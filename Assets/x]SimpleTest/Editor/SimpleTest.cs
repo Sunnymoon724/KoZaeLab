@@ -1,4 +1,4 @@
-﻿using KZLib.Shapes;
+﻿using KZLib;
 using NUnit.Framework;
 using System;
 using System.Collections;

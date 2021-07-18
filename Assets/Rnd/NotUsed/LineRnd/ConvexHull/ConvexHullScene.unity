@@ -1102,8 +1102,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1892830383}
   - component: {fileID: 1892830382}
-  - component: {fileID: 1892830381}
-  - component: {fileID: 1892830380}
   m_Layer: 0
   m_Name: UICam
   m_TagString: Untagged
@@ -1111,22 +1109,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &1892830380
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1892830379}
-  m_Enabled: 1
---- !u!124 &1892830381
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1892830379}
-  m_Enabled: 1
 --- !u!20 &1892830382
 Camera:
   m_ObjectHideFlags: 0
