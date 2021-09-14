@@ -11,10 +11,10 @@ namespace Table
     #region 데이터
 
     [Serializable]
-    public class ExcelExampleData
+    public class ExcelExampleData : IMetaData
     {
 		[SerializeField, HideInInspector]
-		private int no;
+		private string metaId;
 		
 		[SerializeField, HideInInspector]
 		private string version;
@@ -30,7 +30,7 @@ namespace Table
 		
 		[BoxGroup("기본 정보")]
 		[HorizontalGroup("기본 정보/0"), LabelWidth(100), ShowInInspector, ReadOnly]
-		public int No { get => no; private set => no = value; }
+		public string MetaId { get => metaId; private set => metaId = value; }
 		
 		[HorizontalGroup("기본 정보/0"), LabelWidth(100), ShowInInspector, ReadOnly]
 		public string Version { get => version; private set => version = value; }
@@ -49,7 +49,7 @@ namespace Table
 
     #endregion 데이터
 
-    public class ExcelExampleTable : TableConfig<ExcelExampleTable,ExcelExampleData>
+    public class ExcelExampleTable : TableHandler<ExcelExampleTable>
     {
 		[BoxGroup("10",Order = -1,ShowLabel = false)]
 		[HorizontalGroup("10/1",Order = 0), Button("Find File",ButtonSizes.Medium), LabelWidth(100), ShowInInspector]
@@ -61,15 +61,17 @@ namespace Table
 			}
 		}
 
-		[BoxGroup("2",Order = 2,ShowLabel = false), LabelText("ExcelExampleData"), ListDrawerSettings(Expanded = true), ShowIf("@IsShowAll"), Searchable]
-        public List<ExcelExampleData> dataList;
+		[BoxGroup("2",Order = 2,ShowLabel = false), LabelText("ExcelExampleData"), ListDrawerSettings(Expanded = true), ShowIf("@m_IsShowAll"), Searchable,SerializeField]
+        private List<ExcelExampleData> dataList;
 
 		private const string sheetPath = "D:/Documents/Projects/KoZaeLab/Example.xlsx";
 		private const string workSheet = "ExcelExample";
 
-		#region For Editor
+        public override List<IMetaData> MetaDataList => dataList.ConvertAll(x=>x as IMetaData);
 
-		protected override void OnRefresh()
+        #region For Editor
+
+        protected override void OnRefresh()
 		{
 			if(File.Exists(sheetPath))
 			{
@@ -81,9 +83,9 @@ namespace Table
 
 					foreach(var data in query.Deserialize<ExcelExampleData>())
                     {
-						if(dataList.Any(x=>x.No.Equals(data.No)))
+						if(dataList.Any(x=>x.MetaId.Equals(data.MetaId)))
                         {
-							Debug.LogError($"{workSheet} is overlap value {data.No} [{sheetPath}]");
+							Debug.LogError($"{workSheet} is overlap value {data.MetaId} [{sheetPath}]");
 							break;
                         }
 						else
@@ -100,18 +102,6 @@ namespace Table
 			else
 			{
 				Debug.LogError($"excel file is not exist.\n - check the patt({sheetPath})");
-			}
-		}
-
-		protected override void OnShowList()
-		{
-			IsShowAll = !IsShowAll;
-
-			if(!IsShowAll)
-			{
-				fillterList.Clear();
-
-				fillterList.AddRange(dataList.Where(x => GameUtil.CheckVersion(x.Version)));
 			}
 		}
 
