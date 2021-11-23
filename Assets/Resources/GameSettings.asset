@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 771a017bccdd4fa4ab7a215f6c013213, type: 3}
   m_Name: GameSettings
   m_EditorClassIdentifier: 
-  nowGameMode: 0
-  gameVersion: 
+  m_DefaultSettingPath: D:/Documents/Projects/KoZaeLab/Assets\Scripts\KZMenu\EditorWindow
+  m_GameMode: 0
+  m_GameVersion: 0.1
+  m_GameLanguage: 23
