@@ -1,0 +1,11 @@
+#if UNITY_EDITOR
+using Sirenix.OdinInspector.Editor;
+
+public partial class MetaTableEditorWindow : OdinMenuEditorWindow
+{
+    partial void AddOdinMenuTree(ref OdinMenuTree _tree)
+    {
+        _tree.Add("$ClassName",GetTable<Table.$ClassNameTable>("$ClassName"));
+    }
+}     
+#endif
