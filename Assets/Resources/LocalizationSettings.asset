@@ -41,5 +41,4 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  m_PathList:
-  - test.tsv
+  m_PathList: []

@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e9b07c38f910a84bae4fed315816d2b, type: 3}
-  m_Name: ReportSettings
+  m_Script: {fileID: 11500000, guid: f59576ee2dd4482468c00f1aad1e9a00, type: 3}
+  m_Name: TestTable
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,4 +21,23 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  report: 0
+  m_SheetPathList:
+  - m_SheetName: AAA@Test
+    m_SheetPath: D:/Documents/Projects/KoZaeLab/Example.xlsx
+  m_TestList:
+  - m_MetaId: 0
+    m_Version: 0.1
+    m_Name: Goblin
+    m_Difficulty: 0
+  - m_MetaId: 1
+    m_Version: 0.1
+    m_Name: Wolf
+    m_Difficulty: 1
+  - m_MetaId: 2
+    m_Version: 0.1
+    m_Name: Scavanger
+    m_Difficulty: 0
+  - m_MetaId: 3
+    m_Version: 0.1
+    m_Name: Lurker
+    m_Difficulty: 1
