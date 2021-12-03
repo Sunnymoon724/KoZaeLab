@@ -15,7 +15,7 @@ public class Triangulate : MonoBehaviour
     {
         List<Vector2> pointList = new List<Vector2>();
 
-        for(int i = 0;i<pointGroup.childCount;i++)
+        for(int i=0;i<pointGroup.childCount;i++)
         {
             pointList.Add(pointGroup.GetChild(i).position);
         }
@@ -146,7 +146,7 @@ public class Triangulate : MonoBehaviour
             }
 
             // 해당점이 외부의 점이므로 이어에 포함한다.
-            if (!hasPointInside)
+            if (hasPointInside == false)
             {
                 _earList.Add(_posArray[_index]);
             }

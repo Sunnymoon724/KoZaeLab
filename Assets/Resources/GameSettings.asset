@@ -21,7 +21,7 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  m_DefaultSettingPath: KZLib/SettingsEditorWindow
+  m_DefaultSettingPath: Scripts/EditorWindow
   m_GameMode: 0
   m_GameVersion: 0.1
   m_GameLanguage: 23

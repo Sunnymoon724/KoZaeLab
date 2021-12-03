@@ -146,7 +146,7 @@ public static class PolyHull
                 concaveHullList.RemoveAt(0);
                 var aux = new List<PolyLine>();
 
-                if (!edge.IsChecked)
+                if (edge.IsChecked == false)
                 {
                     aux.AddRange(SetConcave(edge,_pointList,concaveHullList, concavity, 40));
 
@@ -201,7 +201,7 @@ public static class PolyHull
             foreach (var point in _insideList)
             {
                 //Not part of the line
-                if ( !(point.x==_line.PointArray[0].x && point.y==_line.PointArray[0].y || point.x==_line.PointArray[1].x && point.y==_line.PointArray[1].y) )
+                if ((point.x==_line.PointArray[0].x && point.y==_line.PointArray[0].y || point.x==_line.PointArray[1].x && point.y==_line.PointArray[1].y) == false)
                 {                    
                     var boundary = GetBoundary(_line,_factor);
 
@@ -233,14 +233,14 @@ public static class PolyHull
             {
                 int count = 0;
 
-                while (!isIntersection && count<_concaveList.Count)
+                while (isIntersection == false && count<_concaveList.Count)
                 {
                     isIntersection = (LineIntersection(_concaveList[count],new PolyLine(nearPointList[i],_line.PointArray[0])) || (LineIntersection(_concaveList[count],new PolyLine(nearPointList[i],_line.PointArray[1]))));
 
                     count++;
                 }
 
-                if (!isIntersection)
+                if (isIntersection == false)
                 {
                     // Prevents from getting sharp angles between middlepoints
                     PolyPoint[] nearNodes = GetHullNearbyNodes(_line,_concaveList);
@@ -248,7 +248,7 @@ public static class PolyHull
                     if ( (GetCos(nearPointList[i], nearNodes[0],_line.PointArray[0])<-concavity) && (GetCos(nearPointList[i], nearNodes[1],_line.PointArray[1])<-concavity))
                     {
                         // Prevents inner tangent lines to the concave hull
-                        if (!(TangentToHull(_line,nearPointList[i],cos1,cos2,_concaveList)))
+                        if ((TangentToHull(_line,nearPointList[i],cos1,cos2,_concaveList)) == false)
                         {
                             sumCos = cos1 + cos2;
                             middlePoint = nearPointList[i];
@@ -306,7 +306,7 @@ public static class PolyHull
 
                 var point = _concaveList[i].PointArray[j];
 
-                if (!searchedList.Contains(point.idx))
+                if (searchedList.Contains(point.idx) == false)
                 {
                     if (point.idx != _line.PointArray[0].idx && point.idx != _line.PointArray[1].idx)
                     {
