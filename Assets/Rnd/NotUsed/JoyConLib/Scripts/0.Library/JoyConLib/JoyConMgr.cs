@@ -22,7 +22,7 @@ namespace JCLib
 
         public List<IJoyCon> datas = new List<IJoyCon>();
 
-		protected override void DoAwake()
+		protected override void Initialize()
         {
 			var isLeft = false;
 			HIDapi.hid_init();
@@ -128,15 +128,15 @@ namespace JCLib
 			}
 		}
 
-		protected override void OnApplicationQuit()
-		{
-			base.OnApplicationQuit();
+		// protected override void OnApplicationQuit()
+		// {
+		// 	base.OnApplicationQuit();
 
-			foreach (var controller in controllers)
-			{
-				controller.Detach();
-			}
-		}
+		// 	foreach (var controller in controllers)
+		// 	{
+		// 		controller.Detach();
+		// 	}
+		// }
 
 		public int AddJoyCon(IJoyCon _object)
         {

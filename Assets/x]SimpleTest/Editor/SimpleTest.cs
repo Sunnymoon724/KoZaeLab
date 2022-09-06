@@ -19,13 +19,13 @@ public class SimpleTest
     [Test]
     public void Test()
     {
-
+        
     }
 
     [Test]
     public void Test2()
     {
-        I($"{Marshal.SizeOf(new Line())}");
+        
     }
 }
 
