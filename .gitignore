@@ -63,4 +63,4 @@ crashlytics-build.properties
 **/.vscode/launch.json
 **/UserSettings
 **~$*
-**/ConfigSettings.asset
+**/NotShared

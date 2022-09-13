@@ -20,36 +20,8 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes:
-    - Name: m_GameObjectDict
-      Entry: 7
-      Data: 0|System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[ConfigSettings+InstanceData,
-        Assembly-CSharp]], mscorlib
-    - Name: comparer
-      Entry: 7
-      Data: 1|System.Collections.Generic.GenericEqualityComparer`1[[System.Int32,
-        mscorlib]], mscorlib
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-  m_UseCustomHierarchy: 0
-  m_UseCustomHUD: 0
-  m_IsInitHierarchy: 0
-  m_IsInitHUD: 0
+    SerializationNodes: []
   m_HUDShow: 0
   m_HUDFontSize: 0
   m_UseFPS: 0
   m_UseMemory: 0
-  m_UseTreeBranch: 0
-  m_BranchColor: {r: 1, g: 0.44, b: 0.97, a: 1}
-  m_UseSeparator: 0
-  m_SeparatorList: []
