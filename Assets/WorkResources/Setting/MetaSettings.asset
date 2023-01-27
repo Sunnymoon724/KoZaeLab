@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2d5bbfd94756be499914a8f2fe8f307, type: 3}
+  m_Name: MetaSettings
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  m_Initialize: 1
+  m_ScriptPath: Scripts/Table/MetaTable
+  m_AssetPath: Resources/ScriptableObject
+  m_SheetList:
+  - m_LocalFilePath: 
+    m_File:
+      m_LocalFilePath: 
+    m_SheetName: Parts
+    m_SheetNameList:
+    - Parts
+    - Stat
+    m_HeaderList:
+    - m_Name: MetaId
+      m_CellType: 1
+      m_IsArray: 0
+      m_OrderNo: 0
+    - m_Name: Version
+      m_CellType: 0
+      m_IsArray: 0
+      m_OrderNo: 1
+    - m_Name: ForItemModelPath
+      m_CellType: 0
+      m_IsArray: 0
+      m_OrderNo: 2
+    - m_Name: InGameModelPath
+      m_CellType: 0
+      m_IsArray: 0
+      m_OrderNo: 3
+    - m_Name: AnimalName
+      m_CellType: 0
+      m_IsArray: 0
+      m_OrderNo: 4
+    - m_Name: PosType
+      m_CellType: 0
+      m_IsArray: 0
+      m_OrderNo: 5
+    - m_Name: PartsType
+      m_CellType: 0
+      m_IsArray: 0
+      m_OrderNo: 6
+    - m_Name: StatId
+      m_CellType: 0
+      m_IsArray: 0
+      m_OrderNo: 7
+    - m_Name: SkillTypeArray
+      m_CellType: 0
+      m_IsArray: 0
+      m_OrderNo: 8
+    - m_Name: ColorIndexArray
+      m_CellType: 0
+      m_IsArray: 0
+      m_OrderNo: 9
+    - m_Name: CustomAnimatorPath
+      m_CellType: 0
+      m_IsArray: 0
+      m_OrderNo: 10
+  - m_LocalFilePath: 
+    m_File:
+      m_LocalFilePath: 
+    m_SheetName: 
+    m_SheetNameList:
+    - Parts
+    - Stat
+    m_HeaderList: []
