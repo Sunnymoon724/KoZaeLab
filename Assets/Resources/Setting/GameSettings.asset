@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e9b07c38f910a84bae4fed315816d2b, type: 3}
-  m_Name: ReportSettings
+  m_Script: {fileID: 11500000, guid: 771a017bccdd4fa4ab7a215f6c013213, type: 3}
+  m_Name: GameSettings
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,4 +21,14 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  report: 0
+  m_Initialize: 1
+  m_UseReport: 0
+  m_ReportURL: 
+  m_UseHeadUpDisplay: 0
+  m_GameMode: 0
+  m_GameVersion: 0.1
+  m_DefaultSettingPath: Scripts/ForEditor/CustomTool
+  m_GameLanguage: 10
+  m_UseTotalFont: 1
+  m_TotalFont: {fileID: 0}
+  m_FontDataList: []
