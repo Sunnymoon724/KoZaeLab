@@ -46,7 +46,7 @@ namespace NakiedLib.FirebaseAddressables
         public override void Provide(ProvideHandle provideHandle)
         {
             var url = UnityEngine.AddressableAssets.Addressables.ResourceManager.TransformInternalId(provideHandle.Location);
-            if (FirebaseAddressablesManager.IsFirebaseStorageLocation(url) == false)
+            if (!FirebaseAddressablesManager.IsFirebaseStorageLocation(url))
             {
                 base.Provide(provideHandle);
                 return;

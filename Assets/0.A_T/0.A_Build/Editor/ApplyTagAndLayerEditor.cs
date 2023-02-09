@@ -39,7 +39,7 @@ public class ApplyTagAndLayerEditor
         {
             GenericMenu menu = new GenericMenu();
 
-            if(Event.current.shift == true && Event.current.control == false)
+            if(Event.current.shift && Event.current.control == false)
             {
                 foreach (string tag in UnityEditorInternal.InternalEditorUtility.tags)
                 {
@@ -49,7 +49,7 @@ public class ApplyTagAndLayerEditor
                 menu.ShowAsContext();
                 evt.Use();
             }
-            else if(Event.current.shift == true && Event.current.control == true)
+            else if(Event.current.shift && Event.current.control)
             {
                 foreach (string layer in UnityEditorInternal.InternalEditorUtility.layers)
                 {
@@ -77,7 +77,7 @@ public class ApplyTagAndLayerEditor
         {
             GenericMenu menu = new GenericMenu();
 
-            if (Event.current.shift == true && Event.current.control == false)
+            if (Event.current.shift && Event.current.control == false)
             {
                 foreach (string tag in UnityEditorInternal.InternalEditorUtility.tags)
                 {
@@ -87,7 +87,7 @@ public class ApplyTagAndLayerEditor
                 menu.ShowAsContext();
                 evt.Use();
             }
-            else if (Event.current.shift == true && Event.current.control == true)
+            else if (Event.current.shift && Event.current.control)
             {
                 foreach (string layer in UnityEditorInternal.InternalEditorUtility.layers)
                 {
@@ -106,7 +106,7 @@ public class ApplyTagAndLayerEditor
 
         string tag = (string)obj;
 
-        if(string.IsNullOrEmpty(tag) == true)
+        if(string.IsNullOrEmpty(tag))
         {
             UnityEngine.Debug.LogError("ApplyTagAndLayerEditor has Error !!");
         }
@@ -124,7 +124,7 @@ public class ApplyTagAndLayerEditor
 
         string layer = (string)obj;
 
-        if (string.IsNullOrEmpty(layer) == true)
+        if (string.IsNullOrEmpty(layer))
         {
             UnityEngine.Debug.LogError("ApplyTagAndLayerEditor has Error !!");
         }

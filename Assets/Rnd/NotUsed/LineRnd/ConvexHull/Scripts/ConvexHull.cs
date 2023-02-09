@@ -100,7 +100,7 @@ public class ConvexHull : MonoBehaviour
 
         while(true)
         {
-            if( count==2 )
+            if(count == 2)
             {
                 _pointList.Add(convexHull[0]);
             }
@@ -109,7 +109,7 @@ public class ConvexHull : MonoBehaviour
 
             for(int i=0;i<_pointList.Count;i++)
             {
-                if( _pointList[i].Equals(nextPoint) )
+                if(_pointList[i] == nextPoint)
                 {
                     continue;
                 }

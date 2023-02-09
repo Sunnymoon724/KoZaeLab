@@ -52,14 +52,14 @@ public class Triangulate : MonoBehaviour
         List<Vector2> pointList = _pointArray.ToList();
         List<Vector2> earList = new List<Vector2>();
         
-        for (int i=0;i<pointList.Count;i++)
+        for(int i=0;i<pointList.Count;i++)
         {
             IsPointEar(i,pointList.ToArray(),earList);
         }
 
-        while (true)
+        while(true)
         {
-            if (pointList.Count == 3)
+            if(pointList.Count == 3)
             {
                 AddTrianglePoint(new Vector2[] { pointList[0],pointList[1],pointList[2] },_pointArray,triangleList);
                 break;
@@ -98,9 +98,9 @@ public class Triangulate : MonoBehaviour
 
     bool IsOrientedClockwise(Vector2 _pointA,Vector2 _pointB,Vector2 _pointC)
     {
-        float determinant = _pointA.x*_pointB.y+_pointC.x*_pointA.y+_pointB.x*_pointC.y-_pointA.x*_pointC.y-_pointC.x*_pointB.y-_pointB.x*_pointA.y;
+        var determinant = _pointA.x*_pointB.y+_pointC.x*_pointA.y+_pointB.x*_pointC.y-_pointA.x*_pointC.y-_pointC.x*_pointB.y-_pointB.x*_pointA.y;
 
-        if (determinant>0.0f)
+        if(determinant > 0.0f)
         {
             return false;
         }
@@ -112,7 +112,7 @@ public class Triangulate : MonoBehaviour
 
     int ClampIndex(int _index, int _maxSize)
     {
-        return  ((_index%_maxSize)+_maxSize)%_maxSize;
+        return ((_index%_maxSize)+_maxSize)%_maxSize;
     }
 
     void IsPointEar(int _index, Vector2[] _posArray,List<Vector2> _earList)
@@ -123,7 +123,7 @@ public class Triangulate : MonoBehaviour
         Vector2 pointC = _posArray[ClampIndex(_index+1,_posArray.Length)];
 
         // 점들의 위치가 cw인지 확인한다.
-        if (IsOrientedClockwise(pointA, pointB, pointC))
+        if(IsOrientedClockwise(pointA,pointB,pointC))
         {
             return;
         }
@@ -132,9 +132,9 @@ public class Triangulate : MonoBehaviour
             // 해당점이 내부의 점인지 외부의 점인지 파악
             bool hasPointInside = false;
 
-            for (int i=0;i<_posArray.Length;i++)
+            for(int i=0;i<_posArray.Length;i++)
             {
-                if (IsOrientedClockwise(_posArray,i))
+                if(IsOrientedClockwise(_posArray,i))
                 {
                     if (IsPointInTriangle(_posArray[i],_posArray,_index))
                     {
@@ -146,7 +146,7 @@ public class Triangulate : MonoBehaviour
             }
 
             // 해당점이 외부의 점이므로 이어에 포함한다.
-            if (hasPointInside == false)
+            if(!hasPointInside)
             {
                 _earList.Add(_posArray[_index]);
             }

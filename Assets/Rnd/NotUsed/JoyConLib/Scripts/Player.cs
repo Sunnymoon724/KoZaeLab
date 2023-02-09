@@ -20,11 +20,11 @@ public class Player : MonoBehaviour, IJoyCon
 
     public void SetButtonDown(JoyConLib.Button _button)
     {
-        if(_button.Equals(JoyConLib.Button.SHOULDER_1))
+        if(_button == JoyConLib.Button.SHOULDER_1)
         {
             transform.localPosition = Vector3.zero;
         }
-        else if (_button.Equals(JoyConLib.Button.SHOULDER_2))
+        else if (_button == JoyConLib.Button.SHOULDER_2)
         {
             JoyConMgr.In.SetVibration(index);
         }
