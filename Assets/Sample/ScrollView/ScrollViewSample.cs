@@ -23,7 +23,7 @@ public class ScrollViewSample : MonoBehaviour
 	[SerializeField,Button("첫번째 슬롯 추가")]
 	private void OnAddFirstSlot()
 	{
-		if(Application.isPlaying == false)
+		if(!Application.isPlaying)
 		{
 			return;
 		}
@@ -33,10 +33,10 @@ public class ScrollViewSample : MonoBehaviour
 		m_ScrollView.SetCellList(m_CellList);
 	}
 
-		[SerializeField,Button("마지막 슬롯 추가")]
+	[SerializeField,Button("마지막 슬롯 추가")]
 	private void OnAddLastSlot()
 	{
-		if(Application.isPlaying == false)
+		if(!Application.isPlaying)
 		{
 			return;
 		}
@@ -49,7 +49,7 @@ public class ScrollViewSample : MonoBehaviour
 	[SerializeField,Button("첫번째 슬롯 삭제")]
 	private void OnRemoveFirstSlot()
 	{
-		if(Application.isPlaying == false)
+		if(!Application.isPlaying)
 		{
 			return;
 		}
@@ -62,7 +62,7 @@ public class ScrollViewSample : MonoBehaviour
 	[SerializeField,Button("마지막 슬롯 삭제")]
 	private void OnRemoveLastSlot()
 	{
-		if(Application.isPlaying == false)
+		if(!Application.isPlaying)
 		{
 			return;
 		}

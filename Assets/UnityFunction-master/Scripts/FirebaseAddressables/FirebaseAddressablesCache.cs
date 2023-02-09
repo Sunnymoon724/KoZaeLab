@@ -75,7 +75,7 @@ namespace NakiedLib.FirebaseAddressables
                             foreach (var dependency in location.Dependencies)
                             {
                                 string firebaseUrl = UnityEngine.AddressableAssets.Addressables.ResourceManager.TransformInternalId(dependency);
-                                if (FirebaseAddressablesManager.IsFirebaseStorageLocation(firebaseUrl) == false)
+                                if (!FirebaseAddressablesManager.IsFirebaseStorageLocation(firebaseUrl))
                                 {
                                     continue;
                                 }
