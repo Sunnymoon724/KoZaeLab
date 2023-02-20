@@ -630,7 +630,7 @@
 //         Ray ray					= CameraHandler.Instance.MainCamera.ViewportPointToRay(vViewPort);
 
 // 		RaycastHit[] hits		= Physics.RaycastAll(ray);
-// 		for(int i = 0; i < hits.Length; i++)
+// 		for(var i = 0; i < hits.Length; i++)
 // 		{
 // 			UnitData unitData = hits[i].collider.GetComponentInParent<UnitData>();
 //             if (unitData != null)
@@ -790,7 +790,7 @@
 
 // 		int[] arrTouchIndex			= new int[2];
 // 		int nIndex					= 0;
-// 		for(int i = 0; i < arrTouch.Length; ++i)
+// 		for(var i = 0; i < arrTouch.Length; ++i)
 // 		{
 // 			if(nIndex >= arrTouchIndex.Length)
 // 			{
@@ -822,7 +822,7 @@
 //             int nTouchIndex2 = arrTouchIndex[1];
 //             int index1 = -1;
 //             int index2 = -1;
-//             for(int i = 0; i < arrTouch.Length; ++i)
+//             for(var i = 0; i < arrTouch.Length; ++i)
 //             {
 //                 if( arrTouch[i].fingerId == nTouchIndex1 )
 //                 {

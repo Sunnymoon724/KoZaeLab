@@ -53,7 +53,7 @@ public class ConvexHull : MonoBehaviour
         {
             pointList.Clear();
 
-            for(int i=0;i<pointGroup.childCount;i++)
+            for(var i=0;i<pointGroup.childCount;i++)
             {
                 pointList.Add(pointGroup.GetChild(i).position);
             }
@@ -80,7 +80,7 @@ public class ConvexHull : MonoBehaviour
         var convexHull = new List<Vector3>();
         var startPos = _pointList[0];
 
-        for(int i=1;i<_pointList.Count;i++)
+        for(var i=1;i<_pointList.Count;i++)
         {
             var testPos = _pointList[i];
 
@@ -107,7 +107,7 @@ public class ConvexHull : MonoBehaviour
 
             var nextPoint = _pointList[Random.Range(0,_pointList.Count)];
 
-            for(int i=0;i<_pointList.Count;i++)
+            for(var i=0;i<_pointList.Count;i++)
             {
                 if(_pointList[i] == nextPoint)
                 {
@@ -137,7 +137,7 @@ public class ConvexHull : MonoBehaviour
 
                 pivot = colinearPointList[colinearPointList.Count-1];
 
-                for(int i=0;i<colinearPointList.Count;i++)
+                for(var i=0;i<colinearPointList.Count;i++)
                 {
                     _pointList.Remove(colinearPointList[i]);
                 }

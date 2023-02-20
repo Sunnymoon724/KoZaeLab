@@ -57,7 +57,7 @@ namespace KZLib.Cam
 
 			SetDownSample(_source,buffer,1.0f);
 
-			for(int i=0;i<m_Iteration;i++)
+			for(var i=0;i<m_Iteration;i++)
 			{
 				var buffer2 = RenderTexture.GetTemporary(width,height,0);
 

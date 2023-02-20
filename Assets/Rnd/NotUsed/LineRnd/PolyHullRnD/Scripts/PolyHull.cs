@@ -191,7 +191,7 @@ public static class PolyHull
     {
         var nearPointList = new List<PolyPoint>();
 
-        for(int i=0;i<2;i++)
+        for(var i=0;i<2;i++)
         {
             if(nearPointList.Count != 0)
             {
@@ -222,7 +222,7 @@ public static class PolyHull
         var concaveList = new List<PolyLine>();
         var sumCos = -2.0f;
         PolyPoint? middlePoint = null;
-        for(int i=0;i<nearPointList.Count;i++)
+        for(var i=0;i<nearPointList.Count;i++)
         {
             bool isIntersection = false;
 
@@ -295,9 +295,9 @@ public static class PolyHull
 
         var length = GetDistance(_point,_line);
 
-        for(int i=0;i<_concaveList.Count;i++)
+        for(var i=0;i<_concaveList.Count;i++)
         {
-            for(int j=0;j<2;j++)
+            for(var j=0;j<2;j++)
             {
                 if (isTangent)
                 {
@@ -346,7 +346,7 @@ public static class PolyHull
         {
             int opposite = 1;
 
-            for(int i = 0;i < 2;i++)
+            for(var i = 0;i < 2;i++)
             {
                 int currectIndex = _concaveList[line_count].PointArray[i].idx;
 

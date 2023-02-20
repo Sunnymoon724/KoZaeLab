@@ -11,7 +11,7 @@ public class Test : MonoBehaviour
     {
         var array = new int[100];
 
-        for(int i=0;i<100;i++)
+        for(var i=0;i<100;i++)
         {
             array[i] = i;
         }
@@ -20,7 +20,7 @@ public class Test : MonoBehaviour
 
         Debug.Log(string.Join("-",array));
 
-        for(int i=0;i<data.Length;i++)
+        for(var i=0;i<data.Length;i++)
         {
             Debug.Log(string.Join("-",data[i]));
         }        
@@ -34,7 +34,7 @@ public class Test : MonoBehaviour
 
         var colorList = new List<List<int>>();
 
-		for(int i=0;i<_count;i++)
+		for(var i=0;i<_count;i++)
 		{
             colorArray[i] = new int[100/_count];
             colorList.Add(new List<int>());
@@ -42,11 +42,11 @@ public class Test : MonoBehaviour
             widthArray[i] = i%2 == 0 ? Mathf.CeilToInt(oldWidth/(float)_count) : Mathf.FloorToInt(oldWidth/(float)_count);
 		}
 
-		for(int i=0;i<_array.Length;i++)
+		for(var i=0;i<_array.Length;i++)
 		{
 			var pivot = i%oldWidth;
 
-			for(int j=0;j<_count;j++)
+			for(var j=0;j<_count;j++)
 			{
 				if(j*widthArray[j] <= pivot && pivot < (j+1)*widthArray[j])
 				{
@@ -55,9 +55,9 @@ public class Test : MonoBehaviour
 			}
 		}
 
-        for(int i=0;i<_count;i++)
+        for(var i=0;i<_count;i++)
 		{
-            for(int j=0;j<colorArray[i].Length;j++)
+            for(var j=0;j<colorArray[i].Length;j++)
             {
                 colorArray[i][j] = colorList[i][j];
             }
@@ -82,7 +82,7 @@ public class Test : MonoBehaviour
 	// 	var colorArray = new Color32[_count][];
 	// 	var newWidth = _texture.width/_count;
 
-	// 	for(int i=0;i<_count;i++)
+	// 	for(var i=0;i<_count;i++)
 	// 	{
 	// 		resultArray[i] = new Texture2D(newWidth,_texture.height,_texture.format,false);
 
@@ -91,11 +91,11 @@ public class Test : MonoBehaviour
 
 	// 	var pixelArray = _texture.GetPixels32();
 
-	// 	for(int i=0;i<pixelArray.Length;i++)
+	// 	for(var i=0;i<pixelArray.Length;i++)
 	// 	{
 	// 		var pivot = i%_texture.width;
 
-	// 		for(int j=0;j<_count;j++)
+	// 		for(var j=0;j<_count;j++)
 	// 		{
 	// 			if(j*newWidth <= pivot && pivot < (j+1)*newWidth)
 	// 			{
@@ -104,7 +104,7 @@ public class Test : MonoBehaviour
 	// 		}
 	// 	}
 
-	// 	for(int i=0;i<_count;i++)
+	// 	for(var i=0;i<_count;i++)
 	// 	{
 	// 		resultArray[i].SetPixels32(colorArray[i]);
 	// 		resultArray[i].Apply();

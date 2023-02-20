@@ -15,7 +15,7 @@ public class Triangulate : MonoBehaviour
     {
         List<Vector2> pointList = new List<Vector2>();
 
-        for(int i=0;i<pointGroup.childCount;i++)
+        for(var i=0;i<pointGroup.childCount;i++)
         {
             pointList.Add(pointGroup.GetChild(i).position);
         }
@@ -52,7 +52,7 @@ public class Triangulate : MonoBehaviour
         List<Vector2> pointList = _pointArray.ToList();
         List<Vector2> earList = new List<Vector2>();
         
-        for(int i=0;i<pointList.Count;i++)
+        for(var i=0;i<pointList.Count;i++)
         {
             IsPointEar(i,pointList.ToArray(),earList);
         }
@@ -132,7 +132,7 @@ public class Triangulate : MonoBehaviour
             // 해당점이 내부의 점인지 외부의 점인지 파악
             bool hasPointInside = false;
 
-            for(int i=0;i<_posArray.Length;i++)
+            for(var i=0;i<_posArray.Length;i++)
             {
                 if(IsOrientedClockwise(_posArray,i))
                 {
