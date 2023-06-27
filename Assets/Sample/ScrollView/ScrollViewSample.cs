@@ -9,7 +9,7 @@ public class ScrollViewSample : MonoBehaviour
 	{
 		public int Index { get; }
 
-		public SampleData(int _index)
+		public SampleData(int _index) : base(null,null,null,false)
 		{
 			Index = _index;
 		}
@@ -30,7 +30,7 @@ public class ScrollViewSample : MonoBehaviour
 
 		m_CellList.Insert(0,new SampleData(Count));
 
-		m_ScrollView.SetCellList(m_CellList,false);
+		m_ScrollView.SetCellList(m_CellList);
 	}
 
 	[SerializeField,Button("마지막 슬롯 추가")]
@@ -43,7 +43,7 @@ public class ScrollViewSample : MonoBehaviour
 
 		m_CellList.Add(new SampleData(Count));
 
-		m_ScrollView.SetCellList(m_CellList,false);
+		m_ScrollView.SetCellList(m_CellList);
 	}
 
 	[SerializeField,Button("첫번째 슬롯 삭제")]
@@ -56,7 +56,7 @@ public class ScrollViewSample : MonoBehaviour
 
 		m_CellList.RemoveAt(0);
 
-		m_ScrollView.SetCellList(m_CellList,false);
+		m_ScrollView.SetCellList(m_CellList);
 	}
 
 	[SerializeField,Button("마지막 슬롯 삭제")]
@@ -69,6 +69,6 @@ public class ScrollViewSample : MonoBehaviour
 
 		m_CellList.RemoveAt(m_CellList.Count-1);
 
-		m_ScrollView.SetCellList(m_CellList,false);
+		m_ScrollView.SetCellList(m_CellList);
 	}
 }
