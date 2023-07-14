@@ -9,7 +9,7 @@ public class ScrollViewSample : MonoBehaviour
 	{
 		public int Index { get; }
 
-		public SampleData(int _index) : base(null,null,null,false)
+		public SampleData(int _index) : base(null,null,null,null)
 		{
 			Index = _index;
 		}
