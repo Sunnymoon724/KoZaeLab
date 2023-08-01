@@ -98,7 +98,5 @@ crashlytics-build.properties
 
 *.DS_Store
 **~$*
-**/NotShared
-**/NotShared.meta
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,unity
