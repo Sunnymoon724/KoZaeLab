@@ -7,9 +7,9 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 791cd124c72d58c418ea6ed8867496d6, type: 3}
+  m_Script: {fileID: 11500000, guid: 8313b98916a794b558b79c18251633ce, type: 3}
   m_Name: BuildSettings
   m_EditorClassIdentifier: 
   serializationData:
@@ -22,12 +22,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   m_Initialize: 1
-  m_UseDefaultAppPath: 1
-  m_AppBuildPath: 
-  m_AOSKeyPath: 
-  m_UseDefaultBundlePath: 1
-  m_LocalBundleBuildPath: 
-  m_ServerBundleBuildPath: 
-  m_OpenFolderEndBuild: 1
-  m_UseUpload: 0
-  m_UseAlarm: 0
+  m_IsOpenFolderAfterAppBuild: 0
+  m_IsUploadAfterAppBuild: 0
+  m_BundleLoadPath: http://localhost
+  m_IsOpenFolderAfterBundleBuild: 0
+  m_IsUploadAfterBundleBuild: 0

@@ -374,7 +374,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: 162c5c383deea48219074cb39e3ff126, type: 2}
-  m_Color: {r: 0.7735849, g: 0.04743683, b: 0.04743683, a: 0.50980395}
+  m_Color: {r: 1, g: 0.38039216, b: 0.7607843, a: 0.50980395}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -434,7 +434,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2147483703
 --- !u!114 &1395932562
 MonoBehaviour:
   m_ObjectHideFlags: 0

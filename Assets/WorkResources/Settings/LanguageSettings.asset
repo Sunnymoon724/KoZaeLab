@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3f6579d69774749deb347419e0feecf4, type: 3}
-  m_Name: LanguageSetting
+  m_Name: LanguageSettings
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -22,5 +22,4 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   m_Initialize: 1
-  m_TranslatePath: Resources/Text/Translate
   m_SheetList: []
