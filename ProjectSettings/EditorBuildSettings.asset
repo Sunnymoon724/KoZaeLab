@@ -4,7 +4,10 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Test2.unity
+    guid: a7a20fa02d4cdcb4694db8852780506c
   m_configObjects:
     com.willykc.templ: {fileID: 11400000, guid: e274758ee56781a4ead8d4c077c66e99,
       type: 2}
