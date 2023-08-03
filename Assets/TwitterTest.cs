@@ -39,14 +39,13 @@ public class TwitterTest : MonoBehaviour
 
 	public IEnumerator GetLogin(Action<bool> callback)
 	{
-		// Debug.Log(Oauth.authorizeURL+"?force_login=true");
+		Debug.Log(Oauth.authorizeURL);
 
 		UnityWebRequest request = UnityWebRequest.Get(Oauth.authorizeURL);
 		// request.SetRequestHeader("Authorization","");
 
 		yield return request.SendWebRequest();
 
-		
 		Debug.Log(request.responseCode);
 		// Debug.Log(request.error);
 
@@ -54,11 +53,17 @@ public class TwitterTest : MonoBehaviour
 
 		if (request.responseCode == 200 || request.responseCode == 201)
 		{
-			m_Text.text = request.downloadHandler.text;
+			// Helper.UrlEncode(param.Key)
 
-			Debug.Log(request.downloadHandler.text);
+			var text = request.downloadHandler.text.Replace(Oauth.authorizeURL,"http://127.0.0.1");
 
-			m_UniWebView.LoadHTMLString(request.downloadHandler.text,null);
+			//  <input name="redirect_after_login" type="hidden" value="https://api.twitter.com/oauth/authenticate?oauth_token=CnfNqwAAAAABpH3tAAABibnk9Ug">
+
+			m_Text.text = text;
+
+			Debug.Log(text);
+
+			m_UniWebView.LoadHTMLString(text,null,true);
 
 			m_UniWebView.OnPageFinished += (view, statusCode, url) =>
 			{
@@ -70,10 +75,10 @@ public class TwitterTest : MonoBehaviour
 				m_Text.text = message.RawMessage;
 			};
 
-			m_UniWebView.OnPageErrorReceived  += (view, errorCode, message) =>
-			{
-				m_Text.text = $"Error Code: {errorCode}, Message: {message}";
-			};
+			// m_UniWebView.OnPageErrorReceived  += (view, errorCode, message) =>
+			// {
+			// 	m_Text.text = $"Error Code: {errorCode}, Message: {message}";
+			// };
 
 			m_UniWebView.Show();
 

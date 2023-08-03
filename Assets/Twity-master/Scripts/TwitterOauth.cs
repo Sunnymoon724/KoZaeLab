@@ -11,12 +11,12 @@ namespace Twity
     {
 
         #region Tokens
-        public static string consumerKey { get; set; } = "gtVarPZ8kN2o3OlYrxdWJzMNQ";
-        public static string consumerSecret { get; set; } = "sjrUqUQ5OVE84O7zlaTHrBhPKCNrn7lmgb3UQOFj9rmU2gHdCy";
-        public static string accessToken { get; set; } = "320392006-NBsmQbCoFTdGu5EFVYGrTwr1mvdGArgQ5j4DXJaW";
-        public static string accessTokenSecret { get; set; } = "KoCYtvK0qpUgcoErkPdLqvMAp4RLYZEAAM8VLj33DI7w8";
+        public static string consumerKey { get; set; } = "icCHHyQngBxtUbw20eaSBsgsM";
+        public static string consumerSecret { get; set; } = "CKkrG8jXBJ4GQZCJjNBwRq9tbLNjYhPj6Fn0F0bt0UdoexEfaH";
+        public static string accessToken { get; set; } = "1600125233767534592-1OlBOknf1Z8OqiprzLP9k4XcYzqjx2";
+        public static string accessTokenSecret { get; set; } = "A4APOB4VVPtX243477XkDeOd4jTgft0rbJCBUfybu0aWE";
 
-        public static string bearerToken {get; set;} = "AAAAAAAAAAAAAAAAAAAAAGPkFAAAAAAAkGEQ%2B1peXf%2FMAxXt31j5TRWAJVg%3DmXnphK7kXG44dpXpzuJNT5bKsuZg9P3Ia0olDtkxbRVLzRwtKA";
+        public static string bearerToken {get; set;} = "AAAAAAAAAAAAAAAAAAAAAO19pAEAAAAA062fGGgb%2BOdMZuxzyEnk1WXyyGk%3DuD19BH4JphDgxpTMMTD8yu6UzSkL7AERviSwsiI56Qu5zUQ0Oh";
 
         public static string requestToken {get; set;}
         public static string requestTokenSecret {get; set;}
