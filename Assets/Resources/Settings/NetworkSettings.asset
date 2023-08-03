@@ -22,12 +22,13 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   m_Initialize: 1
-  m_UseDiscord: 0
+  m_UseDiscord: 1
   m_UseTrello: 0
   m_UseAzure: 0
   m_AzureStorageAccount: 
   m_AzureAccountKey: 
-  m_DiscordLinkList: []
+  m_DiscordLinkList:
+  - https://discord.com/api/webhooks/1072496139586261062/l7qixEBTZOBJtLUrdaTl3Ths035GSjOs0fiyt_TakDIgg7rQbZKH_iSLS3ZUNzvhRFwb
   m_TrelloApiKey: 
   m_TrelloToken: 
   m_TrelloLinkList: []
