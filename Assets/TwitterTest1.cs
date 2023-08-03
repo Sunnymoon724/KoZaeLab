@@ -16,6 +16,7 @@ public class TwitterTest1 : MonoBehaviour
 
 	[SerializeField]
 	private WebViewObject m_WebView;
+	[SerializeField]
 	private RectTransform m_RectTransform;
 
 	[SerializeField]

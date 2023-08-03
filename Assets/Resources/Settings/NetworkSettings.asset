@@ -23,8 +23,8 @@ MonoBehaviour:
     SerializationNodes: []
   m_Initialize: 1
   m_UseDiscord: 1
-  m_UseTrello: 0
-  m_UseAzure: 0
+  m_UseTrello: 1
+  m_UseAzure: 1
   m_AzureStorageAccount: 
   m_AzureAccountKey: 
   m_DiscordLinkList:

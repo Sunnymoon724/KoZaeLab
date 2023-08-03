@@ -729,7 +729,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Button: {fileID: 2042681677}
-  m_WebView: {fileID: 0}
+  m_WebView: {fileID: 305277601}
+  m_RectTransform: {fileID: 305277597}
   m_Text: {fileID: 1455667290}
 --- !u!1 &2042681675
 GameObject:
