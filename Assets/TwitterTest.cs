@@ -34,7 +34,7 @@ public class TwitterTest : MonoBehaviour
 
 					}));
 				}
-			}));
+			},"https://twitter.com/DEVitGame"));
 		});
 	}
 
@@ -42,8 +42,13 @@ public class TwitterTest : MonoBehaviour
 	{
 		Debug.Log(Oauth.authorizeURL);
 
-		UnityWebRequest request = UnityWebRequest.Get(Oauth.authorizeURL);
+		// UnityWebRequest request = UnityWebRequest.Get(Oauth.authorizeURL);
 		// request.SetRequestHeader("Authorization","");
+
+		var request = new UnityWebRequest(Oauth.authorizeURL,UnityWebRequest.kHttpVerbGET)
+		{
+			downloadHandler = new DownloadHandlerBuffer()
+		};
 
 		yield return request.SendWebRequest();
 
@@ -56,7 +61,7 @@ public class TwitterTest : MonoBehaviour
 		{
 			// Helper.UrlEncode(param.Key)
 
-			var text = request.downloadHandler.text.Replace(Oauth.authorizeURL,"http://127.0.0.1");
+			var text = request.downloadHandler.text;
 
 			//  <input name="redirect_after_login" type="hidden" value="https://api.twitter.com/oauth/authenticate?oauth_token=CnfNqwAAAAABpH3tAAABibnk9Ug">
 
@@ -64,16 +69,20 @@ public class TwitterTest : MonoBehaviour
 
 			Debug.Log(text);
 
-			m_UniWebView.LoadHTMLString(text,null,true);
+			m_UniWebView.LoadHTMLString(text,Oauth.authorizeURL,true);
 
 			m_UniWebView.OnPageFinished += (view, statusCode, url) =>
 			{
 				m_Text.text = "code :" +statusCode+" url : "+url;
+
+				Debug.Log("code :" +statusCode+" url : "+url);
 			};
 
 			m_UniWebView.OnMessageReceived += (view, message) =>
 			{
 				m_Text.text = message.RawMessage;
+
+				Debug.Log(message.RawMessage);
 			};
 
 			// m_UniWebView.OnPageErrorReceived  += (view, errorCode, message) =>
