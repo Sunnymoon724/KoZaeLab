@@ -86,9 +86,9 @@ namespace Twity
             parameters.Add("oauth_version", "1.0");
         }
 
-        private static string GenerateTimeStamp()
+        public static string GenerateTimeStamp()
         {
-            DateTimeOffset baseDt = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+            DateTimeOffset baseDt = new(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
             return ((DateTimeOffset.Now - baseDt).Ticks/10000000).ToString();
         }
 

@@ -151,20 +151,15 @@ namespace Twity
 
         public static IEnumerator GenerateRequestToken(TwitterAuthenticationCallback callback, string callbackURL)
         {
-            string url = "https://api.twitter.com/oauth/request_token?oauth_callback="+Helper.UrlEncode(callbackURL);
-
-            Debug.Log(Uri.EscapeUriString(callbackURL));
-
-
+            string url = "https://api.twitter.com/oauth/request_token";
 
             ClearTokens();
-
-            // https://api.twitter.com/oauth/request_token?oauth_callback=$HTTP_ENCODED_CALLBACK_URL'
 
             SortedDictionary<string, string> p = new SortedDictionary<string, string>();
             // p.Add("oauth_callback", Uri.EscapeUriString(callbackURL));
 
             var request = new UnityWebRequest(url,UnityWebRequest.kHttpVerbPOST);
+            request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Authorization", Oauth.GenerateHeaderWithAccessToken(p, "POST", url));
             
             #if UNITY_2017_1
