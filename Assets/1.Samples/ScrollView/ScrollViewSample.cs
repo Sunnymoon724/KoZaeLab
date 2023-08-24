@@ -15,7 +15,7 @@ public class ScrollViewSample : MonoBehaviour
 		}
 	}
 
-	[SerializeField] private UIReuseScrollView m_ScrollView;
+	[SerializeField] private UIScrollView m_ScrollView;
 	[SerializeField,ReadOnly] private int Count => m_CellList.Count;
 
 	private List<ICellData> m_CellList = new List<ICellData>();
