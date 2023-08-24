@@ -26,7 +26,7 @@ namespace Sirenix.OdinInspector.Demos.RPGEditor
     public class CharacterOverview : GlobalConfig<CharacterOverview> 
     {
         [ReadOnly]
-        [ListDrawerSettings(Expanded = true)]
+        [ListDrawerSettings(ShowFoldout = false)]
         public Character[] AllCharacters;
 
 #if UNITY_EDITOR
