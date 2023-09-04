@@ -78,7 +78,7 @@ MonoBehaviour:
   m_UseTotalFont: 1
   m_TotalFontAsset: {fileID: 0}
   m_FontDataList: []
-  m_DefaultSettingPath: Scripts/InEditor/CustomWindow
+  m_DefaultSettingPath: Scripts/InEditor/SettingsWindow
   m_MetaScriptPath: Scripts/Table/MetaTable
   m_MetaAssetPath: Resources/ScriptableObjects
   m_TranslatePath: Resources/Texts/Translations
