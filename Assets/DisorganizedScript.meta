@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: 927e995e80414481497aaf31ba5fa07b
+<<<<<<<< HEAD:Assets/DisorganizedScript.meta
+guid: 576c4c281811492499035dc3315b7ec1
+========
+guid: ca06ff352d33e4f0da29b504fb10f358
+>>>>>>>> trunk:Assets/WorkResources/ScriptableObjects/Settings.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

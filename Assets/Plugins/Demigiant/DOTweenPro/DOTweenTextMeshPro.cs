@@ -689,7 +689,7 @@ namespace DG.Tweening
         {
             if (!ValidateChar(charIndex)) return null;
             if (duration <= 0) {
-                if (Debugger.logPriority > 0) UnityEngine.Debug.LogWarning("Duration can't be 0, returning NULL without creating a tween");
+                if (Debugger.logPriority > 0) Debug.LogWarning("Duration can't be 0, returning NULL without creating a tween");
                 return null;
             }
             return DOTween.Punch(() => _charTransforms[charIndex].offset, x => {
@@ -712,7 +712,7 @@ namespace DG.Tweening
         {
             if (!ValidateChar(charIndex)) return null;
             if (duration <= 0) {
-                if (Debugger.logPriority > 0) UnityEngine.Debug.LogWarning("Duration can't be 0, returning NULL without creating a tween");
+                if (Debugger.logPriority > 0) Debug.LogWarning("Duration can't be 0, returning NULL without creating a tween");
                 return null;
             }
             return DOTween.Punch(() => _charTransforms[charIndex].rotation.eulerAngles, x => {
@@ -748,7 +748,7 @@ namespace DG.Tweening
         {
             if (!ValidateChar(charIndex)) return null;
             if (duration <= 0) {
-                if (Debugger.logPriority > 0) UnityEngine.Debug.LogWarning("Duration can't be 0, returning NULL without creating a tween");
+                if (Debugger.logPriority > 0) Debug.LogWarning("Duration can't be 0, returning NULL without creating a tween");
                 return null;
             }
             return DOTween.Punch(() => _charTransforms[charIndex].scale, x => {
@@ -782,7 +782,7 @@ namespace DG.Tweening
         {
             if (!ValidateChar(charIndex)) return null;
             if (duration <= 0) {
-                if (Debugger.logPriority > 0) UnityEngine.Debug.LogWarning("Duration can't be 0, returning NULL without creating a tween");
+                if (Debugger.logPriority > 0) Debug.LogWarning("Duration can't be 0, returning NULL without creating a tween");
                 return null;
             }
             return DOTween.Shake(() => _charTransforms[charIndex].offset, x => {
@@ -804,7 +804,7 @@ namespace DG.Tweening
         {
             if (!ValidateChar(charIndex)) return null;
             if (duration <= 0) {
-                if (Debugger.logPriority > 0) UnityEngine.Debug.LogWarning("Duration can't be 0, returning NULL without creating a tween");
+                if (Debugger.logPriority > 0) Debug.LogWarning("Duration can't be 0, returning NULL without creating a tween");
                 return null;
             }
             return DOTween.Shake(() => _charTransforms[charIndex].rotation.eulerAngles, x => {
@@ -838,7 +838,7 @@ namespace DG.Tweening
         {
             if (!ValidateChar(charIndex)) return null;
             if (duration <= 0) {
-                if (Debugger.logPriority > 0) UnityEngine.Debug.LogWarning("Duration can't be 0, returning NULL without creating a tween");
+                if (Debugger.logPriority > 0) Debug.LogWarning("Duration can't be 0, returning NULL without creating a tween");
                 return null;
             }
             return DOTween.Shake(() => _charTransforms[charIndex].scale, x => {
