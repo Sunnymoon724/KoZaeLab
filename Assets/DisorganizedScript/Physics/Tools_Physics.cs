@@ -125,7 +125,9 @@ public static partial class Tools
 	{
 		for(var i=_length-1;i>=0;i--)
 		{
-			if(!_filter.Equals(_colliderArray[i]) && _colliderArray.RemoveSafe(i))
+			var collider = _colliderArray[i];
+
+			if(!_filter.Equals(collider) && _colliderArray.RemoveSafe(collider))
 			{
 				_length--;
 			}
@@ -139,7 +141,9 @@ public static partial class Tools
 	{
 		for(var i=_length-1;i>=0;i--)
 		{
-			if(!_filter.Equals(_colliderArray[i].gameObject) && _colliderArray.RemoveSafe(i))
+			var collider = _colliderArray[i];
+
+			if(!_filter.Equals(collider.gameObject) && _colliderArray.RemoveSafe(collider))
 			{
 				_length--;
 			}
@@ -152,7 +156,9 @@ public static partial class Tools
 	{
 		for(var i=_length-1;i>=0;i--)
 		{
-			if(!_filter.Equals(_raycastArray[i].collider) && _raycastArray.RemoveSafe(i))
+			var raycast = _raycastArray[i];
+
+			if(!_filter.Equals(raycast.collider) && _raycastArray.RemoveSafe(raycast))
 			{
 				_length--;
 			}
@@ -164,7 +170,9 @@ public static partial class Tools
 	{
 		for(var i=_length-1;i>=0;i--)
 		{
-			if(!_filter.Equals(_raycastArray[i].collider.gameObject) && _raycastArray.RemoveSafe(i))
+			var raycast = _raycastArray[i];
+
+			if(!_filter.Equals(raycast.collider.gameObject) && _raycastArray.RemoveSafe(raycast))
 			{
 				_length--;
 			}
