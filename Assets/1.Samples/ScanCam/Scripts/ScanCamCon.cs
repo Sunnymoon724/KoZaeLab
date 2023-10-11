@@ -16,6 +16,6 @@ public class ScanCamCon : MonoBehaviour
 			m_ScanCam.StartScan();
 		}
 
-		m_DistanceTextMesh.SetSafeTextMeshPro(string.Format("Distance : {0:0000.000}",m_ScanCam.Distance));
+		m_DistanceTextMesh.SetSafeTextMeshPro(string.Format("Distance : {0:0000.000}",m_ScanCam.CurrentDistance));
 	}
 }
