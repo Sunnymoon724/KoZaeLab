@@ -3,7 +3,7 @@ using Sirenix.OdinInspector.Editor;
 
 //? AUTO_GENERATED CODE
 
-namespace KZLib.Window
+namespace KZLib.KZWindow
 {
 	public partial class SettingsWindow : OdinMenuEditorWindow
 	{
