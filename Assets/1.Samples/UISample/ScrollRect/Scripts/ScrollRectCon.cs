@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace KZLib.KZSample
 {
-	public class ScrollRectCon : MonoBehaviour
+	public class ScrollRectCon : BaseComponent
 	{
 		public class SampleData : CellData
 		{
@@ -16,7 +16,7 @@ namespace KZLib.KZSample
 
 		[SerializeField] private UIScrollRect m_HorizontalScrollRect = null;
 
-		[SerializeField,ReadOnly] private int Count => m_CellList.Count;
+		[ShowInInspector,ReadOnly] private int Count => m_CellList.Count;
 
 		[SerializeField] private int m_CellCount = 10;
 

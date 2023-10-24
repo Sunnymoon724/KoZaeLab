@@ -796,7 +796,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 874150241}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99998903
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1065,7 +1065,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 5.4
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1171,7 +1171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_VerticalScrollRect: {fileID: 813572930}
   m_HorizontalScrollRect: {fileID: 65440126}
-  m_CellCount: 50
+  m_CellCount: 10
 --- !u!4 &1432992694
 Transform:
   m_ObjectHideFlags: 0
@@ -1310,7 +1310,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000021893531}
+  m_AnchoredPosition: {x: 0, y: 0.00035619058}
   m_SizeDelta: {x: 0, y: 400}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1615801804
@@ -1658,8 +1658,8 @@ Canvas:
   m_GameObject: {fileID: 2050582170}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 963194227}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1

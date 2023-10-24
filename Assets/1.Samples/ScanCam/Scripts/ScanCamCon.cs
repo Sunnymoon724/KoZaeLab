@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 
-public class ScanCamCon : MonoBehaviour
+public class ScanCamCon : BaseComponent
 {
 	[SerializeField]
 	private ScanCam m_ScanCam = null;
