@@ -11,6 +11,8 @@ namespace KZLib.KZEditor
 
 		private int m_HandleIndexToDisplayAsTransform = -1;
 
+		private int m_MouseOverHandleIndex = -1;
+
 		private int m_SelectedHandleId = -1;
 		private bool m_MouseIsInHandle = false;
 
@@ -77,11 +79,12 @@ namespace KZLib.KZEditor
 						m_SelectedHandleId = -1;
 						Event.current.Use();
 
-						m_DraggingHandleIndex = -1;
+						if(m_Creator.IsSplineCurve || _index%3 == 0)
+						{
+							m_HandleIndexToDisplayAsTransform = (Event.current.mousePosition == m_HandleDragStart) ? (m_HandleIndexToDisplayAsTransform == _index ? -1 : _index) : -1;
 
-						m_HandleIndexToDisplayAsTransform = (Event.current.mousePosition == m_HandleDragStart) ? (Event.current.shift ? -1 : (m_HandleIndexToDisplayAsTransform == _index ? -1 : _index)) : -1;
-
-						changed = true;
+							changed = true;
+						}
 					}
 					break;
 				}
@@ -89,7 +92,6 @@ namespace KZLib.KZEditor
 				{
 					m_HandleDragEnd += new Vector2(Event.current.delta.x, -Event.current.delta.y);
 
-					m_DraggingHandleIndex = _index;
 					m_HandleIndexToDisplayAsTransform = -1;
 					changed = true;
 
@@ -138,7 +140,7 @@ namespace KZLib.KZEditor
 			{
 				Undo.RecordObject(m_Creator,"Move Handle");
 
-				m_Creator.MoveHandle(_index,position);
+				m_Creator.MoveHandle(_index,position,Event.current.capsLock);
 			}
 		}
 

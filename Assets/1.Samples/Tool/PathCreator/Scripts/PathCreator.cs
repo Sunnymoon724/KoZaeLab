@@ -10,23 +10,20 @@ namespace KZLib.KZDevelop
 {
 	public partial class PathCreator : BaseComponent
 	{
-		private enum CurveType { Spline, Bezier,  };
+		private enum CurveType { Spline, Bezier, };
 
 		[SerializeField,HideInInspector]
 		private bool m_IsClosed = false;
+		[SerializeField,HideInInspector]
+		private CurveType m_PathCurveType = CurveType.Spline;
 
 		[VerticalGroup("0",Order = 0),SerializeField,LabelText("공간 타입")]
 		private SpaceType m_PathSpaceType = SpaceType.xyz;
 		public SpaceType PathSpaceType => m_PathSpaceType;
-
-		[VerticalGroup("0",Order = 0),SerializeField,LabelText("곡선 타입")]
-		private CurveType m_PathCurveType = CurveType.Spline;
-		public bool IsSplineCurve => m_PathCurveType == CurveType.Spline;
-
 		[VerticalGroup("0",Order = 0),ShowInInspector,LabelText("핸들 갯수")]
 		public int HandleCount => HandleArray.Length;
 
-		[VerticalGroup("1",Order = 1),Button("경로 초기화")]
+		[VerticalGroup("1",Order = 1),Button("경로 초기화",ButtonSizes.Medium)]
 		private void OnResetPath()
 		{
 			Undo.RecordObject(this,"Reset Path");
@@ -61,7 +58,7 @@ namespace KZLib.KZDevelop
 				ResetBezier(is2D,IsClosed);
 			}
 
-			m_PathArray = null;
+			ClearPath();
 		}
 
 		[VerticalGroup("0",Order = 0),ShowInInspector,LabelText("폐쇄 여부")]
@@ -76,12 +73,42 @@ namespace KZLib.KZDevelop
 				}
 
 				m_IsClosed = value;
-				m_PathArray = null;
+
+				if(!IsSplineCurve)
+				{
+					if(IsClosed)
+					{
+						m_HandleList.Add(m_HandleList[^1]*2-m_HandleList[^2]);
+						m_HandleList.Add(m_HandleList[0]*2-m_HandleList[1]);
+					}else
+					{
+						m_HandleList.RemoveRange(m_HandleList.Count-2,2);
+					}
+				}
+
+				ClearPath();
 			}
 		}
 
-		[VerticalGroup("2",Order = 2),SerializeField,LabelText("핸들 리스트")]
-		private readonly List<Vector3> m_HandleList = new();
+		[VerticalGroup("0",Order = 0),ShowInInspector,LabelText("곡선 타입")]
+		private CurveType PathCurveType
+		{
+			get => m_PathCurveType;
+			set
+			{
+				if(m_PathCurveType == value)
+				{
+					return;
+				}
+
+				m_PathCurveType = value;
+				ClearPath();
+			}
+		}
+		public bool IsSplineCurve => PathCurveType == CurveType.Spline;
+
+		[VerticalGroup("2",Order = 2),SerializeField,LabelText("핸들 리스트"),ReadOnly]
+		private List<Vector3> m_HandleList = new();
 		public Vector3[] HandleArray => m_HandleList.ToArray();
 		private Vector3[] m_PathArray = null;
 
@@ -107,109 +134,81 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		public void InsertHandle(int _index,Vector3 _position)
+		public void AddAnchor(Vector3 _position)
 		{
-			m_HandleList.Insert(_index,_position);
-
-			m_PathArray = null;
-		}
-
-		public void AddHandle(Vector3 _position)
-		{
-			m_HandleList.Add(_position);
-
-			m_PathArray = null;
-		}
-
-		public void RemoveHandle(int _index)
-		{
-			if(m_HandleList.Count <= (IsSplineCurve ? 4 : IsClosed ? 6 : 4))
+			if(IsSplineCurve)
 			{
+				AddSpline(_position);
+			}
+			else
+			{
+				AddBezier(_position);
+			}
+
+			ClearPath();
+		}
+
+		public void InsertAnchor(int _index,Vector3 _position)
+		{
+			if(_index == m_HandleList.Count-1)
+			{
+				AddAnchor(_position);
+
 				return;
 			}
 
 			if(IsSplineCurve)
 			{
-				m_HandleList.RemoveAt(_index);
+				InsertSpline(_index,_position);
 			}
 			else
 			{
-				if(_index == 0)
-				{
-					if(IsClosed)
-					{
-						m_HandleList[^1] = m_HandleList[2];
-					}
-
-					m_HandleList.RemoveRange(0,3);
-				}
-				else if(_index == m_HandleList.Count-1 && !IsClosed)
-				{
-					m_HandleList.RemoveRange(_index-2,3);
-				}
-				else
-				{
-					m_HandleList.RemoveRange(_index-1,3);
-				}
+				InsertBezier(_index,_position);
 			}
 
-			m_HandleList.RemoveAt(_index);
-
-			m_PathArray = null;
+			ClearPath();
 		}
 
-		public void MoveHandle(int _index,Vector3 _position)
+		public void RemoveAnchor(int _index)
 		{
-			var deltaMove = _position-m_HandleList[_index];
+			var count = IsClosed ? (IsSplineCurve ? 3 : 6) : 4;
 
-			if(m_HandleList.ContainsIndex(_index))
+			if(m_HandleList.Count < count)
 			{
-				m_HandleList[_index] = _position;
+				return;
 			}
 
-			if(!IsSplineCurve)
+			var result = IsSplineCurve ? RemoveSpline(_index) : RemoveBezier(_index);
+
+			if(result)
 			{
-				var isAnchor = _index%3 == 0;
-				var length = m_HandleList.Count;
+				ClearPath();
+			}
+		}
 
-				if(isAnchor)
-				{
-					if(_index+1 < length || IsClosed)
-					{
-						m_HandleList[Tools.LoopClamp(_index+1,length)] += deltaMove;
-					}
-
-					if(_index-1 < length || IsClosed)
-					{
-						m_HandleList[Tools.LoopClamp(_index-1,length)] += deltaMove;
-					}
-				}
-				else
-				{
-					var nextAnchor = (_index+1)%3 == 0;
-					var controlIndex = nextAnchor ? _index+2 : _index-2;
-					var anchorIndex = nextAnchor ? _index+1 : _index-1;
-
-					if(controlIndex >= 0 && controlIndex < length || IsClosed)
-					{
-						var anchor = m_HandleList[Tools.LoopClamp(anchorIndex,length)];
-
-						m_HandleList[Tools.LoopClamp(controlIndex,length)] = anchor+(anchor-_position).normalized*(anchor-m_HandleList[Tools.LoopClamp(controlIndex,length)]).magnitude;
-
-						// float distanceFromAnchor = 0;
-                        //     // If in aligned mode, then attached control's current distance from anchor point should be maintained
-                        //     if (controlMode == ControlMode.Aligned) {
-                        //         distanceFromAnchor = (points[LoopIndex (anchorIndex)] - points[LoopIndex (attachedControlIndex)]).magnitude;
-                        //     }
-                        //     // If in mirrored mode, then both control points should have the same distance from the anchor point
-                        //     else if (controlMode == ControlMode.Mirrored) {
-                        //         distanceFromAnchor = (points[LoopIndex (anchorIndex)] - points[i]).magnitude;
-
-                        //     }
-					}
-				}
+		public void MoveHandle(int _index,Vector3 _position,bool _isFree)
+		{
+			if(!m_HandleList.ContainsIndex(_index))
+			{
+				return;
 			}
 
+			var position = PathSpaceType == SpaceType.xy ? _position.MaskZ() : PathSpaceType == SpaceType.xz ? _position.MaskY() : _position;
+
+			if(IsSplineCurve)
+			{
+				MoveSpline(_index,position);
+			}
+			else
+			{
+				MoveBezier(_index,position,_isFree);
+			}
+
+			ClearPath();
+		}
+
+		public void ClearPath()
+		{
 			m_PathArray = null;
 		}
 

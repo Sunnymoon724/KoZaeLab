@@ -3,7 +3,6 @@ using UnityEditor;
 using UnityEngine;
 using KZLib.KZDevelop;
 using Sirenix.OdinInspector.Editor;
-using System.Linq;
 
 namespace KZLib.KZEditor
 {
@@ -11,10 +10,6 @@ namespace KZLib.KZEditor
 	public partial class PathCreatorEditor : OdinEditor
 	{
 		private PathCreator m_Creator = null;
-
-		private int m_SelectedSegmentIndex = -1;
-		private int m_DraggingHandleIndex = -1;
-		private int m_MouseOverHandleIndex = -1;
 
 		private Color m_HandleSelectColor = Color.yellow;
 
@@ -58,25 +53,22 @@ namespace KZLib.KZEditor
 
 		protected override void OnDisable()
 		{
+			base.OnDisable();
+
 			UnityEditor.Tools.hidden = false;
 		}
 
 		private void OnUndoRedo()
 		{
-            // m_HasUpdatedScreenSpaceLine = false;
-            // hasUpdatedNormalsVertexPath = false;
-            m_SelectedSegmentIndex = -1;
+			m_Creator.ClearPath();
 
-            Repaint();
-        }
+			Repaint();
+		}
 
 		private void OnResetState()
 		{
-			m_SelectedSegmentIndex = -1;
-			m_DraggingHandleIndex = -1;
 			m_MouseOverHandleIndex = -1;
 			m_HandleIndexToDisplayAsTransform = -1;
-			// m_HasUpdatedScreenSpaceLine = false;
 		}
 
 		public override void OnInspectorGUI()
@@ -172,11 +164,11 @@ namespace KZLib.KZEditor
 
 					if(m_HandleIndexToDisplayAsTransform == -1)
 					{
-						m_Creator.AddHandle(newPosition);
+						m_Creator.AddAnchor(newPosition);
 					}
 					else
 					{
-						m_Creator.InsertHandle(m_HandleIndexToDisplayAsTransform+1,newPosition);
+						m_Creator.InsertAnchor(m_HandleIndexToDisplayAsTransform,newPosition);
 					}
 				}
 			}
@@ -186,7 +178,7 @@ namespace KZLib.KZEditor
 				{
 					Undo.RecordObject(m_Creator,"Delete Anchor");
 
-					m_Creator.RemoveHandle(m_MouseOverHandleIndex);
+					m_Creator.RemoveAnchor(m_MouseOverHandleIndex);
 
 					if(m_MouseOverHandleIndex == m_HandleIndexToDisplayAsTransform)
 					{

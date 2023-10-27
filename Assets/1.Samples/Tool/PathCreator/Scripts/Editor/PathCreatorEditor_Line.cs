@@ -2,7 +2,6 @@
 using UnityEngine;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
-using System.Collections.Generic;
 
 namespace KZLib.KZEditor
 {
