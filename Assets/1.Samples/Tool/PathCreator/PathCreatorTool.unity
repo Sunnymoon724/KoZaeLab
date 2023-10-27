@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311924, g: 0.38073963, b: 0.3587269, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -229,31 +229,63 @@ MonoBehaviour:
   upDirection: {x: 0, y: 1, z: 0}
   tweenRigidbody: 0
   wps:
-  - {x: 1.5921575, y: -0.5805659, z: 0.2763672}
-  - {x: -0.69743484, y: -1.0842878, z: 0.2763672}
-  - {x: 2.0367966, y: -1.3801227, z: 0.2763672}
+  - {x: -3.8607652, y: 1.0180432, z: 0.2763672}
+  - {x: -4.582509, y: -0.7801847, z: 0.2763672}
+  - {x: -2.954478, y: -1.9963043, z: 0.2763672}
+  - {x: -1.0329237, y: -1.203589, z: 0.2763672}
+  - {x: -0.10052073, y: -2.1041858, z: 0.2763672}
+  - {x: 5.1366396, y: -1.9080372, z: 0.2763672}
+  - {x: 4.5776157, y: -1.0057554, z: 0.2763672}
+  - {x: 2.2630663, y: 1.8383951, z: 0.2763672}
+  - {x: -0.7478101, y: 0.9949574, z: 0.2763672}
+  - {x: -2.5131443, y: 1.642247, z: 0.2763672}
+  - {x: -5.504406, y: 1.0243797, z: 0.2763672}
   fullWps: []
   path:
     wpLengths:
     - 0
-    - 1.6688377
-    - 2.3443482
-    - 2.750189
+    - 4.017644
+    - 1.9376628
+    - 2.0321002
+    - 2.078646
+    - 1.2963217
+    - 5.2408323
+    - 1.0614235
+    - 3.666924
+    - 3.1267817
+    - 1.8802629
+    - 3.0544078
     wps:
     - {x: -0.034043983, y: -0.20574903, z: 0.276347}
-    - {x: 1.5921575, y: -0.5805659, z: 0.2763672}
-    - {x: -0.69743484, y: -1.0842878, z: 0.2763672}
-    - {x: 2.0367966, y: -1.3801227, z: 0.2763672}
+    - {x: -3.8607652, y: 1.0180432, z: 0.2763672}
+    - {x: -4.582509, y: -0.7801847, z: 0.2763672}
+    - {x: -2.954478, y: -1.9963043, z: 0.2763672}
+    - {x: -1.0329237, y: -1.203589, z: 0.2763672}
+    - {x: -0.10052073, y: -2.1041858, z: 0.2763672}
+    - {x: 5.1366396, y: -1.9080372, z: 0.2763672}
+    - {x: 4.5776157, y: -1.0057554, z: 0.2763672}
+    - {x: 2.2630663, y: 1.8383951, z: 0.2763672}
+    - {x: -0.7478101, y: 0.9949574, z: 0.2763672}
+    - {x: -2.5131443, y: 1.642247, z: 0.2763672}
+    - {x: -5.504406, y: 1.0243797, z: 0.2763672}
     type: 0
     subdivisionsXSegment: 10
-    subdivisions: 40
+    subdivisions: 120
     controlPoints: []
-    length: 6.7633753
+    length: 29.393005
     isFinalized: 1
     timesTable:
     - 0
-    - 0.24674627
-    - 0.5933703
+    - 0.13668707
+    - 0.20260967
+    - 0.27174518
+    - 0.34246424
+    - 0.38656732
+    - 0.5648693
+    - 0.60098076
+    - 0.7257357
+    - 0.83211416
+    - 0.8960839
     - 1
     lengthsTable: []
   inspectorMode: 0
@@ -459,19 +491,12 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: m_HandleList
-      Entry: 7
-      Data: 0|System.Collections.Generic.List`1[[UnityEngine.Vector3, UnityEngine.CoreModule]],
-        mscorlib
-    - Name: 
-      Entry: 12
-      Data: 4
-    - Name: 
+    - Name: m_GizmosOffset
       Entry: 7
       Data: UnityEngine.Vector3, UnityEngine.CoreModule
     - Name: 
       Entry: 4
-      Data: -1
+      Data: 0
     - Name: 
       Entry: 4
       Data: 0
@@ -481,24 +506,9 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-    - Name: 
+    - Name: m_GizmosTextColor
       Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: -1
-    - Name: 
-      Entry: 4
-      Data: -1
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+      Data: UnityEngine.Color, UnityEngine.CoreModule
     - Name: 
       Entry: 4
       Data: 1
@@ -507,36 +517,23 @@ MonoBehaviour:
       Data: 1
     - Name: 
       Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+      Data: 1
     - Name: 
       Entry: 4
       Data: 1
     - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
       Entry: 8
       Data: 
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-  m_GizmosOffset: {x: 0, y: 0, z: 0}
-  m_GizmosTextColor: {r: 1, g: 1, b: 1, a: 1}
-  m_IsClosed: 0
-  m_PathSpaceType: 0
+  m_IsClosed: 1
   m_PathCurveType: 1
+  m_PathSpaceType: 0
+  m_HandleList:
+  - {x: -1, y: 0, z: 0}
+  - {x: -1, y: -1, z: 0}
+  - {x: 8.687714, y: -4.1408663, z: 0}
+  - {x: 8.687714, y: -5.1408663, z: 0}
+  - {x: 8.687714, y: -6.1408663, z: 0}
+  - {x: -1, y: 1, z: 0}
 --- !u!4 &1094646123
 Transform:
   m_ObjectHideFlags: 0
