@@ -3,24 +3,31 @@ using UnityEditor;
 using UnityEngine;
 using KZLib.KZDevelop;
 using Sirenix.OdinInspector.Editor;
+using System.Linq;
 
 namespace KZLib.KZEditor
 {
 	[CustomEditor(typeof(PathCreator))]
 	public partial class PathCreatorEditor : OdinEditor
 	{
-		private const float SELECT_DISTANCE_THRESHOLD = 10.0f;
-
 		private PathCreator m_Creator = null;
 
 		private int m_SelectedSegmentIndex = -1;
 		private int m_DraggingHandleIndex = -1;
 		private int m_MouseOverHandleIndex = -1;
 
+		private Color m_HandleSelectColor = Color.yellow;
+
 		private float m_AnchorSize = 10.0f;
-		private Color m_AnchorNormalColor = Color.white;
-		private Color m_AnchorHighlightColor = Color.white;
-		private Color m_AnchorSelectColor = Color.white;
+		private Color m_AnchorNormalColor = Color.red;
+		private Color m_AnchorHighlightColor = Color.red;
+
+		private float m_ControlSize = 10.0f;
+		private Color m_ControlNormalColor = Color.blue;
+		private Color m_ControlHighlightColor = Color.blue;
+
+		private Color m_NormalLineColor = Color.green;
+		private Color m_GuideLineColor = Color.white;
 
 		protected override void OnEnable()
 		{
@@ -28,20 +35,55 @@ namespace KZLib.KZEditor
 
 			m_Creator = target as PathCreator;
 
+			m_HandleSelectColor = EditorCustom.EditorPath.HandleSelectColor;
+
 			m_AnchorSize = EditorCustom.EditorPath.AnchorSize;
 			m_AnchorNormalColor = EditorCustom.EditorPath.AnchorNormalColor;
 			m_AnchorHighlightColor = EditorCustom.EditorPath.AnchorHighlightColor;
-			m_AnchorSelectColor = EditorCustom.EditorPath.AnchorSelectColor;
 
-			// data.bezierCreated -= ResetState;
-			// data.bezierCreated += ResetState;
-			// Undo.undoRedoPerformed -= OnUndoRedo;
-			// Undo.undoRedoPerformed += OnUndoRedo;
+			m_ControlSize = EditorCustom.EditorPath.ControlSize;
+			m_ControlNormalColor = EditorCustom.EditorPath.ControlNormalColor;
+			m_ControlHighlightColor = EditorCustom.EditorPath.ControlHighlightColor;
 
-			// LoadDisplaySettings ();
-			// UpdateGlobalDisplaySettings ();
-			// ResetState ();
-			// SetTransformState (true);
+			m_NormalLineColor = EditorCustom.EditorPath.NormalLineColor;
+			m_GuideLineColor = EditorCustom.EditorPath.GuideLineColor;
+
+			m_Creator.OnChangedPath += OnResetState;
+
+			Undo.undoRedoPerformed -= OnUndoRedo;
+			Undo.undoRedoPerformed += OnUndoRedo;
+
+			OnResetState();
+		}
+
+		protected override void OnDisable()
+		{
+			UnityEditor.Tools.hidden = false;
+		}
+
+		private void OnUndoRedo()
+		{
+            // m_HasUpdatedScreenSpaceLine = false;
+            // hasUpdatedNormalsVertexPath = false;
+            m_SelectedSegmentIndex = -1;
+
+            Repaint();
+        }
+
+		private void OnResetState()
+		{
+			m_SelectedSegmentIndex = -1;
+			m_DraggingHandleIndex = -1;
+			m_MouseOverHandleIndex = -1;
+			m_HandleIndexToDisplayAsTransform = -1;
+			// m_HasUpdatedScreenSpaceLine = false;
+		}
+
+		public override void OnInspectorGUI()
+		{
+			base.OnInspectorGUI();
+
+			UnityEditor.Tools.hidden = true;
 		}
 
 		private void OnSceneGUI()
@@ -62,7 +104,7 @@ namespace KZLib.KZEditor
 				HandleUtility.AddDefaultControl(0);
 			}
 
-			if (check.changed)
+			if(check.changed)
 			{
 				EditorApplication.QueuePlayerLoopUpdate();
 			}
@@ -70,11 +112,27 @@ namespace KZLib.KZEditor
 
 		private void DrawPath()
 		{
-			var pointArray = m_Creator.AnchorArray;
+			var pointArray = m_Creator.HandleArray;
 
-			for(var i=0;i<pointArray.Length;i++)
+			if(m_Creator.IsSplineCurve)
 			{
-				DrawAnchor(i,pointArray[i]);
+				for(var i=0;i<pointArray.Length;i++)
+				{
+					DrawHandle(i,pointArray[i],true);
+				}
+			}
+			else
+			{
+				for(var i=0;i<pointArray.Length;i+=3)
+				{
+					DrawHandle(i,pointArray[i],true);
+				}
+
+				for(var i=1;i<pointArray.Length-1;i+=3)
+				{
+					DrawHandle(i,pointArray[i],false);
+					DrawHandle(i+1,pointArray[i+1],false);
+				}
 			}
 
 			if(Event.current.type == EventType.Repaint)
@@ -85,18 +143,18 @@ namespace KZLib.KZEditor
 
 		private void SetPathInput(Event _event)
 		{
-			var pointArray = m_Creator.AnchorArray;
-			var mouseOverHandleIndex = (m_MouseOverHandleIndex == -1) ? 0 : m_MouseOverHandleIndex;
+			var handleArray = m_Creator.HandleArray;
+			var handleIndex = (m_MouseOverHandleIndex == -1) ? 0 : m_MouseOverHandleIndex;
 
 			m_MouseOverHandleIndex = -1;
 
-			for(var i=0;i<pointArray.Length;i++)
+			for(var i=0;i<handleArray.Length;i++)
 			{
-				var index = (mouseOverHandleIndex+i)%pointArray.Length;
-				var radius = GetHandleDiameter(m_AnchorSize,pointArray[index])/2.0f;
-				var position = Tools.TransformPoint(pointArray[index],m_Creator.transform,m_Creator.PathSpaceType);
+				var index = (handleIndex+i)%handleArray.Length;
+				var radius = GetHandleDiameter(m_AnchorSize,handleArray[index])/2.0f;
+				var position = Tools.TransformPoint(handleArray[index],m_Creator.transform,m_Creator.PathSpaceType);
 	
-				if(HandleUtility.DistanceToCircle(position,radius) == 0)
+				if(HandleUtility.DistanceToCircle(position,radius) == 0.0f)
 				{
 					m_MouseOverHandleIndex = index;
 					break;
@@ -107,24 +165,18 @@ namespace KZLib.KZEditor
 			{
 				if(_event.type == EventType.MouseDown && _event.button == 0 && _event.shift)
 				{
-					// UpdatePathMouseInfo();
+					var distance = (Camera.current.transform.position-handleArray[^1]).magnitude;
+					var newPosition = Tools.InverseTransformPoint(GetMouseWorldPosition(m_Creator.PathSpaceType,distance),m_Creator.transform,m_Creator.PathSpaceType);
 
-					// if(m_SelectedSegmentIndex != -1 && m_SelectedSegmentIndex < pointArray.Length)
-					// {
-					// 	var newPosition = Tools.InverseTransformPoint(pathMouseInfo.closestWorldPointToMouse,m_Creator.transform,m_Creator.PathSpaceType);
+					Undo.RecordObject(m_Creator,"Add Anchor");
 
-					// 	Undo.RecordObject(m_Creator,"Split Line");
-
-					// 	m_Creator.SplitLine(newPosition,m_SelectedSegmentIndex);
-					// }
-					// else if(!m_Creator.IsClosed)
+					if(m_HandleIndexToDisplayAsTransform == -1)
 					{
-						var distance = (Camera.current.transform.position-pointArray[^1]).magnitude;
-						var newPosition = Tools.InverseTransformPoint(GetMouseWorldPosition(m_Creator.PathSpaceType,distance),m_Creator.transform,m_Creator.PathSpaceType);
-
-						Undo.RecordObject(m_Creator,"Add Anchor");
-
-						m_Creator.AddAnchor(newPosition);
+						m_Creator.AddHandle(newPosition);
+					}
+					else
+					{
+						m_Creator.InsertHandle(m_HandleIndexToDisplayAsTransform+1,newPosition);
 					}
 				}
 			}
@@ -134,40 +186,18 @@ namespace KZLib.KZEditor
 				{
 					Undo.RecordObject(m_Creator,"Delete Anchor");
 
-					m_Creator.RemoveAnchor(m_MouseOverHandleIndex);
-					if(m_MouseOverHandleIndex == m_AnchorIndexToDisplayAsTransform)
+					m_Creator.RemoveHandle(m_MouseOverHandleIndex);
+
+					if(m_MouseOverHandleIndex == m_HandleIndexToDisplayAsTransform)
 					{
-						m_AnchorIndexToDisplayAsTransform = -1;
+						m_HandleIndexToDisplayAsTransform = -1;
 					}
+
 					m_MouseOverHandleIndex = -1;
+
 					Repaint ();
 				}
 			}
-
-			// if(m_DraggingHandleIndex == -1 && m_MouseOverHandleIndex == -1)
-			// {
-			// 	if(_event.type == EventType.MouseDrag && _event.shift)
-			// 	{
-			// 		UpdatePathMouseInfo();
-
-			// 		if(pathMouseInfo.mouseDstToLine < SELECT_DISTANCE_THRESHOLD)
-			// 		{
-			// 			if(pathMouseInfo.closestSegmentIndex != m_SelectedSegmentIndex)
-			// 			{
-			// 				m_SelectedSegmentIndex = pathMouseInfo.closestSegmentIndex;
-			// 				HandleUtility.Repaint();
-			// 			}
-			// 		}
-			// 		else
-			// 		{
-			// 			m_SelectedSegmentIndex = -1;
-			// 			HandleUtility.Repaint();
-			// 		}
-
-			// 		// var nearByAnchor = HandleUtility.DistanceToCircle(anchorPosition,anchorRadius+extraInputRadius) == 0.0f;
-
-			// 	}
-			// }
 		}
 	}
 }
