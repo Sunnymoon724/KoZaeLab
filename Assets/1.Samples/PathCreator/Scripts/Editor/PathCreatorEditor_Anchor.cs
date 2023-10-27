@@ -9,58 +9,58 @@ namespace KZLib.KZEditor
 	{
 		private const float extraInputRadius = 0.005f;
 
-		private int m_AnchorIndexToDisplayAsTransform = -1;
+		private int m_HandleIndexToDisplayAsTransform = -1;
 
-		private int m_SelectedAnchorId = -1;
-		private bool m_MouseIsInAnchor = false;
+		private int m_SelectedHandleId = -1;
+		private bool m_MouseIsInHandle = false;
 
 		private float m_DragStartPoint = float.MaxValue;
 
-		private Vector2 m_AnchorDragStart = Vector2.zero;
-		private Vector2 m_AnchorDragEnd = Vector2.zero;
-		private Vector3 m_AnchorWorldPoint = Vector2.zero;
+		private Vector2 m_HandleDragStart = Vector2.zero;
+		private Vector2 m_HandleDragEnd = Vector2.zero;
+		private Vector3 m_HandleWorldPoint = Vector2.zero;
 
-		private void DrawAnchor(int _index,Vector3 _position)
+		private void DrawHandle(int _index,Vector3 _position,bool _isAnchor)
 		{
 			var changed = false;
-			var isSelectedAnchor =_index == m_AnchorIndexToDisplayAsTransform;
-			var anchorPosition = Tools.TransformPoint(_position,m_Creator.transform,m_Creator.PathSpaceType);
-			var anchorDiameter = GetHandleDiameter(m_AnchorSize,_position);
-			var anchorId = GetAnchorId(_index);
+			var isSelectedHandle =_index == m_HandleIndexToDisplayAsTransform;
+			var handlePosition = Tools.TransformPoint(_position,m_Creator.transform,m_Creator.PathSpaceType);
+			var diameter = GetHandleDiameter(_isAnchor ? m_AnchorSize : m_ControlSize,_position);
+			var handleId = GetHandleId(_index);
 			var screenPosition = Handles.matrix.MultiplyPoint(_position);
 			var cachedMatrix = Handles.matrix;
-			var eventType = Event.current.GetTypeForControl(anchorId);
-			var anchorRadius = anchorDiameter/2.0f;
-			var nearByAnchor = HandleUtility.DistanceToCircle(anchorPosition,anchorRadius+extraInputRadius) == 0.0f;
-			var distanceToMouse = HandleUtility.DistanceToCircle(anchorPosition,0.0f);
+			var eventType = Event.current.GetTypeForControl(handleId);
+			var radius = diameter/2.0f;
+			var nearByHandle = HandleUtility.DistanceToCircle(handlePosition,radius+extraInputRadius) == 0.0f;
+			var distanceToMouse = HandleUtility.DistanceToCircle(handlePosition,0.0f);
 
-			if(nearByAnchor)
+			if(nearByHandle)
 			{
-				if(!m_MouseIsInAnchor)
+				if(!m_MouseIsInHandle)
 				{
 					HandleUtility.Repaint();
-					m_MouseIsInAnchor = true;
+					m_MouseIsInHandle = true;
 				}
 			}
-			else if(m_MouseIsInAnchor)
+			else if(m_MouseIsInHandle)
 			{
 				HandleUtility.Repaint();
-				m_MouseIsInAnchor = false;
+				m_MouseIsInHandle = false;
 			}
 
 			switch(eventType)
 			{
-				case EventType.MouseDown when Event.current.button == 0 && nearByAnchor && distanceToMouse < m_DragStartPoint:
+				case EventType.MouseDown when Event.current.button == 0 && nearByHandle && distanceToMouse < m_DragStartPoint:
 				{
 					m_DragStartPoint = distanceToMouse;
-					GUIUtility.hotControl = anchorId;
-					m_AnchorDragEnd = m_AnchorDragStart = Event.current.mousePosition;
-					m_AnchorWorldPoint = anchorPosition;
-					m_SelectedAnchorId = anchorId;
+					GUIUtility.hotControl = handleId;
+					m_HandleDragEnd = m_HandleDragStart = Event.current.mousePosition;
+					m_HandleWorldPoint = handlePosition;
+					m_SelectedHandleId = handleId;
 
-					if(m_AnchorIndexToDisplayAsTransform != _index)
+					if(m_HandleIndexToDisplayAsTransform != _index)
 					{
-						m_AnchorIndexToDisplayAsTransform = -1;
+						m_HandleIndexToDisplayAsTransform = -1;
 						changed = true;
 					}
 
@@ -71,29 +71,29 @@ namespace KZLib.KZEditor
 				{
 					m_DragStartPoint = float.MaxValue;
 
-					if(GUIUtility.hotControl == anchorId && Event.current.button == 0)
+					if(GUIUtility.hotControl == handleId && Event.current.button == 0)
 					{
 						GUIUtility.hotControl = 0;
-						m_SelectedAnchorId = -1;
+						m_SelectedHandleId = -1;
 						Event.current.Use();
 
 						m_DraggingHandleIndex = -1;
 
-						m_AnchorIndexToDisplayAsTransform = (Event.current.mousePosition == m_AnchorDragStart) ? (Event.current.shift ? -1 : (m_AnchorIndexToDisplayAsTransform == _index ? -1 : _index)) : -1;
+						m_HandleIndexToDisplayAsTransform = (Event.current.mousePosition == m_HandleDragStart) ? (Event.current.shift ? -1 : (m_HandleIndexToDisplayAsTransform == _index ? -1 : _index)) : -1;
 
 						changed = true;
 					}
 					break;
 				}
-				case EventType.MouseDrag when GUIUtility.hotControl == anchorId && Event.current.button == 0:
+				case EventType.MouseDrag when GUIUtility.hotControl == handleId && Event.current.button == 0:
 				{
-					m_AnchorDragEnd += new Vector2(Event.current.delta.x, -Event.current.delta.y);
+					m_HandleDragEnd += new Vector2(Event.current.delta.x, -Event.current.delta.y);
 
 					m_DraggingHandleIndex = _index;
-					m_AnchorIndexToDisplayAsTransform = -1;
+					m_HandleIndexToDisplayAsTransform = -1;
 					changed = true;
 
-					anchorPosition = m_Creator.PathSpaceType == SpaceType.xyz ? Handles.matrix.inverse.MultiplyPoint(Camera.current.ScreenToWorldPoint(Camera.current.WorldToScreenPoint(Handles.matrix.MultiplyPoint(m_AnchorWorldPoint)) + (Vector3)(m_AnchorDragEnd - m_AnchorDragStart))) : GetMouseWorldPosition(m_Creator.PathSpaceType);
+					handlePosition = m_Creator.PathSpaceType == SpaceType.xyz ? Handles.matrix.inverse.MultiplyPoint(Camera.current.ScreenToWorldPoint(Camera.current.WorldToScreenPoint(Handles.matrix.MultiplyPoint(m_HandleWorldPoint)) + (Vector3)(m_HandleDragEnd - m_HandleDragStart))) : GetMouseWorldPosition(m_Creator.PathSpaceType);
 
 					GUI.changed = true;
 					Event.current.Use();
@@ -106,12 +106,16 @@ namespace KZLib.KZEditor
 				var cachedColor = Handles.color;
 
 				Handles.matrix = Matrix4x4.identity;
-				Handles.color = (anchorId == GUIUtility.hotControl || isSelectedAnchor) ? m_AnchorSelectColor : (nearByAnchor && m_SelectedAnchorId == -1) ? m_AnchorHighlightColor : m_AnchorNormalColor;
 
-				Handles.SphereHandleCap(anchorId,anchorPosition,Quaternion.LookRotation(Vector3.up),anchorDiameter,EventType.Repaint);
+				var highlight = _isAnchor ? m_AnchorHighlightColor : m_ControlHighlightColor;
+				var normal = _isAnchor ? m_AnchorNormalColor : m_ControlNormalColor;
+
+				Handles.color = (handleId == GUIUtility.hotControl || isSelectedHandle) ? m_HandleSelectColor : (nearByHandle && m_SelectedHandleId == -1) ? highlight : normal;
+
+				Handles.SphereHandleCap(handleId,handlePosition,Quaternion.LookRotation(Vector3.up),diameter,EventType.Repaint);
 
 				Handles.color = Color.white;
-				Handles.Label(anchorPosition+Tools.TransformPoint(Vector3.one*0.2f,m_Creator.transform,m_Creator.PathSpaceType),string.Format("{0}",_index));
+				Handles.Label(handlePosition+Tools.TransformPoint(Vector3.one*0.2f,m_Creator.transform,m_Creator.PathSpaceType),string.Format("{0}",_index));
 
 				Handles.matrix = cachedMatrix;
 				Handles.color = cachedColor;
@@ -119,13 +123,8 @@ namespace KZLib.KZEditor
 			else if(eventType == EventType.Layout)
 			{
 				Handles.matrix = Matrix4x4.identity;
-				HandleUtility.AddControl(anchorId,HandleUtility.DistanceToCircle(screenPosition, anchorRadius));
+				HandleUtility.AddControl(handleId,HandleUtility.DistanceToCircle(screenPosition,radius));
 				Handles.matrix = cachedMatrix;
-			}
-
-			if(isSelectedAnchor)
-			{
-				anchorPosition = Handles.DoPositionHandle(anchorPosition,Quaternion.identity);
 			}
 
 			if(changed)
@@ -133,13 +132,13 @@ namespace KZLib.KZEditor
 				Repaint();
 			}
 
-			var position = Tools.InverseTransformPoint(anchorPosition,m_Creator.transform,m_Creator.PathSpaceType);
+			var position = Tools.InverseTransformPoint(handlePosition,m_Creator.transform,m_Creator.PathSpaceType);
 
 			if(_position != position)
 			{
-				Undo.RecordObject(m_Creator,"Move Anchor");
+				Undo.RecordObject(m_Creator,"Move Handle");
 
-				m_Creator.MoveAnchor(_index,position);
+				m_Creator.MoveHandle(_index,position);
 			}
 		}
 
@@ -148,9 +147,9 @@ namespace KZLib.KZEditor
 			return _diameter*0.01f*HandleUtility.GetHandleSize(_position)*2.5f;
 		}
 
-		private int GetAnchorId(int _index)
+		private int GetHandleId(int _index)
 		{
-			var hash = string.Format("Anchor_{0}",_index);
+			var hash = string.Format("Handle_{0}",_index);
 			return GUIUtility.GetControlID(hash.GetHashCode(),FocusType.Passive);
 		}
 	}

@@ -2,6 +2,7 @@
 using UnityEngine;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
+using System.Collections.Generic;
 
 namespace KZLib.KZEditor
 {
@@ -9,26 +10,43 @@ namespace KZLib.KZEditor
 	{
 		private void DrawLine(Vector3[] _pointArray)
 		{
-			var length = _pointArray.Length;
-			var start = m_Creator.IsClosed ? 0 : 1;
-			var finish = m_Creator.IsClosed ? length : length-2;
-
 			var cachedColor = Handles.color;
+			var pathArray = m_Creator.PathArray;
 
-			for(var i=start;i<finish;i++)
+			if(m_Creator.IsSplineCurve)
 			{
-				var dataArray = Tools.GetCatmullRomSplineCurve(_pointArray[Tools.LoopClamp(i-1,length)],_pointArray[Tools.LoopClamp(i+0,length)],_pointArray[Tools.LoopClamp(i+1,length)],_pointArray[Tools.LoopClamp(i+2,length)]);
-
-				for(var j=0;j<dataArray.Length;j++)
+				if(!m_Creator.IsClosed)
 				{
-					dataArray[j] = Tools.TransformPoint(dataArray[j],m_Creator.transform,m_Creator.PathSpaceType);
+					Handles.color = m_GuideLineColor;
+					var length = _pointArray.Length;
+
+					Handles.DrawDottedLine(_pointArray[0],_pointArray[1],5.0f);
+					Handles.DrawDottedLine(_pointArray[length-2],_pointArray[length-1],5.0f);
 				}
 
-				Handles.color = i == m_SelectedSegmentIndex && Event.current.shift && m_DraggingHandleIndex == -1 && m_MouseOverHandleIndex == -1 ? EditorCustom.EditorPath.LineHighlightColor : EditorCustom.EditorPath.LineNormalColor;
+				Handles.color = m_NormalLineColor;
 
-				for(var j=0;j<dataArray.Length-1;j++)
+				for(var i=0;i<pathArray.Length-1;i++)
 				{
-					Handles.DrawLine(dataArray[j+0],dataArray[j+1]);
+					Handles.DrawLine(pathArray[i+0],pathArray[i+1]);
+				}
+			}
+			else
+			{
+				Handles.color = m_GuideLineColor;
+				var length = m_Creator.IsClosed ? _pointArray.Length/3 : (_pointArray.Length-1)/3;
+
+				for(var i=0;i<length;i++)
+				{
+					Handles.DrawDottedLine(_pointArray[i*3+0],_pointArray[i*3+1],5.0f);
+					Handles.DrawDottedLine(_pointArray[i*3+2],_pointArray[Tools.LoopClamp(i*3+3,_pointArray.Length)],5.0f);
+				}
+
+				Handles.color = m_NormalLineColor;
+
+				for(var i=0;i<pathArray.Length-1;i++)
+				{
+					Handles.DrawLine(pathArray[i+0],pathArray[i+1]);
 				}
 			}
 
