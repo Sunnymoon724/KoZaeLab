@@ -3,7 +3,7 @@ using Sirenix.OdinInspector.Editor;
 
 //? AUTO_GENERATED CODE
 
-namespace KZLib.Window
+namespace KZLib.KZWindow
 {
 	public partial class SettingsWindow : OdinMenuEditorWindow
 	{
@@ -12,6 +12,7 @@ namespace KZLib.Window
 			_tree.Add("언어 설정",LanguageSettings.In);
 			_tree.Add("메타 설정",MetaSettings.In);
 			_tree.Add("빌드 설정",BuildSettings.In);
+			_tree.Add("통신 설정",NetworkSettings.In);
 		}
 	}
 }

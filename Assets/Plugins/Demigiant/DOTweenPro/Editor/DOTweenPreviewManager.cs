@@ -68,7 +68,8 @@ namespace DG.DOTweenEditor
             }
             if (GUILayout.Button("► Play All <i>in Scene</i>", Styles.btPreview)) {
                 if (!isPreviewing) StartupGlobalPreview();
-                DOTweenAnimation[] anims = Object.FindObjectsOfType<DOTweenAnimation>();
+                // DOTweenAnimation[] anims = Object.FindObjectsOfType<DOTweenAnimation>(); // OBSOLETE
+                DOTweenAnimation[] anims = DeEditorCompatibilityUtils.FindObjectsOfType<DOTweenAnimation>();
                 foreach (DOTweenAnimation anim in anims) AddAnimationToGlobalPreview(anim);
             }
             EditorGUI.EndDisabledGroup();
@@ -157,6 +158,7 @@ namespace DG.DOTweenEditor
             if (_previewOnlyIfSetToAutoPlay && !src.autoPlay) return;
 
             Tween t = src.CreateEditorPreview();
+            if (t == null) return;
             _AnimationToTween.Add(src, new TweenInfo(src, t, src.isFrom));
             // Tween setup
             DOTweenEditorPreview.PrepareTweenForPreview(t);
@@ -186,7 +188,7 @@ namespace DG.DOTweenEditor
                 break;
             }
             if (tInfo == null) {
-                UnityEngine.Debug.LogWarning("DOTween Preview ► Couldn't find tween to stop");
+                Debug.LogWarning("DOTween Preview ► Couldn't find tween to stop");
                 return;
             }
             if (tInfo.isFrom) {
