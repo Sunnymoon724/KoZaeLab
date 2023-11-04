@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 
-public class ScanCamCon : MonoBehaviour
+public class ScanCamCon : BaseComponent
 {
 	[SerializeField]
 	private ScanCam m_ScanCam = null;
@@ -16,6 +16,6 @@ public class ScanCamCon : MonoBehaviour
 			m_ScanCam.StartScan();
 		}
 
-		m_DistanceTextMesh.SetSafeTextMeshPro(string.Format("Distance : {0:0000.000}",m_ScanCam.Distance));
+		m_DistanceTextMesh.SetSafeTextMeshPro(string.Format("Distance : {0:0000.000}",m_ScanCam.CurrentDistance));
 	}
 }
