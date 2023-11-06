@@ -282,7 +282,7 @@ MonoBehaviour:
   m_GizmosTextColor: {r: 1, g: 1, b: 1, a: 1}
   m_ScrollRect: {fileID: 65440124}
   m_IsVertical: 0
-  m_Pivot: {fileID: 893922397135007001}
+  m_Pivot: {fileID: 0}
   m_Padding: 0
   m_Space: 0
 --- !u!1 &218776530
@@ -710,7 +710,7 @@ MonoBehaviour:
   m_GizmosTextColor: {r: 1, g: 1, b: 1, a: 1}
   m_ScrollRect: {fileID: 813572927}
   m_IsVertical: 0
-  m_Pivot: {fileID: 6376467437687292799}
+  m_Pivot: {fileID: 0}
   m_Padding: 0
   m_Space: 0
 --- !u!1 &828812288
@@ -1321,7 +1321,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000023066383}
+  m_AnchoredPosition: {x: 0, y: 0.00020848034}
   m_SizeDelta: {x: 0, y: 400}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1615801804
