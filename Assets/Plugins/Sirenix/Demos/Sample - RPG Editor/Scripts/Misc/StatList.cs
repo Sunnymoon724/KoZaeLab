@@ -32,7 +32,7 @@ namespace Sirenix.OdinInspector.Demos.RPGEditor
     {
         [SerializeField]
         [ValueDropdown("CustomAddStatsButton", IsUniqueList = true, DrawDropdownForListElements = false, DropdownTitle = "Modify Stats")]
-        [ListDrawerSettings(DraggableItems = false, ShowFoldout = false)]
+        [ListDrawerSettings(DraggableItems = false, Expanded = true)]
         private List<StatValue> stats = new List<StatValue>();
 
         public StatValue this[int index]
