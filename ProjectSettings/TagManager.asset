@@ -9,7 +9,7 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Category
+  - 
   - Water
   - UI
   - 
@@ -37,7 +37,7 @@ TagManager:
   - 
   - 
   - 
-  - Effect Layer
+  - 
   m_SortingLayers:
   - name: Default
     uniqueID: 0
