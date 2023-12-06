@@ -83,7 +83,7 @@ namespace KZLib
 
 		private void PlayCutScene()
 		{
-			Tools.LockInput();
+			GameUtility.LockInput();
 
 			m_CutScenePause = false;
 			m_PlayingCutScene = true;
@@ -102,7 +102,7 @@ namespace KZLib
 
 			m_PlayingCutScene = false;
 
-			Tools.UnLockInput();
+			GameUtility.UnLockInput();
 		}
 
 		private void RemoveCutScene()
