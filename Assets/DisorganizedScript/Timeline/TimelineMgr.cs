@@ -26,8 +26,6 @@ namespace KZLib
 
 		public double DirectorTime => m_Director != null ? m_Director.time : -1.0;
 
-		private bool m_Disposed = false;
-
 		protected override void Release(bool _disposing)
 		{
 			if(m_Disposed)
@@ -39,8 +37,6 @@ namespace KZLib
 			{
 				RemoveCutScene();
 			}
-
-			m_Disposed = true;
 
 			base.Release(_disposing);
 		}
@@ -87,7 +83,7 @@ namespace KZLib
 
 		private void PlayCutScene()
 		{
-			Tools.LockInput();
+			GameTools.LockInput();
 
 			m_CutScenePause = false;
 			m_PlayingCutScene = true;
@@ -106,7 +102,7 @@ namespace KZLib
 
 			m_PlayingCutScene = false;
 
-			Tools.UnLockInput();
+			GameTools.UnLockInput();
 		}
 
 		private void RemoveCutScene()

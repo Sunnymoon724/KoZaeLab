@@ -65,6 +65,7 @@ MonoBehaviour:
   m_Initialize: 1
   m_GameVersion: 0.1
   m_UseBundle: 0
+  m_GameMode: 0
   m_ScreenResolution: {x: 1920, y: 1080}
   m_FullScreen: 1
   m_FrameRate: 60
