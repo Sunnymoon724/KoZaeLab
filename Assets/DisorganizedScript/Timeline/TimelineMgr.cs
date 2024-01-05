@@ -112,7 +112,7 @@ namespace KZLib
 				return;
 			}
 
-			Tools.DestroyObject(m_CutSceneObject);
+			ObjectTools.DestroyObject(m_CutSceneObject);
 
 			m_CurrentCutScenePath = string.Empty;
 			m_Director = null;
