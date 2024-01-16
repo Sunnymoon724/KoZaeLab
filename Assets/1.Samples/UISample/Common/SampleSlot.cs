@@ -1,7 +1,7 @@
 
 namespace KZLib.KZSample
 {
-	public class SampleSlot : UISlot
+	public class SampleSlot : UIFocusSlot
 	{
 		protected override bool UseImage => false;
 
