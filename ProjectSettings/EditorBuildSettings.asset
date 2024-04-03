@@ -6,5 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes: []
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: de231f7db03a94d778ddfb0d33b32248,
+      type: 2}
     com.willykc.templ: {fileID: 11400000, guid: e274758ee56781a4ead8d4c077c66e99,
       type: 2}
