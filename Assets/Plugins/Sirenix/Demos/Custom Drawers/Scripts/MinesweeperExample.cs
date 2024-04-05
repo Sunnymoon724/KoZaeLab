@@ -56,8 +56,6 @@ namespace Sirenix.OdinInspector.Demos
         private const float TileSize = 20;
         private const int BoardSize = 25;
 
-        private readonly object Key = new object();
-
         private bool isRunning;
         private bool gameOver;
         private int flaggedBombs;
@@ -157,12 +155,12 @@ namespace Sirenix.OdinInspector.Demos
             }
 
             // Game
-            SirenixEditorGUI.BeginShakeableGroup(this.Key);
+            SirenixEditorGUI.BeginShakeableGroup(3f);
             if (this.isRunning)
             {
                 this.Game();
             }
-            SirenixEditorGUI.EndShakeableGroup(this.Key);
+            SirenixEditorGUI.EndShakeableGroup();
         }
 
         private void Game()
@@ -252,7 +250,7 @@ namespace Sirenix.OdinInspector.Demos
                             {
                                 // LOSE
                                 this.gameOver = true;
-                                SirenixEditorGUI.StartShakingGroup(this.Key, 3f);
+                                SirenixEditorGUI.StartShakingGroup();
                             }
                             else
                             {

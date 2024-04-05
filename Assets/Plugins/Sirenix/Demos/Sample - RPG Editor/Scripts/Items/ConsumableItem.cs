@@ -7,7 +7,7 @@ namespace Sirenix.OdinInspector.Demos.RPGEditor
         [BoxGroup(STATS_BOX_GROUP)]
         public float Cooldown;
 
-        [HorizontalGroup(STATS_BOX_GROUP + "/Dur")]
+        [HorizontalGroup(STATS_BOX_GROUP + "/Dur", DisableAutomaticLabelWidth = true)]
         public bool ConsumeOverTime;
 
         [HideLabel]
