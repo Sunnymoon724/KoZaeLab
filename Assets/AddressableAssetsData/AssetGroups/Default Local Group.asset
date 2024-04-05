@@ -15,12 +15,13 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_Data:
     m_SerializedData: []
-  m_GUID: e78332f81dd754e4ab5fccf4ec31f5a8
+  m_GUID: 7109edac8f3f9404aae2e886a534f131
   m_SerializeEntries:
   - m_GUID: 5ad5d5919c306416180ebfb30b06f2bf
-    m_Address: Assets/GameResources/Prefabs/Cube.prefab
+    m_Address: Cube2
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 13f5c41dac58240b6a2d0f436458fc11, type: 2}

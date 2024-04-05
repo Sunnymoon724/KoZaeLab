@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BuildSettings
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -22,8 +22,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   m_Initialize: 1
-  m_IsOpenFolderAfterAppBuild: 0
-  m_IsUploadAfterAppBuild: 0
-  m_BundleLoadPath: http://localhost
+  m_OpenFolderAfterAppBuild: 0
+  m_UploadAfterAppBuild: 0
+  m_UploadType: 1
+  m_GoogleDriveFolderId: 
+  m_BundleLoadPath: https://firebasestorage.googleapis.com/v0/b/kozaelab.appspot.com/o/files/~2FAndroid?hl=ko
   m_IsOpenFolderAfterBundleBuild: 0
   m_IsUploadAfterBundleBuild: 0
