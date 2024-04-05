@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public static partial class Tools
+public static partial class CommonUtility
 {
 	public static RaycastHit ClosestHit(RaycastHit[] _hitArray,int _length)
 	{

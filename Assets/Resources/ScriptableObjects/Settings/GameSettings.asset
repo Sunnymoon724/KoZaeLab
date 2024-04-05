@@ -20,5 +20,43 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes: []
+    SerializationNodes:
+    - Name: m_PresetNameDict
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.String,
+        mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
+        mscorlib]], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
   m_Initialize: 1
+  m_GameVersion: 0.1
+  m_GameLanguage: 10
+  m_GameMode: 2
+  m_ScreenResolution: {x: 1920, y: 1080}
+  m_IsFullScreen: 1
+  m_FrameRate: 60
+  m_GraphicQuality: 104365118
+  m_UseHeadUpDisplay: 0
+  m_UseFrameSetting: 1
+  m_UseMemorySetting: 1
+  m_UseAudioSetting: 1
+  m_UseLogSetting: 1
+  m_DefaultSettingPath: Scripts/InEditor/SettingsWindow
+  m_MetaScriptPath: Scripts/Data/MetaData
+  m_MetaAssetPath: Resources/ScriptableObjects/MetaData
+  m_TranslatePath: Resources/Texts/Translations
+  m_UIPrefabPath: Resources/Prefabs/UI
+  m_EffectPrefabPath: Resources/Prefabs/Efx
