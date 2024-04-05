@@ -59,7 +59,7 @@ namespace Sirenix.OdinInspector.Demos.RPGEditor
 
             protected override void BuildSelectionTree(OdinMenuTree tree)
             {
-                var scriptableObjectTypes = AssemblyUtilities.GetTypes(AssemblyTypeFlags.CustomTypes)
+                var scriptableObjectTypes = AssemblyUtilities.GetTypes(AssemblyCategory.ProjectSpecific)
                     .Where(x => x.IsClass && !x.IsAbstract && x.InheritsFrom(typeof(T)));
 
                 tree.Selection.SupportsMultiSelect = false;
