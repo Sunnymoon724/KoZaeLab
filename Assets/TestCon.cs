@@ -18,7 +18,7 @@ public class TestCon : MonoBehaviour
 
         // Log.Effect.I(size);
 
-        await AddressablesMgr.In.LoadResourcesAsync(new string[] { "default" },null);
+        await AddressablesMgr.In.LoadResourceAsync(new string[] { "default" },null);
     }
 
     void Update()
