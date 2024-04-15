@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BuildSettings
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 0
+    SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -22,11 +22,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   m_Initialize: 1
+  m_BuildPlatform: 32
   m_OpenFolderAfterAppBuild: 0
   m_UploadAfterAppBuild: 0
   m_UploadType: 1
   m_GoogleDriveFolderId: 
-  m_BuildPlatform: 48
   m_BundleLoadPath: http://localhost
   m_IsOpenFolderAfterBundleBuild: 0
   m_IsUploadAfterBundleBuild: 0
