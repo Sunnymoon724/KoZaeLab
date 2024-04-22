@@ -9,7 +9,6 @@ namespace KZLib.KZWindow
 	{
 		partial void AddOdinMenuTree(ref OdinMenuTree _tree)
 		{
-			_tree.Add("빌드 설정",BuildSettings.In);
 			_tree.Add("통신 설정",NetworkSettings.In);
 		}
 	}
