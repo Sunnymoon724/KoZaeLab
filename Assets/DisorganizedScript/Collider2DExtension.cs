@@ -19,7 +19,7 @@ public static class Collider2DExtension
 
 	public static bool IsOverlapping(this Collider2D _collider,LayerMask _layerMask,Vector2? _offset = null)
 	{
-		return IsOverlapping(_collider,_layerMask,default(ContactFilter2D));
+		return IsOverlapping(_collider,_layerMask,default,_offset);
 	}
 
 	public static bool IsOverlapping(this Collider2D _collider,LayerMask _layerMask,ContactFilter2D _contactFilter,Vector2? _offset = null)
@@ -36,14 +36,14 @@ public static class Collider2DExtension
 	
 	public static bool IsCastOverlapping(this Collider2D _collider,LayerMask _layerMask,Vector2 _offset)
 	{
-		return IsCastOverlapping(_collider,_layerMask,_offset,default(ContactFilter2D));
+		return IsCastOverlapping(_collider,_layerMask,_offset,default);
 	}
 	
 	public static bool IsCastOverlapping(this Collider2D _collider,LayerMask _layerMask,Vector2 _offset,ContactFilter2D _contactFilter)
 	{
 		_contactFilter.SetLayerMask(_layerMask | _contactFilter.layerMask);
 
-		var distance = Tools.GetOffsetDistance(ref _offset);
+		var distance = CommonUtility.GetOffsetDistance(ref _offset);
 		var buffer = s_Raycast2DArray;
 		var count = _collider.Cast(_offset, _contactFilter,buffer,distance);
 		var overlapping = buffer[0];
@@ -73,18 +73,18 @@ public static class Collider2DExtension
 
 	public static bool IsCastOverlapping(this Collider2D _collider1,LayerMask _layerMask,Vector2 _offset,out Collider2D _collider2)
 	{
-		return IsCastOverlapping(_collider1,_layerMask,_offset,default(ContactFilter2D),out _collider2);
+		return IsCastOverlapping(_collider1,_layerMask,_offset,default,out _collider2);
 	}
 	
 	static public bool IsCastOverlapping(this Collider2D _collider1,LayerMask _layerMask,Vector2 _offset,ContactFilter2D _contactFilter,out Collider2D _collider2)
 	{
 		_contactFilter.SetLayerMask(_layerMask | _contactFilter.layerMask);
 
-		var distance = Tools.GetOffsetDistance(ref _offset);
+		var distance = CommonUtility.GetOffsetDistance(ref _offset);
 		var buffer = s_CachedRaycast2DArray;
 		var count = _collider1.Cast(_offset,_contactFilter,buffer,distance);
 
-		_collider2 = count > 0 ? Tools.ClosestHit(buffer,count).collider : null;
+		_collider2 = count > 0 ? CommonUtility.ClosestHit(buffer,count).collider : null;
 
 		Array.Clear(s_CachedRaycast2DArray,0,count);
 
@@ -93,18 +93,18 @@ public static class Collider2DExtension
 	
 	public static bool IsCastOverlapping(this Collider2D _collider,LayerMask _layerMask,Vector2 _offset,out RaycastHit2D _raycast)
 	{
-		return IsCastOverlapping(_collider,_layerMask,_offset,default(ContactFilter2D),out _raycast);
+		return IsCastOverlapping(_collider,_layerMask,_offset,default,out _raycast);
 	}
 	
 	public static bool IsCastOverlapping(this Collider2D _collider, LayerMask _layerMask, Vector2 _offset,ContactFilter2D _contactFilter,out RaycastHit2D _raycast)
 	{
 		_contactFilter.SetLayerMask(_layerMask | _contactFilter.layerMask);
 
-		var distance = Tools.GetOffsetDistance(ref _offset);
+		var distance = CommonUtility.GetOffsetDistance(ref _offset);
 		var buffer = s_CachedRaycast2DArray;
 		int count = _collider.Cast(_offset,_contactFilter,buffer,distance);
 
-		_raycast = count > 0 ? Tools.ClosestHit(buffer, count) : default(RaycastHit2D);
+		_raycast = count > 0 ? CommonUtility.ClosestHit(buffer,count) : default;
 
 		Array.Clear(s_CachedRaycast2DArray,0,count);
 
