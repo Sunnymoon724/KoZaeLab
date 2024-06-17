@@ -1,0 +1,41 @@
+using System;
+using UnityEngine;
+using System.Diagnostics;
+using Sirenix.Utilities;
+
+#if UNITY_EDITOR
+
+using Sirenix.Utilities.Editor;
+
+#endif
+
+namespace KZLib.KZAttribute
+{
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property,AllowMultiple = false,Inherited = true)]
+	[Conditional("UNITY_EDITOR")]
+	public class KZColorArrayAttribute : Attribute { }
+
+#if UNITY_EDITOR
+	public class KZColorArrayAttributeDrawer : KZAttributeDrawer<KZColorArrayAttribute,Color[]>
+	{
+		protected override void DoDrawPropertyLayout(GUIContent _label)
+		{
+			//? label
+			var rect = DrawPrefixLabel(_label);
+			var colorArray = ValueEntry.SmartValue;
+
+			if(colorArray.IsNullOrEmpty())
+			{
+				return;
+			}
+
+			var rectArray = GetRectArray(rect,colorArray.Length);
+
+			for(var i=0;i<colorArray.Length;i++)
+			{
+				DrawColor(rectArray[i],colorArray[i]);
+			}
+		}
+	}
+#endif
+}

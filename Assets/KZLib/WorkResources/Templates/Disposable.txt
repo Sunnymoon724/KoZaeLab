@@ -1,0 +1,55 @@
+﻿using System;
+
+public abstract class ParentClass : IDisposable
+{
+	protected bool m_Disposed = false;
+
+	protected BaseClass() => Initialize();
+	~BaseClass() => Release(false);
+
+	protected virtual void Initialize() { }
+
+	protected virtual void Release(bool _disposing)
+	{
+		if(m_Disposed)
+		{
+			return;
+		}
+
+		if(_disposing)
+		{
+			//! 관리 데이터 제거
+		}
+
+		//! 비관리 데이터 제거
+
+		m_Disposed = true;
+	}
+
+	public void Dispose()
+	{
+		Release(true);
+
+		GC.SuppressFinalize(this);
+	}
+}
+
+public class ChildClass : ParentClass
+{
+	protected override void Release(bool _disposing)
+	{
+		if(m_Disposed)
+		{
+			return;
+		}
+
+		if(_disposing)
+		{
+			//! 관리 데이터 제거
+		}
+
+		//! 비관리 데이터 제거
+
+		base.Release(_disposing);
+	}
+}
