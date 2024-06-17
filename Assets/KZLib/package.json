@@ -15,5 +15,12 @@
     "com.cysharp.unitask" : "2.5.4",
     "com.coffee.ui-effect" : "4.0.0-preview.10",
     "com.neuecc.unirx" : "7.1.0"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "VibrationTest",
+      "description": "Vibration Test",
+      "path": "Samples~/VibrationTest"
+    }
+  ]
 }
