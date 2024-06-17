@@ -1,5 +1,5 @@
 ﻿
-public partial class GameSettings : InSideSingletonSO<GameSettings>
+public partial class GameSettings : InnerBaseSettings<GameSettings>
 {
 	//? 일반 설정
 	private const int GENERAL_ORDER = 0;

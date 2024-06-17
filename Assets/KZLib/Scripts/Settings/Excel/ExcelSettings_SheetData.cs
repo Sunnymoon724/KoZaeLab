@@ -9,7 +9,7 @@ using KZLib.KZFiles;
 /// <summary>
 /// 엑셀 파일 사용 세팅
 /// </summary>
-public abstract partial class ExcelSettings<TObject> : OutSideSingletonSO<TObject> where TObject : ScriptableObject
+public abstract partial class ExcelSettings<TObject> : OuterBaseSettings<TObject> where TObject : SerializedScriptableObject
 {
 	[Serializable]
 	protected abstract class ExcelSheetData
@@ -71,17 +71,19 @@ public abstract partial class ExcelSettings<TObject> : OutSideSingletonSO<TObjec
 
 		private bool IsValidSheetName(IEnumerable<(string,int)> _titleGroup,string[] _titleArray)
 		{
+			var count = 0;
+
 			foreach(var title in _titleArray)
 			{
 				var index = _titleGroup.FindIndex(x=>x.Item1.IsEqual(title));
 
 				if(index != -1)
 				{
-					return false;
+					count++;
 				}
 			}
 
-			return true;
+			return _titleArray.Length == count;
 		}
 
 		protected ExcelFile GetExcelFile()

@@ -7,43 +7,16 @@ using Object = UnityEngine.Object;
 
 public static partial class CommonUtility
 {
-	public static IEnumerable<string> GetAssetPathGroup(string _filter = null,string[] _searchInFolders = null)
+	public static bool IsExistAsset(string _filter = null,string[] _searchInFolders = null)
 	{
-		return ToConvert(AssetDatabase.FindAssets(_filter,_searchInFolders),(guid)=>
-		{
-			return AssetDatabase.GUIDToAssetPath(guid);
-		});
-	}
+		var guidArray = GetAssetGuidArray(_filter,_searchInFolders);
 
-	public static IEnumerable<(string,TObject)> LoadAssetDataGroup<TObject>(string _filter = null,string[] _searchInFolders = null) where TObject : Object
-	{
-		return ToConvert(AssetDatabase.FindAssets(_filter,_searchInFolders),(guid)=>
-		{
-			var assetPath = AssetDatabase.GUIDToAssetPath(guid);
-
-			return (assetPath,AssetDatabase.LoadAssetAtPath<TObject>(assetPath));
-		});
-	}
-
-	public static IEnumerable<TObject> LoadAssetGroup<TObject>(string _filter = null,string[] _searchInFolders = null) where TObject : Object
-	{
-		return ToConvert(AssetDatabase.FindAssets(_filter,_searchInFolders),(guid)=>
-		{
-			return AssetDatabase.LoadAssetAtPath<TObject>(AssetDatabase.GUIDToAssetPath(guid));
-		});
-	}
-
-	public static IEnumerable<TObject> LoadAssetGroupInFolder<TObject>(string _folderPath) where TObject : Object
-	{
-		return ToConvert(GetAllFilePathInFolder(GetFullPath(_folderPath)),(path)=>
-		{
-			return AssetDatabase.LoadAssetAtPath<TObject>(GetAssetsPath(path));
-		});
+		return !guidArray.IsNullOrEmpty();
 	}
 
 	public static TObject LoadAsset<TObject>(string _filter = null,string[] _searchInFolders = null) where TObject : Object
 	{
-		var guidArray = AssetDatabase.FindAssets(_filter,_searchInFolders);
+		var guidArray = GetAssetGuidArray(_filter,_searchInFolders);
 
 		if(guidArray.Length == 0)
 		{
@@ -56,6 +29,40 @@ public static partial class CommonUtility
 		}
 
 		return AssetDatabase.LoadAssetAtPath<TObject>(AssetDatabase.GUIDToAssetPath(guidArray[0]));
+	}
+
+	public static IEnumerable<string> GetAssetPathGroup(string _filter = null,string[] _searchInFolders = null)
+	{
+		return ToConvert(GetAssetGuidArray(_filter,_searchInFolders),(guid)=>
+		{
+			return AssetDatabase.GUIDToAssetPath(guid);
+		});
+	}
+
+	public static IEnumerable<(string,TObject)> LoadAssetDataGroup<TObject>(string _filter = null,string[] _searchInFolders = null) where TObject : Object
+	{
+		return ToConvert(GetAssetGuidArray(_filter,_searchInFolders),(guid)=>
+		{
+			var assetPath = AssetDatabase.GUIDToAssetPath(guid);
+
+			return (assetPath,AssetDatabase.LoadAssetAtPath<TObject>(assetPath));
+		});
+	}
+
+	public static IEnumerable<TObject> LoadAssetGroup<TObject>(string _filter = null,string[] _searchInFolders = null) where TObject : Object
+	{
+		return ToConvert(GetAssetGuidArray(_filter,_searchInFolders),(guid)=>
+		{
+			return AssetDatabase.LoadAssetAtPath<TObject>(AssetDatabase.GUIDToAssetPath(guid));
+		});
+	}
+
+	public static IEnumerable<TObject> LoadAssetGroupInFolder<TObject>(string _folderPath) where TObject : Object
+	{
+		return ToConvert(GetAllFilePathInFolder(GetFullPath(_folderPath)),(path)=>
+		{
+			return AssetDatabase.LoadAssetAtPath<TObject>(GetAssetsPath(path));
+		});
 	}
 
 	public static void SaveAsset(string _dataPath,Object _asset)
@@ -77,6 +84,11 @@ public static partial class CommonUtility
 		AssetDatabase.Refresh();
 
 		Log.System.I("{0}가 {1}에 저장 되었습니다.",_asset.name,_dataPath);
+	}
+
+	private static string[] GetAssetGuidArray(string _filter = null,string[] _searchInFolders = null)
+	{
+		return AssetDatabase.FindAssets(_filter,_searchInFolders);
 	}
 
 	private static IEnumerable<TResult> ToConvert<TResult>(IEnumerable<string> _pathGroup,Func<string,TResult> _onConvert)

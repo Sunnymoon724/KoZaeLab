@@ -4,7 +4,7 @@ using KZLib.KZNetwork;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public partial class NetworkSettings : InSideSingletonSO<NetworkSettings>
+public partial class NetworkSettings : InnerBaseSettings<NetworkSettings>
 {
 	[TabGroup("통신 설정","트렐로")]
 	[TitleGroup("통신 설정/트렐로/사용 설정",BoldTitle = false,Order = 0),SerializeField,LabelText("트렐로 사용"),ToggleLeft]

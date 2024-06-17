@@ -7,11 +7,11 @@ using Cysharp.Threading.Tasks;
 using KZLib.KZAttribute;
 using System;
 
-public partial class BuildSettings : OutSideSingletonSO<BuildSettings>
+public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 {
 	private const string PROFILE_NAME = "KZBundle";
 	
-	private const string DefalutRemoteBundlePath = "http://localhost";
+	private const string DefaultRemoteBundlePath = "http://localhost";
 
 	private string BundleFullPath => GetFullPath("Bundle");
 
@@ -53,7 +53,7 @@ public partial class BuildSettings : OutSideSingletonSO<BuildSettings>
 	{
 		if(m_BundleLoadPath.IsEmpty())
 		{
-			m_BundleLoadPath = DefalutRemoteBundlePath;
+			m_BundleLoadPath = DefaultRemoteBundlePath;
 		}
 	}
 
@@ -96,7 +96,7 @@ public partial class BuildSettings : OutSideSingletonSO<BuildSettings>
 			return;
 		}
 
-		Buildsync(BuildBundAsync).Forget();
+		BuildAsync(BuildBundAsync).Forget();
 	}
 
 	private async UniTask BuildBundAsync()
@@ -109,7 +109,7 @@ public partial class BuildSettings : OutSideSingletonSO<BuildSettings>
 		var setting = AddressableAssetSettingsDefaultObject.Settings;
 		var profileId = GetProfileId(setting.profileSettings);
 
-		setting.profileSettings.SetValue(profileId,"Remote.LoadPath",string.Format("{0}/{1}",m_BundleLoadPath,CurrntBuildTargetToLower));
+		setting.profileSettings.SetValue(profileId,"Remote.LoadPath",string.Format("{0}/{1}",m_BundleLoadPath,CurrentBuildTargetToLower));
 		
 		AddressableAssetSettingsDefaultObject.Settings.activeProfileId = profileId;
 

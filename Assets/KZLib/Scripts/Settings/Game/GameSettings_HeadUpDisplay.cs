@@ -1,7 +1,7 @@
 ﻿using Sirenix.OdinInspector;
 using UnityEngine;
 
-public partial class GameSettings : InSideSingletonSO<GameSettings>
+public partial class GameSettings : InnerBaseSettings<GameSettings>
 {
 	[TabGroup("게임 설정","프로젝트 설정",Order = -10)]
 	[TitleGroup("게임 설정/프로젝트 설정/HUD 설정",BoldTitle = false,Order = HUD_ORDER)]

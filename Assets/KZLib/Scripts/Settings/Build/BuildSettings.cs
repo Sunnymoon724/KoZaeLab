@@ -6,7 +6,7 @@ using KZLib;
 using UnityEditor;
 using UnityEngine;
 
-public partial class BuildSettings : OutSideSingletonSO<BuildSettings>
+public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 {
 	private bool DisableNow => true;
 
@@ -24,18 +24,18 @@ public partial class BuildSettings : OutSideSingletonSO<BuildSettings>
 
 	private string GetFullPath(string _type)
 	{
-		return CommonUtility.PathCombine(CommonUtility.GetProjectPath(),"Builds",_type,CurrntBuildTargetToString);
+		return CommonUtility.PathCombine(CommonUtility.GetProjectPath(),"Builds",_type,CurrentBuildTargetToString);
 	}
 
-	private BuildTarget CurrntBuildTarget => EditorUserBuildSettings.activeBuildTarget;
-	private string CurrntBuildTargetToString => CurrntBuildTarget.ToString();
-	private string CurrntBuildTargetToLower => CurrntBuildTarget.ToString().ToLowerInvariant();
+	private BuildTarget CurrentBuildTarget => EditorUserBuildSettings.activeBuildTarget;
+	private string CurrentBuildTargetToString => CurrentBuildTarget.ToString();
+	private string CurrentBuildTargetToLower => CurrentBuildTarget.ToString().ToLowerInvariant();
 
-	private async UniTaskVoid Buildsync(Func<UniTask> _onBuildTask)
+	private async UniTaskVoid BuildAsync(Func<UniTask> _onBuildTask)
 	{
 		Application.logMessageReceived += OnGetLog;
 
-		var currentTarget = CurrntBuildTarget;
+		var currentTarget = CurrentBuildTarget;
 
 		try
 		{
@@ -51,7 +51,7 @@ public partial class BuildSettings : OutSideSingletonSO<BuildSettings>
 
 			Application.logMessageReceived -= OnGetLog;
 
-			if(CurrntBuildTarget != currentTarget)
+			if(CurrentBuildTarget != currentTarget)
 			{
 				EditorUserBuildSettings.SwitchActiveBuildTargetAsync(BuildPipeline.GetBuildTargetGroup(currentTarget),currentTarget);
 			}
@@ -67,7 +67,7 @@ public partial class BuildSettings : OutSideSingletonSO<BuildSettings>
 
 	private (string,byte[]) ConvertToFileGroup(string _filePath)
 	{
-		if(CurrntBuildTarget == BuildTarget.Android)
+		if(CurrentBuildTarget == BuildTarget.Android)
 		{
 			return (CommonUtility.GetFileName(_filePath),CommonUtility.ReadFile(_filePath));
 		}

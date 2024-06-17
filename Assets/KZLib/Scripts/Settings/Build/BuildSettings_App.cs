@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using KZLib.KZNetwork;
 using System.Collections.Generic;
 
-public partial class BuildSettings : OutSideSingletonSO<BuildSettings>
+public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 {
 	private string AppFullPath => GetFullPath("App");
 
@@ -91,7 +91,7 @@ public partial class BuildSettings : OutSideSingletonSO<BuildSettings>
 			return;
 		}
 
-		Buildsync(BuildAppAsync).Forget();
+		BuildAsync(BuildAppAsync).Forget();
 	}
 
 	private async UniTask BuildAppAsync()
@@ -205,7 +205,7 @@ public partial class BuildSettings : OutSideSingletonSO<BuildSettings>
 
 	private string GetAppPath(string _appName)
 	{
-		switch(CurrntBuildTarget)
+		switch(CurrentBuildTarget)
 		{
 			case BuildTarget.Android:
 			{
