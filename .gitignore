@@ -88,4 +88,4 @@ crashlytics-build.properties
 *.DS_Store
 **~$*
 *.db
-Assets/Plugins
+**/[Aa]ssets/[Pp]lugins
