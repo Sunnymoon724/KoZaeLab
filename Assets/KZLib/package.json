@@ -1,6 +1,7 @@
 {
   "name": "com.bsheepstudio.kzlib",
   "displayName": "KZ Lib",
+  "author": { "name": "KoZaeLib", "email": "sunnymoon724@gmail.com", "url": "https://github.com/Sunnymoon724" },
   "description": "Kozae Library",
   "version": "1.0.0",
   "unity": "2022.3",
