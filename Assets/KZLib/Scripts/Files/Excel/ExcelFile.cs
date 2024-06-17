@@ -15,23 +15,14 @@ namespace KZLib.KZFiles
 	public partial class ExcelFile
 	{
 		[SerializeField]
-		private string m_LocalFilePath = null;
-
-		// public bool IsExistFilePath => CommonUtility.IsExistFile(CommonUtility.GetAbsoluteFullPath(m_LocalFilePath));
-
-		[SerializeField]
 		private IWorkbook m_Workbook = null;
 
-		public ExcelFile(string _localFilePath)
+		public ExcelFile(string _filePath)
 		{
-			m_LocalFilePath = _localFilePath;
+			CommonUtility.IsExistFile(_filePath,true);
 
-			var filePath = CommonUtility.GetAbsoluteFullPath(m_LocalFilePath);
-
-			CommonUtility.IsExistFile(filePath,true);
-
-			using var stream = new FileStream(filePath,FileMode.Open,FileAccess.Read,FileShare.ReadWrite);
-			var extension = CommonUtility.GetExtension(filePath);
+			using var stream = new FileStream(_filePath,FileMode.Open,FileAccess.Read,FileShare.ReadWrite);
+			var extension = CommonUtility.GetExtension(_filePath);
 
 			if(extension.IsEqual(".xls"))
 			{
@@ -116,7 +107,7 @@ namespace KZLib.KZFiles
 
 					if(row.LastCellNum < _orderList[j])
 					{
-						Log.Data.E("{0}번째 줄의 {1}의 값이 존재하지 않습니다.",i,_orderList[j]);
+						Log.Files.E("{0}번째 줄의 {1}의 값이 존재하지 않습니다.",i,_orderList[j]);
 
 						continue;
 					}
@@ -160,7 +151,7 @@ namespace KZLib.KZFiles
 
 				if(KEY_WORD_ARRAY.Any(x=>x.IsEqual(header.ToLowerInvariant())))
 				{
-					Log.Editor.W("{0}는 헤더로 사용할 수 없습니다.",header);
+					Log.Files.W("{0}는 헤더로 사용할 수 없습니다.",header);
 
 					continue;
 				}

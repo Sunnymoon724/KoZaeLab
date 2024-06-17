@@ -52,7 +52,7 @@ public static partial class CommonUtility
 
 		if(guidArray.Length > 1)
 		{
-			Log.System.W("검색된 결과가 2개 이상입니다.");
+			Log.System.W("검색된 결과가 2개 이상입니다. [{0} 사용]",guidArray[0]);
 		}
 
 		return AssetDatabase.LoadAssetAtPath<TObject>(AssetDatabase.GUIDToAssetPath(guidArray[0]));
@@ -60,7 +60,7 @@ public static partial class CommonUtility
 
 	public static void SaveAsset(string _dataPath,Object _asset)
 	{
-		var folderPath = GetParentPath(_dataPath);
+		var folderPath = GetParentAbsolutePath(_dataPath);
 		var assetPath = GetAssetsPath(_dataPath);
 
 		CreateFolder(folderPath);

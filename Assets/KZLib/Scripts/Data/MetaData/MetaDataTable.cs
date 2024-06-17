@@ -61,7 +61,7 @@ namespace KZLib
 		[HorizontalGroup("옵션/기타/추출",Order = 0),Button("ToJson",ButtonSizes.Medium),PropertyTooltip("현재 경로로 익스포트 합니다.")]
 		public void OnExportToJson()
 		{
-			var filePath = CommonUtility.PathCombine(CommonUtility.GetParentPath(CurrentPath),string.Format("{0}.json",TableName));
+			var filePath = CommonUtility.PathCombine(CommonUtility.GetParentAbsolutePath(CurrentPath),string.Format("{0}.json",TableName));
 			var text = JsonConvert.SerializeObject(DataGroup);
 
 			CommonUtility.WriteDataToFile(filePath,text);

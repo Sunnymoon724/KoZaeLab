@@ -63,9 +63,7 @@ public partial class NetworkSettings : InSideSingletonSO<NetworkSettings>
 
 	private async UniTask PostText_GoogleSheet()
 	{
-		var result = await CommonUtility.PostAppendRow_GoogleSheetAsync(GoogleSheetFileId,m_GoogleSheetIndex,"Test\tAAA\tBBB\tCCC");
-
-		Log.System.I(result);
+		await CommonUtility.PostAppendRow_GoogleSheetAsync(GoogleSheetFileId,m_GoogleSheetIndex,"Test\tAAA\tBBB\tCCC");
 
 		await GetText_GoogleSheetAsync();
 	}

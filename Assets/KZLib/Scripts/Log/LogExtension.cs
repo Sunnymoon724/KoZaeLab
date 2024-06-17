@@ -16,23 +16,16 @@ public enum Log
 	Build,
 
 	// 네트워크 관련
-	Network,
 	Server,
 	Client,
 
 	// 데이터 관련
-	Bundle,
 	Data,
 	UI,
 	Effect,
 
-	InGame,
-
 	// 사운드 관련
 	Sound,
-
-	// 디벨로프 관련
-	Develop,
 
 	// 에디터 관련
 	Editor,

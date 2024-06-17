@@ -44,31 +44,6 @@ public static partial class CommonUtility
 		return _value.CompareTo(_maximum) > 0 ? _maximum : _value;
 	}
 
-	public static string GetRndText(int _length,bool _overlap = true)
-	{
-		var text = "abcdefghijklmnopqrstuvwxyz";
-		var charList = new List<char>(_length);
-
-		if(_overlap)
-		{
-			for(var i=0;i<_length;i++)
-			{
-				charList.Add(text.GetRndValue());
-			}
-		}
-		else
-		{
-			var length = Mathf.Max(text.Length,_length);
-
-			charList.AddRange(text);
-			charList = charList.GetRndValueList(length);
-		}
-
-		charList.Randomize();
-
-		return string.Concat(charList);
-	}
-	
 	public static bool TryDispose<TClass>(ref TClass _object) where TClass : class
 	{
 		if(_object == null)

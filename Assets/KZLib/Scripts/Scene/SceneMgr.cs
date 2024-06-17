@@ -160,7 +160,7 @@ namespace KZLib
 				_onProgress?.Invoke(progress*0.99f);
 			},_param);
 
- 			Log.Scene.I("{0} 생성이 끝났습니다.",_sceneName);
+			Log.Scene.I("{0} 생성이 끝났습니다.",_sceneName);
 
 			_onProgress?.Invoke(1.0f);
 		}

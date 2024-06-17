@@ -22,12 +22,12 @@ namespace KZLib.KZFiles
 				return false;
 			}
 
-			m_EventDataList = GetMidiEventList();
-			
+			CreateMidiEventData();
+
 			return true;
 		}
 
-		private List<MidiEventData> GetMidiEventList()
+		private void CreateMidiEventData()
 		{
 			var tempoDataList = GetTempoDataList();
 			var trackEventList = new List<MidiEventData>();
@@ -68,7 +68,7 @@ namespace KZLib.KZFiles
 				index++;
 			}
 
-			return trackEventList.Count == 0 ? trackEventList : trackEventList.OrderBy(x=>x.EventData.AbsoluteTime).ToList();
+			m_EventDataList = new List<MidiEventData>(trackEventList.Count == 0 ? trackEventList : trackEventList.OrderBy(x=>x.EventData.AbsoluteTime));
 		}
 
 		private List<TempoData> GetTempoDataList()

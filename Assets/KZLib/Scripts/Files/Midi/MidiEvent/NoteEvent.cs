@@ -2,7 +2,7 @@ using System;
 
 namespace KZLib.KZFiles
 {
-	public class NoteEvent : MidiEvent
+	public record NoteEvent : MidiEvent
 	{
 		public NoteEvent(byte _command,byte _data1,byte _data2,int _delta,int _channel) : base(_command,_data1,_data2,_delta,_channel)
 		{
@@ -22,12 +22,11 @@ namespace KZLib.KZFiles
 		public virtual byte NoteNumber
 		{
 			get => m_Data1;
-
 			set
 			{
 				if(value < 0 || value > 127)
 				{
-					throw new ArgumentOutOfRangeException("value","Note number must be in the range 0-127");
+					throw new ArgumentOutOfRangeException(string.Format("노트는 1-127 사이 입니다. [{0}]",value));
 				}
 
 				m_Data1 = value;
@@ -37,12 +36,11 @@ namespace KZLib.KZFiles
 		public byte Velocity
 		{
 			get => m_Data2;
-
 			set
 			{
 				if(value < 0 || value > 127)
 				{
-					throw new ArgumentOutOfRangeException("value","Velocity must be in the range 0-127");
+					throw new ArgumentOutOfRangeException(string.Format("속도는 1-127 사이 입니다. [{0}]",value));
 				}
 
 				m_Data2 = value;
@@ -55,57 +53,57 @@ namespace KZLib.KZFiles
 			{
 				if(Channel == 10)
 				{
-					switch(NoteNumber)
+					return NoteNumber switch
 					{
-						case 35: return "Acoustic Bass Drum";
-						case 36: return "Bass Drum 1";
-						case 37: return "Side Stick";
-						case 38: return "Acoustic Snare";
-						case 39: return "Hand Clap";
-						case 40: return "Electric Snare";
-						case 41: return "Low Floor Tom";
-						case 42: return "Closed Hi-Hat";
-						case 43: return "High Floor Tom";
-						case 44: return "Pedal Hi-Hat";
-						case 45: return "Low Tom";
-						case 46: return "Open Hi-Hat";
-						case 47: return "Low-Mid Tom";
-						case 48: return "Hi-Mid Tom";
-						case 49: return "Crash Cymbal 1";
-						case 50: return "High Tom";
-						case 51: return "Ride Cymbal 1";
-						case 52: return "Chinese Cymbal";
-						case 53: return "Ride Bell";
-						case 54: return "Tambourine";
-						case 55: return "Splash Cymbal";
-						case 56: return "Cowbell";
-						case 57: return "Crash Cymbal 2";
-						case 58: return "Vibraslap";
-						case 59: return "Ride Cymbal 2";
-						case 60: return "Hi Bongo";
-						case 61: return "Low Bongo";
-						case 62: return "Mute Hi Conga";
-						case 63: return "Open Hi Conga";
-						case 64: return "Low Conga";
-						case 65: return "High Timbale";
-						case 66: return "Low Timbale";
-						case 67: return "High Agogo";
-						case 68: return "Low Agogo";
-						case 69: return "Cabasa";
-						case 70: return "Maracas";
-						case 71: return "Short Whistle";
-						case 72: return "Long Whistle";
-						case 73: return "Short Guiro";
-						case 74: return "Long Guiro";
-						case 75: return "Claves";
-						case 76: return "Hi Wood Block";
-						case 77: return "Low Wood Block";
-						case 78: return "Mute Cuica";
-						case 79: return "Open Cuica";
-						case 80: return "Mute Triangle";
-						case 81: return "Open Triangle";
-						default: return string.Format("Drum {0}",NoteNumber);
-					}
+						35 => "Acoustic Bass Drum",
+						36 => "Bass Drum 1",
+						37 => "Side Stick",
+						38 => "Acoustic Snare",
+						39 => "Hand Clap",
+						40 => "Electric Snare",
+						41 => "Low Floor Tom",
+						42 => "Closed Hi-Hat",
+						43 => "High Floor Tom",
+						44 => "Pedal Hi-Hat",
+						45 => "Low Tom",
+						46 => "Open Hi-Hat",
+						47 => "Low-Mid Tom",
+						48 => "Hi-Mid Tom",
+						49 => "Crash Cymbal 1",
+						50 => "High Tom",
+						51 => "Ride Cymbal 1",
+						52 => "Chinese Cymbal",
+						53 => "Ride Bell",
+						54 => "Tambourine",
+						55 => "Splash Cymbal",
+						56 => "Cowbell",
+						57 => "Crash Cymbal 2",
+						58 => "Vibraslap",
+						59 => "Ride Cymbal 2",
+						60 => "Hi Bongo",
+						61 => "Low Bongo",
+						62 => "Mute Hi Conga",
+						63 => "Open Hi Conga",
+						64 => "Low Conga",
+						65 => "High Timbale",
+						66 => "Low Timbale",
+						67 => "High Agogo",
+						68 => "Low Agogo",
+						69 => "Cabasa",
+						70 => "Maracas",
+						71 => "Short Whistle",
+						72 => "Long Whistle",
+						73 => "Short Guiro",
+						74 => "Long Guiro",
+						75 => "Claves",
+						76 => "Hi Wood Block",
+						77 => "Low Wood Block",
+						78 => "Mute Cuica",
+						79 => "Open Cuica",
+						80 => "Mute Triangle",
+						81 => "Open Triangle",
+						_ => string.Format("Drum {0}", NoteNumber),
+					};
 				}
 
 				return string.Format("{0}{1}",NOTE_NAME_ARRAY[NoteNumber%12],(NoteNumber/12));

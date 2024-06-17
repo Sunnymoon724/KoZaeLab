@@ -30,7 +30,7 @@ public abstract partial class ExcelSettings<TObject> : OutSideSingletonSO<TObjec
 		[VerticalGroup(" ")]
 		[HorizontalGroup(" /0",Order = 0)]
 		[HorizontalGroup(" /0/0",Order = 0),ShowInInspector,LabelText("경로"),LabelWidth(100),KZDocumentPath,PropertyTooltip("$AbsoluteFilePath")]
-		public string AbsoluteFilePath => CommonUtility.GetAbsoluteFullPath(m_LocalFilePath);
+		public string AbsoluteFilePath => CommonUtility.GetExternalFileAbsolutePath(m_LocalFilePath);
 
 		public ExcelSheetData(string _path)
 		{
@@ -49,7 +49,7 @@ public abstract partial class ExcelSettings<TObject> : OutSideSingletonSO<TObjec
 		{
 			m_SheetNameList.Clear();
 
-			var excelFile = new ExcelFile(m_LocalFilePath);
+			var excelFile = GetExcelFile();
 
 			foreach(var sheetName in excelFile.SheetNameGroup)
 			{
@@ -82,6 +82,11 @@ public abstract partial class ExcelSettings<TObject> : OutSideSingletonSO<TObjec
 			}
 
 			return true;
+		}
+
+		protected ExcelFile GetExcelFile()
+		{
+			return new(AbsoluteFilePath);
 		}
 	}
 }

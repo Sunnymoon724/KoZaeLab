@@ -2,7 +2,7 @@
 
 namespace KZLib.KZFiles
 {
-	public class MidiEvent
+	public record MidiEvent
 	{
 		private int m_Channel;
 		public byte CommandCode { get; protected set; }
@@ -25,12 +25,11 @@ namespace KZLib.KZFiles
 		public virtual int Channel
 		{
 			get => m_Channel;
-			
 			set
 			{
 				if((value < 1) || (value > 16))
 				{
-					throw new ArgumentOutOfRangeException("value",value,string.Format("Channel must be 1-16 (Got {0})",value));
+					throw new ArgumentOutOfRangeException(string.Format("채널은 1-16 사이 입니다. [{0}]",value));
 				}
 
 				m_Channel = value;

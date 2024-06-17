@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 
@@ -6,6 +7,7 @@ public static partial class CommonUtility
 {
 	private static readonly Random s_Random = new();
 
+	#region Integer
 	/// <summary>
 	/// min 에서 max 사이의 숫자를 무작위로 반환한다.
 	/// </summary>
@@ -52,7 +54,9 @@ public static partial class CommonUtility
 
 		return 0;
 	}
+	#endregion Integer
 
+	#region Single
 	/// <summary>
 	/// (0<= n < 1) 무작위 숫자를 반환한다.
 	/// </summary>
@@ -79,7 +83,9 @@ public static partial class CommonUtility
 
 		return _dot == null ? value : value.ToLimit(_dot.Value);
 	}
+	#endregion Single
 
+	#region Double
 	/// <summary>
 	/// (0<= n < 1) 무작위 숫자를 반환한다.
 	/// </summary>
@@ -89,27 +95,69 @@ public static partial class CommonUtility
 	}
 
 	/// <summary>
+	/// -value 에서 +value 사이의 숫자를 무작위로 반환한다.
+	/// </summary>
+	public static double GetRndDouble(double _value,int? _dot = null)
+	{
+		return _value == 0.0d ? _value : GetRndDouble(-_value,+_value,_dot);
+	}
+
+	/// <summary>
+	/// min 에서 max 사이의 숫자를 무작위로 반환한다.
+	/// dot 는 소수점 N째 자리를 의미한다.
+	/// </summary>
+	public static double GetRndDouble(double _min,double _max,int? _dot = null)
+	{
+		var value = GetRndDouble()*(_max-_min)+_min;
+
+		return _dot == null ? value : value.ToLimit(_dot.Value);
+	}
+	#endregion Double
+
+	#region Boolean
+	/// <summary>
 	/// true or false 반환한다.
 	/// </summary>
 	public static bool GetRndBool()
 	{
 		return GetRndInt(0,2) == 0;
 	}
+	#endregion Boolean
 
-	/// <summary>
-	/// -1, 0, 1 반환
-	/// </summary>
-	public static int GetRndSign(bool _includeZero = true)
+	#region String
+	public static string GetRndString(int _length,bool _overlap = true)
 	{
-		return _includeZero ? GetRndInt(0,2)-1 : GetRndDouble() < 0.5d ? -1 : 1;
-	}
+		var text = "abcdefghijklmnopqrstuvwxyz";
+		var charList = new List<char>(_length);
 
+		if(_overlap)
+		{
+			for(var i=0;i<_length;i++)
+			{
+				charList.Add(text.GetRndValue());
+			}
+		}
+		else
+		{
+			var length = Mathf.Max(text.Length,_length);
+
+			charList.AddRange(text);
+			charList = charList.GetRndValueList(length);
+		}
+
+		charList.Randomize();
+
+		return string.Concat(charList);
+	}
+	#endregion String
+
+	#region Gaussian
 	/// <summary>
 	/// 정규분포에서 무작위 정수 반환
 	/// </summary>
-	public static int GetGaussian(int _mean, int _deviation)
+	public static int GetGaussian(int _mean,int _deviation)
 	{
-		return _mean+(int)GetGaussian()*_deviation;
+		return _mean+(int) GetGaussian()*_deviation;
 	}
 
 	/// <summary>
@@ -167,6 +215,16 @@ public static partial class CommonUtility
 
 		return value1*Mathf.Sqrt(-2.0f*Mathf.Log(pivot)/pivot);
 	}
+	#endregion Gaussian
+
+	/// <summary>
+	/// -1, 0, 1 반환
+	/// </summary>
+	public static int GetRndSign(bool _includeZero = true)
+	{
+		return _includeZero ? GetRndInt(0,2)-1 : GetRndDouble() < 0.5d ? -1 : 1;
+	}
+
 	/// <summary>
 	/// 0에서 1의 실수를 반환해서 percent와 비교하여 판단한다.
 	/// </summary>
