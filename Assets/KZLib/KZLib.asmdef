@@ -1,3 +1,24 @@
 {
-    "name": "KZLib"
+    "name": "KZLib",
+    "rootNamespace": "",
+    "references": [
+        "UniTask",
+        "UniRx",
+        "Unity.TextMeshPro",
+        "UIEffect",
+        "Unity.InputSystem",
+        "Unity.Addressables",
+        "Unity.Addressables.Editor",
+        "Unity.ResourceManager",
+        "Unity.RenderPipelines.Universal.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
