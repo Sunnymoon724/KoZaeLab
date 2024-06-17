@@ -21,6 +21,11 @@
       "displayName": "VibrationTest",
       "description": "Vibration Test",
       "path": "Samples~/VibrationTest"
+    },
+    {
+      "displayName": "ScheduleTest",
+      "description": "Schedule Test",
+      "path": "Samples~/ScheduleTest"
     }
   ]
 }
