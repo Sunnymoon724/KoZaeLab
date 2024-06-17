@@ -1,0 +1,15 @@
+#if UNITY_EDITOR
+using Sirenix.OdinInspector.Editor;
+
+//? AUTO_GENERATED CODE
+
+namespace KZLib.KZWindow
+{
+	public partial class SettingsWindow : OdinMenuEditorWindow
+	{
+		partial void AddOdinMenuTree(ref OdinMenuTree _tree)
+		{
+		}
+	}
+}
+#endif
