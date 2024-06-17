@@ -129,7 +129,7 @@ namespace KZLib.KZAttribute
 		{
 			return DrawButton(_rect,SdfIconType.Folder2,_isValid,()=>
 			{
-				CommonUtility.OpenFolder(CommonUtility.GetParentPath(ValueEntry.SmartValue));
+				CommonUtility.OpenFolder(CommonUtility.GetParentAbsolutePath(ValueEntry.SmartValue));
 			});
 		}
 	}

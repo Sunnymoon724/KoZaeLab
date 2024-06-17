@@ -90,12 +90,12 @@ namespace GameData
 
 			if(!m_TranslateDict.ContainsKey(_language))
 			{
-				Log.System.I("해당 언어의 번역본이 없어서 변경하지 않았습니다. [{0}]",_language);
+				Log.Data.I("해당 언어의 번역본이 없어서 변경하지 않았습니다. [{0}]",_language);
 
 				return;
 			}
 
-			Log.System.I("언어가 바꿨습니다. [{0}]",_language);
+			Log.Data.I("언어가 바꿨습니다. [{0}]",_language);
 
 			option.GameLanguage = _language;
 		}

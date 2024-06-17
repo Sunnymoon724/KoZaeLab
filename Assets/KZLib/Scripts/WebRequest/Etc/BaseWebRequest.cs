@@ -55,7 +55,7 @@ namespace KZLib.KZNetwork
 			}
 			catch(Exception _exception)
 			{
-				Log.Network.E("{0}",_exception.Message);
+				Log.System.E("{0}",_exception.Message);
 
 				return new RequestData(false,null);
 			}

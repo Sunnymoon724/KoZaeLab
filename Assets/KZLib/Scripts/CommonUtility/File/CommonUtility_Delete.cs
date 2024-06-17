@@ -23,13 +23,13 @@ public static partial class CommonUtility
 				continue;
 			}
 
-			var dataArray = Directory.GetFileSystemEntries(directory);
+			var fileArray = Directory.GetFileSystemEntries(directory);
 
-			if(dataArray.Length == 0 || (dataArray.Length == 1 && dataArray[0].EndsWith(".DS_Store")))
+			if(fileArray.Length == 0 || (fileArray.Length == 1 && fileArray[0].EndsWith(".DS_Store")))
 			{
-				foreach(var data in dataArray)
+				foreach(var file in fileArray)
 				{
-					File.Delete(data);
+					File.Delete(file);
 				}
 
 				File.Delete(string.Format("{0}.meta",directory));

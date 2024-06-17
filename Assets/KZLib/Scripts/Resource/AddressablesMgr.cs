@@ -74,7 +74,7 @@ namespace KZLib
 			{
 				if(!errorLog.IsEmpty())
 				{
-					Log.Data.E(errorLog);
+					Log.System.E(errorLog);
 				}
 
 				return false;
@@ -156,8 +156,6 @@ namespace KZLib
 				{
 					continue;
 				}
-
-				Log.System.I(data.Item1.PrimaryKey);
 
 				var handle = Addressables.LoadAssetAsync<Object>(data.Item1.PrimaryKey);
 

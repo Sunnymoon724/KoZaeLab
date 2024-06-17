@@ -15,7 +15,8 @@ public static partial class CommonUtility
 			throw new NullReferenceException("폴더의 경로가 null 입니다.");
 		}
 
-		var fullPath = GetFullPath(IsFilePath(_path) ? Path.GetDirectoryName(_path) : _path);
+		// 현재 경로가 파일이면 부모 폴더 경로를 아니면 현재 경로의 풀 경로를 받아옴
+		var fullPath = GetFullPath(IsFilePath(_path) ? GetProjectPath(_path) : _path);
 
 		if(!Directory.Exists(fullPath))
 		{
@@ -76,7 +77,7 @@ public static partial class CommonUtility
 	/// </summary>
 	public static string GetTemplateText(string _templatePath)
 	{
-		var fullPath = GetFullPath(PathCombine(Global.TEMPLATE_FOLDER_PATH,_templatePath));
+		var fullPath = GetTemplateFullFilePath(_templatePath);
 		var data = ReadDataFromFile(fullPath);
 
 		if(data.IsEmpty())

@@ -136,9 +136,35 @@ public static partial class CommonUtility
 #if UNITY_EDITOR
 	public static byte[] GetTestImageData()
 	{
-		var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(PathCombine(Global.ASSETS_HEADER,Global.TEMPLATE_FOLDER_PATH,"Ostrich.png"));
+		var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(GetTemplateFilePath("Ostrich.png"));
 
 		return sprite != null ? sprite.texture.EncodeToPNG() : null;
+	}
+
+	public static string GetTemplateFilePath(string _fileName)
+	{
+		var filePath = string.Format("Packages/com.bsheepstudio.kzlib/WorkResources/Templates/{0}",_fileName);
+
+		if(IsExistFile(PathCombine(GetProjectPath(),filePath)))
+		{
+			return filePath;
+		}
+
+		filePath = string.Format("Assets/KZLib/WorkResources/Templates/{0}",_fileName);
+
+		if(IsExistFile(filePath))
+		{
+			return filePath;
+		}
+
+		throw new NullReferenceException(string.Format("템플릿 폴더에 해당 파일이 없습니다. [{0}]",_fileName));
+	}
+
+	public static string GetTemplateFullFilePath(string _fileName)
+	{
+		var filePath = GetTemplateFilePath(_fileName);
+
+		return filePath.StartsWith("Packages/") ? PathCombine(GetProjectPath(),filePath) : GetFullPath(filePath);
 	}
 #endif
 }

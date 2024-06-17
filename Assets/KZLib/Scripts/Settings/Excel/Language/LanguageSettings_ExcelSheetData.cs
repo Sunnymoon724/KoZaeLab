@@ -40,7 +40,7 @@ public partial class LanguageSettings : ExcelSettings<LanguageSettings>
 			{
 				m_LanguageDataList.Clear();
 
-				var excelFile = new ExcelFile(m_LocalFilePath);
+				var excelFile = GetExcelFile();
 
 				foreach(var title in excelFile.GetTitleGroup(m_SheetName))
 				{
@@ -67,7 +67,7 @@ public partial class LanguageSettings : ExcelSettings<LanguageSettings>
 
 		public override void CreateData()
 		{
-			var excelFile = new ExcelFile(m_LocalFilePath);
+			var excelFile = GetExcelFile();
 			var titleGroup = excelFile.GetTitleGroup(m_SheetName);
             var keyArray = excelFile.GetColumnGroup(m_SheetName,0).ToArray();
             var languageGroupArray = excelFile.GetColumnGroupArray(m_SheetName,titleGroup.Select(x=>x.Item2).ToArray());

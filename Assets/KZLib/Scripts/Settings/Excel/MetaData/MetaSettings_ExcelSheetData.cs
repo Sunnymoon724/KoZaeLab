@@ -25,7 +25,7 @@ public partial class MetaSettings : ExcelSettings<MetaSettings>
 
 				m_HeaderList.Clear();
 
-				var excelFile = new ExcelFile(m_LocalFilePath);
+				var excelFile = GetExcelFile();
 
 				foreach(var title in excelFile.GetTitleGroup(value))
 				{
@@ -76,7 +76,7 @@ public partial class MetaSettings : ExcelSettings<MetaSettings>
 
 		public override void CreateData()
 		{
-			var excelFile = new ExcelFile(m_LocalFilePath);
+			var excelFile = GetExcelFile();
 			var classType = Type.GetType(string.Format("MetaData.{0}Table",SheetName));
 			var scriptData = new ScriptData(SheetName,SheetName,m_HeaderList);
 

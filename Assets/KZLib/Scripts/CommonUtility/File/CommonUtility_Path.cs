@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public static partial class CommonUtility
@@ -21,65 +22,81 @@ public static partial class CommonUtility
 	}
 
 	/// <summary>
-	/// 파일 이름 + 확장자명 반환
+	/// 이름 + 확장자명 반환
 	/// </summary>
 	public static string GetFileName(string _filePath)
 	{
-		return IsFilePath(_filePath) ? Path.GetFileName(_filePath) : string.Empty;
+		return Path.GetFileName(_filePath);
 	}
 
 	/// <summary>
-	/// 파일 or 폴더 이름만 반환
+	/// 이름만 반환
 	/// </summary>
 	public static string GetOnlyName(string _path)
 	{
-		return IsFilePath(_path) ? Path.GetFileNameWithoutExtension(_path) : Path.GetDirectoryName(_path);
+		return Path.GetFileNameWithoutExtension(_path);
 	}
 
 	/// <summary>
-	/// 확장자명 반환
+	/// 확장자명만 반환
 	/// </summary>
 	public static string GetExtension(string _filePath)
 	{
-		return IsFilePath(_filePath) ? Path.GetExtension(_filePath) : string.Empty;
-	}
-
-	/// <summary>
-	/// 현재 경로를 반환
-	/// </summary>
-	public static string GetPathWithoutExtension(string _path)
-	{
-		return PathCombine(Path.GetDirectoryName(_path),Path.GetFileNameWithoutExtension(_path));
+		return Path.GetExtension(_filePath);
 	}
 
 	/// <summary>
 	/// 부모 경로 반환
 	/// </summary>
-	public static string GetParentPath(string _path)
+	public static string GetProjectPath(string _path)
 	{
-		return Directory.GetParent(GetFullPath(_path)).FullName;
+		return Path.GetDirectoryName(_path);
 	}
 
 	/// <summary>
-	/// 프로젝트의 상위 경로 반환
+	/// 현재 경로에서 확장자명을 빼고 반환
 	/// </summary>
-	public static string GetProjectParentPath()
+	public static string GetPathWithoutExtension(string _path)
 	{
-		return Directory.GetParent(Application.dataPath).Parent.FullName;
+		return Regex.Replace(_path,@"\.[^.]*$","");
 	}
 
 	/// <summary>
-	/// 프로젝트의 경로 반환
+	/// 확장자명을 변경함
+	/// </summary>
+	public static string ChangeExtension(string _path,string _extension)
+	{
+		return Path.ChangeExtension(_path,_extension);
+	}
+
+	/// <summary>
+	/// 부모 경로를 절대경로로 반환
+	/// </summary>
+	public static string GetParentAbsolutePath(string _path)
+	{
+		return GetFullPath(GetProjectPath(_path));
+	}
+
+	/// <summary>
+	/// 프로젝트의 경로 반환 (Assets폴더의 부모)
 	/// </summary>
 	public static string GetProjectPath()
 	{
-		return Directory.GetParent(Application.dataPath).FullName;
+		return GetProjectPath(Application.dataPath);
+	}
+
+	/// <summary>
+	/// 프로젝트의 상위 경로 반환 (Assets폴더의 부모의 부모)
+	/// </summary>
+	public static string GetProjectParentPath()
+	{
+		return GetProjectPath(GetProjectPath(Application.dataPath));
 	}
 
 	/// <summary>
 	/// 프로젝트 밖에 있는 파일(폴더)의 절대 경로 반환
 	/// </summary>
-	public static string GetAbsoluteFullPath(string _path)
+	public static string GetExternalFileAbsolutePath(string _path)
 	{
 		if(_path.IsEmpty())
 		{
@@ -100,11 +117,8 @@ public static partial class CommonUtility
 			return _path;
 		}
 
-		//? Assets이 포함되어 있으므로 우선 Assets이전까지 제거
-		if(_path.Contains(Global.ASSETS_HEADER))
-		{
-			_path = RemoveAssetsHeader(_path);
-		}
+		//? 로컬 경로를 반환 이후 다시 붙혀서 반환
+		_path = GetLocalPath(_path);
 
 		return PathCombine(Global.ASSETS_HEADER,_path);
 	}
@@ -130,17 +144,17 @@ public static partial class CommonUtility
 	/// <summary>
 	/// 경로가 폴더인지 파일인지 파악
 	/// </summary>
-	public static bool IsFilePath(string _path)
+	public static bool IsFilePath(string _filePath)
 	{
-		return Path.HasExtension(_path);
+		return Path.HasExtension(_filePath);
 	}
 
 	/// <summary>
 	/// 이 경로가 파일 경로인지 파악 (빌드 시 경로 파악이 어려울 수 있으므로 Empty 정도만 파악)
 	/// </summary>
-	public static bool IsExistFile(string _path,bool _needException = false)
+	public static bool IsExistFile(string _filePath,bool _needException = false)
 	{
-		if(_path.IsEmpty())
+		if(_filePath.IsEmpty())
 		{
 			if(_needException)
 			{
@@ -151,7 +165,7 @@ public static partial class CommonUtility
 		}
 
 #if UNITY_EDITOR
-		var fullPath = GetFullPath(_path);
+		var fullPath = GetFullPath(_filePath);
 
 		if(!File.Exists(fullPath))
 		{

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace KZLib.KZFiles
 {
-	public class MetaEvent : MidiEvent 
+	public record MetaEvent : MidiEvent 
 	{
 		public byte MetaStatus => m_Data1;
 		
@@ -16,7 +16,7 @@ namespace KZLib.KZFiles
 		}
 	}
 
-	public class MetaTextEvent : MetaEvent 
+	public record MetaTextEvent : MetaEvent 
 	{
 		public string Text { get; }
 
@@ -48,7 +48,7 @@ namespace KZLib.KZFiles
 		}
 	}
 
-	public class TrackSequenceNumberEvent : MetaEvent
+	public record TrackSequenceNumberEvent : MetaEvent
 	{
 		private ushort m_SequenceNumber;
 		
@@ -72,7 +72,7 @@ namespace KZLib.KZFiles
 		}
 	}
 	
-	public class MetaDataEvent : MetaEvent
+	public record MetaDataEvent : MetaEvent
 	{
 		public byte[] DataArray { get; }
 		
@@ -83,7 +83,7 @@ namespace KZLib.KZFiles
 		}
 	}
 
-	public class TempoEvent : MetaEvent 
+	public record TempoEvent : MetaEvent 
 	{
 		public int MicrosecondsPerQuarterNote { get; }		
 		public TempoEvent(BinaryReader _reader,int _length,int _delta) : base(0x51,0x00,_delta)
@@ -98,13 +98,7 @@ namespace KZLib.KZFiles
 		
 		public override string ToString() 
 		{
-			return string.Format("{0} {2}bpm ({1})", base.ToString(), MicrosecondsPerQuarterNote, (60000000 / MicrosecondsPerQuarterNote));
+			return string.Format("{0} {2} bpm ({1})", base.ToString(),MicrosecondsPerQuarterNote,(60000000/MicrosecondsPerQuarterNote));
 		}
-		
-		// public double Tempo
-		// {
-		// 	get => (60000000.0/m_MicrosecondsPerQuarterNote);
-		// 	set => m_MicrosecondsPerQuarterNote = (int) (60000000.0/value);
-		// }
 	}
 }

@@ -18,6 +18,7 @@ namespace KZLib.KZFiles
 
 		// 0 = single track, 1 = multi track synchronous, 2 = multi track asynchronous
 		private short m_FileFormat = 0;
+		public short FileFormat => m_FileFormat;
 
 		private short m_DeltaTicksPerQuarterNote = 0;
 
@@ -94,9 +95,10 @@ namespace KZLib.KZFiles
 		private MidiEvent ReadNextEvent(BinaryReader _reader,MidiEvent _previous)
 		{
 			var deltaTime = ReadVariableLength(_reader);
-			var code = (byte)0x00;
 			var channel = 1;
 			var status = _reader.ReadByte();
+
+			byte code;
 
 			if((status & 0x80) == 0)
 			{
@@ -117,30 +119,22 @@ namespace KZLib.KZFiles
 				}
 			}
 
-			switch(code)
+			return code switch
 			{
-				case 0x90: //NoteOn
-					return new NoteEvent(code,_reader.ReadByte(),_reader.ReadByte(),deltaTime,channel);
-				case 0x80: //NoteOff
-				case 0xA0: //AfterTouch
-				case 0xB0: //ControlChange
-				case 0xE0: //PitchWheel
-					return new MidiEvent(code,_reader.ReadByte(),_reader.ReadByte(),deltaTime,channel);
-				case 0xC0: //ProgramChange
-				case 0xD0: //ChannelPressure
-					return new MidiEvent(code,_reader.ReadByte(),0x00,deltaTime,channel);
-				case 0xF8: //TimingClock
-				case 0xFA: //StartSequence
-				case 0xFB: //ContinueSequence
-				case 0xFC: //StopSequence
-					return new MidiEvent(code,0x00,0x00,deltaTime,channel);
-				case 0xF0: //StartOfSystemExclusiveMessage
-					return ReadSystemEvent(_reader,deltaTime,channel);
-				case 0xFF: //MetaEvent
-					return ReadMetaEvent(_reader,deltaTime);
-				default:
-					throw new Exception(string.Format("지원하지 않는 이벤트 입니다.[{0:X2}]",code));
-			}
+				//NoteOn
+				0x90 => new NoteEvent(code,_reader.ReadByte(),_reader.ReadByte(),deltaTime,channel),
+				//NoteOff
+				0x80 or 0xA0 or 0xB0 or 0xE0 => new MidiEvent(code,_reader.ReadByte(),_reader.ReadByte(),deltaTime,channel),
+				//ProgramChange
+				0xC0 or 0xD0 => new MidiEvent(code,_reader.ReadByte(),0x00,deltaTime,channel),
+				//TimingClock
+				0xF8 or 0xFA or 0xFB or 0xFC => new MidiEvent(code,0x00,0x00,deltaTime,channel),
+				//StartOfSystemExclusiveMessage
+				0xF0 => ReadSystemEvent(_reader,deltaTime, channel),
+				//MetaEvent
+				0xFF => ReadMetaEvent(_reader,deltaTime),
+				_ => throw new Exception(string.Format("지원하지 않는 이벤트 입니다.[{0:X2}]",code)),
+			};
 		}
 
 		private MidiEvent ReadSystemEvent(BinaryReader _reader,int _deltaTime,int _channel)
@@ -209,13 +203,13 @@ namespace KZLib.KZFiles
 		private int ReadVariableLength(BinaryReader _reader)
 		{
 			var value = 0;
-			var next = 0;
+			int next;
 
 			do
 			{
 				next = _reader.ReadByte();
-				value = value << 7;
-				value = value | (next & 0x7F);
+				value <<= 7;
+				value |= next & 0x7F;
 
 			}while((next & 0x80) == 0x80);
 

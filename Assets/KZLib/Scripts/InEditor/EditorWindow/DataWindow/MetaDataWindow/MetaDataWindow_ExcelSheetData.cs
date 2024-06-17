@@ -27,7 +27,7 @@ namespace KZLib.KZWindow
 			[SerializeField,HideInInspector]
 			private Action<string> m_OnRemoveSheet = null;
 
-			private ExcelFile File => new(m_LocalFilePath);
+			private ExcelFile File => new(AbsoluteFilePath);
 
 			private bool IsExistFilePath => CommonUtility.IsExistFile(AbsoluteFilePath);
 			private bool IsExistSheetName => !m_SheetName.IsEmpty();
@@ -44,7 +44,7 @@ namespace KZLib.KZWindow
 			[VerticalGroup(" ")]
 			[HorizontalGroup(" /0",Order = 0)]
 			[HorizontalGroup(" /0/0",Order = 0),ShowInInspector,LabelText("경로"),LabelWidth(100),KZDocumentPath,PropertyTooltip("$AbsoluteFilePath")]
-			public string AbsoluteFilePath => CommonUtility.GetAbsoluteFullPath(m_LocalFilePath);
+			public string AbsoluteFilePath => CommonUtility.GetExternalFileAbsolutePath(m_LocalFilePath);
 
 			[HorizontalGroup(" /0/1",Order = 1),Button("시트 갱신하기"),EnableIf(nameof(IsExistFilePath))]
 			private void OnRefreshSheet()
