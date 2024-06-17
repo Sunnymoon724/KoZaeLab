@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 //! 디스코드는 로그 리포트 용도
-public partial class NetworkSettings : InSideSingletonSO<NetworkSettings>
+public partial class NetworkSettings : InnerBaseSettings<NetworkSettings>
 {
 	[TabGroup("통신 설정","디스코드")]
 	[TitleGroup("통신 설정/디스코드/사용 설정",BoldTitle = false,Order = 0),SerializeField,LabelText("디스코드 사용"),ToggleLeft]

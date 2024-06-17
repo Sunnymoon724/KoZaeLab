@@ -1,9 +1,8 @@
-﻿
-using System;
+﻿using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public partial class NetworkSettings : InSideSingletonSO<NetworkSettings>
+public partial class NetworkSettings : InnerBaseSettings<NetworkSettings>
 {
 	[Serializable]
 	private class NameIdResultData

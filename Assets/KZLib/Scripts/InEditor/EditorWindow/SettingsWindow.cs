@@ -8,7 +8,7 @@ using System;
 
 namespace KZLib.KZWindow
 {
-	public partial class SettingsWindow : OdinMenuEditorWindow
+	public class SettingsWindow : OdinMenuEditorWindow
 	{
 		protected List<IMetaDataTable> m_TableList = new();
 
@@ -24,11 +24,16 @@ namespace KZLib.KZWindow
 			tree.DefaultMenuStyle = OdinMenuStyle.TreeViewStyle;
 			tree.Selection.SupportsMultiSelect = false;
 
-			tree.Add("게임 설정",GameSettings.In);
+			AddSettings(tree,new Dictionary<string, string>
+			{
+				{ "게임 설정", nameof(GameSettings) },
+				{ "빌드 설정", nameof(BuildSettings) },
+				{ "메타 설정", nameof(MetaSettings) },
+				{ "언어 설정", nameof(LanguageSettings) },
+				{ "통신 설정", nameof(NetworkSettings) },
+			});
 
 			tree.Add("게임 설정/하이라키 커스텀",m_HierarchyCustom);
-
-			AddOdinMenuTree(ref tree);
 
 			AddMetaTable(ref tree);
 
@@ -74,7 +79,20 @@ namespace KZLib.KZWindow
 			}
 		}
 
-		partial void AddOdinMenuTree(ref OdinMenuTree _tree);
+		private void AddSettings(OdinMenuTree _tree,Dictionary<string,string> _settingsDict)
+		{
+			foreach(var pair in _settingsDict)
+			{
+				var settings = CommonUtility.LoadAsset<ScriptableObject>(string.Format("t:ScriptableObject {0}",pair.Value));
+
+				if(settings == null)
+				{
+					continue;
+				}
+
+				_tree.Add(pair.Key,settings);
+			}
+		}
 	}
 }
 #endif

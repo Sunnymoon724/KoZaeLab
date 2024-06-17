@@ -3,7 +3,7 @@ using KZLib;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public partial class GameSettings : InSideSingletonSO<GameSettings>
+public partial class GameSettings : InnerBaseSettings<GameSettings>
 {
 	[SerializeField,HideInInspector]
 	private Vector2Int m_ScreenResolution = new(Global.BASE_WIDTH,Global.BASE_HEIGHT);

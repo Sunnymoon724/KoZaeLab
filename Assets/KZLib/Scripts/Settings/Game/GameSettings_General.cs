@@ -9,7 +9,7 @@ using UnityEditor;
 
 #endif
 
-public partial class GameSettings : InSideSingletonSO<GameSettings>
+public partial class GameSettings : InnerBaseSettings<GameSettings>
 {
 	#region Game Version
 	[SerializeField,HideInInspector]

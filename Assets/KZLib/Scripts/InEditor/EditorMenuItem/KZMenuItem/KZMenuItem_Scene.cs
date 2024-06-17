@@ -21,14 +21,9 @@ namespace KZLib.KZMenu
 
 		private static string GetScenePath(string _sceneName)
 		{
-			var guid = AssetDatabase.FindAssets(string.Format("t:Scene {0}",_sceneName)).FirstOrDefault();
+			var pathGroup = CommonUtility.GetAssetPathGroup(string.Format("t:Scene {0}",_sceneName));
 
-			if(guid.IsEmpty())
-			{
-				return string.Empty;
-			}
-
-			return AssetDatabase.GUIDToAssetPath(guid);
+			return pathGroup.IsNullOrEmpty() ? string.Empty : pathGroup.First();
 		}
 
 		private static void OnOpenScene(string _title,string _sceneName)

@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// 엑셀 파일 사용 세팅
 /// </summary>
-public abstract partial class ExcelSettings<TObject> : OutSideSingletonSO<TObject> where TObject : ScriptableObject
+public abstract partial class ExcelSettings<TObject> : OuterBaseSettings<TObject> where TObject : SerializedScriptableObject
 {
 	protected string m_ErrorLog = null;
 

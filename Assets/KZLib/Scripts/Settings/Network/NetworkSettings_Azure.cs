@@ -5,7 +5,7 @@
 
 // //! 에저는 애셋번들 업로드 용도로만 사용하고 있으므로 현재는 Editor 전용이다.
 
-// public partial class NetworkSettings : InSideSingletonSO<NetworkSettings>
+// public partial class NetworkSettings : InnerBaseSettings<NetworkSettings>
 // {
 // #if UNITY_EDITOR
 // 	[TabGroup("통신 설정","애저")]

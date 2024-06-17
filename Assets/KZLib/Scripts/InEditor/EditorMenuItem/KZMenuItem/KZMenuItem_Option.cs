@@ -1,5 +1,4 @@
 #if UNITY_EDITOR
-using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -136,73 +135,75 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Option/AddOn/Add Build Settings",false,KZCategory.Option_Add)]
 		private static void OnAddBuildSettings()
 		{
-			AddSettings("빌드 설정","BuildSettings");
+			if(AddSettings("빌드 설정",BuildSettings.IsExist))
+			{
+				BuildSettings.CreateSettings();
+			}
 		}
 
 		[MenuItem("KZMenu/Option/AddOn/Add Build Settings",true)]
 		private static bool IsExistBuildSettings()
 		{
-			return !BuildSettings.IsExistFile;
+			return !BuildSettings.IsExist;
 		}
 
 		[MenuItem("KZMenu/Option/AddOn/Add Meta Settings",false,KZCategory.Option_Add)]
 		private static void OnAddMetaSettings()
 		{
-			AddSettings("메타 설정","MetaSettings");
+			if(AddSettings("메타 설정",MetaSettings.IsExist))
+			{
+				MetaSettings.CreateSettings();
+			}
 		}
 
 		[MenuItem("KZMenu/Option/AddOn/Add Meta Settings",true)]
 		private static bool IsExistMetaSettings()
 		{
-			return !MetaSettings.IsExistFile;
+			return !MetaSettings.IsExist;
 		}
 
 		[MenuItem("KZMenu/Option/AddOn/Add Language Settings",false,KZCategory.Option_Add)]
 		private static void OnAddLanguageSettings()
 		{
-			if(LanguageSettings.HasInstance)
+			if(AddSettings("언어 설정",LanguageSettings.IsExist))
 			{
-				CommonUtility.DisplayInfo(string.Format("{0}이 이미 존재합니다.\n","언어 설정"));
-			}
-			else
-			{
-				AddSettings("언어 설정","LanguageSettings");
+				LanguageSettings.CreateSettings();
 			}
 		}
 
 		[MenuItem("KZMenu/Option/AddOn/Add Language Settings",true)]
 		private static bool IsExistLanguageSettings()
 		{
-			return !LanguageSettings.IsExistFile;
+			return !LanguageSettings.HasInstance;
 		}
 
 		[MenuItem("KZMenu/Option/AddOn/Add Network Settings",false,KZCategory.Option_Add)]
 		private static void OnAddNetworkSettings()
 		{
-			AddSettings("통신 설정","NetworkSettings");
+			if(AddSettings("통신 설정",NetworkSettings.IsExist))
+			{
+				NetworkSettings.CreateSettings();
+			}
 		}
 
 		[MenuItem("KZMenu/Option/AddOn/Add Network Settings",true)]
 		private static bool IsExistNetworkSettings()
 		{
-			return !NetworkSettings.IsExistFile;
+			return !NetworkSettings.IsExist;
 		}
 
-		private static void AddSettings(string _name,string _instanceName)
+		private static bool AddSettings(string _name,bool _isExist)
 		{
-			if(!CommonUtility.DisplayCheck(string.Format("{0} 추가",_name),string.Format("{0} 추가하시겠습니까?",_name)))
+			if(_isExist)
 			{
-				return;
+				CommonUtility.DisplayInfo(string.Format("{0}이 이미 존재합니다.\n",_name));
+
+				return false;
 			}
-
-			var instance = string.Format("_tree.Add(\"{0}\",{1}.In);",_name,_instanceName);
-
-			CommonUtility.AddOrUpdateTemplateText(GameSettings.In.DefaultSettingPath,"SettingsWindow.txt","SettingsWindow_Custom.cs",instance,(text) => 
+			else
 			{
-				var footer = string.Format("\t\t}}{0}\t}}{0}}}{0}#endif",Environment.NewLine);
-
-				return text.Replace(footer,string.Format("\t\t\t{0}{1}{2}",instance,Environment.NewLine,footer));
-			});
+				return CommonUtility.DisplayCheck(string.Format("{0} 추가",_name),string.Format("{0} 추가하시겠습니까?",_name));
+			}
 		}
 
 		[MenuItem("KZMenu/Option/Check Internet",false,KZCategory.Option_Check)]

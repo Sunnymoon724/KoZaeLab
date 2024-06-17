@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public partial class GameSettings : InSideSingletonSO<GameSettings>
+public partial class GameSettings : InnerBaseSettings<GameSettings>
 {
 	[TabGroup("게임 설정","프로젝트 설정",Order = -100)]
 	[TitleGroup("게임 설정/프로젝트 설정/프리셋 설정",BoldTitle = false,Order = PRESET_ORDER)]

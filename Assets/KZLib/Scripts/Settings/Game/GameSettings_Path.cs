@@ -2,7 +2,13 @@
 using UnityEngine;
 using KZLib.KZAttribute;
 
-public partial class GameSettings : InSideSingletonSO<GameSettings>
+#if UNITY_EDITOR
+
+using UnityEditor;
+
+#endif
+
+public partial class GameSettings : InnerBaseSettings<GameSettings>
 {
 	[SerializeField,HideInInspector]
 	private string m_DefaultSettingPath = Global.DEFAULT_SETTING_WINDOW_FOLDER_PATH;
@@ -75,7 +81,9 @@ public partial class GameSettings : InSideSingletonSO<GameSettings>
 	private void InitializePath()
 	{
 #if UNITY_EDITOR
-		CreateFolderByFullPath(Global.DEFAULT_SETTING_WINDOW_FOLDER_PATH);
+		CommonUtility.CreateFolder(Global.DEFAULT_SETTING_WINDOW_FOLDER_PATH);
+
+		AssetDatabase.Refresh();
 #endif
 	}
 }
