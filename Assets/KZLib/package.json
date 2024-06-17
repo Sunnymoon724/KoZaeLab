@@ -8,8 +8,8 @@
   "dependencies": {
     "com.unity.render-pipelines.universal": "14.0.8",
     "com.unity.textmeshpro" : "3.0.9",
-    "com.cysharp.unitask" : "latest",
-    "com.coffee.ui-effect" : "latest",
+    "com.cysharp.unitask" : "2.5.4",
+    "com.coffee.ui-effect" : "4.0.0-preview.10",
     "com.unity.nuget.newtonsoft-json" : "3.2.1"
   }
 }
