@@ -2,4 +2,4 @@
 
 제대로 사용하기 위해서는 DotweenPro, Odin Inspector 에셋이 필요하며 UniTask, UIEffect,UniRx 패키지를 사용하고 있습니다.
 
-https://github.com/Sunnymoon724/KoZaeLab.git?path=src/KoZaeLab/Assets/KZLib
+https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
