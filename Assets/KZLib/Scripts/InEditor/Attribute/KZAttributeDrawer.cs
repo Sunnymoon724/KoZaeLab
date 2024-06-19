@@ -25,18 +25,19 @@ namespace KZLib.KZAttribute
 
 			GUI.enabled = true;
 
-			//? 에러가 없는 경우 -> 제대로 출력
 			if(m_ErrorMessage.IsEmpty())
 			{
+				//? 에러가 없는 경우
+
 				DoDrawPropertyLayout(_label);
-
-				return;
 			}
+			else
+			{
+				//? 에러가 있는 경우
+				SirenixEditorGUI.ErrorMessageBox(m_ErrorMessage);
 
-			//? 에러가 있는 경우 -> 제대로 출력
-			SirenixEditorGUI.ErrorMessageBox(m_ErrorMessage);
-
-			CallNextDrawer(_label);
+				CallNextDrawer(_label);
+			}
 
 			GUI.enabled = cashed;
 		}

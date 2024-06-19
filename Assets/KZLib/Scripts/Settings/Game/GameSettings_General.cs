@@ -15,9 +15,8 @@ public partial class GameSettings : InnerBaseSettings<GameSettings>
 	[SerializeField,HideInInspector]
 	private string m_GameVersion = null;
 
-	[TabGroup("게임 설정","프로젝트 설정",Order = -10)]
-	[TitleGroup("게임 설정/프로젝트 설정/일반 설정",BoldTitle = false,Order = GENERAL_ORDER)]
-	[BoxGroup("게임 설정/프로젝트 설정/일반 설정/0",ShowLabel = false),ShowInInspector,LabelText("게임 버전")]
+	[TitleGroup("일반 설정",BoldTitle = false,Order = 0)]
+	[BoxGroup("일반 설정/0",ShowLabel = false),ShowInInspector,LabelText("게임 버전")]
 	public string GameVersion
 	{
 		get => m_GameVersion;
@@ -40,7 +39,7 @@ public partial class GameSettings : InnerBaseSettings<GameSettings>
 	[SerializeField,HideInInspector]
 	private SystemLanguage m_GameLanguage = SystemLanguage.English;
 
-	[BoxGroup("게임 설정/프로젝트 설정/일반 설정/0",ShowLabel = false),ShowInInspector,LabelText("게임 언어"),InlineButton(nameof(OnChangeDefaultLanguage),Label = "",Icon = SdfIconType.ArrowRepeat)]
+	[BoxGroup("일반 설정/0",ShowLabel = false),ShowInInspector,LabelText("게임 언어"),InlineButton(nameof(OnChangeDefaultLanguage),Label = "",Icon = SdfIconType.Reply)]
 	public SystemLanguage GameLanguage
 	{
 		get
@@ -74,7 +73,7 @@ public partial class GameSettings : InnerBaseSettings<GameSettings>
 	[SerializeField,HideInInspector]
 	private string m_GameMode = DEVELOP_MODE;
 
-	[BoxGroup("게임 설정/프로젝트 설정/일반 설정/0",ShowLabel = false),ShowInInspector,LabelText("게임 모드"),ValueDropdown(nameof(GameModeList))]
+	[BoxGroup("일반 설정/0",ShowLabel = false),ShowInInspector,LabelText("게임 모드"),ValueDropdown(nameof(GameModeList))]
 	public string GameMode
 	{
 		get => m_GameMode;
@@ -124,7 +123,7 @@ public partial class GameSettings : InnerBaseSettings<GameSettings>
 	[SerializeField,HideInInspector]
 	private StateType m_ResourceState;
 
-	[BoxGroup("게임 설정/프로젝트 설정/일반 설정/0",ShowLabel = false),ShowInInspector,LabelText("리소스 상태"),ValueDropdown(nameof(StateList)),EnableIf(nameof(LockState))]
+	[BoxGroup("일반 설정/0",ShowLabel = false),ShowInInspector,LabelText("리소스 상태"),ValueDropdown(nameof(StateList)),EnableIf(nameof(LockState))]
 	private StateType ResourceState
 	{
 		get => m_ResourceState;
@@ -142,7 +141,7 @@ public partial class GameSettings : InnerBaseSettings<GameSettings>
 	[SerializeField,HideInInspector]
 	private StateType m_SaveDataState;
 
-	[BoxGroup("게임 설정/프로젝트 설정/일반 설정/0",ShowLabel = false),ShowInInspector,LabelText("세이브 상태"),ValueDropdown(nameof(StateList)),EnableIf(nameof(LockState))]
+	[BoxGroup("일반 설정/0",ShowLabel = false),ShowInInspector,LabelText("세이브 상태"),ValueDropdown(nameof(StateList)),EnableIf(nameof(LockState))]
 	private StateType SaveDataState
 	{
 		get => m_SaveDataState;
@@ -157,25 +156,16 @@ public partial class GameSettings : InnerBaseSettings<GameSettings>
 		}
 	}
 
-	private ValueDropdownList<string> m_GameModeList = null;
-
-	private IEnumerable GameModeList
+	private static IEnumerable GameModeList
 	{
 		get
 		{
-			if(m_GameModeList == null)
+			return new ValueDropdownList<string>()
 			{
-				m_GameModeList = new()
-				{
-					{ "개발자 모드",DEVELOP_MODE },
-					{ "커스텀 모드",CUSTOM_MODE },
-					{ "라이브 모드",LIVE_MODE },
-				};
-
-				AddGameMode_Partial();
-			}
-
-			return m_GameModeList;
+				{ "개발자 모드", DEVELOP_MODE	},
+				{ "커스텀 모드", CUSTOM_MODE	},
+				{ "라이브 모드", LIVE_MODE		},
+			};
 		}
 	}
 
@@ -193,13 +183,11 @@ public partial class GameSettings : InnerBaseSettings<GameSettings>
 		{
 			return new ValueDropdownList<StateType>()
 			{
-				{ "로컬 상태",StateType.Local_State },
-				{ "서버 상태",StateType.Server_State },
+				{ "로컬 상태", StateType.Local_State	},
+				{ "서버 상태", StateType.Server_State	},
 			};
 		}
 	}
-
-	partial void AddGameMode_Partial();
 
 	private const string DEVELOP_MODE = "DevelopMode";
 	private const string CUSTOM_MODE = "CustomMode";

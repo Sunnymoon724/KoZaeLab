@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using KZLib.KZDevelop;
 using Sirenix.OdinInspector;
-using UniRx;
+// using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -116,7 +117,7 @@ namespace KZLib
 		#region Open
 		public void DelayOpen<TBase>(UITag _tag,object _param,float _delayTime) where TBase : class,IWindowUI
 		{
-			Observable.Timer(TimeSpan.FromSeconds(_delayTime)).Subscribe(_ => { Open<TBase>(_tag,_param); });
+			CommonUtility.DelayActionAsync(() => { Open<TBase>(_tag,_param); },_delayTime,false,default).Forget();
 		}
 
 		public TBase Open<TBase>(UITag _tag,object _param = null) where TBase : class,IWindowUI
