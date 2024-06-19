@@ -51,7 +51,7 @@ MonoBehaviour:
   m_IsFullScreen: 1
   m_FrameRate: 60
   m_GraphicQuality: 104365118
-  m_UseHeadUpDisplay: 0
+  m_UseHeadUpDisplay: 1
   m_UseFrameSetting: 1
   m_UseMemorySetting: 1
   m_UseAudioSetting: 1
@@ -61,4 +61,4 @@ MonoBehaviour:
   m_MetaAssetPath: Resources/ScriptableObjects/MetaData
   m_TranslatePath: Resources/Texts/Translations
   m_UIPrefabPath: Resources/Prefabs/UI
-  m_EffectPrefabPath: Resources/Prefabs/Efx
+  m_EffectPrefabPath: Resources/ScriptableObjects

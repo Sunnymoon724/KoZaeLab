@@ -5,6 +5,13 @@ using UnityEngine;
 
 public static partial class CommonUtility
 {
+	public static async UniTask DelayActionAsync(Action _onAction,float _second,bool _ignoreTimeScale,CancellationToken _token)
+	{
+		await UniTask.WaitForSeconds(_second,_ignoreTimeScale,cancellationToken : _token);
+
+		_onAction();
+	}
+
 	public static async UniTask MergeUniTaskAsync(Func<UniTask>[] _onPlayTaskArray,CancellationToken _token)
 	{
 		for(var i=0;i<_onPlayTaskArray.Length;i++)
@@ -25,12 +32,12 @@ public static partial class CommonUtility
 
 	public static async UniTask LoopUniTaskAsync(Func<UniTask> _onPlayTask,int _count,CancellationToken _token)
 	{
-		await LoopAsync(_onPlayTask,_count,_token);
+		await LoopPlayAsync(_onPlayTask,_count,_token);
 	}
 
 	public static async UniTask LoopActionWaitForSecondeAsync(Action _onAction,float _second,bool _ignoreTimeScale,int _count,CancellationToken _token)
 	{
-		await LoopAsync(async ()=>
+		await LoopPlayAsync(async ()=>
 		{
 			_onAction();
 			await UniTask.WaitForSeconds(_second,_ignoreTimeScale,cancellationToken : _token);
@@ -40,7 +47,7 @@ public static partial class CommonUtility
 
 	public static async UniTask LoopActionWaitForFrameAsync(Action _onAction,int _count,CancellationToken _token)
 	{
-		await LoopAsync(async ()=>
+		await LoopPlayAsync(async ()=>
 		{
 			_onAction();
 			await UniTask.Yield(_token);
@@ -48,7 +55,7 @@ public static partial class CommonUtility
 		},_count,_token);
 	}
 
-	private static async UniTask LoopAsync(Func<UniTask> _onPlayTask,int _count,CancellationToken _token)
+	private static async UniTask LoopPlayAsync(Func<UniTask> _onPlayTask,int _count,CancellationToken _token)
 	{
 		if(_count == 0)
 		{

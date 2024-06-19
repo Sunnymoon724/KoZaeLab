@@ -1,13 +1,52 @@
-﻿using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace KZLib
 {
 	public partial class ResMgr : Singleton<ResMgr>
 	{
+		private record LoadingData(string DataPath,bool IsFilePath,Transform Parent);
+
+		private record CachedData
+		{
+			public Object[] DataArray { get; }
+
+			private readonly long m_Duration = 0L;
+
+			public CachedData(Object[] _dataArray,long _duration)
+			{
+				DataArray = _dataArray;
+				m_Duration = _duration;
+			}
+
+			public bool IsOverdue => m_Duration < DateTime.Now.Ticks;
+		}
+
 		private const string RESOURCES = "Resources";
 		private const float UPDATE_PERIOD = 0.1f;
 
+		private const float POOL_LOOP_TIME = 30.0f;   // 30초
+		private const double DEFAULT_DELETE_TIME = 60.0d;	// 60초
+
 		private CancellationTokenSource m_Source = null;
+
+		private float m_PoolTimer = 0.0f;
+
+		private readonly Queue<LoadingData> m_LoadingQueue = new();
+
+		private readonly Dictionary<string,List<CachedData>> m_CachedDataDict = new();
+		private readonly List<CachedData> m_RemoveList = new();
+
+		protected override void Initialize()
+		{
+			m_Source = new();
+
+			LoopProcessAsync().Forget();
+		}
 
 		protected override void Release(bool _disposing)
 		{
@@ -25,16 +64,114 @@ namespace KZLib
 
 			if(_disposing)
 			{
-				foreach(var data in m_CachedDataDict.Values)
-				{
-					data.Release();
-				}
-
 				m_CachedDataDict.Clear();
 				m_LoadingQueue.Clear();
 			}
 
 			base.Release(_disposing);
+		}
+
+		private async UniTaskVoid LoopProcessAsync()
+		{
+			while(true)
+			{
+				await UniTask.WaitForSeconds(UPDATE_PERIOD,true,cancellationToken : m_Source.Token);
+
+				// 오브젝트 풀 정리
+				{
+					m_PoolTimer += UPDATE_PERIOD;
+
+					if(m_PoolTimer >= POOL_LOOP_TIME)
+					{
+						m_PoolTimer = 0.0f;
+						m_RemoveList.Clear();
+
+						foreach(var pair in new Dictionary<string,List<CachedData>>(m_CachedDataDict))
+						{
+							foreach(var data in pair.Value)
+							{
+								if(data.IsOverdue)
+								{
+									//? 기한이 지난 것들
+									m_RemoveList.Add(data);
+								}
+							}
+
+							pair.Value.RemoveAll(x => m_RemoveList.Contains(x));
+
+							if(pair.Value.Count == 0)
+							{
+								m_CachedDataDict.RemoveSafe(pair.Key);
+							}
+						}
+					}
+				}
+
+				// 로딩 큐 체크하고 있으면 로딩 큐 실행
+				{
+					if(m_LoadingQueue.IsNullOrEmpty())
+					{
+						continue;
+					}
+
+					var data = m_LoadingQueue.Dequeue();
+
+					GetObject(data.DataPath,data.Parent,true);
+				}
+			}
+		}
+
+		private void AddLoadingQueue(string _path,bool _isFilePath,Transform _parent = null)
+		{
+			m_LoadingQueue.Enqueue(new LoadingData(_path,_isFilePath,_parent));
+		}
+
+		private TObject GetData<TObject>(string _path) where TObject : Object
+		{
+			if(m_CachedDataDict.TryGetValue(_path,out var dataList))
+			{
+				foreach(var data in dataList)
+				{
+					if(data.DataArray[0] is TObject result)
+					{
+						return result;
+					}
+				}
+			}
+
+			return null;
+		}
+
+		private TObject[] GetDataArray<TObject>(string _path) where TObject : Object
+		{
+			if(m_CachedDataDict.TryGetValue(_path,out var dataList))
+			{
+				foreach(var data in dataList)
+				{
+					if(data.DataArray is TObject[] resultArray)
+					{
+						return resultArray;
+					}
+				}
+			}
+
+			return null;
+		}
+
+		private void PutData<TObject>(string _path,TObject _object) where TObject : Object
+		{
+			PutDataArray(_path,new TObject[] { _object });
+		}
+
+		private void PutDataArray<TObject>(string _path,TObject[] _objectArray) where TObject : Object
+		{
+			if(!m_CachedDataDict.TryGetValue(_path,out var list))
+			{
+				list = new List<CachedData>();
+				m_CachedDataDict.Add(_path,list);
+			}
+
+			list.Add(new CachedData(_objectArray,DateTime.Now.AddSeconds(DEFAULT_DELETE_TIME).Ticks));
 		}
 	}
 }

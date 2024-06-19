@@ -13,16 +13,16 @@ namespace KZLib
 {
 	public partial class ResMgr : Singleton<ResMgr>
 	{
-		public TComponent GetObject<TComponent>(string _filePath,Transform _parent = null,bool _Immediately = true) where TComponent : Component
+		public TComponent GetObject<TComponent>(string _filePath,Transform _parent = null,bool _immediately = true) where TComponent : Component
 		{
-			var data = GetObject(_filePath,_parent,_Immediately);
+			var data = GetObject(_filePath,_parent,_immediately);
 
 			return data ? data.GetComponent<TComponent>() : null;
 		}
 
-		public GameObject GetObject(string _filePath,Transform _parent = null,bool _Immediately = true)
+		public GameObject GetObject(string _filePath,Transform _parent = null,bool _immediately = true)
 		{
-			if(_Immediately)
+			if(_immediately)
 			{
 				var data = GetResource<GameObject>(_filePath);
 
