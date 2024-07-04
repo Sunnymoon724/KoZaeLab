@@ -13,8 +13,6 @@
     "com.unity.addressables" : "1.21.21",
     "com.unity.textmeshpro" : "3.0.9",
     "com.cysharp.unitask" : "2.5.4",
-    "com.cysharp.r3" : "1.1.13",
-    "com.cysharp.memorypack" : "1.1.13",
     "com.github-gitchenzo.nugetforunity" : "4.1.1",
     "com.coffee.ui-effect" : "4.0.0-preview.10"
   },
