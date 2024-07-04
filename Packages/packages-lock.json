@@ -7,6 +7,13 @@
       "dependencies": {},
       "hash": "332340e7bc2f8257816dd28784607a1edf6b6c2a"
     },
+    "com.cysharp.memorypack": {
+      "version": "https://github.com/Cysharp/MemoryPack.git?path=src/MemoryPack.Unity/Assets/MemoryPack.Unity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "4b1e3f889fbc8bae6e700bc148f6dbba0a4b7170"
+    },
     "com.cysharp.r3": {
       "version": "https://github.com/Cysharp/R3.git?path=src/R3.Unity/Assets/R3.Unity",
       "depth": 0,
