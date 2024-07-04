@@ -8,7 +8,6 @@ using System.Linq;
 using KZLib;
 using KZLib.KZAttribute;
 using Newtonsoft.Json;
-using KZLib.KZFiles;
 
 /// <summary>
 /// 언어 현지화 세팅
@@ -18,8 +17,7 @@ public partial class LanguageSettings : ExcelSettings<LanguageSettings>
 	[Serializable]
 	private class LanguageSheetData : ExcelSheetData
 	{
-	#pragma warning disable IDE0051
-		[HorizontalGroup(" /0/2",Order = 2),ShowInInspector,LabelText("시트"),LabelWidth(100),KZRichText]
+		[HorizontalGroup(" /0/1",Order = 1),ShowInInspector,LabelText("시트"),LabelWidth(100),KZRichText]
 		private string SheetName => m_SheetName;
 
 		[Space(5)]
@@ -29,6 +27,27 @@ public partial class LanguageSettings : ExcelSettings<LanguageSettings>
 		public LanguageSheetData(string _path) : base(_path) { }
 
 		protected override string[] TitleArray => new[] { LANGUAGE_KEY, ENGLISH };
+
+		protected override bool IsShowCreateButton => m_LanguageDataList.Count != 0;
+
+		protected override bool IsCreateAble
+		{
+			get
+			{
+				m_ErrorLog = string.Empty;
+
+				var count = m_LanguageDataList.Count(x=>x.IsInclude);
+
+				if(count == 0)
+				{
+					m_ErrorLog = "생성할 언어가 없습니다.";
+
+					return false;
+				}
+
+				return true;
+			}
+		}
 
 		protected override void OnRefreshSheet()
 		{
@@ -44,35 +63,24 @@ public partial class LanguageSettings : ExcelSettings<LanguageSettings>
 
 				foreach(var title in excelFile.GetTitleGroup(m_SheetName))
 				{
-					m_LanguageDataList.Add(new LanguageData(title.Item1,true));
+					if(title.Item1.IsEnumDefined<SystemLanguage>())
+					{
+						m_LanguageDataList.Add(new LanguageData(title.Item1,true));
+					}
 				}
 			}
 		}
 
-		public override bool IsCreateAble(out string _errorLog)
-		{
-			_errorLog = string.Empty;
-
-			var count = m_LanguageDataList.Count(x=>x.IsInclude);
-
-			if(count == 0)
-			{
-				_errorLog = "생성할 언어가 없습니다.";
-
-				return false;
-			}
-
-			return true;
-		}
-
-		public override void CreateData()
+		[VerticalGroup(" /1",Order = 1),SerializeField,LabelText("언어 리스트"),TableList(IsReadOnly = true,AlwaysExpanded = true)]
+		protected override void OnCreateData()
 		{
 			var excelFile = GetExcelFile();
-			var titleGroup = excelFile.GetTitleGroup(m_SheetName);
-            var keyArray = excelFile.GetColumnGroup(m_SheetName,0).ToArray();
-            var languageGroupArray = excelFile.GetColumnGroupArray(m_SheetName,titleGroup.Select(x=>x.Item2).ToArray());
+			var titleGroup = excelFile.GetTitleGroup(SheetName);
+            var keyArray = excelFile.GetColumnGroup(SheetName,0).ToArray();
+            var languageGroupArray = excelFile.GetColumnGroupArray(SheetName,titleGroup.Select(x=>x.Item2).ToArray());
 
-			var localizeDict = new Dictionary<string,string>();
+			var languageDict = new Dictionary<string,string>();
+			var languageList = new List<string>();
 
 			for(var i=1;i<languageGroupArray.Length;i++)
 			{
@@ -91,7 +99,7 @@ public partial class LanguageSettings : ExcelSettings<LanguageSettings>
 					continue;
 				}
 
-				localizeDict.Clear();
+				languageDict.Clear();
 
 				var index = 1;
 
@@ -106,24 +114,26 @@ public partial class LanguageSettings : ExcelSettings<LanguageSettings>
 
 					var key = keyArray[index++];
 
-					if(localizeDict.ContainsKey(key))
+					if(languageDict.ContainsKey(key))
 					{
 						Log.Editor.W("{0}가 중복되어 생략했습니다.",key);
 
 						continue;
 					}
 
-					localizeDict.Add(key,text);
+					languageDict.Add(key,text);
 				}
 
-				if(localizeDict.IsNullOrEmpty())
+				if(languageDict.IsNullOrEmpty())
 				{
 					continue;
 				}
 
-				var result = JsonConvert.SerializeObject(localizeDict,Formatting.Indented);
+				var result = JsonConvert.SerializeObject(languageDict,Formatting.Indented);
 
-				CommonUtility.WriteDataToFile(CommonUtility.GetFullPath(CommonUtility.PathCombine(GameSettings.In.TranslatePath,string.Format("{0}.json",language))),result);
+				CommonUtility.WriteDataToFile(CommonUtility.GetFullPath(CommonUtility.PathCombine(GameSettings.In.LanguagePath,string.Format("{0}.json",language))),result);
+
+				languageList.Add(language);
 			}
 
 			AssetDatabase.Refresh();
@@ -133,9 +143,8 @@ public partial class LanguageSettings : ExcelSettings<LanguageSettings>
 				GameDataMgr.In.Clear<GameData.Option>();
 			}
 
-			CommonUtility.DisplayInfo("언어팩이 완성 되었습니다.");
+			CommonUtility.DisplayInfo(string.Format("언어팩이 완성 되었습니다. [{0}]",string.Join(",",languageList)));
 		}
-#pragma warning restore IDE0051
 	}
 }
 #endif

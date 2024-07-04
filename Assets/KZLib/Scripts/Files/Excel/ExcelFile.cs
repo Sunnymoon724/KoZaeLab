@@ -55,7 +55,7 @@ namespace KZLib.KZFiles
 			}
 		}
 
-		public Dictionary<string,string[]> GetEnumDict(string _sheetName,List<int> _orderList)
+		public Dictionary<string,string[]> GetEnumDict(string _sheetName)
 		{
 			var sheet = GetSheet(_sheetName);
 			var explicitDict = new Dictionary<string,string[]>();
@@ -75,58 +75,36 @@ namespace KZLib.KZFiles
 					explicitArray[i] = Regex.Replace(explicitArray[i],@"[^0-9a-zA-Z_]+",string.Empty);
 				}
 
-				var index = GetHeader(sheet,_orderList,explicitArray);
+				var header = GetHeader(sheet,explicitArray);
 
-				if(!_orderList.ContainsIndex(index))
-				{
-					continue;
-				}
-
-				var header = sheet.GetRow(0).GetCell(_orderList[index]).StringCellValue;
-
-				if(explicitDict.ContainsKey(header))
+				if(header == null || explicitDict.ContainsKey(header))
 				{
 					continue;
 				}
 
 				explicitDict.Add(header,explicitArray);
-
-				_orderList.RemoveAt(index);
 			}
 
 			return explicitDict;
 		}
 
-		private int GetHeader(ISheet _sheet,List<int> _orderList,string[] _dataArray)
+		private string GetHeader(ISheet _sheet,string[] _dataArray)
 		{
-			for(var i=1;i<=_sheet.LastRowNum;i++)
+			var index = 0;
+
+			foreach(var row in GetRowGroup(_sheet.SheetName,1))
 			{
-				for(var j=0;j<_orderList.Count;j++)
+				if(!_dataArray.Contains(row))
 				{
-					var row = _sheet.GetRow(i);
+					index++;
 
-					if(row.LastCellNum < _orderList[j])
-					{
-						Log.Files.E("{0}번째 줄의 {1}의 값이 존재하지 않습니다.",i,_orderList[j]);
-
-						continue;
-					}
-
-					var cell = _sheet.GetRow(i).GetCell(_orderList[j]);
-
-					if(cell == null || cell.StringCellValue.IsEmpty())
-					{
-						continue;
-					}
-
-					if(_dataArray.Any(x=>x.Contains(cell.StringCellValue)))
-					{
-						return j;
-					}
+					continue;
 				}
+
+				return ParseCell(GetSheet(_sheet.SheetName).GetRow(0).GetCell(index));
 			}
 
-			return -1;
+			return null;
 		}
 
 		private ISheet GetSheet(string _sheetName)

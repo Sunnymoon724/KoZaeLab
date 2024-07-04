@@ -54,8 +54,11 @@ public class SlotUI : BaseComponentUI
 			SetImage(_cellData.CellSprite);
 		}
 
-		if(UseButton)
+		if(UseButton && m_Button)
 		{
+			// TODO 이렇게 하면 오디오도 날라가는데 초기화 하긴 해야함
+			m_Button.onClick.RemoveAllListeners();
+
 			if(_cellData.CellAudioClip && gameObject.TryGetComponent<AudioButtonUI>(out var audioButton))
 			{
 				audioButton.SetAudio(_cellData.CellAudioClip);

@@ -1,3 +1,4 @@
+using KZLib.KZSchedule;
 using UnityEngine;
 using UnityEngine.UI;
 

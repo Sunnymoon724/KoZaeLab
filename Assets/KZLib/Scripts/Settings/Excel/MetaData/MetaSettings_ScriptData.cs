@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System;
 using System.Linq;
-using UnityEditor;
 
 /// <summary>
 /// 시트 파일 사용 세팅 시
@@ -16,16 +15,16 @@ public partial class MetaSettings : ExcelSettings<MetaSettings>
 		public string SheetName { get; }
 		public string ClassName { get; }
 
-		private readonly List<CellData> m_MemberDataList = null;
+		private readonly List<ExcelCellData> m_MemberDataList = null;
 		
-		public ScriptData(string _className,string _sheetName,List<CellData> _headerList)
+		public ScriptData(string _className,string _sheetName,List<ExcelCellData> _headerList)
 		{
 			SheetName = _sheetName;
 			ClassName = _className;
-			m_MemberDataList = new List<CellData>(_headerList);
+			m_MemberDataList = new List<ExcelCellData>(_headerList);
 		}
 
-		protected string MergeMemberData(Func<CellData,string> _onGetData,string _spaceText)
+		protected string MergeMemberData(Func<ExcelCellData,string> _onGetData,string _spaceText)
 		{
 			var builder = new StringBuilder();
 
@@ -44,16 +43,14 @@ public partial class MetaSettings : ExcelSettings<MetaSettings>
 		
 		public string MemberProperties => MergeMemberData((member)=>{ return member.ToPropertyText(); },string.Format("{0}{0}\t\t",Environment.NewLine));
 
-		public bool IsInEnum(out List<int> _orderList)
+		public bool IsInEnum()
 		{
-			_orderList = new List<int>();
-			
 			foreach(var data in m_MemberDataList.Where(x=>x.IsEnumType))
 			{
-				_orderList.Add(data.OrderNo);
+				return true;
 			}
 
-			return _orderList.Count > 0;
+			return false;
 		}
 
 		public void WriteScript(string _scriptPath)

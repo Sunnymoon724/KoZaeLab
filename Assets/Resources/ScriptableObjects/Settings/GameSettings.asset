@@ -59,6 +59,6 @@ MonoBehaviour:
   m_DefaultSettingPath: Scripts/InEditor/SettingsWindow
   m_MetaScriptPath: Scripts/Data/MetaData
   m_MetaAssetPath: Resources/ScriptableObjects/MetaData
-  m_TranslatePath: Resources/Texts/Translations
+  m_LanguagePath: Resources/Texts/Languages
   m_UIPrefabPath: Resources/Prefabs/UI
   m_EffectPrefabPath: Resources/ScriptableObjects

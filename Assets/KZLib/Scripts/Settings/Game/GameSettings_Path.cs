@@ -32,10 +32,10 @@ public partial class GameSettings : InnerBaseSettings<GameSettings>
 	public string MetaAssetPath { get => m_MetaAssetPath; private set => m_MetaAssetPath = value; }
 
 	[SerializeField,HideInInspector]
-	private string m_TranslatePath = Global.DEFAULT_LANGUAGE_TRANSLATE_FOLDER_PATH;
+	private string m_LanguagePath = Global.DEFAULT_LANGUAGE_FOLDER_PATH;
 
 	[BoxGroup("경로 설정/0",ShowLabel = false),ShowInInspector,LabelText("언어 데이터 에셋 경로"),KZFolderPath]
-	public string TranslatePath { get => m_TranslatePath; private set => m_TranslatePath = value; }
+	public string LanguagePath { get => m_LanguagePath; private set => m_LanguagePath = value; }
 
 	[SerializeField,HideInInspector]
 	private string m_UIPrefabPath = Global.DEFAULT_UI_PREFAB_PATH;

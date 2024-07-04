@@ -3,7 +3,6 @@
     "rootNamespace": "",
     "references": [
         "UniTask",
-        "UniRx",
         "Unity.TextMeshPro",
         "UIEffect",
         "Unity.InputSystem",
