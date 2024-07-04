@@ -21,9 +21,15 @@ namespace KZLib.KZAttribute
 		{
 			//? label
 			var rect = DrawPrefixLabel(_label);
+			var text = ValueEntry.SmartValue;
+
+			if(text.Contains(Environment.NewLine))
+			{
+				text = text.Replace(Environment.NewLine,"\\n");
+			}
 
 			//? 텍스트
-			EditorGUI.LabelField(rect,ValueEntry.SmartValue,new GUIStyle(GUI.skin.label)
+			EditorGUI.LabelField(rect,text,new GUIStyle(GUI.skin.label)
 			{
 				richText = true,
 			});

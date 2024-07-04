@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System;
 using NPOI.SS.UserModel;
 using System.Reflection;
-using System.ComponentModel;
-using System.Linq;
 
 namespace KZLib.KZFiles
 {
@@ -91,14 +89,7 @@ namespace KZLib.KZFiles
 
 				for(var j=_range.y;j<_range.y+_range.height;j++)
 				{
-					if(row == null)
-					{
-						resultArray[i,j] = string.Empty;
-					}
-					else
-					{
-						resultArray[i,j] = ParseCell(row.GetCell(j));
-					}
+					resultArray[i,j] = row == null ? string.Empty : ParseCell(row.GetCell(j));
 				}
 			}
 
@@ -107,138 +98,113 @@ namespace KZLib.KZFiles
 
 		private object ConvertData(ICell _cell,Type _type)
 		{
-			var data = ConvertCell(_cell,_type) ?? throw new InvalidCastException(string.Format("{0}을 캐스팅 할 수 있는 타입이 없습니다.",_type));
+			var text = GetCellText(_cell);
 
-			if(_type.IsGenericType && _type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+			if(_type.Equals(typeof(string)))
 			{
-				return new NullableConverter(_type).ConvertFrom(data);
+				return text.NormalizeNewLines();
 			}
-			else if(_type.IsEnum)
+			else if(_type.IsArray)
 			{
-				if(Enum.TryParse(_type,_cell.StringCellValue,out var value))
+				var dataArray = text.Replace(" ","").TrimEnd('&',' ').Split('&');
+				var type = _type.GetElementType();
+
+				var resultArray = Array.CreateInstance(type,dataArray.Length);
+
+				for(var i=0;i<dataArray.Length;i++)
+				{
+					resultArray.SetValue(ConvertToObject(dataArray[i],type),i);
+				}
+
+				return resultArray;
+			}
+			else
+			{
+				return ConvertToObject(text,_type);
+			}
+		}
+
+		private object ConvertToObject(string _text,Type _type)
+		{
+			if(_type.IsEnum)
+			{
+				if(Enum.TryParse(_type,_text,out var value))
 				{
 					return value;
 				}
 
-				throw new InvalidCastException(string.Format("{0}을 캐스팅 하는데 문제가 있습니다. [{1}]",_type,_cell.StringCellValue));
+				throw new ArgumentException(string.Format("{0}는 {1}의 enum이 아닙니다.",_text,_type.Name));
 			}
 			else if(_type.Equals(typeof(Vector3)))
 			{
-				return ConvertVector3(data);
-			}
-			else if(_type.IsArray)
-			{
-				return ConvertArrayData(data,_type.GetElementType());
-			}
-
-			return Convert.ChangeType(data,_type);
-		}
-
-		private object ConvertCell(ICell _cell,Type _type)
-		{
-			if(_type.Equals(typeof(float)) || _type.Equals(typeof(double)) || _type.Equals(typeof(short)) || _type.Equals(typeof(int)) || _type.Equals(typeof(long)))
-			{
-				if(_cell.CellType == CellType.Numeric || _cell.CellType == CellType.Formula)
+				if(_text.TryToVector3(out var _result))
 				{
-					return ConvertObject(_cell.NumericCellValue,_type);
+					return _result;
 				}
-				else if(_cell.CellType == CellType.String)
+
+				throw new ArgumentException(string.Format("{0}는 vector3가 아닙니다.",_text));
+			}
+			else if(_type.Equals(typeof(short)))
+			{
+				if(short.TryParse(_text,out var value))
 				{
-					return ConvertObject(_cell.StringCellValue,_type);
+					return value;
 				}
+
+				throw new ArgumentException(string.Format("{0}는 short가 아닙니다.",_text));
 			}
-			else if(_type.Equals(typeof(Vector3)))
+			else if(_type.Equals(typeof(int)))
 			{
-				return _cell.StringCellValue;
+				if(int.TryParse(_text,out var value))
+				{
+					return value;
+				}
+
+				throw new ArgumentException(string.Format("{0}는 int가 아닙니다.",_text));
 			}
-			else if(_type.Equals(typeof(string)) || _type.IsArray)
+			else if(_type.Equals(typeof(long)))
 			{
-				return (_cell.CellType == CellType.Numeric) ? _cell.NumericCellValue : _cell.StringCellValue;
+				if(long.TryParse(_text,out var value))
+				{
+					return value;
+				}
+
+				throw new ArgumentException(string.Format("{0}는 long이 아닙니다.",_text));
+			}
+			else if(_type.Equals(typeof(float)))
+			{
+				if(float.TryParse(_text,out var value))
+				{
+					return value;
+				}
+
+				throw new ArgumentException(string.Format("{0}는 float이 아닙니다.",_text));
+			}
+			else if(_type.Equals(typeof(double)))
+			{
+				if(double.TryParse(_text,out var value))
+				{
+					return value;
+				}
+
+				throw new ArgumentException(string.Format("{0}는 double이 아닙니다.",_text));
 			}
 			else if(_type.Equals(typeof(bool)))
 			{
-				return _cell.BooleanCellValue;
+				if(bool.TryParse(_text,out var value))
+				{
+					return value;
+				}
+
+				throw new ArgumentException(string.Format("{0}는 bool이 아닙니다.",_text));
 			}
 
-			return null;
+			throw new InvalidCastException(string.Format("{0}을 캐스팅 할 수 있는 타입이 없습니다.",_type));
 		}
 
-		private object ConvertObject(object _object,Type _type)
+		private string GetCellText(ICell _cell)
 		{
-			if(_object != null)
-			{
-				if(_type.Equals(typeof(float)))
-				{
-					return Convert.ToSingle(_object);
-				}
-
-				if(_type.Equals(typeof(double)))
-				{
-					return Convert.ToDouble(_object);
-				}
-
-				if(_type.Equals(typeof(short)))
-				{
-					return Convert.ToInt16(_object);
-				}
-
-				if(_type.Equals(typeof(int)))
-				{
-					return Convert.ToInt32(_object);
-				}
-
-				if(_type.Equals(typeof(long)))
-				{
-					return Convert.ToInt64(_object);
-				}
-			}
-
-			throw new FormatException(string.Format("바꿀 수 있는 포맷이 없습니다. [오브젝트 : {0}/ 타입 : {1}]",_object,_type));
-		}
-
-		private object ConvertArrayData(object _object,Type _type)
-		{
-			if(_object != null)
-			{
-				var dataArray = _object.ToString().Replace(" ","").TrimEnd('&',' ').Split('&');
-
-				if(_type.Equals(typeof(float)))
-				{
-					return dataArray.Select(x=>Convert.ToSingle(x)).ToArray();
-				}
-
-				if(_type.Equals(typeof(double)))
-				{
-					return dataArray.Select(x=>Convert.ToDouble(x)).ToArray();
-				}
-
-				if(_type.Equals(typeof(short)))
-				{
-					return dataArray.Select(x=>Convert.ToInt16(x)).ToArray();
-				}
-
-				if(_type.Equals(typeof(int)))
-				{
-					return dataArray.Select(x=>Convert.ToInt32(x)).ToArray();
-				}
-
-				if(_type.Equals(typeof(long)))
-				{
-					return dataArray.Select(x=>Convert.ToInt64(x)).ToArray();
-				}
-
-				if(_type.Equals(typeof(string)))
-				{
-					return dataArray;
-				}
-			}
-
-			throw new FormatException(string.Format("바꿀 수 있는 포맷이 없습니다. [오브젝트 : {0}/ 타입 : {1}]",_object,_type));
-		}
-
-		private object ConvertVector3(object _object)
-		{
-			return _object.ToString().ToVector3();
+			return (_cell.CellType == CellType.Numeric || _cell.CellType == CellType.Formula) ? string.Format("{0}",_cell.NumericCellValue) : _cell.StringCellValue;
 		}
 
 		private string ParseCell(ICell _cell)

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace KZLib
 {
@@ -37,7 +36,7 @@ namespace KZLib
 				}
 			}
 
-			if(!m_MetaDataContainer.Any())
+			if(m_MetaDataContainer.Count == 0)
 			{
 				Log.Data.W("메타 데이터 매니져가 비어 있습니다.");
 			}
@@ -51,18 +50,18 @@ namespace KZLib
 
 		private int AddMetaData(IMetaDataTable _table)
 		{
-			if(_table.DataGroup.IsNullOrEmpty())
+			var table = CommonUtility.CopyObject(_table as MetaDataTable);
+			var dataGroup = table.DataGroup;
+
+			if(dataGroup.IsNullOrEmpty())
 			{
 				return 0;
 			}
 
 			var dataDict = new Dictionary<int,IMetaData>();
-			var iterator = _table.DataGroup.GetEnumerator();
 
-			while(iterator.MoveNext())
+			foreach(var data in dataGroup)
 			{
-				var data = iterator.Current;
-
 				if(!CommonUtility.CheckVersion(data.Version) || !data.IsExist)
 				{
 					continue;
@@ -81,7 +80,7 @@ namespace KZLib
 				return 0;
 			}
 
-			var type = _table.DataGroup.First().GetType();
+			var type = dataGroup.GetType().GetElementType();
 
 			m_MetaDataContainer.Add(type,dataDict);
 
@@ -114,7 +113,22 @@ namespace KZLib
 
 		public IEnumerable<TData> GetContainer<TData>() where TData : class,IMetaData
 		{
-			return m_MetaDataContainer.TryGetValue(typeof(TData),out var data) ? data.Values.Cast<TData>() : null;
+			if(m_MetaDataContainer.TryGetValue(typeof(TData),out var dictionary))
+			{
+				var resultList = new List<TData>();
+
+				foreach(var value in dictionary.Values)
+				{
+					if(value is TData data)
+					{
+						resultList.Add(data);
+					}
+				}
+
+				return resultList;
+			}
+
+			return null;
 		}
 
 		public int GetCount<TData>() where TData : class,IMetaData

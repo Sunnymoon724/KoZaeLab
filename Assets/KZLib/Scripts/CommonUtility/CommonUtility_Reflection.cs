@@ -24,6 +24,21 @@ public static partial class CommonUtility
 		return null;
 	}
 
+	/// <summary>
+	/// 이름으로 타입 찾기
+	/// </summary>
+	public static Type FindType(string _typeFullName,string _assemblyName)
+	{
+		var assembly = Assembly.Load(_assemblyName);
+
+		if(assembly != null)
+		{
+			return assembly.GetType(_typeFullName);
+		}
+
+		return null;
+	}
+
 	public static IEnumerable<Type> FindDerivedTypeGroup(Type _type)
 	{
 		return FindDerivedTypeGroup(_type,AppDomain.CurrentDomain.GetAssemblies());

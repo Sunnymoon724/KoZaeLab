@@ -17,48 +17,12 @@ public partial class LanguageSettings : ExcelSettings<LanguageSettings>
 	private List<LanguageSheetData> m_SheetList = new();
 
 	protected override bool IsShowAddButton => m_SheetList.Count == 0;
-	protected override bool IsShowCreateButton => !IsShowAddButton;
-	protected override bool IsCreateAble
-	{
-		get
-		{
-			m_ErrorLog = string.Empty;
-
-			if(!IsShowCreateButton)
-			{
-				m_ErrorLog = "시트가 없습니다.";
-
-				return false;
-			}
-
-			var sheet = m_SheetList[0];
-
-			if(!sheet.IsCreateAble(out var error))
-			{
-				m_ErrorLog = string.Format("시트 데이터가 오류 입니다. [{0}]\n",error);
-
-				return false;
-			}
-
-			return true;
-		}
-	}
 
 	protected override void OnSetSheetData(string _filePath)
 	{
 		m_SheetList.Clear();
 
 		m_SheetList.Add(new LanguageSheetData(_filePath));
-	}
-
-	protected override void OnCreateButton()
-	{
-		if(!IsShowCreateButton)
-		{
-			return;
-		}
-
-		m_SheetList[0].CreateData();
 	}
 }
 #endif

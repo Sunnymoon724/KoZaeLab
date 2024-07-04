@@ -18,12 +18,6 @@ namespace KZLib.KZMenu
 			EditorWindow.GetWindow<SaveDataWindow>().Show();
 		}
 
-		[MenuItem("KZMenu/Window/Open Meta Data Window",false,KZCategory.Window_Data)]
-		private static void OnOpenMetaDataWindow()
-		{
-			EditorWindow.GetWindow<MetaDataWindow>().Show();
-		}
-
 		[MenuItem("KZMenu/Window/Open Manual Window",false,KZCategory.Window_Manual)]
 		private static void OnOpenManualWindow()
 		{

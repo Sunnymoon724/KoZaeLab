@@ -53,15 +53,15 @@ namespace GameData
 
 		public Language LanguageOption { get; private set; }
 
-		private readonly Dictionary<SystemLanguage,Dictionary<string,string>> m_TranslateDict = new();
+		private readonly Dictionary<SystemLanguage,Dictionary<string,string>> m_LanguageDict = new();
 
 		private void InitializeLanguage()
 		{
 			LanguageOption = s_SaveHandler.GetObject(LANGUAGE_OPTION,new Language());
 
-			m_TranslateDict.Clear();
+			m_LanguageDict.Clear();
 
-			foreach(var textAsset in ResMgr.In.GetTextAssetArray(GameSettings.In.TranslatePath))
+			foreach(var textAsset in ResMgr.In.GetTextAssetArray(GameSettings.In.LanguagePath))
 			{
 				var languageDict = JsonConvert.DeserializeObject<Dictionary<string,string>>(textAsset.text);
 
@@ -70,13 +70,13 @@ namespace GameData
 					continue;
 				}
 
-				m_TranslateDict.Add(textAsset.name.ToEnum<SystemLanguage>(),languageDict);
+				m_LanguageDict.Add(textAsset.name.ToEnum<SystemLanguage>(),languageDict);
 			}
 		}
 
 		private void ReleaseLanguage()
 		{
-			m_TranslateDict.Clear();
+			m_LanguageDict.Clear();
 		}
 
 		public void SetGameLanguage(SystemLanguage _language)
@@ -88,7 +88,7 @@ namespace GameData
 				return;
 			}
 
-			if(!m_TranslateDict.ContainsKey(_language))
+			if(!m_LanguageDict.ContainsKey(_language))
 			{
 				Log.Data.I("해당 언어의 번역본이 없어서 변경하지 않았습니다. [{0}]",_language);
 
@@ -102,12 +102,12 @@ namespace GameData
 
 		public string ToTranslateText(string _key)
 		{
-			if(m_TranslateDict.IsNullOrEmpty())
+			if(m_LanguageDict.IsNullOrEmpty())
 			{
 				throw new NullReferenceException("번역 데이터가 비어있습니다.");
 			}
 
-			if(m_TranslateDict.TryGetValue(LanguageOption.GameLanguage,out var dataDict))
+			if(m_LanguageDict.TryGetValue(LanguageOption.GameLanguage,out var dataDict))
 			{
 				if(dataDict.TryGetValue(_key,out var value))
 				{
@@ -116,7 +116,7 @@ namespace GameData
 			}
 			else
 			{
-				if(m_TranslateDict[DefaultLanguage].TryGetValue(_key,out var value))
+				if(m_LanguageDict[DefaultLanguage].TryGetValue(_key,out var value))
 				{
 					return value;
 				}
@@ -130,7 +130,7 @@ namespace GameData
 #if UNITY_EDITOR
 			var textList = new List<string>();
 
-			foreach(var pair in m_TranslateDict)
+			foreach(var pair in m_LanguageDict)
 			{
 				if(pair.Value.TryGetValue(_key,out var value))
 				{
@@ -153,7 +153,7 @@ namespace GameData
 #if UNITY_EDITOR
 			if(!_text.IsEmpty())
 			{
-				foreach(var dict in m_TranslateDict.Values)
+				foreach(var dict in m_LanguageDict.Values)
 				{
 					foreach(var pair in dict)
 					{

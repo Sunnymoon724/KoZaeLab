@@ -1,8 +1,9 @@
 ﻿using Cysharp.Threading.Tasks;
 using KZLib.KZDevelop;
+using KZLib.KZSchedule;
 using UnityEngine;
 
-public class SchedulePanelUI : WindowUI2D
+public class GraphicsPanelUI : WindowUI2D
 {
 	[SerializeField,HideInInspector]
 	private UITag m_Tag = null;

@@ -1,0 +1,552 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd241309258da248a636dffe7b5b474, type: 3}
+  m_Name: PartsTable
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  m_PartsList:
+  - m_MetaId: 300100
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Common/Common_Drive_0_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 300110
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Common/Common_Drive_1_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 300120
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Common/Common_Drive_2_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 300130
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Common/Common_Drive_3_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 300140
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Common/Common_Drive_4_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 300150
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Common/Common_Drive_5_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 300200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Common/Common_Weapon_0_0.prefab
+    m_DataType: 2
+    m_StatId: 15
+    m_Exist: 1
+  - m_MetaId: 300210
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Common/Common_Weapon_1_0.prefab
+    m_DataType: 2
+    m_StatId: 13
+    m_Exist: 1
+  - m_MetaId: 301000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Cat/Cat_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 301200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Cat/Cat_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 3
+    m_Exist: 1
+  - m_MetaId: 302000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Dog/Dog_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 302200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Dog/Dog_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 3
+    m_Exist: 1
+  - m_MetaId: 302201
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Dog/Dog_Weapon_1.prefab
+    m_DataType: 2
+    m_StatId: 5
+    m_Exist: 1
+  - m_MetaId: 303000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Squirrel/Squirrel_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 303200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Squirrel/Squirrel_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 6
+    m_Exist: 1
+  - m_MetaId: 304000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Rabbit/Rabbit_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 304100
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Rabbit/Rabbit_Drive_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 304200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Rabbit/Rabbit_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 7
+    m_Exist: 1
+  - m_MetaId: 305000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Turtle/Turtle_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 305200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Turtle/Turtle_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 4
+    m_Exist: 1
+  - m_MetaId: 306000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Bee/Bee_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 306200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Bee/Bee_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 8
+    m_Exist: 1
+  - m_MetaId: 307000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Deer/Deer_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 307200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Deer/Deer_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 10
+    m_Exist: 1
+  - m_MetaId: 308000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Whale/Whale_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 308200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Whale/Whale_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 11
+    m_Exist: 1
+  - m_MetaId: 309000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Alligator/Alligator_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 309200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Alligator/Alligator_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 12
+    m_Exist: 1
+  - m_MetaId: 310000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Owl/Owl_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 310200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Owl/Owl_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 13
+    m_Exist: 1
+  - m_MetaId: 311000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Pelican/Pelican_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 312000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Raven/Raven_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 313000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Chicken/Chicken_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 313200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Chicken/Chicken_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 6
+    m_Exist: 1
+  - m_MetaId: 314000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Giraffe/Giraffe_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 314100
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Giraffe/Giraffe_Drive_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 314200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Giraffe/Giraffe_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 15
+    m_Exist: 1
+  - m_MetaId: 315000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Penguin/Penguin_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 315200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Penguin/Penguin_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 16
+    m_Exist: 1
+  - m_MetaId: 316000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Cow/Cow_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 316200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Cow/Cow_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 15
+    m_Exist: 1
+  - m_MetaId: 317000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Lion/Lion_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 318000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Frog/Frog_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 318100
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Frog/Frog_Drive_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 318200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Frog/Frog_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 9
+    m_Exist: 1
+  - m_MetaId: 319000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Otter/Otter_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 319100
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Otter/Otter_Drive_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 319200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Otter/Otter_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 12
+    m_Exist: 1
+  - m_MetaId: 320000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Monkey/Monkey_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 320100
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Monkey/Monkey_Drive_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 320200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Monkey/Monkey_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 5
+    m_Exist: 1
+  - m_MetaId: 321000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Clownfish/Clownfish_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 321200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Clownfish/Clownfish_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 11
+    m_Exist: 1
+  - m_MetaId: 322000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Pig/Pig_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 322200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Pig/Pig_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 5
+    m_Exist: 1
+  - m_MetaId: 323000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Crab/Crab_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 323100
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Crab/Crab_Drive_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 323200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Crab/Crab_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 17
+    m_Exist: 1
+  - m_MetaId: 324000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Ostrich/Ostrich_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 324100
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Ostrich/Ostrich_Drive_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 324200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Ostrich/Ostrich_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 17
+    m_Exist: 1
+  - m_MetaId: 325000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/HammerHeadShark/HammerHeadShark_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 325100
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/HammerHeadShark/HammerHeadShark_Drive_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 325200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/HammerHeadShark/HammerHeadShark_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 11
+    m_Exist: 1
+  - m_MetaId: 326000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Tiger/Tiger_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 326200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Tiger/Tiger_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 5
+    m_Exist: 1
+  - m_MetaId: 327000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Elephant/Elephant_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 328000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/AtlasBeetle/AtlasBeetle_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 328200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/AtlasBeetle/AtlasBeetle_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 18
+    m_Exist: 1
+  - m_MetaId: 329000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Squid/Squid_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 329100
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Squid/Squid_Drive_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 329200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Squid/Squid_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 19
+    m_Exist: 1
+  - m_MetaId: 330000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Ladybug/Ladybug_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 330200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Ladybug/Ladybug_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 18
+    m_Exist: 1
+  - m_MetaId: 331000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Sardine/Sardine_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 331100
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Sardine/Sardine_Drive_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 331200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Sardine/Sardine_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 20
+    m_Exist: 1
+  - m_MetaId: 332000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Platypus/Platypus_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 332100
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Platypus/Platypus_Drive_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 332200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Platypus/Platypus_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 7
+    m_Exist: 1
+  - m_MetaId: 333000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Octopus/Octopus_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 333100
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Octopus/Octopus_Drive_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 333200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Octopus/Octopus_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 21
+    m_Exist: 1
+  - m_MetaId: 334000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Sheep/Sheep_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 334100
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Sheep/Sheep_Drive_0.prefab
+    m_DataType: 1
+    m_StatId: 2
+    m_Exist: 1
+  - m_MetaId: 334200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Sheep/Sheep_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 20
+    m_Exist: 1
+  - m_MetaId: 335000
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Wolf/Wolf_Core_0.prefab
+    m_DataType: 0
+    m_StatId: 1
+    m_Exist: 1
+  - m_MetaId: 335200
+    m_Version: 0.1
+    m_ModelPath: GameResources/Prefabs/Model/Parts/Wolf/Wolf_Weapon_0.prefab
+    m_DataType: 2
+    m_StatId: 22
+    m_Exist: 1
