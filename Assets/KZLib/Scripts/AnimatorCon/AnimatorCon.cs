@@ -4,6 +4,11 @@ using KZLib.KZAttribute;
 
 namespace KZLib
 {
+	// TODO 이벤트 부분 개발 중
+
+	/// <summary>
+	/// 매 프레임 체크하며 애니메이션 실행함 (애니메이션 확인도 추가)
+	/// </summary>
 	[RequireComponent(typeof(Animator)),ExecuteInEditMode]
 	public abstract class AnimatorCon : BaseComponent
 	{
@@ -18,8 +23,6 @@ namespace KZLib
 
 		public bool IsPlaying { get; private set; }
 		public bool IsLoop { get; private set; }
-
-		protected virtual void OnActionEvent(string _event) { }
 
 		private bool IsExistAnimator
 		{
