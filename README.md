@@ -2,6 +2,9 @@
 * 코 코재가 범용적으로 코드를 쓸 수 있도록 라이브러리화 시키고 있는 연구소. (현재 코드 정리 중)
 * 제대로 사용하기 위해서는 **DotweenPro**, **Odin Inspector** 에셋이 필요하며 **UniTask**, **UIEffect**(임시로) 패키지를 사용하고 있습니다.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blueviolet.svg)](https://github.com/Sunnymoon724/KoZaeLab/blob/master/LICENSE)
+[![Unity Version](https://img.shields.io/badge/Unity-2022.3%20or%20later-important)](https://unity3d.com/)
+
 ## 목차
 * [시작하기](#getting-started)
 * [외부에셋](#external-assets)
