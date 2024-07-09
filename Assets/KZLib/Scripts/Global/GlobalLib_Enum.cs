@@ -5,6 +5,8 @@ public enum UIPriorityType { Backmost = -500, Normal = 0, Foremost = +500 };
 
 public enum SpaceType { xyz, xy, xz };
 
+public enum GraphicsQualityPresetType { QualityLowest, QualityLow, QualityMiddle, QualityHigh, QualityHighest, }
+
 public enum EaseType
 {
 	Linear,

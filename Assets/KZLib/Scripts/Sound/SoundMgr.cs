@@ -51,7 +51,7 @@ namespace KZLib
 
 		private void OnChangeSoundOption()
 		{
-			var option = GameDataMgr.In.Access<GameData.Option>().SoundOption;
+			var option = GameDataMgr.In.Access<GameData.SoundOption>();
 
 			var master = option.MasterVolume;
 			var music = option.MusicVolume;

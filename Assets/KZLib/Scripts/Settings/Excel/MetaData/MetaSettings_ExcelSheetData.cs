@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System;
 using UnityEditor;
 using System.Text;
-using System.Reflection;
 
 /// <summary>
 /// 메타 테이블을 세팅
@@ -80,7 +79,7 @@ public partial class MetaSettings : ExcelSettings<MetaSettings>
 			}
 		}
 
-		public Type MetaType => CommonUtility.FindType(string.Format("MetaData.{0}Table",SheetName),"Assembly-CSharp");
+		public Type MetaType => ReflectionUtility.FindType(string.Format("MetaData.{0}Table",SheetName),"Assembly-CSharp");
 
 		protected override void OnRefreshSheet()
 		{

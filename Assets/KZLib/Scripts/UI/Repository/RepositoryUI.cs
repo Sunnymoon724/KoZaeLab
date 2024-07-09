@@ -22,21 +22,21 @@ public abstract class RepositoryUI : SortingLayerCanvas
 		m_CanvasGroup.interactable = !_block;
 	}
 
-	protected override void Awake()
+	protected override void Initialize()
 	{
-		base.Awake();
+		base.Initialize();
 
 		m_Canvas.sortingOrder = SortingLayerOrder;
 
 		if(CanvasCamera != null)
 		{
-			CameraMgr.In.AddSubCamera(CanvasCamera);
+			CameraMgr.In.AddSubCamera(CanvasCamera,false);
 		}
 	}
 
-	protected override void OnDestroy()
+	protected override void Release()
 	{
-		base.OnDestroy();
+		base.Release();
 
 		RemoveAll(null,true,true);
 

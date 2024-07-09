@@ -24,9 +24,9 @@ namespace KZLib.KZDevelop
 
 		private List<Transform> m_ParallaxList = null;
 
-		protected override void Awake()
+		protected override void Initialize()
 		{
-			base.Awake();
+			base.Initialize();
 
 			if(m_Count < 1 || m_Width < 0.0f)
 			{

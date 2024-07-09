@@ -9,9 +9,7 @@
         "Unity.Addressables",
         "Unity.Addressables.Editor",
         "Unity.ResourceManager",
-        "Unity.RenderPipelines.Universal.Runtime",
-        "R3.Unity",
-        "MemoryPack.Unity"
+        "Unity.RenderPipelines.Universal.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

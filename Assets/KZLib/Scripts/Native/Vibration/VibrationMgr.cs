@@ -67,7 +67,7 @@ namespace KZLib
 
 		private void OnChangeNativeOption()
 		{
-			var option = GameDataMgr.In.Access<GameData.Option>().NativeOption;
+			var option = GameDataMgr.In.Access<GameData.NativeOption>();
 
 			m_UseVibration = option.UseVibration;
 		}

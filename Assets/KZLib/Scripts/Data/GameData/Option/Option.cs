@@ -1,7 +1,5 @@
 ﻿using KZLib;
-
-public record ScreenResolutionData(int Width,int Height,bool IsFull);
-public record SoundVolumeData(float Level,bool Mute);
+using KZLib.KZDevelop;
 
 namespace GameData
 {
@@ -9,8 +7,11 @@ namespace GameData
 	/// 디폴트 옵션은 게임세팅에서 가져온다.
 	/// 여기 저장되는건 유저 옵션들
 	/// </summary>
-	public partial class Option : IGameData
+	public abstract class Option : IGameData
 	{
+		protected abstract string OPTION_KEY { get; }
+		protected abstract EventTag Tag { get; }
+
 		private class Handler : SaveDataHandler
 		{
 			protected override string TABLE_NAME => "Option_Table";
@@ -18,31 +19,22 @@ namespace GameData
 			protected override bool NewSave => true;
 		}
 
-		private static Handler s_SaveHandler = null;
+		private readonly Handler m_SaveHandler = new();
 
-		public void Initialize()
+		public abstract void Initialize();
+
+		public abstract void Release();
+
+		protected TData GetOption<TData>(TData _default)
 		{
-			s_SaveHandler = new();
-
-			InitializeSound();
-			InitializeGraphic();
-			InitializeLanguage();
-			InitializeNative();
-
-			Initialize_Partial();
+			return m_SaveHandler.GetObject(OPTION_KEY,_default);
 		}
 
-		public void Release()
+		protected void SaveOption(object _object)
 		{
-			ReleaseSound();
-			ReleaseGraphic();
-			ReleaseLanguage();
-			ReleaseNative();
+			m_SaveHandler.SetObject(OPTION_KEY,_object);
 
-			Release_Partial();
+			Broadcaster.SendEvent(Tag);
 		}
-
-		partial void Initialize_Partial();
-		partial void Release_Partial();
 	}
 }

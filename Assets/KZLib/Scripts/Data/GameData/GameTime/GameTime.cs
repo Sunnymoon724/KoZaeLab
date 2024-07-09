@@ -16,6 +16,7 @@ namespace GameData
 
 		public long LastServerTime { get; private set; }
 		public float LastClientTime { get; private set; }
+
 		public float NowClientTime { get; private set; }
 		public long NowServerTime => m_ServerTime + (long)(TimeSpan.TicksPerSecond*(Time.realtimeSinceStartup-m_SyncTime));
 

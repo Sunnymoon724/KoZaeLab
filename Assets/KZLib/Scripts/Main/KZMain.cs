@@ -71,7 +71,7 @@ namespace KZLib
 			Log.System.I("메인 생성");
 		}
 
-		private void Start()
+		private async void Start()
 		{
 			if(!GameSettings.In.IsLiveMode && GameSettings.In.UseHeadUpDisplay)
 			{
@@ -81,7 +81,7 @@ namespace KZLib
 			DOTween.Init(false,false,LogBehaviour.ErrorsOnly);
 			DOTween.SetTweensCapacity(1000,100);
 
-			var option = GameDataMgr.In.Access<Option>().GraphicOption;
+			var option = GameDataMgr.In.Access<GraphicOption>();
 			var builder = new StringBuilder();
 
 			InitializeResolution(builder,option);
@@ -95,7 +95,8 @@ namespace KZLib
 
 			Log.System.I(builder.ToString());
 
-			MetaDataMgr.In.LoadAll();
+			// TODO 메타 데이터 로드 위치 변경하기 (선택창으로 시작할때 로드 or 원할때 로드)
+			await MetaDataMgr.In.LoadAllAsync();
 
 			if(IsTestMode)
 			{
@@ -128,14 +129,12 @@ namespace KZLib
 #endif
 		protected virtual void InitializeNormalMode() { }
 
-		private void InitializeResolution(StringBuilder _builder,Option.Graphic _option)
+		private void InitializeResolution(StringBuilder _builder,GraphicOption _option)
 		{
 			//? 모바일에서 화면잠김을 방지하기 위한 값.
 			Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
 			var resolution = _option.ScreenResolution;
-
-			Screen.SetResolution(resolution.Width,resolution.Height,resolution.IsFull);
 
 			_builder.AppendFormat(string.Format("현재 해상도 {0}x{1}\n",resolution.Width,resolution.Width));
 		}
@@ -144,18 +143,12 @@ namespace KZLib
 		private void InitializeMobileFrame(StringBuilder _builder,Option.Graphic _option)
 		{
 			_option.FrameRate = Global.FRAME_RATE_30;
-
-			// //? vSyncCount = 0
-			_option.GraphicQuality &= ~GraphicQualityOption.VERTICAL_SYNC_ENABLE;
 			_builder.AppendFormat(string.Format("현재 FPS {0}\n",_option.FrameRate));
 		}
 #elif UNITY_STANDALONE
-		private void InitializePcFrame(StringBuilder _builder,Option.Graphic _option)
+		private void InitializePcFrame(StringBuilder _builder,GraphicOption _option)
 		{
 			_option.FrameRate = Global.FRAME_RATE_60;
-
-			// //? vSyncCount = 1
-			_option.GraphicQuality |= GraphicQualityOption.VERTICAL_SYNC_ENABLE;
 			_builder.AppendFormat(string.Format("현재 FPS {0}\n",_option.FrameRate));
 		}
 #endif

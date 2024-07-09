@@ -33,9 +33,9 @@ namespace TransitionPanel
 
 		private bool IsFade => m_TransitionType == TransitionType.Fade;
 
-		protected override void OnDestroy()
+		protected override void Release()
 		{
-			base.OnDestroy();
+			base.Release();
 
 			if(m_WipeMaterial)
 			{

@@ -13,7 +13,7 @@ public class DialogBoxPopupUI : WindowUI2D
 	private TMP_Text m_MessageText = null;
 
 	[SerializeField]
-	private GridLayoutUI m_GridLayout = null;
+	private GridLayoutGroupUI m_GridLayout = null;
 
 	public override void Open(object _param)
 	{

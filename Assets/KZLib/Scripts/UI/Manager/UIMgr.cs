@@ -15,9 +15,9 @@ namespace KZLib
 		public static readonly Vector3 DEFAULT_POS = Vector3.zero;
 
 		[SerializeField]
-		private float m_ScreenWidth = Global.BASE_WIDTH;
+		private int m_ScreenWidth = Global.BASE_WIDTH;
 		[SerializeField]
-		private float m_ScreenHeight = Global.BASE_HEIGHT;
+		private int m_ScreenHeight = Global.BASE_HEIGHT;
 
 		//? 캔버스들 (처음에 넣고 도중에 수정 불가능)
 		private readonly List<RepositoryUI> m_RepositoryList = new();
@@ -59,12 +59,6 @@ namespace KZLib
 			Broadcaster.DisableListener(EventTag.ChangeGraphicOption,OnSetScreenSize);
 		}
 
-		private void SetScreenSize(int _width,int _height)
-		{
-			m_ScreenWidth = _width;
-			m_ScreenHeight = _height;
-		}
-
         private void OnSetScreenSize()
 		{
 			if(!m_Repository2D)
@@ -72,10 +66,16 @@ namespace KZLib
 				return;
 			}
 
-			var option = GameDataMgr.In.Access<GameData.Option>().GraphicOption;
+			var option = GameDataMgr.In.Access<GameData.GraphicOption>();
 			var resolution = option.ScreenResolution;
 
-			SetScreenSize(resolution.Width,resolution.Height);
+			if(m_ScreenWidth == resolution.Width && m_ScreenHeight == resolution.Height)
+			{
+				return;
+			}
+
+			m_ScreenWidth = resolution.Width;
+			m_ScreenHeight = resolution.Height;
 
 			var scaler = m_Repository2D.GetComponent<CanvasScaler>();
 

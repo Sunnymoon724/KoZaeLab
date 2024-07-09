@@ -41,7 +41,7 @@ public abstract class FocusSlotUI : SlotUI,IFocusSlotUI
 	{
 		if(m_Slot)
 		{
-			DrawGizmoText(m_Slot.position,GizmosText);
+			DrawGizmoText(m_Slot.position);
 		}
 	}
 #endif

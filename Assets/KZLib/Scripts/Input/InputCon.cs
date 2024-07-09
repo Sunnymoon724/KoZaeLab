@@ -14,9 +14,9 @@ namespace KZLib
 		private InputActionAsset m_InputActionAsset = null;
 		protected Dictionary<string,InputAction> m_InputActionDictionary = new();
 
-		protected override void Awake()
+		protected override void Initialize()
 		{
-			base.Awake();
+			base.Initialize();
 
 			InputMgr.In.AddInputCon(this);
 
@@ -29,19 +29,23 @@ namespace KZLib
 			}
 		}
 
-		protected virtual void OnEnable()
+		protected override void OnEnable()
 		{
+			base.OnEnable();
+
 			SetEnable(true);
 		}
 
-		protected virtual void OnDisable()
+		protected override void OnDisable()
 		{
+			base.OnDisable();
+
 			SetEnable(false);
 		}
 
-		protected override void OnDestroy()
+		protected override void Release()
 		{
-			base.OnDestroy();
+			base.Release();
 
 			if(InputMgr.HasInstance)
 			{

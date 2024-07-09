@@ -92,7 +92,9 @@ namespace KZLib
 
 				if(resourceArray.IsNullOrEmpty())
 				{
-					throw new NullReferenceException(string.Format("리소스가 없습니다.[폴더 경로 : {0}]",_folderPath));
+					Log.System.W(string.Format("리소스가 없습니다.[폴더 경로 : {0}]",_folderPath));
+
+					return null;
 				}
 
 				PutDataArray(_folderPath,resourceArray);

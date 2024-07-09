@@ -5,16 +5,10 @@ using UnityEngine;
 
 using UnityEditor;
 
-#else
-
-using System;
-
 #endif
 
 public abstract class BaseSettings<TObject> : SingletonSO<TObject> where TObject : SerializedScriptableObject
 {
-	public static void CreateSettings() { }
-
 	public static bool IsExist => CommonUtility.IsExistAsset(string.Format("t:ScriptableObject {0}",typeof(TObject).Name));
 }
 
@@ -23,20 +17,22 @@ public abstract class BaseSettings<TObject> : SingletonSO<TObject> where TObject
 /// </summary>
 public abstract class InnerBaseSettings<TObject> : BaseSettings<TObject> where TObject : SerializedScriptableObject
 {
-	public static TObject In
+	private const string SETTINGS_PATH = "ScriptableObjects/Settings";
+
+	public static new TObject In
 	{
 		get
 		{
 			if(!m_Instance)
 			{
-				var path = CommonUtility.PathCombine("ScriptableObjects/Settings",typeof(TObject).Name);
+				var path = CommonUtility.PathCombine(SETTINGS_PATH,typeof(TObject).Name);
 
 				m_Instance = Resources.Load<TObject>(path);
 
 #if UNITY_EDITOR
 				if(!m_Instance)
 				{
-					CreateSettings();
+					CreateScriptableObject(path);
 				}
 #endif
 			}
@@ -45,9 +41,9 @@ public abstract class InnerBaseSettings<TObject> : BaseSettings<TObject> where T
 		}
 	}
 
-	public static new void CreateSettings()
+	public static void CreateSettings()
 	{
-		CreateScriptableObject(CommonUtility.PathCombine("Resources/ScriptableObjects/Settings",typeof(TObject).Name));
+		CreateScriptableObject(CommonUtility.PathCombine(SETTINGS_PATH,typeof(TObject).Name));
 	}
 }
 
@@ -56,24 +52,24 @@ public abstract class InnerBaseSettings<TObject> : BaseSettings<TObject> where T
 /// </summary>
 public abstract class OuterBaseSettings<TObject> : BaseSettings<TObject> where TObject : SerializedScriptableObject
 {
-	public static TObject In
+	private const string SETTINGS_PATH = "Assets/WorkResources/ScriptableObjects/Settings";
+
+	public static new TObject In
 	{
 		get
 		{
 			if(!m_Instance)
 			{
-				var typeName = typeof(TObject).Name;
 #if UNITY_EDITOR
-				var path = CommonUtility.PathCombine("WorkResources/ScriptableObjects/Settings",typeName);
+				var path = CommonUtility.PathCombine(SETTINGS_PATH,typeof(TObject).Name);
 
-				m_Instance = AssetDatabase.LoadAssetAtPath<TObject>(CommonUtility.GetAssetsPath(string.Format("{0}.asset",path)));
+				m_Instance = AssetDatabase.LoadAssetAtPath<TObject>(string.Format("{0}.asset",path));
+
 
 				if(!m_Instance)
 				{
-					CreateSettings();
+					CreateScriptableObject(path);
 				}
-#else
-				throw new NullReferenceException(string.Format("{0}는 에디터 이외의 곳에서 만들어 질 수 없습니다.",typeName));
 #endif
 			}
 
@@ -81,8 +77,8 @@ public abstract class OuterBaseSettings<TObject> : BaseSettings<TObject> where T
 		}
 	}
 
-	public static new void CreateSettings()
+	public static void CreateSettings()
 	{
-		CreateScriptableObject(CommonUtility.PathCombine("WorkResources/ScriptableObjects/Settings",typeof(TObject).Name));
+		CreateScriptableObject(CommonUtility.PathCombine(SETTINGS_PATH,typeof(TObject).Name));
 	}
 }

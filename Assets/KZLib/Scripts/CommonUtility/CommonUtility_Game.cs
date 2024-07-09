@@ -131,6 +131,8 @@ public static partial class CommonUtility
 		{
 			AddressablesMgr.In.Dispose();
 		}
+
+		ReflectionUtility.ClearCacheData();
 	}
 
 #if UNITY_EDITOR

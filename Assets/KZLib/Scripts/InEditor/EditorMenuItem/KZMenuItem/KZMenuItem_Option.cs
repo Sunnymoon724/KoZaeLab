@@ -174,7 +174,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Option/AddOn/Add Language Settings",true)]
 		private static bool IsExistLanguageSettings()
 		{
-			return !LanguageSettings.HasInstance;
+			return !LanguageSettings.IsExist;
 		}
 
 		[MenuItem("KZMenu/Option/AddOn/Add Network Settings",false,KZCategory.Option_Add)]

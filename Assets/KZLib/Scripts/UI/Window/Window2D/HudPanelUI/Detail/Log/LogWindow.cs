@@ -71,9 +71,9 @@ namespace HudPanel
 
 		private string m_CompareText = null;
 
-		protected override void Awake()
+		protected override void Initialize()
 		{
-			base.Awake();
+			base.Initialize();
 
 			m_InputField.text = string.Empty;
 
@@ -90,15 +90,19 @@ namespace HudPanel
 			});
 		}
 
-		private void OnEnable()
+		protected override void OnEnable()
 		{
+			base.OnEnable();
+
 			LogMgr.In.OnAddLog += OnUpdateLogScroll;
 
 			SetScrollRect();
 		}
 
-		private void OnDisable()
+		protected override void OnDisable()
 		{
+			base.OnEnable();
+
 			LogMgr.In.OnAddLog -= OnUpdateLogScroll;
 		}
 

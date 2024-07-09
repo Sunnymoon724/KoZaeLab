@@ -11,16 +11,18 @@ namespace HudPanel
 		[SerializeField]
 		private GraphImageUI m_GraphImage = null;
 
-		protected override void Awake()
+		protected override void Initialize()
 		{
-			base.Awake();
+			base.Initialize();
 
 			m_GraphArray = new float[GRAPH_RESOLUTION];
 		}
 
-		private void OnEnable()
+		protected override void OnEnable()
 		{
-			m_GraphImage.Initialize(GRAPH_RESOLUTION);
+			base.OnEnable();
+
+			m_GraphImage.SetResolution(GRAPH_RESOLUTION);
 		}
 
 		public void UpdateGraph(float[] _spectrumArray)

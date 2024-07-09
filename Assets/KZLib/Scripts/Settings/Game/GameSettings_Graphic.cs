@@ -27,50 +27,19 @@ public partial class GameSettings : InnerBaseSettings<GameSettings>
 	public int FrameRate { get => m_FrameRate; private set => m_FrameRate = value; }
 
 	[SerializeField,HideInInspector]
-	private long m_GraphicQuality = GraphicsOptionPreset.QUALITY_HIGH;
+	private GraphicsQualityPresetType m_GraphicQualityPreset = GraphicsQualityPresetType.QualityHighest;
 
-	[BoxGroup("그래픽 설정/0",ShowLabel = false),ShowInInspector,LabelText("그래픽 퀄리티"),ValueDropdown(nameof(GraphicPresetList))]
-	public long GraphicQuality { get => m_GraphicQuality; private set => m_GraphicQuality = value; }
+	[BoxGroup("그래픽 설정/0",ShowLabel = false),ShowInInspector,LabelText("그래픽 퀄리티 프리셋")]
+	public GraphicsQualityPresetType GraphicQualityPreset { get => m_GraphicQualityPreset; private set => m_GraphicQualityPreset = value; }
 
 	private void InitializeGraphic()
 	{
 		ScreenResolution = new Vector2Int(Global.BASE_WIDTH,Global.BASE_HEIGHT);
 		FullScreen = true;
-		GraphicQuality = GraphicsOptionPreset.QUALITY_HIGH;
+		m_GraphicQualityPreset = GraphicsQualityPresetType.QualityHighest;
 		FrameRate = Global.FRAME_RATE_60;
 
 		Screen.SetResolution(m_ScreenResolution.x,m_ScreenResolution.y,FullScreen);
 		Application.targetFrameRate = m_FrameRate;
-	}
-
-	private static IEnumerable GraphicPresetList
-	{
-		get
-		{
-			return new ValueDropdownList<long>()
-			{
-				{ "QUALITY_LOW",	GraphicsOptionPreset.QUALITY_LOW	},
-				{ "QUALITY_MIDDLE", GraphicsOptionPreset.QUALITY_MIDDLE },
-				{ "QUALITY_HIGH",	GraphicsOptionPreset.QUALITY_HIGH	},
-			};
-		}
-	}
-
-	private class GraphicsOptionPreset
-	{
-		public static long QUALITY_LOW		= PostEffectQualityOption.POST_EFFECT_QUALITY_LOW
-											| SceneGraphicQualityOption.SCENE_GRAPHICS_QUALITY_LOW
-											| EffectDisplayQualityOption.EFFECT_DISPLAY_QUALITY_LOW
-											| TextureQualityOption.TEXTURE_QUALITY_LOW;
-
-		public static long QUALITY_MIDDLE	= PostEffectQualityOption.POST_EFFECT_QUALITY_MIDDLE
-											| SceneGraphicQualityOption.SCENE_GRAPHICS_QUALITY_MIDDLE
-											| EffectDisplayQualityOption.EFFECT_DISPLAY_QUALITY_MIDDLE
-											| TextureQualityOption.TEXTURE_QUALITY_MIDDLE;
-
-		public static long QUALITY_HIGH		= PostEffectQualityOption.POST_EFFECT_QUALITY_HIGH
-											| SceneGraphicQualityOption.SCENE_GRAPHICS_QUALITY_HIGH
-											| EffectDisplayQualityOption.EFFECT_DISPLAY_QUALITY_HIGH
-											| TextureQualityOption.TEXTURE_QUALITY_HIGH;
 	}
 }

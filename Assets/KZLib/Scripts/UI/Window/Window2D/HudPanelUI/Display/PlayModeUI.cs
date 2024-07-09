@@ -10,9 +10,9 @@ namespace HudPanel
 
 		private string m_CurrentMode = null;
 
-		protected override void Awake()
+		protected override void Initialize()
 		{
-			base.Awake();
+			base.Initialize();
 
 			if(m_CurrentMode.IsEmpty())
 			{

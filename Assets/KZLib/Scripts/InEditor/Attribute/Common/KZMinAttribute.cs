@@ -31,8 +31,6 @@ namespace KZLib.KZAttribute
 #if UNITY_EDITOR
 	public abstract class KZMinClampAttributeDrawer<TValue> : KZAttributeDrawer<KZMinClampAttribute, TValue> where TValue : IComparable<TValue>
 	{
-		protected TValue m_MinValue = default;
-
 		protected override void DoDrawPropertyLayout(GUIContent _label)
 		{
 			var rect = EditorGUILayout.GetControlRect();
@@ -40,19 +38,19 @@ namespace KZLib.KZAttribute
 			var labelText = _label == null ? string.Empty : _label.text;
 
 			var value = DrawField(rect,labelText);
+			var minimum = Attribute.MinExpression.IsEmpty() ? MinValue : GetValue<TValue>(Attribute.MinExpression);
 
-			ValueEntry.SmartValue = CommonUtility.MinClamp(value,m_MinValue);
+			ValueEntry.SmartValue = CommonUtility.MinClamp(value,minimum);
 		}
+
+		protected abstract TValue MinValue { get; }
 
 		protected abstract TValue DrawField(Rect _rect, string _labelText);
 	}
 
 	public class KZMinIntAttributeDrawer : KZMinClampAttributeDrawer<int>
 	{
-		protected override void Initialize()
-		{
-			m_MinValue = Attribute.MinExpression.IsEmpty() ? (int) Attribute.MinValue : GetValue<int>(Attribute.MinExpression);
-		}
+		protected override int MinValue => Convert.ToInt32(Attribute.MinValue);
 
 		protected override int DrawField(Rect _rect,string _labelText)
 		{
@@ -62,10 +60,7 @@ namespace KZLib.KZAttribute
 
 	public class KZMinLongAttributeDrawer : KZMinClampAttributeDrawer<long>
 	{
-		protected override void Initialize()
-		{
-			m_MinValue = Attribute.MinExpression.IsEmpty() ? (long) Attribute.MinValue : GetValue<long>(Attribute.MinExpression);
-		}
+		protected override long MinValue => Convert.ToInt64(Attribute.MinValue);
 
 		protected override long DrawField(Rect _rect,string _labelText)
 		{
@@ -75,10 +70,7 @@ namespace KZLib.KZAttribute
 
 	public class KZMinFloatAttributeDrawer : KZMinClampAttributeDrawer<float>
 	{
-		protected override void Initialize()
-		{
-			m_MinValue = Attribute.MinExpression.IsEmpty() ? (float) Attribute.MinValue : GetValue<float>(Attribute.MinExpression);
-		}
+		protected override float MinValue => Convert.ToSingle(Attribute.MinValue);
 
 		protected override float DrawField(Rect _rect,string _labelText)
 		{
@@ -88,10 +80,7 @@ namespace KZLib.KZAttribute
 
 	public class KZMinDoubleAttributeDrawer : KZMinClampAttributeDrawer<double>
 	{
-		protected override void Initialize()
-		{
-			m_MinValue = Attribute.MinExpression.IsEmpty() ? Attribute.MinValue : GetValue<double>(Attribute.MinExpression);
-		}
+		protected override double MinValue => Attribute.MinValue;
 
 		protected override double DrawField(Rect _rect,string _labelText)
 		{
