@@ -60,5 +60,5 @@ public abstract class DataSingleton<TClass> : Singleton<TClass> where TClass : c
 		base.Release(_disposing);
 	}
 
-	public abstract void ClearAll();
+	protected abstract void ClearAll();
 }

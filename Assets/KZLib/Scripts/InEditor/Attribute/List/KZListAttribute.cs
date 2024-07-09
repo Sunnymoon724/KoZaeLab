@@ -18,13 +18,15 @@ namespace KZLib.KZAttribute
 #if UNITY_EDITOR
 	public abstract class KZListAttributeDrawer<TValue> : KZAttributeDrawer<KZListAttribute,TValue>
 	{
+		private const float LIST_WIDTH = 30.0f;
+
 		protected int m_ListCount = 0;
 
 		protected override void DoDrawPropertyLayout(GUIContent _label)
 		{
 			//? label
 			var rect = DrawPrefixLabel(_label);
-			var sizeRect = new Rect(rect.x,rect.y,30,rect.height);
+			var sizeRect = new Rect(rect.x,rect.y,LIST_WIDTH,rect.height);
 
 			var count = EditorGUI.IntField(sizeRect,"",m_ListCount);
 

@@ -58,7 +58,7 @@ namespace KZLib.KZAttribute
 
 		protected TMember GetValue<TMember>(string _memberName)
 		{
-			return CommonUtility.GetValueInObject<TMember>(_memberName,Property.ParentValues[0]);
+			return ReflectionUtility.GetValueInObject<TMember>(_memberName,Property.ParentValues[0]);
 		}
 
 		protected GUIStyle GetValidateStyle(bool _isValid,string _wrongColor = null)

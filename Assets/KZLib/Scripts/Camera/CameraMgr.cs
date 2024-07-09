@@ -1,99 +1,193 @@
 using System;
+using System.Collections.Generic;
+using KZLib.KZDevelop;
+using MetaData;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace KZLib
 {
-	public partial class CameraMgr : LoadSingletonMB<CameraMgr>
+	public class CameraMgr : LoadSingletonMB<CameraMgr>
 	{
 		[SerializeField,LabelText("메인 카메라")]
 		private Camera m_MainCamera = null;
-
 		private Camera m_OverrideCamera = null;
-		public Camera MainCamera => !m_OverrideCamera ? m_MainCamera : m_OverrideCamera;
+		public Camera CurrentCamera => m_OverrideCamera == null ? m_OverrideCamera : m_MainCamera;
 
-		private bool m_PlayingCutScene;
-		public bool IsPlayingCutScene => m_PlayingCutScene;
+		[ShowInInspector,ReadOnly,LabelText("카메라 타겟")]
+		private Transform m_Target = null;
 
-		public void SetPlayingCutScene(bool _isPlay)
-		{
-			m_PlayingCutScene = _isPlay;
-		}
+		[SerializeField,LabelText("X회전 잠금")]
+		private bool m_LockRotateX = false;
 
-		public bool IsActiveMainCamera()
-		{
-			return MainCamera.gameObject.activeSelf;
-		}
+		/// <summary>
+		/// 서브 카메라들
+		/// </summary>
+		private readonly Dictionary<Camera,bool> m_SubCameraDict = new();
+
+		private float m_FarFactor = 1.0f;
 
 		protected override void Initialize()
 		{
-			if(!m_MainCamera)
+			base.Initialize();
+
+			if(m_MainCamera == null)
 			{
 				throw new NullReferenceException("메인 카메라가 없습니다.");
 			}
+
+			var camera = m_MainCamera.GetComponent<Camera>();
+
+			camera.allowDynamicResolution = true;
+
+			SetCameraBackgroundColor(Color.black);
+
+			Broadcaster.EnableListener(EventTag.ChangeGraphicOption,OnChangeFarClipPlane);
+
+			OnChangeFarClipPlane();
 		}
 
 		protected override void Release()
 		{
-			
+			base.Release();
+
+			Broadcaster.DisableListener(EventTag.ChangeGraphicOption,OnChangeFarClipPlane);
 		}
 
+		public void SetCameraData(CameraData _cameraData)
+		{
+			if(!_cameraData.IsExist)
+			{
+				throw new NullReferenceException("카메라 데이터가 없습니다.");
+			}
+
+			if(!_cameraData.IsExist)
+			{
+				throw new NullReferenceException("카메라 데이터가 없습니다.");
+			}
+
+			CurrentCamera.nearClipPlane = _cameraData.NearClipPlane;
+			CurrentCamera.farClipPlane = m_FarFactor*_cameraData.FarClipPlane;
+
+			CurrentCamera.orthographic = _cameraData.Orthographic;
+			CurrentCamera.orthographicSize = _cameraData.FieldOfView;
+			CurrentCamera.fieldOfView = _cameraData.FieldOfView;
+
+			var position = m_Target ? m_Target.position : Vector3.zero;
+
+			CurrentCamera.transform.SetPositionAndRotation(position +_cameraData.Position,Quaternion.Euler(_cameraData.Rotation));
+
+			SetSubCameraDict();
+		}
+
+		/// <summary>
+		/// 다른 카메라를 오버라이드 하여 메인 카메라를 잠시 끈다. (다시 돌리는 방법은 null 넣기)
+		/// </summary>
 		public void SetCamera(Camera _overrideCamera)
 		{
+			var onCamera = _overrideCamera != null;
+
 			m_OverrideCamera = _overrideCamera;
 
-			m_OverrideCamera.gameObject.SetActiveSelf(_overrideCamera);
-			m_MainCamera.gameObject.SetActiveSelf(!_overrideCamera);
+			if(m_OverrideCamera != null)
+			{
+				m_OverrideCamera.gameObject.SetActiveSelf(onCamera);
+			}
+
+			m_MainCamera.gameObject.SetActiveSelf(!onCamera);
 		}
 
-		public void SetOrthographicCamera(float _nearClipPlane,float _farClipPlane,float _size)
+		public void SetEnableCamera(bool _enable)
 		{
-			MainCamera.orthographic = true;
-
-			MainCamera.nearClipPlane = _nearClipPlane;
-			MainCamera.farClipPlane = _farClipPlane;
-
-			MainCamera.orthographicSize = _size;
+			m_MainCamera.enabled = _enable;
 		}
 
-		public void SetPerspectiveCamera(float _nearClipPlane,float _farClipPlane,float _fieldOfView)
+		public void SetTarget(Transform _target)
 		{
-			MainCamera.orthographic = false;
+			m_Target = _target;
+		}
 
-			MainCamera.nearClipPlane = _nearClipPlane;
-			MainCamera.farClipPlane = _farClipPlane;
-			MainCamera.fieldOfView = _fieldOfView;
+		public void LookTarget(Transform _target,float _duration = 0.0f)
+		{
+			SetTarget(_target);
+
+			if(_target)
+			{
+				return;
+			}
+
+			var pivot = (_target.position-transform.position).normalized;
+			var rotation = Quaternion.LookRotation(pivot).eulerAngles;
+
+			if(m_LockRotateX)
+			{
+				rotation.x = transform.rotation.eulerAngles.x;
+			}
+
+			rotation.z = transform.rotation.eulerAngles.z;
+
+			transform.rotation = Quaternion.Euler(rotation);
+
+			// _duration 부분 수정하기
+		}
+
+		private void OnChangeFarClipPlane()
+		{
+			var option = GameDataMgr.In.Access<GameData.GraphicOption>();
+			var flag = option.IsIncludeGraphicQualityOption(GraphicQualityTag.CameraFarHalf);
+
+			m_FarFactor = flag ? 0.5f : 1.0f;
+		}
+
+		public void AddSubCamera(Camera _camera,bool _dependency = true)
+		{
+			if(!m_SubCameraDict.ContainsKey(_camera))
+			{
+				m_SubCameraDict.Add(_camera,_dependency);
+			}
+
+			_camera.depth = m_MainCamera.depth+1;
+			_camera.clearFlags = CameraClearFlags.Nothing;
+		}
+
+		public void RemoveSubCamera(Camera _camera)
+		{
+			if(m_SubCameraDict.ContainsKey(_camera))
+			{
+				return;
+			}
+
+			m_SubCameraDict.Remove(_camera);
+
+			_camera.depth = -1;
+			_camera.clearFlags = CameraClearFlags.Color;
+		}
+
+		private void SetSubCameraDict()
+		{
+			var main = CurrentCamera;
+
+			foreach(var pair in m_SubCameraDict)
+			{
+				if(!pair.Value)
+				{
+					continue;
+				}
+
+				var camera = pair.Key;
+
+				camera.nearClipPlane = main.nearClipPlane;
+				camera.farClipPlane = main.farClipPlane;
+
+				camera.orthographic = main.orthographic;
+				camera.orthographicSize = main.orthographicSize;
+				camera.fieldOfView = main.fieldOfView;
+			}
 		}
 
 		private void SetCameraBackgroundColor(Color _color)
 		{
-			MainCamera.backgroundColor = _color;
-		}
-
-		public void SetEnableCamera(bool _enabled)
-		{			
-			MainCamera.enabled = _enabled;
-		}
-
-		public void SetUpCamera(float _width = 16.0f,float _height = 9.0f)
-		{
-			MainCamera.aspect = _width/_height;
-
-			var ratio = new Vector2(Screen.width/_width, Screen.height/_height);
-			var added = new Vector2(((ratio.x/(ratio.y/100))-100)/200,((ratio.y/(ratio.x/100))-100)/200);
-
-			if(ratio.y > ratio.x)
-			{
-				added.x = 0.0f;
-			}
-			else
-			{
-				added.y = 0.0f;
-			}
-
-			var rect = MainCamera.rect;
-
-			MainCamera.rect = new Rect(rect.x+Mathf.Abs(added.x),rect.y+Mathf.Abs(added.y),rect.width+(added.x*2.0f),rect.height+(added.y*2.0f));
+			m_MainCamera.backgroundColor = _color;
 		}
 	}
 }

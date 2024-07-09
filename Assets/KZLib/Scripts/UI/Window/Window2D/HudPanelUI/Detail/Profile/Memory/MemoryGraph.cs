@@ -15,11 +15,13 @@ namespace HudPanel
 		[SerializeField] private GraphImageUI m_AllocatedGraphImage = null;
 		[SerializeField] private GraphImageUI m_MonoGraphImage = null;
 
-		private void OnEnable()
+		protected override void OnEnable()
 		{
-			m_ReservedGraphImage.Initialize(GRAPH_RESOLUTION);
-			m_AllocatedGraphImage.Initialize(GRAPH_RESOLUTION);
-			m_MonoGraphImage.Initialize(GRAPH_RESOLUTION);
+			base.OnEnable();
+
+			m_ReservedGraphImage.SetResolution(GRAPH_RESOLUTION);
+			m_AllocatedGraphImage.SetResolution(GRAPH_RESOLUTION);
+			m_MonoGraphImage.SetResolution(GRAPH_RESOLUTION);
 		}
 
 		public void UpdateGraph(float _reserved,float _allocated,float _mono)

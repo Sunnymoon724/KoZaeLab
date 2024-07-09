@@ -35,9 +35,6 @@ namespace KZLib.KZAttribute
 #if UNITY_EDITOR
 	public abstract class KZClampAttributeDrawer<TValue> : KZAttributeDrawer<KZClampAttribute,TValue> where TValue : IComparable<TValue>
 	{
-		protected TValue m_MinValue = default;
-		protected TValue m_MaxValue = default;
-
 		protected override void DoDrawPropertyLayout(GUIContent _label)
 		{
 			var rect = EditorGUILayout.GetControlRect();
@@ -45,21 +42,22 @@ namespace KZLib.KZAttribute
 			var labelText = _label == null ? string.Empty : _label.text;
 
 			var value = DrawField(rect,labelText);
+			var minimum = Attribute.MinExpression.IsEmpty() ? MinValue : GetValue<TValue>(Attribute.MinExpression);
+			var maximum = Attribute.MaxExpression.IsEmpty() ? MaxValue : GetValue<TValue>(Attribute.MaxExpression);
 
-			ValueEntry.SmartValue = CommonUtility.Clamp(value,m_MinValue,m_MaxValue);
+			ValueEntry.SmartValue = CommonUtility.Clamp(value,minimum,maximum);
 		}
+
+		protected abstract TValue MinValue { get; }
+		protected abstract TValue MaxValue { get; }
 
 		protected abstract TValue DrawField(Rect _rect,string _labelText);
 	}
 
 	public class KZClampIntAttributeDrawer : KZClampAttributeDrawer<int>
 	{
-		protected override void Initialize()
-		{
-			m_MinValue = Attribute.MinExpression.IsEmpty() ? (int) Attribute.MinValue : GetValue<int>(Attribute.MinExpression);
-
-			m_MaxValue = Attribute.MaxExpression.IsEmpty() ? (int) Attribute.MaxValue : GetValue<int>(Attribute.MaxExpression);
-		}
+		protected override int MinValue => Convert.ToInt32(Attribute.MinValue);
+		protected override int MaxValue => Convert.ToInt32(Attribute.MaxValue);
 
 		protected override int DrawField(Rect _rect,string _labelText)
 		{
@@ -69,12 +67,8 @@ namespace KZLib.KZAttribute
 
 	public class KZClampLongAttributeDrawer : KZClampAttributeDrawer<long>
 	{
-		protected override void Initialize()
-		{
-			m_MinValue = Attribute.MinExpression.IsEmpty() ? (long) Attribute.MinValue : GetValue<long>(Attribute.MinExpression);
-
-			m_MaxValue = Attribute.MaxExpression.IsEmpty() ? (long) Attribute.MaxValue : GetValue<long>(Attribute.MaxExpression);
-		}
+		protected override long MinValue => Convert.ToInt64(Attribute.MinValue);
+		protected override long MaxValue => Convert.ToInt64(Attribute.MaxValue);
 
 		protected override long DrawField(Rect _rect,string _labelText)
 		{
@@ -84,12 +78,8 @@ namespace KZLib.KZAttribute
 
 	public class KZClampFloatAttributeDrawer : KZClampAttributeDrawer<float>
 	{
-		protected override void Initialize()
-		{
-			m_MinValue = Attribute.MinExpression.IsEmpty() ? (float) Attribute.MinValue : GetValue<float>(Attribute.MinExpression);
-
-			m_MaxValue = Attribute.MaxExpression.IsEmpty() ? (float) Attribute.MaxValue : GetValue<float>(Attribute.MaxExpression);
-		}
+		protected override float MinValue => Convert.ToSingle(Attribute.MinValue);
+		protected override float MaxValue => Convert.ToSingle(Attribute.MaxValue);
 
 		protected override float DrawField(Rect _rect,string _labelText)
 		{
@@ -99,12 +89,8 @@ namespace KZLib.KZAttribute
 
 	public class KZClampDoubleAttributeDrawer : KZClampAttributeDrawer<double>
 	{
-		protected override void Initialize()
-		{
-			m_MinValue = Attribute.MinExpression.IsEmpty() ? Attribute.MinValue : GetValue<double>(Attribute.MinExpression);
-
-			m_MaxValue = Attribute.MaxExpression.IsEmpty() ? Attribute.MaxValue : GetValue<double>(Attribute.MaxExpression);
-		}
+		protected override double MinValue => Attribute.MinValue;
+		protected override double MaxValue => Attribute.MaxValue;
 
 		protected override double DrawField(Rect _rect,string _labelText)
 		{

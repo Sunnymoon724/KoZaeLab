@@ -4,7 +4,7 @@ using KZLib.KZDevelop;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public partial class UIMenuType : Enumeration
+public class UIMenuType : Enumeration
 {
 	public UIMenuType(string _name) : base(_name) { }
 }
@@ -22,8 +22,20 @@ namespace KZLib
 
 			public UIMenuType MenuType => Enumeration.Parse<UIMenuType>(m_MenuName);
 
-			private static List<string> s_MenuList = null;
-			private static List<string> MenuList => s_MenuList ??= Enumeration.GetNames<UIMenuType>();
+			private List<string> MenuList
+			{
+				get
+				{
+					var menuList = new List<string>();
+
+					foreach(var menuType in Enumeration.GetGroup<UIMenuType>(true))
+					{
+						menuList.Add(menuType.ToString());
+					}
+
+					return menuList;
+				}
+			}
 
 			[SerializeField,LabelText("이미지"),HideIf(nameof(m_UseCommonSprite))]
 			private Sprite m_MenuSprite = null;
@@ -53,7 +65,7 @@ namespace KZLib
 		public record MenuParam(UIMenuType MenuType,Action OnClicked);
 
 		[HorizontalGroup("0",Order = 0),SerializeField,LabelText("레이아웃")]
-		private GridLayoutUI m_GridLayout = null;
+		private GridLayoutGroupUI m_GridLayout = null;
 		[HorizontalGroup("1",Order = 1),SerializeField,ToggleLeft,LabelText("동일 이미지 사용"),OnValueChanged(nameof(OnChangeCommon))]
 		private bool m_UseCommonSprite = false;
 		[HorizontalGroup("1",Order = 1),SerializeField,HideLabel,ShowIf(nameof(m_UseCommonSprite))]

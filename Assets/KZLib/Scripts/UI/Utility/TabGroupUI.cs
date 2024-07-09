@@ -26,19 +26,14 @@ public class TabGroupUI : BaseComponentUI
 
 	private bool m_Initialized = false;
 
-	protected override void Awake()
-	{
-		base.Awake();
-
-		Initialize();
-	}
-
-	private void Initialize()
+	protected override void Initialize()
 	{
 		if(m_Initialized)
 		{
 			return;
 		}
+
+		base.Initialize();
 
 		for(var i=m_TabButtonList.Count-1;i>=0;i--)
 		{

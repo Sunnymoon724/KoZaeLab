@@ -12,9 +12,11 @@ namespace HudPanel
 		[SerializeField]
 		private GraphImageUI m_GraphImage = null;
 
-		private void OnEnable()
+		protected override void OnEnable()
 		{
-			m_GraphImage.Initialize(GRAPH_RESOLUTION);
+			base.OnEnable();
+
+			m_GraphImage.SetResolution(GRAPH_RESOLUTION);
 		}
 
 		public void UpdateGraph(int _frameRate)

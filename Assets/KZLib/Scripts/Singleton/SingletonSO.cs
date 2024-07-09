@@ -8,23 +8,35 @@ using UnityEditor;
 #endif
 
 /// <summary>
-/// InSideSingletonSO or OutSideSingletonSO를 사용 함. (직접 사용 X)
+/// 해당 경로에서 체크해서 없으면 에러
 /// </summary>
 public abstract class SingletonSO<TObject> : SerializedScriptableObject where TObject : SerializedScriptableObject
 {
-	protected static TObject m_Instance;
+	protected static TObject m_Instance = null;
 
-	// Assets 이후로
-	protected static void SaveAsset(string _filePath)
+	public static TObject In
 	{
-#if UNITY_EDITOR
-		var filePath = string.Format("{0}.asset",_filePath);
+		get
+		{
+			if(!m_Instance)
+			{
+				m_Instance = Resources.Load<TObject>(CommonUtility.PathCombine("ScriptableObjects",typeof(TObject).Name));
+			}
+
+			return m_Instance;
+		}
+	}
+
+	protected static void CreateScriptableObject(string _path)
+	{
+		m_Instance = CreateInstance<TObject>();
+
+		var filePath = string.Format("{0}.asset",_path.StartsWith(Global.ASSETS_HEADER) ? _path : CommonUtility.PathCombine("Assets/Resources",_path));
 
 		CommonUtility.CreateFolder(filePath);
 
 		AssetDatabase.CreateAsset(m_Instance,CommonUtility.GetAssetsPath(filePath));
 		AssetDatabase.Refresh();
-#endif
 	}
 
 	private void Awake()
@@ -60,13 +72,6 @@ public abstract class SingletonSO<TObject> : SerializedScriptableObject where TO
 	/// 처음 생성 될때만 쓰임
 	/// </summary>
 	protected virtual void Initialize() { }
-
-	protected static void CreateScriptableObject(string _path)
-	{
-		m_Instance = CreateInstance<TObject>();
-
-		SaveAsset(_path);
-	}
 #endif
 
 	public void OnDestroy()

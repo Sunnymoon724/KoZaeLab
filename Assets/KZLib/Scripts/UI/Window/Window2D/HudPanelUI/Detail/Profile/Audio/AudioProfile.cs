@@ -1,5 +1,4 @@
-﻿using KZLib;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 namespace HudPanel
@@ -19,35 +18,21 @@ namespace HudPanel
 
 		private bool m_Initialize = false;
 
-		protected override void Awake()
+		protected override void Initialize()
 		{
-			base.Awake();
-
-			Initialize();
-		}
-
-		private void Initialize()
-		{
-			if(m_Initialize)
+			if(m_AudioListener)
 			{
 				return;
 			}
 
-			var camera = CameraMgr.HasInstance ? CameraMgr.In.MainCamera : Camera.main;
+			base.Initialize();
 
-			m_AudioListener = camera != null ? camera.GetComponent<AudioListener>() : FindObjectOfType<AudioListener>();
-
-			m_Initialize = true;
+			m_AudioListener = FindObjectOfType<AudioListener>();
 		}
 
 		public void Refresh()
 		{
-			if(m_AudioListener == null)
-			{
-				Initialize();
-
-				return;
-			}
+			Initialize();
 
 			AudioListener.GetOutputData(m_SpectrumArray,0);
 

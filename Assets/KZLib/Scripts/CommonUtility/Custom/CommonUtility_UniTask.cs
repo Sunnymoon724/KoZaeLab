@@ -5,6 +5,23 @@ using UnityEngine;
 
 public static partial class CommonUtility
 {
+	public static void KillTokenSource(ref CancellationTokenSource _tokenSource)
+	{
+		if(_tokenSource != null)
+		{
+			_tokenSource.Cancel();
+			_tokenSource.Dispose();
+			_tokenSource = null;
+		}
+	}
+
+	public static void RecycleTokenSource(ref CancellationTokenSource _tokenSource)
+	{
+		KillTokenSource(ref _tokenSource);
+
+		_tokenSource = new CancellationTokenSource();
+	}
+
 	public static async UniTask DelayActionAsync(Action _onAction,float _second,bool _ignoreTimeScale,CancellationToken _token)
 	{
 		await UniTask.WaitForSeconds(_second,_ignoreTimeScale,cancellationToken : _token);

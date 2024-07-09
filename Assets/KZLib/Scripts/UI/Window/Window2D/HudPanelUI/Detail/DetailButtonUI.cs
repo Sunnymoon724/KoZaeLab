@@ -11,9 +11,9 @@ namespace HudPanel
 
 		private TabButtonUI m_Selected = null;
 
-		protected override void Awake()
+		protected override void Initialize()
 		{
-			base.Awake();
+			base.Initialize();
 
 			foreach(var pair in m_WindowDict)
 			{

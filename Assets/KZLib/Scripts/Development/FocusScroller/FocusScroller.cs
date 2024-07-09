@@ -63,7 +63,7 @@ namespace KZLib.KZDevelop
 		[BoxGroup("뷰어",ShowLabel = false,Order = 99),SerializeField,KZRichText]
 		private int m_FocusIndex = -1;
 
-		private UIPool m_UIPool = null;
+		private GameObjectUIPool m_ObjectPool = null;
 
 		private bool m_Initialize = false;
 
@@ -82,19 +82,14 @@ namespace KZLib.KZDevelop
 
 		public ICellData FocusCellData => m_CellList.TryGetValueByIndex(m_FocusIndex,out var data) ? data : null;
 
-		protected override void Awake()
-		{
-			base.Awake();
-
-			Initialize();
-		}
-
-		private void Initialize()
+		protected override void Initialize()
 		{
 			if(m_Initialize)
 			{
 				return;
 			}
+
+			base.Initialize();
 
 			if(m_Slot == null)
 			{
@@ -114,7 +109,7 @@ namespace KZLib.KZDevelop
 			m_Viewport.pivot = new Vector2(0.0f,1.0f);
 			slot.UIRectTransform.pivot = new Vector2(0.5f,0.5f);
 
-			m_UIPool = new UIPool(slot.gameObject,m_Viewport);
+			m_ObjectPool = new GameObjectUIPool(slot.gameObject,m_Viewport);
 
 			m_CellList.Clear();
 			m_SlotList.Clear();
@@ -156,10 +151,7 @@ namespace KZLib.KZDevelop
 
 		public void SetCellList(List<ICellData> _cellList,int? _index = null)
 		{
-			if(!m_Initialize)
-			{
-				Initialize();
-			}
+			Initialize();
 
 			var index = _index.HasValue ? Mathf.Clamp(_index.Value,0,_cellList.Count) : 0;
 
@@ -246,7 +238,7 @@ namespace KZLib.KZDevelop
 
 			for(var i=0;i<count;i++)
 			{
-				m_SlotList.Add(m_UIPool.Get<FocusSlotUI>(m_Viewport));
+				m_SlotList.Add(m_ObjectPool.Get<FocusSlotUI>(m_Viewport));
 			}
 		}
 

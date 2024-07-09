@@ -12,6 +12,7 @@ namespace System.Collections.Generic
 		private int m_Rear = -1;
 
 		public int Size => m_DataArray.Length;
+		public int Capacity => m_Capacity;
 
 		public CircularQueue(int _capacity)
 		{
@@ -19,9 +20,6 @@ namespace System.Collections.Generic
 			{
 				throw new ArgumentOutOfRangeException(string.Format("용량이 {0} 입니다.",_capacity)); 
 			}
-
-			m_Front = -1;
-			m_Rear = -1;
 
 			m_Capacity = _capacity;
 			m_DataArray = new TData[_capacity];
@@ -43,6 +41,10 @@ namespace System.Collections.Generic
 				if(IsEmpty)
 				{
 					m_Front = 0;
+				}
+				else if(IsFull)
+				{
+					m_Front = (m_Front+1)%m_Capacity;
 				}
 
 				m_Rear = (m_Rear+1)%m_Capacity;
@@ -132,24 +134,30 @@ namespace System.Collections.Generic
 
 		public bool Contains(TData _data)
 		{
-			return m_DataArray.Any(x=>x.Equals(_data));
+			if(_data == null)
+			{
+				throw new ArgumentNullException(string.Format("{0}이 없습니다.",_data));
+			}
+
+			return m_DataArray.Any(x=>x != null && x.Equals(_data));
 		}
 
 		public void CopyTo(Array _array,int _index)
 		{
 			if(_array == null)
 			{
-				throw new ArgumentNullException(nameof(_array));
+				throw new ArgumentNullException(string.Format("{0}이 없습니다.",_array));
 			}
 
 			if(_index < 0 || _index >= _array.Length)
 			{
-				throw new ArgumentOutOfRangeException(nameof(_index));
+				throw new ArgumentNullException(string.Format("{0}는 {1}의 범위 밖입니다.",_index,_array));
 			}
 
 			if(Count > 0)
 			{
 				var index = m_Front;
+
 				for(var i=0;i<Count;i++)
 				{
 					_array.SetValue(m_DataArray[index],_index+i);

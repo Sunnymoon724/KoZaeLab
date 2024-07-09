@@ -30,9 +30,9 @@ namespace KZLib.KZDevelop
 		/// <summary>
 		/// 부모와 자식 게임 오브젝트를 설정합니다.
 		/// </summary>
-		protected virtual void SetChild(GameObject _parent,GameObject _child)
+		protected virtual void SetChild(Transform _parent,Transform _child)
 		{
-			_parent.transform.SetChild(_child.transform);
+			_parent.SetChild(_child);
 		}
 
 		/// <summary>
@@ -40,7 +40,7 @@ namespace KZLib.KZDevelop
 		/// </summary>
 		public void Put(GameObject _data)
 		{
-			SetChild(m_Storage.gameObject,_data);
+			SetChild(m_Storage,_data.transform);
 
 			_data.name = m_Pivot.name;
 			_data.SetActiveSelf(false);
@@ -58,7 +58,7 @@ namespace KZLib.KZDevelop
 
 			if(_parent)
 			{
-				SetChild(_parent.gameObject,data);
+				SetChild(_parent,data.transform);
 			}
 
 			data.SetActiveSelf(true);

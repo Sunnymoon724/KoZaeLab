@@ -52,7 +52,7 @@ namespace KZLib
 			Log.Data.I("SQL 로드 완료 [{0}]",_tableName);
 		}
 
-		public override void ClearAll()
+		protected override void ClearAll()
 		{
 			if(m_Command != null)
 			{

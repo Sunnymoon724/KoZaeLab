@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51dd79be8f368244e8ea81e8d379242b, type: 3}
+  m_Name: GraphicQualityPresetSettings
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: m_QualityPresetDicts
+      Entry: 6
+      Data: 
+    - Name: m_QualityDict
+      Entry: 6
+      Data: 
+  m_Initialize: 1
+  m_QualityLowestPresetList: []
+  m_QualityLowPresetList: []
+  m_QualityMiddlePresetList: []
+  m_QualityHighPresetList: []
+  m_QualityHighestPresetList: []
