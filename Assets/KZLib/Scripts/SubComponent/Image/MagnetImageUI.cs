@@ -44,7 +44,7 @@ public class MagnetImageUI : BaseImageUI
 		{
 			if(this == value)
 			{
-				Log.System.W("자기 자신을 타겟으로 지정할 수 없습니다.");
+				LogTag.UI.W("자기 자신을 타겟으로 지정할 수 없습니다.");
 
 				return;
 			}

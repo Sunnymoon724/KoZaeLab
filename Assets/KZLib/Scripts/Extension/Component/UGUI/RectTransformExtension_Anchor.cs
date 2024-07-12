@@ -18,34 +18,34 @@ public static partial class RectTransformExtension
 		_rectTransform.offsetMax = Vector2.zero;
 	}
 
-	public static void SetAnchoredPositionX(this RectTransform _rectTransform,float _x)
-	{
-		_rectTransform.anchoredPosition = new Vector2(_x,_rectTransform.anchoredPosition.y);
-	}
-
-	public static void SetAnchoredPositionY(this RectTransform _rectTransform,float _y)
-	{
-		_rectTransform.anchoredPosition = new Vector2(_rectTransform.anchoredPosition.x,_y);
-	}
-
 	public static void SetAnchoredPosition(this RectTransform _rectTransform,Vector2 _point)
 	{
 		_rectTransform.anchoredPosition = _point;
 	}
 
-	public static void SetWidth(this RectTransform _rectTransform,float _width)
+	public static void SetAnchoredPositionX(this RectTransform _rectTransform,float _x)
 	{
-		_rectTransform.sizeDelta = new Vector2(_width,_rectTransform.sizeDelta.y);
+		_rectTransform.SetAnchoredPosition(new(_x,_rectTransform.anchoredPosition.y));
 	}
 
-	public static void SetHeight(this RectTransform _rectTransform,float _height)
+	public static void SetAnchoredPositionY(this RectTransform _rectTransform,float _y)
 	{
-		_rectTransform.sizeDelta = new Vector2(_rectTransform.sizeDelta.x,_height);
+		_rectTransform.SetAnchoredPosition(new(_rectTransform.anchoredPosition.x,_y));
 	}
 
 	public static void SetSize(this RectTransform _rectTransform,Vector2 _size)
 	{
 		_rectTransform.sizeDelta = _size;
+	}
+
+	public static void SetWidth(this RectTransform _rectTransform,float _width)
+	{
+		_rectTransform.SetSize(new(_width,_rectTransform.sizeDelta.y));
+	}
+
+	public static void SetHeight(this RectTransform _rectTransform,float _height)
+	{
+		_rectTransform.SetSize(new(_rectTransform.sizeDelta.x,_height));
 	}
 
 	public static void SetLeftAnchorOffset(this RectTransform _rectTransform,float _left)

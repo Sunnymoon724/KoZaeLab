@@ -63,7 +63,7 @@ namespace KZLib.KZSchedule
 
 			if(duration <= 0.0f)
 			{
-				Log.System.W("진행 시간이 0 미만인 애니메이션은 실행할 수 없습니다.");
+				LogTag.System.W("진행 시간이 0 미만인 애니메이션은 실행할 수 없습니다.");
 
 				return;
 			}

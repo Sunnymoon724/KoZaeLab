@@ -34,15 +34,15 @@ namespace KZLib.KZMenu
 
 			if(textList.IsNullOrEmpty())
 			{
-				Log.Editor.I("사용하고 있는 에셋이 없습니다.");
+				LogTag.Editor.I("사용하고 있는 에셋이 없습니다.");
 			}
 			else
 			{
-				Log.Editor.I("사용하는 에셋 리스트 입니다.");
+				LogTag.Editor.I("사용하는 에셋 리스트 입니다.");
 
 				foreach(var text in textList)
 				{
-					Log.Editor.I(text);
+					LogTag.Editor.I(text);
 				}
 			}
 		}
@@ -76,15 +76,15 @@ namespace KZLib.KZMenu
 
 			if(textList.IsNullOrEmpty())
 			{
-				Log.Editor.I("사용된 에셋이 없습니다.");
+				LogTag.Editor.I("사용된 에셋이 없습니다.");
 			}
 			else
 			{
-				Log.Editor.I("사용된 에셋 리스트 입니다.");
+				LogTag.Editor.I("사용된 에셋 리스트 입니다.");
 
 				foreach(var text in textList)
 				{
-					Log.Editor.I(text);
+					LogTag.Editor.I(text);
 				}
 			}
 		}
@@ -93,7 +93,7 @@ namespace KZLib.KZMenu
 		{
 			if(Selection.activeObject == null)
 			{
-				Log.Editor.I("선택된 에셋이 없습니다.");
+				LogTag.Editor.I("선택된 에셋이 없습니다.");
 
 				return false;
 			}
@@ -102,7 +102,7 @@ namespace KZLib.KZMenu
 
 			if(!CommonUtility.IsFilePath(path))
 			{
-				Log.Editor.I("폴더를 선택했습니다.");
+				LogTag.Editor.I("폴더를 선택했습니다.");
 
 				return false;
 			}

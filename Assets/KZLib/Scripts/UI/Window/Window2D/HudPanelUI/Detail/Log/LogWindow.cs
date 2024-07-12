@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using KZLib;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -117,9 +118,11 @@ namespace HudPanel
 
 			foreach(var data in LogMgr.In.LogDataGroup)
 			{
-				if(CheckLogData(data,out var color))
+				var log = GetLogData(data);
+
+				if(log.Item2 != null)
 				{
-					cellList.Add(CreateCellData(data,color));
+					cellList.Add(CreateCellData(data,log.Item1,log.Item2));
 				}
 			}
 
@@ -131,11 +134,13 @@ namespace HudPanel
 			}
 		}
 
-		private void OnUpdateLogScroll(LogData _data)
+		private void OnUpdateLogScroll(MessageData _data)
 		{
-			if(CheckLogData(_data,out var color))
+			var log = GetLogData(_data);
+
+			if(log.Item2 != null)
 			{
-				m_ScrollRect.AddCell(CreateCellData(_data,color));
+				m_ScrollRect.AddCell(CreateCellData(_data,log.Item1,log.Item2));
 			}
 
 			foreach(var data in m_MsgDataDict.Values)
@@ -144,38 +149,44 @@ namespace HudPanel
 			}
 		}
 
-		private bool CheckLogData(LogData _data,out Color _color)
+		private (Color,string) GetLogData(MessageData _data)
 		{
-			var type = GetMsgType(_data.DataType);
+			var head = SplitHead(_data.Head);
 
-			if(m_MsgDataDict.TryGetValue(type,out var data))
+			if(head.Type.HasValue)
 			{
-				_color = data.MsgColor;
+				var data = m_MsgDataDict[head.Type.Value];
 
-				return data.AddCount() && (m_CompareText.IsEmpty() || _data.Body.Contains(m_CompareText,StringComparison.OrdinalIgnoreCase));
+				if(data.AddCount() && (m_CompareText.IsEmpty() || _data.Body.Contains(m_CompareText,StringComparison.OrdinalIgnoreCase)))
+				{
+					return (data.MsgColor,_data.Body);
+				}
 			}
 
-			_color = Color.white;
-
-			return false;
+			return (Color.white,null);
 		}
 
-		private LogCellData CreateCellData(LogData _data,Color _color)
+		private LogCellData CreateCellData(MessageData _data,Color _color,string _time)
 		{
-			return new LogCellData(_color,_data.Time,_data.Body,() =>
+			return new LogCellData(_color,_time,_data.Body,() =>
 			{
 				CommonUtility.SendReportOnlyDiscord("Log Window",new MessageData[] { _data },null);
 			});
 		}
 
-		private MsgType GetMsgType(LogType _logType)
+		private (MsgType? Type,string Time) SplitHead(string _head)
 		{
-			return _logType switch
+			var match = Regex.Match(_head,@"<(.+?)> \[(.+?)\]");
+
+			if(match.Success)
 			{
-				LogType.Warning => MsgType.Warning,
-				LogType.Error or LogType.Exception => MsgType.Error,
-				_ => MsgType.Info,
-			};
+				var type = match.Groups[1].Value;
+				var time = match.Groups[2].Value;
+
+				return (type.ToEnum<MsgType>(),time);
+			}
+
+			return (null,null);
 		}
 	}
 }

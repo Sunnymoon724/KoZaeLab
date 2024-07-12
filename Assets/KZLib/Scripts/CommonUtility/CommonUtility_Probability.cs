@@ -68,20 +68,20 @@ public static partial class CommonUtility
 	/// <summary>
 	/// -value 에서 +value 사이의 숫자를 무작위로 반환한다.
 	/// </summary>
-	public static float GetRndFloat(float _value,int? _dot = null)
+	public static float GetRndFloat(float _value,int? _decimals = null)
 	{
-		return _value == 0.0f ? _value : GetRndFloat(-_value,+_value,_dot);
+		return _value == 0.0f ? _value : GetRndFloat(-_value,+_value,_decimals);
 	}
 
 	/// <summary>
 	/// min 에서 max 사이의 숫자를 무작위로 반환한다.
 	/// dot 는 소수점 N째 자리를 의미한다.
 	/// </summary>
-	public static float GetRndFloat(float _min,float _max,int? _dot = null)
+	public static float GetRndFloat(float _min,float _max,int? _decimals = null)
 	{
 		var value = GetRndFloat()*(_max-_min)+_min;
 
-		return _dot == null ? value : value.ToLimit(_dot.Value);
+		return _decimals == null ? value : value.ToLimit(_decimals.Value);
 	}
 	#endregion Single
 
@@ -97,20 +97,20 @@ public static partial class CommonUtility
 	/// <summary>
 	/// -value 에서 +value 사이의 숫자를 무작위로 반환한다.
 	/// </summary>
-	public static double GetRndDouble(double _value,int? _dot = null)
+	public static double GetRndDouble(double _value,int? _decimals = null)
 	{
-		return _value == 0.0d ? _value : GetRndDouble(-_value,+_value,_dot);
+		return _value == 0.0d ? _value : GetRndDouble(-_value,+_value,_decimals);
 	}
 
 	/// <summary>
 	/// min 에서 max 사이의 숫자를 무작위로 반환한다.
 	/// dot 는 소수점 N째 자리를 의미한다.
 	/// </summary>
-	public static double GetRndDouble(double _min,double _max,int? _dot = null)
+	public static double GetRndDouble(double _min,double _max,int? _decimals = null)
 	{
 		var value = GetRndDouble()*(_max-_min)+_min;
 
-		return _dot == null ? value : value.ToLimit(_dot.Value);
+		return _decimals == null ? value : value.ToLimit(_decimals.Value);
 	}
 	#endregion Double
 

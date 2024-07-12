@@ -128,11 +128,11 @@ namespace KZLib.KZWindow
 
 					if(result)
 					{
-						Log.System.W(string.Format("{0}의 {1}가 변경 하여 저장 했습니다.",m_Path,changed));
+						LogTag.Editor.W(string.Format("{0}의 {1}가 변경 하여 저장 했습니다.",m_Path,changed));
 					}
 					else
 					{
-						Log.System.W(string.Format("{0}의 {1}을 변경하려고 했으나 저장에 실패했습니다.",m_Path,changed));
+						LogTag.Editor.W(string.Format("{0}의 {1}을 변경하려고 했으나 저장에 실패했습니다.",m_Path,changed));
 					}
 				}
 			}

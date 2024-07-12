@@ -57,7 +57,7 @@ public partial class MetaSettings : ExcelSettings<MetaSettings>
 		{
 			if(CommonUtility.IsExistFile(_scriptPath))
 			{
-				Log.Data.W("스크립트가 이미 존재하여 생성을 생략합니다. [경로 :{0}]",_scriptPath);
+				LogTag.Editor.W("스크립트가 이미 존재하여 생성을 생략합니다. [경로 :{0}]",_scriptPath);
 
 				return;
 			}

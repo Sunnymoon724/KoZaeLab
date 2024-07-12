@@ -3,31 +3,30 @@ using UnityEngine.UI;
 
 public static class LayoutGroupExtension
 {
-	public static void ForceRebuild<TComponent>(this TComponent _layoutGroup,bool _recursive = true) where TComponent : Component,ILayoutController
+	public static void ForceRebuild(this LayoutGroup _layoutGroup,bool _recursive = true)
 	{
 		if(_recursive)
 		{
-			RecursiveLayoutRebuild((RectTransform)_layoutGroup.transform);
+			RecursiveLayoutRebuild(_layoutGroup.transform as RectTransform);
 		}
 		else
 		{
-			LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)_layoutGroup.transform);
+			LayoutRebuilder.ForceRebuildLayoutImmediate(_layoutGroup.transform as RectTransform);
 		}
 	}
 	
-	public static void MarkForRebuild<TComponent>(this TComponent _layoutGroup,bool _recursive = true) where TComponent : Component,ILayoutController
+	public static void MarkForRebuild(this LayoutGroup _layoutGroup,bool _recursive = true)
 	{
 		if(_recursive)
 		{
-			RecursiveMarkForRebuild((RectTransform)_layoutGroup.transform);
+			RecursiveMarkForRebuild(_layoutGroup.transform as RectTransform);
 		}
 		else
 		{
-			LayoutRebuilder.MarkLayoutForRebuild((RectTransform)_layoutGroup.transform);
+			LayoutRebuilder.MarkLayoutForRebuild(_layoutGroup.transform as RectTransform);
 		}
 	}
 
-	
 	private static void RecursiveMarkForRebuild(RectTransform _transform)
 	{
 		for(var i=0;i<_transform.childCount;i++)
@@ -60,9 +59,8 @@ public static class LayoutGroupExtension
 			}
 		}
 
-		var controller = _transform.GetComponent<ILayoutController>();
-
-		if(controller != null)
+		
+		if(_transform.TryGetComponent<ILayoutController>(out var _))
 		{
 			LayoutRebuilder.ForceRebuildLayoutImmediate(_transform);
 		}

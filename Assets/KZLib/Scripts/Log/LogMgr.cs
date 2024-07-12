@@ -15,21 +15,16 @@ namespace KZLib
 	{
 		private const int MAX_LOG_COUNT = 100;
 
-		private readonly CircularQueue<LogData> m_LogDataQueue = new(MAX_LOG_COUNT);
+		private readonly CircularQueue<MessageData> m_LogDataQueue = new(MAX_LOG_COUNT);
 
-		public IEnumerable<LogData> LogDataGroup => m_LogDataQueue;
+		public IEnumerable<MessageData> LogDataGroup => m_LogDataQueue;
 
 #if !UNITY_EDITOR
-		private const int COOL_TIME_TIMER = 30*1000; // 30초
+		private const int COOL_TIME_TIMER = 30; // 30초
 		private bool m_SendLock = false;
 #endif
-		private Action<LogData> m_OnAddLog = null;
 
-		public event Action<LogData> OnAddLog
-		{
-			add { m_OnAddLog -= value; m_OnAddLog += value; }
-			remove { m_OnAddLog -= value; }
-		}
+		public MoreAction<MessageData> OnAddLog { get; set; }
 
 		protected override void Initialize()
 		{
@@ -53,26 +48,44 @@ namespace KZLib
 			base.Release(_disposing);
 		}
 
-		private void OnGetLog(string _condition,string _stack,LogType _type)
+		private void OnGetLog(string _condition,string _stackTrace,LogType _type)
 		{
+			var head = string.Format("<{0}> {1}",GetLogTag(_type),DateTime.Now.ToString("MM/dd HH:mm:ss:ff"));
+			var body = string.Empty;
+
 			if(_type == LogType.Exception)
 			{
-				GetLog(LogType.Exception,string.Format("[Exception] {0} [{1}]",_condition,_stack));
+				body = string.Format("{0}\n\n{1}",_condition,_stackTrace);
 			}
+			else
+			{
+				var stackTraceArray = _stackTrace.Split('\n');
+				var index = stackTraceArray.FindIndex(x => x.Contains(nameof(LogTag)));
+				var stackTrace = stackTraceArray[index+1];
+
+				body = string.Format("{0}\n\n{1}",_condition,stackTrace);
+			}
+
+			AddLog(head,body);
 		}
 
-		private string SetPrefix(Log _kind)
+		private string GetLogTag(LogType _logType)
 		{
-			return _kind == Log.Normal ? string.Empty : string.Format("[{0}] ",_kind);
+			return _logType switch
+			{
+				LogType.Warning => "Warning",
+				LogType.Error or LogType.Exception => "Error",
+				_ => "Info",
+			};
 		}
 
-		public string ShowLog(Log _kind,LogType _type,object _message,params object[] _argumentArray)
+		public string ShowLog(LogTag _tag,object _message,params object[] _argumentArray)
 		{
-			var text = string.Concat(SetPrefix(_kind),ConvertText(_message));
+			var text = string.Format("[{0}] {1}",_tag,ConvertText(_message));
 
 			if(_argumentArray.IsNullOrEmpty())
 			{
-				return GetLog(_type,text);
+				return text;
 			}
 			else
 			{
@@ -83,13 +96,16 @@ namespace KZLib
 					objectArray[i] = _argumentArray[i] is not string && _argumentArray[i] is IEnumerable ? ConvertText(_argumentArray[i]) : _argumentArray[i];
 				}
 
-				return GetLog(_type,string.Format(text,objectArray));
+				return string.Format(text,objectArray);
 			}
 		}
 
-		private string GetLog(LogType _type,string _text)
+		private void AddLog(string _head,string _body)
 		{
-			AddLogData(_type,_text);
+			var data = new MessageData(_head,_body);
+
+			m_LogDataQueue.Enqueue(data);
+			OnAddLog?.Invoke(data);
 
 #if !UNITY_EDITOR
 			if(!m_SendLock && (_type == LogType.Exception))
@@ -97,8 +113,6 @@ namespace KZLib
 				SendBugAsync().Forget();
 			}
 #endif
-
-			return _text;
 		}
 
 		private string ConvertText(object _object)
@@ -125,13 +139,9 @@ namespace KZLib
 			return _object.ToString();
 		}
 
-		private void AddLogData(LogType _type,string _log)
+		public void ClearLog()
 		{
-			var data = new LogData(_type,_log);
-
-			m_LogDataQueue.Enqueue(data);
-
-			m_OnAddLog?.Invoke(data);
+			m_LogDataQueue.Clear();
 		}
 
 #if !UNITY_EDITOR
@@ -145,6 +155,7 @@ namespace KZLib
 
 			await CommonUtility.SendBugReportAsync(m_LogDataQueue,texture.EncodeToPNG());
 
+			// 한번 보내고 30초동안 대기 -> 너무 자주 보내면 부하가 있음
 			await UniTask.WaitForSeconds(COOL_TIME_TIMER);
 
 			m_SendLock = false;

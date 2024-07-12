@@ -21,7 +21,7 @@ namespace KZLib.KZFiles
 			m_Data1 = _data1;
 			m_Data2 = _data2;
 		}
-		
+
 		public virtual int Channel
 		{
 			get => m_Channel;

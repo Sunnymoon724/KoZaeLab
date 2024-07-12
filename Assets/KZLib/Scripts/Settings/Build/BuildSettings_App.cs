@@ -96,7 +96,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 
 	private async UniTask BuildAppAsync()
 	{
-		Log.Build.I("앱 빌드 시작");
+		LogTag.Build.I("앱 빌드 시작");
 
 		var sceneArray = EditorBuildSettings.scenes.Where(x=>x.enabled).Select(y=>y.path).ToArray();
 		var appName = string.Format("{0} [{1}_{2}]",Application.productName,GameSettings.In.GameMode.First(),GameSettings.In.GameVersion);
@@ -113,18 +113,18 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 				continue;
 			}
 
-			Log.Build.I("{0} 빌드 시작",target);
+			LogTag.Build.I("{0} 빌드 시작",target);
 
 			var appPath = GetAppPath(appName);
 			var report = BuildPipeline.BuildPlayer(GetBuildPlayerOptions(sceneArray,target,appPath));
 
 			if(report.summary.result == BuildResult.Succeeded)
 			{
-				Log.Build.I("{0} 빌드 성공 [걸린 시간 : {1} 경로 : {2}]",target,report.summary.totalTime,appPath);
+				LogTag.Build.I("{0} 빌드 성공 [걸린 시간 : {1} 경로 : {2}]",target,report.summary.totalTime,appPath);
 
 				if(m_OpenFolderAfterAppBuild)
 				{
-					Log.Build.I("빌드가 있는 폴더를 오픈 합니다.");
+					LogTag.Build.I("빌드가 있는 폴더를 오픈 합니다.");
 
 					CommonUtility.OpenFolder(AppFullPath);
 				}
@@ -135,7 +135,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 
 					if(UseGoogleDrive && !m_GoogleDriveFolderId.IsEmpty())
 					{
-						Log.Build.I("앱을 구글 드라이브에 업로드합니다.");
+						LogTag.Build.I("앱을 구글 드라이브에 업로드합니다.");
 
 						var request = GoogleDrivePostCreateFileWebRequest.Create(m_GoogleDriveFolderId,fileGroup.Item1,fileGroup.Item2);
 
@@ -143,17 +143,17 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 
 						if(!data.Result)
 						{
-							Log.Build.I("업로드에 실패 하였습니다.");
+							LogTag.Build.I("업로드에 실패 하였습니다.");
 
 							return;
 						}
 
-						Log.Build.I("업로드에 성공 하였습니다. {0}",string.Format(@"https://drive.google.com/drive/folders/{0}",m_GoogleDriveFolderId));
+						LogTag.Build.I("업로드에 성공 하였습니다. {0}",string.Format(@"https://drive.google.com/drive/folders/{0}",m_GoogleDriveFolderId));
 					}
 
 					if(m_UploadType.HasFlag(UploadType.Azure))
 					{
-						Log.Build.I("앱을 애저에 업로드합니다.");
+						LogTag.Build.I("앱을 애저에 업로드합니다.");
 					}
 
 					await UniTask.Yield();

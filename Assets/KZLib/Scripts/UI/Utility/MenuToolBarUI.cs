@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using KZLib.KZDevelop;
+using KZLib;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -101,7 +101,7 @@ namespace KZLib
 
 				if(cell == null)
 				{
-					Log.UI.E("{0}은 정의되어 있지 않습니다.",data.MenuType);
+					LogTag.UI.E("{0}은 정의되어 있지 않습니다.",data.MenuType);
 
 					continue;
 				}

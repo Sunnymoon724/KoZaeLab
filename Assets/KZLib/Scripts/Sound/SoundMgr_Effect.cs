@@ -90,7 +90,7 @@ namespace KZLib
 
 			if(!source)
 			{
-				Log.Sound.W("소스가 꽉차서 추가합니다. 현재 : {0}",m_EffectList.Count);
+				LogTag.Sound.W("소스가 꽉차서 추가합니다. 현재 : {0}",m_EffectList.Count);
 
 				source = CreateEffectSource(m_EffectList.Count);
 			}

@@ -196,9 +196,9 @@ public static class QuaternionExtension
 		return Quaternion.Euler((angle2.x-angle1.x)/2.0f,(angle2.y-angle1.y)/2.0f,(angle2.z-angle1.z)/2.0f);
 	}
 
-	public static string ToQuaternionString(this Quaternion _quaternion,int _dot = 2)
+	public static string ToQuaternionString(this Quaternion _quaternion,int _decimals = 2)
 	{
-		var format = string.Format("({1}{0}}}, {2}{0}}}, {3}{0}}}, {4}{0}}})",_dot,"{0:f","{1:f","{2:f","{3:f");
+		var format = string.Format("({1}{0}}}, {2}{0}}}, {3}{0}}}, {4}{0}}})",_decimals,"{0:f","{1:f","{2:f","{3:f");
 
 		return string.Format(format,_quaternion.x,_quaternion.y,_quaternion.z,_quaternion.w);
 	}

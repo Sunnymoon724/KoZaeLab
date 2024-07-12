@@ -79,15 +79,15 @@ namespace KZLib.KZMenu
 
 			if(resultList.IsNullOrEmpty())
 			{
-				Log.Editor.I("컴포넌트가 오류인 프리펩은 없습니다.");
+				LogTag.Editor.I("컴포넌트가 오류인 프리펩은 없습니다.");
 			}
 			else
 			{
-				Log.Editor.I("컴포넌트가 오류인 프리펩 리스트 입니다.");
+				LogTag.Editor.I("컴포넌트가 오류인 프리펩 리스트 입니다.");
 
 				foreach(var result in resultList)
 				{
-					Log.Editor.I(result);
+					LogTag.Editor.I(result);
 				}
 			}
 		}
@@ -119,15 +119,15 @@ namespace KZLib.KZMenu
 
 			if(resultList.IsNullOrEmpty())
 			{
-				Log.Editor.I("메쉬 필터가 오류인 프리펩은 없습니다.");
+				LogTag.Editor.I("메쉬 필터가 오류인 프리펩은 없습니다.");
 			}
 			else
 			{
-				Log.Editor.I("메쉬 필터가 오류인 프리펩 리스트 입니다.");
+				LogTag.Editor.I("메쉬 필터가 오류인 프리펩 리스트 입니다.");
 
 				foreach(var result in resultList)
 				{
-					Log.Editor.I(result);
+					LogTag.Editor.I(result);
 				}
 			}
 		}
@@ -211,12 +211,12 @@ namespace KZLib.KZMenu
 		{
 			if(Application.internetReachability != NetworkReachability.NotReachable)
 			{
-				Log.Editor.I("인터넷이 연결되어 있습니다. [상태 : {0}]",Application.internetReachability);
+				LogTag.Editor.I("인터넷이 연결되어 있습니다. [상태 : {0}]",Application.internetReachability);
 
 				return;
 			}
 
-			Log.Editor.W("인터넷이 연결되어 있지 않습니다.");
+			LogTag.Editor.W("인터넷이 연결되어 있지 않습니다.");
 		}
 	}
 }

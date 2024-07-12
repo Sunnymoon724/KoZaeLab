@@ -1,8 +1,8 @@
 ﻿
-public record SoundVolumeData(float Level,bool Mute);
-
 namespace GameData
 {
+	public record SoundVolumeData(float Level,bool Mute);
+
 	public class SoundOption : Option
 	{
 		protected override string OPTION_KEY => "Sound Option";

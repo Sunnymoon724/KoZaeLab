@@ -114,26 +114,6 @@ public static class DictionaryExtension
 		return _sources.Values.IsEquals(_values);
 	}
 
-	public static bool? GetAsBool<TKey>(this IDictionary<TKey,object> _sources,TKey _key)
-	{
-		return _sources.TryGetValue(_key,out var value) ? value as bool? : null;
-	}
-
-	public static int? GetAsInt<TKey>(this IDictionary<TKey,object> _sources,TKey _key)
-	{
-		return _sources.TryGetValue(_key,out var value) ? value as int? : null;
-	}
-
-	public static float? GetAsFloat<TKey>(this IDictionary<TKey,object> _sources,TKey _key)
-	{
-		return _sources.TryGetValue(_key,out var value) ? value as float? : null;
-	}
-
-	public static string GetAsString<TKey>(this IDictionary<TKey,object> _sources,TKey _key)
-	{
-		return _sources.TryGetValue(_key,out var value) ? value as string : null;
-	}
-	
 	public static void AddRange<TKey,TValue>(this IDictionary<TKey,TValue> _sources,IEnumerable<TValue> _values,Func<TValue,TKey> _key,Action _onAction = null)
 	{
 		foreach(var value in _values)

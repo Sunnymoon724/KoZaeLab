@@ -106,7 +106,7 @@ namespace KZLib
 			}
 			catch(Exception _exception)
 			{
-				Log.System.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
+				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
 				SetInt(_key,_default);
 
@@ -134,7 +134,7 @@ namespace KZLib
 			}
 			catch(Exception _exception)
 			{
-				Log.System.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
+				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
 				SetLong(_key,_default);
 
@@ -162,7 +162,7 @@ namespace KZLib
 			}
 			catch(Exception _exception)
 			{
-				Log.System.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
+				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
 				SetFloat(_key,_default);
 
@@ -190,7 +190,7 @@ namespace KZLib
 			}
 			catch(Exception _exception)
 			{
-				Log.System.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
+				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
 				SetDouble(_key,_default);
 
@@ -218,7 +218,7 @@ namespace KZLib
 			}
 			catch(Exception _exception)
 			{
-				Log.System.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
+				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
 				SetBool(_key,_default);
 
@@ -246,7 +246,7 @@ namespace KZLib
 			}
 			catch(Exception _exception)
 			{
-				Log.System.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
+				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
 				SetEnum(_key,_default);
 
@@ -284,7 +284,7 @@ namespace KZLib
 			}
 			catch(Exception _exception)
 			{
-				Log.System.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
+				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
 				SetObject(_key,_default);
 
@@ -322,7 +322,7 @@ namespace KZLib
 			}
 			catch(Exception _exception)
 			{
-				Log.System.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
+				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
 				SetObject(_key,_default);
 

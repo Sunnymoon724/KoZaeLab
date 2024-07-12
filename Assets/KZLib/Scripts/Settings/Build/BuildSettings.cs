@@ -1,10 +1,8 @@
 ﻿#if UNITY_EDITOR
 using System;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using KZLib;
 using UnityEditor;
-using UnityEngine;
 
 public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 {
@@ -12,8 +10,6 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 
 	[Flags]
 	private enum UploadType { None = 0, GoogleDrive = 1<<0, Azure = 1<<1, All = -1 };
-
-	private readonly Queue<LogData> m_LogDataQueue = new();
 
 	protected override void Initialize()
 	{
@@ -33,7 +29,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 
 	private async UniTaskVoid BuildAsync(Func<UniTask> _onBuildTask)
 	{
-		Application.logMessageReceived += OnGetLog;
+		LogMgr.In.ClearLog();
 
 		var currentTarget = CurrentBuildTarget;
 
@@ -43,28 +39,20 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 		}
 		catch(Exception _exception)
 		{
-			Log.Build.E("빌드 실패\n{0}",_exception.Message);
+			LogTag.Build.E("빌드 실패\n{0}",_exception.Message);
 		}
 		finally
 		{
 			CommonUtility.ClearProgressBar();
-
-			Application.logMessageReceived -= OnGetLog;
 
 			if(CurrentBuildTarget != currentTarget)
 			{
 				EditorUserBuildSettings.SwitchActiveBuildTargetAsync(BuildPipeline.GetBuildTargetGroup(currentTarget),currentTarget);
 			}
 
-			await CommonUtility.SendBuildReportAsync(m_LogDataQueue);
+			await CommonUtility.SendBuildReportAsync(LogMgr.In.LogDataGroup);
 		}
 	}
-
-	private void OnGetLog(string _condition,string _stack,LogType _type)
-	{
-		m_LogDataQueue.Enqueue(new LogData(_type,_condition));
-	}
-
 	private (string,byte[]) ConvertToFileGroup(string _filePath)
 	{
 		if(CurrentBuildTarget == BuildTarget.Android)

@@ -49,7 +49,7 @@ namespace KZLib
 				CreateTable(_tableName);
 			}
 
-			Log.Data.I("SQL 로드 완료 [{0}]",_tableName);
+			LogTag.Data.I("SQL 로드 완료 [{0}]",_tableName);
 		}
 
 		protected override void ClearAll()

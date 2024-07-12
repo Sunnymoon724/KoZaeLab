@@ -12,22 +12,22 @@ public static class CameraExtension
 
 	public static void ShowLayer(this Camera _camera,int _layerIndex)
 	{
-		_camera.cullingMask |= 1 << _layerIndex;
+		_camera.cullingMask = _camera.cullingMask.AddFlag(1 << _layerIndex);
 	}
 
 	public static void ShowLayer(this Camera _camera,params string[] _layerNameArray)
 	{
-		_camera.cullingMask |= LayerMask.GetMask(_layerNameArray);
+		_camera.cullingMask = _camera.cullingMask.AddFlag(LayerMask.GetMask(_layerNameArray));
 	}
 
 	public static void HideLayer(this Camera _camera,int _layerIndex)
 	{
-		_camera.cullingMask &= ~(1 << _layerIndex);
+		_camera.cullingMask = _camera.cullingMask.RemoveFlag(1 << _layerIndex);
 	}
 
 	public static void HideLayer(this Camera _camera,params string[] _layerNameArray)
 	{
-		_camera.cullingMask &= ~LayerMask.GetMask(_layerNameArray);
+		_camera.cullingMask = _camera.cullingMask.RemoveFlag(LayerMask.GetMask(_layerNameArray));
 	}
 
 	public static void ToggleLayerVisibility(this Camera _camera,int _layerIndex)
@@ -42,12 +42,12 @@ public static class CameraExtension
 
 	public static bool IsLayerShown(this Camera _camera,int _layerIndex)
 	{
-		return (_camera.cullingMask & (1 << _layerIndex)) > 0;
+		return _camera.cullingMask.HasFlag(1 << _layerIndex);
 	}
 
 	public static bool IsLayerShown(this Camera _camera,params string[] _layerNameArray)
 	{
-		return (_camera.cullingMask & LayerMask.GetMask(_layerNameArray)) > 0;
+		return _camera.cullingMask.HasFlag(LayerMask.GetMask(_layerNameArray));
 	}
 
 	public static void SetLayerVisibility(this Camera _camera,bool _isShow,int _layerIndex)
@@ -161,7 +161,7 @@ public static class CameraExtension
 			return true;
 		}
 
-		_position2 = default(Vector3);
+		_position2 = default;
 
 		return false;
 	}

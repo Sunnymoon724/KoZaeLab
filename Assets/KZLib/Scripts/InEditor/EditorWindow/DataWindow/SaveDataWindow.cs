@@ -43,7 +43,7 @@ namespace KZLib.KZWindow
 
 					SaveDataMgr.In.SetData(m_TableName,key,data);
 
-					Log.Editor.I(string.Format("{0}의 {1}의 값이 {2}로 변경 되었습니다.",m_TableName,key,data));
+					LogTag.Editor.I(string.Format("{0}의 {1}의 값이 {2}로 변경 되었습니다.",m_TableName,key,data));
 				}
 			}
 
@@ -163,7 +163,7 @@ namespace KZLib.KZWindow
 
 			m_DataList.RemoveAt(_index);
 
-			Log.Editor.I(string.Format("{0}의 {1}가 삭제 되었습니다.",TableName,key));
+			LogTag.Editor.I(string.Format("{0}의 {1}가 삭제 되었습니다.",TableName,key));
 		}
 
 		[VerticalGroup("2",Order = 2),Button("테이블 삭제",ButtonHeight = 30),ShowIf(nameof(IsSelectedTable))]
@@ -171,7 +171,7 @@ namespace KZLib.KZWindow
 		{
 			SaveDataMgr.In.DeleteTable(TableName);
 
-			Log.Editor.I(string.Format("{0}이 삭제 되었습니다.",TableName));
+			LogTag.Editor.I(string.Format("{0}이 삭제 되었습니다.",TableName));
 
 			TableName = null;
 

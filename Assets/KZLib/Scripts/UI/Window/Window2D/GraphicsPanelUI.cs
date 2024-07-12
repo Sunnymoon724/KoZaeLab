@@ -1,5 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
-using KZLib.KZDevelop;
+using KZLib;
 using KZLib.KZSchedule;
 using UnityEngine;
 

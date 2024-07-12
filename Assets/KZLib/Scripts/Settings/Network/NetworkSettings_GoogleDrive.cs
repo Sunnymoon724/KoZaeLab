@@ -27,18 +27,18 @@ public partial class NetworkSettings : InnerBaseSettings<NetworkSettings>
 	{
 		var request = GoogleDriveGetFolderListWebRequest.Create(m_GoogleDriveFolderId);
 
-		Log.Test.I("드라이브 리스트를 얻어옵니다. 아이디 : {0}",m_GoogleDriveFolderId);
+		LogTag.Test.I("드라이브 리스트를 얻어옵니다. 아이디 : {0}",m_GoogleDriveFolderId);
 
 		var data = await request.SendAsync();
 
 		if(!data.Result)
 		{
-			Log.Test.I("리스트 얻어오기를 실패 하였습니다.");
+			LogTag.Test.I("리스트 얻어오기를 실패 하였습니다.");
 
 			return;
 		}
 
-		Log.Test.I("리스트 얻어오기를 성공 하였습니다.");
+		LogTag.Test.I("리스트 얻어오기를 성공 하였습니다.");
 
 		m_GoogleDriveResultList.Clear();
 
@@ -62,18 +62,18 @@ public partial class NetworkSettings : InnerBaseSettings<NetworkSettings>
 	{
 		var request = GoogleDrivePostCreateFileWebRequest.Create(m_GoogleDriveFolderId,"Ostrich.png",CommonUtility.GetTestImageData());
 
-		Log.Test.I("테스트 이미지를 포스트 합니다. 아이디 : {0}",m_GoogleDriveFolderId);
+		LogTag.Test.I("테스트 이미지를 포스트 합니다. 아이디 : {0}",m_GoogleDriveFolderId);
 
 		var data = await request.SendAsync();
 
 		if(!data.Result)
 		{
-			Log.Test.I("테스트 이미지를 포스트에 실패 하였습니다.");
+			LogTag.Test.I("테스트 이미지를 포스트에 실패 하였습니다.");
 
 			return;
 		}
 
-		Log.Test.I("테스트 이미지를 포스트에 성공 하였습니다.");
+		LogTag.Test.I("테스트 이미지를 포스트에 성공 하였습니다.");
 	}
 
 	private bool IsExistGoogleDrive => m_UseGoogleDrive && !m_GoogleDriveFolderId.IsEmpty();

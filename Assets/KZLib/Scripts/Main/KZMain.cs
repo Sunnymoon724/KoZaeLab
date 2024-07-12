@@ -68,7 +68,7 @@ namespace KZLib
 
 		protected virtual void Awake()
 		{
-			Log.System.I("메인 생성");
+			LogTag.System.I("메인 생성");
 		}
 
 		private async void Start()
@@ -93,7 +93,7 @@ namespace KZLib
 #endif
 			InitializeRenderSetting(builder);
 
-			Log.System.I(builder.ToString());
+			LogTag.System.I(builder.ToString());
 
 			// TODO 메타 데이터 로드 위치 변경하기 (선택창으로 시작할때 로드 or 원할때 로드)
 			await MetaDataMgr.In.LoadAllAsync();

@@ -106,37 +106,40 @@ public static partial class RectTransformExtension
 
 	public static Rect GetCanvasRect(this RectTransform _rectTransform)
 	{
-        var worldCornerArray = new Vector3[4];
-        var localCornerArray = new Vector3[4];
+		var canvas = _rectTransform.GetParentCanvas();
 
-		var canvas = _rectTransform.GetComponentInParent<Canvas>();
+		if(canvas == null)
+		{
+			return Rect.zero;
+		}
 
-        _rectTransform.GetWorldCorners(worldCornerArray);
+		var worldCornerArray = GetCornerArray(_rectTransform);
+		var localCornerArray = new Vector3[worldCornerArray.Length];
 
-        for(var i=0;i<localCornerArray.Length;i++)
-        {
-            localCornerArray[i] = canvas.transform.InverseTransformPoint(worldCornerArray[i]);
-        }
+		for(var i=0;i<worldCornerArray.Length;i++)
+		{
+			localCornerArray[i] = canvas.transform.InverseTransformPoint(worldCornerArray[i]);
+		}
 
-        return new Rect(localCornerArray[0],localCornerArray[2]-localCornerArray[0]);
+		var x		= Mathf.Min(localCornerArray[0].x,localCornerArray[1].x,localCornerArray[2].x, localCornerArray[3].x);
+		var y		= Mathf.Min(localCornerArray[0].y,localCornerArray[1].y,localCornerArray[2].y, localCornerArray[3].y);
+		var width	= Mathf.Max(localCornerArray[0].x,localCornerArray[1].x,localCornerArray[2].x, localCornerArray[3].x)-x;
+		var height	= Mathf.Max(localCornerArray[0].y,localCornerArray[1].y,localCornerArray[2].y, localCornerArray[3].y)-y;
+
+		return new Rect(x,y,width,height);
 	}
 
 	public static Canvas GetParentCanvas(this RectTransform _rectTransform)
 	{
-		var parent = _rectTransform;
-		var canvas = _rectTransform.GetComponent<Canvas>();
+		var canvas = _rectTransform.GetComponentInParent<Canvas>();
+		var parent = _rectTransform.parent;
 		var index = 0;
 
-		while(!canvas || index > 50)
+		while(!canvas && parent && index < 50)
 		{
-			canvas = _rectTransform.GetComponentInParent<Canvas>();
-
-			if(!canvas)
-			{
-				parent = parent.parent.GetComponent<RectTransform>();
-
-				index++;
-			}
+			canvas = parent.GetComponent<Canvas>();
+			parent = parent.parent;
+			index++;
 		}
 
 		return canvas;

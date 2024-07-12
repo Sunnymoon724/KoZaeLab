@@ -123,7 +123,7 @@ public partial class MetaSettings : ExcelSettings<MetaSettings>
 
 				foreach(var remove in removeList)
 				{
-					Log.Data.W("{0}는 이미 존재하여서 생략합니다.",remove);
+					LogTag.Editor.W("{0}는 이미 존재하여서 생략합니다.",remove);
 
 					enumDict.Remove(remove);
 				}

@@ -7,9 +7,9 @@ public static class DoubleExtension
 		return string.Format("{0:n0}",_double);
 	}
 
-	public static string ToStringPercent(this double _double,int _dot)
+	public static string ToStringPercent(this double _double,int _decimals)
 	{
-		return string.Format(string.Concat("{0:f",_dot,"}%"),_double);
+		return string.Format(string.Concat("{0:f",_decimals,"}%"),_double);
 	}
 
 	public static string ToStringSign(this double _double)
@@ -20,25 +20,25 @@ public static class DoubleExtension
 	/// <summary>
 	/// 소수점 n번쨰 까지만 표시
 	/// </summary>
-	public static double ToLimit(this double _double,int _dot)
+	public static double ToLimit(this double _double,int _decimals)
 	{
-		var sign = Math.Sign(_double);
-		var number = Math.Abs(_double);
-		var divisor = Math.Pow(10.0d,_dot);
+		var factor = Math.Pow(10.0d,_decimals);
 
-		return sign*Math.Floor(number*divisor)/divisor;
+		return Math.Floor(_double*factor)/factor;
 	}
 
 	public static double ToWrapAngle(this double _angle)
 	{
-		while(_angle > 180.0d)
+		_angle %= Global.FULL_ANGLE;
+
+		while(_angle > +Global.HALF_ANGLE)
 		{
-			_angle -= 360.0d;
+			_angle -= Global.FULL_ANGLE;
 		}
 
-		while(_angle < -180.0d)
+		while(_angle < -Global.HALF_ANGLE)
 		{
-			_angle += 360.0d;
+			_angle += Global.FULL_ANGLE;
 		}
 
 		return _angle;
@@ -47,16 +47,6 @@ public static class DoubleExtension
 	public static long ToMilliseconds(this double _seconds)
 	{
 		return (long) _seconds*1000L;
-	}
-
-	public static double DegreeToRadian(this double _angle)
-	{
-		return Math.PI*_angle/180.0d;
-	}
-
-	public static double RadianToDegree(this double _angle)
-	{
-		return _angle*(180.0d/Math.PI);
 	}
 
 	public static bool Approximately(this double _double,double _number,double _delta = 1e-15d)
@@ -69,9 +59,9 @@ public static class DoubleExtension
 		return Approximately(_double,0.0d,_delta);
 	}
 
-	public static void SeparateDecimal(this double _double,out int _integer,out double _decimal)
+	public static void SeparateDecimal(this double _double,out int _integer,out double _fraction)
 	{
-		_integer = (int) Math.Floor(_double);
-		_decimal = _double.Approximately(_integer) ? 0.0d : Math.Abs(_double-_integer);
+		_integer = (int) Math.Truncate(_double);
+        _fraction = Math.Abs(_double-_integer);
 	}
 }

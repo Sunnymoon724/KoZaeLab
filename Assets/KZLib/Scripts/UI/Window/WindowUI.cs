@@ -68,7 +68,7 @@ public abstract class WindowUI : SortingLayerCanvas,IWindowUI
 
 	public virtual void Open(object _param)
 	{
-		Log.UI.I("{0}가 열렸습니다.",Tag);
+		LogTag.UI.I("{0}가 열렸습니다.",Tag);
 
 		gameObject.SetActiveSelf(true);
 
@@ -81,7 +81,7 @@ public abstract class WindowUI : SortingLayerCanvas,IWindowUI
 
 		IsOpen = false;
 
-		Log.UI.I("{0}가 닫혔습니다.",Tag);
+		LogTag.UI.I("{0}가 닫혔습니다.",Tag);
 	}
 
 	public virtual void Release() { }
@@ -90,11 +90,11 @@ public abstract class WindowUI : SortingLayerCanvas,IWindowUI
 	{
 		if(_hide)
 		{
-			Log.UI.I("{0}의 숨겨진 상태입니다.",Tag);
+			LogTag.UI.I("{0}의 숨겨진 상태입니다.",Tag);
 		}
 		else
 		{
-			Log.UI.I("{0}의 보여진 상태입니다.",Tag);
+			LogTag.UI.I("{0}의 보여진 상태입니다.",Tag);
 		}
 	}
 
