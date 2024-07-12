@@ -1,40 +1,47 @@
 using System.Globalization;
-using System.Linq;
 
 public static class CharExtension
 {
-	public static int HexToDecimal(this char _char)
+	public static int HexToDecimal(this char _character)
 	{
-		return int.Parse(string.Format("{0}",_char),NumberStyles.HexNumber);
+		return int.Parse(_character.ToString(),NumberStyles.HexNumber);
 	}
 
-	public static int HexToDecimal(this char _char,int _default)
+	public static int HexToDecimal(this char _character,int _default)
 	{
-		return int.TryParse(string.Format("{0}",_char),NumberStyles.HexNumber,CultureInfo.CurrentCulture,out var num) ? num : _default;
+		return int.TryParse(_character.ToString(),NumberStyles.HexNumber,CultureInfo.CurrentCulture,out var number) ? number : _default;
 	}
 
 	/// <summary>
 	/// 해당 문자가 포함되어 있는지 파악한다.
 	/// </summary>
-	public static bool EqualsLetters(this char _char,params char[] _charArray)
+	public static bool EqualsLetters(this char _character,params char[] _characterArray)
 	{
-		return _charArray.Any(x=>x == _char);
+		foreach(var character in _characterArray)
+		{
+			if(character == _character)
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
-	public static int FromHex(this char _char)
+	public static int FromHex(this char _character)
 	{
-		_char = char.ToUpperInvariant(_char);
+		_character = char.ToUpperInvariant(_character);
 
-		return _char.IsDigit() ? _char-'0' : _char.IsHexAlphabet() ? 10+_char-'A' : -1;
+		return _character.IsNumber() ? _character-'0' : _character.IsAlphabet() ? 10+_character-'A' : -1;
 	}
 
-	public static bool IsDigit(this char _char)
+	public static bool IsNumber(this char _character)
 	{
-		return _char >= '0' && _char <= '9';
+		return _character >= '0' && _character <= '9';
 	}
 
-	public static bool IsHexAlphabet(this char _char)
+	public static bool IsAlphabet(this char _character)
 	{
-		return _char >= 'A' && _char <= 'F';
+		return _character >= 'A' && _character <= 'F';
 	}
 }

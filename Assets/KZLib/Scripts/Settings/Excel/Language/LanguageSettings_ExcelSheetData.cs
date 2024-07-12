@@ -116,7 +116,7 @@ public partial class LanguageSettings : ExcelSettings<LanguageSettings>
 
 					if(languageDict.ContainsKey(key))
 					{
-						Log.Editor.W("{0}가 중복되어 생략했습니다.",key);
+						LogTag.Editor.W("{0}가 중복되어 생략했습니다.",key);
 
 						continue;
 					}

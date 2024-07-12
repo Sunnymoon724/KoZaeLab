@@ -1,6 +1,6 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using KZLib.KZDevelop;
+using KZLib;
 using KZLib.KZSchedule;
 using Sirenix.OdinInspector;
 using UnityEngine;

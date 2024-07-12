@@ -1,18 +1,17 @@
 using UnityEngine;
-using TMPro;
-using System.Collections;
+using Cysharp.Threading.Tasks;
 
 public static class ParticleSystemExtension
 {
-	public static IEnumerator PlayAndWaitForParticleSystem(this ParticleSystem _particleSystem)
+	public static async UniTask PlayAndWaitForParticleAsync(this ParticleSystem _particleSystem)
 	{
 		_particleSystem.Play();
 
-		yield return _particleSystem.WaitForParticleSystem();
+		await  _particleSystem.WaitForParticleAsync();
 	}
 
-	public static IEnumerator WaitForParticleSystem(this ParticleSystem _particleSystem)
+	public static async UniTask WaitForParticleAsync(this ParticleSystem _particleSystem)
 	{
-		yield return new WaitWhile(()=>_particleSystem.isPlaying);
+		await UniTask.WaitWhile(() => _particleSystem.isPlaying);
 	}
 }

@@ -101,7 +101,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 
 	private async UniTask BuildBundAsync()
 	{
-		Log.Build.I("번들 빌드 시작");
+		LogTag.Build.I("번들 빌드 시작");
 
 		// var bundleName = string.Format("{0} [{1}_{2}]",Application.productName,GameSettings.In.GameVersion,DateTime.Now.ToString("MM-dd HH-mm"));
 
@@ -126,18 +126,18 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 		}
 
 		//? 성공
-		Log.Build.I("앱 빌드 성공 [걸린 시간 : {0:F3} 경로 : {1}]",report.Duration,BundleFullPath);
+		LogTag.Build.I("앱 빌드 성공 [걸린 시간 : {0:F3} 경로 : {1}]",report.Duration,BundleFullPath);
 
 		if(m_IsOpenFolderAfterBundleBuild)
 		{
-			Log.Build.I("번들이 있는 폴더를 오픈 합니다.");
+			LogTag.Build.I("번들이 있는 폴더를 오픈 합니다.");
 
 			CommonUtility.OpenFolder(BundleFullPath);
 		}
 
 		if(m_IsUploadAfterBundleBuild)
 		{
-			Log.Build.I("번들을 업로드합니다.");
+			LogTag.Build.I("번들을 업로드합니다.");
 
 			await UniTask.Yield();
 

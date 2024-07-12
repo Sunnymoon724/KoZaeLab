@@ -1,4 +1,4 @@
-using KZLib.KZDevelop;
+using KZLib;
 
 public partial class UITag : Enumeration
 {

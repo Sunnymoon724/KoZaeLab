@@ -5,46 +5,6 @@ using UnityEngine.UI;
 
 public static class ButtonExtension
 {
-	public static void SetDisabledColor(this Button _button,Color _color)
-	{
-		var colorBlock = _button.colors;
-
-		colorBlock.disabledColor = _color;
-		_button.colors = colorBlock;
-	}
-
-	public static void SetSelectedColor(this Button _button,Color _color)
-	{
-		var colorBlock = _button.colors;
-
-		colorBlock.selectedColor = _color;
-		_button.colors = colorBlock;
-	}
-
-	public static void SetNormalColor(this Button _button,Color _color)
-	{
-		var colorBlock = _button.colors;
-
-		colorBlock.normalColor = _color;
-		_button.colors = colorBlock;
-	}
-
-	public static void SetHighlightedColor(this Button _button,Color _color)
-	{
-		var colorBlock = _button.colors;
-
-		colorBlock.highlightedColor = _color;
-		_button.colors = colorBlock;
-	}
-
-	public static void SetPressedColor(this Button _button,Color _color)
-	{
-		var colorBlock = _button.colors;
-
-		colorBlock.pressedColor = _color;
-		_button.colors = colorBlock;
-	}
-
 	/// <summary>
 	/// 중복 방지 용
 	/// </summary>

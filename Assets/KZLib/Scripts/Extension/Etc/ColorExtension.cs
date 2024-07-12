@@ -3,18 +3,18 @@ using UnityEngine;
 
 public static class ColorExtension
 {
-	private static readonly Dictionary<Color,string> s_CacheDict = new();
+	private static readonly Dictionary<Color,string> s_ColorDict = new();
 
 	private const float BRIGHTNESS_DEFAULT = 0.0625f;
 
 	public static string ToHexCode(this Color _color)
 	{
-		if(!s_CacheDict.ContainsKey(_color))
+		if(!s_ColorDict.ContainsKey(_color))
 		{
-			s_CacheDict.Add(_color,string.Format("#{0}",ColorUtility.ToHtmlStringRGBA(_color)));
+			s_ColorDict.Add(_color,string.Format("#{0}",ColorUtility.ToHtmlStringRGBA(_color)));
 		}
 
-		return s_CacheDict[_color];
+		return s_ColorDict[_color];
 	}
 
 	public static Vector3 ToHSV(this Color _color)
@@ -87,6 +87,14 @@ public static class ColorExtension
 	{
 		var max = Mathf.Max(_color.r,_color.g,_color.b);
 
-		return max/255.0f > 0.5f ? Color.white : Color.black;
+		return max > 0.5f ? Color.white : Color.black;
+	}
+
+	/// <summary>
+	/// 캐시된 색상 데이터를 모두 삭제합니다.
+	/// </summary>
+	public static void ClearCacheData()
+	{
+		s_ColorDict.Clear();
 	}
 }

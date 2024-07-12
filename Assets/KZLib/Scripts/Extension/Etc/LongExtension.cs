@@ -1,19 +1,19 @@
 
 public static class LongExtension
 {
-	public static long Sign(this long _int64)
+	public static long Sign(this long _long)
 	{
-		return _int64 < 0L ? -1L : _int64 > 0L ? 1L : 0L;
+		return _long < 0L ? -1L : _long > 0L ? 1L : 0L;
 	}
 
-	public static string ToStringComma(this long _int64)
+	public static string ToStringComma(this long _long)
 	{
-		return string.Format("{0:n0}",_int64);
+		return string.Format("{0:n0}",_long);
 	}
 
-	public static string ToStringSign(this long _int64)
+	public static string ToStringSign(this long _long)
 	{
-		return string.Format("{0:+#;-#;0}",_int64);
+		return string.Format("{0:+#;-#;0}",_long);
 	}
 
 	public static double ToSeconds(this long _milliSeconds)
@@ -26,19 +26,18 @@ public static class LongExtension
 		return (_pivot & _target) != 0;
 	}
 
-	public static void AddFlag(this ref long _pivot,long _target)
+	public static long AddFlag(this long _pivot,long _target)
 	{
-		_pivot |= _target;
+		return _pivot |= _target;
 	}
 
-	public static void RemoveFlag(this ref long _pivot,long _target)
+	public static long RemoveFlag(this long _pivot,long _target)
 	{
-		_pivot &= ~_target;
+		return _pivot &= ~_target;
 	}
 
-	public static void ChangeFlag(this ref long _pivot,long _add,long _remove)
+	public static long ChangeFlag(this long _pivot,long _add,long _remove)
 	{
-		_pivot.AddFlag(_add);
-		_pivot.RemoveFlag(_remove);
+        return _pivot.AddFlag(_add).RemoveFlag(_remove);
 	}
 }

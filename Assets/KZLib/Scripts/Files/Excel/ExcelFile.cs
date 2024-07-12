@@ -129,7 +129,7 @@ namespace KZLib.KZFiles
 
 				if(KEY_WORD_ARRAY.Any(x=>x.IsEqual(header.ToLowerInvariant())))
 				{
-					Log.Files.W("{0}는 헤더로 사용할 수 없습니다.",header);
+					LogTag.File.W("{0}는 헤더로 사용할 수 없습니다.",header);
 
 					continue;
 				}

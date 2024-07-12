@@ -119,9 +119,9 @@ public static class Vector3Extension
 		return new(_vector.x,_vector.y,_vector.z,_w);
 	}
 
-	public static string ToVectorString(this Vector3 _vector,int _dot = 2)
+	public static string ToVectorString(this Vector3 _vector,int _decimals = 2)
 	{
-		var format = string.Format("({1}{0}}}, {2}{0}}}, {3}{0}}})",_dot,"{0:f","{1:f","{2:f");
+		var format = string.Format("({1}{0}}}, {2}{0}}}, {3}{0}}})",_decimals,"{0:f","{1:f","{2:f");
 
 		return string.Format(format,_vector.x,_vector.y,_vector.z);
 	}
@@ -223,7 +223,7 @@ public static class Vector3Extension
 		return new Color(_vector.x/255.0f,_vector.y/255.0f,_vector.z/255.0f,1.0f);
 	}
 
-	public static (Vector3 position,int index) GetClosestPoint(this Vector3 _position,params Vector3[] _positionArray)
+	public static (Vector3 Position,int Index) GetClosestPoint(this Vector3 _position,params Vector3[] _positionArray)
 	{
 		var index = -1;
 		var position = Vector3.zero;
@@ -245,14 +245,14 @@ public static class Vector3Extension
 		return (position,index);
 	}
 
-	public static (Vector3 position,float distance) GetClosestPointOnRay(this Vector3 _position,Vector3 _origin,Vector3 _direction)
+	public static (Vector3 Position,float Distance) GetClosestPointOnRay(this Vector3 _position,Vector3 _origin,Vector3 _direction)
 	{
 		var distance = Vector3.Dot(_position-_origin,_direction);
 
 		return (_origin+_direction*distance,distance);
 	}
 
-	public static (Vector3 position,float distance) GetClosestPointOnSegment(this Vector3 _position,Vector3 _start,Vector3 _end)
+	public static (Vector3 Position,float Distance) GetClosestPointOnSegment(this Vector3 _position,Vector3 _start,Vector3 _end)
 	{
 		var direction = _end-_start;
 		var magnitude = direction.magnitude;
@@ -296,7 +296,7 @@ public static class Vector3Extension
 	{
 		_vector -= _position;
 		_vector = _vector.RotateAround(Vector3.zero,Quaternion.Inverse(_rotation));
-		_vector = Vector3.Scale(_vector,new Vector3(1.0f/_scale.x,1.0f/_scale.y,1.0f/_scale.z));
+		_vector = Vector3.Scale(_vector,_scale.Reciprocal());
 
 		return _vector;
 	}
@@ -306,19 +306,12 @@ public static class Vector3Extension
 		_position = _worldCam.WorldToViewportPoint(_position);
 		_position = _uiCam.ViewportToWorldPoint(_position);
 
-		if(!_relativeTo)
+		if(!_relativeTo || !_relativeTo.parent)
 		{
 			return _position;
 		}
 
-		_relativeTo = _relativeTo.parent;
-
-		if(!_relativeTo)
-		{
-			return _position;
-		}
-
-		return _relativeTo.InverseTransformPoint(_position);
+		return _relativeTo.parent.InverseTransformPoint(_position);
 	}
 
 	public static Vector3 VectorByTransform(this Vector3 _vector,Transform _target)

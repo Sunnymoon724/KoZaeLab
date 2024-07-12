@@ -17,7 +17,7 @@ public class CombineMesh : BaseMesh
 
 		if(!IsValidMeshIndexCount(count))
 		{
-			Log.System.W("배칭된 메쉬의 인덱스 갯수가 많습니다. 오브젝트 : {0} : 인덱스 갯수 : {1}",m_MeshFilter.gameObject.name,count);
+			LogTag.System.W("배칭된 메쉬의 인덱스 갯수가 많습니다. 오브젝트 : {0} : 인덱스 갯수 : {1}",m_MeshFilter.gameObject.name,count);
 
 			return;
 		}
@@ -54,7 +54,7 @@ public class CombineMesh : BaseMesh
 
 		if(!IsValidMeshIndexCount(count))
 		{
-			Log.System.W("배칭된 메쉬의 인덱스 갯수가 많습니다. 오브젝트 : {0} : 인덱스 갯수 : {1}",m_MeshFilter.gameObject.name,count);
+			LogTag.System.W("배칭된 메쉬의 인덱스 갯수가 많습니다. 오브젝트 : {0} : 인덱스 갯수 : {1}",m_MeshFilter.gameObject.name,count);
 
 			return;
 		}

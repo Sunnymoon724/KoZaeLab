@@ -67,7 +67,7 @@ public static class ContainerExtension
 		{
 			var compare = _predicate(data);
 
-			if(value.CompareTo(compare) > 0)
+			if(value.CompareTo(compare) < 0)
 			{
 				value = compare;
 				maximum = index;
@@ -86,12 +86,14 @@ public static class ContainerExtension
 			return default;
 		}
 
-		if(_sources.Count() == 1)
+		var sources = _sources.ToArray();
+
+		if(sources.Length == 1)
 		{
-			_sources.First();
+			return sources[0];
 		}
 
-		return _sources.ElementAt(CommonUtility.GetRndInt(0,_sources.Count()-1));
+		return sources[CommonUtility.GetRndInt(0,sources.Length-1)];
 	}
 
 	public static TValue GetWeightedRndValue<TValue>(this IEnumerable<TValue> _sources,float[] _weightedArray)
@@ -101,9 +103,11 @@ public static class ContainerExtension
 			return default;
 		}
 
-		if(_sources.Count() == 1)
+		var sources = _sources.ToArray();
+
+		if(sources.Length == 1)
 		{
-			_sources.First();
+			return sources[0];
 		}
 
 		var total = 0.0f;
@@ -124,7 +128,7 @@ public static class ContainerExtension
 		{
 			if(pivot <= _weightedArray[i])
 			{
-				return _sources.ElementAt(i);
+				return sources[i];
 			}
 
 			pivot -= _weightedArray[i];

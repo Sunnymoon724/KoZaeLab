@@ -133,6 +133,8 @@ public static partial class CommonUtility
 		}
 
 		ReflectionUtility.ClearCacheData();
+		StringExtension.ClearCacheData();
+		ColorExtension.ClearCacheData();
 	}
 
 #if UNITY_EDITOR

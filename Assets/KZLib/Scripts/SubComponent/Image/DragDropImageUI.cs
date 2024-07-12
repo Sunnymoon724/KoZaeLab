@@ -1,4 +1,4 @@
-using KZLib.KZDevelop;
+using KZLib;
 using UnityEngine;
 using UnityEngine.EventSystems;
 

@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using NPOI.SS.UserModel;
-using System.Reflection;
+using Sirenix.Utilities;
 
 namespace KZLib.KZFiles
 {
@@ -13,7 +13,7 @@ namespace KZLib.KZFiles
 		{
 			var sheet = GetSheet(_sheetName);
 			var dataList = new List<TData>();
-			var propertyArray = typeof(TData).GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+			var propertyInfoArray = typeof(TData).GetProperties(Flags.InstanceAnyVisibility);
 			var lastRow = sheet.LastRowNum;
 			var startRow = Mathf.Clamp(_startRow,0,lastRow);
 
@@ -43,14 +43,14 @@ namespace KZLib.KZFiles
 					}
 
 					var header = ParseCell(headerRow.GetCell(j));
-					var index = propertyArray.FindIndex(x=>x.Name.IsEqual(header));
+					var index = propertyInfoArray.FindIndex(x=>x.Name.IsEqual(header));
 
 					if(index == -1)
 					{
 						continue;
 					}
 
-					var property = propertyArray[index];
+					var property = propertyInfoArray[index];
 
 					if(property.CanWrite)
 					{
@@ -61,7 +61,7 @@ namespace KZLib.KZFiles
 						}
 						catch(Exception _ex)
 						{
-							Log.Files.F(string.Format("엑셀 파일에 문제가 있습니다. 시트:{0} 오류:{1} 위치: {2}",_sheetName,_ex.Message,string.Format("행[{0}]/열[{1}]",i+1,header)));
+							LogTag.File.E(string.Format("엑셀 파일에 문제가 있습니다. 시트:{0} 오류:{1} 위치: {2}",_sheetName,_ex.Message,string.Format("행[{0}]/열[{1}]",i+1,header)));
 						}
 					}
 				}

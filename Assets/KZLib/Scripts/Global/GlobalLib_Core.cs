@@ -7,8 +7,6 @@ public partial struct Global
 	public const float HALF_ANGLE = 180.0f;
 	public const float FULL_ANGLE = 360.0f;
 
-	// public static string DEVICE_ID => SystemInfo.deviceUniqueIdentifier;
-
 	public const int BASE_WIDTH = 1920;
 	public const int BASE_HEIGHT = 1080;
 

@@ -93,17 +93,5 @@ namespace KZLib
 			m_Vibration.Call("AmplitudeVibrate",m_Activity,Convert.ToInt64(_millisecond*1000L),Mathf.RoundToInt(amplitude*25.5f));
 #endif
 		}
-
-// 		public void Stop()
-// 		{
-// 			if(!m_UseVibration)
-// 			{
-// 				return;
-// 			}
-			
-// #if UNITY_IOS && !UNITY_EDITOR
-// 			StopVibration();
-// #endif
-// 		}
 	}
 }

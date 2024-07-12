@@ -49,7 +49,7 @@ public static class Vector2Extension
 	#endregion Invert
 
 	#region ToVector
-	public static Vector3 ToVector2(this Vector2 _vector,float _z = 0.0f)
+	public static Vector3 ToVector3(this Vector2 _vector,float _z = 0.0f)
 	{
 		return new(_vector.x,_vector.y,_z);
 	}
@@ -59,9 +59,9 @@ public static class Vector2Extension
 		return new(_vector.x,_vector.y,_z,_w);
 	}
 
-	public static string ToVectorString(this Vector2 _vector,int _dot = 2)
+	public static string ToVectorString(this Vector2 _vector,int _decimals = 2)
 	{
-		var format = string.Format("({1}{0}}}, {2}{0}}})",_dot,"{0:f","{1:f");
+		var format = string.Format("({1}{0}}}, {2}{0}}})",_decimals,"{0:f","{1:f");
 
 		return string.Format(format,_vector.x,_vector.y);
 	}
@@ -158,16 +158,12 @@ public static class Vector2Extension
 		var sin = Mathf.Sin(_theta);
 		var cos = Mathf.Cos(_theta);
 		
-		_point.x -= _origin.x;
-		_point.y -= _origin.y;
-		
-		_point.x = _point.x*cos-_point.y*sin + _origin.x;
-		_point.y = _point.x*sin+_point.y*cos + _origin.y;
+		_point -= _origin;
 
-		return _point;
+		return new Vector2(_point.x*cos-_point.y*sin+_origin.x,_point.x*sin+_point.y*cos+_origin.y);
 	}
 
-	public static (Vector2 point,int index) GetClosestPoint(this Vector2 _point,params Vector2[] _pointArray)
+	public static (Vector2 Point,int Index) GetClosestPoint(this Vector2 _point,params Vector2[] _pointArray)
 	{
 		var index = -1;
 		var point = Vector2.zero;

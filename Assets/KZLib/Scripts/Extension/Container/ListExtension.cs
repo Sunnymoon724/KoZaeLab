@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public static class ListExtension
@@ -95,19 +93,19 @@ public static class ListExtension
 	}
 
 	/// <summary>
-	/// 오브젝트의 위치를 옮긴다.
+	/// 값의 위치를 옮긴다.
 	/// </summary>
 	public static void Move<TValue>(this IList<TValue> _sources,TValue _value,int _newIndex)
 	{
 		_sources.Move(_sources.IndexOf(_value),_newIndex);
 	}
 
-	/// <summary>
-	/// 오브젝트의 위치를 옮긴다.
+	//// <summary>
+	/// 값의 위치를 옮긴다.
 	/// </summary>
 	public static void Move<TValue>(this IList<TValue> _sources,int _oldIndex,int _newIndex)
 	{
-		var value = _sources[_oldIndex];
+		var data = _sources[_oldIndex];
 
 		_sources.RemoveAt(_oldIndex);
 
@@ -116,7 +114,7 @@ public static class ListExtension
 			_newIndex--;
 		}
 
-		_sources.Insert(_newIndex,value);
+		_sources.Insert(_newIndex,data);
 	}
 
 	/// <summary>

@@ -2,14 +2,37 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Numerics;
 using System.Text;
 using System.Xml;
 using Newtonsoft.Json;
 using UnityEngine;
 
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
+
 public static partial class StringExtension
 {
-	private static readonly Dictionary<string,Color> s_CacheDict = new();
+	private static readonly Dictionary<string,Color> s_HexColorDict = new();
+
+	public static BigInteger ToBigInteger(this string _text,BigInteger _default = default)
+	{
+		if(_text.IsEmpty())
+		{
+			return _default;
+		}
+
+		if(_text.Contains("e") || _text.Contains("E"))
+		{
+			var result = double.Parse(_text);
+
+			return new BigInteger(result);
+		}
+		else
+		{
+			return BigInteger.Parse(_text);
+		}
+	}
 
 	public static bool IsEnumDefined<TEnum>(this string _text)
 	{
@@ -26,13 +49,13 @@ public static partial class StringExtension
 	/// </summary>
 	public static Color ToColor(this string _hexCode)
 	{
-		var hexCode = _hexCode.Length == 7 ? string.Format("{0}FF",_hexCode) : _hexCode;
+		_hexCode = _hexCode.Length == 7 ? string.Format("{0}FF",_hexCode) : _hexCode;
 
-		if(!s_CacheDict.ContainsKey(hexCode))
+		if(!s_HexColorDict.ContainsKey(_hexCode))
 		{
-			if(ColorUtility.TryParseHtmlString(hexCode,out var color))
+			if(ColorUtility.TryParseHtmlString(_hexCode,out var color))
 			{
-				s_CacheDict.Add(hexCode,color);
+				s_HexColorDict.Add(_hexCode,color);
 			}
 			else
 			{
@@ -40,7 +63,7 @@ public static partial class StringExtension
 			}
 		}
 
-		return s_CacheDict[hexCode];
+		return s_HexColorDict[_hexCode];
 	}
 
 	public static int ToInt(this string _text,int _default = 0)
@@ -122,9 +145,9 @@ public static partial class StringExtension
 		{
 			return false;
 		}
-		
+
 		_result = new Vector2(GetNumberInArray(vectorArray,0),GetNumberInArray(vectorArray,1));
-		
+
 		return true;
 	}
 
@@ -180,15 +203,37 @@ public static partial class StringExtension
 		return ToColorText(ColorUtility.ToHtmlStringRGBA(_color),_text);
 	}
 
+	public static string ToFirstCharToUpper(this string _text)
+	{
+		if(_text.IsEmpty())
+		{
+			return _text;
+		}
+
+		var text = char.ToUpperInvariant(_text[0]);
+
+		return _text.Length > 1 ? string.Concat(text,_text[1..]) : text.ToString();
+	}
+
+	public static string ToFirstCharToLower(this string _text)
+	{
+		if(_text.IsEmpty())
+		{
+			return _text;
+		}
+
+		var text = char.ToLowerInvariant(_text[0]);
+
+		return _text.Length > 1 ? string.Concat(text,_text[1..]) : text.ToString();
+	}
+
 	public static string XmlToJson(this string _xml)
 	{
-		using(var stream = new MemoryStream(Encoding.UTF8.GetBytes(_xml)))
-		{
-			var xml = new XmlDocument();
-			xml.Load(stream);
+		using var stream = new MemoryStream(Encoding.UTF8.GetBytes(_xml));
+		var xml = new XmlDocument();
+		xml.Load(stream);
 
-			return JsonConvert.SerializeXmlNode(xml);
-		}
+		return JsonConvert.SerializeXmlNode(xml);
 	}
 
 	/// <summary>
@@ -203,5 +248,13 @@ public static partial class StringExtension
 #else
 		return _path.Replace('\\','/');
 #endif
+	}
+
+	/// <summary>
+	/// 캐시된 색상 데이터를 모두 삭제합니다.
+	/// </summary>
+	public static void ClearCacheData()
+	{
+		s_HexColorDict.Clear();
 	}
 }

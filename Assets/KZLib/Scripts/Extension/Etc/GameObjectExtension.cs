@@ -1,10 +1,14 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-public static partial class GameObjectExtension
+public static class GameObjectExtension
 {
 	public static void SetRenderOff(this GameObject _object)
 	{
+		if(!_object)
+		{
+			return;
+		}
+
 		foreach(var renderer in _object.GetComponentsInChildren<Renderer>())
 		{
 			renderer.enabled = false;
@@ -45,6 +49,11 @@ public static partial class GameObjectExtension
 	/// </summary>
 	public static void SetActiveAll(this GameObject _object,bool _active,bool _includeSelf)
 	{
+		if(!_object)
+		{
+			return;
+		}
+
 		if(_includeSelf)
 		{
 			_object.SetActiveSelf(_active);
@@ -58,6 +67,11 @@ public static partial class GameObjectExtension
 	/// </summary>
 	public static void SetAllLayer(this GameObject _object,int _layer)
 	{
+		if(!_object)
+		{
+			return;
+		}
+
 		_object.layer = _layer;
 
 		_object.transform.TraverseChildren((child)=> { child.gameObject.layer = _layer; });
@@ -68,18 +82,19 @@ public static partial class GameObjectExtension
 	/// </summary>
 	public static void SetAllLayer(this GameObject _object,string _layerMask)
 	{
-		var layer = LayerMask.NameToLayer(_layerMask);
+		if(!_object)
+		{
+			return;
+		}
 
-		_object.layer = layer;
-
-		_object.transform.TraverseChildren((child)=> { child.gameObject.layer = layer; });
+		SetAllLayer(_object,LayerMask.NameToLayer(_layerMask));
 	}
 
 	public static bool IsPrefab(this GameObject _object)
 	{
 		if(!_object)
 		{
-			throw new ArgumentNullException(nameof(_object));
+			return false;
 		}
 
 		return !_object.scene.IsValid() && !_object.scene.isLoaded && _object.GetInstanceID() >= 0 && !_object.hideFlags.HasFlag(HideFlags.HideInHierarchy);

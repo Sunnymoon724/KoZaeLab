@@ -25,7 +25,7 @@ public static partial class CommonUtility
 
 		if(guidArray.Length > 1)
 		{
-			Log.System.W("검색된 결과가 2개 이상입니다. [{0} 사용]",guidArray[0]);
+			LogTag.System.W("검색된 결과가 2개 이상입니다. [{0} 사용]",guidArray[0]);
 		}
 
 		return AssetDatabase.LoadAssetAtPath<TObject>(AssetDatabase.GUIDToAssetPath(guidArray[0]));
@@ -83,7 +83,7 @@ public static partial class CommonUtility
 		AssetDatabase.SaveAssets();
 		AssetDatabase.Refresh();
 
-		Log.System.I("{0}가 {1}에 저장 되었습니다.",_asset.name,_dataPath);
+		LogTag.System.I("{0}가 {1}에 저장 되었습니다.",_asset.name,_dataPath);
 	}
 
 	private static string[] GetAssetGuidArray(string _filter = null,string[] _searchInFolders = null)

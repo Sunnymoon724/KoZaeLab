@@ -21,15 +21,105 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: m_QualityPresetDicts
-      Entry: 6
-      Data: 
     - Name: m_QualityDict
-      Entry: 6
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[GraphicsQualityPresetType,
+        KZLib],[System.Int64, mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[GraphicsQualityPresetType,
+        KZLib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 5
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 0
+    - Name: $v
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
+    - Name: $v
+      Entry: 3
+      Data: 16
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 2
+    - Name: $v
+      Entry: 3
+      Data: 29
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 3
+    - Name: $v
+      Entry: 3
+      Data: 31
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 4
+    - Name: $v
+      Entry: 3
+      Data: 31
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
       Data: 
   m_Initialize: 1
   m_QualityLowestPresetList: []
-  m_QualityLowPresetList: []
-  m_QualityMiddlePresetList: []
-  m_QualityHighPresetList: []
+  m_QualityLowPresetList:
+  - m_QualityOption: 16
+    m_Tag: CameraFarHalf
+  m_QualityMiddlePresetList:
+  - m_QualityOption: 1
+    m_Tag: GlobalTextureMipmapLimit
+  - m_QualityOption: 4
+    m_Tag: VerticalSync
+  - m_QualityOption: 8
+    m_Tag: UnitShadow
+  m_QualityHighPresetList:
+  - m_QualityOption: 2
+    m_Tag: AnisotropicFiltering
   m_QualityHighestPresetList: []

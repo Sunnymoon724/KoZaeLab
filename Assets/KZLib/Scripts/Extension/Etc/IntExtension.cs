@@ -3,29 +3,29 @@ using UnityEngine;
 
 public static class IntExtension
 {
-	public static int Sign(this int _int32)
+	public static int Sign(this int _integer)
 	{
-		return _int32 < 0 ? -1 : _int32 > 0 ? 1 : 0;
+		return _integer < 0 ? -1 : _integer > 0 ? 1 : 0;
 	}
 
-	public static int GetDigitsSize(this int _int32)
+	public static int GetNumberSize(this int _integer)
 	{
-		return _int32 == 0 ? 1 : (int) Mathf.Log10(_int32)+1;
+		return _integer == 0 ? 1 : (int) Math.Floor(Math.Log10(Math.Abs(_integer)))+1;
 	}
 
-	public static string ToStringComma(this int _int32)
+	public static string ToStringComma(this int _integer)
 	{
-		return string.Format("{0:n0}",_int32);
+		return string.Format("{0:n0}",_integer);
 	}
 
-	public static string ToStringSign(this int _int32)
+	public static string ToStringSign(this int _integer)
 	{
-		return string.Format("{0:+#;-#;0}",_int32);
+		return string.Format("{0:+#;-#;0}",_integer);
 	}
 
-	public static char ToHexChar(this int _int32)
+	public static char ToHexChar(this int _integer)
 	{
-		return _int32 > 15 ? 'F' : _int32 < 10 ? (char) ('0'+_int32) : (char) ('A'+_int32-10);
+		return _integer > 15 ? 'F' : _integer < 10 ? (char) ('0'+_integer) : (char) ('A'+_integer-10);
 	}
 
 	public static string ToHex(this int _decimal)
@@ -35,22 +35,22 @@ public static class IntExtension
 
 	public static string ToHex8(this int _decimal)
 	{
-		return string.Format("{0:x2}",_decimal &= 0xFF);
+		return string.Format("{0:x2}",_decimal & 0xFF);
 	}
 
 	public static string ToHex24(this int _decimal)
 	{
-		return string.Format("{0:x6}",_decimal &= 0xFFFFFF);
+		return string.Format("{0:x6}",_decimal & 0xFFFFFF);
 	}
 
 	public static string ToHex32(this int _decimal)
 	{
-		return string.Format("{0:x8}",_decimal &= 0xFFFFFF);
+		return string.Format("{0:x8}", _decimal & 0xFFFFFFFF);
 	}
 
-	public static bool IsEnumDefined<TNumber>(this int _int32)
+	public static bool IsEnumDefined<TNumber>(this int _integer)
 	{
-		return Enum.IsDefined(typeof(TNumber),_int32);
+		return Enum.IsDefined(typeof(TNumber),_integer);
 	}
 
 	public static Color ToColor(this int _hexNum)
@@ -77,88 +77,71 @@ public static class IntExtension
 		);
 	}
 
-	public static bool IsPrimeNumber(this int _int32)
+	public static bool HasFlag(this int _pivot,int _target)
 	{
-		for(var i=2;i*i<=_int32;i++)
+		return (_pivot & _target) != 0;
+	}
+
+	public static int AddFlag(this int _pivot,int _target)
+	{
+		return _pivot |= _target;
+	}
+
+	public static int RemoveFlag(this int _pivot,int _target)
+	{
+		return _pivot &= ~_target;
+	}
+
+	public static bool IsPrimeNumber(this int _integer)
+	{
+		if(_integer <= 1)
 		{
-			if(_int32%i == 0)
+			return false;
+		}
+		if(_integer <= 3)
+		{
+			return true;
+		}
+		if(_integer % 2 == 0 || _integer % 3 == 0)
+		{
+			return false;
+		}
+
+		var i = 5;
+		while(i*i <= _integer)
+		{
+			if(_integer%i == 0 || _integer % (i+2) == 0)
 			{
 				return false;
 			}
+
+			i += 6;
 		}
-		
+
 		return true;
 	}
 
-	#region ToRoman
 	public static string ToRoman(this int _decimal)
 	{
-		if(_decimal > 999)
+		if(_decimal <= 0 || _decimal >= 4000)
 		{
-			return string.Format("M{0}",ToRoman(_decimal-1000));
+			return null;
 		}
 
-		if(_decimal > 899)
+		var romanArray = new string[] { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
+		var valueArray = new int[]{ 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
+
+		var roman = string.Empty;
+
+		for(var i=0;i<romanArray.Length;i++)
 		{
-			return string.Format("CM{0}",ToRoman(_decimal-900));
+			while(_decimal >= valueArray[i])
+			{
+				roman += romanArray[i];
+				_decimal -= valueArray[i];
+			}
 		}
 
-		if(_decimal > 499)
-		{
-			return string.Format("D{0}",ToRoman(_decimal-500));
-		}
-
-		if(_decimal > 399)
-		{
-			return string.Format("CD{0}",ToRoman(_decimal-400));
-		}
-
-		if(_decimal > 99)
-		{
-			return string.Format("C{0}",ToRoman(_decimal-100));
-		}
-
-		if(_decimal > 89)
-		{
-			return string.Format("XC{0}",ToRoman(_decimal-90));
-		}
-
-		if(_decimal > 49)
-		{
-			return string.Format("L{0}",ToRoman(_decimal-50));
-		}
-
-		if(_decimal > 39)
-		{
-			return string.Format("XL{0}",ToRoman(_decimal-40));
-		}
-
-		if(_decimal > 9)
-		{
-			return string.Format("X{0}",ToRoman(_decimal-10));
-		}
-
-		if(_decimal > 8)
-		{
-			return string.Format("IX{0}",ToRoman(_decimal-9));
-		}
-
-		if(_decimal > 4)
-		{
-			return string.Format("V{0}",ToRoman(_decimal-5));
-		}
-
-		if(_decimal > 3)
-		{
-			return string.Format("IV{0}",ToRoman(_decimal-4));
-		}
-
-		if(_decimal > 0)
-		{
-			return string.Format("I{0}",ToRoman(_decimal-1));
-		}
-
-		return "";
+		return roman;
 	}
-	#endregion ToRoman
 }

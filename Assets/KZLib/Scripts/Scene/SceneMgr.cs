@@ -148,7 +148,7 @@ namespace KZLib
 
 			_onProgress?.Invoke(0.0f);
 
-			Log.Scene.I("{0} 생성을 시작합니다.",_sceneName);
+			LogTag.Scene.I("{0} 생성을 시작합니다.",_sceneName);
 
 			var sceneType = Type.GetType(_sceneName) ?? throw new NullReferenceException(string.Format("{0}이 존재하지 않습니다.",_sceneName));
 			var sceneBiding = (SceneBinding) Activator.CreateInstance(sceneType) ?? throw new NullReferenceException(string.Format("{0} 생성이 실패했습니다.",_sceneName));
@@ -160,7 +160,7 @@ namespace KZLib
 				_onProgress?.Invoke(progress*0.99f);
 			},_param);
 
-			Log.Scene.I("{0} 생성이 끝났습니다.",_sceneName);
+			LogTag.Scene.I("{0} 생성이 끝났습니다.",_sceneName);
 
 			_onProgress?.Invoke(1.0f);
 		}
@@ -178,7 +178,7 @@ namespace KZLib
 
 			var sceneName = current.SceneName;
 
-			Log.Scene.I("{0} 제거를 시작합니다.",sceneName);
+			LogTag.Scene.I("{0} 제거를 시작합니다.",sceneName);
 
 			m_SceneStack.Pop();
 
@@ -193,7 +193,7 @@ namespace KZLib
 #if UNITY_EDITOR
 			EditorUtility.UnloadUnusedAssetsImmediate(true);
 #endif
-			Log.Scene.I("{0} 제거가 끝났습니다.",sceneName);
+			LogTag.Scene.I("{0} 제거가 끝났습니다.",sceneName);
 
 			CommonUtility.ClearUnLoadedAssetMemory();
 

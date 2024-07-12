@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 
-public record ScreenResolutionData(int Width,int Height,bool IsFull)
-{
-	public ScreenResolutionData(Vector2Int _resolution,bool _isFull) : this(_resolution.x,_resolution.y,_isFull) { }
-}
-
 namespace GameData
 {
+	public record ScreenResolutionData(int Width,int Height,bool IsFull)
+	{
+		public ScreenResolutionData(Vector2Int _resolution,bool _isFull) : this(_resolution.x,_resolution.y,_isFull) { }
+	}
+
 	public class GraphicOption : Option
 	{
 		protected override string OPTION_KEY => "Graphic Option";
@@ -82,7 +82,7 @@ namespace GameData
 
 		public void AddGraphicQuality(GraphicQualityTag _qualityTag)
 		{
-			var quality = m_GraphicData.GraphicQuality |= _qualityTag.QualityOption;
+			var quality = m_GraphicData.GraphicQuality.AddFlag(_qualityTag.QualityOption);
 
 			if(m_GraphicData.GraphicQuality == quality)
 			{
@@ -96,7 +96,7 @@ namespace GameData
 
 		public void RemoveGraphicQuality(GraphicQualityTag _qualityTag)
 		{
-			var quality = m_GraphicData.GraphicQuality & ~_qualityTag.QualityOption;
+			var quality = m_GraphicData.GraphicQuality.RemoveFlag(_qualityTag.QualityOption);
 
 			if(m_GraphicData.GraphicQuality == quality)
 			{

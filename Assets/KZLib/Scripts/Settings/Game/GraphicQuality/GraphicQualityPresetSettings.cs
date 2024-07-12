@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using KZLib;
 using KZLib.KZAttribute;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -112,7 +113,7 @@ public class GraphicQualityPresetSettings : InnerBaseSettings<GraphicQualityPres
 		{
 			foreach(var preset in pair.Value)
 			{
-				quality |= preset.QualityOption;
+				quality = quality.AddFlag(preset.QualityOption);
 			}
 
 			pair.Value.Sort((x,y)=>x.QualityOption.CompareTo(y.QualityOption));

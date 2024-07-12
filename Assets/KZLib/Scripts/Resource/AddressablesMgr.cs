@@ -74,7 +74,7 @@ namespace KZLib
 			{
 				if(!errorLog.IsEmpty())
 				{
-					Log.System.E(errorLog);
+					LogTag.System.E(errorLog);
 				}
 
 				return false;
