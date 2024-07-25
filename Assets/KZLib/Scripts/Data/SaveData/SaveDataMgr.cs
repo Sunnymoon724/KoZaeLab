@@ -313,7 +313,7 @@ namespace KZLib
 		private string GetDataBasePath(string _fileName)
 		{
 #if UNITY_EDITOR
-			return string.Format("data source={0}/{1}",CommonUtility.GetProjectParentPath(),_fileName);
+			return string.Format("data source={0}/{1}",FileUtility.GetProjectParentPath(),_fileName);
 #elif !UNITY_EDITOR && UNITY_ANDROID
 			return string.Format("URI=file:{0}/{1}",UnityEngine.Application.persistentDataPath,_fileName);
 #elif !UNITY_EDITOR && UNITY_STANDALONE

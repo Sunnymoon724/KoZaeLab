@@ -65,7 +65,7 @@ namespace KZLib.KZDevelop
 
 					m_OnChangedPath?.Invoke();
 
-					m_PathLength = CommonUtility.GetTotalDistance(m_PointArray);
+					m_PathLength = MathUtility.GetTotalDistance(m_PointArray);
 
 					if(m_LineRenderer)
 					{

@@ -40,7 +40,7 @@ public class DrawLineRenderer : BaseLineRenderer
 		m_LineRenderer.positionCount = 1;
 		m_LineRenderer.SetPosition(0,_pointArray[0]);
 
-		var duration = CommonUtility.GetTotalDistance(_pointArray)/_speed;
+		var duration = MathUtility.GetTotalDistance(_pointArray)/_speed;
 
 #if UNITY_EDITOR
 		m_StartGizmo = true;

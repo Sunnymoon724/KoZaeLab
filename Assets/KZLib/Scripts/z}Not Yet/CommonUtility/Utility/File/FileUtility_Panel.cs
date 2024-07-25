@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-public static partial class CommonUtility
+public static partial class FileUtility
 {
 	/// <summary>
 	/// 팝업 창을 이용하여 경로 수동 설정

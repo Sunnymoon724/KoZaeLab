@@ -132,7 +132,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 		{
 			LogTag.Build.I("번들이 있는 폴더를 오픈 합니다.");
 
-			CommonUtility.OpenFolder(BundleFullPath);
+			FileUtility.OpenFolder(BundleFullPath);
 		}
 
 		if(m_IsUploadAfterBundleBuild)

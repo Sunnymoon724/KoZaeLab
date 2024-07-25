@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-public static partial class CommonUtility
+public static partial class FileUtility
 {
 	private const int KILO_BYTE = 1 << 10;
 	private const int MEGA_BYTE = KILO_BYTE * KILO_BYTE;

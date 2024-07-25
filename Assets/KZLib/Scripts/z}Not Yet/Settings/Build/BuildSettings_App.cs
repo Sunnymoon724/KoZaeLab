@@ -50,7 +50,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 	}
 
 	[VerticalGroup("빌드 설정/앱 설정/일반 설정/0/3",Order = 3),ShowInInspector,LabelText("씬 리스트"),KZRichText]
-	private string SceneName => string.Join("|",EditorBuildSettings.scenes.Where(x=>x.enabled).Select(y=>CommonUtility.GetOnlyName(y.path)));
+	private string SceneName => string.Join("|",EditorBuildSettings.scenes.Where(x=>x.enabled).Select(y=>FileUtility.GetOnlyName(y.path)));
 
 	[VerticalGroup("빌드 설정/앱 설정/일반 설정/0/4",Order = 4),ShowInInspector,LabelText("개발자 빌드")]
 	private bool DevelopmentBuild
@@ -128,7 +128,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 				{
 					LogTag.Build.I("빌드가 있는 폴더를 오픈 합니다.");
 
-					CommonUtility.OpenFolder(AppFullPath);
+					FileUtility.OpenFolder(AppFullPath);
 				}
 
 				if(m_UploadAfterAppBuild)
@@ -211,15 +211,15 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 		{
 			case BuildTarget.Android:
 			{
-				return CommonUtility.PathCombine(AppFullPath,string.Format("{0}.apk",_appName));
+				return FileUtility.PathCombine(AppFullPath,string.Format("{0}.apk",_appName));
 			}
 			case BuildTarget.iOS:
 			{
-				return CommonUtility.PathCombine(AppFullPath,string.Format("{0}",_appName));
+				return FileUtility.PathCombine(AppFullPath,string.Format("{0}",_appName));
 			}
 			default:
 			{
-				return CommonUtility.PathCombine(AppFullPath,string.Format("{0}",_appName));
+				return FileUtility.PathCombine(AppFullPath,string.Format("{0}",_appName));
 			}
 		}
 	}

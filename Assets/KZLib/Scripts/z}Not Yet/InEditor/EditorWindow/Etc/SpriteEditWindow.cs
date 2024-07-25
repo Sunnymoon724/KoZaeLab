@@ -14,13 +14,13 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("버튼 그룹/0"),Button("이미지 가져오기",ButtonSizes.Large)]
         private void OnGetImage()
         {
-			m_SpritePath = CommonUtility.GetFilePathInPanel("위치를 수정 합니다.",".png");
+			m_SpritePath = FileUtility.GetFilePathInPanel("위치를 수정 합니다.",".png");
 		}
 
 		[HorizontalGroup("버튼 그룹/0"),Button("이미지 변환하기",ButtonSizes.Large),EnableIf(nameof(IsExist))]
 		private void OnSetImage()
 		{
-			var fileData = CommonUtility.ReadFile(m_SpritePath);
+			var fileData = FileUtility.ReadFile(m_SpritePath);
 			var texture = new Texture2D(1,1);
 
 			try
@@ -50,7 +50,7 @@ namespace KZLib.KZWindow
 					{
 						texture.SetPixels32(pixelArray);
 
-						CommonUtility.WriteFile(string.Concat(CommonUtility.GetPathWithoutExtension(m_SpritePath),"_Convert.png"),texture);
+						FileUtility.WriteFile(string.Concat(FileUtility.GetPathWithoutExtension(m_SpritePath),"_Convert.png"),texture);
 						UnityUtility.DisplayInfo("이미지 변경 완료");
 					}
 				}

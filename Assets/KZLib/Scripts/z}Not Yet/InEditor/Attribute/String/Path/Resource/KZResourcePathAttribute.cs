@@ -29,7 +29,7 @@ namespace KZLib.KZAttribute
 
 		protected override string GetNewPath()
 		{
-			return CommonUtility.GetFilePathInPanel("위치를 수정 합니다.",ResourceKind);
+			return FileUtility.GetFilePathInPanel("위치를 수정 합니다.",ResourceKind);
 		}
 
 		protected override Rect OnClickToOpen(Rect _rect,bool _isValid)
@@ -41,7 +41,7 @@ namespace KZLib.KZAttribute
 
 		protected override bool IsValidPath()
 		{
-			return CommonUtility.IsExistFile(ValueEntry.SmartValue);
+			return FileUtility.IsExistFile(ValueEntry.SmartValue);
 		}
 
 		protected class ResourceViewer<UObject> : OdinEditorWindow where UObject : UnityEngine.Object
@@ -70,7 +70,7 @@ namespace KZLib.KZAttribute
 					return;
 				}
 
-				ViewerObject = AssetDatabase.LoadAssetAtPath<UObject>(CommonUtility.GetAssetsPath(m_ObjectPath));
+				ViewerObject = AssetDatabase.LoadAssetAtPath<UObject>(FileUtility.GetAssetsPath(m_ObjectPath));
 			}
 
 			[OnInspectorGUI]

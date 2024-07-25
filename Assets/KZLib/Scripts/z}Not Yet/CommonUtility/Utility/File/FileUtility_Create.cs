@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using UnityEditor;
 
-public static partial class CommonUtility
+public static partial class FileUtility
 {
 	/// <summary>
 	/// 실제 경로를 생성함 (폴더면 폴더 생성 / 파일이면 부모 폴더 생성)
@@ -16,7 +16,7 @@ public static partial class CommonUtility
 		}
 
 		// 현재 경로가 파일이면 부모 폴더 경로를 아니면 현재 경로의 풀 경로를 받아옴
-		var fullPath = GetFullPath(IsFilePath(_path) ? GetProjectPath(_path) : _path);
+		var fullPath = GetFullPath(IsFilePath(_path) ? GetParentPath(_path) : _path);
 
 		if(!Directory.Exists(fullPath))
 		{

@@ -11,14 +11,14 @@ namespace KZLib.KZMenu
 		private static void OnCreateScriptableObject()
 		{
 			var selected = Selection.activeObject;
-			var dataPath = CommonUtility.PathCombine(GameSettings.In.MetaAssetPath,string.Format("{0}.asset",selected.name));
+			var dataPath = FileUtility.PathCombine(GameSettings.In.MetaAssetPath,string.Format("{0}.asset",selected.name));
 
 			if(!UnityUtility.DisplayCheck("애셋 생성",string.Format("애셋을 생성하시겠습니까? \n 에셋 이름 : {0} \n 생성 경로 : {1} (프로젝트 세팅)",selected.name,dataPath)))
 			{
 				return;
 			}
 
-			if(CommonUtility.IsExistFile(dataPath))
+			if(FileUtility.IsExistFile(dataPath))
 			{
 				UnityUtility.DisplayError(string.Format("{0}에 파일이 이미 존재합니다.",dataPath));
 

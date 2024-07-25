@@ -53,7 +53,7 @@ public partial class GameSettings : InnerBaseSettings<GameSettings>
 	private void InitializePath()
 	{
 #if UNITY_EDITOR
-		CommonUtility.CreateFolder(Global.DEFAULT_SETTING_WINDOW_FOLDER_PATH);
+		FileUtility.CreateFolder(Global.DEFAULT_SETTING_WINDOW_FOLDER_PATH);
 
 		AssetDatabase.Refresh();
 #endif

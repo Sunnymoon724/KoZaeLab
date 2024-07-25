@@ -131,7 +131,7 @@ public static class GameUtility
 		var packagePath = string.Format("Packages/com.bsheepstudio.kzlib/WorkResources/Templates/{0}",_fileName);
 		var assetPath = string.Format("Assets/KZLib/WorkResources/Templates/{0}",_fileName);
 
-		return CommonUtility.IsExistFile(CommonUtility.PathCombine(CommonUtility.GetProjectPath(),packagePath)) ? packagePath : (CommonUtility.IsExistFile(assetPath) ? assetPath : throw new NullReferenceException(string.Format("템플릿 폴더에 해당 파일이 없습니다. [{0}]",_fileName)));
+		return FileUtility.IsExistFile(FileUtility.PathCombine(FileUtility.GetProjectPath(),packagePath)) ? packagePath : (FileUtility.IsExistFile(assetPath) ? assetPath : throw new NullReferenceException(string.Format("템플릿 폴더에 해당 파일이 없습니다. [{0}]",_fileName)));
 	}
 
 	public static byte[] GetTestImageData()
@@ -145,7 +145,7 @@ public static class GameUtility
 	{
 		var filePath = GetTemplateFilePath(_fileName);
 
-		return filePath.StartsWith("Packages/") ? CommonUtility.PathCombine(CommonUtility.GetProjectPath(),filePath) : CommonUtility.GetFullPath(filePath);
+		return filePath.StartsWith("Packages/") ? FileUtility.PathCombine(FileUtility.GetProjectPath(),filePath) : FileUtility.GetFullPath(filePath);
 	}
 #endif
 }

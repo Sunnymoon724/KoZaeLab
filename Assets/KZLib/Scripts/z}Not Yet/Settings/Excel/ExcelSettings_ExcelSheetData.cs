@@ -25,14 +25,14 @@ public abstract partial class ExcelSettings<TObject> : OuterBaseSettings<TObject
 
 		protected string m_ErrorLog = null;
 
-		protected bool IsExistFilePath => CommonUtility.IsExistFile(AbsoluteFilePath);
+		protected bool IsExistFilePath => FileUtility.IsExistFile(AbsoluteFilePath);
 
 		protected bool IsExistSheetName => !m_SheetName.IsEmpty();
 
 		[VerticalGroup(" ")]
 		[HorizontalGroup(" /0",Order = 0)]
 		[HorizontalGroup(" /0/0",Order = 0),ShowInInspector,LabelText("경로"),LabelWidth(100),KZDocumentPath,PropertyTooltip("$AbsoluteFilePath")]
-		public string AbsoluteFilePath => CommonUtility.GetExternalFileAbsolutePath(m_LocalFilePath);
+		public string AbsoluteFilePath => FileUtility.GetExternalFileAbsolutePath(m_LocalFilePath);
 
 		public ExcelSheetData(string _path)
 		{

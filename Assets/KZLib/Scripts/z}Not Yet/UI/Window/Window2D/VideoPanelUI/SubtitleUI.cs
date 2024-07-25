@@ -40,7 +40,7 @@ namespace VideoPanel
 
 		public void SetPath(string _videoPath)
 		{
-			var dataPath = CommonUtility.ChangeExtension(_videoPath,".txt");
+			var dataPath = FileUtility.ChangeExtension(_videoPath,".txt");
 			var textAsset = ResMgr.In.GetTextAsset(dataPath);
 
 			if(!textAsset)

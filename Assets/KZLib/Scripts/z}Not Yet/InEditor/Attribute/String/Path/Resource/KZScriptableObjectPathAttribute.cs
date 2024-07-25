@@ -31,7 +31,7 @@ namespace KZLib.KZAttribute
 		{
 			var viewer = EditorWindow.GetWindow<ScriptableObjectWindow>("Viewer");
 
-			var data = AssetDatabase.LoadAssetAtPath<ScriptableObject>(CommonUtility.GetAssetsPath(ValueEntry.SmartValue));
+			var data = AssetDatabase.LoadAssetAtPath<ScriptableObject>(FileUtility.GetAssetsPath(ValueEntry.SmartValue));
 
 			viewer.SetScriptableObject(data);
 			viewer.Show();

@@ -55,21 +55,21 @@ public partial class MetaSettings : ExcelSettings<MetaSettings>
 
 		public void WriteScript(string _scriptPath)
 		{
-			if(CommonUtility.IsExistFile(_scriptPath))
+			if(FileUtility.IsExistFile(_scriptPath))
 			{
 				LogTag.Editor.W("스크립트가 이미 존재하여 생성을 생략합니다. [경로 :{0}]",_scriptPath);
 
 				return;
 			}
 
-			var data = CommonUtility.GetTemplateText("MetaTable.txt");
+			var data = FileUtility.GetTemplateText("MetaTable.txt");
 
 			data = data.Replace("$ClassName",ClassName);
 			data = data.Replace("$MemberFields",MemberFields);
 			data = data.Replace("$MemberProperties",MemberProperties);
 			data = data.Replace("$SheetName",SheetName);
 
-			CommonUtility.WriteDataToFile(_scriptPath,data);
+			FileUtility.WriteDataToFile(_scriptPath,data);
 		}
 	}
 }
