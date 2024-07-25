@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-public static partial class CommonUtility
+public static partial class FileUtility
 {
 	/// <summary>
 	/// .meta는 알아서 제외 합니다.

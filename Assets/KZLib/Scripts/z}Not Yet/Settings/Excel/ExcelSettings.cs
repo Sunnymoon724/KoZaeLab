@@ -12,19 +12,19 @@ public abstract partial class ExcelSettings<TObject> : OuterBaseSettings<TObject
 	[HorizontalGroup("엑셀 설정/추가",Order = 0),Button("시트 추가",ButtonSizes.Large),PropertyTooltip("유니티 내부 폴더에 있으면 안됩니다."),ShowIf(nameof(IsShowAddButton))]
     private void OnAddExcel()
     {
-		var filePath = CommonUtility.GetExcelFilePath();
+		var filePath = FileUtility.GetExcelFilePath();
 
 		if(filePath.IsEmpty())
 		{
 			return;
 		}
 
-		if(CommonUtility.IsIncludeAssetsHeader(filePath))
+		if(FileUtility.IsIncludeAssetsHeader(filePath))
 		{
 			UnityUtility.DisplayError(string.Format("파일 {0}는 유니티 내부 폴더에 있으면 안됩니다.",filePath));
 		}
 
-		var localPath = filePath[(CommonUtility.GetProjectParentPath().Length+1)..];
+		var localPath = filePath[(FileUtility.GetProjectParentPath().Length+1)..];
 
 		OnSetSheetData(localPath);
 	}

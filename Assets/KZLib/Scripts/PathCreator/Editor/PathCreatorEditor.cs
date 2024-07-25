@@ -149,7 +149,7 @@ namespace KZLib.KZEditor
 
 		private void DrawHandle(int _index,Vector3 _position)
 		{
-			var position = CommonUtility.TransformPoint(_position,m_Creator.transform,m_Creator.PathSpaceType);
+			var position = _position.TransformPoint(m_Creator.transform,m_Creator.PathSpaceType);
 
 			var isSelected = _index == m_SelectedHandleIndex;
 			var isMouseOver = _index == m_MouseOverHandleIndex;
@@ -179,21 +179,21 @@ namespace KZLib.KZEditor
 			return _diameter*0.01f*HandleUtility.GetHandleSize(_position)*2.5f;
 		}
 
-		private Vector3 GetMouseWorldPosition(SpaceType _type,float _depth = 10.0f)
+		private Vector3 GetMousePosition(PathCreator _creator,float _depth = 10.0f)
 		{
-			var mouseRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-			var worldMouse = mouseRay.GetPoint(_depth);
+			var ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+			var position = ray.GetPoint(_depth);
 
-			if(_type == SpaceType.xy && mouseRay.direction.z != 0.0f)
+			if(_creator.PathSpaceType == SpaceType.xy && ray.direction.z != 0.0f)
 			{
-				worldMouse = mouseRay.GetPoint(Mathf.Abs(mouseRay.origin.z/mouseRay.direction.z));
+				position = ray.GetPoint(Mathf.Abs(ray.origin.z/ray.direction.z));
 			}
-			else if(_type == SpaceType.xz && mouseRay.direction.y != 0)
+			else if(_creator.PathSpaceType == SpaceType.xz && ray.direction.y != 0)
 			{
-				worldMouse = mouseRay.GetPoint(Mathf.Abs(mouseRay.origin.y/mouseRay.direction.y));
+				position = ray.GetPoint(Mathf.Abs(ray.origin.y/ray.direction.y));
 			}
 
-			return worldMouse;
+			return position.InverseTransformPoint(_creator.transform,_creator.PathSpaceType);
 		}
 	}
 }

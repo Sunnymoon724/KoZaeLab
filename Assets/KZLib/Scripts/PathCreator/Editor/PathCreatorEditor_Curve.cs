@@ -18,7 +18,7 @@ namespace KZLib.KZEditor
 			{
 				var index = (handleIndex+i)%handleArray.Length;
 				var radius = GetHandleDiameter(m_AnchorSize,handleArray[index])/2.0f;
-				var position = CommonUtility.TransformPoint(handleArray[index],m_Creator.transform,m_Creator.PathSpaceType);
+				var position = handleArray[index].TransformPoint(m_Creator.transform,m_Creator.PathSpaceType);
 	
 				if(HandleUtility.DistanceToCircle(position,radius) == 0.0f)
 				{
@@ -39,7 +39,7 @@ namespace KZLib.KZEditor
 						if(_event.shift)
 						{
 							var distance = (Camera.current.transform.position-handleArray[^1]).magnitude;
-							var newPosition = CommonUtility.InverseTransformPoint(GetMouseWorldPosition(m_Creator.PathSpaceType,distance),m_Creator.transform,m_Creator.PathSpaceType);
+							var newPosition = GetMousePosition(m_Creator,distance);
 
 							Undo.RecordObject(m_Creator,"Add Anchor");
 
@@ -82,13 +82,13 @@ namespace KZLib.KZEditor
 					case EventType.MouseDrag when m_DragHandleIndex != -1:
 					{
 						var currentPosition = handleArray[m_DragHandleIndex];
-						var localPosition = CommonUtility.InverseTransformPoint(GetMouseWorldPosition(m_Creator.PathSpaceType),m_Creator.transform,m_Creator.PathSpaceType);
+						var newPosition = GetMousePosition(m_Creator);
 
-						if(currentPosition != localPosition)
+						if(currentPosition != newPosition)
 						{
 							Undo.RecordObject(m_Creator,"Move Handle");
 
-							m_Creator.MoveCurve(m_DragHandleIndex,localPosition,_event.capsLock);
+							m_Creator.MoveCurve(m_DragHandleIndex,newPosition,_event.capsLock);
 
 							Repaint();
 						}

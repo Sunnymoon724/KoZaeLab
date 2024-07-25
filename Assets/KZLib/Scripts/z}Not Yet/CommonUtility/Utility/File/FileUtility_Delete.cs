@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-public static partial class CommonUtility
+public static partial class FileUtility
 {
 	// 비어 있는 서브 디렉토리 모두 삭제하기
 	public static void DeleteEmptyDirectory(string _startPath,Action _onComplete = null)

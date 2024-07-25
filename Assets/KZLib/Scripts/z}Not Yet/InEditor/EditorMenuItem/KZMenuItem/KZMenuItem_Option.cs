@@ -30,7 +30,7 @@ namespace KZLib.KZMenu
 				return;
 			}
 
-			CommonUtility.DeleteEmptyDirectory(Application.dataPath,()=>
+			FileUtility.DeleteEmptyDirectory(Application.dataPath,()=>
 			{
 				AssetDatabase.Refresh();
 

@@ -25,7 +25,7 @@ public abstract class InnerBaseSettings<TObject> : BaseSettings<TObject> where T
 		{
 			if(!s_Instance)
 			{
-				var path = CommonUtility.PathCombine(SETTINGS_PATH,typeof(TObject).Name);
+				var path = FileUtility.PathCombine(SETTINGS_PATH,typeof(TObject).Name);
 
 				s_Instance = Resources.Load<TObject>(path);
 
@@ -43,7 +43,7 @@ public abstract class InnerBaseSettings<TObject> : BaseSettings<TObject> where T
 
 	public static void CreateSettings()
 	{
-		CreateScriptableObject(CommonUtility.PathCombine(SETTINGS_PATH,typeof(TObject).Name));
+		CreateScriptableObject(FileUtility.PathCombine(SETTINGS_PATH,typeof(TObject).Name));
 	}
 }
 
@@ -61,7 +61,7 @@ public abstract class OuterBaseSettings<TObject> : BaseSettings<TObject> where T
 			if(!s_Instance)
 			{
 #if UNITY_EDITOR
-				var path = CommonUtility.PathCombine(SETTINGS_PATH,typeof(TObject).Name);
+				var path = FileUtility.PathCombine(SETTINGS_PATH,typeof(TObject).Name);
 
 				s_Instance = AssetDatabase.LoadAssetAtPath<TObject>(string.Format("{0}.asset",path));
 
@@ -79,6 +79,6 @@ public abstract class OuterBaseSettings<TObject> : BaseSettings<TObject> where T
 
 	public static void CreateSettings()
 	{
-		CreateScriptableObject(CommonUtility.PathCombine(SETTINGS_PATH,typeof(TObject).Name));
+		CreateScriptableObject(FileUtility.PathCombine(SETTINGS_PATH,typeof(TObject).Name));
 	}
 }

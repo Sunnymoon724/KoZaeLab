@@ -99,7 +99,7 @@ public partial class MetaSettings : ExcelSettings<MetaSettings>
 
 			if(MetaType == null)
 			{
-				var scriptPath = CommonUtility.PathCombine(CommonUtility.GetFullPath(GameSettings.In.MetaScriptPath),string.Format("{0}Table.cs",SheetName));
+				var scriptPath = FileUtility.PathCombine(FileUtility.GetFullPath(GameSettings.In.MetaScriptPath),string.Format("{0}Table.cs",SheetName));
 
 				//? script 만들기
 				scriptData.WriteScript(scriptPath);
@@ -141,7 +141,7 @@ public partial class MetaSettings : ExcelSettings<MetaSettings>
 
 					var enumText = string.Format("{0}\tpublic enum {1}{0}\t{{{0}{2}\t}}",Environment.NewLine,pair.Key,builder.ToString());
 
-					CommonUtility.AddOrUpdateTemplateText(GameSettings.In.MetaScriptPath,"MetaDataEnum.txt","MetaDataEnum.cs",enumText,(text)=>
+					FileUtility.AddOrUpdateTemplateText(GameSettings.In.MetaScriptPath,"MetaDataEnum.txt","MetaDataEnum.cs",enumText,(text)=>
 					{
 						var footer = text[..text.LastIndexOf("}")];
 

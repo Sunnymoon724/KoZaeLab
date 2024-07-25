@@ -5,7 +5,7 @@ using System.Text;
 using Newtonsoft.Json;
 using UnityEngine;
 
-public static partial class CommonUtility
+public static partial class FileUtility
 {
 	private const int WAV_HEADER_SIZE = 44;
 	

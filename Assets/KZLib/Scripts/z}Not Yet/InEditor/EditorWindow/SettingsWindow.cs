@@ -86,7 +86,7 @@ namespace KZLib.KZWindow
 				asset = CreateInstance<TObject>();
 
 				// 생성
-				var dataPath = CommonUtility.PathCombine("Resources/ScriptableObjects",typeof(TObject).Name);
+				var dataPath = FileUtility.PathCombine("Resources/ScriptableObjects",typeof(TObject).Name);
 
 				CommonUtility.SaveAsset(dataPath,asset);
 			}

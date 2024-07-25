@@ -341,28 +341,27 @@ public static class Vector3Extension
 
 	public static Vector3 TransformPoint(this Vector3 _position,Transform _transform,SpaceType _type)
 	{
-		var original = LockTransformToSpace(_transform,_type);
+		var (Position,Rotation,Scale) = LockTransformToSpace(_transform,_type);
+		var position = _transform.TransformPoint(_position);
 
-		var transformedPoint = _transform.TransformPoint(_position);
+		_transform.SetPositionAndRotation(Position,Rotation);
+		_transform.localScale = Scale;
 
-		_transform.SetPositionAndRotation(original.Item1,original.Item2);
-		_transform.localScale = original.Item3;
-
-		return transformedPoint;
+		return position;
 	}
 
 	public static Vector3 InverseTransformPoint(this Vector3 _position,Transform _transform,SpaceType _type)
 	{
-		var original = LockTransformToSpace(_transform,_type);
-		Vector3 transformedPoint =_transform.InverseTransformPoint(_position);
+		var (Position,Rotation,Scale) = LockTransformToSpace(_transform,_type);
+		var position = _transform.InverseTransformPoint(_position);
 
-		_transform.SetPositionAndRotation(original.Item1,original.Item2);
-		_transform.localScale = original.Item3;
+		_transform.SetPositionAndRotation(Position,Rotation);
+		_transform.localScale = Scale;
 
-		return transformedPoint;
+		return position;
 	}
 
-	private static (Vector3,Quaternion,Vector3) LockTransformToSpace(Transform _transform,SpaceType _space)
+	private static (Vector3 Position,Quaternion Rotation,Vector3 Scale) LockTransformToSpace(Transform _transform,SpaceType _space)
 	{
 		_transform.GetPositionAndRotation(out var position,out var rotation);
 		var scale = _transform.localScale;

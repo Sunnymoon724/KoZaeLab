@@ -20,7 +20,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 
 	private string GetFullPath(string _type)
 	{
-		return CommonUtility.PathCombine(CommonUtility.GetProjectPath(),"Builds",_type,CurrentBuildTargetToString);
+		return FileUtility.PathCombine(FileUtility.GetProjectPath(),"Builds",_type,CurrentBuildTargetToString);
 	}
 
 	private BuildTarget CurrentBuildTarget => EditorUserBuildSettings.activeBuildTarget;
@@ -57,7 +57,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 	{
 		if(CurrentBuildTarget == BuildTarget.Android)
 		{
-			return (CommonUtility.GetFileName(_filePath),CommonUtility.ReadFile(_filePath));
+			return (FileUtility.GetFileName(_filePath),FileUtility.ReadFile(_filePath));
 		}
 		else
 		{

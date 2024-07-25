@@ -21,13 +21,13 @@ namespace KZLib.KZMenu
 			{
 				var asset = AssetDatabase.GetAssetPath(selected);
 
-				textList.Add(string.Format("<b> {0} </b>을 사용하고 있는 에셋 찾기",CommonUtility.GetOnlyName(asset)));
+				textList.Add(string.Format("<b> {0} </b>을 사용하고 있는 에셋 찾기",FileUtility.GetOnlyName(asset)));
 
 				if(AssetsPathListDict.TryGetValue(asset,out var dependantList))
 				{
 					foreach(var dependant in dependantList)
 					{
-						textList.Add(string.Format("<a href=\"{0}\">{1}</a> ",dependant,CommonUtility.GetOnlyName(dependant)));
+						textList.Add(string.Format("<a href=\"{0}\">{1}</a> ",dependant,FileUtility.GetOnlyName(dependant)));
 					}
 				}
 			}
@@ -61,7 +61,7 @@ namespace KZLib.KZMenu
 			{
 				var asset = AssetDatabase.GetAssetPath(selected);
 
-				textList.Add(string.Format("<b> {0} </b>에 사용된 에셋 찾기",CommonUtility.GetOnlyName(asset)));
+				textList.Add(string.Format("<b> {0} </b>에 사용된 에셋 찾기",FileUtility.GetOnlyName(asset)));
 
 				foreach(var dependant in AssetDatabase.GetDependencies(asset,false))
 				{
@@ -70,7 +70,7 @@ namespace KZLib.KZMenu
 						continue;
 					}
 
-					textList.Add(string.Format("<a href=\"{0}\">{1}</a> ",dependant,CommonUtility.GetOnlyName(dependant)));
+					textList.Add(string.Format("<a href=\"{0}\">{1}</a> ",dependant,FileUtility.GetOnlyName(dependant)));
 				}
 			}
 
@@ -100,7 +100,7 @@ namespace KZLib.KZMenu
 
 			var path = AssetDatabase.GetAssetPath(Selection.activeObject);
 
-			if(!CommonUtility.IsFilePath(path))
+			if(!FileUtility.IsFilePath(path))
 			{
 				LogTag.Editor.I("폴더를 선택했습니다.");
 

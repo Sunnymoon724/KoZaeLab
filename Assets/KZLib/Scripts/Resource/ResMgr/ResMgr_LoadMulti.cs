@@ -125,7 +125,7 @@ namespace KZLib
 		private TObject[] LoadDataArray<TObject>(string _folderPath) where TObject : Object
 		{
 #if UNITY_EDITOR
-			if(CommonUtility.IsFilePath(_folderPath))
+			if(FileUtility.IsFilePath(_folderPath))
 			{
 				throw new NullReferenceException(string.Format("경로가 파일 경로 입니다.[경로 : {0}]",_folderPath));
 			}
@@ -134,7 +134,7 @@ namespace KZLib
 			//? Resources로 시작하는건 리소스 폴더이므로
 			if(_folderPath.StartsWith(RESOURCES))
 			{
-				return Resources.LoadAll<TObject>(CommonUtility.RemoveHeaderDirectory(_folderPath,RESOURCES));
+				return Resources.LoadAll<TObject>(FileUtility.RemoveHeaderDirectory(_folderPath,RESOURCES));
 			}
 
 			if(GameSettings.In.IsServerResource)

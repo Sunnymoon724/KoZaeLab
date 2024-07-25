@@ -59,20 +59,20 @@ public static partial class CommonUtility
 
 	public static IEnumerable<TObject> LoadAssetGroupInFolder<TObject>(string _folderPath) where TObject : Object
 	{
-		return ToConvert(GetAllFilePathInFolder(GetFullPath(_folderPath)),(path)=>
+		return ToConvert(FileUtility.GetAllFilePathInFolder(FileUtility.GetFullPath(_folderPath)),(path)=>
 		{
-			return AssetDatabase.LoadAssetAtPath<TObject>(GetAssetsPath(path));
+			return AssetDatabase.LoadAssetAtPath<TObject>(FileUtility.GetAssetsPath(path));
 		});
 	}
 
 	public static void SaveAsset(string _dataPath,Object _asset)
 	{
-		var folderPath = GetParentAbsolutePath(_dataPath);
-		var assetPath = GetAssetsPath(_dataPath);
+		var folderPath = FileUtility.GetParentAbsolutePath(_dataPath);
+		var assetPath = FileUtility.GetAssetsPath(_dataPath);
 
-		CreateFolder(folderPath);
+		FileUtility.CreateFolder(folderPath);
 
-		if(IsExistFile(_dataPath))
+		if(FileUtility.IsExistFile(_dataPath))
 		{
 			AssetDatabase.DeleteAsset(assetPath);
 		}

@@ -3,7 +3,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-public static partial class CommonUtility
+public static partial class FileUtility
 {
 	/// <summary>
 	/// 모든 경로 합침
@@ -22,7 +22,7 @@ public static partial class CommonUtility
 	}
 
 	/// <summary>
-	/// 이름 + 확장자명 반환
+	/// 이름 + 확장자명 반환 (폴더는 이름만)
 	/// </summary>
 	public static string GetFileName(string _filePath)
 	{
@@ -43,6 +43,14 @@ public static partial class CommonUtility
 	public static string GetExtension(string _filePath)
 	{
 		return Path.GetExtension(_filePath);
+	}
+
+	/// <summary>
+	/// 부모 경로 반환
+	/// </summary>
+	public static string GetParentPath(string _path)
+	{
+		return Path.GetDirectoryName(_path);
 	}
 
 	/// <summary>
@@ -149,6 +157,11 @@ public static partial class CommonUtility
 		return Path.HasExtension(_filePath);
 	}
 
+	public static bool IsExist(string _file,bool _needException = false)
+	{
+		return IsFilePath(_file) ? IsExistFile(_file,_needException) : IsExistFolder(_file,_needException);
+	}
+
 	/// <summary>
 	/// 이 경로가 파일 경로인지 파악 (빌드 시 경로 파악이 어려울 수 있으므로 Empty 정도만 파악)
 	/// </summary>
@@ -199,7 +212,7 @@ public static partial class CommonUtility
 		{
 			if(_needException)
 			{
-				throw new NullReferenceException(string.Format("폴더가 존재하지 않습니다. 경로 : {0}",fullPath));
+				throw new DirectoryNotFoundException(string.Format("폴더가 존재하지 않습니다. 경로 : {0}",fullPath));
 			}
 
 			return false;

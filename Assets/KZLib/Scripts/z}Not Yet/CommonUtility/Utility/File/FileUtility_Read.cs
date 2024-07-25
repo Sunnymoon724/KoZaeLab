@@ -1,6 +1,6 @@
 using System.IO;
 
-public static partial class CommonUtility
+public static partial class FileUtility
 {
 	public static byte[] ReadFile(string _filePath)
 	{

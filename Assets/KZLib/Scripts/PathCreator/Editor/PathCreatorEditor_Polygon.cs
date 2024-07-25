@@ -16,7 +16,7 @@ namespace KZLib.KZEditor
 			for(var i=0;i<3;i++)
 			{
 				var radius = GetHandleDiameter(m_AnchorSize,handleArray[i])/2.0f;
-				var position = CommonUtility.TransformPoint(handleArray[i],m_Creator.transform,m_Creator.PathSpaceType);
+				var position = handleArray[i].TransformPoint(m_Creator.transform,m_Creator.PathSpaceType);
 	
 				if(HandleUtility.DistanceToCircle(position,radius) == 0.0f)
 				{
@@ -45,13 +45,13 @@ namespace KZLib.KZEditor
 					case EventType.MouseDrag when m_DragHandleIndex != -1:
 					{
 						var currentPosition = handleArray[m_DragHandleIndex];
-						var localPosition = CommonUtility.InverseTransformPoint(GetMouseWorldPosition(m_Creator.PathSpaceType),m_Creator.transform,m_Creator.PathSpaceType);
+						var newPosition = GetMousePosition(m_Creator);
 
-						if(currentPosition != localPosition)
+						if(currentPosition != newPosition)
 						{
 							Undo.RecordObject(m_Creator,"Move Center");
 
-							m_Creator.MovePolygon(m_DragHandleIndex,localPosition);
+							m_Creator.MovePolygon(m_DragHandleIndex,newPosition);
 
 							Repaint();
 						}

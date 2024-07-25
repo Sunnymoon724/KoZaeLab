@@ -71,12 +71,12 @@ namespace KZLib.KZAttribute
 				if(Attribute.IncludeProject)
 				{
 					// 내부에 있는 경우
-					if(!CommonUtility.IsIncludeAssetsHeader(dataPath))
+					if(!FileUtility.IsIncludeAssetsHeader(dataPath))
 					{
 						UnityUtility.DisplayError(string.Format("{0}가 Assets 폴더 안에 있지 않습니다. 다시 확인해 주세요.",dataPath));
 					}
 
-					ValueEntry.SmartValue = CommonUtility.RemoveAssetsHeader(dataPath);
+					ValueEntry.SmartValue = FileUtility.RemoveAssetsHeader(dataPath);
 				}
 				else
 				{
@@ -129,7 +129,7 @@ namespace KZLib.KZAttribute
 		{
 			return DrawButton(_rect,SdfIconType.Folder2,_isValid,()=>
 			{
-				CommonUtility.OpenFolder(CommonUtility.GetParentAbsolutePath(ValueEntry.SmartValue));
+				FileUtility.OpenFolder(FileUtility.GetParentAbsolutePath(ValueEntry.SmartValue));
 			});
 		}
 	}

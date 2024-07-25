@@ -17,7 +17,7 @@ namespace KZLib.KZDevelop
 
 		private void GetCurvePointArray()
 		{
-			m_PointArray = CommonUtility.GetCubicBezierCurve(HandleArray,IsClosed,m_Resolution) ?? new Vector3[0];
+			m_PointArray = MathUtility.GetCubicBezierCurve(HandleArray,IsClosed,m_Resolution) ?? new Vector3[0];
 		}
 
 		public void SetCurve(Vector3[] _handleArray,bool _isClosed,float _resolution)
