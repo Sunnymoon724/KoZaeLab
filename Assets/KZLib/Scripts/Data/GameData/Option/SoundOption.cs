@@ -1,37 +1,45 @@
-﻿
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
+
 namespace GameData
 {
-	public record SoundVolumeData(float Level,bool Mute);
+	public enum SoundType { Master, Music, Effect }
+	public record SoundData(float Volume,bool Mute);
 
 	public class SoundOption : Option
 	{
 		protected override string OPTION_KEY => "Sound Option";
 		protected override EventTag Tag => EventTag.ChangeSoundOption;
 
-		private class SoundData
+		private class Sound
 		{
-			public float MasterLevel { get; set; }
-			public bool MasterMute { get; set; }
+			public Dictionary<SoundType,SoundData> SoundDict { get; set; }
 
-			public float MusicLevel { get; set; }
-			public bool MusicMute { get; set; }
+			[JsonIgnore]
+			public SoundData Master => SoundDict[SoundType.Master];
+			[JsonIgnore]
+			public SoundData Music => SoundDict[SoundType.Music];
+			[JsonIgnore]
+			public SoundData Effect => SoundDict[SoundType.Effect];
 
-			public float EffectLevel { get; set; }
-			public bool EffectMute { get; set; }
+			public void SetData(SoundType _type,SoundData _data)
+			{
+				SoundDict[_type] = _data;
+			}
 		}
 
-		private SoundData m_SoundData = null;
+		private Sound m_Sound = null;
 
 		public override void Initialize()
 		{
-			m_SoundData = GetOption(new SoundData()
+			m_Sound = GetOption(new Sound()
 			{
-				MasterLevel		= 1.0f,
-				MasterMute		= false,
-				MusicLevel		= 1.0f,
-				MusicMute		= false,
-				EffectLevel		= 1.0f,
-				EffectMute		= false,
+				SoundDict = new Dictionary<SoundType,SoundData>()
+				{
+					{ SoundType.Master,	new SoundData(1.0f,false) },
+					{ SoundType.Music,	new SoundData(1.0f,false) },
+					{ SoundType.Effect,	new SoundData(1.0f,false) },
+				},
 			});
 		}
 
@@ -43,60 +51,57 @@ namespace GameData
 		/// <summary>
 		/// 마스터 볼륨
 		/// </summary>
-		public SoundVolumeData MasterVolume
+		public SoundData Master
 		{
-			get => new(m_SoundData.MasterLevel,m_SoundData.MasterMute);
+			get => m_Sound.Master;
 			set
 			{
-				if((m_SoundData.MasterLevel == value.Level) && (m_SoundData.MasterMute == value.Mute))
+				if(m_Sound.Master == value)
 				{
 					return;
 				}
 
-				m_SoundData.MasterLevel = value.Level;
-				m_SoundData.MasterMute = value.Mute;
+				m_Sound.SetData(SoundType.Master,value);
 
-				SaveOption(m_SoundData);
+				SaveOption(m_Sound);
 			}
 		}
 
 		/// <summary>
 		/// 배경음 볼륨
 		/// </summary>
-		public SoundVolumeData MusicVolume
+		public SoundData Music
 		{
-			get => new(m_SoundData.MusicLevel,m_SoundData.MusicMute);
+			get => m_Sound.Music;
 			set
 			{
-				if((m_SoundData.MusicLevel == value.Level) && (m_SoundData.MusicMute == value.Mute))
+				if(m_Sound.Music == value)
 				{
 					return;
 				}
 
-				m_SoundData.MusicLevel = value.Level;
-				m_SoundData.MusicMute = value.Mute;
+				m_Sound.SetData(SoundType.Music,value);
 
-				SaveOption(m_SoundData);
+				SaveOption(m_Sound);
 			}
 		}
 
 		/// <summary>
 		/// 효과음 볼륨
 		/// </summary>
-		public SoundVolumeData EffectVolume
+		public SoundData Effect
 		{
-			get => new(m_SoundData.EffectLevel,m_SoundData.EffectMute);
+			get => m_Sound.Effect;
 			set
 			{
-				if((m_SoundData.EffectLevel == value.Level) && (m_SoundData.EffectMute == value.Mute))
+				if(m_Sound.Effect == value)
 				{
 					return;
 				}
 
-				m_SoundData.EffectLevel = value.Level;
-				m_SoundData.EffectMute = value.Mute;
+				m_Sound.SetData(SoundType.Effect,value);
 
-				SaveOption(m_SoundData);
+				SaveOption(m_Sound);
 			}
 		}
 	}

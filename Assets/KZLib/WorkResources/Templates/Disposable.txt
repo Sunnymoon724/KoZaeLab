@@ -1,8 +1,8 @@
 ﻿using System;
 
-public abstract class ParentClass : IDisposable
+public abstract class BaseClass : IDisposable
 {
-	protected bool m_Disposed = false;
+	private bool m_Disposed = false;
 
 	protected BaseClass() => Initialize();
 	~BaseClass() => Release(false);
@@ -18,10 +18,11 @@ public abstract class ParentClass : IDisposable
 
 		if(_disposing)
 		{
-			//! 관리 데이터 제거
+			// 관리 데이터 제거
+			// 이벤트 핸들러 제거
 		}
 
-		//! 비관리 데이터 제거
+		// 비관리 데이터 제거
 
 		m_Disposed = true;
 	}
@@ -34,8 +35,10 @@ public abstract class ParentClass : IDisposable
 	}
 }
 
-public class ChildClass : ParentClass
+public class DerivedClass : BaseClass
 {
+	private bool m_Disposed = false;
+
 	protected override void Release(bool _disposing)
 	{
 		if(m_Disposed)
@@ -45,10 +48,13 @@ public class ChildClass : ParentClass
 
 		if(_disposing)
 		{
-			//! 관리 데이터 제거
+			// 관리 데이터 제거
+			// 이벤트 핸들러 제거
 		}
 
-		//! 비관리 데이터 제거
+		// 비관리 데이터 제거
+
+		m_Disposed = true;
 
 		base.Release(_disposing);
 	}

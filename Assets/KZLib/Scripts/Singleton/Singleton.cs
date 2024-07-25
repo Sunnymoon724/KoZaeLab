@@ -1,22 +1,22 @@
 ﻿using System;
 
-public abstract class Singleton<TClass> : IDisposable where TClass : class, new()
+public abstract class Singleton<TClass> : IDisposable where TClass : class,new()
 {
-	private static volatile TClass m_Instance = null;
+	private static TClass s_Instance = null;
 
-	protected bool m_Disposed = false;
+	private bool m_Disposed = false;
 
 	public static TClass In
 	{
 		get
 		{
-			m_Instance ??= new TClass();
+			s_Instance ??= new TClass();
 
-			return m_Instance;
+			return s_Instance;
 		}
 	}
 
-	public static bool HasInstance => m_Instance != null;
+	public static bool HasInstance => s_Instance != null;
 
 	protected Singleton() => Initialize();
 	~Singleton() => Release(false);
@@ -30,10 +30,16 @@ public abstract class Singleton<TClass> : IDisposable where TClass : class, new(
 			return;
 		}
 
-		if(_disposing) { }
+		if(_disposing)
+		{
+			// 관리 데이터 제거
+			// 이벤트 핸들러 제거
+		}
+
+		// 비관리 데이터 제거
 
 		m_Disposed = true;
-		m_Instance = null;
+		s_Instance = null;
 	}
 
 	public void Dispose()
@@ -45,6 +51,8 @@ public abstract class Singleton<TClass> : IDisposable where TClass : class, new(
 
 public abstract class DataSingleton<TClass> : Singleton<TClass> where TClass : class,new()
 {
+	private bool m_Disposed = false;
+
 	protected override void Release(bool _disposing)
 	{
 		if(m_Disposed)
@@ -56,6 +64,8 @@ public abstract class DataSingleton<TClass> : Singleton<TClass> where TClass : c
 		{
 			ClearAll();
 		}
+
+		m_Disposed = true;
 
 		base.Release(_disposing);
 	}

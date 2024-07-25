@@ -6,16 +6,16 @@ namespace GameData
 		protected override string OPTION_KEY => "Native Option";
 		protected override EventTag Tag => EventTag.ChangeNativeOption;
 
-		private class NativeData
+		private class Native
 		{
 			public bool UseVibration { get; set; }
 		}
 
-		private NativeData m_NativeData = null;
+		private Native m_Native = null;
 
 		public override void Initialize()
 		{
-			m_NativeData = GetOption(new NativeData());
+			m_Native = GetOption(new Native());
 		}
 
 		public override void Release()
@@ -25,17 +25,17 @@ namespace GameData
 
 		public bool UseVibration
 		{
-			get => m_NativeData.UseVibration;
+			get => m_Native.UseVibration;
 			set
 			{
-				if(m_NativeData.UseVibration == value)
+				if(m_Native.UseVibration == value)
 				{
 					return;
 				}
 
-				m_NativeData.UseVibration = value;
+				m_Native.UseVibration = value;
 
-				SaveOption(m_NativeData);
+				SaveOption(m_Native);
 			}
 		}
 	}

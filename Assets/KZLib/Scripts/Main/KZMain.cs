@@ -81,16 +81,14 @@ namespace KZLib
 			DOTween.Init(false,false,LogBehaviour.ErrorsOnly);
 			DOTween.SetTweensCapacity(1000,100);
 
+			// 모바일에서 화면잠김을 방지하기 위한 값.
+			Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
 			var option = GameDataMgr.In.Access<GraphicOption>();
 			var builder = new StringBuilder();
 
 			InitializeResolution(builder,option);
 
-#if UNITY_ANDROID || UNITY_IOS
-			InitializeMobileFrame(builder,option);
-#elif UNITY_STANDALONE
-			InitializePcFrame(builder,option);
-#endif
 			InitializeRenderSetting(builder);
 
 			LogTag.System.I(builder.ToString());
@@ -131,27 +129,11 @@ namespace KZLib
 
 		private void InitializeResolution(StringBuilder _builder,GraphicOption _option)
 		{
-			//? 모바일에서 화면잠김을 방지하기 위한 값.
-			Screen.sleepTimeout = SleepTimeout.NeverSleep;
-
 			var resolution = _option.ScreenResolution;
 
 			_builder.AppendFormat(string.Format("현재 해상도 {0}x{1}\n",resolution.Width,resolution.Width));
 		}
 
-#if UNITY_ANDROID || UNITY_IOS
-		private void InitializeMobileFrame(StringBuilder _builder,Option.Graphic _option)
-		{
-			_option.FrameRate = Global.FRAME_RATE_30;
-			_builder.AppendFormat(string.Format("현재 FPS {0}\n",_option.FrameRate));
-		}
-#elif UNITY_STANDALONE
-		private void InitializePcFrame(StringBuilder _builder,GraphicOption _option)
-		{
-			_option.FrameRate = Global.FRAME_RATE_60;
-			_builder.AppendFormat(string.Format("현재 FPS {0}\n",_option.FrameRate));
-		}
-#endif
 		private void InitializeRenderSetting(StringBuilder _builder)
 		{
 
@@ -159,7 +141,7 @@ namespace KZLib
 
 		protected virtual void OnApplicationQuit()
 		{
-			CommonUtility.ReleaseManager();
+			GameUtility.ReleaseManager();
 		}
 
 		protected virtual void Update()
