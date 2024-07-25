@@ -9,13 +9,14 @@ using UnityEngine;
 
 #endif
 
-using KZLib.KZDevelop;
 using UnityEngine;
 
 namespace KZLib
 {
 	public class VibrationMgr : Singleton<VibrationMgr>
 	{
+		private bool m_Disposed = false;
+
 		private bool m_UseVibration = true;
 
 #if UNITY_IOS && !UNITY_EDITOR
@@ -53,14 +54,17 @@ namespace KZLib
 
 		protected override void Release(bool _disposing)
 		{
-			Broadcaster.DisableListener(EventTag.ChangeNativeOption,OnChangeNativeOption);
-
 			if(m_Disposed)
 			{
 				return;
 			}
 
-			if(_disposing) { }
+			if(_disposing)
+			{
+				Broadcaster.DisableListener(EventTag.ChangeNativeOption,OnChangeNativeOption);
+			}
+
+			m_Disposed = true;
 
 			base.Release(_disposing);
 		}

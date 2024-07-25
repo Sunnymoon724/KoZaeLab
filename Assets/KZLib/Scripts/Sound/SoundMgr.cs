@@ -1,31 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using Cysharp.Threading.Tasks;
-using KZLib.KZDevelop;
-using UnityEngine;
-using UnityEngine.Audio;
+﻿using UnityEngine;
 
 namespace KZLib
 {
-	public partial class SoundMgr : LoadSingletonMB<SoundMgr>
+	public class SoundMgr : Singleton<SoundMgr>
 	{
-		private bool m_AudioPause = false;
+		private bool m_Disposed = false;
 
-		public bool IsAudioPausing => m_AudioPause;
+		//? BGM 관련
+		private AudioSource m_BGMSource = null;
+		public AudioSource BGMSource => m_BGMSource;
 
-		private readonly Dictionary<AudioSource,CancellationTokenSource> m_TokenDict = new();
+		//? UI 관련
+		private AudioSource m_UISource = null;
 
 		protected override void Initialize()
 		{
-			if(m_Mixer)
+			if(CameraMgr.HasInstance)
 			{
-				m_MixerDict.AddRange(m_Mixer.FindMatchingGroups(MIXER_MASTER));
+				m_BGMSource = CameraMgr.In.gameObject.GetComponentInChildren<AudioSource>();
+			}
+			else
+			{
+				//? 카메라 매니저가 없으면 메인 카메라에 오디오 리스너를 생성함
+				m_BGMSource = Camera.main.gameObject.GetOrAddComponent<AudioSource>();
 			}
 
-			for(var i=0;i<EFFECT_MAX_COUNT;i++)
+			if(UIMgr.HasInstance)
 			{
-				m_EffectList.Add(CreateEffectSource(i));
+				m_UISource = UIMgr.In.gameObject.GetComponentInChildren<AudioSource>();
 			}
 
 			Broadcaster.EnableListener(EventTag.ChangeSoundOption,OnChangeSoundOption);
@@ -33,221 +35,86 @@ namespace KZLib
 			OnChangeSoundOption();
 		}
 
-		protected override void Release()
+		protected override void Release(bool _disposing)
 		{
-			foreach(var token in m_TokenDict.Values)
+			if(m_Disposed)
 			{
-				token?.Cancel();
-				token?.Dispose();
+				return;
 			}
 
-			m_MixerDict.Clear();
+			if(_disposing)
+			{
+				m_BGMSource = null;
+				m_UISource = null;
 
-			m_EffectList.Clear();
-			m_TokenDict.Clear();
+				Broadcaster.DisableListener(EventTag.ChangeSoundOption,OnChangeSoundOption);
+			}
 
-			Broadcaster.DisableListener(EventTag.ChangeSoundOption,OnChangeSoundOption);
+			m_Disposed = true;
+
+			base.Release(_disposing);
 		}
 
 		private void OnChangeSoundOption()
 		{
 			var option = GameDataMgr.In.Access<GameData.SoundOption>();
 
-			var master = option.MasterVolume;
-			var music = option.MusicVolume;
-			var effect = option.EffectVolume;
+			var master = option.Master;
+			var music = option.Music;
+			var effect = option.Effect;
 
-			m_MusicVolume = master.Level*music.Level;
-			m_MusicMute = master.Mute || music.Mute;
+			m_BGMSource.volume = master.Volume*music.Volume;
+			m_BGMSource.mute = master.Mute || music.Mute;
 
-			m_EffectVolume = master.Level*effect.Level;
-			m_EffectMute = master.Mute || effect.Mute;
-
-			m_MusicSource.volume = m_MusicVolume;
-			m_MusicSource.mute = m_MusicMute;
-
-			foreach(var source in m_EffectList)
-			{
-				source.volume = m_EffectVolume;
-				source.mute = m_EffectMute;
-			}
+			m_UISource.volume = master.Volume*effect.Volume;
+			m_UISource.mute= master.Mute || effect.Mute;
 		}
 
-		private void SetAudioSource(AudioSource _source,AudioClip _clip,string _name,AudioMixerGroup _mixerGroup,bool _loop,bool _mute,float _volume)
+		public void PlayUIShot(string _path,float _volume = 1.0f)
 		{
-			_source.name = _name;
-			_source.clip = _clip;
-			_source.outputAudioMixerGroup = _mixerGroup;
-			_source.loop = _loop;
-			_source.pitch = 1.0f;
-			_source.ignoreListenerPause = false;
-
-			_source.volume = _volume;
-			_source.mute = _mute;
+			PlayUIShot(ResMgr.In.GetAudioClip(_path),_volume);
 		}
 
-		private void AddTask(AudioSource _source,CancellationTokenSource _token)
+		public void PlayUIShot(AudioClip _clip,float _volume = 1.0f)
 		{
-			if(m_TokenDict.ContainsKey(_source))
-			{
-				KillTask(_source);
-			}
-
-			m_TokenDict.Add(_source,_token);
+			m_UISource.PlayOneShot(_clip,_volume);
 		}
 
-		private void KillTask(AudioSource _source)
+		public void ReplayBGM(float _time = 0.0f)
 		{
-			if(m_TokenDict.TryGetValue(_source,out var token))
-			{
-				token?.Cancel();
-				token?.Dispose();
+			m_BGMSource.time = _time;
 
-				m_TokenDict.RemoveSafe(_source);
-			}
+			m_BGMSource.Play();
 		}
 
-		private bool RestartSound(AudioSource _source,float _time = 0.0f,float _delay = 0.0f)
+		public void PlayBGM(string _path,float _time = 0.0f)
 		{
-			if(!IsPlayingSource(_source))
-			{
-				return false;
-			}
-
-			PlaySound(_source,_time,_delay);
-
-			return true;
+			PlayBGM(ResMgr.In.GetAudioClip(_path),_time);
 		}
 
-		private void PlaySound(AudioSource _source,float _time = 0.0f,float _delay = 0.0f)
+		public void PlayBGM(AudioClip _clip,float _time = 0.0f)
 		{
-			_source.time = _time;
-			_source.PlayScheduled(AudioSettings.dspTime+_delay);
-		}
-
-		private void StopSound(AudioSource _source,bool _clear,float _fadeDuration = 0.0f)
-		{
-			var volume = _source.volume;
-
-			KillTask(_source);
-
-			var source = new CancellationTokenSource();
-
-			FadeOutAsync(_source,_source.volume,source.Token,_fadeDuration,()=>
-			{
-				_source.Stop();
-
-				KillTask(_source);
-
-				if(_clear)
-				{
-					_source.clip = null;
-				}
-
-				_source.volume = volume;
-			}).Forget();
-
-			if(_fadeDuration > 0.0f)
-			{
-				AddTask(_source,source);
-			}
-		}
-
-		private async UniTask PlaySoundAsync(AudioSource _source,CancellationToken _token,float _duration,float _delay = 0.0f,Action<float> _onPlay = null,Action _onComplete = null)
-		{
-			if(_delay != 0.0f)
-			{
-				await UniTask.WaitForSeconds(_delay);
-			}
-
-			var startTime = AudioSettings.dspTime;
-			var elapsedTime = 0.0f;
-
-			while(elapsedTime < _duration)
-			{
-				if(_token.IsCancellationRequested)
-				{
-					return;
-				}
-
-				_onPlay?.Invoke(elapsedTime);
-
-				await UniTask.Yield(_token);
-
-				var current = (float) (AudioSettings.dspTime-startTime);
-
-				if(elapsedTime != current)
-				{
-					elapsedTime = current;
-				}
-			}
-
-			_onPlay?.Invoke(_duration);
-
-			_onComplete?.Invoke();
-		}
-
-		private async UniTask FadeOutAsync(AudioSource _source,float _volume,CancellationToken _token,float _duration,Action _onComplete = null)
-		{
-			if(_duration > 0.0f)
-			{
-				await PlaySoundAsync(_source,_token,_duration,0.0f,(time)=>
-				{
-					m_MusicSource.volume = Mathf.Lerp(_volume,0.0f,time/_duration);
-				});
-			}
-
-			_onComplete?.Invoke();
-		}
-
-		private async UniTask FadeInAsync(AudioSource _source,float _volume,CancellationToken _token,float _duration,Action _onComplete = null)
-		{
-			if(_duration > 0.0f)
-			{
-				await PlaySoundAsync(_source,_token,_duration,0.0f,(time)=>
-				{
-					m_MusicSource.volume = Mathf.Lerp(0.0f,_volume,time/_duration);
-				});
-			}
-
-			_onComplete?.Invoke();
-		}
-
-		private async UniTask PlayFadeInOutLoopAsync(AudioSource _source,float _time,float _delay,CancellationToken _token,Vector3 _duration,int _count)
-		{
-			if(_count == 0)
+			//? 중복 금지
+			if(m_BGMSource.clip != null && m_BGMSource.clip.name.IsEqual(_clip.name))
 			{
 				return;
 			}
 
-			var count = _count;
-			var volume = m_MusicSource.volume;
+			m_BGMSource.clip = _clip;
+			m_BGMSource.loop = true;
+			m_BGMSource.time = _time;
 
-			while(count == -1 || count-- > 0)
-			{
-				if(_token.IsCancellationRequested)
-				{
-					return;
-				}
-
-				await UniTask.WaitForSeconds(_delay);
-
-				PlaySound(m_MusicSource,_time);
-
-				await FadeInAsync(_source,volume,_token,_duration.x);
-
-				if(_duration.y > 0.0f)
-				{
-					await UniTask.WaitForSeconds(_duration.y);
-				}
-
-				await FadeOutAsync(_source,volume,_token,_duration.z);
-			}
+			m_BGMSource.Play();
 		}
 
-		private bool IsPlayingSource(AudioSource _source)
+		public void StopBGM(bool _clear)
 		{
-			return _source.clip && _source.isPlaying;
+			m_BGMSource.Stop();
+
+			if(_clear)
+			{
+				m_BGMSource.clip = null;
+			}
 		}
 	}
 }

@@ -12,7 +12,7 @@ namespace GameData
 		protected override string OPTION_KEY => "Graphic Option";
 		protected override EventTag Tag => EventTag.ChangeGraphicOption;
 
-		private class GraphicData
+		private class Graphic
 		{
 			public Vector2Int Resolution { get; set; }
 			public bool FullScreen { get; set; }
@@ -20,11 +20,11 @@ namespace GameData
 			public long GraphicQuality { get; set; }
 		}
 
-		private GraphicData m_GraphicData = null;
+		private Graphic m_Graphic = null;
 
 		public override void Initialize()
 		{
-			m_GraphicData = GetOption(new GraphicData()
+			m_Graphic = GetOption(new Graphic()
 			{
 				Resolution		= GameSettings.In.ScreenResolution,
 				FullScreen		= GameSettings.In.FullScreen,
@@ -32,10 +32,10 @@ namespace GameData
 				GraphicQuality	= GraphicQualityPresetSettings.In.GetPresetQuality(GameSettings.In.GraphicQualityPreset),
 			});
 
-			Screen.SetResolution(m_GraphicData.Resolution.x,m_GraphicData.Resolution.y,m_GraphicData.FullScreen);
-			Application.targetFrameRate = m_GraphicData.FrameRate;
+			Screen.SetResolution(m_Graphic.Resolution.x,m_Graphic.Resolution.y,m_Graphic.FullScreen);
+			Application.targetFrameRate = m_Graphic.FrameRate;
 
-			CheckGraphicQuality();
+			CheckGraphicQuality(false);
 		}
 
 		public override void Release()
@@ -45,81 +45,84 @@ namespace GameData
 
 		public ScreenResolutionData ScreenResolution
 		{
-			get => new(m_GraphicData.Resolution,m_GraphicData.FullScreen);
+			get => new(m_Graphic.Resolution,m_Graphic.FullScreen);
 			set
 			{
-				if((m_GraphicData.Resolution.x == value.Width) && (m_GraphicData.Resolution.y == value.Height) && (m_GraphicData.FullScreen == value.IsFull))
+				if((m_Graphic.Resolution.x == value.Width) && (m_Graphic.Resolution.y == value.Height) && (m_Graphic.FullScreen == value.IsFull))
 				{
 					return;
 				}
 
-				m_GraphicData.Resolution = new Vector2Int(value.Width,value.Height);
-				m_GraphicData.FullScreen = value.IsFull;
+				m_Graphic.Resolution = new Vector2Int(value.Width,value.Height);
+				m_Graphic.FullScreen = value.IsFull;
 
-				Screen.SetResolution(m_GraphicData.Resolution.x,m_GraphicData.Resolution.y,m_GraphicData.FullScreen);
+				Screen.SetResolution(m_Graphic.Resolution.x,m_Graphic.Resolution.y,m_Graphic.FullScreen);
 
-				SaveOption(m_GraphicData);
+				SaveOption(m_Graphic);
 			}
 		}
 
 		public int FrameRate
 		{
-			get => m_GraphicData.FrameRate;
+			get => m_Graphic.FrameRate;
 			set
 			{
-				if(m_GraphicData.FrameRate == value)
+				if(m_Graphic.FrameRate == value)
 				{
 					return;
 				}
 
-				m_GraphicData.FrameRate = value;
+				m_Graphic.FrameRate = value;
 
-				Application.targetFrameRate = m_GraphicData.FrameRate;
+				Application.targetFrameRate = m_Graphic.FrameRate;
 
-				SaveOption(m_GraphicData);
+				SaveOption(m_Graphic);
 			}
 		}
 
 		public void AddGraphicQuality(GraphicQualityTag _qualityTag)
 		{
-			var quality = m_GraphicData.GraphicQuality.AddFlag(_qualityTag.QualityOption);
+			var quality = m_Graphic.GraphicQuality.AddFlag(_qualityTag.QualityOption);
 
-			if(m_GraphicData.GraphicQuality == quality)
+			if(m_Graphic.GraphicQuality == quality)
 			{
 				return;
 			}
 
-			m_GraphicData.GraphicQuality = quality;
+			m_Graphic.GraphicQuality = quality;
 
-			CheckGraphicQuality();
+			CheckGraphicQuality(true);
 		}
 
 		public void RemoveGraphicQuality(GraphicQualityTag _qualityTag)
 		{
-			var quality = m_GraphicData.GraphicQuality.RemoveFlag(_qualityTag.QualityOption);
+			var quality = m_Graphic.GraphicQuality.RemoveFlag(_qualityTag.QualityOption);
 
-			if(m_GraphicData.GraphicQuality == quality)
+			if(m_Graphic.GraphicQuality == quality)
 			{
 				return;
 			}
 
-			m_GraphicData.GraphicQuality = quality;
+			m_Graphic.GraphicQuality = quality;
 
-			CheckGraphicQuality();
+			CheckGraphicQuality(true);
 		}
 
-		private void CheckGraphicQuality()
+		private void CheckGraphicQuality(bool _isSave)
 		{
 			QualitySettings.globalTextureMipmapLimit = IsIncludeGraphicQualityOption(GraphicQualityTag.GlobalTextureMipmapLimit) ? 0 : 1;
 			QualitySettings.anisotropicFiltering = IsIncludeGraphicQualityOption(GraphicQualityTag.AnisotropicFiltering) ? AnisotropicFiltering.ForceEnable : AnisotropicFiltering.Disable;
 			QualitySettings.vSyncCount = IsIncludeGraphicQualityOption(GraphicQualityTag.VerticalSync) ? 1 : 0;
 
-			SaveOption(m_GraphicData);
+			if(_isSave)
+			{
+				SaveOption(m_Graphic);
+			}
 		}
 
 		public bool IsIncludeGraphicQualityOption(GraphicQualityTag _tag)
 		{
-			return m_GraphicData.GraphicQuality.HasFlag(_tag.QualityOption);
+			return m_Graphic.GraphicQuality.HasFlag(_tag.QualityOption);
 		}
     }
 }

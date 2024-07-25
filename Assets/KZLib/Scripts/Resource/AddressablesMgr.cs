@@ -11,6 +11,8 @@ namespace KZLib
 {
 	public class AddressablesMgr : Singleton<AddressablesMgr>
 	{
+		private bool m_Disposed = false;
+
 		private record AssetData(Object Asset,string Label);
 
 		private readonly Dictionary<string,AssetData> m_AssetDataDict = new();
@@ -26,6 +28,8 @@ namespace KZLib
 			{
 				m_AssetDataDict.Clear();
 			}
+
+			m_Disposed = true;
 
 			base.Release(_disposing);
 		}
@@ -102,19 +106,7 @@ namespace KZLib
 				throw new NullReferenceException(string.Format("에셋이 존재하지 않습니다. [{0}]",_path));
 			}
 
-			var objectList = new List<TObject>();
-
-			foreach(var pair in dataGroup)
-			{
-				var data = pair.Value;
-
-				if(data.Asset is TObject asset)
-				{
-					objectList.Add(asset);
-				}
-			}
-
-			return objectList.ToArray();
+			return dataGroup.Select(x => x.Value.Asset as TObject).Where(y => y != null).ToArray();
 		}
 
 		public async UniTask LoadResourceAsync(string[] _labelArray,Action<float,float> _onProgress)
@@ -137,10 +129,7 @@ namespace KZLib
 					throw handle.OperationException;
 				}
 
-				foreach(var location in handle.Result)
-				{
-					dataList.Add((location,label));
-				}
+				dataList.AddRange(handle.Result.Select(x => (x,label)));
 
 				Addressables.Release(handle);
 			}
@@ -174,15 +163,10 @@ namespace KZLib
 
 		public void ReleaseResources(params string[] _labelArray)
 		{
-			foreach(var pair in new Dictionary<string,AssetData>(m_AssetDataDict))
+			foreach(var key in m_AssetDataDict.Where(x => _labelArray.Contains(x.Value.Label)).Select(y => y.Key))
 			{
-				if(!_labelArray.Contains(pair.Value.Label))
-				{
-					continue;
-				}
-
-				Addressables.Release(pair.Value);
-				m_AssetDataDict.Remove(pair.Key);
+				Addressables.Release(m_AssetDataDict[key].Asset);
+				m_AssetDataDict.Remove(key);
 			}
 		}
 	}

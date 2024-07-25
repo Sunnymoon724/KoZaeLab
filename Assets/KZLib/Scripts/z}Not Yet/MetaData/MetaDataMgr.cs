@@ -200,7 +200,7 @@ namespace KZLib
 					continue;
 				}
 
-				if(!CommonUtility.CheckVersion(data.Version) || !data.IsExist)
+				if(!GameUtility.CheckVersion(data.Version) || !data.IsExist)
 				{
 					continue;
 				}

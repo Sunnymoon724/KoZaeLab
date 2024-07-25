@@ -45,7 +45,7 @@ namespace KZLib.KZDevelop
 				Enable = _enable;
 				Elastic = _elastic;
 				Duration = _duration;
-				Curve = CommonUtility.GetEaseCurve(_type);
+				Curve = MathUtility.GetEaseCurve(_type);
 				StartTime = _startTime;
 				EndLocation = _endLocation;
 				m_OnComplete = _onComplete;

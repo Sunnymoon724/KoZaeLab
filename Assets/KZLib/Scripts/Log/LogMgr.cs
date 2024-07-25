@@ -13,6 +13,8 @@ namespace KZLib
 {
 	public class LogMgr : Singleton<LogMgr>
 	{
+		private bool m_Disposed = false;
+
 		private const int MAX_LOG_COUNT = 100;
 
 		private readonly CircularQueue<MessageData> m_LogDataQueue = new(MAX_LOG_COUNT);
@@ -38,12 +40,14 @@ namespace KZLib
 				return;
 			}
 
-			Application.logMessageReceived -= OnGetLog;
-
 			if(_disposing)
 			{
+				Application.logMessageReceived -= OnGetLog;
+
 				m_LogDataQueue.Clear();
 			}
+
+			m_Disposed = true;
 
 			base.Release(_disposing);
 		}

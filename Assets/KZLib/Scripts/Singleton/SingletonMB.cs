@@ -7,23 +7,23 @@ using UnityEngine;
 /// </summary>
 public abstract class SingletonMB<TBehaviour> : SerializedMonoBehaviour where TBehaviour : SerializedMonoBehaviour
 {
-	protected static TBehaviour m_Instance;
+	protected static TBehaviour s_Instance;
 
-	public static TBehaviour In => m_Instance;
+	public static TBehaviour In => s_Instance;
 
 	private void Awake()
 	{
 		//! 중복 처리
-		if(m_Instance)
+		if(s_Instance)
 		{
 			CommonUtility.DestroyObject(gameObject);
 
 			return;
 		}
 
-		m_Instance = gameObject.GetComponent<TBehaviour>();
+		s_Instance = gameObject.GetComponent<TBehaviour>();
 
-		if(!m_Instance)
+		if(!s_Instance)
 		{
 			throw new NullReferenceException(string.Format("{0}이 존재하지 않습니다.",typeof(TBehaviour)));
 		}
@@ -37,12 +37,17 @@ public abstract class SingletonMB<TBehaviour> : SerializedMonoBehaviour where TB
 	{
 		Release();
 
-		m_Instance = null;
+		if(s_Instance)
+		{
+			CommonUtility.DestroyObject(gameObject);
+
+			s_Instance = null;
+		}
 	}
 
 	protected virtual void Release() { }
 
-	public static bool HasInstance => m_Instance;
+	public static bool HasInstance => s_Instance;
 }
 
 /// <summary>
@@ -50,23 +55,23 @@ public abstract class SingletonMB<TBehaviour> : SerializedMonoBehaviour where TB
 /// </summary>
 public class AutoSingletonMB<TBehaviour> : SerializedMonoBehaviour where TBehaviour : SerializedMonoBehaviour
 {
-	protected static TBehaviour m_Instance = null;
+	protected static TBehaviour s_Instance;
 
 	public static TBehaviour In
 	{
 		get
 		{
-			if(!m_Instance)
+			if(!s_Instance)
 			{
-				m_Instance = FindObjectOfType<TBehaviour>();
+				s_Instance = FindObjectOfType<TBehaviour>();
 
-				if(!m_Instance)
+				if(!s_Instance)
 				{
-					m_Instance = new GameObject(typeof(TBehaviour).Name).AddComponent<TBehaviour>();
+					s_Instance = new GameObject(typeof(TBehaviour).Name).AddComponent<TBehaviour>();
 				}
 			}
 
-			return m_Instance;
+			return s_Instance;
 		}
 	}
 
@@ -83,59 +88,37 @@ public class AutoSingletonMB<TBehaviour> : SerializedMonoBehaviour where TBehavi
 	{
 		Release();
 
-		m_Instance = null;
+		s_Instance = null;
 	}
 
 	protected virtual void Release() { }
 
-	public static bool HasInstance => m_Instance;
+	public static bool HasInstance => s_Instance;
 }
 
 /// <summary>
 /// Resources폴더에서 가져오며 없으면 에러
 /// </summary>
-public class LoadSingletonMB<TBehaviour> : SerializedMonoBehaviour where TBehaviour : SerializedMonoBehaviour
+public class LoadSingletonMB<TBehaviour> : AutoSingletonMB<TBehaviour> where TBehaviour : SerializedMonoBehaviour
 {
-	protected static TBehaviour m_Instance = null;
-
-	public static TBehaviour In
+	public static new TBehaviour In
 	{
 		get
 		{
-			if(!m_Instance)
+			if(!s_Instance)
 			{
-				m_Instance = FindObjectOfType<TBehaviour>();
+				s_Instance = FindObjectOfType<TBehaviour>();
 
-				if(!m_Instance)
+				if(!s_Instance)
 				{
 					var data = Resources.Load<TBehaviour>(typeof(TBehaviour).Name);
 
-					m_Instance = CommonUtility.CopyObject(data);
-					m_Instance.name = data.name;
+					s_Instance = CommonUtility.CopyObject(data);
+					s_Instance.name = data.name;
 				}
 			}
 
-			return m_Instance;
+			return s_Instance;
 		}
 	}
-
-	private void Awake()
-	{
-		DontDestroyOnLoad(this);
-
-		Initialize();
-	}
-
-	protected virtual void Initialize() { }
-
-	private void OnDestroy()
-	{
-		Release();
-
-		m_Instance = null;
-	}
-
-	protected virtual void Release() { }
-
-	public static bool HasInstance => m_Instance;
 }

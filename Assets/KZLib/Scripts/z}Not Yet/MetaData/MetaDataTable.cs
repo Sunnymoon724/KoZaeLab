@@ -68,17 +68,17 @@ namespace KZLib
 
 				if(data == null)
 				{
-					CommonUtility.DisplayError(string.Format("{0} 번쨰 데이터가 null 입니다.",i));
+					UnityUtility.DisplayError(string.Format("{0} 번쨰 데이터가 null 입니다.",i));
 				}
 
 				if(data.MetaId == 0)
 				{
-					CommonUtility.DisplayError(string.Format("{0} 번쨰 메타아이디가 0 입니다.",i));
+					UnityUtility.DisplayError(string.Format("{0} 번쨰 메타아이디가 0 입니다.",i));
 				}
 
 				if(indexList.Contains(data.MetaId))
 				{
-					CommonUtility.DisplayError(string.Format("{0} 번쨰 메타아이디[{1}]가 중복 입니다!",i,data.MetaId));
+					UnityUtility.DisplayError(string.Format("{0} 번쨰 메타아이디[{1}]가 중복 입니다!",i,data.MetaId));
 				}
 
 				if(data.MetaId != -1)

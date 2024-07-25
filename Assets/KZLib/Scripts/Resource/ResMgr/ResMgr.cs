@@ -26,6 +26,8 @@ namespace KZLib
 			public bool IsOverdue => m_Duration < DateTime.Now.Ticks;
 		}
 
+		private bool m_Disposed = false;
+
 		private const string RESOURCES = "Resources";
 		private const float UPDATE_PERIOD = 0.1f;
 
@@ -68,6 +70,8 @@ namespace KZLib
 				m_LoadingQueue.Clear();
 			}
 
+			m_Disposed = true;
+
 			base.Release(_disposing);
 		}
 
@@ -88,12 +92,12 @@ namespace KZLib
 
 						foreach(var pair in new Dictionary<string,List<CachedData>>(m_CachedDataDict))
 						{
-							foreach(var data in pair.Value)
+							foreach(var cachedData in pair.Value)
 							{
-								if(data.IsOverdue)
+								if(cachedData.IsOverdue)
 								{
 									//? 기한이 지난 것들
-									m_RemoveList.Add(data);
+									m_RemoveList.Add(cachedData);
 								}
 							}
 
@@ -108,16 +112,14 @@ namespace KZLib
 				}
 
 				// 로딩 큐 체크하고 있으면 로딩 큐 실행
+				if(m_LoadingQueue.IsNullOrEmpty())
 				{
-					if(m_LoadingQueue.IsNullOrEmpty())
-					{
-						continue;
-					}
-
-					var data = m_LoadingQueue.Dequeue();
-
-					GetObject(data.DataPath,data.Parent,true);
+					continue;
 				}
+
+				var loadingData = m_LoadingQueue.Dequeue();
+
+				GetObject(loadingData.DataPath,loadingData.Parent,true);
 			}
 		}
 

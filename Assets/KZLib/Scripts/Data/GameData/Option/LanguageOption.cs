@@ -11,23 +11,23 @@ namespace GameData
 		protected override string OPTION_KEY => "Language Option";
 		protected override EventTag Tag => EventTag.ChangeLanguageOption;
 
-		private class LanguageData
+		private class Language
 		{
-			public SystemLanguage Language { get; set; }
+			public SystemLanguage CurrentLanguage { get; set; }
 		}
 
 		// https://docs.google.com/document/d/1x3wfhsAR4urxCOhi3jqwoCRwp7DUmZqGPip6rsrGF_k/edit?usp=sharing
 		private static SystemLanguage DefaultLanguage => GameSettings.In.DefaultLanguage;
 
-		private LanguageData m_LanguageData = null;
+		private Language m_Language = null;
 
 		private readonly Dictionary<SystemLanguage,Dictionary<string,string>> m_LanguageDict = new();
 
 		public override void Initialize()
 		{
-			m_LanguageData = GetOption(new LanguageData()
+			m_Language = GetOption(new Language()
 			{
-				Language = DefaultLanguage,
+				CurrentLanguage = DefaultLanguage,
 			});
 
 			m_LanguageDict.Clear();
@@ -52,7 +52,7 @@ namespace GameData
 
 		public void SetGameLanguage(SystemLanguage _language)
 		{
-			if(m_LanguageData.Language == _language)
+			if(m_Language.CurrentLanguage == _language)
 			{
 				return;
 			}
@@ -66,9 +66,9 @@ namespace GameData
 
 			LogTag.Data.I("언어가 바꿨습니다. [{0}]",_language);
 
-			m_LanguageData.Language = _language;
+			m_Language.CurrentLanguage = _language;
 
-			SaveOption(m_LanguageData);
+			SaveOption(m_Language);
 		}
 
 		public string ToLocalizeText(string _key)
@@ -78,7 +78,7 @@ namespace GameData
 				throw new NullReferenceException("번역 데이터가 비어있습니다.");
 			}
 
-			if(m_LanguageDict.TryGetValue(m_LanguageData.Language,out var dataDict))
+			if(m_LanguageDict.TryGetValue(m_Language.CurrentLanguage,out var dataDict))
 			{
 				if(dataDict.TryGetValue(_key,out var value))
 				{

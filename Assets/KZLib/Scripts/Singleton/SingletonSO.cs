@@ -12,30 +12,30 @@ using UnityEditor;
 /// </summary>
 public abstract class SingletonSO<TObject> : SerializedScriptableObject where TObject : SerializedScriptableObject
 {
-	protected static TObject m_Instance = null;
+	protected static TObject s_Instance = null;
 
 	public static TObject In
 	{
 		get
 		{
-			if(!m_Instance)
+			if(!s_Instance)
 			{
-				m_Instance = Resources.Load<TObject>(CommonUtility.PathCombine("ScriptableObjects",typeof(TObject).Name));
+				s_Instance = Resources.Load<TObject>(CommonUtility.PathCombine("ScriptableObjects",typeof(TObject).Name));
 			}
 
-			return m_Instance;
+			return s_Instance;
 		}
 	}
 
 	protected static void CreateScriptableObject(string _path)
 	{
-		m_Instance = CreateInstance<TObject>();
+		s_Instance = CreateInstance<TObject>();
 
 		var filePath = string.Format("{0}.asset",_path.StartsWith(Global.ASSETS_HEADER) ? _path : CommonUtility.PathCombine("Assets/Resources",_path));
 
 		CommonUtility.CreateFolder(filePath);
 
-		AssetDatabase.CreateAsset(m_Instance,CommonUtility.GetAssetsPath(filePath));
+		AssetDatabase.CreateAsset(s_Instance,CommonUtility.GetAssetsPath(filePath));
 		AssetDatabase.Refresh();
 	}
 
@@ -78,10 +78,10 @@ public abstract class SingletonSO<TObject> : SerializedScriptableObject where TO
 	{
 		Release();
 
-		m_Instance = null;
+		s_Instance = null;
 	}
 
 	protected virtual void Release() { }
 
-	public static bool HasInstance => m_Instance;
+	public static bool HasInstance => s_Instance;
 }

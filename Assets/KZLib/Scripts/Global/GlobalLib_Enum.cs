@@ -7,28 +7,6 @@ public enum SpaceType { xyz, xy, xz };
 
 public enum GraphicsQualityPresetType { QualityLowest, QualityLow, QualityMiddle, QualityHigh, QualityHighest, }
 
-public enum EaseType
-{
-	Linear,
-	RiseFall, FallRise, Mountain, Valley,
-	InSine, OutSine, InOutSine, OutInSine,
-
-	InQuad, OutQuad, InOutQuad, OutInQuad,
-	InCubic, OutCubic, InOutCubic, OutInCubic,
-	InQuart, OutQuart, InOutQuart, OutInQuart,
-	InQuint, OutQuint, InOutQuint, OutInQuint,
-
-	InExpo, OutExpo, InOutExpo, OutInExpo,
-	InCirc, OutCirc, InOutCirc, OutInCirc,
-
-	InBounce, OutBounce, InOutBounce, OutInBounce,
-
-	InElastic, OutElastic, InOutElastic, OutInElastic,
-
-	InBack, OutBack, InOutBack, OutInBack,
-	// Flash, InFlash, OutFlash, InOutFlash
-}
-
 [Flags]
 public enum BuildPlatformType
 {

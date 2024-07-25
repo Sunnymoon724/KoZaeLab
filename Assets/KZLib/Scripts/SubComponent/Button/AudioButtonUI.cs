@@ -23,7 +23,7 @@ public class AudioButtonUI : BaseButtonUI
 
 	protected override void OnClickButton()
 	{
-		SoundMgr.In.PlayEffect(m_AudioClip,true);
+		SoundMgr.In.PlayUIShot(m_AudioClip);
 	}
 
 	public void SetAudio(AudioClip _clip)

@@ -4,6 +4,7 @@ namespace KZLib
 {
 	public class InputMgr : Singleton<InputMgr>
 	{
+		private bool m_Disposed = false;
 		private bool m_InputBlock = false;
 
 		public bool IsInputBlock => m_InputBlock;
@@ -21,6 +22,8 @@ namespace KZLib
 			{
 				m_InputConList.Clear();
 			}
+
+			m_Disposed = true;
 
 			base.Release(_disposing);
 		}

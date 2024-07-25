@@ -5,7 +5,6 @@ using Sirenix.OdinInspector;
 #if UNITY_EDITOR
 
 using UnityEditor;
-using KZLib.KZEditor;
 using Sirenix.Utilities.Editor;
 
 #endif
