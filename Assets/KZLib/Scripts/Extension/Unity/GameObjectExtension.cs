@@ -100,6 +100,21 @@ public static class GameObjectExtension
 		return !_object.scene.IsValid() && !_object.scene.isLoaded && _object.GetInstanceID() >= 0 && !_object.hideFlags.HasFlag(HideFlags.HideInHierarchy);
 	}
 
+	public static bool IsExistMeshFilter(this GameObject _object)
+	{
+		var filterArray = _object.GetComponentsInChildren<MeshFilter>(true);
+
+		for(var i=0;i<filterArray.Length;i++)
+		{
+			if(!filterArray[i].sharedMesh)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public static TComponent GetOrAddComponent<TComponent>(this GameObject _object) where TComponent : Component
 	{
 		return _object.GetComponent<TComponent>() ?? _object.AddComponent<TComponent>();

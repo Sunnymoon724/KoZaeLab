@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEditorInternal;
 
-public static class UnityUtility
+public static partial class UnityUtility
 {
 	#region Tag & Layer
 	/// <summary>
