@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -59,9 +60,9 @@ namespace KZLib.KZMenu
 				return;
 			}
 
-			var resultList = new List<string>();
+			var builder = new StringBuilder();
 
-			foreach(var pair in CommonUtility.LoadAssetDataGroup<GameObject>("t:prefab"))
+			foreach(var pair in UnityUtility.LoadAssetDataGroup<GameObject>("t:prefab"))
 			{
 				pair.Item2.transform.TraverseChildren((child)=>
 				{
@@ -72,23 +73,20 @@ namespace KZLib.KZMenu
 							continue;
 						}
 
-						resultList.Add(string.Format("프리펩 <b> <a href=\"{1}\">{0}</a> </b>이며 내부 경로는 <b> {2} </b>입니다.",pair.Item2.name,pair.Item1,child.GetHierarchy()));
+						builder.Append(string.Format("<b> <a href=\"{0}\">{1}</a> </b>\n",pair.Item1,pair.Item2.name));
 					}
 				});
 			}
 
-			if(resultList.IsNullOrEmpty())
+			if(builder.Length == 0)
 			{
 				LogTag.Editor.I("컴포넌트가 오류인 프리펩은 없습니다.");
 			}
 			else
 			{
-				LogTag.Editor.I("컴포넌트가 오류인 프리펩 리스트 입니다.");
+				builder.Insert(0,"미싱 컴퍼넌트 리스트 입니다.\n");
 
-				foreach(var result in resultList)
-				{
-					LogTag.Editor.I(result);
-				}
+				LogTag.Editor.I(builder.ToString());
 			}
 		}
 
@@ -100,9 +98,10 @@ namespace KZLib.KZMenu
 				return;
 			}
 
+			var builder = new StringBuilder();
 			var resultList = new List<string>();
 
-			foreach(var pair in CommonUtility.LoadAssetDataGroup<GameObject>("t:prefab"))
+			foreach(var pair in UnityUtility.LoadAssetDataGroup<GameObject>("t:prefab"))
 			{
 				pair.Item2.transform.TraverseChildren((child)=>
 				{
@@ -113,22 +112,19 @@ namespace KZLib.KZMenu
 						return;
 					}
 
-					resultList.Add(string.Format("프리펩 <b> <a href=\"{1}\">{0}</a> </b>이며 내부 경로는 <b> {2} </b>입니다.",pair.Item2.name,pair.Item1,child.GetHierarchy()));
+					builder.Append(string.Format("<b> <a href=\"{0}\">{1}</a> </b> [<b> {2} </b>]",pair.Item1,pair.Item2.name,child.GetHierarchy()));
 				});
 			}
 
-			if(resultList.IsNullOrEmpty())
+			if(builder.Length == 0)
 			{
 				LogTag.Editor.I("메쉬 필터가 오류인 프리펩은 없습니다.");
 			}
 			else
 			{
-				LogTag.Editor.I("메쉬 필터가 오류인 프리펩 리스트 입니다.");
+				builder.Insert(0,"미싱 메쉬 필터 리스트 입니다.\n");
 
-				foreach(var result in resultList)
-				{
-					LogTag.Editor.I(result);
-				}
+				LogTag.Editor.I(builder.ToString());
 			}
 		}
 

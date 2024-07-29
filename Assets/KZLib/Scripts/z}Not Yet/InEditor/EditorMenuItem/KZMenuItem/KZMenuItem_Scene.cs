@@ -21,7 +21,7 @@ namespace KZLib.KZMenu
 
 		private static string GetScenePath(string _sceneName)
 		{
-			var pathGroup = CommonUtility.GetAssetPathGroup(string.Format("t:Scene {0}",_sceneName));
+			var pathGroup = UnityUtility.GetAssetPathGroup(string.Format("t:Scene {0}",_sceneName));
 
 			return pathGroup.IsNullOrEmpty() ? string.Empty : pathGroup.First();
 		}

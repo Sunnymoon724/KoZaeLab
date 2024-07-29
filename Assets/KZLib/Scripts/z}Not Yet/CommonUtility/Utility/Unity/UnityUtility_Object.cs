@@ -168,4 +168,23 @@ public static partial class UnityUtility
 		LogTag.System.I("{0}가 {1}에 저장 되었습니다.",_asset.name,_dataPath);
 	}
 #endif
+
+	// public static bool SetShadowsOffInMeshRenderer(GameObject _object)
+	// {
+	// 	var rendererArray = _object.GetComponentsInChildren<MeshRenderer>(true);
+	// 	var changed = false;
+
+	// 	for(int i=0;i<rendererArray.Length;i++)
+	// 	{
+	// 		if(rendererArray[i].receiveShadows)
+	// 		{
+	// 			changed = true;
+
+	// 			rendererArray[i].receiveShadows = false;
+	// 			rendererArray[i].shadowCastingMode = ShadowCastingMode.Off;
+	// 		}
+	// 	}
+
+	// 	return changed;
+	// }
 }

@@ -64,7 +64,7 @@ namespace KZLib.KZWindow
 		{
 			foreach(var pair in _settingsDict)
 			{
-				var settings = CommonUtility.LoadAsset<ScriptableObject>(string.Format("t:ScriptableObject {0}",pair.Value));
+				var settings = UnityUtility.LoadAsset<ScriptableObject>(string.Format("t:ScriptableObject {0}",pair.Value));
 
 				if(settings == null)
 				{
@@ -79,7 +79,7 @@ namespace KZLib.KZWindow
 		{
 			var _path = string.Format("t:ScriptableObject {0}",typeof(TObject).Name);
 
-			var asset = CommonUtility.LoadAsset<TObject>(_path);
+			var asset = UnityUtility.LoadAsset<TObject>(_path);
 
 			if(asset == null && _autoCreate)
 			{
@@ -88,7 +88,7 @@ namespace KZLib.KZWindow
 				// 생성
 				var dataPath = FileUtility.PathCombine("Resources/ScriptableObjects",typeof(TObject).Name);
 
-				CommonUtility.SaveAsset(dataPath,asset);
+				UnityUtility.SaveAsset(dataPath,asset);
 			}
 
 			return asset;

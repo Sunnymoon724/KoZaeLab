@@ -113,7 +113,7 @@ public static class GameUtility
 	{
 		if(AutoSingletonMB<TBehaviour>.HasInstance)
 		{
-			CommonUtility.DestroyObject(AutoSingletonMB<TBehaviour>.In.gameObject);
+			UnityUtility.DestroyObject(AutoSingletonMB<TBehaviour>.In.gameObject);
 		}
 	}
 

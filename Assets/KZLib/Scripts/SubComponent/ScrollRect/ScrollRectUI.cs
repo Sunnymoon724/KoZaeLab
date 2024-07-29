@@ -100,7 +100,7 @@ public partial class ScrollRectUI : BaseComponentUI
 
 		foreach(var pair in new Dictionary<int,SlotUI>(m_SlotDict))
 		{
-			CommonUtility.DestroyObject(pair.Value.gameObject);
+			UnityUtility.DestroyObject(pair.Value.gameObject);
 		}
 
 		m_SlotDict.Clear();

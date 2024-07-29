@@ -9,7 +9,7 @@ using UnityEditor;
 
 public abstract class BaseSettings<TObject> : SingletonSO<TObject> where TObject : SerializedScriptableObject
 {
-	public static bool IsExist => CommonUtility.IsExistAsset(string.Format("t:ScriptableObject {0}",typeof(TObject).Name));
+	public static bool IsExist => UnityUtility.IsExistAsset(string.Format("t:ScriptableObject {0}",typeof(TObject).Name));
 }
 
 /// <summary>

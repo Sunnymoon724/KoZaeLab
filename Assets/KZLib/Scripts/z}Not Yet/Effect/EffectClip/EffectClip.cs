@@ -96,7 +96,7 @@ public abstract class EffectClip : BaseComponentTask
 		// 실패시 삭제
 		if(!_result)
 		{
-			CommonUtility.DestroyObject(gameObject);
+			UnityUtility.DestroyObject(gameObject);
 
 			return;
 		}

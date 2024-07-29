@@ -39,24 +39,10 @@ public static partial class CommonUtility
 		}
 	}
 
-	public static bool SetShadowsOffInMeshRenderer(GameObject _object)
-	{
-		var rendererArray = _object.GetComponentsInChildren<MeshRenderer>(true);
-		var changed = false;
+	
 
-		for(int i=0;i<rendererArray.Length;i++)
-		{
-			if(rendererArray[i].receiveShadows)
-			{
-				changed = true;
 
-				rendererArray[i].receiveShadows = false;
-				rendererArray[i].shadowCastingMode = ShadowCastingMode.Off;
-			}
-		}
-
-		return changed;
-	}
+	
 
 	#region Skin Mesh Flip
 	/// <summary>

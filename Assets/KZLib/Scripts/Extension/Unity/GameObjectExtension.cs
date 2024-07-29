@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public static class GameObjectExtension
 {
@@ -118,5 +119,49 @@ public static class GameObjectExtension
 	public static TComponent GetOrAddComponent<TComponent>(this GameObject _object) where TComponent : Component
 	{
 		return _object.GetComponent<TComponent>() ?? _object.AddComponent<TComponent>();
+	}
+
+	public static void ReAssignShader2(this GameObject _object)
+	{
+		var cacheDict = new Dictionary<string,Shader>();
+
+		foreach(var graphic in _object.GetComponentsInChildren<TMPro.TMP_Text>(true))
+		{
+			if(!graphic.fontMaterial)
+			{
+				continue;
+			}
+
+			var shaderName = graphic.fontMaterial.shader.name;
+
+			if (!shaderCache.TryGetValue(shaderName, out Shader shader))
+			{
+				shader = Shader.Find(shaderName);
+				shaderCache[shaderName] = shader;
+			}
+
+			graphic.fontMaterial.shader = shader;
+		}
+
+		foreach(var renderer in _object.GetComponentsInChildren<Renderer>(true))
+		{
+			if(renderer.materials == null)
+			{
+				continue;
+			}
+
+			for(var i = 0; i < renderer.materials.Length; i++)
+			{
+				var shaderName = renderer.materials[i].shader.name;
+
+				if (!shaderCache.TryGetValue(shaderName, out Shader shader))
+				{
+					shader = Shader.Find(shaderName);
+					shaderCache[shaderName] = shader;
+				}
+
+				renderer.materials[i].shader = shader;
+			}
+		}
 	}
 }

@@ -16,7 +16,7 @@ public abstract class SingletonMB<TBehaviour> : SerializedMonoBehaviour where TB
 		//! 중복 처리
 		if(s_Instance)
 		{
-			CommonUtility.DestroyObject(gameObject);
+			UnityUtility.DestroyObject(gameObject);
 
 			return;
 		}
@@ -39,7 +39,7 @@ public abstract class SingletonMB<TBehaviour> : SerializedMonoBehaviour where TB
 
 		if(s_Instance)
 		{
-			CommonUtility.DestroyObject(gameObject);
+			UnityUtility.DestroyObject(gameObject);
 
 			s_Instance = null;
 		}
@@ -113,7 +113,7 @@ public class LoadSingletonMB<TBehaviour> : AutoSingletonMB<TBehaviour> where TBe
 				{
 					var data = Resources.Load<TBehaviour>(typeof(TBehaviour).Name);
 
-					s_Instance = CommonUtility.CopyObject(data);
+					s_Instance = UnityUtility.CopyObject(data);
 					s_Instance.name = data.name;
 				}
 			}

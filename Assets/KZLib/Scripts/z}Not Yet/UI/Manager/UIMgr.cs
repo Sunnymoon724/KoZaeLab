@@ -159,14 +159,14 @@ namespace KZLib
 
 			if(!data.TryGetComponent<WindowUI>(out var window))
 			{
-				CommonUtility.DestroyObject(data);
+				UnityUtility.DestroyObject(data);
 
 				throw new NullReferenceException(string.Format("{0}의 타입의 UI 스크립트가 없습니다.",_tag.ToString()));
 			}
 
 			if(window.Tag != _tag)
 			{
-				CommonUtility.DestroyObject(data);
+				UnityUtility.DestroyObject(data);
 
 				throw new NullReferenceException(string.Format("만들어진 UI[{0}]와 해당 UI[{1}]의 타입이 다름니다.",window.Tag,_tag.ToString()));
 			}

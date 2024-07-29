@@ -106,7 +106,7 @@ namespace KZLib
 
 				for(var i=0;i<resourceArray.Length;i++)
 				{
-					var data = CommonUtility.CopyObject(resourceArray[i]);
+					var data = UnityUtility.CopyObject(resourceArray[i]);
 
 					if(GameSettings.In.IsServerResource)
 					{
@@ -143,7 +143,7 @@ namespace KZLib
 			}
 
 #if UNITY_EDITOR
-			return CommonUtility.LoadAssetGroupInFolder<TObject>(_folderPath).ToArray();
+			return UnityUtility.LoadAssetGroupInFolder<TObject>(_folderPath).ToArray();
 #else
 			return null;
 #endif
