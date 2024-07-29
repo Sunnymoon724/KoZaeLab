@@ -28,7 +28,7 @@ namespace KZLib.KZMenu
 			var script = selected as MonoScript;
 			var asset = ScriptableObject.CreateInstance(script.GetClass());
 
-			CommonUtility.SaveAsset(dataPath,asset);
+			UnityUtility.SaveAsset(dataPath,asset);
 		}
 
 		[MenuItem("Assets/KZSubMenu/Script/Create ScriptableObject",true)]

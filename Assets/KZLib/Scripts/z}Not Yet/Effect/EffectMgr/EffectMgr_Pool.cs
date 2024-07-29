@@ -60,7 +60,7 @@ namespace KZLib
 			{
 				if(Effect)
 				{
-					CommonUtility.DestroyObject(Effect.gameObject);
+					UnityUtility.DestroyObject(Effect.gameObject);
 				}
 			}
 		}

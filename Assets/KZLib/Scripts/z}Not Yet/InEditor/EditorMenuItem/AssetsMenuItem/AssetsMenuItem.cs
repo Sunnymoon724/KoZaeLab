@@ -42,7 +42,7 @@ namespace KZLib.KZMenu
 				return;
 			}
 
-			var pathGroup = CommonUtility.GetAssetPathGroup();
+			var pathGroup = UnityUtility.GetAssetPathGroup();
 			var totalCount = pathGroup.Count();
 			var index = 0;
 			var dependantDict = new Dictionary<string,string[]>();

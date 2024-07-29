@@ -156,7 +156,7 @@ namespace KZLib
 					continue;
 				}
 
-				CommonUtility.DestroyObject(data.gameObject);
+				UnityUtility.DestroyObject(data.gameObject);
 			}
 
 			foreach(var pair in m_PoolDataDict)

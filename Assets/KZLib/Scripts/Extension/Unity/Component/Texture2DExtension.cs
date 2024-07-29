@@ -1,8 +1,9 @@
 using UnityEngine;
+using TMPro;
 
-public static partial class CommonUtility
+public static class Texture2DExtension
 {
-	public static void ConvertToSolidColor(Texture2D _texture,Color _color)
+	public static void ToSolidColor(this Texture2D _texture,Color _color)
 	{
 		var pixelArray = _texture.GetPixels32();
 
@@ -15,45 +16,44 @@ public static partial class CommonUtility
 		_texture.Apply();
 	}
 
-	public static void ScaleTexture(Texture2D _texture,int _newWidth,int _newHeight)
+	public static void ScaleTexture(this Texture2D _texture,Vector2Int _size)
 	{
-		var pixelArray = _texture.GetPixels32();
+		var scale = new Vector2(1.0f/_size.x,1.0f/_size.y);
 
-		var scaleX = 1.0f/_newWidth;
-		var scaleY = 1.0f/_newHeight;
+		var pixelArray = _texture.GetPixels32();
 
 		for(var i=0;i<pixelArray.Length;i++)
 		{
-			pixelArray[i] = _texture.GetPixelBilinear(scaleX*(i%_newWidth),scaleY*(i/_newWidth));
+			pixelArray[i] = _texture.GetPixelBilinear(scale.x*(i%_size.x),scale.y*(i/_size.y));
 		}
 
 		_texture.SetPixels32(pixelArray);
 		_texture.Apply();
 	}
 
-	public static Texture2D CopyTexture(Texture2D _texture)
+	public static Texture2D CopyTexture(this Texture2D _texture)
 	{
-		var result = new Texture2D(_texture.width,_texture.height,_texture.format,false);
+		var texture = new Texture2D(_texture.width,_texture.height,_texture.format,false);
 
-		result.SetPixels32(_texture.GetPixels32());
-		result.Apply();
+		texture.SetPixels32(_texture.GetPixels32());
+		texture.Apply();
 
-		return result;
+		return texture;
 	}
 
-	public static Sprite GetTexture(Texture2D _texture)
+	public static Sprite CreateSprite(this Texture2D _texture)
 	{
 		return Sprite.Create(_texture,new Rect(0.0f,0.0f,_texture.width,_texture.height),new Vector2(0.5f,0.5f));
 	}
 
-	public static Sprite GetTiledTexture(Texture2D _texture,float _border = 0.0f,float _pixelsPerUnit = 100.0f)
+	public static Sprite CreateTiledSprite(this Texture2D _texture,float _border = 0.0f,float _pixelsPerUnit = 100.0f)
 	{
 		_texture.wrapMode = TextureWrapMode.Repeat;
 		
 		return Sprite.Create(_texture,new Rect(0.0f,0.0f,_texture.width,_texture.height),Vector2.zero,_pixelsPerUnit,0,SpriteMeshType.Tight,new Vector4(_border,_border,_border,_border));
 	}
 
-	public static Texture2D[,] SplitTexture(Texture2D _texture,Vector2Int _count)
+	public static Texture2D[,] SplitTexture(this Texture2D _texture,Vector2Int _count)
 	{
 		if(_count.x <= 0 || _count.y <= 0 )
 		{
@@ -66,13 +66,15 @@ public static partial class CommonUtility
 
         var resultArray = new Texture2D[_count.x,_count.y];
 
-        for(var i = 0;i<_count.x;i++)
+        for(var i=0;i<_count.x;i++)
         {
-            for(var j = 0;j<_count.y;j++)
+            for(var j=0;j<_count.y;j++)
             {
 				resultArray[i,j] = new Texture2D(width,height);
+
                 var pixelArray = new Color32[width*height];
                 var index = 0;
+
                 for(var k=i*width;k<(i+1)*width;k++)
                 {
                     for(var l=j*height;l<(j+1)*height;i++)
@@ -90,7 +92,7 @@ public static partial class CommonUtility
 		return resultArray;
 	}
 
-	public static Texture2D CropTexture(Texture2D _texture,RectInt _size)
+	public static Texture2D CropTexture(this Texture2D _texture,RectInt _size)
 	{
 		var width = _texture.width-_size.width;
 		var height = _texture.height-_size.height;
@@ -110,7 +112,7 @@ public static partial class CommonUtility
 		return result;
 	}
 
-	public static void RotateTexture(Texture2D _texture,float _angle)
+	public static void RotateTexture(this Texture2D _texture,float _angle)
 	{
 		var width = _texture.width;
 		var height = _texture.height;

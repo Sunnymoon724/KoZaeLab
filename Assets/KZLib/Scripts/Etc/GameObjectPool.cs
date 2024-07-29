@@ -58,7 +58,7 @@ namespace KZLib
 		/// </summary>
 		public GameObject Get(Transform _parent = null)
 		{
-			var data = m_ObjectQueue.Count > 0 ? m_ObjectQueue.Dequeue() : CommonUtility.CopyObject(m_Pivot);
+			var data = m_ObjectQueue.Count > 0 ? m_ObjectQueue.Dequeue() : UnityUtility.CopyObject(m_Pivot);
 
 			if(_parent)
 			{

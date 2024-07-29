@@ -39,7 +39,7 @@ namespace TransitionPanel
 
 			if(m_WipeMaterial)
 			{
-				CommonUtility.DestroyObject(m_WipeMaterial);
+				UnityUtility.DestroyObject(m_WipeMaterial);
 			}
 		}
 

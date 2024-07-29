@@ -110,7 +110,7 @@ namespace KZLib
 
 			if(typeof(TObject) == typeof(GameObject))
 			{
-				var data = CommonUtility.CopyObject(resource);
+				var data = UnityUtility.CopyObject(resource);
 
 				if(GameSettings.In.IsServerResource)
 				{
