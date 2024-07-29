@@ -50,7 +50,7 @@ namespace KZLib.KZWindow
 					{
 						texture.SetPixels32(pixelArray);
 
-						FileUtility.WriteFile(string.Concat(FileUtility.GetPathWithoutExtension(m_SpritePath),"_Convert.png"),texture);
+						FileUtility.WriteTextureToFile(string.Concat(FileUtility.GetPathWithoutExtension(m_SpritePath),"_Convert.png"),texture);
 						UnityUtility.DisplayInfo("이미지 변경 완료");
 					}
 				}

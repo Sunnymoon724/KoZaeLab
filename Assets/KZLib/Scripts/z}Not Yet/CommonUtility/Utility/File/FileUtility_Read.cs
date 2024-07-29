@@ -4,20 +4,19 @@ public static partial class FileUtility
 {
 	public static byte[] ReadFile(string _filePath)
 	{
-		var fullPath = GetFullPath(_filePath);
-
-		IsExistFile(fullPath,true);
-
-		return File.ReadAllBytes(fullPath);
+		return IsExist(_filePath,true) ? File.ReadAllBytes(_filePath) : null;
 	}
 
 	public static bool TryReadDataFromFile(string _filePath,out string _text)
 	{
-		var fullPath = GetFullPath(_filePath);
+		if(!IsExist(_filePath,true))
+		{
+			_text = null;
 
-		IsExistFile(fullPath,true);
+			return false;
+		}
 
-		using var fileStream = File.Open(fullPath,FileMode.Open,FileAccess.Read);
+		using var fileStream = File.Open(_filePath,FileMode.Open,FileAccess.Read);
 		using var stream = new StreamReader(fileStream);
 
 		_text = stream.ReadToEnd();

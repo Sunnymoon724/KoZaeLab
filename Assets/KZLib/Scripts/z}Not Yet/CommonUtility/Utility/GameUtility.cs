@@ -128,10 +128,22 @@ public static class GameUtility
 #if UNITY_EDITOR
 	public static string GetTemplateFilePath(string _fileName)
 	{
+		var projectPath = FileUtility.GetProjectPath();
 		var packagePath = string.Format("Packages/com.bsheepstudio.kzlib/WorkResources/Templates/{0}",_fileName);
+
+		if(FileUtility.IsExist(FileUtility.PathCombine(projectPath,packagePath)))
+		{
+			return packagePath;
+		}
+
 		var assetPath = string.Format("Assets/KZLib/WorkResources/Templates/{0}",_fileName);
 
-		return FileUtility.IsExistFile(FileUtility.PathCombine(FileUtility.GetProjectPath(),packagePath)) ? packagePath : (FileUtility.IsExistFile(assetPath) ? assetPath : throw new NullReferenceException(string.Format("템플릿 폴더에 해당 파일이 없습니다. [{0}]",_fileName)));
+		if(FileUtility.IsExist(FileUtility.GetAbsolutePath(assetPath,true)))
+		{
+			return assetPath;
+		}
+
+		throw new NullReferenceException(string.Format("템플릿 폴더에 해당 파일이 없습니다. [{0}]",_fileName));
 	}
 
 	public static byte[] GetTestImageData()
@@ -141,11 +153,11 @@ public static class GameUtility
 		return sprite != null ? sprite.texture.EncodeToPNG() : null;
 	}
 
-	public static string GetTemplateFullFilePath(string _fileName)
+	public static string GetTemplateFileAbsolutePath(string _fileName)
 	{
 		var filePath = GetTemplateFilePath(_fileName);
 
-		return filePath.StartsWith("Packages/") ? FileUtility.PathCombine(FileUtility.GetProjectPath(),filePath) : FileUtility.GetFullPath(filePath);
+		return FileUtility.IsStartWithAssetsHeader(filePath) ? FileUtility.GetAbsolutePath(filePath,true) : FileUtility.PathCombine(FileUtility.GetProjectPath(),filePath);
 	}
 #endif
 }

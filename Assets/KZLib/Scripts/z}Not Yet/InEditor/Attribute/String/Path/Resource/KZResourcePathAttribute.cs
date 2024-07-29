@@ -16,7 +16,7 @@ namespace KZLib.KZAttribute
 	[Conditional("UNITY_EDITOR")]
 	public abstract class KZResourcePathAttribute : KZPathAttribute
 	{
-		protected KZResourcePathAttribute(bool _changePathBtn,bool _includeProject) : base(true,_changePathBtn,_includeProject) { }
+		protected KZResourcePathAttribute(bool _changePathBtn,bool _isIncludeAssets) : base(true,_changePathBtn,_isIncludeAssets) { }
 	}
 
 #if UNITY_EDITOR
@@ -41,7 +41,7 @@ namespace KZLib.KZAttribute
 
 		protected override bool IsValidPath()
 		{
-			return FileUtility.IsExistFile(ValueEntry.SmartValue);
+			return FileUtility.IsExist(ValueEntry.SmartValue);
 		}
 
 		protected class ResourceViewer<UObject> : OdinEditorWindow where UObject : UnityEngine.Object

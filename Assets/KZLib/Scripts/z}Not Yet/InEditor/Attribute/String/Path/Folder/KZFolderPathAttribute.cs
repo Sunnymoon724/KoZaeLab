@@ -24,13 +24,13 @@ namespace KZLib.KZAttribute
 		{
 			return DrawButton(_rect,SdfIconType.Folder2,_isValid,()=>
 			{
-				FileUtility.OpenFolder(FileUtility.GetFullPath(ValueEntry.SmartValue));
+				FileUtility.Open(FileUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets));
 			});
 		}
 
 		protected override bool IsValidPath()
 		{
-			return FileUtility.IsExistFolder(ValueEntry.SmartValue);
+			return FileUtility.IsExist(ValueEntry.SmartValue);
 		}
     }
 #endif

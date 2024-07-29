@@ -115,7 +115,7 @@ public static partial class CommonUtility
 
 	public static string GetCheckSum(string _filePath)
 	{
-		FileUtility.IsExistFile(_filePath,true);
+		FileUtility.IsExist(_filePath,true);
 
 		using var stream = File.OpenRead(_filePath);
 		var md5 = new MD5CryptoServiceProvider();

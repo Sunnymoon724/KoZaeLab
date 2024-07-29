@@ -20,14 +20,14 @@ namespace KZLib.KZAttribute
 		public bool AddOpenButton { get; }
 		public bool AddChangeButton { get; }
 
-		public bool IncludeProject { get; }
+		public bool IsIncludeAssets { get; }
 
-		protected KZPathAttribute(bool _addOpenBtn,bool _changePathBtn,bool _includeProject) : base()
+		protected KZPathAttribute(bool _addOpenBtn,bool _changePathBtn,bool _isIncludeAssets) : base()
 		{
 			AddOpenButton = _addOpenBtn;
 			AddChangeButton = _changePathBtn;
 
-			IncludeProject = _includeProject;
+			IsIncludeAssets = _isIncludeAssets;
 		}
 	}
 
@@ -68,7 +68,7 @@ namespace KZLib.KZAttribute
 					return;
 				}
 
-				if(Attribute.IncludeProject)
+				if(Attribute.IsIncludeAssets)
 				{
 					// 내부에 있는 경우
 					if(!FileUtility.IsIncludeAssetsHeader(dataPath))
@@ -129,7 +129,7 @@ namespace KZLib.KZAttribute
 		{
 			return DrawButton(_rect,SdfIconType.Folder2,_isValid,()=>
 			{
-				FileUtility.OpenFolder(FileUtility.GetParentAbsolutePath(ValueEntry.SmartValue));
+				FileUtility.Open(FileUtility.GetParentPath(FileUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets)));
 			});
 		}
 	}

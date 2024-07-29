@@ -25,14 +25,14 @@ public abstract partial class ExcelSettings<TObject> : OuterBaseSettings<TObject
 
 		protected string m_ErrorLog = null;
 
-		protected bool IsExistFilePath => FileUtility.IsExistFile(AbsoluteFilePath);
+		protected bool IsExistPath => FileUtility.IsExist(AbsoluteFilePath);
 
 		protected bool IsExistSheetName => !m_SheetName.IsEmpty();
 
 		[VerticalGroup(" ")]
 		[HorizontalGroup(" /0",Order = 0)]
 		[HorizontalGroup(" /0/0",Order = 0),ShowInInspector,LabelText("경로"),LabelWidth(100),KZDocumentPath,PropertyTooltip("$AbsoluteFilePath")]
-		public string AbsoluteFilePath => FileUtility.GetExternalFileAbsolutePath(m_LocalFilePath);
+		public string AbsoluteFilePath => FileUtility.GetAbsolutePath(m_LocalFilePath,false);
 
 		public ExcelSheetData(string _path)
 		{
@@ -46,7 +46,7 @@ public abstract partial class ExcelSettings<TObject> : OuterBaseSettings<TObject
 		protected abstract bool IsShowCreateButton { get; }
 		protected abstract bool IsCreateAble { get; }
 
-		[HorizontalGroup(" /0/2",Order = 2),Button("시트 갱신하기"),EnableIf(nameof(IsExistFilePath))]
+		[HorizontalGroup(" /0/2",Order = 2),Button("시트 갱신하기"),EnableIf(nameof(IsExistPath))]
 		protected virtual void OnRefreshSheet()
 		{
 			m_SheetNameList.Clear();

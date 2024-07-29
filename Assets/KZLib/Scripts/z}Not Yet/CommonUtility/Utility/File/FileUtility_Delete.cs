@@ -44,7 +44,7 @@ public static partial class FileUtility
 	/// </summary>
 	public static bool DeleteFile(string _fullPath)
 	{
-		if(!IsExistFile(_fullPath))
+		if(!IsExist(_fullPath))
 		{
 			return false;
 		}

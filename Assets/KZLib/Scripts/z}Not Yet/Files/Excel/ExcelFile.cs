@@ -19,7 +19,7 @@ namespace KZLib.KZFiles
 
 		public ExcelFile(string _filePath)
 		{
-			FileUtility.IsExistFile(_filePath,true);
+			FileUtility.IsExist(_filePath,true);
 
 			using var stream = new FileStream(_filePath,FileMode.Open,FileAccess.Read,FileShare.ReadWrite);
 			var extension = FileUtility.GetExtension(_filePath);
