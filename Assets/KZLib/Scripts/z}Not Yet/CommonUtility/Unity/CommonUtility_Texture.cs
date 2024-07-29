@@ -1,43 +1,7 @@
-using System;
 using UnityEngine;
 
 public static partial class CommonUtility
 {
-	public static Texture2D GetScreenShot(TextureFormat _format = TextureFormat.ARGB32)
-	{
-		return CreateTexture2D(Screen.width,Screen.height,_format);
-	}
-
-	public static Texture2D GetCameraScreenShot(Camera _camera,int _width = Global.BASE_WIDTH,int _height = Global.BASE_HEIGHT,TextureFormat _format = TextureFormat.RGB24)
-	{
-		var renderTexture = new RenderTexture(_width,_height,0);
-
-		_camera.targetTexture = renderTexture;
-		_camera.clearFlags = CameraClearFlags.SolidColor;
-		_camera.backgroundColor = Color.clear;
-
-		_camera.Render();
-
-		RenderTexture.active = renderTexture;
-
-		var texture = CreateTexture2D(renderTexture.width,renderTexture.height,_format);
-
-		RenderTexture.active = null;
-		_camera.targetTexture = null;
-
-		return texture;
-	}
-
-	private static Texture2D CreateTexture2D(int _width,int _height,TextureFormat _format)
-	{
-		var texture = new Texture2D(_width,_height,_format,false);
-
-		texture.ReadPixels(new Rect(0.0f,0.0f,_width,_height),0,0);
-		texture.Apply();
-
-		return texture;
-	}
-
 	public static void ConvertToSolidColor(Texture2D _texture,Color _color)
 	{
 		var pixelArray = _texture.GetPixels32();
