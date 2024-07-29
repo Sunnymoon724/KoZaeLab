@@ -9,7 +9,7 @@ public static partial class FileUtility
 	/// </summary>
 	public static string[] GetAllFilePathInFolder(string _folderPath)
 	{
-		IsExistFolder(_folderPath,true);
+		IsExist(_folderPath,true);
 
 		if(IsFilePath(_folderPath))
 		{

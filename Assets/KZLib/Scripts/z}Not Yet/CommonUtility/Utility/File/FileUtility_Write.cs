@@ -3,16 +3,36 @@ using System;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
+using UnityEditor;
 using UnityEngine;
 
 public static partial class FileUtility
 {
 	private const int WAV_HEADER_SIZE = 44;
-	
+
+	/// <summary>
+	/// 실제 경로를 생성함 (폴더면 폴더 생성 / 파일이면 부모 폴더 생성)
+	/// </summary>
+	public static void CreateFolder(string _path)
+	{
+		if(_path.IsEmpty())
+		{
+			throw new NullReferenceException("폴더의 경로가 null 입니다.");
+		}
+
+		// 현재 경로가 파일이면 부모 폴더 경로를 아니면 현재 경로의 풀 경로를 받아옴
+		var fullPath = IsFilePath(_path) ? GetParentPath(_path) : _path;
+
+		if(!Directory.Exists(fullPath))
+		{
+			Directory.CreateDirectory(fullPath);
+		}
+	}
+
 	/// <summary>
 	/// 파일 쓰기
 	/// </summary>
-	public static void WriteDataToFile(string _filePath,string _text)
+	public static void WriteTextToFile(string _filePath,string _text)
 	{
 		CreateFolder(_filePath);
 
@@ -23,30 +43,30 @@ public static partial class FileUtility
 	/// <summary>
 	/// 파일 쓰기
 	/// </summary>
-	public static void WriteJsonFile<TObject>(string _filePath,TObject _object)
+	public static void WriteJsonToFile<TObject>(string _filePath,TObject _object)
 	{
-		WriteDataToFile(_filePath,JsonConvert.SerializeObject(_object));
+		WriteTextToFile(_filePath,JsonConvert.SerializeObject(_object));
 	}
 
 	/// <summary>
 	/// byte[] 저장
 	/// </summary>
-	public static void WriteFile(string _filePath,Texture2D _texture)
+	public static void WriteTextureToFile(string _filePath,Texture2D _texture)
 	{
-		WriteFile(_filePath,_texture.EncodeToPNG());
+		WriteDataToFile(_filePath,_texture.EncodeToPNG());
 	}
 
 	/// <summary>
 	/// byte[] 저장
 	/// </summary>
-	public static void WriteFile(string _filePath,byte[] _dataArray)
+	public static void WriteDataToFile(string _filePath,byte[] _dataArray)
 	{
 		CreateFolder(_filePath);
 
 		File.WriteAllBytes(_filePath,_dataArray);
 	}
 
-	public static void WriteAudioClipToWAV(string _filePath,AudioClip _clip)
+	public static void WriteAudioClipToWav(string _filePath,AudioClip _clip)
 	{
 		using var stream = CreateEmpty(_filePath,WAV_HEADER_SIZE);
 
@@ -92,7 +112,7 @@ public static partial class FileUtility
 		_stream.Seek(0,SeekOrigin.Begin);
 
 		_stream.Write(Encoding.UTF8.GetBytes("RIFF"),0,4);
-		_stream.Write(System.BitConverter.GetBytes(_stream.Length-8),0,4);
+		_stream.Write(BitConverter.GetBytes(_stream.Length-8),0,4);
 
 		_stream.Write(Encoding.UTF8.GetBytes("WAVE"),0,4);
 
@@ -107,6 +127,42 @@ public static partial class FileUtility
 
 		_stream.Write(Encoding.UTF8.GetBytes("data"),0,4);
 		_stream.Write(BitConverter.GetBytes(clip.samples*clip.channels*2),0,4);
+	}
+
+	/// <summary>
+	/// 템플릿 코드 추가 or 갱신 하기
+	/// </summary>
+	public static void AddOrUpdateTemplateText(string _folderPath,string _templateName,string _scriptName,string _newData,Func<string,string> _onUpdate)
+	{
+		var absolutePath = GetAbsolutePath(PathCombine(_folderPath,_scriptName),true);
+		var templateText = IsExist(absolutePath) ? ReadDataFromFile(absolutePath) : GetTemplateText(_templateName);
+
+		if(templateText.IsEmpty() || templateText.Contains(_newData))
+		{
+			return;
+		}
+
+		templateText = _onUpdate(templateText);
+
+		WriteTextToFile(absolutePath,templateText);
+
+		AssetDatabase.Refresh();
+	}
+
+	/// <summary>
+	/// 템플릿 코드 가져오기
+	/// </summary>
+	public static string GetTemplateText(string _templatePath)
+	{
+		var absolutePath = GameUtility.GetTemplateFileAbsolutePath(_templatePath);
+		var data = ReadDataFromFile(absolutePath);
+
+		if(data.IsEmpty())
+		{
+			UnityUtility.DisplayErrorPathLink(absolutePath);
+		}
+
+		return data;
 	}
 }
 #endif

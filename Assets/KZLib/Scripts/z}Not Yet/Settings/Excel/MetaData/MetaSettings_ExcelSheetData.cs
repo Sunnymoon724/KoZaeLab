@@ -99,7 +99,8 @@ public partial class MetaSettings : ExcelSettings<MetaSettings>
 
 			if(MetaType == null)
 			{
-				var scriptPath = FileUtility.PathCombine(FileUtility.GetFullPath(GameSettings.In.MetaScriptPath),string.Format("{0}Table.cs",SheetName));
+				var fileName = string.Format("{0}/{1}Table.cs",GameSettings.In.MetaScriptPath,SheetName);
+				var scriptPath = FileUtility.GetAbsolutePath(fileName,true);
 
 				//? script 만들기
 				scriptData.WriteScript(scriptPath);

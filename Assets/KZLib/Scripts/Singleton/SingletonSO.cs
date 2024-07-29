@@ -31,9 +31,9 @@ public abstract class SingletonSO<TObject> : SerializedScriptableObject where TO
 	{
 		s_Instance = CreateInstance<TObject>();
 
-		var filePath = string.Format("{0}.asset",_path.StartsWith(Global.ASSETS_HEADER) ? _path : FileUtility.PathCombine("Assets/Resources",_path));
+		var filePath = string.Format("{0}.asset",_path.StartsWith(Global.ASSETS_HEADER) ? _path : string.Format("Assets/Resources/{0}",_path));
 
-		FileUtility.CreateFolder(filePath);
+		FileUtility.CreateFolder(FileUtility.GetAbsolutePath(filePath,true));
 
 		AssetDatabase.CreateAsset(s_Instance,FileUtility.GetAssetsPath(filePath));
 		AssetDatabase.Refresh();

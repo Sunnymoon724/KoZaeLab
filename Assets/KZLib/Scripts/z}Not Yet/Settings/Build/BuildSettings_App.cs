@@ -128,7 +128,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 				{
 					LogTag.Build.I("빌드가 있는 폴더를 오픈 합니다.");
 
-					FileUtility.OpenFolder(AppFullPath);
+					FileUtility.Open(AppFullPath);
 				}
 
 				if(m_UploadAfterAppBuild)

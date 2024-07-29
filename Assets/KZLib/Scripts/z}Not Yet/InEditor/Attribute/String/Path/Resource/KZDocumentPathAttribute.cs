@@ -8,7 +8,7 @@ namespace KZLib.KZAttribute
 	[Conditional("UNITY_EDITOR")]
 	public class KZDocumentPathAttribute : KZResourcePathAttribute
 	{
-		public KZDocumentPathAttribute(bool _changePathBtn = true,bool _includeProject = false) : base(_changePathBtn,_includeProject) { }
+		public KZDocumentPathAttribute(bool _changePathBtn = true,bool _isIncludeAssets = false) : base(_changePathBtn,_isIncludeAssets) { }
 	}
 
 #if UNITY_EDITOR
@@ -20,7 +20,7 @@ namespace KZLib.KZAttribute
 
 		protected override void OnOpenResource()
 		{
-			FileUtility.OpenFile(FileUtility.GetFullPath(ValueEntry.SmartValue));
+			FileUtility.Open(FileUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets));
 		}
 	}
 #endif

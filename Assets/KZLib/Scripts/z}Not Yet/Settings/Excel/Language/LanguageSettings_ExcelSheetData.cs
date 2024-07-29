@@ -130,8 +130,9 @@ public partial class LanguageSettings : ExcelSettings<LanguageSettings>
 				}
 
 				var result = JsonConvert.SerializeObject(languageDict,Formatting.Indented);
+				var filePath = string.Format("{0}/{1}.json",GameSettings.In.LanguagePath,language);
 
-				FileUtility.WriteDataToFile(FileUtility.GetFullPath(FileUtility.PathCombine(GameSettings.In.LanguagePath,string.Format("{0}.json",language))),result);
+				FileUtility.WriteTextToFile(FileUtility.GetAbsolutePath(filePath,false),result);
 
 				languageList.Add(language);
 			}

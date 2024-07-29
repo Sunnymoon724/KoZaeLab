@@ -157,7 +157,7 @@ public static class LogExtension
 		{
 			var pathArray = match.Groups[1].Value.Split(':');
 
-			InternalEditorUtility.OpenFileAtLineExternal(FileUtility.GetFullPath(pathArray[0]),Convert.ToInt32(pathArray[1]));
+			InternalEditorUtility.OpenFileAtLineExternal(FileUtility.GetAbsolutePath(pathArray[0],true),Convert.ToInt32(pathArray[1]));
 
 			return true;
 		}

@@ -55,7 +55,7 @@ public partial class MetaSettings : ExcelSettings<MetaSettings>
 
 		public void WriteScript(string _scriptPath)
 		{
-			if(FileUtility.IsExistFile(_scriptPath))
+			if(FileUtility.IsExist(_scriptPath))
 			{
 				LogTag.Editor.W("스크립트가 이미 존재하여 생성을 생략합니다. [경로 :{0}]",_scriptPath);
 
@@ -69,7 +69,7 @@ public partial class MetaSettings : ExcelSettings<MetaSettings>
 			data = data.Replace("$MemberProperties",MemberProperties);
 			data = data.Replace("$SheetName",SheetName);
 
-			FileUtility.WriteDataToFile(_scriptPath,data);
+			FileUtility.WriteTextToFile(_scriptPath,data);
 		}
 	}
 }

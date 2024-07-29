@@ -16,7 +16,7 @@ public static partial class FileUtility
 			return string.Empty;
 		}
 
-		IsExistFile(filePath,true);
+		IsExist(filePath,true);
 
 		return filePath;
 	}
@@ -33,7 +33,7 @@ public static partial class FileUtility
 			return string.Empty;
 		}
 
-		IsExistFolder(folderPath);
+		IsExist(folderPath);
 
 		return folderPath;
 	}

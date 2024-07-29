@@ -10,15 +10,32 @@ public static partial class FileUtility
 	/// </summary>
 	public static string PathCombine(params string[] _pathArray)
 	{
-		return Path.Combine(_pathArray).Replace("\\","/");
+		return NormalizePath(Path.Combine(_pathArray));
 	}
 
 	/// <summary>
-	/// 실제 경로를 반환
+	/// Assets 폴더를 기준으로 나온다. (Assets의 외부는 프로젝트 부모 폴더 기준)
 	/// </summary>
-	public static string GetFullPath(string _path)
+	public static string GetAbsolutePath(string _path,bool _isIncludeAssets)
 	{
-		return IsStartWithAssetsHeader(_path) ? _path : PathCombine(Application.dataPath,_path);
+		if(Path.IsPathRooted(_path))
+		{
+			return NormalizePath(_path);
+		}
+		else if(_isIncludeAssets)
+		{
+			//? AssetsPath로 변경 후 사용
+			return NormalizePath(Path.GetFullPath(GetAssetsPath(_path)));
+		}
+		else
+		{
+			return NormalizePath(Path.GetFullPath(_path,GetProjectParentPath()));
+		}
+	}
+
+	public static string NormalizePath(string _path)
+	{
+		return _path.Replace("\\","/");
 	}
 
 	/// <summary>
@@ -54,14 +71,6 @@ public static partial class FileUtility
 	}
 
 	/// <summary>
-	/// 부모 경로 반환
-	/// </summary>
-	public static string GetProjectPath(string _path)
-	{
-		return Path.GetDirectoryName(_path);
-	}
-
-	/// <summary>
 	/// 현재 경로에서 확장자명을 빼고 반환
 	/// </summary>
 	public static string GetPathWithoutExtension(string _path)
@@ -80,9 +89,9 @@ public static partial class FileUtility
 	/// <summary>
 	/// 부모 경로를 절대경로로 반환
 	/// </summary>
-	public static string GetParentAbsolutePath(string _path)
+	public static string GetParentAbsolutePath(string _path,bool _isIncludeAssets)
 	{
-		return GetFullPath(GetProjectPath(_path));
+		return GetAbsolutePath(GetParentPath(_path),_isIncludeAssets);
 	}
 
 	/// <summary>
@@ -90,7 +99,9 @@ public static partial class FileUtility
 	/// </summary>
 	public static string GetProjectPath()
 	{
-		return GetProjectPath(Application.dataPath);
+		var directoryInfo = Directory.GetParent(Application.dataPath);
+
+		return NormalizePath(directoryInfo.FullName);
 	}
 
 	/// <summary>
@@ -98,20 +109,10 @@ public static partial class FileUtility
 	/// </summary>
 	public static string GetProjectParentPath()
 	{
-		return GetProjectPath(GetProjectPath(Application.dataPath));
-	}
+		var directoryInfo = Directory.GetParent(Application.dataPath);
+		var parentDirectoryInfo = Directory.GetParent(directoryInfo.FullName);
 
-	/// <summary>
-	/// 프로젝트 밖에 있는 파일(폴더)의 절대 경로 반환
-	/// </summary>
-	public static string GetExternalFileAbsolutePath(string _path)
-	{
-		if(_path.IsEmpty())
-		{
-			return null;
-		}
-
-		return PathCombine(GetProjectParentPath(),_path);
+		return NormalizePath(parentDirectoryInfo.FullName);
 	}
 
 	/// <summary>
@@ -119,16 +120,7 @@ public static partial class FileUtility
 	/// </summary>
 	public static string GetAssetsPath(string _path)
 	{
-		//? 이미 있으므로 생략
-		if(IsStartWithAssetsHeader(_path))
-		{
-			return _path;
-		}
-
-		//? 로컬 경로를 반환 이후 다시 붙혀서 반환
-		_path = GetLocalPath(_path);
-
-		return PathCombine(Global.ASSETS_HEADER,_path);
+		return IsStartWithAssetsHeader(_path) ? NormalizePath(_path) : PathCombine(Global.ASSETS_HEADER,_path);
 	}
 
 	/// <summary>
@@ -136,7 +128,7 @@ public static partial class FileUtility
 	/// </summary>
 	public static string GetLocalPath(string _path)
 	{
-		return IsStartWithAssetsHeader(_path) ? RemoveAssetsHeader(_path) : _path;
+		return IsStartWithAssetsHeader(_path) ? RemoveAssetsHeader(_path) : NormalizePath(_path);
 	}
 
 	public static bool IsIncludeAssetsHeader(string _path)
@@ -157,68 +149,65 @@ public static partial class FileUtility
 		return Path.HasExtension(_filePath);
 	}
 
-	public static bool IsExist(string _file,bool _needException = false)
-	{
-		return IsFilePath(_file) ? IsExistFile(_file,_needException) : IsExistFolder(_file,_needException);
-	}
-
 	/// <summary>
-	/// 이 경로가 파일 경로인지 파악 (빌드 시 경로 파악이 어려울 수 있으므로 Empty 정도만 파악)
+	/// 존재 여부 파악 (에디터가 아니면 Empty만 파악)
 	/// </summary>
-	public static bool IsExistFile(string _filePath,bool _needException = false)
-	{
-		if(_filePath.IsEmpty())
-		{
-			if(_needException)
-			{
-				throw new NullReferenceException("파일의 경로가 null 입니다.");
-			}
-
-			return false;
-		}
-
-#if UNITY_EDITOR
-		var fullPath = GetFullPath(_filePath);
-
-		if(!File.Exists(fullPath))
-		{
-			if(_needException)
-			{
-				throw new NullReferenceException(string.Format("파일이 존재하지 않습니다. 경로 : {0}",fullPath));
-			}
-
-			return false;
-		}
-#endif
-		return true;
-	}
-
-	public static bool IsExistFolder(string _path,bool _needException = false)
+	public static bool IsExist(string _path,bool _needException = false)
 	{
 		if(_path.IsEmpty())
 		{
 			if(_needException)
 			{
-				throw new NullReferenceException("폴더의 경로가 null 입니다.");
+				throw new NullReferenceException("경로가 null 입니다.");
 			}
-			
+
 			return false;
 		}
 
 #if UNITY_EDITOR
-		var fullPath = GetFullPath(_path);
+		//? 내부 경로 체크
+		var fullPath = GetAbsolutePath(_path,true);
 
-		if(!Directory.Exists(fullPath))
+		if(File.Exists(fullPath))
+		{
+			return true;
+		}
+		else if(Directory.Exists(fullPath))
+		{
+			return true;
+		}
+
+		//? 외부 경로 체크
+		fullPath = GetAbsolutePath(_path,false);
+
+		if(File.Exists(fullPath))
+		{
+			return true;
+		}
+		else if(Directory.Exists(fullPath))
+		{
+			return true;
+		}
+
+		if(IsFilePath(_path))
 		{
 			if(_needException)
 			{
-				throw new DirectoryNotFoundException(string.Format("폴더가 존재하지 않습니다. 경로 : {0}",fullPath));
+				throw new FileNotFoundException(string.Format("파일이 존재하지 않습니다. [{0}]",fullPath));
 			}
-
-			return false;
 		}
-#endif
+		else
+		{
+			if(_needException)
+			{
+				throw new DirectoryNotFoundException(string.Format("폴더가 존재하지 않습니다. [{0}]",fullPath));
+			}
+		}
+
+		return false;
+#else
 		return true;
+#endif
 	}
 
 	/// <summary>
@@ -226,8 +215,8 @@ public static partial class FileUtility
 	/// </summary>
 	public static string RemoveHeaderDirectory(string _path,string _header)
 	{
-		var path = _path.Replace("\\","/");
-		var header = _header.Replace("\\","/");
+		var path = NormalizePath(_path);
+		var header = NormalizePath(_header);
 
 		return path[(path.IndexOf(header)+header.Length+1)..];
 	}
@@ -238,5 +227,23 @@ public static partial class FileUtility
 	public static string RemoveAssetsHeader(string _path)
 	{
 		return RemoveHeaderDirectory(_path,Global.ASSETS_HEADER);
+	}
+
+	private static string GetUniquePath(string _path)
+	{
+		var directory = GetParentPath(_path);
+		var name = GetOnlyName(_path);
+		var extension = GetExtension(_path);
+
+		var count = 1;
+		var newPath = _path;
+
+		while(File.Exists(newPath))
+		{
+			newPath = PathCombine(directory,string.Format("{0} ({1}){2}",name,count,extension));
+			count++;
+		}
+
+		return newPath;
 	}
 }

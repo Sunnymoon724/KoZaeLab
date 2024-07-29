@@ -18,7 +18,7 @@ namespace KZLib.KZMenu
 				return;
 			}
 
-			if(FileUtility.IsExistFile(dataPath))
+			if(FileUtility.IsExist(dataPath))
 			{
 				UnityUtility.DisplayError(string.Format("{0}에 파일이 이미 존재합니다.",dataPath));
 
