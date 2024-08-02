@@ -5,11 +5,5 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-    private string PATH = "/Users/kozae/Documents/Projects/KoZaeLab/Test";
-
-    [Button("Test")]
-    void OnPlayTest()
-    {
-        FileUtility.Compress(PATH,"/Users/kozae/Documents/Projects/KoZaeLab/Test");
-    }
+    
 }
