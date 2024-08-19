@@ -1,36 +1,67 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
-using System;
-
-#if !UNITY_EDITOR
-
-using Cysharp.Threading.Tasks;
-
-#endif
 
 namespace KZLib
 {
-	public class LogMgr : Singleton<LogMgr>
+	public class ShaderMgr : Singleton<ShaderMgr>
 	{
 		private bool m_Disposed = false;
 
-		private const int MAX_LOG_COUNT = 100;
+		private readonly Dictionary<string,Shader> m_ShaderDict = new();
 
-		private readonly CircularQueue<MessageData> m_LogDataQueue = new(MAX_LOG_COUNT);
+		private Material m_Grayscale = null;
+		private Material m_Blur = null;
+		private Material m_GrayscaleBlur = null;
 
-		public IEnumerable<MessageData> LogDataGroup => m_LogDataQueue;
+		public Material Grayscale
+		{
+			get
+			{
+				if(!m_Grayscale)
+				{
+					m_Grayscale = GetMaterial("KZLib/TextureGrayscaleBlur");
+					m_Grayscale.SetFloat("_BlurSize",0.0f);
+					m_Grayscale.SetFloat("_Saturation",1.0f);
+				}
 
-#if !UNITY_EDITOR
-		private const int COOL_TIME_TIMER = 30; // 30초
-		private bool m_SendLock = false;
-#endif
+				return m_Grayscale;
+			}
+		}
 
-		public MoreAction<MessageData> OnAddLog { get; set; }
+		public Material Blur
+		{
+			get
+			{
+				if(!m_Blur)
+				{
+					m_Blur = GetMaterial("KZLib/TextureGrayscaleBlur");
+					m_Blur.SetFloat("_BlurSize",0.8f);
+					m_Blur.SetFloat("_Saturation",0.0f);
+				}
+
+				return m_Blur;
+			}
+		}
+
+		public Material GrayscaleBlur
+		{
+			get
+			{
+				if(!m_GrayscaleBlur)
+				{
+					m_GrayscaleBlur = GetMaterial("KZLib/TextureGrayscaleBlur");
+					m_GrayscaleBlur.SetFloat("_BlurSize",0.8f);
+					m_GrayscaleBlur.SetFloat("_Saturation",1.0f);
+				}
+
+				return m_GrayscaleBlur;
+			}
+		}
 
 		protected override void Initialize()
 		{
-			Application.logMessageReceived += OnGetLog;
+			
 		}
 
 		protected override void Release(bool _disposing)
@@ -42,9 +73,22 @@ namespace KZLib
 
 			if(_disposing)
 			{
-				Application.logMessageReceived -= OnGetLog;
+				m_ShaderDict.Clear();
 
-				m_LogDataQueue.Clear();
+				if(m_Grayscale)
+				{
+					UnityUtility.DestroyObject(m_Grayscale);
+				}
+
+				if(m_Blur)
+				{
+					UnityUtility.DestroyObject(m_Blur);
+				}
+
+				if(m_GrayscaleBlur)
+				{
+					UnityUtility.DestroyObject(m_GrayscaleBlur);
+				}
 			}
 
 			m_Disposed = true;
@@ -52,118 +96,33 @@ namespace KZLib
 			base.Release(_disposing);
 		}
 
-		private void OnGetLog(string _condition,string _stackTrace,LogType _type)
+		public Shader GetShader(string _shaderName)
 		{
-			var head = string.Format("<{0}> {1}",GetLogTag(_type),DateTime.Now.ToString("MM/dd HH:mm:ss:ff"));
-			var body = string.Empty;
-
-			if(_type == LogType.Exception)
+			if(!m_ShaderDict.ContainsKey(_shaderName))
 			{
-				body = string.Format("{0}\n\n{1}",_condition,_stackTrace);
-			}
-			else
-			{
-				var stackTraceArray = _stackTrace.Split('\n');
-				var index = stackTraceArray.FindIndex(x => x.Contains(nameof(LogTag)));
-				var stackTrace = stackTraceArray[index+1];
+				var shader = Shader.Find(_shaderName);
 
-				body = string.Format("{0}\n\n{1}",_condition,stackTrace);
-			}
-
-			AddLog(head,body);
-		}
-
-		private string GetLogTag(LogType _logType)
-		{
-			return _logType switch
-			{
-				LogType.Warning => "Warning",
-				LogType.Error or LogType.Exception => "Error",
-				_ => "Info",
-			};
-		}
-
-		public string ShowLog(LogTag _tag,object _message,params object[] _argumentArray)
-		{
-			var text = string.Format("[{0}] {1}",_tag,ConvertText(_message));
-
-			if(_argumentArray.IsNullOrEmpty())
-			{
-				return text;
-			}
-			else
-			{
-				var objectArray = new object[_argumentArray.Length];
-
-				for(var i=0;i<_argumentArray.Length;i++)
+				if(shader == null)
 				{
-					objectArray[i] = _argumentArray[i] is not string && _argumentArray[i] is IEnumerable ? ConvertText(_argumentArray[i]) : _argumentArray[i];
+					var name = _shaderName[(_shaderName.LastIndexOf('/') + 1)..];
+
+					shader = Resources.Load(string.Format("Shaders/{0}",name)) as Shader;
+
+					if(shader == null)
+					{
+						throw new NullReferenceException(string.Format("쉐이더 {0}이 없습니다.",_shaderName));
+					}
 				}
 
-				return string.Format(text,objectArray);
-			}
-		}
-
-		private void AddLog(string _head,string _body)
-		{
-			var data = new MessageData(_head,_body);
-
-			m_LogDataQueue.Enqueue(data);
-			OnAddLog?.Invoke(data);
-
-#if !UNITY_EDITOR
-			if(!m_SendLock && (_type == LogType.Exception))
-			{
-				SendBugAsync().Forget();
-			}
-#endif
-		}
-
-		private string ConvertText(object _object)
-		{
-			if(_object == null)
-			{
-				return "NULL";
+				m_ShaderDict.Add(_shaderName,shader);
 			}
 
-			if(_object is not string && _object is IEnumerable dataGroup)
-			{
-				var textList = new List<string>();
-
-				foreach(var data in dataGroup)
-				{
-					textList.Add(ConvertText(data));
-				}
-
-				var count = textList.Count;
-
-				return count == 0 ? string.Format("Empty - [{0}]",_object) : string.Format("{0} - [{1}]",count,string.Join(" & ",textList));
-			}
-
-			return _object.ToString();
+			return m_ShaderDict[_shaderName];
 		}
 
-		public void ClearLog()
+		public Material GetMaterial(string _shaderName)
 		{
-			m_LogDataQueue.Clear();
+			return new Material(GetShader(_shaderName));
 		}
-
-#if !UNITY_EDITOR
-		private async UniTaskVoid SendBugAsync()
-		{
-			m_SendLock = true;
-
-			await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
-
-			var texture = CommonUtility.GetScreenShot();
-
-			await CommonUtility.SendBugReportAsync(m_LogDataQueue,texture.EncodeToPNG());
-
-			// 한번 보내고 30초동안 대기 -> 너무 자주 보내면 부하가 있음
-			await UniTask.WaitForSeconds(COOL_TIME_TIMER);
-
-			m_SendLock = false;
-		}
-#endif
 	}
 }

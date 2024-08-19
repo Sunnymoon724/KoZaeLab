@@ -4,46 +4,6 @@ using UnityEngine.Rendering;
 
 public static partial class CommonUtility
 {
-	/// <summary>
-	/// 불러온 게임 오브젝트들의 쉐이더를 재지정해준다.
-	/// </summary>
-	public static void ReAssignShader(GameObject _object)
-	{
-		foreach(var graphic in _object.GetComponentsInChildren<TMPro.TMP_Text>(true))
-		{
-			if(!graphic.fontMaterial)
-			{
-				continue;
-			}
-
-			var shader = graphic.fontMaterial.shader;
-		
-			shader = Shader.Find(shader.name);
-			graphic.fontMaterial.shader = shader;
-		}
-
-		foreach(var renderer in _object.GetComponentsInChildren<Renderer>(true))
-		{
-			if(renderer.materials == null)
-			{
-				continue;
-			}
-
-			for(var i=0;i<renderer.materials.Length;i++)
-			{
-				var shader = renderer.materials[i].shader;
-		
-				shader = Shader.Find(shader.name);
-				renderer.materials[i].shader = shader;
-			}
-		}
-	}
-
-	
-
-
-	
-
 	#region Skin Mesh Flip
 	/// <summary>
 	/// 면이 뒤집히는 현상 수정

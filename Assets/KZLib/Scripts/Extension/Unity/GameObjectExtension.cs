@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using KZLib;
 using UnityEngine;
 
 public static class GameObjectExtension
@@ -121,10 +121,8 @@ public static class GameObjectExtension
 		return _object.GetComponent<TComponent>() ?? _object.AddComponent<TComponent>();
 	}
 
-	public static void ReAssignShader2(this GameObject _object)
+	public static void ReAssignShader(this GameObject _object)
 	{
-		var cacheDict = new Dictionary<string,Shader>();
-
 		foreach(var graphic in _object.GetComponentsInChildren<TMPro.TMP_Text>(true))
 		{
 			if(!graphic.fontMaterial)
@@ -132,15 +130,7 @@ public static class GameObjectExtension
 				continue;
 			}
 
-			var shaderName = graphic.fontMaterial.shader.name;
-
-			if (!shaderCache.TryGetValue(shaderName, out Shader shader))
-			{
-				shader = Shader.Find(shaderName);
-				shaderCache[shaderName] = shader;
-			}
-
-			graphic.fontMaterial.shader = shader;
+			graphic.fontMaterial.shader = ShaderMgr.In.GetShader(graphic.fontMaterial.shader.name);
 		}
 
 		foreach(var renderer in _object.GetComponentsInChildren<Renderer>(true))
@@ -150,17 +140,9 @@ public static class GameObjectExtension
 				continue;
 			}
 
-			for(var i = 0; i < renderer.materials.Length; i++)
+			for(var i=0;i<renderer.materials.Length;i++)
 			{
-				var shaderName = renderer.materials[i].shader.name;
-
-				if (!shaderCache.TryGetValue(shaderName, out Shader shader))
-				{
-					shader = Shader.Find(shaderName);
-					shaderCache[shaderName] = shader;
-				}
-
-				renderer.materials[i].shader = shader;
+				renderer.materials[i].shader = ShaderMgr.In.GetShader(renderer.materials[i].shader.name);
 			}
 		}
 	}
