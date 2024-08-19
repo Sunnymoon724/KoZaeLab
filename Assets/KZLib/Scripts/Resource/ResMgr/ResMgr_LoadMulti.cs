@@ -110,7 +110,7 @@ namespace KZLib
 
 					if(GameSettings.In.IsServerResource)
 					{
-						CommonUtility.ReAssignShader(data as GameObject);
+						(data as GameObject).ReAssignShader();
 					}
 
 					dataArray[i] = data;
