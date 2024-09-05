@@ -1,12 +1,9 @@
 #if UNITY_EDITOR
-
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using KZLib.KZAttribute;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
-using UnityEditor;
 
 namespace KZLib
 {
@@ -60,7 +57,7 @@ namespace KZLib
 
 		protected virtual void IsValidate()
 		{
-			var indexList = new List<int>();
+			var indexSet = new HashSet<int>();
 
 			for(var i=0;i<m_MetaDataList.Count;i++)
 			{
@@ -76,14 +73,14 @@ namespace KZLib
 					UnityUtility.DisplayError(string.Format("{0} 번쨰 메타아이디가 0 입니다.",i));
 				}
 
-				if(indexList.Contains(data.MetaId))
+				if(indexSet.Contains(data.MetaId))
 				{
 					UnityUtility.DisplayError(string.Format("{0} 번쨰 메타아이디[{1}]가 중복 입니다!",i,data.MetaId));
 				}
 
 				if(data.MetaId != -1)
 				{
-					indexList.Add(data.MetaId);
+					indexSet.Add(data.MetaId);
 				}
 			}
 		}

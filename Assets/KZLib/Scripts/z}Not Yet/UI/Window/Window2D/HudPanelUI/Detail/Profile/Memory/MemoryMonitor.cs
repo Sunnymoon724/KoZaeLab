@@ -12,7 +12,7 @@ namespace HudPanel
 
 		public void SetMemory(long _size)
 		{
-			CommonUtility.ByteToString(_size,out var size,out var unit);
+			_size.ByteToString(out var size,out var unit);
 
 			m_SizeText.SetSafeTextMeshPro(string.Format("{0:N2}",size));
 			m_UnitText.SetSafeTextMeshPro(unit);

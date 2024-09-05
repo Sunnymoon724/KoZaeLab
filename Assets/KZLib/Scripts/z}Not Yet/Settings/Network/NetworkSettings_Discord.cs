@@ -26,13 +26,13 @@ public partial class NetworkSettings : InnerBaseSettings<NetworkSettings>
 	[HorizontalGroup("통신 설정/디스코드/테스트/0"),Button("텍스트 보내기",ButtonSizes.Large),EnableIf(nameof(IsExistDiscord))]
 	private void OnPostTextTest_Discord()
 	{
-		CommonUtility.SendReportOnlyDiscord("Text Test",new MessageData[] { new("Test","Hello World") },null);
+		WebRequestUtility.SendReportOnlyDiscord("Text Test",new MessageData[] { new("Test","Hello World") },null);
 	}
 
 	[HorizontalGroup("통신 설정/디스코드/테스트/0"),Button("이미지 보내기",ButtonSizes.Large),EnableIf(nameof(IsExistDiscord))]
 	private void OnPostPhotoTest_Discord()
 	{
-		CommonUtility.SendReportOnlyDiscord("Photo Test",new MessageData[] { new("Test","Hello World") },GameUtility.GetTestImageData());
+		WebRequestUtility.SendReportOnlyDiscord("Photo Test",new MessageData[] { new("Test","Hello World") },GameUtility.GetTestImageData());
 	}
 #pragma warning restore IDE0051
 #endif

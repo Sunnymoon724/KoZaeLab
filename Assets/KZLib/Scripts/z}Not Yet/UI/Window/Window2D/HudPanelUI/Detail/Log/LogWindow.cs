@@ -170,7 +170,7 @@ namespace HudPanel
 		{
 			return new LogCellData(_color,_time,_data.Body,() =>
 			{
-				CommonUtility.SendReportOnlyDiscord("Log Window",new MessageData[] { _data },null);
+				WebRequestUtility.SendReportOnlyDiscord("Log Window",new MessageData[] { _data },null);
 			});
 		}
 

@@ -38,9 +38,9 @@ namespace KZLib.KZAttribute
 			var labelText = _label == null ? string.Empty : _label.text;
 
 			var value = DrawField(rect,labelText);
-			var minimum = Attribute.MinExpression.IsEmpty() ? MinValue : GetValue<TValue>(Attribute.MinExpression);
+			var min = Attribute.MinExpression.IsEmpty() ? MinValue : GetValue<TValue>(Attribute.MinExpression);
 
-			ValueEntry.SmartValue = CommonUtility.MinClamp(value,minimum);
+			ValueEntry.SmartValue = MathUtility.MinClamp(value,min);
 		}
 
 		protected abstract TValue MinValue { get; }

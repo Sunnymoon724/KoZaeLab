@@ -80,9 +80,4 @@ public class LocalizeTextUI : BaseTextUI
 
 		OnSetLocalizeText();
 	}
-
-	public void ClearText()
-	{
-		m_Text.SetSafeTextMeshPro(string.Empty);
-	}
 }

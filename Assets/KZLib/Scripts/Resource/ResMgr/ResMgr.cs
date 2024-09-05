@@ -34,7 +34,7 @@ namespace KZLib
 		private const float POOL_LOOP_TIME = 30.0f;   // 30초
 		private const double DEFAULT_DELETE_TIME = 60.0d;	// 60초
 
-		private CancellationTokenSource m_Source = null;
+		private CancellationTokenSource m_TokenSource = null;
 
 		private float m_PoolTimer = 0.0f;
 
@@ -45,7 +45,7 @@ namespace KZLib
 
 		protected override void Initialize()
 		{
-			m_Source = new();
+			m_TokenSource = new();
 
 			LoopProcessAsync().Forget();
 		}
@@ -57,12 +57,7 @@ namespace KZLib
 				return;
 			}
 
-			if(m_Source != null)
-			{
-				m_Source.Cancel();
-				m_Source.Dispose();
-				m_Source = null;
-			}
+			UniTaskUtility.KillTokenSource(ref m_TokenSource);
 
 			if(_disposing)
 			{
@@ -79,7 +74,7 @@ namespace KZLib
 		{
 			while(true)
 			{
-				await UniTask.WaitForSeconds(UPDATE_PERIOD,true,cancellationToken : m_Source.Token);
+				await UniTask.Delay(TimeSpan.FromSeconds(UPDATE_PERIOD),true,cancellationToken : m_TokenSource.Token);
 
 				// 오브젝트 풀 정리
 				{

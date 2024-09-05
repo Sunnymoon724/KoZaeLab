@@ -80,7 +80,7 @@ namespace KZLib
 				return false;
 			}
 
-			return m_SaveDataDict.ContainsKey(CommonUtility.AESEncryptData(_tableName,_key));
+			return m_SaveDataDict.ContainsKey(SecurityUtility.AESEncryptData(_tableName,_key));
 		}
 
 		public IEnumerable<string> GetTableNameGroup()
@@ -138,7 +138,7 @@ namespace KZLib
 		public void SetData(string _tableName,string _key,string _data)
 		{
 			var dataDict = m_SaveDataDict[_tableName];
-			var code = CommonUtility.Base64Encode(_data);
+			var code = SecurityUtility.Base64Encode(_data);
 
 			if(dataDict.ContainsKey(_key))
 			{
@@ -240,7 +240,7 @@ namespace KZLib
 				{
 					var data = m_DataReader.GetString(m_DataReader.GetOrdinal("dataString"));
 
-					if(code.IsEqual(CommonUtility.Base64Encode(data)))
+					if(code.IsEqual(SecurityUtility.Base64Encode(data)))
 					{
 						_dataDict.AddOrUpdate(key,data);
 					}
@@ -248,7 +248,7 @@ namespace KZLib
 					{
 						removeList.Add(key);
 
-						throw new NullReferenceException(string.Format("데이터 오류 {0}",CommonUtility.AESDecryptData(_tableName,key)));
+						throw new NullReferenceException(string.Format("데이터 오류 {0}",SecurityUtility.AESDecryptData(_tableName,key)));
 					}
 				}
 				else

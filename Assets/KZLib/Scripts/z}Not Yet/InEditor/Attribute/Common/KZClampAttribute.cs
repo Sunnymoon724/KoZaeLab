@@ -42,10 +42,10 @@ namespace KZLib.KZAttribute
 			var labelText = _label == null ? string.Empty : _label.text;
 
 			var value = DrawField(rect,labelText);
-			var minimum = Attribute.MinExpression.IsEmpty() ? MinValue : GetValue<TValue>(Attribute.MinExpression);
-			var maximum = Attribute.MaxExpression.IsEmpty() ? MaxValue : GetValue<TValue>(Attribute.MaxExpression);
+			var min = Attribute.MinExpression.IsEmpty() ? MinValue : GetValue<TValue>(Attribute.MinExpression);
+			var max = Attribute.MaxExpression.IsEmpty() ? MaxValue : GetValue<TValue>(Attribute.MaxExpression);
 
-			ValueEntry.SmartValue = CommonUtility.Clamp(value,minimum,maximum);
+			ValueEntry.SmartValue = MathUtility.Clamp(value,min,max);
 		}
 
 		protected abstract TValue MinValue { get; }

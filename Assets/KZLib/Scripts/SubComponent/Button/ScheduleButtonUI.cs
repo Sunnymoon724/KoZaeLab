@@ -35,19 +35,19 @@ public class ScheduleButtonUI : BaseButtonUI
 	{
 		base.Release();
 
-		CommonUtility.KillTokenSource(ref m_TokenSource);
+		UniTaskUtility.KillTokenSource(ref m_TokenSource);
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
 
-		CommonUtility.KillTokenSource(ref m_TokenSource);
+		UniTaskUtility.KillTokenSource(ref m_TokenSource);
 	}
 
 	protected override void OnClickButton()
 	{
-		CommonUtility.RecycleTokenSource(ref m_TokenSource);
+		UniTaskUtility.RecycleTokenSource(ref m_TokenSource);
 
 		ClickedAsync().Forget();
 	}

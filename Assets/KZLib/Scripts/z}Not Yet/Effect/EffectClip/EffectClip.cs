@@ -63,7 +63,7 @@ public abstract class EffectClip : BaseComponentTask
 
 		var count = m_UseLoop ? -1 : 1;
 
-		await CommonUtility.LoopUniTaskAsync(async ()=>
+		await UniTaskUtility.LoopUniTaskAsync(async ()=>
 		{
 			m_CurrentTime = 0.0f;
 
@@ -79,7 +79,7 @@ public abstract class EffectClip : BaseComponentTask
 
 	protected async virtual UniTask PlayTaskAsync()
 	{
-		await CommonUtility.ExecuteOverTimeAsync(0.0f,Duration,Duration,(time)=>
+		await UniTaskUtility.ExecuteOverTimeAsync(0.0f,Duration,Duration,(time)=>
 		{
 			m_CurrentTime = time;
 

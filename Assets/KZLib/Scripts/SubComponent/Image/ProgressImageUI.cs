@@ -62,14 +62,14 @@ public class ProgressImageUI : BaseImageUI
 	{
 		base.Release();
 
-		CommonUtility.KillTokenSource(ref m_TokenSource);
+		UniTaskUtility.KillTokenSource(ref m_TokenSource);
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
 
-		CommonUtility.KillTokenSource(ref m_TokenSource);
+		UniTaskUtility.KillTokenSource(ref m_TokenSource);
 	}
 
     public void SetRange(float _min,float _max)
@@ -87,9 +87,9 @@ public class ProgressImageUI : BaseImageUI
 
 	public void SetValueDuration(float _value,float _duration)
 	{
-		CommonUtility.RecycleTokenSource(ref m_TokenSource);
+		UniTaskUtility.RecycleTokenSource(ref m_TokenSource);
 
-		CommonUtility.ExecuteOverTimeAsync(CurrentValue,_value,_duration,SetValue,false,null,m_TokenSource.Token).Forget();
+		UniTaskUtility.ExecuteOverTimeAsync(CurrentValue,_value,_duration,SetValue,false,null,m_TokenSource.Token).Forget();
 	}
 
 	protected override void Reset() 

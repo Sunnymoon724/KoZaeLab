@@ -38,9 +38,9 @@ namespace KZLib.KZAttribute
 			var labelText = _label == null ? string.Empty : _label.text;
 
 			var value = DrawField(rect,labelText);
-			var maximum = Attribute.MaxExpression.IsEmpty() ? MaxValue : GetValue<TValue>(Attribute.MaxExpression);
+			var max = Attribute.MaxExpression.IsEmpty() ? MaxValue : GetValue<TValue>(Attribute.MaxExpression);
 
-			ValueEntry.SmartValue = CommonUtility.MaxClamp(value,maximum);
+			ValueEntry.SmartValue = MathUtility.MaxClamp(value,max);
 		}
 
 		protected abstract TValue MaxValue { get; }

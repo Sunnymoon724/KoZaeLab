@@ -37,17 +37,17 @@ namespace KZLib.KZFiles
 				throw new Exception("헤더 청크를 찾을 수 없습니다.");
 			}
 
-			var chunkSize = CommonUtility.ReadInt32(_reader);
+			var chunkSize = _reader.ReadInt32();
 
 			if(chunkSize != 6)
 			{
 				throw new Exception("헤더 청크의 길이는 6byte 이어야 합니다.");
 			}
 
-			m_FileFormat = CommonUtility.ReadInt16(_reader);
-			int trackCount = CommonUtility.ReadInt16(_reader);
+			m_FileFormat = _reader.ReadInt16();
+			int trackCount = _reader.ReadInt16();
 
-			m_DeltaTicksPerQuarterNote = CommonUtility.ReadInt16(_reader);
+			m_DeltaTicksPerQuarterNote = _reader.ReadInt16();
 			m_MidiTrackList = new List<MidiTrack>(trackCount);
 
 			for(var i=0;i<trackCount;i++)
@@ -68,7 +68,7 @@ namespace KZLib.KZFiles
 				throw new NullReferenceException("트랙 청크를 찾을 수 없습니다.");
 			}
 
-			var chunkSize = CommonUtility.ReadInt32(_reader);
+			var chunkSize = _reader.ReadInt32();
 			var startPosition = _reader.BaseStream.Position;
 			var endPosition = startPosition+chunkSize;
 			
@@ -94,7 +94,7 @@ namespace KZLib.KZFiles
 
 		private MidiEvent ReadNextEvent(BinaryReader _reader,MidiEvent _previous)
 		{
-			var deltaTime = ReadVariableLength(_reader);
+			var deltaTime = _reader.ReadVariableLength();
 			var channel = 1;
 			var status = _reader.ReadByte();
 
@@ -154,7 +154,7 @@ namespace KZLib.KZFiles
 		private MidiEvent ReadMetaEvent(BinaryReader _reader,int _deltaTime)
 		{
 			var status = _reader.ReadByte();
-			int length = ReadVariableLength(_reader);
+			int length = _reader.ReadVariableLength();
 
 			switch(status) 
 			{
@@ -200,20 +200,8 @@ namespace KZLib.KZFiles
 			}
 		}
 
-		private int ReadVariableLength(BinaryReader _reader)
-		{
-			var value = 0;
-			int next;
+		
 
-			do
-			{
-				next = _reader.ReadByte();
-				value <<= 7;
-				value |= next & 0x7F;
-
-			}while((next & 0x80) == 0x80);
-
-			return value;
-		}
+		
 	}
 }

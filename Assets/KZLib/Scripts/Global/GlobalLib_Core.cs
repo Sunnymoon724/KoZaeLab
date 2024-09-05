@@ -13,6 +13,8 @@ public partial struct Global
 	public const int FRAME_RATE_60 = 60;
 	public const int FRAME_RATE_30 = 30;
 
+	public static readonly string[] BYTE_UNIT_ARRAY = new string[] { "B","KB","MB","GB","TB" };
+
 	public static readonly Vector3 CENTER_VIEWPORT_POINT = new(0.5f,0.5f,1.0f);
 
 

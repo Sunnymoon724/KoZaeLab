@@ -17,4 +17,9 @@ public abstract class BaseTextUI : BaseComponentUI
 			m_Text = GetComponent<TMP_Text>();
 		}
 	}
+
+	public void ClearText()
+	{
+		m_Text.SetSafeTextMeshPro(string.Empty);
+	}
 }

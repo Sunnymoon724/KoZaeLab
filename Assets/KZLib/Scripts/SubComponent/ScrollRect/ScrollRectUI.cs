@@ -156,7 +156,7 @@ public partial class ScrollRectUI : BaseComponentUI
 
 		var contentLocation = GetContentLocation();
 
-		CommonUtility.ExecuteOverTimeAsync(contentLocation,location,_duration,SetScrollLocation).Forget();
+		UniTaskUtility.ExecuteOverTimeAsync(contentLocation,location,_duration,SetScrollLocation).Forget();
 	}
 
 	private float FindReachLocation(int _index,MoveToType _type)

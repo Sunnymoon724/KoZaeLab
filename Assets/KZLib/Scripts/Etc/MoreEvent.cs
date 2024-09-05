@@ -2,6 +2,10 @@ using System;
 
 namespace KZLib
 {
+	/// <summary>
+	/// 중복 실행 방지 델리게이트
+	/// </summary>
+
 	#region MoreAction
 	public class MoreAction
 	{

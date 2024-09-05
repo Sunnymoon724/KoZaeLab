@@ -8,6 +8,8 @@ namespace HudPanel
 	public interface IHudUI
 	{
 		void Refresh(float _deltaTime,int _frameCount);
+
+		bool IsActive { get; }
 	}
 }
 
@@ -32,7 +34,10 @@ public class HudPanelUI : WindowUI2D
 		{
 			foreach(var hud in m_HudUIList)
 			{
-				hud.Refresh(m_DeltaTime,m_FrameCount);
+				if(hud.IsActive)
+				{
+					hud.Refresh(m_DeltaTime,m_FrameCount);
+				}
 			}
 
 			m_DeltaTime = 0.0f;

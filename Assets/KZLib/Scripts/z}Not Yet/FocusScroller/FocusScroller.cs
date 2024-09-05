@@ -131,7 +131,7 @@ namespace KZLib.KZDevelop
 			{
 				OnDragStart += () =>
 				{
-					CommonUtility.MergeUniTaskAsync(new Func<UniTask>[]
+					UniTaskUtility.MergeUniTaskAsync(new Func<UniTask>[]
 					{
 						() => { return PlayButtonFadeAsync(1.0f,0.0f,m_FadeInDuration); },
 					},default).Forget();
@@ -139,7 +139,7 @@ namespace KZLib.KZDevelop
 
 				OnDragEnd += _ =>
 				{
-					CommonUtility.MergeUniTaskAsync(new Func<UniTask>[]
+					UniTaskUtility.MergeUniTaskAsync(new Func<UniTask>[]
 					{
 						() => { return PlayButtonFadeAsync(0.0f,1.0f,m_MagnetDuration); },
 					},default).Forget();
@@ -164,7 +164,7 @@ namespace KZLib.KZDevelop
 
 		public void UpdateIndex(int _index)
 		{
-			m_FocusIndex = CommonUtility.LoopClamp(_index,m_CellList.Count);
+			m_FocusIndex = MathUtility.LoopClamp(_index,m_CellList.Count);
 
 			m_OnSetFocus?.Invoke(m_CellList[m_FocusIndex]);
 
@@ -186,7 +186,7 @@ namespace KZLib.KZDevelop
 
 		private void OnClickedButton(int _index)
 		{
-			var index = m_CircularMode ? CommonUtility.LoopClamp(_index,m_CellList.Count) : Mathf.Clamp(_index,0,m_CellList.Count);
+			var index = m_CircularMode ? MathUtility.LoopClamp(_index,m_CellList.Count) : Mathf.Clamp(_index,0,m_CellList.Count);
 
 			if(!m_CellList.ContainsIndex(index) || index == m_FocusIndex)
 			{
@@ -197,7 +197,7 @@ namespace KZLib.KZDevelop
 
 			if(m_UseFade)
 			{
-				CommonUtility.MergeUniTaskAsync(new Func<UniTask>[]
+				UniTaskUtility.MergeUniTaskAsync(new Func<UniTask>[]
 				{
 					() => { return PlayButtonFadeAsync(1.0f,0.0f,m_ButtonClickDuration/2.0f); },
 					() => { return PlayButtonFadeAsync(0.0f,1.0f,m_ButtonClickDuration/2.0f); },
@@ -207,7 +207,7 @@ namespace KZLib.KZDevelop
 
 		private async UniTask PlayButtonFadeAsync(float _start,float _finish,float _duration)
 		{
-			await CommonUtility.ExecuteOverTimeAsync(0.0f,1.0f,_duration,(progress)=>
+			await UniTaskUtility.ExecuteOverTimeAsync(0.0f,1.0f,_duration,(progress)=>
 			{
 				foreach(var graphic in m_GraphicList)
 				{
@@ -253,11 +253,11 @@ namespace KZLib.KZDevelop
 			{
 				var index = _firstIndex+i;
 				var location = _firstLocation+i*m_SlotSpace;
-				var slot = m_SlotList[CommonUtility.LoopClamp(index,slotCount)];
+				var slot = m_SlotList[MathUtility.LoopClamp(index,slotCount)];
 
 				if(IsCircularMode)
 				{
-					index = CommonUtility.LoopClamp(index,cellCount);
+					index = MathUtility.LoopClamp(index,cellCount);
 				}
 
 				if(index < 0 || index >= cellCount || location > 1.0f)

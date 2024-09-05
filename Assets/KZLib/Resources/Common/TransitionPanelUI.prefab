@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
@@ -98,13 +98,13 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   m_AutoPlay: 0
-  m_SkipButton: {fileID: 0}
   m_Duration: 0
   m_Progress: 1
   m_LoopCount: 1
   m_IgnoreTimeScale: 1
   m_Image: {fileID: 4348948429196818278}
-  m_TransitionType: 1
+  m_Material: {fileID: 2100000, guid: 106769c56d55bc447bac303457ad0662, type: 2}
+  m_Type: 0
 --- !u!1 &4582253882050708188
 GameObject:
   m_ObjectHideFlags: 0
