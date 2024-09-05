@@ -62,7 +62,7 @@ namespace KZLib
 
 		private void SetData(string _key,string _data)
 		{
-			var data = IsEncrypt ? CommonUtility.AESEncryptData(TABLE_NAME,_data) : _data;
+			var data = IsEncrypt ? SecurityUtility.AESEncryptData(TABLE_NAME,_data) : _data;
 
 			SaveDataMgr.In.SetData(TABLE_NAME,EncryptText(_key),data);
 		}
@@ -342,12 +342,12 @@ namespace KZLib
 
 		private string EncryptText(string _text)
 		{
-			return IsEncrypt ? CommonUtility.AESEncryptData(TABLE_NAME,_text) : _text;
+			return IsEncrypt ? SecurityUtility.AESEncryptData(TABLE_NAME,_text) : _text;
 		}
 
 		private string DecryptText(string _text)
 		{
-			return IsEncrypt ? CommonUtility.AESDecryptData(TABLE_NAME,_text) : _text;
+			return IsEncrypt ? SecurityUtility.AESDecryptData(TABLE_NAME,_text) : _text;
 		}
 	}
 }

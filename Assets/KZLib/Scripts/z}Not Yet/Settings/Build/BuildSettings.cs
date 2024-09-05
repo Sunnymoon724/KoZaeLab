@@ -50,7 +50,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 				EditorUserBuildSettings.SwitchActiveBuildTargetAsync(BuildPipeline.GetBuildTargetGroup(currentTarget),currentTarget);
 			}
 
-			await CommonUtility.SendBuildReportAsync(LogMgr.In.LogDataGroup);
+			await WebRequestUtility.SendBuildReportAsync(LogMgr.In.LogDataGroup);
 		}
 	}
 	private (string,byte[]) ConvertToFileGroup(string _filePath)

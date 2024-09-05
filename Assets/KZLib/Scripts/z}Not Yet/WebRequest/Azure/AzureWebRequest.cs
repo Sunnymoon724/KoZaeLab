@@ -61,7 +61,7 @@ namespace KZLib.KZNetwork
 			// container
 			builder.AppendFormat("/{0}/{1}",_storageName,_path);
 			
-			var signature = CommonUtility.HMACSignature(key,builder.ToString());
+			var signature = SecurityUtility.HMACSignature(key,builder.ToString());
 
 			return string.Format("SharedKey {0}:{1}",_storageName,signature);
 		}

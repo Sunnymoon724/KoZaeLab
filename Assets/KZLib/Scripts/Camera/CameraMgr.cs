@@ -11,7 +11,7 @@ namespace KZLib
 		[SerializeField,LabelText("메인 카메라")]
 		private Camera m_MainCamera = null;
 		private Camera m_OverrideCamera = null;
-		public Camera CurrentCamera => m_OverrideCamera == null ? m_OverrideCamera : m_MainCamera;
+		public Camera CurrentCamera => m_OverrideCamera == null ? m_MainCamera : m_OverrideCamera;
 
 		[ShowInInspector,ReadOnly,LabelText("카메라 타겟")]
 		private Transform m_Target = null;

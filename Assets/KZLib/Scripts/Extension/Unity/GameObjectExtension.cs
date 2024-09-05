@@ -1,4 +1,5 @@
-﻿using KZLib;
+﻿using System.Collections.Generic;
+using KZLib;
 using UnityEngine;
 
 public static class GameObjectExtension
@@ -145,5 +146,59 @@ public static class GameObjectExtension
 				renderer.materials[i].shader = ShaderMgr.In.GetShader(renderer.materials[i].shader.name);
 			}
 		}
+	}
+
+	/// <summary>
+	/// 면이 뒤집히는 현상 수정
+	/// </summary>
+	public static void SkinMeshFlip(this GameObject _object)
+	{
+		var mesh = _object.GetComponent<SkinnedMeshRenderer>().sharedMesh;
+
+		for(var i=0;i<mesh.vertices.Length;i++)
+		{
+			mesh.vertices[i] = new Vector3(mesh.vertices[i].x+100f,mesh.vertices[i].y,mesh.vertices[i].z);
+		}
+
+		var verticesList = new List<Vector3>();
+		var normalList = new List<Vector3>();
+		var triangleList = new List<int>();
+		var uvList = new List<Vector2>();
+		var tangentList = new List<Vector4>();
+		var boneWeightList = new List<BoneWeight>();
+		var bindposeList = new List<Matrix4x4>();
+
+		for(var i=0;i<mesh.vertices.Length;i++)
+		{
+			verticesList.Add(mesh.vertices[i]);
+			normalList.Add(mesh.normals[i]);
+			uvList.Add(mesh.uv[i]);
+			tangentList.Add(mesh.tangents[i]);
+		}
+
+		for(var i=mesh.triangles.Length-1;i>=0;i--)
+		{
+			triangleList.Add(mesh.triangles[i]);
+		}
+
+		for(var i=0;i<mesh.boneWeights.Length;i++)
+		{
+			boneWeightList.Add(mesh.boneWeights[i]);
+		}
+
+		for(var i=0;i<mesh.bindposes.Length;i++)
+		{
+			bindposeList.Add(mesh.bindposes[i]);
+		}
+
+		mesh.Clear();
+
+		mesh.vertices = verticesList.ToArray();
+		mesh.triangles = triangleList.ToArray();
+		mesh.uv = uvList.ToArray();
+		mesh.normals = normalList.ToArray();
+		mesh.tangents = tangentList.ToArray();
+		mesh.boneWeights = boneWeightList.ToArray();
+		mesh.bindposes = bindposeList.ToArray();
 	}
 }

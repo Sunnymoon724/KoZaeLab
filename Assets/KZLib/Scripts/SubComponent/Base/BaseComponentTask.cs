@@ -1,5 +1,6 @@
 using System.Threading;
 
+// TODO m_Source 수정?!
 public abstract class BaseComponentTask : BaseComponent
 {
 	protected CancellationTokenSource m_Source = null;

@@ -8,7 +8,9 @@ namespace HudPanel
 		[SerializeField]
 		private TMP_Text m_FrameText = null;
 
-		private string GetFrameRate(int _value)
+        public bool IsActive => gameObject.activeSelf;
+
+        private string GetFrameRate(int _value)
 		{
 			return _value > 0 ? string.Format("{0:000}",_value) : "----";
 		}

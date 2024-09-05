@@ -26,7 +26,7 @@ namespace KZLib
 		{
 			while(true)
 			{
-				await UniTask.WaitForSeconds(POOL_INTERVAL,true);
+				await UniTask.Delay(TimeSpan.FromSeconds(POOL_INTERVAL),true);
 
 				foreach(var pair in m_PoolDataDict)
 				{

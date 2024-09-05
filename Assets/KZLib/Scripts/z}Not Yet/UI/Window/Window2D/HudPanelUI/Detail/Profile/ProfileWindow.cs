@@ -13,13 +13,10 @@ namespace HudPanel
 		[SerializeField]
 		private AudioProfile m_AudioProfile = null;
 
+		public bool IsActive => gameObject.activeInHierarchy;
+
 		public void Refresh(float _deltaTime,int _frameCount)
 		{
-			if(!gameObject.activeInHierarchy)
-			{
-				return;
-			}
-
 			m_FrameProfile.Refresh(_deltaTime,_frameCount);
 			m_MemoryProfile.Refresh();
 			m_RenderProfile.Refresh();

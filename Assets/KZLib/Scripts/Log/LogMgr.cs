@@ -155,12 +155,12 @@ namespace KZLib
 
 			await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
 
-			var texture = CommonUtility.GetScreenShot();
+			var texture = UnityUtility.GetScreenShot();
 
-			await CommonUtility.SendBugReportAsync(m_LogDataQueue,texture.EncodeToPNG());
+			await WebRequestUtility.SendBugReportAsync(m_LogDataQueue,texture.EncodeToPNG());
 
 			// 한번 보내고 30초동안 대기 -> 너무 자주 보내면 부하가 있음
-			await UniTask.WaitForSeconds(COOL_TIME_TIMER);
+			await UniTask.Delay(TimeSpan.FromSeconds(COOL_TIME_TIMER));
 
 			m_SendLock = false;
 		}

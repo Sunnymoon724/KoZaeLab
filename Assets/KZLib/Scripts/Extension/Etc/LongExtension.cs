@@ -40,4 +40,35 @@ public static class LongExtension
 	{
         return _pivot.AddFlag(_add).RemoveFlag(_remove);
 	}
+
+	public static string ByteToString(this long _byte)
+	{
+		_byte.ByteToString(out var _size,out var _unit);
+
+		return string.Format("{0:N2} {1}",_size,_unit);
+	}
+
+	public static void ByteToString(this long _byte,out double _size,out string _unit)
+	{
+		var index = 0;
+		_size = _byte;
+
+		while(_size >= 1024.0d)
+		{
+			_size /= 1024.0d;
+			index++;
+		}
+
+		_unit = Global.BYTE_UNIT_ARRAY[index];
+	}
+
+	public static long ByteScaleUpUnit(this long _byte)
+	{
+		return _byte/1024L;
+	}
+
+	public static double ByteScaleUpUnitToDouble(this long _byte)
+	{
+		return _byte/1024.0d;
+	}
 }
