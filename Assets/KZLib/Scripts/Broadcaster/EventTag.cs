@@ -14,9 +14,9 @@ public class EventTag : Enumeration
 	public static readonly EventTag ChangeNativeOption = new(nameof(ChangeNativeOption));
 
 	// Touch
-	public static readonly EventTag TouchDownPoint		= new(nameof(TouchDownPoint));
-	public static readonly EventTag TouchDragPoint		= new(nameof(TouchDragPoint));
-	public static readonly EventTag TouchUpPoint		= new(nameof(TouchUpPoint));
+	public static readonly EventTag TouchDownPoint			= new(nameof(TouchDownPoint));
+	public static readonly EventTag TouchHoldingPoint		= new(nameof(TouchHoldingPoint));
+	public static readonly EventTag TouchUpPoint			= new(nameof(TouchUpPoint));
 
 	// Update Account
 	public static readonly EventTag UpdateAccount = new(nameof(UpdateAccount));

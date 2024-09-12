@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace KZLib
 {
-	public abstract class InputCon : BaseComponent
+	public class InputCon : BaseComponent
 	{
 		private readonly bool m_InputBlock = false;
 
@@ -70,7 +70,7 @@ namespace KZLib
 
 		public void BlockInput(bool _block)
 		{
-			SetEnable(_block);
+			SetEnable(!_block);
 		}
 	}
 }

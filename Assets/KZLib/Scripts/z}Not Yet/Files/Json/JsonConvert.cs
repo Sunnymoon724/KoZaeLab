@@ -2,6 +2,10 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 
+/// <summary>
+/// 사용 예시
+/// new JsonSerializerSettings() { Converters = { new Vector3IntConverter() } }
+/// </summary>
 namespace KZLib.KZFiles.Converter
 {
 	public class Vector4Converter : JsonConverter
@@ -52,6 +56,35 @@ namespace KZLib.KZFiles.Converter
 		public override void WriteJson(JsonWriter _writer,object _object,JsonSerializer _serializer)
 		{
 			var data = (Vector3) _object;
+
+			_writer.WriteStartObject();
+			_writer.WritePropertyName("x");
+			_writer.WriteValue(data.x);
+			_writer.WritePropertyName("y");
+			_writer.WriteValue(data.y);
+			_writer.WritePropertyName("z");
+			_writer.WriteValue(data.z);
+			_writer.WriteEndObject();
+		}
+	}
+
+	public class Vector3IntConverter : JsonConverter
+	{
+		public override bool CanConvert(Type _type)
+		{
+			return _type == typeof(Vector3Int);
+		}
+
+		public override object ReadJson(JsonReader _reader,Type _type,object _object,JsonSerializer _serializer)
+		{
+			var data = _serializer.Deserialize(_reader);
+
+			return JsonConvert.DeserializeObject<Vector3Int>(data.ToString());
+		}
+
+		public override void WriteJson(JsonWriter _writer,object _object,JsonSerializer _serializer)
+		{
+			var data = (Vector3Int) _object;
 
 			_writer.WriteStartObject();
 			_writer.WritePropertyName("x");

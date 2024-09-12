@@ -60,7 +60,7 @@ public static partial class TransformExtension
 		return Vector3.Dot(_transform.forward,direction.normalized) >= _cos;
 	}
 
-	public static void LookAt2D(Transform _transform,Vector3 _target)
+	public static void LookAt2D(this Transform _transform,Vector3 _target)
 	{
 		_transform.rotation = Quaternion.LookRotation(Vector3.forward,-(_target-_transform.position));
 		_transform.Rotate(Vector3.forward,-90.0f);
