@@ -5,6 +5,9 @@ using UnityEngine.EventSystems;
 
 namespace KZLib
 {
+	/// <summary>
+	/// 터치 이벤트는 Down, Holding(Drag), Up 3개만 쓰며 Holding과 Drag는 받은 쪽에서 처리
+	/// </summary>
 	public class TouchMgr : LoadSingletonMB<TouchMgr>
 	{
 		private bool m_Block = false;
@@ -25,8 +28,6 @@ namespace KZLib
 				return;
 			}
 
-			
-
 #if UNITY_EDITOR || UNITY_STANDALONE
 			if(Input.GetMouseButtonDown(0))
 			{
@@ -34,7 +35,7 @@ namespace KZLib
 			}
 			else if(Input.GetMouseButton(0))
 			{
-				ProcessInputEvent(EventTag.TouchDragPoint,Input.mousePosition,-1);
+				ProcessInputEvent(EventTag.TouchHoldingPoint,Input.mousePosition,-1);
 			}
 			else if(Input.GetMouseButtonUp(0))
 			{
@@ -48,14 +49,21 @@ namespace KZLib
 				switch (touch.phase)
 				{
 					case TouchPhase.Began:
+					{
 						ProcessInputEvent(EventTag.TouchDownPoint,touch.position,touch.fingerId);
 						break;
+					}
 					case TouchPhase.Moved:
-						ProcessInputEvent(EventTag.TouchDragPoint,touch.position,touch.fingerId);
+					case TouchPhase.Stationary:
+					{
+						ProcessInputEvent(EventTag.TouchHoldingPoint,touch.position,touch.fingerId);
 						break;
+					}
 					case TouchPhase.Ended:
+					{
 						ProcessInputEvent(EventTag.TouchUpPoint,touch.position,touch.fingerId);
 						break;
+					}
 				}
 			}
 #endif
@@ -63,7 +71,7 @@ namespace KZLib
 
 		private void ProcessInputEvent(EventTag _eventTag,Vector2 _point,int _pointerId)
 		{
-			if(!EventSystem.current.IsPointerOverGameObject(_pointerId))
+			if(EventSystem.current != null && !EventSystem.current.IsPointerOverGameObject(_pointerId))
 			{
 				var worldPoint = CameraMgr.In.CurrentCamera.ScreenToWorldPoint(_point).ToVector2();
 
