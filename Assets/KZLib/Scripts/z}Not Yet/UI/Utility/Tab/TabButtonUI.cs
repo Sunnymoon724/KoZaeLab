@@ -9,17 +9,12 @@ public class TabButtonUI : BaseButtonUI
 
 	[SerializeField,HideInInspector]
 	private TabGroupUI m_TabGroup = null;
-	[SerializeField,HideInInspector]
-	private ToggleUI m_Toggle = null;
 
 	[FoldoutGroup("기본 설정",Order = 0),ShowInInspector,LabelText("선택")]
 	public bool Select { get => isActiveAndEnabled && m_Select; private set => SelectTap(value,true); }
 
 	[FoldoutGroup("기본 설정",Order = 0),ShowInInspector,LabelText("탭 그룹")]
 	private TabGroupUI TabGroup => m_TabGroup;
-
-	[FoldoutGroup("기본 설정",Order = 0),ShowInInspector,LabelText("토글 설정")]
-	private ToggleUI Toggle { get => m_Toggle; set { m_Toggle = value; value.SetToggle(Select,true); } }
 
 	private Action<bool> m_OnChanged = null;
 
@@ -29,7 +24,7 @@ public class TabButtonUI : BaseButtonUI
 		remove { m_OnChanged -= value; }
 	}
 
-	protected override void OnClickButton()
+	protected override void OnClickedButton()
 	{
 		Select = !Select;
 	}
@@ -57,11 +52,6 @@ public class TabButtonUI : BaseButtonUI
 		}
 
 		m_Select = _value;
-
-		if(Toggle)
-		{
-			Toggle.SetToggle(m_Select,_forceUpdate);
-		}
 
 		m_OnChanged?.Invoke(_value);
 

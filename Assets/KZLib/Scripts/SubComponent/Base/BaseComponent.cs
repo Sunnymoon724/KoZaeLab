@@ -17,7 +17,7 @@ public abstract class BaseComponent : SerializedMonoBehaviour
 		Initialize();
 	}
 
-	private void OnDestroy()
+	protected void OnDestroy()
 	{
 		Release();
 	}

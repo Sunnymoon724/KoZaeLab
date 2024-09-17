@@ -17,7 +17,7 @@ public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDr
 		m_Canvas = gameObject.GetComponentInParent<Canvas>();
 	}
 
-	public void OnDrag(PointerEventData _data)
+	void IDragHandler.OnDrag(PointerEventData _data)
 	{
 		if(m_Canvas == null)
 		{
@@ -36,7 +36,7 @@ public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDr
 		OnBeginDragHandler?.Invoke();
 	}
 
-	public void OnEndDrag(PointerEventData _data)
+	void IEndDragHandler.OnEndDrag(PointerEventData _data)
 	{
 		OnEndDragHandler?.Invoke();
 	}

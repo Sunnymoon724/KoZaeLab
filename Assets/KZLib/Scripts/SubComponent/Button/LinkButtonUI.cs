@@ -16,7 +16,7 @@ public class LinkButtonUI : BaseButtonUI
 		base.Initialize();
 	}
 
-	protected override void OnClickButton()
+	protected override void OnClickedButton()
 	{
 		Application.OpenURL(m_LinkURL);
 	}

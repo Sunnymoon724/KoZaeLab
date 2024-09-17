@@ -105,7 +105,7 @@ namespace KZLib.KZAttribute
 			}
 
 			//? 텍스트
-			EditorGUI.LabelField(rect,ValueEntry.SmartValue,GetValidateStyle(isValid));
+			EditorGUI.LabelField(rect,ValueEntry.SmartValue,GetValidateStyle(isValid,Global.WRONG_HEX_COLOR));
 		}
 
 		protected Rect DrawButton(Rect _rect,SdfIconType _icon,bool _active,Action _onClicked)

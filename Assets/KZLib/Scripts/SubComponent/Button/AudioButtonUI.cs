@@ -21,7 +21,7 @@ public class AudioButtonUI : BaseButtonUI
 		base.Initialize();
 	}
 
-	protected override void OnClickButton()
+	protected override void OnClickedButton()
 	{
 		SoundMgr.In.PlayUIShot(m_AudioClip);
 	}

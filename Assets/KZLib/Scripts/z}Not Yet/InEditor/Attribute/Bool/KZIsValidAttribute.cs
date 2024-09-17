@@ -17,10 +17,13 @@ namespace KZLib.KZAttribute
 		public string CorrectText { get; }
 		public string WrongText { get; }
 
-		public KZIsValidAttribute(string _correctText = "O",string _wrongText = "X")
+		public string WrongHexColor { get; }
+
+		public KZIsValidAttribute(string _correctText = "O",string _wrongText = "X",string _wrongHexColor = null)
 		{
 			CorrectText = _correctText;
 			WrongText = _wrongText;
+			WrongHexColor = _wrongHexColor;
 		}
 	}
 
@@ -34,7 +37,7 @@ namespace KZLib.KZAttribute
 			//? label
 			var rect = DrawPrefixLabel(_label);
 			//? 텍스트
-			EditorGUI.LabelField(rect,isValid ? Attribute.CorrectText : Attribute.WrongText,GetValidateStyle(isValid));
+			EditorGUI.LabelField(rect,isValid ? Attribute.CorrectText : Attribute.WrongText,GetValidateStyle(isValid,Attribute.WrongHexColor));
 		}
 	}
 #endif

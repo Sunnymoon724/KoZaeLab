@@ -15,6 +15,10 @@ public static class StringExtension
 {
 	private static readonly Dictionary<string,Color> s_HexColorDict = new();
 
+	#region Normalize
+	/// <summary>
+	/// 슬래시 일반화
+	/// </summary>
 	public static string NormalizeNewLines(this string _text)
 	{
 		return _text.Replace("\\n",Environment.NewLine);
@@ -33,6 +37,7 @@ public static class StringExtension
 		return _path.Replace('\\','/');
 #endif
 	}
+	#endregion Normalize
 
 	#region Character
 	/// <summary>
@@ -126,21 +131,28 @@ public static class StringExtension
 	}
 	#endregion Character
 
+	#region Compare
 	/// <summary>
-	/// _includeSpace가 true면 공백도 없는걸로 판단함
+	/// includeSpace가 true면 공백도 없는걸로 판단함
 	/// </summary>
 	/// <param name="_text"></param>
-	public static bool IsEmpty(this string _text)
+	public static bool IsEmpty(this string _text,bool _includeSpace = false)
 	{
-		return string.IsNullOrEmpty(_text);
+		return _includeSpace ? string.IsNullOrWhiteSpace(_text) : string.IsNullOrEmpty(_text);
 	}
 
+	/// <summary>
+	/// 스트링 전용 비교
+	/// </summary>
 	public static bool IsEqual(this string _text1,string _text2)
 	{
 		return string.Equals(_text1,_text2);
 	}
 
-	public static bool AttemptMatch(this string _text,int _index,string _match,bool _ignoreCase = false)
+	/// <summary>
+	/// index에서 match가 일치하는지 확인합니다.
+	/// </summary>
+	public static bool IsMatchAt(this string _text,int _index,string _match,bool _ignoreCase = false)
 	{
 		if(_text.IsEmpty() || _match.IsEmpty())
 		{
@@ -172,6 +184,7 @@ public static class StringExtension
 
 		return true;
 	}
+	#endregion Compare
 
 	#region Convert Enum
 	public static bool IsEnumDefined<TEnum>(this string _text)
@@ -208,11 +221,17 @@ public static class StringExtension
 		return s_HexColorDict[_hexCode];
 	}
 
+	/// <summary>
+	/// color으로 문자 색상을 변경합니다.
+	/// </summary>
 	public static string ToColorText(this string _text,string _color)
 	{
 		return string.Format("<color=#{0}>{1}</color>",_color,_text);
 	}
-	
+
+	/// <summary>
+	/// color으로 문자 색상을 변경합니다.
+	/// </summary>
 	public static string ToColorText(this string _text,Color _color)
 	{
 		return ToColorText(ColorUtility.ToHtmlStringRGBA(_color),_text);
@@ -366,11 +385,9 @@ public static class StringExtension
 			return null;
 		}
 
-		return _text.TrimParenthesis().Split(',');
+		return _text.TrimParentheses().Split(',');
 	}
 	#endregion Convert Vector
-
-	
 
 	#region Remove
 	public static string RemoveStart(this string _text,string _remove)
@@ -425,6 +442,9 @@ public static class StringExtension
 	#endregion Remove
 
 	#region Trim
+	/// <summary>
+	/// trim만큼 앞에서 부터 제거
+	/// </summary>
 	public static string TrimTextStart(this string _text,string _trim)
 	{
 		if(_text.IsEmpty() || _trim.IsEmpty())
@@ -440,6 +460,9 @@ public static class StringExtension
 		return _text;
 	}
 
+	/// <summary>
+	/// trim만큼 뒤에서 부터 제거
+	/// </summary>
 	public static string TrimTextEnd(this string _text,string _trim)
 	{
 		if(_text.IsEmpty() || _trim.IsEmpty())
@@ -455,66 +478,106 @@ public static class StringExtension
 		return _text;
 	}
 
+	/// <summary>
+	/// 빈칸 전부 제거
+	/// </summary>
 	public static string TrimAllSpace(this string _text)
 	{
-        return _text.IsEmpty() ? _text : _text.Replace(" ",string.Empty).Trim();
+        return _text.IsEmpty() ? _text : _text.Replace(" ",string.Empty);
 	}
 
-	public static string TrimParenthesis(this string _text)
+	/// <summary>
+	/// 모든 괄호 제거
+	/// </summary>
+	public static string TrimBrackets(this string _text)
+	{
+		return _text.Trim('(',')','[',']','{','}','<','>');
+	}
+	/// <summary>
+	/// 소괄호 제거
+	/// </summary>
+	public static string TrimParentheses(this string _text)
 	{
 		return _text.Trim('(',')');
 	}
-	public static string TrimBrackets(this string _text)
-	{
-		return _text.Trim('[',']');
-	}
+	/// <summary>
+	/// 중괄호 제거
+	/// </summary>
 	public static string TrimBraces(this string _text)
 	{
 		return _text.Trim('{','}');
 	}
-
-	public static string TrimChevrons(this string _text)
+	/// <summary>
+	/// 대괄호 제거
+	/// </summary>
+	public static string TrimSquareBrackets(this string _text)
+	{
+		return _text.Trim('[',']');
+	}
+	/// <summary>
+	/// 화살괄호 제거
+	/// </summary>
+	public static string TrimAngleBrackets(this string _text)
 	{
 		return _text.Trim('<','>');
 	}
 	#endregion Trim
 
+	#region Wrap
+	/// <summary>
+	/// 소괄호 래핑
+	/// </summary>
+	public static string WrapParentheses(this string _text)
+	{
+		return string.Format("({0})",_text);
+	}
+	/// <summary>
+	/// 중괄호 래핑
+	/// </summary>
+	public static string WrapBraces(this string _text)
+	{
+		return string.Format("{{{0}}}",_text);
+	}
+	/// <summary>
+	/// 대괄호 래핑
+	/// </summary>
+	public static string WrapSquareBrackets(this string _text)
+	{
+		return string.Format("[{0}]",_text);
+	}
+	/// <summary>
+	/// 화살괄호 래핑
+	/// </summary>
+	public static string WrapAngleBrackets(this string _text)
+	{
+		return string.Format("<{0}>",_text);
+	}
+	#endregion Wrap
+
 	#region Split
-	public static string[] SplitTextParenthesis(this string _text)
+	public static string[] SplitTextByBrackets(this string _text,StringSplitOptions _options = StringSplitOptions.None)
 	{
-		return SplitText(_text,'(',')');
+		return _text.Split(new char[] { '(', ')', '[', ']', '{', '}', '<', '>' }, _options);
 	}
 
-	public static string[] SplitTextBrackets(this string _text)
+	public static string[] SplitTextByParentheses(this string _text,StringSplitOptions _options = StringSplitOptions.None)
 	{
-		return SplitText(_text,'[',']');
-	}
-	
-	public static string[] SplitTextBraces(this string _text)
-	{
-		return SplitText(_text,'{','}');
+		return _text.Split(new char[] { '(', ')' }, _options);
 	}
 
-	public static string[] SplitTextChevrons(this string _text)
+	public static string[] SplitTextByBraces(this string _text,StringSplitOptions _options = StringSplitOptions.None)
 	{
-		return SplitText(_text,'<','>');
+		return _text.Split(new char[] { '{', '}' }, _options);
 	}
 
-	private static string[] SplitText(this string _text,char _start,char _close)
+	public static string[] SplitTextBySquareBrackets(this string _text,StringSplitOptions _options = StringSplitOptions.None)
 	{
-		var textList = new List<string>();
-		var start = _text.IndexOf(_start);
-		var close = _text.IndexOf(_close);
+		return _text.Split(new char[] { '[', ']' }, _options);
+	}
 
-		while(start != -1 || close != -1)
-		{
-			textList.Add(_text.Substring(start+1,close-start-1));
-			
-			start = _text.IndexOf(_start,close+1);
-			close = _text.IndexOf(_close,close+1);
-		}
-
-		return textList.ToArray();
+	public static string[] SplitTextByAngleBrackets(this string _text,StringSplitOptions _options = StringSplitOptions.None)
+	{
+		return _text.Split(new char[] { '<', '>' }, _options);
 	}
 	#endregion Split
 
@@ -589,7 +652,6 @@ public static class StringExtension
 	{
         return _text.IsEmpty() ? null : Regex.Replace(_text,@"\d",string.Empty);
     }
-
 
 	/// <summary>
 	/// 숫자만 남긴다.

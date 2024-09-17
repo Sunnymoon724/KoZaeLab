@@ -45,7 +45,7 @@ public class ScheduleButtonUI : BaseButtonUI
 		UniTaskUtility.KillTokenSource(ref m_TokenSource);
 	}
 
-	protected override void OnClickButton()
+	protected override void OnClickedButton()
 	{
 		UniTaskUtility.RecycleTokenSource(ref m_TokenSource);
 
