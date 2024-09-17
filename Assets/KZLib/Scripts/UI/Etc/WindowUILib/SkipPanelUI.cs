@@ -32,7 +32,7 @@ public class SkipPanelUI : WindowUI2D
 
 		if(_param is SkipParam param)
 		{
-			m_SkipButton.SetOnClickListener(()=>
+			m_SkipButton.SetListener(()=>
 			{
 				param.OnClicked?.Invoke();
 
@@ -62,7 +62,7 @@ public class SkipPanelUI : WindowUI2D
 		SetButtonsState(_skipActive : false,_triggerActive : false);
 		ShowSkipButton(m_SkipShowDuration);
 
-		m_TriggerButton.SetOnClickListener(()=> { ShowSkipButton(0.0f); });
+		m_TriggerButton.AddListener(()=> { ShowSkipButton(0.0f); } );
 	}
 
 	private void SetButtonsState(bool _skipActive,bool _triggerActive)

@@ -8,11 +8,18 @@ public abstract class BaseButtonUI : BaseComponentUI
 	[SerializeField,LabelText("버튼")]
 	protected Button m_Button = null;
 
-	protected override void Initialize()
+	protected override void OnEnable()
 	{
-		base.Initialize();
+		base.OnEnable();
 
-		m_Button.SetOnClickListener(OnClickButton);
+		m_Button.AddListener(OnClickedButton);
+	}
+
+	protected override void OnDisable()
+	{
+		base.OnDisable();
+
+		m_Button.RemoveListener(OnClickedButton);
 	}
 
 	protected override void Reset()
@@ -25,5 +32,5 @@ public abstract class BaseButtonUI : BaseComponentUI
 		}
 	}
 
-	protected abstract void OnClickButton();
+	protected abstract void OnClickedButton();
 }

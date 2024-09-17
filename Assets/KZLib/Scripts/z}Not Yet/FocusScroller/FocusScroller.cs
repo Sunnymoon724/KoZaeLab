@@ -118,12 +118,12 @@ namespace KZLib.KZDevelop
 			{
 				if(m_PrevButton)
 				{
-					m_PrevButton.SetOnClickListener(()=> { OnClickedButton(m_FocusIndex-1); });
+					m_PrevButton.AddListener(OnClickedPrevButton);
 				}
 
 				if(m_NextButton)
 				{
-					m_NextButton.SetOnClickListener(()=> { OnClickedButton(m_FocusIndex+1); });
+					m_NextButton.AddListener(OnClickedNextButton);
 				}
 			}
 
@@ -147,6 +147,16 @@ namespace KZLib.KZDevelop
 			}
 
 			m_Initialize = true;
+		}
+
+		private void OnClickedPrevButton()
+		{
+			OnClickedButton(m_FocusIndex-1);
+		}
+
+		private void OnClickedNextButton()
+		{
+			OnClickedButton(m_FocusIndex+1);
 		}
 
 		public void SetCellList(List<ICellData> _cellList,int? _index = null)

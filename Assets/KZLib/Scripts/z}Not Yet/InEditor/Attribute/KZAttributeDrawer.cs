@@ -61,12 +61,12 @@ namespace KZLib.KZAttribute
 			return ReflectionUtility.GetValueInObject<TMember>(_memberName,Property.ParentValues[0]);
 		}
 
-		protected GUIStyle GetValidateStyle(bool _isValid,string _wrongColor = null)
+		protected GUIStyle GetValidateStyle(bool _isValid,string _wrongHexColor = null)
 		{
-			var wrongColor = _wrongColor ?? Global.WRONG_HEX_COLOR;
-
 			var style = new GUIStyle(GUI.skin.label);
-			style.normal.textColor = _isValid ? style.normal.textColor : wrongColor.ToColor();
+			var pivot = style.normal.textColor;
+
+			style.normal.textColor = _isValid ? pivot : _wrongHexColor == null ? pivot : _wrongHexColor.ToColor();
 
 			return style;
 		}

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
@@ -11,23 +10,23 @@ public partial class ScrollRectUI : BaseComponentUI
 {
 	private enum MoveToType { Top, Center, Bottom, }
 
-	[VerticalGroup("기본",Order = 0),SerializeField]
+	[SerializeField,LabelText("스크롤 렉트")]
 	private ScrollRect m_ScrollRect = null;
 
-	[VerticalGroup("기본",Order = 0),SerializeField,ReadOnly]
+	[SerializeField,ReadOnly,LabelText("세로 여부")]
 	private bool m_IsVertical = false;
 
-	[VerticalGroup("기본",Order = 0),SerializeField]
-	private SlotUI m_Pivot = null;
-
-	[VerticalGroup("기본"),SerializeField,ReadOnly]
-	private Dictionary<int,SlotUI> m_SlotDict = new();
-
-	[VerticalGroup("설정",Order = 1),SerializeField]
+	[SerializeField,LabelText("주변 여백")]
 	private float m_Padding = 0.0f;
 
-	[VerticalGroup("설정",Order = 1),SerializeField]
+	[SerializeField,LabelText("사이 공간")]
 	private float m_Space = 0.0f;
+
+	[SerializeField,LabelText("피봇")]
+	private SlotUI m_Pivot = null;
+
+	[SerializeField,ReadOnly,LabelText("슬롯 딕셔너리")]
+	private Dictionary<int,SlotUI> m_SlotDict = new();
 
 	private float m_SlotSize = 0.0f;
 	private float m_SlotPivot = 0.0f;
@@ -62,10 +61,10 @@ public partial class ScrollRectUI : BaseComponentUI
 
 		var content = m_ScrollRect.content;
 
-		m_ScrollRect.content.pivot = new Vector2(0.0f,1.0f);
+		m_ScrollRect.content.pivot = Vector2.up;
 		m_ScrollRect.content.anchoredPosition = Vector2.zero;
 
-		m_ScrollRect.viewport.pivot = new Vector2(0.0f,1.0f);
+		m_ScrollRect.viewport.pivot = Vector2.up;
 
 		if(m_IsVertical)
 		{
@@ -98,12 +97,17 @@ public partial class ScrollRectUI : BaseComponentUI
 
 		m_CellList.Clear();
 
-		foreach(var pair in new Dictionary<int,SlotUI>(m_SlotDict))
+		foreach(var slot in new List<SlotUI>(m_SlotDict.Values))
 		{
-			UnityUtility.DestroyObject(pair.Value.gameObject);
+			m_ObjectPool.Put(slot.gameObject);
 		}
 
 		m_SlotDict.Clear();
+	}
+
+	public void MoveToTop(ICellData _data,float _duration = 0.0f)
+	{
+		MoveToTop(m_CellList.FindIndex(x=>x.Equals(_data)),_duration);
 	}
 
 	public void MoveToTop(int _index,float _duration = 0.0f)
@@ -111,29 +115,24 @@ public partial class ScrollRectUI : BaseComponentUI
 		MoveTo(_index,MoveToType.Top,_duration);
 	}
 
+	public void MoveToCenter(ICellData _data,float _duration = 0.0f)
+	{
+		MoveToCenter(m_CellList.FindIndex(x=>x.Equals(_data)),_duration);
+	}
+
 	public void MoveToCenter(int _index,float _duration = 0.0f)
 	{
 		MoveTo(_index,MoveToType.Center,_duration);
 	}
 
+	public void MoveToBottom(ICellData _data,float _duration = 0.0f)
+	{
+		MoveToBottom(m_CellList.FindIndex(x=>x.Equals(_data)),_duration);
+	}
+
 	public void MoveToBottom(int _index,float _duration = 0.0f)
 	{
 		MoveTo(_index,MoveToType.Bottom,_duration);
-	}
-
-	public void MoveToTop(ICellData _data,float _duration = 0.0f)
-	{
-		MoveTo(m_CellList.FindIndex(x=>x.Equals(_data)),MoveToType.Top,_duration);
-	}
-
-	public void MoveToCenter(ICellData _data,float _duration = 0.0f)
-	{
-		MoveTo(m_CellList.FindIndex(x=>x.Equals(_data)),MoveToType.Center,_duration);
-	}
-
-	public void MoveToBottom(ICellData _data,float _duration = 0.0f)
-	{
-		MoveTo(m_CellList.FindIndex(x=>x.Equals(_data)),MoveToType.Bottom,_duration);
 	}
 
 	private void MoveTo(int _index,MoveToType _type,float _duration = 0.0f)
@@ -188,14 +187,14 @@ public partial class ScrollRectUI : BaseComponentUI
 	{
 		base.OnEnable();
 
-		m_ScrollRect.onValueChanged.AddListener(OnScrollChanged);
+		m_ScrollRect.AddListener(OnScrollChanged);
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
 
-		m_ScrollRect.onValueChanged.RemoveListener(OnScrollChanged);
+		m_ScrollRect.RemoveListener(OnScrollChanged);
 	}
 
 	private void OnScrollChanged(Vector2 _location)
@@ -211,31 +210,15 @@ public partial class ScrollRectUI : BaseComponentUI
 		var tailIndex = GetShowTailIndex();
 
 		if(m_HeadIndex != headIndex)
-		{
-			for(var i=m_HeadIndex;i<headIndex;i++)
-			{
-				if(m_SlotDict.ContainsKey(i))
-				{
-					m_ObjectPool.Put(m_SlotDict[i].gameObject);
+        {
+            RemoveSlotInDict(m_HeadIndex,headIndex);
 
-					m_SlotDict.Remove(i);
-				}
-			}
-
-			m_HeadIndex = headIndex;
-		}
+            m_HeadIndex = headIndex;
+        }
 
 		if(m_TailIndex != tailIndex)
 		{
-			for(var i=tailIndex+1;i<=m_TailIndex;i++)
-			{
-				if(m_SlotDict.ContainsKey(i))
-				{
-					m_ObjectPool.Put(m_SlotDict[i].gameObject);
-
-					m_SlotDict.Remove(i);
-				}
-			}
+			RemoveSlotInDict(tailIndex,m_TailIndex+1);
 
 			m_TailIndex = tailIndex;
 		}
@@ -280,23 +263,21 @@ public partial class ScrollRectUI : BaseComponentUI
 			SetSlotLocation(slot.UIRectTransform,i);
 
 			slotLocation += size;
-
-			tailIndex = i;
 		}
+	}
 
-		if(m_TailIndex != tailIndex)
+	private void RemoveSlotInDict(int _start,int _finish)
+	{
+		for(var i=_start;i<_finish;i++)
 		{
-			for(var i=tailIndex+1;i<=m_TailIndex;i++)
+			if(!m_SlotDict.ContainsKey(i))
 			{
-				if(m_SlotDict.ContainsKey(i))
-				{
-					m_ObjectPool.Put(m_SlotDict[i].gameObject);
-
-					m_SlotDict.Remove(i);
-				}
+				continue;
 			}
 
-			m_TailIndex = tailIndex;
+			m_ObjectPool.Put(m_SlotDict[i].gameObject);
+
+			m_SlotDict.Remove(i);
 		}
 	}
 
@@ -317,7 +298,7 @@ public partial class ScrollRectUI : BaseComponentUI
 		ResizeContent();
 
 		m_ScrollRect.StopMovement();
-		m_ScrollRect.normalizedPosition = new Vector2(0.0f,1.0f);
+		m_ScrollRect.normalizedPosition = Vector2.up;
 
 		UpdateLocation(true);
 
@@ -347,14 +328,12 @@ public partial class ScrollRectUI : BaseComponentUI
 
 		for(var i=0;i<m_CellList.Count;i++)
 		{
-			location += m_SlotSize;
-
-			if(contentLocation<=location)
+			if(contentLocation <= location + m_SlotSize)
 			{
 				return i;
 			}
 
-			location += m_Space;
+			location += m_SlotSize + m_Space;
 		}
 
 		return m_CellList.Count;
@@ -387,38 +366,21 @@ public partial class ScrollRectUI : BaseComponentUI
 
 	private void ResizeContent()
 	{
-		var size = m_CellList.Count*m_SlotSize+(m_CellList.Count-1)*m_Space+m_Padding*2.0f;
-		var current = m_ScrollRect.content.sizeDelta;
+		var size = m_CellList.Count == 0 ? 0.0f : m_CellList.Count*m_SlotSize+(m_CellList.Count-1)*m_Space+m_Padding*2.0f;
 
-		m_ScrollRect.content.sizeDelta = m_IsVertical ? new Vector2(current.x,size) : new Vector2(size,current.y);
+		m_ScrollRect.content.sizeDelta = m_IsVertical ? new Vector2(m_ScrollRect.content.sizeDelta.x,size) : new Vector2(size,m_ScrollRect.content.sizeDelta.y);
 	}
 
 	private void SetSlotLocation(RectTransform _rect,int _index)
 	{
 		var size = GetSizeToIndex(_index);
-		var location = m_IsVertical ? m_SlotPivot-size : m_SlotPivot+size;
 
-		_rect.anchoredPosition = m_IsVertical ? new Vector2(0.0f,location) : new Vector2(location,0.0f);
+		_rect.anchoredPosition = m_IsVertical ? new Vector2(0.0f,m_SlotPivot-size) : new Vector2(m_SlotPivot+size,0.0f);
 	}
 
 	private float GetSizeToIndex(int _index)
 	{
-		var count = Mathf.Clamp(_index,0,m_CellList.Count-1);
-		var result = m_SlotSize*count;
-
-		if(count > 0)
-		{
-			var space = count;
-
-			if(count == (m_CellList.Count == 0 ? 0 : m_CellList.Count-1))
-			{
-				space--;
-			}
-
-			result += m_Space*space;
-		}
-
-		return result;
+		return (m_SlotSize+m_Space)*_index;
 	}
 
 	protected override void Reset()
