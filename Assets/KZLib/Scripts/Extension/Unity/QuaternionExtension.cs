@@ -203,7 +203,7 @@ public static class QuaternionExtension
 
 	public static string ToQuaternionString(this Quaternion _quaternion,int _decimals = 2)
 	{
-		var format = string.Format("({1}{0}}}, {2}{0}}}, {3}{0}}}, {4}{0}}})",_decimals,"{0:f","{1:f","{2:f","{3:f");
+		var format = $"({"{0:f"}{_decimals}}}, {"{1:f"}{_decimals}}}, {"{2:f"}{_decimals}}}, {"{3:f"}{_decimals}}})";
 
 		return string.Format(format,_quaternion.x,_quaternion.y,_quaternion.z,_quaternion.w);
 	}

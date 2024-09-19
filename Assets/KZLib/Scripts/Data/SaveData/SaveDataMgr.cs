@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Mono.Data.Sqlite;
 
 namespace KZLib
@@ -24,10 +23,12 @@ namespace KZLib
 		{
 			m_Connection = new SqliteConnection(GetDataBasePath(DATABASE_NAME));
 			m_Connection.Open();
-
 			m_SaveDataDict.Clear();
 		}
 
+		/// <summary>
+		/// SQL 테이블을 로드합니다.
+		/// </summary>
 		public void LoadSQLTable(string _tableName)
 		{
 			if(_tableName.IsEmpty())
@@ -73,6 +74,9 @@ namespace KZLib
 			}
 		}
 
+		/// <summary>
+		/// 데이터가 존재하는지 확인합니다.
+		/// </summary>
 		public bool HasKey(string _tableName,string _key)
 		{
 			if(_tableName.IsEmpty() || _key.IsEmpty())
@@ -83,41 +87,39 @@ namespace KZLib
 			return m_SaveDataDict.ContainsKey(SecurityUtility.AESEncryptData(_tableName,_key));
 		}
 
+		/// <summary>
+		/// 모든 테이블 이름을 가져옵니다.
+		/// </summary>
 		public IEnumerable<string> GetTableNameGroup()
 		{
 			var result = ExecuteSQL("select name from sqlite_master where type = 'table'");
 
 			if(!result || m_DataReader == null)
 			{
-				return null;
+				yield break;
 			}
 
 			var nameList = new List<string>();
 
 			while(m_DataReader.Read())
 			{
-				nameList.Add(m_DataReader[0].ToString());
+				LoadSQLTable(m_DataReader[0].ToString());
 			}
 
 			m_DataReader.Close();
 
-			var dataDict = new Dictionary<(string,string),string>();
-
-			for(var i=0;i<nameList.Count;i++)
+			foreach(var pair in m_SaveDataDict)
 			{
-				var tableName = nameList[i];
-
-				if(!m_SaveDataDict.ContainsKey(tableName))
+				if(pair.Value.Count > 0)
 				{
-					m_SaveDataDict.Add(tableName,new Dictionary<string,string>());
+					yield return pair.Key;
 				}
-
-				LoadTable(tableName,m_SaveDataDict[tableName]);
 			}
-			
-			return m_SaveDataDict.Where(x=>x.Value.Count > 0).Select(x=>x.Key).ToList();
 		}
 
+		/// <summary>
+		/// 테이블에 저장된 데이터를 가져옵니다.
+		/// </summary>
 		public IReadOnlyDictionary<string,string> GetDataInTable(string _tableName)
 		{
 			if(m_SaveDataDict.TryGetValue(_tableName,out var dataDict))
@@ -128,6 +130,9 @@ namespace KZLib
 			return null;
 		}
 
+		/// <summary>
+		/// 저장된 데이터를 가져옵니다.
+		/// </summary>
 		public bool TryGetData(string _tableName,string _key,out string _result)
 		{
 			_result = null;
@@ -135,9 +140,16 @@ namespace KZLib
 			return m_SaveDataDict.TryGetValue(_tableName,out var dataDict) && dataDict.TryGetValue(_key,out _result);
 		}
 
+		/// <summary>
+		/// 저장된 데이터를 업데이트하거나 추가합니다.
+		/// </summary>
 		public void SetData(string _tableName,string _key,string _data)
 		{
-			var dataDict = m_SaveDataDict[_tableName];
+			if(!m_SaveDataDict.TryGetValue(_tableName,out var dataDict))
+			{
+				throw new ArgumentException($"{_tableName}이름의 테이블은 없습니다.");
+			}
+
 			var code = SecurityUtility.Base64Encode(_data);
 
 			if(dataDict.ContainsKey(_key))
@@ -154,69 +166,61 @@ namespace KZLib
 			}
 		}
 
+        /// <summary>
+        /// 저장된 데이터를 삭제합니다.
+        /// </summary>
 		public void RemoveKey(string _tableName,string _key)
 		{
-			if(m_SaveDataDict.TryGetValue(_tableName,out var dataDict) && dataDict.ContainsKey(_key))
-			{
-				m_SaveDataDict[_tableName].Remove(_key);
-
-				DeleteFromTable(_tableName,_key);
-			}
+			if(m_SaveDataDict.TryGetValue(_tableName, out var dataDict) && dataDict.Remove(_key))
+            {
+                DeleteFromTable(_tableName,_key);
+            }
 		}
 
 		private void InsertToTable(string _tableName,string _key,string _value,string _code)
 		{
-			ExecuteNonQuery(string.Format("insert into {0} (key, dataType, dataString, dataCode ) values ( '{1}', {2}, '{3}', '{4}')",_tableName,_key,STRING_TYPE,_value,_code));
+			ExecuteNonQuery($"insert into {_tableName} (key, dataType, dataString, dataCode ) values ( '{_key}', {STRING_TYPE}, '{_value}', '{_code}')");
 		}
 
 		private void UpdateToTable(string _tableName,string _key,string _value,string _code)
 		{
-			ExecuteNonQuery(string.Format("update {0} set key = '{1}', dataType = {2}, dataString = '{3}', dataCode = '{4}' where key = '{1}'",_tableName,_key,STRING_TYPE,_value,_code));
+			ExecuteNonQuery($"update {_tableName} set key = '{_key}', dataType = {STRING_TYPE}, dataString = '{_value}', dataCode = '{_code}' where key = '{_key}'");
 		}
 
 		private void DeleteFromTable(string _tableName,string _key)
 		{
-			ExecuteNonQuery(string.Format("delete from {0} where key = '{1}'",_tableName,_key));
+			ExecuteNonQuery($"delete from {_tableName} where key = '{_key}'");
 		}
 
 		private bool HasTable(string _tableName)
 		{
-			var result = ExecuteSQL(string.Format("select name from sqlite_master where type = 'table' and name = '{0}'",_tableName));
+			var result = ExecuteSQL($"select name from sqlite_master where type = 'table' and name = '{_tableName}'");
 
 			if(!result || m_DataReader == null)
 			{
 				return false;
 			}
 
-			var flag = false;
+			var exists = m_DataReader.Read();
+            m_DataReader.Close();
 
-			while(m_DataReader.Read())
-			{
-				flag = true;
-
-				break;
-			}
-
-			m_DataReader.Close();
-
-			return flag;
+            return exists;
 		}
 
 		private void CreateTable(string _tableName)
 		{
-			ExecuteNonQuery(string.Format("create table {0} (key text not null , dataType integer, dataString text, dataCode text, unique (key))",_tableName));
+			ExecuteNonQuery($"create table {_tableName} (key text not null , dataType integer, dataString text, dataCode text, unique (key))");
 
 			m_SaveDataDict.Add(_tableName,new Dictionary<string,string>());
 		}
 
+		/// <summary>
+		/// 테이블을 삭제합니다.
+		/// </summary>
 		public void DeleteTable(string _tableName)
 		{
-			var result = ExecuteNonQuery(string.Format("drop table {0}",_tableName));
-
-			if(result > 0)
+			if(ExecuteNonQuery($"drop table {_tableName}") > 0)
 			{
-				m_SaveDataDict[_tableName].Clear();
-
 				m_SaveDataDict.Remove(_tableName);
 			}
 		}
@@ -248,79 +252,58 @@ namespace KZLib
 					{
 						removeList.Add(key);
 
-						throw new NullReferenceException(string.Format("데이터 오류 {0}",SecurityUtility.AESDecryptData(_tableName,key)));
+						throw new NullReferenceException($"데이터 오류 {SecurityUtility.AESDecryptData(_tableName,key)}");
 					}
 				}
 				else
 				{
-					throw new NullReferenceException(string.Format("지원하지 않는 데이터 타입 {0}",type));
+					throw new NullReferenceException($"지원하지 않는 데이터 타입 {type}");
 				}
 			}
 
 			m_DataReader.Close();
 
-			if(!removeList.IsNullOrEmpty())
-			{
-				for(var i=0;i<removeList.Count;i++)
-				{
-					DeleteFromTable(_tableName,removeList[i]);
-				}
-			}
+			foreach(var remove in removeList)
+            {
+                DeleteFromTable(_tableName,remove);
+            }
 
 			return true;
 		}
 
 		private bool SelectFullFromTable(string _tableName)
 		{
-			return ExecuteSQL(string.Format("select * from {0}",_tableName));
+			return ExecuteSQL($"select * from {_tableName}");
 		}
 
 		private int ExecuteNonQuery(string _source)
 		{
-			if(m_Connection != null)
-			{
-				m_Command = m_Connection.CreateCommand();
+			using var command = m_Connection.CreateCommand();
+			command.CommandText = _source;
 
-				if(m_Command != null)
-				{
-					m_Command.CommandText = _source;
-
-					return m_Command.ExecuteNonQuery();
-				}
-			}
-
-			return 0;
+			return command.ExecuteNonQuery();
 		}
 
 		private bool ExecuteSQL(string _command)
 		{
-			if(m_Connection != null)
-			{
-				m_Command = m_Connection.CreateCommand();
+			using var command = m_Connection.CreateCommand();
+			command.CommandText = _command;
+			m_DataReader = command.ExecuteReader();
 
-				if(m_Command != null)
-				{
-					m_Command.CommandText = _command;
-					m_DataReader = m_Command.ExecuteReader();
-
-					return m_DataReader != null;
-				}
-			}
-
-			return false;
+			return m_DataReader != null;
 		}
 
 		private string GetDataBasePath(string _fileName)
-		{
+        {
 #if UNITY_EDITOR
-			return string.Format("data source={0}/{1}",FileUtility.GetProjectParentPath(),_fileName);
+            return $"data source={FileUtility.GetProjectParentPath()}/{_fileName}";
 #elif !UNITY_EDITOR && UNITY_ANDROID
-			return string.Format("URI=file:{0}/{1}",UnityEngine.Application.persistentDataPath,_fileName);
+            return $"URI=file:{UnityEngine.Application.persistentDataPath}/{_fileName}";
 #elif !UNITY_EDITOR && UNITY_STANDALONE
-			return string.Format("URI=file:{0}/{1}",UnityEngine.Application.dataPath,_fileName);
+            return $"URI=file:{UnityEngine.Application.dataPath}/{_fileName}";
 #else
-			return string.Format("data source={0}/{1}",UnityEngine.Application.persistentDataPath,_fileName);
+            return $"data source={UnityEngine.Application.persistentDataPath}/{_fileName}";
 #endif
-		}
+        }
 	}
 }

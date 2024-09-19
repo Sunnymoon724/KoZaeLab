@@ -8,39 +8,39 @@ public static partial class TransformExtension
 	/// <summary>
 	/// 현재 transform 부터 root 까지 full path 반환.
 	/// </summary>
-	public static string GetHierarchy(this Transform _origin,StringBuilder _builder = null)
+	public static string GetHierarchy(this Transform _origin)
 	{
-		_builder ??= new StringBuilder();
+		var builder = new StringBuilder(_origin.name);
 
-		_builder.Insert(0,_origin.name);
-
-		if(_origin.parent)
+		while(_origin.parent)
 		{
-			_builder.Insert(0,"/");
+			builder.Insert(0, '/');
+			builder.Insert(0, _origin.parent.name);
 
-			return GetHierarchy(_origin.parent,_builder);
+			_origin = _origin.parent;
 		}
 
-		return _builder.ToString();
+		return builder.ToString();
 	}
 
 	/// <summary>
 	/// 현재 transform 부터 root 까지 0부터 차례대로 index 반환.
 	/// </summary>
-	public static string GetHierarchyInOrder(this Transform _origin,StringBuilder _builder = null)
+	public static string GetHierarchyInOrder(this Transform _origin)
 	{
-		_builder ??= new StringBuilder();
+		var builder = new StringBuilder();
 
-		_builder.Insert(0,_origin.GetSiblingIndex());
+		for(var current = _origin;current != null;current = current.parent)
+		{
+			builder.Insert(0, current.GetSiblingIndex());
 
-		if(_origin.parent)
-        {
-            _builder.Insert(0,"/");
+			if(current.parent)
+			{
+				builder.Insert(0,'/');
+			}
+		}
 
-            return GetHierarchyInOrder(_origin.parent,_builder);
-        }
-
-		return _builder.ToString();
+		return builder.ToString();
 	}
 
 	/// <summary>
@@ -56,12 +56,7 @@ public static partial class TransformExtension
 	/// </summary>
 	public static Transform FindSibling(this Transform _origin,string _name)
 	{
-		if(_origin.parent)
-		{
-			return _origin.parent.Find(_name);
-		}
-
-		return null;
+		return _origin.parent ? _origin.parent.Find(_name) : null;
 	}
 
 	/// <summary>
@@ -69,27 +64,23 @@ public static partial class TransformExtension
 	/// </summary>
 	public static Transform FindInParentHierarchy(this Transform _origin,string _name)
 	{
-		if(_origin.name.IsEqual(_name))
+		for(var current = _origin.parent;current != null;current = current.parent)
 		{
-			return _origin;
-		}
-
-		if(_origin.parent)
-		{
-			return FindInParentHierarchy(_origin.parent,_name);
+			if(current.name.IsEqual(_name))
+			{
+				return current;
+			}
 		}
 
 		return null;
 	}
 
+	/// <summary>
+	/// 부모 Transform 반환
+	/// </summary>
 	public static Transform GetParent(this Transform _origin)
 	{
-		if(!_origin)
-		{
-			return null;
-		}
-
-		return _origin.parent;
+		return _origin ? _origin.parent : null;
 	}
 
 	/// <summary>
@@ -104,6 +95,9 @@ public static partial class TransformExtension
 		return child.transform;
 	}
 
+	/// <summary>
+	/// 자식들 추가
+	/// </summary>
 	public static Transform[] AddChildren(this Transform _origin,string[] _nameArray)
 	{
 		var dataArray = new Transform[_nameArray.Length];
@@ -116,28 +110,40 @@ public static partial class TransformExtension
 		return dataArray;
 	}
 
+	/// <summary>
+	/// 자식들 추가
+	/// </summary>
 	public static Transform[] AddChildren(this Transform _origin,string _name,int _count)
 	{
 		var _nameArray = new string[_count];
 
 		for(var i=0;i<_count;i++)
 		{
-			_nameArray[i] = string.Format("{0}_{1}",_name,i);
+			_nameArray[i] = $"{_name}_{i}";
 		}
 
 		return AddChildren(_origin,_nameArray);
 	}
 
+	/// <summary>
+	/// 자식 설정
+	/// </summary>
 	public static void SetChild(this Transform _origin,Transform _child,bool _sameLayer = true)
 	{
 		_origin.SetChildInside(_child,true,_sameLayer);
 	}
 
+	/// <summary>
+	/// 자식 설정
+	/// </summary>
 	public static void SetUIChild(this Transform _origin,Transform _child,bool _sameLayer = true)
 	{
 		_origin.SetChildInside(_child,false,_sameLayer);
 	}
 
+	/// <summary>
+	/// 자식 설정
+	/// </summary>
 	private static void SetChildInside(this Transform _origin,Transform _child,bool _stays,bool _sameLayer = true)
 	{
 		_child.SetParent(_origin,_stays);
@@ -162,6 +168,11 @@ public static partial class TransformExtension
 		return child.transform;
 	}
 
+	/// <summary>
+	/// prefab로부터 Instance를 만들고 Parent의 자식으로 만든다.
+	/// 자식의 transform값이 변할 수 있다. (월드상의 현재 위치와 스케일을 유지하기 위해 부모에 대한 상대 값들로 변경된다.)
+	/// 자식은 부모의 레이어와 동일하게 설정한다.
+	/// </summary>
 	public static Transform[] AddChildren(this Transform _origin,GameObject _prefab,int _count)
 	{
 		var dataArray = new Transform[_count];
@@ -188,6 +199,11 @@ public static partial class TransformExtension
 		return child.transform;
 	}
 
+	/// <summary>
+	/// prefab로부터 Instance를 만들고 Parent의 자식으로 만든다.
+	/// 자식의 transform값을 유지한다.
+	/// 자식은 부모의 레이어와 동일하게 설정한다.
+	/// </summary>
 	public static Transform[] AddUIChildren(this Transform _origin,GameObject _prefab,int _count)
 	{
 		var dataArray = new Transform[_count];
@@ -205,18 +221,21 @@ public static partial class TransformExtension
 	/// </summary>
 	public static Transform FindInChild(this Transform _transform,string _name)
 	{
-		if(_transform.name.IsEqual(_name))
-		{
-			return _transform;
-		}
+		var queue = new Queue<Transform>();
+		queue.Enqueue(_transform);
 
-		for(var i=0;i<_transform.childCount;i++)
+		while(queue.Count > 0)
 		{
-			var result = FindInChild(_transform.GetChild(i),_name);
+			var current = queue.Dequeue();
 
-			if(result)
+			if(current.name.IsEqual(_name))
 			{
-				return result;
+				return current;
+			}
+
+			for(var i=0;i<current.childCount;i++)
+			{
+				queue.Enqueue(current.GetChild(i));
 			}
 		}
 
@@ -228,40 +247,57 @@ public static partial class TransformExtension
 	/// </summary>
 	public static void FindAllChildren(this Transform _transform,string _text,ref List<Transform> _resultList)
 	{
-		for(var i=0;i<_transform.childCount;i++)
+		var queue = new Queue<Transform>();
+		queue.Enqueue(_transform);
+
+		while(queue.Count > 0)
 		{
-			var child = _transform.GetChild(i);
+			var current = queue.Dequeue();
 
-			child.FindAllChildren(_text,ref _resultList);
-
-			if(child.name.IsEqual(_text))
+			if(current.name.IsEqual(_text))
 			{
-				_resultList.Add(child);
+				_resultList.Add(current);
+			}
+
+			for(var i=0;i<current.childCount;i++)
+			{
+				queue.Enqueue(current.GetChild(i));
 			}
 		}
 	}
 
+	/// <summary>
+	/// 자식 찾기
+	/// </summary>
 	public static Transform GetChild(this Transform _origin,string _name)
 	{
-		if(!_origin)
-		{
-			return null;
-		}
-
-		return _origin.Find(_name);
+		return _origin ? _origin.Find(_name) : null;
 	}
 
+	/// <summary>
+	/// Hierarchy 내부의 모든 자식 트랜스폼을 찾아 넣는다.
+	/// </summary>
 	public static void GetAllChildrenInHierarchy(this Transform _transform,ref List<Transform> _resultList)
 	{
-		for(var i=0;i<_transform.childCount;i++)
-		{
-			var child = _transform.GetChild(i);
+		var queue = new Queue<Transform>();
+		queue.Enqueue(_transform);
 
-			_resultList.Add(child);
-			child.GetAllChildrenInHierarchy(ref _resultList);
+		while(queue.Count > 0)
+		{
+			var current = queue.Dequeue();
+
+			_resultList.Add(current);
+
+			for(var i=0;i<current.childCount;i++)
+			{
+				queue.Enqueue(current.GetChild(i));
+			}
 		}
 	}
 
+	/// <summary>
+	/// 모든 자식을 삭제
+	/// </summary>
 	public static Transform DestroyChildren(this Transform _transform,bool _activeOnly = false)
 	{
 		var count = _transform.childCount;
@@ -288,6 +324,9 @@ public static partial class TransformExtension
 		return _transform;
 	}
 
+	/// <summary>
+	/// 모든 자식을 삭제
+	/// </summary>
 	public static Transform DestroyChildren(this Transform _transform,params Transform[] _exceptionArray)
 	{
 		var count = _transform.childCount;
@@ -333,18 +372,29 @@ public static partial class TransformExtension
 			return;
 		}
 
-		_onAction?.Invoke(_parent);
-		
-		for(var i=0;i<_parent.childCount;i++)
-		{
-			var child = _parent.GetChild(i);
+		var stack = new Stack<Transform>();
+		var current = _parent;
 
-			if(!child)
+		do
+		{
+			_onAction?.Invoke(current);
+
+			var count = current.childCount;
+
+			for(var i=count-1;i>=0;i--)
 			{
-				continue;
+				stack.Push(current.GetChild(i));
 			}
 
-			child.TraverseChildren(_onAction);
+			if(stack.Count > 0)
+			{
+				current = stack.Pop();
+			}
+			else
+			{
+				break;
+			}
 		}
+		while(true);
 	}
 }

@@ -28,7 +28,7 @@ namespace KZLib
 				{
 					var menuList = new List<string>();
 
-					foreach(var menuType in Enumeration.GetGroup<UIMenuType>(true))
+					foreach(var menuType in Enumeration.GetEnumerationGroup<UIMenuType>(true))
 					{
 						menuList.Add(menuType.ToString());
 					}

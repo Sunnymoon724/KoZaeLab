@@ -53,13 +53,11 @@ namespace KZLib
 			Broadcaster.DisableListener(EventTag.ChangeGraphicOption,OnChangeFarClipPlane);
 		}
 
+		/// <summary>
+		/// 카메라 데이터를 세팅하는 함수.
+		/// </summary>
 		public void SetCameraData(CameraData _cameraData)
 		{
-			if(!_cameraData.IsExist)
-			{
-				throw new NullReferenceException("카메라 데이터가 없습니다.");
-			}
-
 			if(!_cameraData.IsExist)
 			{
 				throw new NullReferenceException("카메라 데이터가 없습니다.");

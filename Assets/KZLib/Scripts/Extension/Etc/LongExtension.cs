@@ -38,14 +38,14 @@ public static class LongExtension
 
 	public static long ChangeFlag(this long _pivot,long _add,long _remove)
 	{
-        return _pivot.AddFlag(_add).RemoveFlag(_remove);
+		return _pivot.AddFlag(_add).RemoveFlag(_remove);
 	}
 
 	public static string ByteToString(this long _byte)
 	{
-		_byte.ByteToString(out var _size,out var _unit);
+		_byte.ByteToString(out var _size, out var _unit);
 
-		return string.Format("{0:N2} {1}",_size,_unit);
+		return $"{_size:N2} {_unit}";
 	}
 
 	public static void ByteToString(this long _byte,out double _size,out string _unit)

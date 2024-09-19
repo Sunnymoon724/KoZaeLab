@@ -155,7 +155,7 @@ namespace KZLib.KZEditor
 			var isMouseOver = _index == m_MouseOverHandleIndex;
 			var isAnchor = m_Creator.IsCurveMode ? IsCurveAnchor(_index) : IsShapeAnchor(_index);
 			var diameter = GetHandleDiameter(isAnchor ? m_AnchorSize : m_ControlSize,_position);
-			
+
 			var handleId = GUIUtility.GetControlID(_index.GetHashCode(),FocusType.Passive);
 
 			var cachedColor = Handles.color;

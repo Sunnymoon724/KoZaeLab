@@ -36,19 +36,15 @@ public partial class MetaSettings : ExcelSettings<MetaSettings>
 
 	public IEnumerable<Type> GetMetaTableGroup()
 	{
-		var typeList = new List<Type>();
-
 		foreach(var sheet in m_SheetList)
 		{
 			var type = sheet.MetaType;
 
 			if(type != null)
 			{
-				typeList.Add(type);
+				yield return type;
 			}
 		}
-
-		return typeList;
 	}
 }
 #endif

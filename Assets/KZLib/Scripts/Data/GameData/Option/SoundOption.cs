@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace GameData
 {
@@ -13,19 +12,14 @@ namespace GameData
 
 		private class Sound
 		{
-			public Dictionary<SoundType,SoundData> SoundDict { get; set; }
+			[JsonProperty("Master")]
+			public SoundData Master { get; set; }
 
-			[JsonIgnore]
-			public SoundData Master => SoundDict[SoundType.Master];
-			[JsonIgnore]
-			public SoundData Music => SoundDict[SoundType.Music];
-			[JsonIgnore]
-			public SoundData Effect => SoundDict[SoundType.Effect];
+			[JsonProperty("Music")]
+			public SoundData Music { get; set; }
 
-			public void SetData(SoundType _type,SoundData _data)
-			{
-				SoundDict[_type] = _data;
-			}
+			[JsonProperty("Effect")]
+			public SoundData Effect { get; set; }
 		}
 
 		private Sound m_Sound = null;
@@ -34,12 +28,9 @@ namespace GameData
 		{
 			m_Sound = GetOption(new Sound()
 			{
-				SoundDict = new Dictionary<SoundType,SoundData>()
-				{
-					{ SoundType.Master,	new SoundData(1.0f,false) },
-					{ SoundType.Music,	new SoundData(1.0f,false) },
-					{ SoundType.Effect,	new SoundData(1.0f,false) },
-				},
+				Master	= new SoundData(1.0f,false),
+				Music	= new SoundData(1.0f,false),
+				Effect	= new SoundData(1.0f,false),
 			});
 		}
 
@@ -61,7 +52,7 @@ namespace GameData
 					return;
 				}
 
-				m_Sound.SetData(SoundType.Master,value);
+				m_Sound.Master = value;
 
 				SaveOption(m_Sound);
 			}
@@ -80,7 +71,7 @@ namespace GameData
 					return;
 				}
 
-				m_Sound.SetData(SoundType.Music,value);
+				m_Sound.Music = value;
 
 				SaveOption(m_Sound);
 			}
@@ -99,7 +90,7 @@ namespace GameData
 					return;
 				}
 
-				m_Sound.SetData(SoundType.Effect,value);
+				m_Sound.Effect = value;
 
 				SaveOption(m_Sound);
 			}

@@ -31,9 +31,9 @@ public abstract class BaseComponentUI : BaseComponent
 		}
 	}
 
-	protected class GameObjectUIPool : GameObjectPool
+	protected class GameObjectUIPool<TComponent> : GameObjectPool<TComponent> where TComponent : Component
 	{
-		public GameObjectUIPool(GameObject _pivot,Transform _storage) : base(_pivot,_storage,1) { }
+		public GameObjectUIPool(TComponent _pivot,Transform _storage) : base(_pivot,_storage,1) { }
 
 		protected override void SetChild(Transform _parent,Transform _child)
 		{

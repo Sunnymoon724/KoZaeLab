@@ -99,21 +99,10 @@ namespace GameData
 #if UNITY_EDITOR
 		public IEnumerable<string> GetLanguageGroup(string _key)
 		{
-			var textList = new List<string>();
-
-			foreach(var pair in m_LanguageDict)
+			foreach(var (key,value) in m_LanguageDict)
 			{
-				if(pair.Value.TryGetValue(_key,out var value))
-				{
-					textList.Add(string.Format("[{0}] {1}",pair.Key,value));
-				}
-				else
-				{
-					textList.Add(string.Format("[Undefined] {0}",_key.ToString()));
-				}
+				yield return value.TryGetValue(_key,out var language) ? $"{key} {language}" : $"Undefined {_key}";
 			}
-
-			return textList;
 		}
 
 		public string FindKey(string _text)
@@ -144,7 +133,7 @@ public static class LocalizeExtension
 {
 	public static string ToLocalize(this string _key)
 	{
-		if(_key.IsEmpty())
+		if(!_key.IsEmpty())
 		{
 			return _key;
 		}

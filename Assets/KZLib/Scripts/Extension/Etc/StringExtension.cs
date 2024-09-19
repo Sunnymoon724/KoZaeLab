@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -50,16 +51,13 @@ public static class StringExtension
 			return false;
 		}
 
-		foreach(var character in _characterArray)
-		{
-			if(_text.Contains(character))
-			{
-				return true;
-			}
-		}
+		var characterSet = new HashSet<char>(_characterArray);
 
-		return false;
+		return _text.Any(x => characterSet.Contains(x));
 	}
+	/// <summary>
+	/// 첫 글자를 대문자로 변경
+	/// </summary>
 	public static string ToFirstCharacterToUpper(this string _text)
 	{
 		if(_text.IsEmpty())
@@ -69,9 +67,12 @@ public static class StringExtension
 
 		var text = char.ToUpperInvariant(_text[0]);
 
-		return _text.Length > 1 ? string.Concat(text,_text[1..]) : text.ToString();
+		return _text.Length > 1 ? $"{text}{_text[1..]}" : text.ToString();
 	}
 
+	/// <summary>
+	/// 첫 글자를 소문자로 변경
+	/// </summary>
 	public static string ToFirstCharacterToLower(this string _text)
 	{
 		if(_text.IsEmpty())
@@ -81,34 +82,36 @@ public static class StringExtension
 
 		var text = char.ToLowerInvariant(_text[0]);
 
-		return _text.Length > 1 ? string.Concat(text,_text[1..]) : text.ToString();
+		return _text.Length > 1 ? $"{text}{_text[1..]}" : text.ToString();
 	}
 
+	/// <summary>
+	/// 문자열의 첫 번째 문자를 count 수 만큼 가져옴
+	/// </summary>
 	public static string GetFirstCharacter(this string _text,int _count)
 	{
 		return _text.IsEmpty() || _count <= 0 ? _text : _text[..Mathf.Min(_count, _text.Length)];
 	}
 
-	public static int CountOf(this string _text,char _character)
+	/// <summary>
+	/// 문자열의 끝 부분에서 count 개수 만큼 가져옵니다.
+	/// </summary>
+	public static string GetLastCharacter(this string _text,int _count)
 	{
-		if(_text.IsEmpty())
-		{
-			return -1;
-		}
-
-		var count = 0;
-
-		foreach(var character in _text)
-		{
-			if(character == _character)
-			{
-				count++;
-			}
-		}
-
-		return count;
+		return _text.IsEmpty() || _count <= 0 ? _text : _text[^(Mathf.Min(_count,_text.Length))..];
 	}
 
+	/// <summary>
+	/// 문자열 내부에 character 문자가 몇 개 포함되어 있는지 반환
+	/// </summary>
+	public static int CountOf(this string _text,char _character)
+	{
+		return _text.Count(x => x == _character);
+	}
+
+	/// <summary>
+	/// 문자열 내부에 character 문자가 order번째 포함되어 있는지 반환
+	/// </summary>
 	public static int IndexOfOrder(this string _text,char _character,int _order)
 	{
 		if(_text.IsEmpty())
@@ -124,7 +127,7 @@ public static class StringExtension
 
 			if(index == -1)
 			{
-				break;
+				return -1;
 			}
 		}
 		return index;
@@ -154,35 +157,12 @@ public static class StringExtension
 	/// </summary>
 	public static bool IsMatchAt(this string _text,int _index,string _match,bool _ignoreCase = false)
 	{
-		if(_text.IsEmpty() || _match.IsEmpty())
+		if(_text.IsEmpty() || _match.IsEmpty() || _index < 0 || _index+_match.Length > _text.Length)
 		{
 			return false;
 		}
 
-		if(_index < 0 || _index+_match.Length > _text.Length)
-		{
-			return false;
-		}
-
-		for(var i=0;i<_match.Length;i++)
-		{
-			if(_ignoreCase)
-			{
-				if(char.ToUpperInvariant(_text[_index+i]) != char.ToUpperInvariant(_match[i]))
-				{
-					return false;
-				}
-			}
-			else
-			{
-				if(_text[_index+i] != _match[i])
-				{
-					return false;
-				}
-			}
-		}
-
-		return true;
+		return _ignoreCase ? string.Equals(_text.Substring(_index,_match.Length),_match,StringComparison.OrdinalIgnoreCase) : _text.Substring(_index,_match.Length) == _match;
 	}
 	#endregion Compare
 
@@ -200,25 +180,28 @@ public static class StringExtension
 
 	#region Convert Color
 	/// <summary>
-	/// default는 Color.clear
+	/// 16진수 색상 코드를 UnityEngine.Color로 변환합니다.
 	/// </summary>
 	public static Color ToColor(this string _hexCode)
 	{
-		_hexCode = _hexCode.Length == 7 ? string.Format("{0}FF",_hexCode) : _hexCode;
-
-		if(!s_HexColorDict.ContainsKey(_hexCode))
+		if(_hexCode.Length == 7)
 		{
-			if(ColorUtility.TryParseHtmlString(_hexCode,out var color))
-			{
-				s_HexColorDict.Add(_hexCode,color);
-			}
-			else
-			{
-				return Color.clear;
-			}
+			_hexCode = string.Format("{0}FF",_hexCode);
 		}
 
-		return s_HexColorDict[_hexCode];
+		if(s_HexColorDict.TryGetValue(_hexCode,out var color))
+		{
+			return color;
+		}
+
+		if(ColorUtility.TryParseHtmlString(_hexCode,out color))
+		{
+			s_HexColorDict.Add(_hexCode,color);
+
+			return color;
+		}
+
+		return Color.clear;
 	}
 
 	/// <summary>
@@ -239,6 +222,9 @@ public static class StringExtension
 	#endregion Convert Color
 
 	#region Convert Number
+	/// <summary>
+	/// 문자열을 BigInteger로 변환합니다.
+	/// </summary>
 	public static BigInteger ToBigInteger(this string _text,BigInteger _default = default)
 	{
 		if(_text.IsEmpty())
@@ -246,18 +232,12 @@ public static class StringExtension
 			return _default;
 		}
 
-		if(_text.Contains("e") || _text.Contains("E"))
-		{
-			var result = double.Parse(_text);
-
-			return new BigInteger(result);
-		}
-		else
-		{
-			return BigInteger.Parse(_text);
-		}
+		return BigInteger.TryParse(_text,out var result) ? result : _default;
 	}
 
+	/// <summary>
+	/// 문자열을 int로 변환합니다.
+	/// </summary>
 	public static int ToInt(this string _text,int _default = 0)
 	{
 		if(_text.IsEmpty())
@@ -265,7 +245,7 @@ public static class StringExtension
 			return _default;
 		}
 
-		if(_text.StartsWith("0x"))
+		if(_text.StartsWith("0x",StringComparison.OrdinalIgnoreCase))
 		{
 			return _text.ToHexInt(_default);
 		}
@@ -273,43 +253,54 @@ public static class StringExtension
 		return int.TryParse(_text,out var num) ? num : _default;
 	}
 
+	/// <summary>
+	/// 문자열을 float로 변환합니다.
+	/// </summary>
 	public static float ToFloat(this string _text,float _default = 0.0f)
 	{
 		return float.TryParse(_text,out var num) ? num : _default;
 	}
 
+	/// <summary>
+	/// 문자열을 double로 변환합니다.
+	/// </summary>
 	public static double ToDouble(this string _text,double _default = 0.0d)
 	{
 		return double.TryParse(_text,out var num) ? num : _default;
 	}
 
+	/// <summary>
+	/// 문자열을 byte로 변환합니다.
+	/// </summary>
 	public static byte ToByte(this string _text,byte _default = 0x00)
 	{
-		if(_text.StartsWith("0x"))
+		if(_text.StartsWith("0x",StringComparison.OrdinalIgnoreCase))
 		{
 			return Convert.ToByte(_text,16);
 		}
 
 		return byte.TryParse(_text,out var num) ? num : _default;
 	}
-	
+
+	/// <summary>
+	/// 문자열을 16진수 정수로 변환합니다.
+	/// </summary>
 	public static int ToHexInt(this string _hexText,int _default = 0)
 	{
 		return int.TryParse(_hexText,NumberStyles.HexNumber,CultureInfo.CurrentCulture,out var num) ? num : _default;
 	}
 
+	/// <summary>
+	/// 문자열을 16진수 실수로 변환합니다.
+	/// </summary>
 	public static float ToHexFloat(string _hexText,float _default = 0.0f)
 	{
-		if(uint.TryParse(_hexText,NumberStyles.AllowHexSpecifier,CultureInfo.CurrentCulture,out var num))
-		{
-			return BitConverter.ToSingle(BitConverter.GetBytes(num),0);
-		}
-		else
-		{
-			return _default;
-		}
+		return uint.TryParse(_hexText,NumberStyles.AllowHexSpecifier,CultureInfo.CurrentCulture,out var num) ? BitConverter.ToSingle(BitConverter.GetBytes(num),0) : _default;
 	}
 
+	/// <summary>
+	/// 배열에서 인덱스를 찾아 해당 위치의 문자열을 실수로 변환하여 반환합니다.
+	/// </summary>
 	private static float GetNumberInArray(string[] _textArray,int _index)
 	{
 		return _textArray.ContainsIndex(_index) ? _textArray[_index].ToFloat() : 0.0f;
@@ -317,6 +308,9 @@ public static class StringExtension
 	#endregion Convert Number
 
 	#region Convert DateTime
+	/// <summary>
+	/// 문자열을 DateTime으로 변환합니다.
+	/// </summary>
 	public static DateTime ToDateTime(this string _text,CultureInfo _cultureInfo = null, DateTimeStyles _styles = DateTimeStyles.AdjustToUniversal)
 	{
 		var cultureInfo = _cultureInfo ?? CultureInfo.CreateSpecificCulture("ko-KR");
@@ -326,16 +320,25 @@ public static class StringExtension
 	#endregion Convert DateTime
 
 	#region Convert Vector
+	/// <summary>
+	/// 문자열을 Vector2로 변환합니다.
+	/// </summary>
 	public static Vector2 ToVector2(this string _text)
 	{
 		return _text.ToVector2(Vector2.zero);
 	}
 
+	/// <summary>
+	/// 문자열을 Vector2로 변환합니다.
+	/// </summary>
 	public static Vector2 ToVector2(this string _text,Vector2 _default)
 	{
 		return _text.TryToVector2(out var result) ? result : _default;
 	}
 
+	/// <summary>
+	/// 문자열을 Vector2로 변환합니다.
+	/// </summary>
 	public static bool TryToVector2(this string _text,out Vector2 _result)
 	{
 		_result = Vector2.zero;
@@ -352,16 +355,25 @@ public static class StringExtension
 		return true;
 	}
 
+	/// <summary>
+	/// 문자열을 Vector3로 변환합니다.
+	/// </summary>
 	public static Vector3 ToVector3(this string _text)
 	{
 		return _text.ToVector3(Vector3.zero);
 	}
 
+		/// <summary>
+	/// 문자열을 Vector3로 변환합니다.
+	/// </summary>
 	public static Vector3 ToVector3(this string _text,Vector3 _default)
 	{
 		return _text.TryToVector3(out var result) ? result : _default;
 	}
 
+	/// <summary>
+	/// 문자열을 Vector3로 변환합니다.
+	/// </summary>
 	public static bool TryToVector3(this string _text,out Vector3 _result)
 	{
 		_result = Vector3.zero;
@@ -378,6 +390,9 @@ public static class StringExtension
 		return true;
 	}
 
+	/// <summary>
+	/// 문자열을 Vector로 변환하는 메서드에 사용되는 문자열을 변환합니다.
+	/// </summary>
 	private static string[] ConvertVectorArray(string _text)
 	{
 		if(_text.IsEmpty())
@@ -390,6 +405,9 @@ public static class StringExtension
 	#endregion Convert Vector
 
 	#region Remove
+	/// <summary>
+	/// 문자열의 시작 부분에서 지정된 문자열을 제거합니다.
+	/// </summary>
 	public static string RemoveStart(this string _text,string _remove)
 	{
 		if(_text.IsEmpty() || _remove.IsEmpty())
@@ -400,6 +418,9 @@ public static class StringExtension
 		return _text.StartsWith(_remove) ? _text[_remove.Length..] : _text;
 	}
 
+	/// <summary>
+	/// 문자열의 끝 부분에서 지정된 문자열을 제거합니다.
+	/// </summary>
 	public static string RemoveEnd(this string _text,string _remove)
 	{
 		if(_text.IsEmpty() || _remove.IsEmpty())
@@ -410,6 +431,9 @@ public static class StringExtension
 		return _text.EndsWith(_remove) ? _text[..^_remove.Length] : _text;
 	}
 
+	/// <summary>
+	/// 문자열의 시작 부분에서 count 개수 만큼 제거합니다.
+	/// </summary>
 	public static string RemoveFirstCharacter(this string _text,int _count)
 	{
 		if(_text.IsEmpty() || _count <= 0)
@@ -420,11 +444,9 @@ public static class StringExtension
 		return _count >= _text.Length ? string.Empty : _text[_count..];
 	}
 
-	public static string GetLastCharacter(this string _text,int _count)
-	{
-		return _text.IsEmpty() || _count <= 0 ? _text : _text[^(Mathf.Min(_count,_text.Length))..];
-	}
-
+	/// <summary>
+	/// 문자열의 끝 부분에서 count 개수 만큼 제거합니다.
+	/// </summary>
 	public static string RemoveLastCharacter(this string _text,int _count)
 	{
 		if(_text.IsEmpty() || _count <= 0)
@@ -435,6 +457,9 @@ public static class StringExtension
 		return _count >= _text.Length ? string.Empty : _text[..^_count];
 	}
 
+	/// <summary>
+	/// 문자열에서 리치 텍스트를 제거합니다.
+	/// </summary>
 	public static string RemoveRichText(this string _text)
 	{
 		return Regex.Replace(_text,"<.*?>",string.Empty);
@@ -529,28 +554,28 @@ public static class StringExtension
 	/// </summary>
 	public static string WrapParentheses(this string _text)
 	{
-		return string.Format("({0})",_text);
+		return $"({_text})";
 	}
 	/// <summary>
 	/// 중괄호 래핑
 	/// </summary>
 	public static string WrapBraces(this string _text)
 	{
-		return string.Format("{{{0}}}",_text);
+		return $"{{{_text}}}";
 	}
 	/// <summary>
 	/// 대괄호 래핑
 	/// </summary>
 	public static string WrapSquareBrackets(this string _text)
 	{
-		return string.Format("[{0}]",_text);
+		return $"[{_text}]";
 	}
 	/// <summary>
 	/// 화살괄호 래핑
 	/// </summary>
 	public static string WrapAngleBrackets(this string _text)
 	{
-		return string.Format("<{0}>",_text);
+		return $"<{_text}>";
 	}
 	#endregion Wrap
 

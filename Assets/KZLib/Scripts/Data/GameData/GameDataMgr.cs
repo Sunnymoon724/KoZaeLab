@@ -19,25 +19,25 @@ namespace KZLib
 		{
 			var key = typeof(TData).Name;
 
-			if(!m_GameDataDict.ContainsKey(key))
+			if(!m_GameDataDict.TryGetValue(key,out var data))
 			{
-				var data = new TData();
+				data = new TData();
 
 				data.Initialize();
 
-				m_GameDataDict.AddOrUpdate(key,data);
+				m_GameDataDict.Add(key,data);
 			}
 
-			return m_GameDataDict[key] as TData;
+			return data as TData;
 		}
 
 		public void Clear<TData>()
 		{
 			var key = typeof(TData).Name;
 
-			if(m_GameDataDict.ContainsKey(key))
+			if(m_GameDataDict.TryGetValue(key,out var data))
 			{
-				m_GameDataDict[key].Release();
+				data.Release();
 				m_GameDataDict.Remove(key);
 			}
 		}

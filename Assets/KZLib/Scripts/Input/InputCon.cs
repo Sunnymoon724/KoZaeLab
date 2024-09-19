@@ -6,7 +6,7 @@ namespace KZLib
 {
 	public class InputCon : BaseComponent
 	{
-		private readonly bool m_InputBlock = false;
+		private bool m_InputBlock = false;
 
 		public bool IsInputBlock => m_InputBlock;
 
@@ -70,6 +70,8 @@ namespace KZLib
 
 		public void BlockInput(bool _block)
 		{
+			m_InputBlock = _block;
+
 			SetEnable(!_block);
 		}
 	}

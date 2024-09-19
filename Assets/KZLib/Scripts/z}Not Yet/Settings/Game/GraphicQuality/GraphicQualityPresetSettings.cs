@@ -31,7 +31,7 @@ public class GraphicQualityPresetSettings : InnerBaseSettings<GraphicQualityPres
 	[HorizontalGroup("버튼",Order = 0),Button("새로 고침",ButtonSizes.Large)]
 	private void OnRefresh()
 	{
-		var tagList = new List<GraphicQualityTag>(Enumeration.GetGroup<GraphicQualityTag>(true));
+		var tagList = new List<GraphicQualityTag>(Enumeration.GetEnumerationGroup<GraphicQualityTag>(true));
 
 		foreach(var optionList in QualityPresetDicts.Values)
 		{

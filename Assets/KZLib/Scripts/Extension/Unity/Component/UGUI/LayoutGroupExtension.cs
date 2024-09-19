@@ -14,7 +14,7 @@ public static class LayoutGroupExtension
 			LayoutRebuilder.ForceRebuildLayoutImmediate(_layoutGroup.transform as RectTransform);
 		}
 	}
-	
+
 	public static void MarkForRebuild(this LayoutGroup _layoutGroup,bool _recursive = true)
 	{
 		if(_recursive)
@@ -39,14 +39,9 @@ public static class LayoutGroupExtension
 			}
 		}
 
-		var controller = _transform.GetComponent<ILayoutController>();
-
-		if(controller != null)
-		{
-			LayoutRebuilder.MarkLayoutForRebuild(_transform);
-		}
+		LayoutRebuilder.MarkLayoutForRebuild(_transform);
 	}
-	
+
 	private static void RecursiveLayoutRebuild(RectTransform _transform)
 	{
 		for(var i=0;i<_transform.childCount;i++)
@@ -59,10 +54,6 @@ public static class LayoutGroupExtension
 			}
 		}
 
-		
-		if(_transform.TryGetComponent<ILayoutController>(out var _))
-		{
-			LayoutRebuilder.ForceRebuildLayoutImmediate(_transform);
-		}
+		LayoutRebuilder.ForceRebuildLayoutImmediate(_transform);
 	}
 }

@@ -97,7 +97,7 @@ namespace KZLib
 
 				for(var i=0;i<_argumentArray.Length;i++)
 				{
-					objectArray[i] = _argumentArray[i] is not string && _argumentArray[i] is IEnumerable ? ConvertText(_argumentArray[i]) : _argumentArray[i];
+					objectArray[i] = _argumentArray[i] is not string && _argumentArray[i] is IEnumerable dataGroup ? ConvertText(dataGroup) : _argumentArray[i];
 				}
 
 				return string.Format(text,objectArray);

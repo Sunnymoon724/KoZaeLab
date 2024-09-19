@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using KZLib;
-using KZLib.KZDevelop;
 
 namespace GameData
 {
@@ -81,9 +80,10 @@ namespace GameData
 
 		protected virtual void UpdateLocalData(string _key)
 		{
-			var data = m_AccountDataDict[_key];
-
-			m_SaveHandler.SetObject(_key,data);
+			if(m_AccountDataDict.TryGetValue(_key,out var data))
+			{
+				m_SaveHandler.SetObject(_key,data);
+			}
 		}
 
 		protected virtual void UpdateServerData(string _key)

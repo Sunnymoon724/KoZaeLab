@@ -20,29 +20,35 @@ namespace KZLib
 			m_Name = _name;
 		}
 
-		public static IEnumerable<TEnumeration> GetGroup<TEnumeration>(bool _includeDerivedType) where TEnumeration : Enumeration
+		/// <summary>
+		/// TEnumeration Type에 속한 모든 Enumeration을 반환
+		/// </summary>
+		public static IEnumerable<TEnumeration> GetEnumerationGroup<TEnumeration>(bool _includeDerivedType) where TEnumeration : Enumeration
 		{
-			var dataList = new List<TEnumeration>();
 			var type = typeof(TEnumeration);
 
-			AddValuesFromType(dataList,type);
+			foreach(var enumeration in GetEnumerationFieldGroup<TEnumeration>(type))
+			{
+				yield return enumeration;
+			}
 
 			if(_includeDerivedType)
 			{
 				foreach(var derivedType in ReflectionUtility.FindDerivedTypeGroup(type))
 				{
-					AddValuesFromType(dataList,derivedType);
+					foreach(var enumeration in GetEnumerationFieldGroup<TEnumeration>(derivedType))
+					{
+						yield return enumeration;
+					}
 				}
 			}
-
-			return dataList;
 		}
 
-		private static void AddValuesFromType<TEnumeration>(List<TEnumeration> _dataList,Type _type) where TEnumeration : Enumeration
+		private static IEnumerable<TEnumeration> GetEnumerationFieldGroup<TEnumeration>(Type _type) where TEnumeration : Enumeration
 		{
 			foreach(var fieldInfo in _type.GetFields(ENUMERATION_FLAG))
 			{
-				_dataList.Add(fieldInfo.GetValue(null) as TEnumeration);
+				yield return fieldInfo.GetValue(null) as TEnumeration;
 			}
 		}
 
@@ -63,7 +69,7 @@ namespace KZLib
 
 		public static bool TryParse<TEnumeration>(string _name,out TEnumeration _result) where TEnumeration : Enumeration
 		{
-			foreach(var data in GetGroup<TEnumeration>(true))
+			foreach(var data in GetEnumerationGroup<TEnumeration>(true))
 			{
 				if(data.m_Name.IsEqual(_name))
 				{

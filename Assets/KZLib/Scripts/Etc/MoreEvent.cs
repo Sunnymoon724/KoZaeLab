@@ -18,21 +18,35 @@ namespace KZLib
 			m_OnAction = _onAction;
 		}
 
+		/// <summary>
+		/// 델리게이트에 추가
+		/// 중복되는 리스너는 삭제하고 새로운 리스너를 추가
+		/// </summary>
 		public static MoreAction operator +(MoreAction _delegate,Action _onAction)
 		{
 			_delegate ??= new MoreAction();
 
-			_delegate.m_OnAction -= _onAction;
-			_delegate.m_OnAction += _onAction;
+			if(_onAction != null)
+			{
+				_delegate.m_OnAction -= _onAction;
+				_delegate.m_OnAction += _onAction;
+			}
 
 			return _delegate;
 		}
 
+
+		/// <summary>
+		/// 델리게이트에서 삭제
+		/// </summary>
 		public static MoreAction operator -(MoreAction _delegate,Action _onAction)
 		{
 			_delegate ??= new MoreAction();
 
-			_delegate.m_OnAction -= _onAction;
+			if(_onAction != null)
+			{
+				_delegate.m_OnAction -= _onAction;
+			}
 
 			return _delegate;
 		}
@@ -56,21 +70,34 @@ namespace KZLib
 			m_OnAction = _onAction;
 		}
 
+		/// <summary>
+		/// 델리게이트에 추가
+		/// 중복되는 리스너는 삭제하고 새로운 리스너를 추가
+		/// </summary>
 		public static MoreAction<TObject> operator +(MoreAction<TObject> _delegate,Action<TObject> _onAction)
 		{
 			_delegate ??= new MoreAction<TObject>();
 
-			_delegate.m_OnAction -= _onAction;
-			_delegate.m_OnAction += _onAction;
+			if(_onAction != null)
+			{
+				_delegate.m_OnAction -= _onAction;
+				_delegate.m_OnAction += _onAction;
+			}
 
 			return _delegate;
 		}
 
+		/// <summary>
+		/// 델리게이트에서 제거
+		/// </summary>
 		public static MoreAction<TObject> operator -(MoreAction<TObject> _delegate,Action<TObject> _onAction)
 		{
 			_delegate ??= new MoreAction<TObject>();
 
-			_delegate.m_OnAction -= _onAction;
+			if(_onAction != null)
+			{
+				_delegate.m_OnAction -= _onAction;
+			}
 
 			return _delegate;
 		}
@@ -94,21 +121,33 @@ namespace KZLib
 			m_OnFunc = _onFunc;
 		}
 
+		/// <summary>
+		/// 델리게이트에 추가
+		/// 중복되는 리스너는 삭제하고 새로운 리스너를 추가
+		/// </summary>
 		public static MoreFunc<TObject> operator +(MoreFunc<TObject> _delegate,Func<TObject> _onFunc)
 		{
-			_delegate ??= new MoreFunc<TObject>();
+			_delegate ??= new MoreFunc<TObject>(_onFunc);
 
-			_delegate.m_OnFunc -= _onFunc;
-			_delegate.m_OnFunc += _onFunc;
+			if(_onFunc != null)
+			{
+				_delegate.m_OnFunc += _onFunc;
+			}
 
 			return _delegate;
 		}
 
+		/// <summary>
+		/// 델리게이트에서 제거
+		/// </summary>
 		public static MoreFunc<TObject> operator -(MoreFunc<TObject> _delegate,Func<TObject> _onFunc)
 		{
 			_delegate ??= new MoreFunc<TObject>();
 
-			_delegate.m_OnFunc -= _onFunc;
+			if(_onFunc != null)
+			{
+				_delegate.m_OnFunc -= _onFunc;
+			}
 
 			return _delegate;
 		}

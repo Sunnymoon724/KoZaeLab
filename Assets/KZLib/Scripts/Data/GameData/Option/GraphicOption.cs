@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace GameData
 {
@@ -12,6 +13,7 @@ namespace GameData
 		protected override string OPTION_KEY => "Graphic Option";
 		protected override EventTag Tag => EventTag.ChangeGraphicOption;
 
+		[Serializable]
 		private class Graphic
 		{
 			public Vector2Int Resolution { get; set; }

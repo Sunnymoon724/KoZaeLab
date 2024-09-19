@@ -131,7 +131,7 @@ namespace KZLib
 		{
 			var resolution = _option.ScreenResolution;
 
-			_builder.AppendFormat(string.Format("현재 해상도 {0}x{1}\n",resolution.Width,resolution.Width));
+			_builder.AppendFormat($"현재 해상도 {resolution.Width}x{resolution.Width}\n");
 		}
 
 		private void InitializeRenderSetting(StringBuilder _builder)
