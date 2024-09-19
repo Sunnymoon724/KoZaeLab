@@ -12,18 +12,16 @@ public static class BoxCollider2DExtension
 	{
 		_localCenter = _collider.offset;
 
-		var halfSize = _collider.size;
+		var halfWidth = _collider.size.x*0.5f;
+		var halfHeight = _collider.size.y*0.5f;
 
-		halfSize.x *= 0.5f;
-		halfSize.y *= 0.5f;
-
-		return Mathf.Sqrt(halfSize.x*halfSize.x+halfSize.y*halfSize.y)+_collider.edgeRadius;
+		return Mathf.Sqrt(halfWidth*halfWidth+halfHeight*halfHeight)+_collider.edgeRadius;
 	}
 
 	public static bool ApplyScale(this BoxCollider2D _collider,Vector3 _scale)
 	{
-		_collider.offset *= _scale;
-		_collider.size *= _scale.Abs();
+		_collider.offset = Vector2.Scale(_collider.offset,_scale);
+		_collider.size = Vector2.Scale(_collider.size,_scale.Abs());
 
 		return true;
 	}

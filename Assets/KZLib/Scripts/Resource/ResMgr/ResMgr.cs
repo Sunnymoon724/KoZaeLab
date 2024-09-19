@@ -83,20 +83,10 @@ namespace KZLib
 					if(m_PoolTimer >= POOL_LOOP_TIME)
 					{
 						m_PoolTimer = 0.0f;
-						m_RemoveList.Clear();
 
-						foreach(var pair in new Dictionary<string,List<CachedData>>(m_CachedDataDict))
+						foreach(var pair in m_CachedDataDict)
 						{
-							foreach(var cachedData in pair.Value)
-							{
-								if(cachedData.IsOverdue)
-								{
-									//? 기한이 지난 것들
-									m_RemoveList.Add(cachedData);
-								}
-							}
-
-							pair.Value.RemoveAll(x => m_RemoveList.Contains(x));
+							pair.Value.RemoveAll(x => x.IsOverdue);
 
 							if(pair.Value.Count == 0)
 							{
@@ -107,14 +97,12 @@ namespace KZLib
 				}
 
 				// 로딩 큐 체크하고 있으면 로딩 큐 실행
-				if(m_LoadingQueue.IsNullOrEmpty())
+				if(m_LoadingQueue.Count > 0)
 				{
-					continue;
+					var loadingData = m_LoadingQueue.Dequeue();
+
+					GetObject(loadingData.DataPath,loadingData.Parent,true);
 				}
-
-				var loadingData = m_LoadingQueue.Dequeue();
-
-				GetObject(loadingData.DataPath,loadingData.Parent,true);
 			}
 		}
 
@@ -125,15 +113,9 @@ namespace KZLib
 
 		private TObject GetData<TObject>(string _path) where TObject : Object
 		{
-			if(m_CachedDataDict.TryGetValue(_path,out var dataList))
+			if(m_CachedDataDict.TryGetValue(_path,out var dataList) && dataList.Count > 0)
 			{
-				foreach(var data in dataList)
-				{
-					if(data.DataArray[0] is TObject result)
-					{
-						return result;
-					}
-				}
+				return dataList[0].DataArray[0] as TObject;
 			}
 
 			return null;
@@ -141,14 +123,13 @@ namespace KZLib
 
 		private TObject[] GetDataArray<TObject>(string _path) where TObject : Object
 		{
-			if(m_CachedDataDict.TryGetValue(_path,out var dataList))
+			if(m_CachedDataDict.TryGetValue(_path,out var dataList) && dataList.Count > 0)
 			{
-				foreach(var data in dataList)
+				var data = dataList[0];
+
+				if(data.DataArray is TObject[] resultArray)
 				{
-					if(data.DataArray is TObject[] resultArray)
-					{
-						return resultArray;
-					}
+					return resultArray;
 				}
 			}
 

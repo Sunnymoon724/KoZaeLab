@@ -41,7 +41,7 @@ public static class ListExtension
 		_sources.Move(_sources.IndexOf(_value),_newIndex);
 	}
 
-	//// <summary>
+	/// <summary>
 	/// 값의 위치를 옮긴다.
 	/// </summary>
 	public static void Move<TValue>(this IList<TValue> _sources,int _oldIndex,int _newIndex)

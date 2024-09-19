@@ -61,7 +61,7 @@ public static class Vector2Extension
 
 	public static string ToVectorString(this Vector2 _vector,int _decimals = 2)
 	{
-		var format = string.Format("({1}{0}}}, {2}{0}}})",_decimals,"{0:f","{1:f");
+		var format = $"({"{0:f"}{_decimals}}}, {"{1:f"}{_decimals}}})";
 
 		return string.Format(format,_vector.x,_vector.y);
 	}

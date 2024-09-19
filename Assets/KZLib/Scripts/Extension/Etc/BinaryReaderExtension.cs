@@ -5,14 +5,10 @@ public static class BinaryReaderExtension
 {
 	public static string ReadTextAddColon(this BinaryReader _reader,int _length)
 	{
-		var byteList = new List<byte>();
-
-		for(var i=0;i<_length;i++)
-		{
-			byteList.Add(_reader.ReadByte());
-		}
-
-		return string.Join(":",byteList);
+		var bytes = new byte[_length];
+		_reader.Read(bytes,0,_length);
+		
+		return string.Join(":", bytes);
 	}
 
 	public static short ReadInt16(this BinaryReader _reader)

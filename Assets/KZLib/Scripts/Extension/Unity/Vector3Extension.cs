@@ -121,7 +121,7 @@ public static class Vector3Extension
 
 	public static string ToVectorString(this Vector3 _vector,int _decimals = 2)
 	{
-		var format = string.Format("({1}{0}}}, {2}{0}}}, {3}{0}}})",_decimals,"{0:f","{1:f","{2:f");
+		var format = $"({"{0:f"}{_decimals}}}, {"{1:f"}{_decimals}}}, {"{2:f"}{_decimals}}})";
 
 		return string.Format(format,_vector.x,_vector.y,_vector.z);
 	}
@@ -364,21 +364,21 @@ public static class Vector3Extension
 	private static (Vector3 Position,Quaternion Rotation,Vector3 Scale) LockTransformToSpace(Transform _transform,SpaceType _space)
 	{
 		_transform.GetPositionAndRotation(out var position,out var rotation);
-		var scale = _transform.localScale;
+
+        var scale = _transform.localScale;
 
 		if(_space == SpaceType.xy)
 		{
-			_transform.eulerAngles = new Vector3(0.0f,0.0f,_transform.eulerAngles.z);
-			_transform.position = new Vector3(_transform.position.x,_transform.position.y,0.0f);
+			position.z = 0.0f;
 		}
 		else if(_space == SpaceType.xz)
 		{
-			_transform.eulerAngles = new Vector3(0.0f,_transform.eulerAngles.y,0.0f);
-			_transform.position = new Vector3(_transform.position.x,0.0f,_transform.position.z);
+			position.y = 0.0f;
 		}
 
-		var max = Mathf.Max(_transform.lossyScale.x,_transform.lossyScale.y,_transform.lossyScale.z);
+		var max = Mathf.Max(scale.x,scale.y,scale.z);
 
+		_transform.SetPositionAndRotation(position,rotation);
 		_transform.localScale = Vector3.one*max;
 
 		return (position,rotation,scale);

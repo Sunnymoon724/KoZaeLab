@@ -17,11 +17,11 @@ public static class RectExtension
 		return result;
 	}
 
-	public static Rect ToPixels(this Rect _rect,int _width,int _height,bool _round)
+	public static Rect ToPixels(this Rect _rect,int _width,int _height,bool _round = false)
 	{
 		var result = _rect;
 
-		if (_round)
+		if(_round)
 		{
 			result.xMin = Mathf.RoundToInt(_rect.xMin*_width);
 			result.xMax = Mathf.RoundToInt(_rect.xMax*_width);

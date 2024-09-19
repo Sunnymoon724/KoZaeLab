@@ -7,11 +7,17 @@ namespace KZLib
 	{
 		private static readonly Dictionary<EventTag,Delegate> s_ListenerDict = new();
 
+		/// <summary>
+		/// 이벤트에 리스너를 추가
+		/// </summary>
 		public static void EnableListener(EventTag _eventTag,Action _onAction)
 		{
 			EnableListenerInner(_eventTag,_onAction);
 		}
 
+		/// <summary>
+		/// 이벤트에 리스너를 추가
+		/// </summary>
 		public static void EnableListener<TDelegate>(EventTag _eventTag,Action<TDelegate> _onAction)
 		{
 			EnableListenerInner(_eventTag,_onAction);
@@ -19,26 +25,34 @@ namespace KZLib
 
 		private static void EnableListenerInner(EventTag _eventTag,Delegate _callback)
 		{
-			ValidateCallback(_eventTag,_callback);
-
-			if(!s_ListenerDict.ContainsKey(_eventTag))
+			if(_callback == null)
 			{
-				s_ListenerDict.Add(_eventTag,_callback);
-
 				return;
 			}
 
-			ValidateListener(_eventTag);
 			ValidateType(_eventTag,_callback);
 
-			s_ListenerDict[_eventTag] = Delegate.Combine(s_ListenerDict[_eventTag],_callback);
+			if(s_ListenerDict.TryGetValue(_eventTag,out var listener))
+			{
+				s_ListenerDict[_eventTag] = listener == null ? _callback : Delegate.Combine(listener,_callback);
+			}
+			else
+			{
+				s_ListenerDict[_eventTag] = _callback;
+			}
 		}
 
+		/// <summary>
+		/// 이벤트에 추가된 리스너를 삭제
+		/// </summary>
 		public static void DisableListener(EventTag _eventTag,Action _onAction)
 		{
 			DisableListenerInner(_eventTag,_onAction);
 		}
 
+		/// <summary>
+		/// 이벤트에 추가된 리스너를 삭제
+		/// </summary>
 		public static void DisableListener<TDelegate>(EventTag _eventTag,Action<TDelegate> _onAction)
 		{
 			DisableListenerInner(_eventTag,_onAction);
@@ -46,17 +60,14 @@ namespace KZLib
 
 		private static void DisableListenerInner(EventTag _eventTag,Delegate _callback)
 		{
-			ValidateCallback(_eventTag,_callback);
-
-			if(!s_ListenerDict.ContainsKey(_eventTag))
+			if(_callback == null || !s_ListenerDict.TryGetValue(_eventTag,out var listener) || listener == null)
 			{
 				return;
 			}
 
-			ValidateListener(_eventTag);
 			ValidateType(_eventTag,_callback);
 
-			s_ListenerDict[_eventTag] = Delegate.Remove(s_ListenerDict[_eventTag],_callback);
+			s_ListenerDict[_eventTag] = Delegate.Remove(listener,_callback);
 
 			if(s_ListenerDict[_eventTag] == null)
 			{
@@ -64,60 +75,44 @@ namespace KZLib
 			}
 		}
 
+		/// <summary>
+		/// 이벤트를 발생시킵니다.
+		/// </summary>
 		public static void SendEvent(EventTag _eventTag)
 		{
-			if(!s_ListenerDict.ContainsKey(_eventTag))
+			if(s_ListenerDict.TryGetValue(_eventTag,out var listener) && listener is Action action)
 			{
-				return;
+				action();
 			}
-
-			ValidateListener(_eventTag);
-
-			var listener = s_ListenerDict[_eventTag];
-			var result = listener as Action ?? throw new NullReferenceException(string.Format("{0}의 타입에 문제가 있습니다.[{1}]",_eventTag,listener.GetType().Name));
-
-			result();
+			else
+			{
+				throw new InvalidOperationException($"{_eventTag}에 잘못된 리스너 타입이 등록되었습니다. [Action  != {listener.GetType().Name}]");
+			}
 		}
 
+		/// <summary>
+		/// 이벤트를 발생시킵니다.
+		/// </summary>
 		public static void SendEvent<TDelegate>(EventTag _eventTag,TDelegate _param)
 		{
-			if(!s_ListenerDict.ContainsKey(_eventTag))
+			if(s_ListenerDict.TryGetValue(_eventTag,out var listener) && listener is Action<TDelegate> action)
 			{
-				return;
+				action(_param);
 			}
-
-			ValidateListener(_eventTag);
-
-			var listener = s_ListenerDict[_eventTag];
-			var result = listener as Action<TDelegate> ?? throw new NullReferenceException(string.Format("{0}의 타입에 문제가 있습니다.[{1}]",_eventTag,listener.GetType().Name));
-
-			result(_param);
-		}
-
-		private static void ValidateCallback(EventTag _eventTag,Delegate _callback)
-		{
-			if(_callback == null)
+			else
 			{
-				throw new ArgumentNullException(string.Format("{0}의 콜백이 존재하지 않습니다.",_eventTag));
+				throw new InvalidOperationException($"{_eventTag}에 잘못된 리스너 타입이 등록되었습니다. [Action<TDelegate>  != {listener.GetType().Name}]");
 			}
 		}
 
-		private static void ValidateListener(EventTag _eventTag)
-		{
-			if(s_ListenerDict[_eventTag] == null)
-			{
-				throw new NullReferenceException(string.Format("{0}가 Null 입니다.",_eventTag));
-			}
-		}
-
-		private static void ValidateType(EventTag _eventTag,Delegate _callback)
+		private static void ValidateType(EventTag _eventTag, Delegate _callback)
 		{
 			var listenerType = s_ListenerDict[_eventTag].GetType();
 			var callBackType = _callback.GetType();
 
-			if(listenerType != callBackType)
+			if (listenerType != callBackType)
 			{
-				throw new InvalidOperationException(string.Format("{0}의 이벤트 타입[{1}]과 현재 이벤트의 타입[{2}]이 다릅니다.",_eventTag,listenerType.Name,callBackType.Name));
+				throw new InvalidOperationException($"{_eventTag}의 이벤트 타입[{listenerType.Name}]과 현재 이벤트의 타입[{callBackType.Name}]이 다릅니다.");
 			}
 		}
 	}

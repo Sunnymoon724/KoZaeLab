@@ -15,7 +15,7 @@ public static class EnumerableExtension
 			}
 		}
 
-		return _sources.First();
+		return _sources.FirstOrDefault();
 	}
 
 	public static int FindIndex<TValue>(this IEnumerable<TValue> _sources,Func<TValue,bool> _predicate)
@@ -256,16 +256,13 @@ public static class EnumerableExtension
 
 	public static IEnumerable<TResult> Zip<TValue1,TValue2,TResult>(this IEnumerable<TValue1> _sources1,IEnumerable<TValue2> _sources2,Func<TValue1,TValue2,TResult> _predicate)
 	{
-		var resultList = new List<TResult>();
 		var iterator1 = _sources1.GetEnumerator();
 		var iterator2 = _sources2.GetEnumerator();
 
 		while(iterator1.MoveNext() && iterator2.MoveNext())
 		{
-			resultList.Add(_predicate(iterator1.Current,iterator2.Current));
+			yield return _predicate(iterator1.Current,iterator2.Current);
 		}
-
-		return resultList;
 	}
 
 	public static string ToString<TValue>(this IEnumerable<TValue> _sources,string _separator)

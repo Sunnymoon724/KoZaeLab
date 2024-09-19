@@ -75,259 +75,153 @@ namespace KZLib
 			{
 				return data;
 			}
-			else
-			{
-				if(NewSave)
-				{
-					SetString(_key,_default);
-				}
 
-				return _default;
+			if(NewSave)
+			{
+				SetString(_key,_default);
 			}
+
+			return _default;
 		}
 
 		public int GetInt(string _key,int _default = 0)
 		{
-			try
+			if(int.TryParse(GetData(_key),out var result))
 			{
-				if(int.TryParse(GetData(_key),out var result))
-				{
-					return result;
-				}
-				else
-				{
-					if(NewSave)
-					{
-						SetInt(_key,_default);
-					}
-
-					return _default;
-				}
+				return result;
 			}
-			catch(Exception _exception)
-			{
-				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
+			if(NewSave)
+			{
 				SetInt(_key,_default);
-
-				return _default;
 			}
+
+			return _default;
 		}
 
 		public long GetLong(string _key,long _default = 0L)
 		{
-			try
+			if(long.TryParse(GetData(_key),out var result))
 			{
-				if(long.TryParse(GetData(_key),out var result))
-				{
-					return result;
-				}
-				else
-				{
-					if(NewSave)
-					{
-						SetLong(_key,_default);
-					}
-
-					return _default;
-				}
+				return result;
 			}
-			catch(Exception _exception)
-			{
-				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
+			if(NewSave)
+			{
 				SetLong(_key,_default);
-
-				return _default;
 			}
+
+			return _default;
 		}
 
 		public float GetFloat(string _key,float _default = 0.0f)
 		{
-			try
+			if(float.TryParse(GetData(_key),out var result))
 			{
-				if(float.TryParse(GetData(_key),out var result))
-				{
-					return result;
-				}
-				else
-				{
-					if(NewSave)
-					{
-						SetFloat(_key,_default);
-					}
-
-					return _default;
-				}
+				return result;
 			}
-			catch(Exception _exception)
-			{
-				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
+			if(NewSave)
+			{
 				SetFloat(_key,_default);
-
-				return _default;
 			}
+
+			return _default;
 		}
 
 		public double GetDouble(string _key,double _default = 0.0d)
 		{
-			try
+			if(double.TryParse(GetData(_key),out var result))
 			{
-				if(double.TryParse(GetData(_key),out var result))
-				{
-					return result;
-				}
-				else
-				{
-					if(NewSave)
-					{
-						SetDouble(_key,_default);
-					}
-
-					return _default;
-				}
+				return result;
 			}
-			catch(Exception _exception)
-			{
-				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
+			if(NewSave)
+			{
 				SetDouble(_key,_default);
-
-				return _default;
 			}
+
+			return _default;
 		}
 
 		public bool GetBool(string _key,bool _default = true)
 		{
-			try
+			if(bool.TryParse(GetData(_key),out var result))
 			{
-				if(bool.TryParse(GetData(_key),out var result))
-				{
-					return result;
-				}
-				else
-				{
-					if(NewSave)
-					{
-						SetBool(_key,_default);
-					}
-
-					return _default;
-				}
+				return result;
 			}
-			catch(Exception _exception)
-			{
-				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
+			if(NewSave)
+			{
 				SetBool(_key,_default);
-
-				return _default;
 			}
+
+			return _default;
 		}
 
 		public TEnum GetEnum<TEnum>(string _key,TEnum _default = default) where TEnum : struct
 		{
-			try
+			if(Enum.TryParse(GetData(_key),true,out TEnum result))
 			{
-				if(Enum.TryParse(GetData(_key),true,out TEnum result))
-				{
-					return result;
-				}
-				else
-				{
-					if(NewSave)
-					{
-						SetEnum(_key,_default);
-					}
-
-					return _default;
-				}
+				return result;
 			}
-			catch(Exception _exception)
-			{
-				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
+			if(NewSave)
+			{
 				SetEnum(_key,_default);
-
-				return _default;
 			}
+
+			return _default;
 		}
 
 		public TData GetObject<TData>(string _key,TData _default = default)
 		{
-			try
+			var data = GetData(_key);
+
+			if(!data.IsEmpty())
 			{
-				var data = GetData(_key);
+				var result = JsonConvert.DeserializeObject<TData>(data);
+				var text = JsonConvert.SerializeObject(result);
 
-				if(!data.IsEmpty())
+				if(!text.IsEqual(data))
 				{
-					var result = JsonConvert.DeserializeObject<TData>(data);
-					var text = JsonConvert.SerializeObject(result);
-
-					if(!text.IsEqual(data))
-					{
-						SetString(_key,text);
-					}
-
-					return result;
+					SetString(_key,text);
 				}
-				else
-				{
-					if(NewSave)
-					{
-						SetObject(_key,_default);
-					}
 
-					return _default;
-				}
+				return result;
 			}
-			catch(Exception _exception)
-			{
-				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
+			if(NewSave)
+			{
 				SetObject(_key,_default);
-
-				return _default;
 			}
+
+			return _default;
 		}
 
 		public object GetObject(string _key,Type _type,object _default = default)
 		{
-			try
+			var data = GetData(_key);
+
+			if(!data.IsEmpty())
 			{
-				var data = GetData(_key);
+				var result = JsonConvert.DeserializeObject(data,_type);
+				var text = JsonConvert.SerializeObject(result);
 
-				if(!data.IsEmpty())
+				if(!text.IsEqual(data))
 				{
-					var result = JsonConvert.DeserializeObject(data,_type);
-					var text = JsonConvert.SerializeObject(result);
-
-					if(!text.IsEqual(data))
-					{
-						SetString(_key,text);
-					}
-
-					return result;
+					SetString(_key,text);
 				}
-				else
-				{
-					if(NewSave)
-					{
-						SetObject(_key,_default);
-					}
 
-					return _default;
-				}
+				return result;
 			}
-			catch(Exception _exception)
-			{
-				LogTag.Data.E("데이터가 오류나서 초기화 시켰습니다.{0}",_exception);
 
+			if(NewSave)
+			{
 				SetObject(_key,_default);
-
-				return _default;
 			}
+
+			return _default;
 		}
 
 		private string GetData(string _key)

@@ -4,7 +4,7 @@ namespace System.Collections.Generic
 {
 	public class CircularQueue<TData> : IEnumerable<TData>,IEnumerable,IReadOnlyCollection<TData>,ICollection
 	{
-		private TData[] m_DataArray = null;
+		private readonly TData[] m_DataArray = null;
 		private readonly int m_Capacity = 0;
 		private readonly object m_SyncRoot = new();
 
@@ -18,7 +18,7 @@ namespace System.Collections.Generic
 		{
 			if(_capacity <= 0)
 			{
-				throw new ArgumentOutOfRangeException(string.Format("용량이 {0} 입니다.",_capacity)); 
+				throw new ArgumentOutOfRangeException($"용량이 {_capacity} 입니다."); 
 			}
 
 			m_Capacity = _capacity;
@@ -38,13 +38,13 @@ namespace System.Collections.Generic
 		{
 			lock(m_SyncRoot)
 			{
-				if(IsEmpty)
-				{
-					m_Front = 0;
-				}
-				else if(IsFull)
+				if(IsFull)
 				{
 					m_Front = (m_Front+1)%m_Capacity;
+				}
+				else if(IsEmpty)
+				{
+					m_Front = 0;
 				}
 
 				m_Rear = (m_Rear+1)%m_Capacity;
@@ -90,7 +90,7 @@ namespace System.Collections.Generic
 			}
 		}
 
-		public int Count => m_Front == -1 ? 0 : m_Rear >= m_Front ? m_Rear-m_Front+1 : m_Capacity - m_Front+m_Rear+1;
+		public int Count => IsEmpty ? 0 : (m_Rear >= m_Front ? m_Rear-m_Front+1 : m_Capacity-m_Front+m_Rear+1);
 		public bool IsEmpty => m_Front == -1;
 		public bool IsFull => (m_Rear+1)%m_Capacity == m_Front;
 
@@ -102,8 +102,6 @@ namespace System.Collections.Generic
 				m_Rear = -1;
 
 				Array.Clear(m_DataArray,0,m_Capacity);
-
-				m_DataArray = new TData[m_Capacity];
 			}
 		}
 
@@ -136,7 +134,7 @@ namespace System.Collections.Generic
 		{
 			if(_data == null)
 			{
-				throw new ArgumentNullException(string.Format("{0}이 없습니다.",_data));
+				throw new ArgumentNullException("null은 포함될 수 없습니다.");
 			}
 
 			return m_DataArray.Any(x=>x != null && x.Equals(_data));
@@ -146,13 +144,13 @@ namespace System.Collections.Generic
 		{
 			if(_array == null)
 			{
-				throw new ArgumentNullException(string.Format("{0}이 없습니다.",_array));
+				throw new ArgumentNullException("배열이 null입니다.");
 			}
 
 			if(_index < 0 || _index >= _array.Length)
-			{
-				throw new ArgumentNullException(string.Format("{0}는 {1}의 범위 밖입니다.",_index,_array));
-			}
+            {
+                throw new ArgumentOutOfRangeException($"인덱스 {_index}는 배열의 범위를 초과합니다.");
+            }
 
 			if(Count > 0)
 			{

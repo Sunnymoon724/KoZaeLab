@@ -63,7 +63,7 @@ namespace KZLib.KZDevelop
 						GetShapePointArray();
 					}
 
-					m_OnChangedPath?.Invoke();
+					OnChangedPath?.Invoke();
 
 					m_PathLength = MathUtility.GetTotalDistance(m_PointArray);
 
@@ -81,13 +81,7 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		private Action m_OnChangedPath = null;
-
-		public event Action OnChangedPath
-		{
-			add { m_OnChangedPath -= value; m_OnChangedPath += value; }
-			remove { m_OnChangedPath -= value; }
-		}
+		public MoreAction OnChangedPath { get; set; }
 
 		public void SetDirty()
 		{

@@ -63,7 +63,7 @@ namespace KZLib.KZDevelop
 		[BoxGroup("뷰어",ShowLabel = false,Order = 99),SerializeField,KZRichText]
 		private int m_FocusIndex = -1;
 
-		private GameObjectUIPool m_ObjectPool = null;
+		private GameObjectUIPool<FocusSlotUI> m_ObjectPool = null;
 
 		private bool m_Initialize = false;
 
@@ -109,7 +109,7 @@ namespace KZLib.KZDevelop
 			m_Viewport.pivot = new Vector2(0.0f,1.0f);
 			slot.UIRectTransform.pivot = new Vector2(0.5f,0.5f);
 
-			m_ObjectPool = new GameObjectUIPool(slot.gameObject,m_Viewport);
+			m_ObjectPool = new GameObjectUIPool<FocusSlotUI>(m_Slot,m_Viewport);
 
 			m_CellList.Clear();
 			m_SlotList.Clear();
@@ -248,7 +248,7 @@ namespace KZLib.KZDevelop
 
 			for(var i=0;i<count;i++)
 			{
-				m_SlotList.Add(m_ObjectPool.Get<FocusSlotUI>(m_Viewport));
+				m_SlotList.Add(m_ObjectPool.Get(m_Viewport));
 			}
 		}
 

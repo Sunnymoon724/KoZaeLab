@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UnityEngine;
 using Object = UnityEngine.Object;
 
 public static class DictionaryExtension
@@ -41,49 +40,41 @@ public static class DictionaryExtension
 	/// </summary>
 	public static bool FindAllPairList<TKey,TValue>(this IDictionary<TKey,List<TValue>> _sources,Func<TValue,bool> _predicate,out List<KeyValuePair<TKey,TValue>> _pairList)
 	{
-		_pairList = new List<KeyValuePair<TKey,TValue>>();
+		_pairList = new List<KeyValuePair<TKey,TValue>>(_sources.Sum(x => x.Value.Count));
 
 		foreach(var pair in _sources)
 		{
-			foreach(var value in pair.Value)
-			{
-				if(_predicate(value))
-				{
-					_pairList.Add(new KeyValuePair<TKey,TValue>(pair.Key,value));
-				}
-			}
+			_pairList.AddRange(pair.Value.Where(_predicate).Select(x => new KeyValuePair<TKey,TValue>(pair.Key,x)));
 		}
 
 		return _pairList.Count != 0;
 	}
-	
-	public static TValue GetOrCreateValue<TKey,TValue>(this IDictionary<TKey,TValue> _sources,TKey _key) where TValue : new()
-	{
-		if(!_sources.ContainsKey(_key))
-		{
-			_sources.Add(_key,new TValue());
-		}
 
-		return _sources[_key];
-	}
-
+	/// <summary>
+	/// 딕셔너리에서 지정된 키와 인덱스를 사용하여 가장 가까운 항목을 찾습니다.
+	/// </summary>
 	public static TValue GetNearValue<TKey,TValue>(this IDictionary<TKey,TValue> _sources,TKey _key,int _near)
 	{
-		var keyList = _sources.Keys.ToList();
-
-		for(var i=0;i<keyList.Count;i++)
+		if(_sources.IsNullOrEmpty() && !_sources.ContainsKey(_key))
 		{
-			if(keyList[i].Equals(_key))
-			{
-				var idx = Mathf.Clamp(i+_near,0,keyList.Count-1);
-
-				return _sources[keyList[idx]];
-			}
+			return default;
 		}
 
-		return default;
+		var keyList = _sources.Keys.ToList();
+
+		var index = keyList.IndexOf(_key)+_near;
+
+		if(index < 0 || index >= keyList.Count)
+		{
+			return default;
+		}
+
+		return _sources[keyList[index]];
 	}
 
+	/// <summary>
+	/// 딕셔너리의 키와 지정된 키열이 일치하는지 확인합니다.
+	/// </summary>
 	public static bool IsKeysEquals<TKey,TValue>(this IDictionary<TKey,TValue> _sources,IEnumerable<TKey> _keys)
 	{
 		if(_sources.IsNullOrEmpty() && _keys.IsNullOrEmpty())
@@ -96,9 +87,12 @@ public static class DictionaryExtension
 			return false;
 		}
 
-		return _sources.Keys.IsEquals(_keys);
+		return _sources.Keys.SequenceEqual(_keys);
 	}
 
+	/// <summary>
+	/// 딕셔너리의 값과 지정된 값 열이 일치하는지 확인합니다.
+	/// </summary>
 	public static bool IsValuesEquals<TKey,TValue>(this IDictionary<TKey,TValue> _sources,IEnumerable<TValue> _values)
 	{
 		if(_sources.IsNullOrEmpty() && _values.IsNullOrEmpty())
@@ -111,35 +105,39 @@ public static class DictionaryExtension
 			return false;
 		}
 
-		return _sources.Values.IsEquals(_values);
+		return _sources.Values.SequenceEqual(_values);
 	}
 
-	public static void AddRange<TKey,TValue>(this IDictionary<TKey,TValue> _sources,IEnumerable<TValue> _values,Func<TValue,TKey> _key,Action _onAction = null)
+	/// <summary>
+	/// 지정된 조건을 사용하여 딕셔너리에 추가합니다. 
+	/// </summary>
+	public static void AddRange<TKey,TValue>(this IDictionary<TKey,TValue> _sources,IEnumerable<TValue> _values,Func<TValue,TKey> _predicate,Action _onAction = null)
 	{
 		foreach(var value in _values)
 		{
-			var key = _key(value);
+			var key = _predicate(value);
 
-			if(key == null)
+			if(key == null || _sources.ContainsKey(key))
 			{
 				continue;
 			}
 
-			if(_sources.ContainsKey(key))
-			{
-				continue;
-			}
-			
 			_onAction?.Invoke();
 			_sources.Add(key,value);
 		}
 	}
 
+	/// <summary>
+	/// Group을 딕셔너리에 추가합니다. 
+	/// </summary>
 	public static void AddRange<TValue>(this IDictionary<string,TValue> _sources,IEnumerable<TValue> _values,Action _onAction = null) where TValue : Object
 	{
-		_sources.AddRange(_values,(value)=>{ return value.name; },_onAction);
+		_sources.AddRange(_values,value=>value.name,_onAction);
 	}
 
+	/// <summary>
+	/// Dict을 딕셔너리에 추가합니다. 
+	/// </summary>
 	public static void AddRange<TKey,TValue>(this IDictionary<TKey,TValue> _sources,IDictionary<TKey,TValue> _values,Action _onAction = null)
 	{
 		foreach(var pair in _values)
@@ -154,26 +152,51 @@ public static class DictionaryExtension
 		}
 	}
 
+	/// <summary>
+	/// 리스트에 값을 추가하거나 새로 생성합니다.
+	/// </summary>
 	public static void AddOrCreate<TKey,TValue>(this IDictionary<TKey,List<TValue>> _sources,TKey _key,TValue _value)
 	{
-		if(!_sources.ContainsKey(_key))
+		if(!_sources.TryGetValue(_key,out var list))
 		{
-			_sources.Add(_key,new List<TValue>());
+			list = new List<TValue>();
+			_sources.Add(_key,list);
 		}
 
-		_sources[_key].Add(_value);
+		list.Add(_value);
 	}
 
+	/// <summary>
+	/// 큐에 값을 추가하거나 새로 생성합니다.
+	/// </summary>
 	public static void AddOrCreate<TKey,TValue>(this IDictionary<TKey,Queue<TValue>> _sources,TKey _key,TValue _value)
 	{
-		if(!_sources.ContainsKey(_key))
+		if(!_sources.TryGetValue(_key,out var queue))
 		{
-			_sources.Add(_key,new Queue<TValue>());
+			queue = new Queue<TValue>();
+			_sources.Add(_key,queue);
 		}
 
-		_sources[_key].Enqueue(_value);
+		queue.Enqueue(_value);
 	}
 
+	/// <summary>
+	/// 큐에 값을 추가하거나 새로 생성합니다.
+	/// </summary>
+	public static void AddOrCreate<TKey,TValue>(this IDictionary<TKey,Stack<TValue>> _sources,TKey _key,TValue _value)
+	{
+		if(!_sources.TryGetValue(_key,out var stack))
+		{
+			stack = new Stack<TValue>();
+			_sources.Add(_key,stack);
+		}
+
+		stack.Push(_value);
+	}
+
+	/// <summary>
+	/// 키가 이미 있으면 값을 업데이트하고, 없으면 추가합니다.
+	/// </summary>
 	public static void AddOrUpdate<TKey,TValue>(this IDictionary<TKey,TValue> _sources,TKey _key,TValue _value)
 	{
 		if(_sources.ContainsKey(_key))
@@ -197,10 +220,18 @@ public static class DictionaryExtension
 		}
 	}
 	
+	/// <summary>
+	/// 하나 이상의 딕셔너리를 현재 딕셔너리에 추가합니다.
+	/// </summary>
 	public static void AddDictionary<TKey,TValue>(this IDictionary<TKey,TValue> _sources,params IDictionary<TKey,TValue>[] _dictArray)
 	{
 		foreach(var dict in _dictArray)
 		{
+			if(dict == null)
+			{
+				continue;
+			}
+
 			foreach(var pair in dict)
 			{
 				if(!_sources.ContainsKey(pair.Key))
@@ -211,12 +242,20 @@ public static class DictionaryExtension
 		}
 	}
 
+	/// <summary>
+	/// 각 딕셔너리의 value를 하나의 리스트로 병합합니다.
+	/// </summary>
 	public static List<TValue> MergeToList<TKey,TEnumerable,TValue>(this IDictionary<TKey,TEnumerable> _sources) where TEnumerable : IEnumerable<TValue>
 	{
 		var valueList = new List<TValue>(_sources.Count);
 
 		foreach(var pair in _sources)
 		{
+			if(pair.Value == null)
+			{
+				continue;
+			}
+
 			foreach(var value in pair.Value)
 			{
 				valueList.Add(value);
@@ -231,18 +270,16 @@ public static class DictionaryExtension
 	/// </summary>
 	public static string ToString<TKey,TValue>(this IDictionary<TKey,TValue> _dict,string _format)
 	{
-		var builder = new StringBuilder();
-
 		if(_dict.IsNullOrEmpty() || !_format.Contains("{0}") || !_format.Contains("{1}"))
 		{
 			return string.Empty;
 		}
 
-		var iterator = _dict.GetEnumerator();
+		var builder = new StringBuilder(_dict.Count*(_format.Length+16));
 
-		while(iterator.MoveNext())
+		foreach(var pair in _dict)
 		{
-			builder.AppendFormat(_format,iterator.Current.Key,iterator.Current.Value);
+			builder.AppendFormat(_format,pair.Key,pair.Value);
 		}
 
 		return builder.ToString();

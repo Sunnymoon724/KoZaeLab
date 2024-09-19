@@ -16,7 +16,7 @@ public static class MonoBehaviourExtension
 		{
 			_behaviour.enabled = false;
 		}
-		
+
 		_behaviour.runInEditMode = false;
 
 		if(enabled)

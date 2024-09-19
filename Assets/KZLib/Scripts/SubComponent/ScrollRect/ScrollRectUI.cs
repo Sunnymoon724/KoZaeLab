@@ -33,7 +33,7 @@ public partial class ScrollRectUI : BaseComponentUI
 
 	private readonly List<ICellData> m_CellList = new();
 
-	private GameObjectUIPool m_ObjectPool = null;
+	private GameObjectUIPool<SlotUI> m_ObjectPool = null;
 
 	private int m_HeadIndex = 0;
 	private int m_TailIndex = 0;
@@ -83,7 +83,7 @@ public partial class ScrollRectUI : BaseComponentUI
 			m_ScrollRect.content.anchorMax = new Vector2(0.0f,content.anchorMax.y);
 		}
 
-		m_ObjectPool = new GameObjectUIPool(m_Pivot.gameObject,m_ScrollRect.viewport);
+		m_ObjectPool = new GameObjectUIPool<SlotUI>(m_Pivot,m_ScrollRect.viewport);
 
 		m_CellList.Clear();
 		m_SlotDict.Clear();
@@ -99,7 +99,7 @@ public partial class ScrollRectUI : BaseComponentUI
 
 		foreach(var slot in new List<SlotUI>(m_SlotDict.Values))
 		{
-			m_ObjectPool.Put(slot.gameObject);
+			m_ObjectPool.Put(slot);
 		}
 
 		m_SlotDict.Clear();
@@ -243,7 +243,7 @@ public partial class ScrollRectUI : BaseComponentUI
 
 			if(!m_SlotDict.ContainsKey(i))
 			{
-				var data = m_ObjectPool.Get<SlotUI>(m_ScrollRect.content);
+				var data = m_ObjectPool.Get(m_ScrollRect.content);
 
 				data.gameObject.name = string.Format("Slot_{0}",i);
 				data.gameObject.SetActiveSelf(true);
@@ -275,7 +275,7 @@ public partial class ScrollRectUI : BaseComponentUI
 				continue;
 			}
 
-			m_ObjectPool.Put(m_SlotDict[i].gameObject);
+			m_ObjectPool.Put(m_SlotDict[i]);
 
 			m_SlotDict.Remove(i);
 		}

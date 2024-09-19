@@ -23,7 +23,7 @@ public class GridLayoutGroupUI : BaseComponentUI
 
 	private readonly List<ICellData> m_CellList = new();
 
-	private GameObjectUIPool m_ObjectPool = null;
+	private GameObjectUIPool<SlotUI> m_ObjectPool = null;
 
 	private bool m_Initialize = false;
 
@@ -49,7 +49,7 @@ public class GridLayoutGroupUI : BaseComponentUI
 		m_Pivot.gameObject.SetActiveSelf(false);
 		m_Storage.SetUIChild(m_Pivot.transform);
 
-		m_ObjectPool = new GameObjectUIPool(m_Pivot.gameObject,m_Storage);
+		m_ObjectPool = new GameObjectUIPool<SlotUI>(m_Pivot,m_Storage);
 
 		m_CellList.Clear();
 		m_SlotList.Clear();
@@ -86,7 +86,7 @@ public class GridLayoutGroupUI : BaseComponentUI
 
 	private SlotUI AddSlot()
 	{
-		var slot = m_ObjectPool.Get<SlotUI>(m_GridLayout.transform);
+		var slot = m_ObjectPool.Get(m_GridLayout.transform);
 
 		slot.gameObject.SetActive(true);
 
@@ -97,7 +97,7 @@ public class GridLayoutGroupUI : BaseComponentUI
 	{
 		for(var i=_count;i<m_SlotList.Count;i++)
 		{
-			m_ObjectPool.Put(m_SlotList[i].gameObject);
+			m_ObjectPool.Put(m_SlotList[i]);
 		}
 
 		m_SlotList.RemoveRange(_count,m_SlotList.Count-_count);

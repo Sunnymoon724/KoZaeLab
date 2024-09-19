@@ -134,7 +134,7 @@ public static class LogExtension
 		var name = EditorUtility.InstanceIDToObject(_instance).name;
 
 		//? LogTag 에서 호출한 Log만 제어하기 위해서
-		if(!name.IsEqual(nameof(LogTag)))
+		if(name.IsEmpty() || !name.IsEqual(nameof(LogTag)))
 		{
 			return false;
 		}
@@ -157,7 +157,12 @@ public static class LogExtension
 		{
 			var pathArray = match.Groups[1].Value.Split(':');
 
-			InternalEditorUtility.OpenFileAtLineExternal(FileUtility.GetAbsolutePath(pathArray[0],true),Convert.ToInt32(pathArray[1]));
+			if(pathArray.Length < 2 || !int.TryParse(pathArray[1],out int lineNumber))
+			{
+				return false;
+			}
+
+			InternalEditorUtility.OpenFileAtLineExternal(FileUtility.GetAbsolutePath(pathArray[0],true),lineNumber);
 
 			return true;
 		}
