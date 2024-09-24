@@ -17,7 +17,7 @@ namespace GameData
 		}
 
 		// https://docs.google.com/document/d/1x3wfhsAR4urxCOhi3jqwoCRwp7DUmZqGPip6rsrGF_k/edit?usp=sharing
-		private static SystemLanguage DefaultLanguage => GameSettings.In.DefaultLanguage;
+		private const SystemLanguage DEFAULT_LANGUAGE = SystemLanguage.English;
 
 		private Language m_Language = null;
 
@@ -25,10 +25,9 @@ namespace GameData
 
 		public override void Initialize()
 		{
-			m_Language = GetOption(new Language()
-			{
-				CurrentLanguage = DefaultLanguage,
-			});
+			var language = CommonSaveData.GetEnum("[System] GameLanguage",DEFAULT_LANGUAGE);
+
+			m_Language = GetOption(new Language() { CurrentLanguage = language, });
 
 			m_LanguageDict.Clear();
 
@@ -87,7 +86,7 @@ namespace GameData
 			}
 			else
 			{
-				if(m_LanguageDict[DefaultLanguage].TryGetValue(_key,out var value))
+				if(m_LanguageDict[DEFAULT_LANGUAGE].TryGetValue(_key,out var value))
 				{
 					return value;
 				}

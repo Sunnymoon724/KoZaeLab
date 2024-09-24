@@ -28,26 +28,23 @@ namespace KZLib.KZAttribute
 #if UNITY_EDITOR
 	public abstract class KZSuffixAttributeDrawer<TValue> : KZAttributeDrawer<KZSuffixAttribute,TValue>
 	{
-		private const int SPACE = 5;
+		private const int LABEL_SPACING = 5;
 
 		protected override void DoDrawPropertyLayout(GUIContent _label)
 		{
 			var rect = EditorGUILayout.GetControlRect();
 
-			var label = new GUIContent(Attribute.SuffixText);
-			var style = new GUIStyle(GUI.skin.label);
-			var width = style.CalcSize(label).x+SPACE;
+			var labelContent = new GUIContent(Attribute.SuffixText);
+			var width = LABEL_STYLE.CalcSize(labelContent).x+LABEL_SPACING;
 
 			rect.xMax -= width;
 
-			var labelText = _label == null ? string.Empty : _label.text;
+			DrawField(rect,GetLabelText(_label));
 
-			DrawField(rect,labelText);
-
-			rect.xMin = rect.xMax+SPACE;
+			rect.xMin = rect.xMax+LABEL_SPACING;
 			rect.xMax += width;
 
-			EditorGUI.LabelField(rect,label,style);
+			EditorGUI.LabelField(rect,labelContent,LABEL_STYLE);
 		}
 
 		protected abstract void DrawField(Rect _rect,string _labelText);

@@ -19,33 +19,49 @@ namespace KZLib.KZAttribute
 		public string MinExpression { get; }
 		public string MaxExpression { get; }
 
-		public KZClampAttribute(double _minValue,double _maxValue)
+		public KZClampAttribute(double _minValue,double _maxValue) : this(_minValue,null,_maxValue,null) { }
+		public KZClampAttribute(string _minExpression,string _maxExpression) : this(double.MinValue,_minExpression,double.MaxValue,_maxExpression) { }
+
+		protected KZClampAttribute(double _minValue,string _minExpression,double _maxValue,string _maxExpression)
 		{
 			MinValue = _minValue;
-			MaxValue = _maxValue;
-		}
-
-		public KZClampAttribute(string _minExpression,string _maxExpression)
-		{
 			MinExpression = _minExpression;
+
+			MaxValue = _maxValue;
 			MaxExpression = _maxExpression;
 		}
 	}
 
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property,AllowMultiple = false,Inherited = true)]
+	[Conditional("UNITY_EDITOR")]
+	public class KZMaxClampAttribute : KZClampAttribute
+	{
+		public KZMaxClampAttribute(double _maxValue) : base(double.MinValue,null,_maxValue,null) { }
+		public KZMaxClampAttribute(string _maxExpression) : base(double.MinValue,null,double.MaxValue,_maxExpression) { }
+	}
+
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property,AllowMultiple = false,Inherited = true)]
+	[Conditional("UNITY_EDITOR")]
+	public class KZMinClampAttribute : KZClampAttribute
+	{
+		public KZMinClampAttribute(double _minValue) : base(_minValue,null,double.MaxValue,null) { }
+		public KZMinClampAttribute(string _minExpression) : base(double.MinValue,_minExpression,double.MaxValue,null) { }
+	}
+
 #if UNITY_EDITOR
-	public abstract class KZClampAttributeDrawer<TValue> : KZAttributeDrawer<KZClampAttribute,TValue> where TValue : IComparable<TValue>
+	public abstract class KZBaseClampAttributeDrawer<TAttribute,TValue> : KZAttributeDrawer<TAttribute,TValue> where TAttribute : KZClampAttribute where TValue : IComparable<TValue>
 	{
 		protected override void DoDrawPropertyLayout(GUIContent _label)
 		{
 			var rect = EditorGUILayout.GetControlRect();
 
-			var labelText = _label == null ? string.Empty : _label.text;
+			var curValue = DrawField(rect,GetLabelText(_label));
+			var minValue = Attribute.MinExpression.IsEmpty() ? MinValue : GetValue<TValue>(Attribute.MinExpression);
+			var maxValue = Attribute.MaxExpression.IsEmpty() ? MaxValue : GetValue<TValue>(Attribute.MaxExpression);
 
-			var value = DrawField(rect,labelText);
-			var min = Attribute.MinExpression.IsEmpty() ? MinValue : GetValue<TValue>(Attribute.MinExpression);
-			var max = Attribute.MaxExpression.IsEmpty() ? MaxValue : GetValue<TValue>(Attribute.MaxExpression);
+			ValueEntry.SmartValue = MathUtility.Clamp(curValue,minValue,maxValue);
 
-			ValueEntry.SmartValue = MathUtility.Clamp(value,min,max);
+			DrawField(rect,GetLabelText(_label));
 		}
 
 		protected abstract TValue MinValue { get; }
@@ -54,7 +70,7 @@ namespace KZLib.KZAttribute
 		protected abstract TValue DrawField(Rect _rect,string _labelText);
 	}
 
-	public class KZClampIntAttributeDrawer : KZClampAttributeDrawer<int>
+	public abstract class KZBaseClampIntAttributeDrawer<TAttribute> : KZBaseClampAttributeDrawer<TAttribute,int> where TAttribute : KZClampAttribute
 	{
 		protected override int MinValue => Convert.ToInt32(Attribute.MinValue);
 		protected override int MaxValue => Convert.ToInt32(Attribute.MaxValue);
@@ -65,7 +81,7 @@ namespace KZLib.KZAttribute
 		}
 	}
 
-	public class KZClampLongAttributeDrawer : KZClampAttributeDrawer<long>
+	public abstract class KZBaseClampLongAttributeDrawer<TAttribute> : KZBaseClampAttributeDrawer<TAttribute,long> where TAttribute : KZClampAttribute
 	{
 		protected override long MinValue => Convert.ToInt64(Attribute.MinValue);
 		protected override long MaxValue => Convert.ToInt64(Attribute.MaxValue);
@@ -76,7 +92,7 @@ namespace KZLib.KZAttribute
 		}
 	}
 
-	public class KZClampFloatAttributeDrawer : KZClampAttributeDrawer<float>
+	public abstract class KZBaseClampFloatAttributeDrawer<TAttribute> : KZBaseClampAttributeDrawer<TAttribute,float> where TAttribute : KZClampAttribute
 	{
 		protected override float MinValue => Convert.ToSingle(Attribute.MinValue);
 		protected override float MaxValue => Convert.ToSingle(Attribute.MaxValue);
@@ -87,7 +103,7 @@ namespace KZLib.KZAttribute
 		}
 	}
 
-	public class KZClampDoubleAttributeDrawer : KZClampAttributeDrawer<double>
+	public abstract class KZBaseClampDoubleAttributeDrawer<TAttribute> : KZBaseClampAttributeDrawer<TAttribute,double> where TAttribute : KZClampAttribute
 	{
 		protected override double MinValue => Attribute.MinValue;
 		protected override double MaxValue => Attribute.MaxValue;
@@ -97,5 +113,21 @@ namespace KZLib.KZAttribute
 			return EditorGUI.DoubleField(_rect,_labelText,ValueEntry.SmartValue);
 		}
 	}
+
+	public class KZClampIntAttributeDrawer : KZBaseClampIntAttributeDrawer<KZClampAttribute> { }
+	public class KZMinClampIntAttributeDrawer : KZBaseClampIntAttributeDrawer<KZMinClampAttribute> { }
+	public class KZMaxClampIntAttributeDrawer : KZBaseClampIntAttributeDrawer<KZMaxClampAttribute> { }
+
+	public class KZClampLongAttributeDrawer : KZBaseClampLongAttributeDrawer<KZClampAttribute> { }
+	public class KZMinClampLongAttributeDrawer : KZBaseClampLongAttributeDrawer<KZMinClampAttribute> { }
+	public class KZMaxClampLongAttributeDrawer : KZBaseClampLongAttributeDrawer<KZMaxClampAttribute> { }
+
+	public class KZClampFloatAttributeDrawer : KZBaseClampFloatAttributeDrawer<KZClampAttribute> { }
+	public class KZMinClampFloatAttributeDrawer : KZBaseClampFloatAttributeDrawer<KZMinClampAttribute> { }
+	public class KZMaxClampFloatAttributeDrawer : KZBaseClampFloatAttributeDrawer<KZMaxClampAttribute> { }
+
+	public class KZClampDoubleAttributeDrawer : KZBaseClampDoubleAttributeDrawer<KZClampAttribute> { }
+	public class KZMinClampDoubleAttributeDrawer : KZBaseClampDoubleAttributeDrawer<KZMinClampAttribute> { }
+	public class KZMaxClampDoubleAttributeDrawer : KZBaseClampDoubleAttributeDrawer<KZMaxClampAttribute> { }
 #endif
 }
