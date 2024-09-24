@@ -17,18 +17,20 @@ namespace KZLib.KZAttribute
 	{
 		protected string m_ErrorMessage = null;
 
+		protected static readonly GUIStyle LABEL_STYLE = new(GUI.skin.label);
+
 		protected abstract void DoDrawPropertyLayout(GUIContent _label);
 
 		protected override void DrawPropertyLayout(GUIContent _label)
 		{
 			var cashed = GUI.enabled;
+			var isValid = m_ErrorMessage.IsEmpty();
 
-			GUI.enabled = true;
+			GUI.enabled = isValid;
 
-			if(m_ErrorMessage.IsEmpty())
+			if(isValid)
 			{
 				//? 에러가 없는 경우
-
 				DoDrawPropertyLayout(_label);
 			}
 			else
@@ -63,10 +65,9 @@ namespace KZLib.KZAttribute
 
 		protected GUIStyle GetValidateStyle(bool _isValid,string _wrongHexColor = null)
 		{
-			var style = new GUIStyle(GUI.skin.label);
-			var pivot = style.normal.textColor;
+			var style = LABEL_STYLE;
 
-			style.normal.textColor = _isValid ? pivot : _wrongHexColor == null ? pivot : _wrongHexColor.ToColor();
+			style.normal.textColor = _isValid ? GUI.skin.label.normal.textColor : _wrongHexColor?.ToColor() ?? GUI.skin.label.normal.textColor;
 
 			return style;
 		}
@@ -76,7 +77,6 @@ namespace KZLib.KZAttribute
 			var height = _rect.height;
 
 			SirenixEditorGUI.DrawSolidRect(_rect.VerticalPadding(0.0f,height*0.3f),_color.MaskAlpha(1.0f));
-
 			SirenixEditorGUI.DrawSolidRect(_rect.VerticalPadding(height*0.7f,0.0f),Color.white);
 			SirenixEditorGUI.DrawSolidRect(_rect.VerticalPadding(height*0.7f,0.0f),new Color(0.0f,0.0f,0.0f,_color.a));
 		}
@@ -84,7 +84,6 @@ namespace KZLib.KZAttribute
 		protected Rect[] GetRectArray(Rect _rect,int _count,float _space = 0.0f)
 		{
 			var rectArray = new Rect[_count];
-
 			var totalWidth = _rect.width-(_count-1)*_space;
 			var width = totalWidth/_count;
 
@@ -96,6 +95,11 @@ namespace KZLib.KZAttribute
 			}
 
 			return rectArray;
+		}
+
+		protected string GetLabelText(GUIContent _label)
+		{
+			return _label == null ? string.Empty : _label.text;
 		}
 	}
 #endif

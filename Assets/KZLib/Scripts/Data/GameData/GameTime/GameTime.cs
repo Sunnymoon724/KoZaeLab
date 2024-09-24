@@ -17,10 +17,10 @@ namespace GameData
 		public long LastServerTime { get; private set; }
 		public float LastClientTime { get; private set; }
 
-		public float NowClientTime { get; private set; }
-		public long NowServerTime => m_ServerTime + (long)(TimeSpan.TicksPerSecond*(Time.realtimeSinceStartup-m_SyncTime));
+		public float CurrentClientTime { get; private set; }
+		public long CurrentServerTime => m_ServerTime + (long)(TimeSpan.TicksPerSecond*(Time.realtimeSinceStartup-m_SyncTime));
 
-		private readonly Dictionary<string,long> m_TimerDict = new();
+		private readonly Dictionary<string,float> m_TimerDict = new();
 
 		public void Initialize() { }
 
@@ -32,16 +32,16 @@ namespace GameData
 		public void SetServerTime(long _serverTime)
 		{
 			m_SyncTime = Time.realtimeSinceStartup;
-			LastServerTime = m_ServerTime;
-			m_ServerTime = _serverTime;
+            LastServerTime = m_ServerTime;
+            m_ServerTime = _serverTime;
 
-			LastClientTime = NowClientTime;
-			NowClientTime = m_SyncTime;
+            LastClientTime = CurrentClientTime;
+			CurrentClientTime = m_SyncTime;
 		}
 
 		public DateTime GetCurrentTime(bool _isLocal = true)
 		{
-			var result = new DateTime(NowServerTime);
+			var result = new DateTime(CurrentServerTime);
 
 			return _isLocal ? result.ToLocalTime() : result;
 		}
@@ -49,9 +49,9 @@ namespace GameData
 		/// <summary>
 		/// 현재시간 목표시간 비교후(UTC) 현재시간이 목표시간 지난경우 : ExtraTime // 남은시간 있으면 : RemainingTime
 		/// </summary>
-		public void CheckDestinationTime(long _milliSeconds,Action _onExtraTime,Action _onRemainingTime = null)
+		public void CheckTimeCondition(long _time,Action _onExtraTime,Action _onRemainingTime)
 		{
-			if (NowServerTime >= _milliSeconds)
+			if(CurrentServerTime >= _time)
 			{
 				_onExtraTime?.Invoke();
 			}
@@ -64,9 +64,9 @@ namespace GameData
 		/// <summary>
 		/// 현재시간 목표시간 비교후 현재시간이 목표시간 지난경우 : ExtraTime // 남은시간 있으면 : RemainingTime
 		/// </summary>
-		public void CheckAndDoAction(DateTime _distance,bool _isLocal,Action _onExtraTime,Action _onRemainingTime = null)
+		public void CheckTimeCondition(DateTime _time,bool _isLocal,Action _onExtraTime,Action _onRemainingTime)
 		{
-			if(GetCurrentTime(_isLocal) >= _distance)
+			if(GetCurrentTime(_isLocal) >= _time)
 			{
 				_onExtraTime?.Invoke();
 			}
@@ -113,14 +113,14 @@ namespace GameData
 
 		public void StartTimer(string _key)
 		{
-			m_TimerDict.AddOrUpdate(_key,DateTime.Now.Ticks);
+			m_TimerDict.AddOrUpdate(_key,Time.realtimeSinceStartup);
 		}
 
 		public bool GetTime(string _key,out float _seconds)
 		{
-			if(m_TimerDict.TryGetValue(_key,out var data))
+			if(m_TimerDict.TryGetValue(_key,out var start))
 			{
-				_seconds = (DateTime.Now.Ticks-data)/(float)TimeSpan.TicksPerSecond;
+				_seconds = Time.realtimeSinceStartup-start;
 
 				return true;
 			}
