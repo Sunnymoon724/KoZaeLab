@@ -24,13 +24,10 @@ namespace KZLib.KZAttribute
 
 		protected override void DoDrawPropertyLayout(GUIContent _label)
 		{
-			//? label
 			var rect = DrawPrefixLabel(_label);
-			var sizeRect = new Rect(rect.x,rect.y,LIST_WIDTH,rect.height);
+			var countRect = new Rect(rect.x,rect.y,LIST_WIDTH,rect.height);
 
-			var count = EditorGUI.IntField(sizeRect,"",m_ListCount);
-
-			m_ListCount = Mathf.Clamp(count,0,int.MaxValue);
+			m_ListCount = MathUtility.MinClamp(EditorGUI.IntField(countRect,"",m_ListCount),0);
 
 			if(m_ListCount <= 0)
 			{
@@ -38,6 +35,18 @@ namespace KZLib.KZAttribute
 			}
 
 			DrawField(new Rect(rect.x+50,rect.y,rect.width-50,rect.height));
+		}
+
+		protected void AdjustList<TData>(List<TData> _dataList,TData _data,int _count)
+		{
+			if(_count < m_ListCount)
+			{
+				_dataList.AddCount(_data,m_ListCount-_count);
+			}
+			else if(_count > m_ListCount)
+			{
+				_dataList.RemoveRange(m_ListCount,_count-m_ListCount);
+			}
 		}
 
 		protected abstract void DrawField(Rect _rect);
@@ -57,16 +66,7 @@ namespace KZLib.KZAttribute
 
 		protected override void DrawField(Rect _rect)
 		{
-			var count = ValueEntry.SmartValue.Count;
-
-			if(count < m_ListCount)
-			{
-				ValueEntry.SmartValue.AddCount(0,m_ListCount-count);
-			}
-			else if(count > m_ListCount)
-			{
-				ValueEntry.SmartValue.RemoveRange(m_ListCount,count-m_ListCount);
-			}
+			AdjustList(ValueEntry.SmartValue,0,ValueEntry.SmartValue.Count);
 
 			var rectArray = GetRectArray(_rect,m_ListCount,5.0f);
 
@@ -91,16 +91,7 @@ namespace KZLib.KZAttribute
 
 		protected override void DrawField(Rect _rect)
 		{
-			var count = ValueEntry.SmartValue.Count;
-
-			if(count < m_ListCount)
-			{
-				ValueEntry.SmartValue.AddCount(0,m_ListCount-count);
-			}
-			else if(count > m_ListCount)
-			{
-				ValueEntry.SmartValue.RemoveRange(m_ListCount,count-m_ListCount);
-			}
+			AdjustList(ValueEntry.SmartValue,0.0f,ValueEntry.SmartValue.Count);
 
 			var rectArray = GetRectArray(_rect,m_ListCount,5.0f);
 
@@ -125,16 +116,7 @@ namespace KZLib.KZAttribute
 
 		protected override void DrawField(Rect _rect)
 		{
-			var count = ValueEntry.SmartValue.Count;
-
-			if(count < m_ListCount)
-			{
-				ValueEntry.SmartValue.AddCount("",m_ListCount-count);
-			}
-			else if(count > m_ListCount)
-			{
-				ValueEntry.SmartValue.RemoveRange(m_ListCount,count-m_ListCount);
-			}
+			AdjustList(ValueEntry.SmartValue,"",ValueEntry.SmartValue.Count);
 
 			var rectArray = GetRectArray(_rect,m_ListCount,5.0f);
 

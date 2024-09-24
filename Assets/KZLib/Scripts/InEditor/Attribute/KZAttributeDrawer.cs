@@ -67,7 +67,7 @@ namespace KZLib.KZAttribute
 		{
 			var style = LABEL_STYLE;
 
-			style.normal.textColor = _isValid ? GUI.skin.label.normal.textColor : _wrongHexColor?.ToColor() ?? GUI.skin.label.normal.textColor;
+			style.normal.textColor = _isValid ? style.normal.textColor : _wrongHexColor?.ToColor() ?? style.normal.textColor;
 
 			return style;
 		}
@@ -100,6 +100,18 @@ namespace KZLib.KZAttribute
 		protected string GetLabelText(GUIContent _label)
 		{
 			return _label == null ? string.Empty : _label.text;
+		}
+
+		protected object ConvertToValue(object _value)
+		{
+			if(_value == null)
+			{
+				return default;
+			}
+
+			var type = typeof(TValue);
+
+			return (TValue) Convert.ChangeType(_value,type);
 		}
 	}
 #endif
