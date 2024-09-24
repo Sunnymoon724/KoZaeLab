@@ -1,13 +1,6 @@
 using System;
 using UnityEngine;
 using System.Diagnostics;
-using Sirenix.Utilities;
-
-#if UNITY_EDITOR
-
-using Sirenix.Utilities.Editor;
-
-#endif
 
 namespace KZLib.KZAttribute
 {
@@ -20,7 +13,6 @@ namespace KZLib.KZAttribute
 	{
 		protected override void DoDrawPropertyLayout(GUIContent _label)
 		{
-			//? label
 			var rect = DrawPrefixLabel(_label);
 			var colorArray = ValueEntry.SmartValue;
 

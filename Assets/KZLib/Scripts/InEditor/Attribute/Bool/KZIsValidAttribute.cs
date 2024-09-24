@@ -32,12 +32,12 @@ namespace KZLib.KZAttribute
 	{
 		protected override void DoDrawPropertyLayout(GUIContent _label)
 		{
-			var isValid = ValueEntry.SmartValue;
-
-			//? label
 			var rect = DrawPrefixLabel(_label);
-			//? 텍스트
-			EditorGUI.LabelField(rect,isValid ? Attribute.CorrectText : Attribute.WrongText,GetValidateStyle(isValid,Attribute.WrongHexColor));
+
+			var text = ValueEntry.SmartValue ? Attribute.CorrectText : Attribute.WrongText;
+			var style = GetValidateStyle(ValueEntry.SmartValue,Attribute.WrongHexColor);
+
+			EditorGUI.LabelField(rect,text,style);
 		}
 	}
 #endif

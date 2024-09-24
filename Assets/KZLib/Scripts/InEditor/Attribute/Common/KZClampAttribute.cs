@@ -51,66 +51,57 @@ namespace KZLib.KZAttribute
 #if UNITY_EDITOR
 	public abstract class KZBaseClampAttributeDrawer<TAttribute,TValue> : KZAttributeDrawer<TAttribute,TValue> where TAttribute : KZClampAttribute where TValue : IComparable<TValue>
 	{
+		protected TValue m_MinValue;
+		protected TValue m_MaxValue;
+
+		protected override void Initialize()
+		{
+			base.Initialize();
+
+			m_MinValue = Attribute.MinExpression.IsEmpty() ? (TValue) ConvertToValue(Attribute.MinValue) : GetValue<TValue>(Attribute.MinExpression);
+			m_MaxValue = Attribute.MaxExpression.IsEmpty() ? (TValue) ConvertToValue(Attribute.MaxValue) : GetValue<TValue>(Attribute.MaxExpression);
+		}
+
 		protected override void DoDrawPropertyLayout(GUIContent _label)
 		{
 			var rect = EditorGUILayout.GetControlRect();
+			var current = DrawField(rect,GetLabelText(_label));
 
-			var curValue = DrawField(rect,GetLabelText(_label));
-			var minValue = Attribute.MinExpression.IsEmpty() ? MinValue : GetValue<TValue>(Attribute.MinExpression);
-			var maxValue = Attribute.MaxExpression.IsEmpty() ? MaxValue : GetValue<TValue>(Attribute.MaxExpression);
-
-			ValueEntry.SmartValue = MathUtility.Clamp(curValue,minValue,maxValue);
-
-			DrawField(rect,GetLabelText(_label));
+			ValueEntry.SmartValue = MathUtility.Clamp(current,m_MinValue,m_MaxValue);
 		}
 
-		protected abstract TValue MinValue { get; }
-		protected abstract TValue MaxValue { get; }
-
-		protected abstract TValue DrawField(Rect _rect,string _labelText);
+		protected abstract TValue DrawField(Rect _rect,string _label);
 	}
 
 	public abstract class KZBaseClampIntAttributeDrawer<TAttribute> : KZBaseClampAttributeDrawer<TAttribute,int> where TAttribute : KZClampAttribute
 	{
-		protected override int MinValue => Convert.ToInt32(Attribute.MinValue);
-		protected override int MaxValue => Convert.ToInt32(Attribute.MaxValue);
-
-		protected override int DrawField(Rect _rect,string _labelText)
+		protected override int DrawField(Rect _rect,string _label)
 		{
-			return EditorGUI.IntField(_rect,_labelText,ValueEntry.SmartValue);
+			return EditorGUI.IntField(_rect,_label,ValueEntry.SmartValue);
 		}
 	}
 
 	public abstract class KZBaseClampLongAttributeDrawer<TAttribute> : KZBaseClampAttributeDrawer<TAttribute,long> where TAttribute : KZClampAttribute
 	{
-		protected override long MinValue => Convert.ToInt64(Attribute.MinValue);
-		protected override long MaxValue => Convert.ToInt64(Attribute.MaxValue);
-
-		protected override long DrawField(Rect _rect,string _labelText)
+		protected override long DrawField(Rect _rect,string _label)
 		{
-			return EditorGUI.LongField(_rect,_labelText,ValueEntry.SmartValue);
+			return EditorGUI.LongField(_rect,_label,ValueEntry.SmartValue);
 		}
 	}
 
 	public abstract class KZBaseClampFloatAttributeDrawer<TAttribute> : KZBaseClampAttributeDrawer<TAttribute,float> where TAttribute : KZClampAttribute
 	{
-		protected override float MinValue => Convert.ToSingle(Attribute.MinValue);
-		protected override float MaxValue => Convert.ToSingle(Attribute.MaxValue);
-
-		protected override float DrawField(Rect _rect,string _labelText)
+		protected override float DrawField(Rect _rect,string _label)
 		{
-			return EditorGUI.FloatField(_rect,_labelText,ValueEntry.SmartValue);
+			return EditorGUI.FloatField(_rect,_label,ValueEntry.SmartValue);
 		}
 	}
 
 	public abstract class KZBaseClampDoubleAttributeDrawer<TAttribute> : KZBaseClampAttributeDrawer<TAttribute,double> where TAttribute : KZClampAttribute
 	{
-		protected override double MinValue => Attribute.MinValue;
-		protected override double MaxValue => Attribute.MaxValue;
-
-		protected override double DrawField(Rect _rect,string _labelText)
+		protected override double DrawField(Rect _rect,string _label)
 		{
-			return EditorGUI.DoubleField(_rect,_labelText,ValueEntry.SmartValue);
+			return EditorGUI.DoubleField(_rect,_label,ValueEntry.SmartValue);
 		}
 	}
 

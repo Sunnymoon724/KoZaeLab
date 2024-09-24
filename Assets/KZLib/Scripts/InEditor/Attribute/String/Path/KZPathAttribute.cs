@@ -40,8 +40,6 @@ namespace KZLib.KZAttribute
 
 		protected override void Initialize()
 		{
-			base.Initialize();
-
 			if(Attribute.AddChangeButton)
 			{
 				m_OnClickedList.Add(OnClickToChangePath);

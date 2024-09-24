@@ -39,7 +39,7 @@ namespace KZLib.KZAttribute
 
 			rect.xMax -= width;
 
-			DrawField(rect,GetLabelText(_label));
+			ValueEntry.SmartValue = DrawField(rect,GetLabelText(_label));
 
 			rect.xMin = rect.xMax+LABEL_SPACING;
 			rect.xMax += width;
@@ -47,46 +47,46 @@ namespace KZLib.KZAttribute
 			EditorGUI.LabelField(rect,labelContent,LABEL_STYLE);
 		}
 
-		protected abstract void DrawField(Rect _rect,string _labelText);
+		protected abstract TValue DrawField(Rect _rect,string _labelText);
 	}
 
 	public class KZSuffixStringAttributeDrawer : KZSuffixAttributeDrawer<string>
 	{
-		protected override void DrawField(Rect _rect,string _labelText)
+		protected override string DrawField(Rect _rect,string _label)
 		{
-			ValueEntry.SmartValue = EditorGUI.TextField(_rect,_labelText,ValueEntry.SmartValue);
+			return EditorGUI.TextField(_rect,_label,ValueEntry.SmartValue);
 		}
 	}
 
 	public class KZSuffixIntAttributeDrawer : KZSuffixAttributeDrawer<int>
 	{
-		protected override void DrawField(Rect _rect,string _labelText)
+		protected override int DrawField(Rect _rect,string _label)
 		{
-			ValueEntry.SmartValue = EditorGUI.IntField(_rect,_labelText,ValueEntry.SmartValue);
+			return EditorGUI.IntField(_rect,_label,ValueEntry.SmartValue);
 		}
 	}
 
 	public class KZSuffixLongAttributeDrawer : KZSuffixAttributeDrawer<long>
 	{
-		protected override void DrawField(Rect _rect,string _labelText)
+		protected override long DrawField(Rect _rect,string _label)
 		{
-			ValueEntry.SmartValue = EditorGUI.LongField(_rect,_labelText,ValueEntry.SmartValue);
+			return EditorGUI.LongField(_rect,_label,ValueEntry.SmartValue);
 		}
 	}
 
 	public class KZSuffixFloatAttributeDrawer : KZSuffixAttributeDrawer<float>
 	{
-		protected override void DrawField(Rect _rect,string _labelText)
+		protected override float DrawField(Rect _rect,string _label)
 		{
-			ValueEntry.SmartValue = EditorGUI.FloatField(_rect,_labelText,ValueEntry.SmartValue);
+			return EditorGUI.FloatField(_rect,_label,ValueEntry.SmartValue);
 		}
 	}
 
 	public class KZSuffixDoubleAttributeDrawer : KZSuffixAttributeDrawer<double>
 	{
-		protected override void DrawField(Rect _rect,string _labelText)
+		protected override double DrawField(Rect _rect,string _label)
 		{
-			ValueEntry.SmartValue = EditorGUI.DoubleField(_rect,_labelText,ValueEntry.SmartValue);
+			return EditorGUI.DoubleField(_rect,_label,ValueEntry.SmartValue);
 		}
 	}
 #endif

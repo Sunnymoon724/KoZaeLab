@@ -21,7 +21,6 @@ namespace KZLib.KZAttribute
 	{
 		protected override void DoDrawPropertyLayout(GUIContent _label)
 		{
-			//? label
 			var rect = DrawPrefixLabel(_label);
 
 			var tagArray = InternalEditorUtility.tags;
