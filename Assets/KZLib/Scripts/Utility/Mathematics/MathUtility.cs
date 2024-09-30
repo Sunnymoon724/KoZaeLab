@@ -40,25 +40,25 @@ public static partial class MathUtility
 	/// <summary>
 	/// 비교 가능한 오브젝트를 범위 안의 오브젝트로 자른다.
 	/// </summary>
-	public static TCompare Clamp<TCompare>(TCompare _value,TCompare _min,TCompare _max) where TCompare : IComparable<TCompare>
+	public static TCompare Clamp<TCompare>(TCompare _curValue,TCompare _minValue,TCompare _maxValue) where TCompare : IComparable<TCompare>
 	{
-		return _value.CompareTo(_min) < 0 ? _min : _value.CompareTo(_max) > 0 ? _max : _value;
+		return _curValue.CompareTo(_minValue) < 0 ? _minValue : _curValue.CompareTo(_maxValue) > 0 ? _maxValue : _curValue;
 	}
 
 	/// <summary>
 	/// 비교 가능한 오브젝트를 범위 안의 오브젝트로 자른다.
 	/// </summary>
-	public static TCompare MinClamp<TCompare>(TCompare _value,TCompare _min) where TCompare : IComparable<TCompare>
+	public static TCompare MinClamp<TCompare>(TCompare _curValue,TCompare _minValue) where TCompare : IComparable<TCompare>
 	{
-		return _value.CompareTo(_min) < 0 ? _min : _value;
+		return Clamp(_curValue,_minValue,_curValue);
 	}
 
 	/// <summary>
 	/// 비교 가능한 오브젝트를 범위 안의 오브젝트로 자른다.
 	/// </summary>
-	public static TCompare MaxClamp<TCompare>(TCompare _value,TCompare _max) where TCompare : IComparable<TCompare>
+	public static TCompare MaxClamp<TCompare>(TCompare _curValue,TCompare _maxValue) where TCompare : IComparable<TCompare>
 	{
-		return _value.CompareTo(_max) > 0 ? _max : _value;
+		return Clamp(_curValue,_curValue,_maxValue);
 	}
 	#endregion Clamp
 

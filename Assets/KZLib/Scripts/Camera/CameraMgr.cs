@@ -8,20 +8,17 @@ namespace KZLib
 {
 	public class CameraMgr : LoadSingletonMB<CameraMgr>
 	{
-		[SerializeField,LabelText("메인 카메라")]
+		[SerializeField,LabelText("Main Camera")]
 		private Camera m_MainCamera = null;
 		private Camera m_OverrideCamera = null;
 		public Camera CurrentCamera => m_OverrideCamera == null ? m_MainCamera : m_OverrideCamera;
 
-		[ShowInInspector,ReadOnly,LabelText("카메라 타겟")]
+		[ShowInInspector,ReadOnly,LabelText("Camera Target")]
 		private Transform m_Target = null;
 
-		[SerializeField,LabelText("X회전 잠금")]
+		[SerializeField,LabelText("Lock X Rotate")]
 		private bool m_LockRotateX = false;
 
-		/// <summary>
-		/// 서브 카메라들
-		/// </summary>
 		private readonly Dictionary<Camera,bool> m_SubCameraDict = new();
 
 		private float m_FarFactor = 1.0f;
@@ -30,9 +27,9 @@ namespace KZLib
 		{
 			base.Initialize();
 
-			if(m_MainCamera == null)
+			if(!m_MainCamera)
 			{
-				throw new NullReferenceException("메인 카메라가 없습니다.");
+				throw new NullReferenceException("Main camera is missing.");
 			}
 
 			var camera = m_MainCamera.GetComponent<Camera>();
@@ -53,14 +50,11 @@ namespace KZLib
 			Broadcaster.DisableListener(EventTag.ChangeGraphicOption,OnChangeFarClipPlane);
 		}
 
-		/// <summary>
-		/// 카메라 데이터를 세팅하는 함수.
-		/// </summary>
 		public void SetCameraData(CameraData _cameraData)
 		{
 			if(!_cameraData.IsExist)
 			{
-				throw new NullReferenceException("카메라 데이터가 없습니다.");
+				throw new NullReferenceException("Camera data is missing.");
 			}
 
 			CurrentCamera.nearClipPlane = _cameraData.NearClipPlane;
@@ -77,9 +71,6 @@ namespace KZLib
 			SetSubCameraDict();
 		}
 
-		/// <summary>
-		/// 다른 카메라를 오버라이드 하여 메인 카메라를 잠시 끈다. (다시 돌리는 방법은 null 넣기)
-		/// </summary>
 		public void SetCamera(Camera _overrideCamera)
 		{
 			var onCamera = _overrideCamera != null;
@@ -125,7 +116,7 @@ namespace KZLib
 
 			transform.rotation = Quaternion.Euler(rotation);
 
-			// _duration 부분 수정하기
+			// TODO _duration 부분 수정하기
 		}
 
 		private void OnChangeFarClipPlane()

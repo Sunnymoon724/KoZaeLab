@@ -12,10 +12,10 @@ namespace KZLib.KZNetwork
 	{
 		protected DiscordPostWebRequest(string _uri,string _content,EmbedData[] _embedArray,byte[] _file) : base(_uri,UnityWebRequest.kHttpVerbPOST)
 		{
-			//? 제목 - [버전]
-			var content = string.Format("```ansi\n{0} - [{1}]\n```",_content,GameSettings.In.GameVersion);
+			//? 제목
+			var content = $"```ansi\n{_content}\n```";
 			//? 기기ID
-			var username = string.Format("{0}",GameSettings.In.GetPresetOrDeviceID());
+			var username = $"{GameSettings.In.GetPresetOrDeviceID()}";
 
 			var webHook = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new WebHookData(content,username,_embedArray)));
 
