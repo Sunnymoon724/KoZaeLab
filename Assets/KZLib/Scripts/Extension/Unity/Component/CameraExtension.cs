@@ -167,9 +167,9 @@ public static class CameraExtension
 	}
 
 	/// <summary>
-	/// RectTransform의 네 모서리 영역의 화면좌표를 계산한다.
+	/// Calculate the screen space corners of the rect transform.
 	/// </summary>
-	public static void CalcCornerOnScreen(this Camera _camera,RectTransform _transform,Vector3[] _positionArray,float _factor = 1.0f)
+	public static void CalculateCornerOnScreen(this Camera _camera,RectTransform _transform,Vector3[] _positionArray,float _factor = 1.0f)
 	{
 		_transform.GetWorldCorners(_positionArray);
 

@@ -6,7 +6,7 @@ using UnityEngine;
 public static partial class TransformExtension
 {
 	/// <summary>
-	/// 현재 transform 부터 root 까지 full path 반환.
+	/// Get current transform to root ( AAA/BBB )
 	/// </summary>
 	public static string GetHierarchy(this Transform _origin)
 	{
@@ -24,7 +24,7 @@ public static partial class TransformExtension
 	}
 
 	/// <summary>
-	/// 현재 transform 부터 root 까지 0부터 차례대로 index 반환.
+	/// Get current transform to root ( 0/1/2/3 )
 	/// </summary>
 	public static string GetHierarchyInOrder(this Transform _origin)
 	{
@@ -32,7 +32,7 @@ public static partial class TransformExtension
 
 		for(var current = _origin;current != null;current = current.parent)
 		{
-			builder.Insert(0, current.GetSiblingIndex());
+			builder.Insert(0,current.GetSiblingIndex());
 
 			if(current.parent)
 			{
@@ -43,25 +43,16 @@ public static partial class TransformExtension
 		return builder.ToString();
 	}
 
-	/// <summary>
-	/// 루트에서 찾기
-	/// </summary>
 	public static Transform FindFromRoot(this Transform _origin,string _name)
 	{
 		return _origin.root.Find(_name);
 	}
 
-	/// <summary>
-	/// 같은 계층에서 찾기
-	/// </summary>
 	public static Transform FindSibling(this Transform _origin,string _name)
 	{
 		return _origin.parent ? _origin.parent.Find(_name) : null;
 	}
 
-	/// <summary>
-	/// 부모에서 찾기
-	/// </summary>
 	public static Transform FindInParentHierarchy(this Transform _origin,string _name)
 	{
 		for(var current = _origin.parent;current != null;current = current.parent)
@@ -75,17 +66,11 @@ public static partial class TransformExtension
 		return null;
 	}
 
-	/// <summary>
-	/// 부모 Transform 반환
-	/// </summary>
 	public static Transform GetParent(this Transform _origin)
 	{
 		return _origin ? _origin.parent : null;
 	}
 
-	/// <summary>
-	/// 자식 추가
-	/// </summary>
 	public static Transform AddChild(this Transform _origin,string _name)
 	{
 		var child = new GameObject(_name);
@@ -95,9 +80,6 @@ public static partial class TransformExtension
 		return child.transform;
 	}
 
-	/// <summary>
-	/// 자식들 추가
-	/// </summary>
 	public static Transform[] AddChildren(this Transform _origin,string[] _nameArray)
 	{
 		var dataArray = new Transform[_nameArray.Length];
@@ -110,9 +92,6 @@ public static partial class TransformExtension
 		return dataArray;
 	}
 
-	/// <summary>
-	/// 자식들 추가
-	/// </summary>
 	public static Transform[] AddChildren(this Transform _origin,string _name,int _count)
 	{
 		var _nameArray = new string[_count];
@@ -125,25 +104,16 @@ public static partial class TransformExtension
 		return AddChildren(_origin,_nameArray);
 	}
 
-	/// <summary>
-	/// 자식 설정
-	/// </summary>
 	public static void SetChild(this Transform _origin,Transform _child,bool _sameLayer = true)
 	{
 		_origin.SetChildInside(_child,true,_sameLayer);
 	}
 
-	/// <summary>
-	/// 자식 설정
-	/// </summary>
 	public static void SetUIChild(this Transform _origin,Transform _child,bool _sameLayer = true)
 	{
 		_origin.SetChildInside(_child,false,_sameLayer);
 	}
 
-	/// <summary>
-	/// 자식 설정
-	/// </summary>
 	private static void SetChildInside(this Transform _origin,Transform _child,bool _stays,bool _sameLayer = true)
 	{
 		_child.SetParent(_origin,_stays);
@@ -154,11 +124,6 @@ public static partial class TransformExtension
 		}
 	}
 
-	/// <summary>
-	/// prefab로부터 Instance를 만들고 Parent의 자식으로 만든다.
-	/// 자식의 transform값이 변할 수 있다. (월드상의 현재 위치와 스케일을 유지하기 위해 부모에 대한 상대 값들로 변경된다.)
-	/// 자식은 부모의 레이어와 동일하게 설정한다.
-	/// </summary>
 	public static Transform AddChild(this Transform _origin,GameObject _prefab)
 	{
 		var child = UnityUtility.CopyObject(_prefab);
@@ -168,11 +133,6 @@ public static partial class TransformExtension
 		return child.transform;
 	}
 
-	/// <summary>
-	/// prefab로부터 Instance를 만들고 Parent의 자식으로 만든다.
-	/// 자식의 transform값이 변할 수 있다. (월드상의 현재 위치와 스케일을 유지하기 위해 부모에 대한 상대 값들로 변경된다.)
-	/// 자식은 부모의 레이어와 동일하게 설정한다.
-	/// </summary>
 	public static Transform[] AddChildren(this Transform _origin,GameObject _prefab,int _count)
 	{
 		var dataArray = new Transform[_count];
@@ -185,11 +145,6 @@ public static partial class TransformExtension
 		return dataArray;
 	}
 
-	/// <summary>
-	/// prefab로부터 Instance를 만들고 Parent의 자식으로 만든다.
-	/// 자식의 transform값을 유지한다.
-	/// 자식은 부모의 레이어와 동일하게 설정한다.
-	/// </summary>
 	public static Transform AddUIChild(this Transform _origin,GameObject _prefab)
 	{
 		var child = UnityUtility.CopyObject(_prefab);
@@ -199,11 +154,6 @@ public static partial class TransformExtension
 		return child.transform;
 	}
 
-	/// <summary>
-	/// prefab로부터 Instance를 만들고 Parent의 자식으로 만든다.
-	/// 자식의 transform값을 유지한다.
-	/// 자식은 부모의 레이어와 동일하게 설정한다.
-	/// </summary>
 	public static Transform[] AddUIChildren(this Transform _origin,GameObject _prefab,int _count)
 	{
 		var dataArray = new Transform[_count];
@@ -216,9 +166,6 @@ public static partial class TransformExtension
 		return dataArray;
 	}
 
-	/// <summary>
-	/// 자식에서 찾기
-	/// </summary>
 	public static Transform FindInChild(this Transform _transform,string _name)
 	{
 		var queue = new Queue<Transform>();
@@ -242,9 +189,6 @@ public static partial class TransformExtension
 		return null;
 	}
 
-	/// <summary>
-	/// 자식에서 모두 찾기
-	/// </summary>
 	public static void FindAllChildren(this Transform _transform,string _text,ref List<Transform> _resultList)
 	{
 		var queue = new Queue<Transform>();
@@ -266,16 +210,13 @@ public static partial class TransformExtension
 		}
 	}
 
-	/// <summary>
-	/// 자식 찾기
-	/// </summary>
 	public static Transform GetChild(this Transform _origin,string _name)
 	{
 		return _origin ? _origin.Find(_name) : null;
 	}
 
 	/// <summary>
-	/// Hierarchy 내부의 모든 자식 트랜스폼을 찾아 넣는다.
+	/// Get All Children In Hierarchy
 	/// </summary>
 	public static void GetAllChildrenInHierarchy(this Transform _transform,ref List<Transform> _resultList)
 	{
@@ -295,9 +236,6 @@ public static partial class TransformExtension
 		}
 	}
 
-	/// <summary>
-	/// 모든 자식을 삭제
-	/// </summary>
 	public static Transform DestroyChildren(this Transform _transform,bool _activeOnly = false)
 	{
 		var count = _transform.childCount;
@@ -324,9 +262,6 @@ public static partial class TransformExtension
 		return _transform;
 	}
 
-	/// <summary>
-	/// 모든 자식을 삭제
-	/// </summary>
 	public static Transform DestroyChildren(this Transform _transform,params Transform[] _exceptionArray)
 	{
 		var count = _transform.childCount;
@@ -362,9 +297,6 @@ public static partial class TransformExtension
 		return _transform;
 	}
 
-	/// <summary>
-	/// 순회하면서 onAction을 실행한다.
-	/// </summary>
 	public static void TraverseChildren(this Transform _parent,Action<Transform> _onAction)
 	{
 		if(!_parent)

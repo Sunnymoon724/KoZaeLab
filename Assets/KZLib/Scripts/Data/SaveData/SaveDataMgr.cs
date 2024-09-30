@@ -5,7 +5,7 @@ using Mono.Data.Sqlite;
 namespace KZLib
 {
 	/// <summary>
-	/// SQL을 이용해서 로컬 데이터를 저장함 -> 암호화는 하지만 보안 X
+	/// Storing local data using SQL -> Encrypted, but not secure.
 	/// </summary>
 	public class SaveDataMgr : DataSingleton<SaveDataMgr>
 	{
@@ -26,9 +26,6 @@ namespace KZLib
 			m_SaveDataDict.Clear();
 		}
 
-		/// <summary>
-		/// SQL 테이블을 로드합니다.
-		/// </summary>
 		public void LoadSQLTable(string _tableName)
 		{
 			if(_tableName.IsEmpty())
@@ -50,7 +47,7 @@ namespace KZLib
 				CreateTable(_tableName);
 			}
 
-			LogTag.Data.I("SQL 로드 완료 [{0}]",_tableName);
+			LogTag.Data.I("SQL Load Complete. [{0}]",_tableName);
 		}
 
 		protected override void ClearAll()
@@ -74,9 +71,6 @@ namespace KZLib
 			}
 		}
 
-		/// <summary>
-		/// 데이터가 존재하는지 확인합니다.
-		/// </summary>
 		public bool HasKey(string _tableName,string _key)
 		{
 			if(_tableName.IsEmpty() || _key.IsEmpty())
@@ -87,9 +81,6 @@ namespace KZLib
 			return m_SaveDataDict.ContainsKey(SecurityUtility.AESEncryptData(_tableName,_key));
 		}
 
-		/// <summary>
-		/// 모든 테이블 이름을 가져옵니다.
-		/// </summary>
 		public IEnumerable<string> GetTableNameGroup()
 		{
 			var result = ExecuteSQL("select name from sqlite_master where type = 'table'");
@@ -117,9 +108,6 @@ namespace KZLib
 			}
 		}
 
-		/// <summary>
-		/// 테이블에 저장된 데이터를 가져옵니다.
-		/// </summary>
 		public IReadOnlyDictionary<string,string> GetDataInTable(string _tableName)
 		{
 			if(m_SaveDataDict.TryGetValue(_tableName,out var dataDict))
@@ -130,9 +118,6 @@ namespace KZLib
 			return null;
 		}
 
-		/// <summary>
-		/// 저장된 데이터를 가져옵니다.
-		/// </summary>
 		public bool TryGetData(string _tableName,string _key,out string _result)
 		{
 			_result = null;
@@ -140,14 +125,11 @@ namespace KZLib
 			return m_SaveDataDict.TryGetValue(_tableName,out var dataDict) && dataDict.TryGetValue(_key,out _result);
 		}
 
-		/// <summary>
-		/// 저장된 데이터를 업데이트하거나 추가합니다.
-		/// </summary>
 		public void SetData(string _tableName,string _key,string _data)
 		{
 			if(!m_SaveDataDict.TryGetValue(_tableName,out var dataDict))
 			{
-				throw new ArgumentException($"{_tableName}이름의 테이블은 없습니다.");
+				throw new ArgumentException($"{_tableName} is not found.");
 			}
 
 			var code = SecurityUtility.Base64Encode(_data);
@@ -166,15 +148,12 @@ namespace KZLib
 			}
 		}
 
-        /// <summary>
-        /// 저장된 데이터를 삭제합니다.
-        /// </summary>
 		public void RemoveKey(string _tableName,string _key)
 		{
 			if(m_SaveDataDict.TryGetValue(_tableName, out var dataDict) && dataDict.Remove(_key))
-            {
-                DeleteFromTable(_tableName,_key);
-            }
+			{
+				DeleteFromTable(_tableName,_key);
+			}
 		}
 
 		private void InsertToTable(string _tableName,string _key,string _value,string _code)
@@ -214,9 +193,6 @@ namespace KZLib
 			m_SaveDataDict.Add(_tableName,new Dictionary<string,string>());
 		}
 
-		/// <summary>
-		/// 테이블을 삭제합니다.
-		/// </summary>
 		public void DeleteTable(string _tableName)
 		{
 			if(ExecuteNonQuery($"drop table {_tableName}") > 0)
@@ -252,12 +228,12 @@ namespace KZLib
 					{
 						removeList.Add(key);
 
-						throw new NullReferenceException($"데이터 오류 {SecurityUtility.AESDecryptData(_tableName,key)}");
+						throw new NullReferenceException($"data code error. [{SecurityUtility.AESDecryptData(_tableName,key)}]");
 					}
 				}
 				else
 				{
-					throw new NullReferenceException($"지원하지 않는 데이터 타입 {type}");
+					throw new NullReferenceException($"not support data type. [{type}]");
 				}
 			}
 

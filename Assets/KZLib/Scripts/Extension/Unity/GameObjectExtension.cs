@@ -18,7 +18,7 @@ public static class GameObjectExtension
 	}
 
 	/// <summary>
-	/// 나 자신이 켜져있는지 확인하고 켜고 끄는거.
+	/// Check null & Set active
 	/// </summary>
 	public static void SetActiveSelf(this GameObject _object,bool _active)
 	{
@@ -34,7 +34,7 @@ public static class GameObjectExtension
 	}
 
 	/// <summary>
-	/// 자신의 액티브를 토글한다.
+	/// Toggle active
 	/// </summary>
 	public static void SetActiveToggle(this GameObject _object)
 	{
@@ -47,7 +47,7 @@ public static class GameObjectExtension
 	}
 
 	/// <summary>
-	/// 자식의 모든 액티브를 꺼버린다
+	/// Set active all children
 	/// </summary>
 	public static void SetActiveAll(this GameObject _object,bool _active,bool _includeSelf)
 	{
@@ -63,10 +63,7 @@ public static class GameObjectExtension
 
 		_object.transform.TraverseChildren((child)=> { child.gameObject.SetActiveSelf(_active); });
 	}
-	
-	/// <summary>
-	/// 자식 포함 모든 레이어를 변경한다.
-	/// </summary>
+
 	public static void SetAllLayer(this GameObject _object,int _layer)
 	{
 		if(!_object)
@@ -79,9 +76,6 @@ public static class GameObjectExtension
 		_object.transform.TraverseChildren((child)=> { child.gameObject.layer = _layer; });
 	}
 
-	/// <summary>
-	/// 자식 포함 모든 레이어를 변경한다.
-	/// </summary>
 	public static void SetAllLayer(this GameObject _object,string _layerMask)
 	{
 		if(!_object)
@@ -149,7 +143,7 @@ public static class GameObjectExtension
 	}
 
 	/// <summary>
-	/// 면이 뒤집히는 현상 수정
+	/// Check mesh flip
 	/// </summary>
 	public static void SkinMeshFlip(this GameObject _object)
 	{

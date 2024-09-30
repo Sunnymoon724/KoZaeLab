@@ -40,7 +40,7 @@ namespace GameData
 		}
 
 		/// <summary>
-		/// 마스터 볼륨
+		/// Master Sound
 		/// </summary>
 		public SoundData Master
 		{
@@ -59,7 +59,7 @@ namespace GameData
 		}
 
 		/// <summary>
-		/// 배경음 볼륨
+		/// Background Music
 		/// </summary>
 		public SoundData Music
 		{
@@ -78,7 +78,7 @@ namespace GameData
 		}
 
 		/// <summary>
-		/// 효과음 볼륨
+		/// Sound Effect 
 		/// </summary>
 		public SoundData Effect
 		{

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public static class ScrollRectExtension
 {
 	/// <summary>
-	/// 이미 등록된 리스너가 있으면 제거하고 새로 등록
+	/// Add One Kind Listener
 	/// </summary>
 	public static void AddListener(this ScrollRect _scrollRect,UnityAction<Vector2> _onAction,bool _overlap = false)
 	{
@@ -23,7 +23,7 @@ public static class ScrollRectExtension
 	}
 
 	/// <summary>
-	/// 그냥 하나만 등록
+	/// Set One Listener
 	/// </summary>
 	public static void SetListener(this ScrollRect _scrollRect,UnityAction<Vector2> _onAction)
 	{
@@ -37,7 +37,7 @@ public static class ScrollRectExtension
 	}
 
 	/// <summary>
-	/// 리스너 제거
+	/// Remove Listener
 	/// </summary>
 	public static void RemoveListener(this ScrollRect _scrollRect,UnityAction<Vector2> _onAction)
 	{
@@ -50,7 +50,7 @@ public static class ScrollRectExtension
 	}
 
 	/// <summary>
-	/// 모든 리스너 제거
+	/// Clear Listener
 	/// </summary>
 	public static void ClearListener(this ScrollRect _scrollRect)
 	{

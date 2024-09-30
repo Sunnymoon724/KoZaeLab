@@ -3,7 +3,7 @@ using System;
 namespace KZLib
 {
 	/// <summary>
-	/// Only One Delegate
+	/// Only One Kind Delegate (Not Overlap)
 	/// </summary>
 
 	#region MoreAction

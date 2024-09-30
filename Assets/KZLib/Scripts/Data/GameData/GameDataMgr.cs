@@ -13,7 +13,7 @@ namespace KZLib
 		private readonly Dictionary<string,IGameData> m_GameDataDict = new();
 
 		/// <summary>
-		/// 없으면 데이터를 자체적으로 생성한다.
+		/// If data is not exist, create new data.
 		/// </summary>
 		public TData Access<TData>() where TData : class,IGameData,new()
 		{
