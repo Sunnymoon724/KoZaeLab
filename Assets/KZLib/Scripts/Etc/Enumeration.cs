@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 
 /// <summary>
-/// https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/enumeration-classes-over-enum-types
-/// 참고 레퍼런스
+/// Reference : https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/enumeration-classes-over-enum-types
 /// </summary>
 
 namespace KZLib
@@ -20,9 +19,6 @@ namespace KZLib
 			m_Name = _name;
 		}
 
-		/// <summary>
-		/// TEnumeration Type에 속한 모든 Enumeration을 반환
-		/// </summary>
 		public static IEnumerable<TEnumeration> GetEnumerationGroup<TEnumeration>(bool _includeDerivedType) where TEnumeration : Enumeration
 		{
 			var type = typeof(TEnumeration);
@@ -64,7 +60,7 @@ namespace KZLib
 				return data;
 			}
 
-			throw new InvalidOperationException(string.Format("{0}은 Enum 안에 없습니다.[Enum 종류 : {1}]",_name,nameof(TEnumeration)));
+			throw new InvalidOperationException(string.Format("{0} is not in the Enum. [Enum type: {1}]", _name, nameof(TEnumeration)));
 		}
 
 		public static bool TryParse<TEnumeration>(string _name,out TEnumeration _result) where TEnumeration : Enumeration
