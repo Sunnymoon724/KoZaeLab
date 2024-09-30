@@ -7,16 +7,16 @@ namespace KZLib
 {
 	public class InfiniteBackground : SerializedMonoBehaviour
 	{
-		[SerializeField,LabelText("프리펩")]
+		[SerializeField,LabelText("Pivot")]
 		private SpriteRenderer m_Pivot = null;
 
-		[SerializeField,LabelText("프리펩 갯수"),MinValue(1)]
+		[SerializeField,LabelText("Count"),MinValue(1)]
 		private int m_Count = 1;
 
-		[SerializeField,LabelText("스크롤 속도")]
+		[SerializeField,LabelText("Scroll Speed")]
 		private float m_Speed = 0.0f;
 
-		[SerializeField,LabelText("시작 지점")]
+		[SerializeField,LabelText("Start Point")]
 		private Vector2 m_StartPoint = Vector2.zero;
 
 		private List<Transform> m_BackgroundList = null;
@@ -27,7 +27,7 @@ namespace KZLib
 		{
 			if(!m_Pivot)
 			{
-				throw new NullReferenceException("피벗이 없습니다.");
+				throw new NullReferenceException("Pivot is null.");
 			}
 
 			m_Width = m_Pivot.bounds.size.x*m_Pivot.transform.lossyScale.x;
