@@ -58,12 +58,12 @@ namespace GameData
 
 			if(!m_LanguageDict.ContainsKey(_language))
 			{
-				LogTag.Data.W("해당 언어의 번역본이 없어서 변경하지 않았습니다. [{0}]",_language);
+				LogTag.Data.W($"{_language} is not exist.");
 
 				return;
 			}
 
-			LogTag.Data.I("언어가 바꿨습니다. [{0}]",_language);
+			LogTag.Data.I($"Language is changed. [{_language}]");
 
 			m_Language.CurrentLanguage = _language;
 
@@ -74,7 +74,7 @@ namespace GameData
 		{
 			if(m_LanguageDict.IsNullOrEmpty())
 			{
-				throw new NullReferenceException("번역 데이터가 비어있습니다.");
+				throw new NullReferenceException("Data is empty.");
 			}
 
 			if(m_LanguageDict.TryGetValue(m_Language.CurrentLanguage,out var dataDict))

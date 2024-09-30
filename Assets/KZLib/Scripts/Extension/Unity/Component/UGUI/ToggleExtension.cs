@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public static class ToggleExtension
 {
 	/// <summary>
-	/// 이미 등록된 리스너가 있으면 제거하고 새로 등록
+	/// Add One Kind Listener
 	/// </summary>
 	public static void AddListener(this Toggle _toggle,UnityAction<bool> _onAction,bool _overlap = false)
 	{
@@ -22,7 +22,7 @@ public static class ToggleExtension
 	}
 
 	/// <summary>
-	/// 그냥 하나만 등록
+	/// Set One Listener
 	/// </summary>
 	public static void SetListener(this Toggle _toggle,UnityAction<bool> _onAction)
 	{
@@ -36,7 +36,7 @@ public static class ToggleExtension
 	}
 
 	/// <summary>
-	/// 리스너 제거
+	/// Remove Listener
 	/// </summary>
 	public static void RemoveListener(this Toggle _toggle,UnityAction<bool> _onAction)
 	{
@@ -49,7 +49,7 @@ public static class ToggleExtension
 	}
 
 	/// <summary>
-	/// 모든 리스너 제거
+	/// Clear Listener
 	/// </summary>
 	public static void ClearListener(this Toggle _toggle)
 	{

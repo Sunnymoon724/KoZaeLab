@@ -6,9 +6,6 @@ using System.Collections.Generic;
 
 namespace GameData
 {
-	/// <summary>
-	/// 시간 관련
-	/// </summary>
 	public class GameTime : IGameData
 	{
 		private long m_ServerTime = 0L;
@@ -47,43 +44,43 @@ namespace GameData
 		}
 
 		/// <summary>
-		/// 현재시간 목표시간 비교후(UTC) 현재시간이 목표시간 지난경우 : ExtraTime // 남은시간 있으면 : RemainingTime
+		/// Compare the current time with the target time (UTC). Passed : onTimePassed / Remaining : onTimeRemaining
 		/// </summary>
-		public void CheckTimeCondition(long _time,Action _onExtraTime,Action _onRemainingTime)
+		public void CheckTimeCondition(long _time,Action _onTimePassed,Action _onTimeRemaining)
 		{
 			if(CurrentServerTime >= _time)
 			{
-				_onExtraTime?.Invoke();
+				_onTimePassed?.Invoke();
 			}
 			else
 			{
-				_onRemainingTime?.Invoke();
+				_onTimeRemaining?.Invoke();
 			}
 		}
 
 		/// <summary>
-		/// 현재시간 목표시간 비교후 현재시간이 목표시간 지난경우 : ExtraTime // 남은시간 있으면 : RemainingTime
+		/// Compare the current time with the target time (UTC). Passed : onTimePassed / Remaining : onTimeRemaining
 		/// </summary>
-		public void CheckTimeCondition(DateTime _time,bool _isLocal,Action _onExtraTime,Action _onRemainingTime)
+		public void CheckTimeCondition(DateTime _time,bool _isLocal,Action _onTimePassed,Action _onTimeRemaining)
 		{
 			if(GetCurrentTime(_isLocal) >= _time)
 			{
-				_onExtraTime?.Invoke();
+				_onTimePassed?.Invoke();
 			}
 			else
 			{
-				_onRemainingTime?.Invoke();
+				_onTimeRemaining?.Invoke();
 			}
 		}
 
 		/// <summary>
-		/// 현재 시간 이후로 해당 요일, 해당 시간을 알아오고자 할때 사용.
+		/// Gets the next day of the week and time after the current time.
 		/// </summary>
 		public DateTime GetTargetDate(DayOfWeek[] _dayOfWeek,int _hour,bool _isLocal = false)
 		{
 			var dateTime = GetCurrentTime(_isLocal);
 
-			//현재 요일인 경우.
+			//? Current day
 			if(_dayOfWeek.Any(x => x == dateTime.DayOfWeek) && dateTime.Hour < _hour)
 			{
 				while(dateTime.Hour < _hour)
@@ -96,13 +93,13 @@ namespace GameData
 
 			dateTime = dateTime.GetNextDay();
 
-			//일단 요일 맞춰줌.
+			//? Adjust Day
 			while(!_dayOfWeek.Any(x => x == dateTime.DayOfWeek))
 			{
 				dateTime = dateTime.GetNextDay();
 			}
 
-			//시간 맞춰줌.
+			//? Adjust Hour.
 			while(dateTime.Hour < _hour)
 			{
 				dateTime = dateTime.AddSeconds(1.0f);

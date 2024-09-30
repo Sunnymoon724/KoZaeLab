@@ -1,5 +1,4 @@
 using UnityEngine;
-using Cysharp.Threading.Tasks;
 
 public static class BoxCollider2DExtension
 {
