@@ -29,7 +29,7 @@ namespace KZLib.KZAttribute
 
 		protected override string GetNewPath()
 		{
-			return FileUtility.GetFilePathInPanel("위치를 수정 합니다.",ResourceKind);
+			return FileUtility.GetFilePathInPanel("Change new path.",ResourceKind);
 		}
 
 		protected override Rect OnClickToOpen(Rect _rect,bool _isValid)

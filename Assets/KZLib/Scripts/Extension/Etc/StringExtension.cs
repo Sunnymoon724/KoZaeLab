@@ -26,7 +26,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// 경로 슬래시 변경
+	/// Change path slash
 	/// </summary>
 	public static string PathConvertSlash(this string _path)
 	{
@@ -42,7 +42,7 @@ public static class StringExtension
 
 	#region Character
 	/// <summary>
-	/// 해당 문자가 포함되어 있는지 파악한다.
+	/// Check character in string
 	/// </summary>
 	public static bool IsContainsCharacterArray(this string _text,params char[] _characterArray)
 	{
@@ -56,7 +56,7 @@ public static class StringExtension
 		return _text.Any(x => characterSet.Contains(x));
 	}
 	/// <summary>
-	/// 첫 글자를 대문자로 변경
+	/// Convert first character to uppercase
 	/// </summary>
 	public static string ToFirstCharacterToUpper(this string _text)
 	{
@@ -71,7 +71,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// 첫 글자를 소문자로 변경
+	/// Convert first character to lowercase
 	/// </summary>
 	public static string ToFirstCharacterToLower(this string _text)
 	{
@@ -86,23 +86,23 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// 문자열의 첫 번째 문자를 count 수 만큼 가져옴
+	/// Get character 0 to count from first
 	/// </summary>
-	public static string GetFirstCharacter(this string _text,int _count)
+	public static string GetStartCharacter(this string _text,int _count)
 	{
 		return _text.IsEmpty() || _count <= 0 ? _text : _text[..Mathf.Min(_count, _text.Length)];
 	}
 
 	/// <summary>
-	/// 문자열의 끝 부분에서 count 개수 만큼 가져옵니다.
+	/// Get character 0 to count from last
 	/// </summary>
-	public static string GetLastCharacter(this string _text,int _count)
+	public static string GetEndCharacter(this string _text,int _count)
 	{
 		return _text.IsEmpty() || _count <= 0 ? _text : _text[^(Mathf.Min(_count,_text.Length))..];
 	}
 
 	/// <summary>
-	/// 문자열 내부에 character 문자가 몇 개 포함되어 있는지 반환
+	/// Count character in string
 	/// </summary>
 	public static int CountOf(this string _text,char _character)
 	{
@@ -110,7 +110,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// 문자열 내부에 character 문자가 order번째 포함되어 있는지 반환
+	/// Get index of character in string
 	/// </summary>
 	public static int IndexOfOrder(this string _text,char _character,int _order)
 	{
@@ -136,7 +136,7 @@ public static class StringExtension
 
 	#region Compare
 	/// <summary>
-	/// includeSpace가 true면 공백도 없는걸로 판단함
+	/// Check empty text
 	/// </summary>
 	/// <param name="_text"></param>
 	public static bool IsEmpty(this string _text,bool _includeSpace = false)
@@ -144,16 +144,13 @@ public static class StringExtension
 		return _includeSpace ? string.IsNullOrWhiteSpace(_text) : string.IsNullOrEmpty(_text);
 	}
 
-	/// <summary>
-	/// 스트링 전용 비교
-	/// </summary>
 	public static bool IsEqual(this string _text1,string _text2)
 	{
 		return string.Equals(_text1,_text2);
 	}
 
 	/// <summary>
-	/// index에서 match가 일치하는지 확인합니다.
+	/// Check match at index
 	/// </summary>
 	public static bool IsMatchAt(this string _text,int _index,string _match,bool _ignoreCase = false)
 	{
@@ -180,7 +177,7 @@ public static class StringExtension
 
 	#region Convert Color
 	/// <summary>
-	/// 16진수 색상 코드를 UnityEngine.Color로 변환합니다.
+	/// HexCode to Color
 	/// </summary>
 	public static Color ToColor(this string _hexCode)
 	{
@@ -205,7 +202,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// color으로 문자 색상을 변경합니다.
+	/// Add richText
 	/// </summary>
 	public static string ToColorText(this string _text,string _color)
 	{
@@ -213,7 +210,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// color으로 문자 색상을 변경합니다.
+	/// Add richText
 	/// </summary>
 	public static string ToColorText(this string _text,Color _color)
 	{
@@ -222,9 +219,6 @@ public static class StringExtension
 	#endregion Convert Color
 
 	#region Convert Number
-	/// <summary>
-	/// 문자열을 BigInteger로 변환합니다.
-	/// </summary>
 	public static BigInteger ToBigInteger(this string _text,BigInteger _default = default)
 	{
 		if(_text.IsEmpty())
@@ -235,9 +229,6 @@ public static class StringExtension
 		return BigInteger.TryParse(_text,out var result) ? result : _default;
 	}
 
-	/// <summary>
-	/// 문자열을 int로 변환합니다.
-	/// </summary>
 	public static int ToInt(this string _text,int _default = 0)
 	{
 		if(_text.IsEmpty())
@@ -253,25 +244,16 @@ public static class StringExtension
 		return int.TryParse(_text,out var num) ? num : _default;
 	}
 
-	/// <summary>
-	/// 문자열을 float로 변환합니다.
-	/// </summary>
 	public static float ToFloat(this string _text,float _default = 0.0f)
 	{
 		return float.TryParse(_text,out var num) ? num : _default;
 	}
 
-	/// <summary>
-	/// 문자열을 double로 변환합니다.
-	/// </summary>
 	public static double ToDouble(this string _text,double _default = 0.0d)
 	{
 		return double.TryParse(_text,out var num) ? num : _default;
 	}
 
-	/// <summary>
-	/// 문자열을 byte로 변환합니다.
-	/// </summary>
 	public static byte ToByte(this string _text,byte _default = 0x00)
 	{
 		if(_text.StartsWith("0x",StringComparison.OrdinalIgnoreCase))
@@ -282,25 +264,16 @@ public static class StringExtension
 		return byte.TryParse(_text,out var num) ? num : _default;
 	}
 
-	/// <summary>
-	/// 문자열을 16진수 정수로 변환합니다.
-	/// </summary>
 	public static int ToHexInt(this string _hexText,int _default = 0)
 	{
 		return int.TryParse(_hexText,NumberStyles.HexNumber,CultureInfo.CurrentCulture,out var num) ? num : _default;
 	}
 
-	/// <summary>
-	/// 문자열을 16진수 실수로 변환합니다.
-	/// </summary>
 	public static float ToHexFloat(string _hexText,float _default = 0.0f)
 	{
 		return uint.TryParse(_hexText,NumberStyles.AllowHexSpecifier,CultureInfo.CurrentCulture,out var num) ? BitConverter.ToSingle(BitConverter.GetBytes(num),0) : _default;
 	}
 
-	/// <summary>
-	/// 배열에서 인덱스를 찾아 해당 위치의 문자열을 실수로 변환하여 반환합니다.
-	/// </summary>
 	private static float GetNumberInArray(string[] _textArray,int _index)
 	{
 		return _textArray.ContainsIndex(_index) ? _textArray[_index].ToFloat() : 0.0f;
@@ -308,9 +281,6 @@ public static class StringExtension
 	#endregion Convert Number
 
 	#region Convert DateTime
-	/// <summary>
-	/// 문자열을 DateTime으로 변환합니다.
-	/// </summary>
 	public static DateTime ToDateTime(this string _text,CultureInfo _cultureInfo = null, DateTimeStyles _styles = DateTimeStyles.AdjustToUniversal)
 	{
 		var cultureInfo = _cultureInfo ?? CultureInfo.CreateSpecificCulture("ko-KR");
@@ -320,25 +290,16 @@ public static class StringExtension
 	#endregion Convert DateTime
 
 	#region Convert Vector
-	/// <summary>
-	/// 문자열을 Vector2로 변환합니다.
-	/// </summary>
 	public static Vector2 ToVector2(this string _text)
 	{
 		return _text.ToVector2(Vector2.zero);
 	}
 
-	/// <summary>
-	/// 문자열을 Vector2로 변환합니다.
-	/// </summary>
 	public static Vector2 ToVector2(this string _text,Vector2 _default)
 	{
 		return _text.TryToVector2(out var result) ? result : _default;
 	}
 
-	/// <summary>
-	/// 문자열을 Vector2로 변환합니다.
-	/// </summary>
 	public static bool TryToVector2(this string _text,out Vector2 _result)
 	{
 		_result = Vector2.zero;
@@ -355,25 +316,16 @@ public static class StringExtension
 		return true;
 	}
 
-	/// <summary>
-	/// 문자열을 Vector3로 변환합니다.
-	/// </summary>
 	public static Vector3 ToVector3(this string _text)
 	{
 		return _text.ToVector3(Vector3.zero);
 	}
 
-		/// <summary>
-	/// 문자열을 Vector3로 변환합니다.
-	/// </summary>
 	public static Vector3 ToVector3(this string _text,Vector3 _default)
 	{
 		return _text.TryToVector3(out var result) ? result : _default;
 	}
 
-	/// <summary>
-	/// 문자열을 Vector3로 변환합니다.
-	/// </summary>
 	public static bool TryToVector3(this string _text,out Vector3 _result)
 	{
 		_result = Vector3.zero;
@@ -390,9 +342,6 @@ public static class StringExtension
 		return true;
 	}
 
-	/// <summary>
-	/// 문자열을 Vector로 변환하는 메서드에 사용되는 문자열을 변환합니다.
-	/// </summary>
 	private static string[] ConvertVectorArray(string _text)
 	{
 		if(_text.IsEmpty())
@@ -406,7 +355,7 @@ public static class StringExtension
 
 	#region Remove
 	/// <summary>
-	/// 문자열의 시작 부분에서 지정된 문자열을 제거합니다.
+	/// Remove text from first
 	/// </summary>
 	public static string RemoveStart(this string _text,string _remove)
 	{
@@ -419,7 +368,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// 문자열의 끝 부분에서 지정된 문자열을 제거합니다.
+	/// Remove text from last
 	/// </summary>
 	public static string RemoveEnd(this string _text,string _remove)
 	{
@@ -432,9 +381,9 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// 문자열의 시작 부분에서 count 개수 만큼 제거합니다.
+	/// Remove text by count from first
 	/// </summary>
-	public static string RemoveFirstCharacter(this string _text,int _count)
+	public static string RemoveStartCharacter(this string _text,int _count)
 	{
 		if(_text.IsEmpty() || _count <= 0)
 		{
@@ -445,9 +394,9 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// 문자열의 끝 부분에서 count 개수 만큼 제거합니다.
+	/// Remove text by count from last
 	/// </summary>
-	public static string RemoveLastCharacter(this string _text,int _count)
+	public static string RemoveEndCharacter(this string _text,int _count)
 	{
 		if(_text.IsEmpty() || _count <= 0)
 		{
@@ -458,7 +407,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// 문자열에서 리치 텍스트를 제거합니다.
+	/// Remove richText
 	/// </summary>
 	public static string RemoveRichText(this string _text)
 	{
@@ -468,7 +417,7 @@ public static class StringExtension
 
 	#region Trim
 	/// <summary>
-	/// trim만큼 앞에서 부터 제거
+	/// Trim text from first
 	/// </summary>
 	public static string TrimTextStart(this string _text,string _trim)
 	{
@@ -486,7 +435,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// trim만큼 뒤에서 부터 제거
+	/// Trim text from last
 	/// </summary>
 	public static string TrimTextEnd(this string _text,string _trim)
 	{
@@ -504,7 +453,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// 빈칸 전부 제거
+	/// Trim all space
 	/// </summary>
 	public static string TrimAllSpace(this string _text)
 	{
@@ -512,36 +461,24 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// 모든 괄호 제거
+	/// Trim all brackets
 	/// </summary>
 	public static string TrimBrackets(this string _text)
 	{
 		return _text.Trim('(',')','[',']','{','}','<','>');
 	}
-	/// <summary>
-	/// 소괄호 제거
-	/// </summary>
 	public static string TrimParentheses(this string _text)
 	{
 		return _text.Trim('(',')');
 	}
-	/// <summary>
-	/// 중괄호 제거
-	/// </summary>
 	public static string TrimBraces(this string _text)
 	{
 		return _text.Trim('{','}');
 	}
-	/// <summary>
-	/// 대괄호 제거
-	/// </summary>
 	public static string TrimSquareBrackets(this string _text)
 	{
 		return _text.Trim('[',']');
 	}
-	/// <summary>
-	/// 화살괄호 제거
-	/// </summary>
 	public static string TrimAngleBrackets(this string _text)
 	{
 		return _text.Trim('<','>');
@@ -549,30 +486,18 @@ public static class StringExtension
 	#endregion Trim
 
 	#region Wrap
-	/// <summary>
-	/// 소괄호 래핑
-	/// </summary>
 	public static string WrapParentheses(this string _text)
 	{
 		return $"({_text})";
 	}
-	/// <summary>
-	/// 중괄호 래핑
-	/// </summary>
 	public static string WrapBraces(this string _text)
 	{
 		return $"{{{_text}}}";
 	}
-	/// <summary>
-	/// 대괄호 래핑
-	/// </summary>
 	public static string WrapSquareBrackets(this string _text)
 	{
 		return $"[{_text}]";
 	}
-	/// <summary>
-	/// 화살괄호 래핑
-	/// </summary>
 	public static string WrapAngleBrackets(this string _text)
 	{
 		return $"<{_text}>";
@@ -608,18 +533,7 @@ public static class StringExtension
 
 	#region Extract
 	/// <summary>
-	/// 문자를 앞뒤 문자를 이용하여 자른다.
-	/// </summary>
-	public static string ExtractData(this string _text,char _startMark,char _endMark)
-	{
-		var startIdx = _text.IndexOf(_startMark);
-		var endIdx = _text.LastIndexOf(_endMark);
-
-		return (startIdx == -1 || endIdx == -1 || startIdx > endIdx) ? _text : _text.Substring(startIdx+1,endIdx-startIdx-1);
-	}
-
-	/// <summary>
-	/// 문자를 앞뒤 문자를 이용하여 자른다.
+	/// Extract start to end
 	/// </summary>
 	public static string ExtractData(this string _text,string _startText,string _endText)
 	{
@@ -636,66 +550,56 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// 문자를 앞뒤 문자를 이용하여 자른다.
+	/// Extract start to end
+	/// </summary>
+	public static string ExtractData(this string _text,char _startMark,char _endMark)
+	{
+		return _text.ExtractData($"{_startMark}",$"{_endMark}");
+	}
+
+	/// <summary>
+	/// Extract start to end
 	/// </summary>
 	public static string ExtractData(this string _text,char _startMark,string _endText)
 	{
-		var index = _text.IndexOf(_startMark);
-
-		if(index == -1)
-		{
-			return _text;
-		}
-
-		var start = _text[..index];
-		var end = start.RemoveEnd(_endText);
-
-		return start.IsEqual(end) ? _text : end;
+		return _text.ExtractData($"{_startMark}",_endText);
 	}
 
 	/// <summary>
-	/// 문자를 앞뒤 문자를 이용하여 자른다.
+	/// Extract start to end
 	/// </summary>
 	public static string ExtractData(this string _text,string _startText,char _endMark)
 	{
-		var start = _text.RemoveStart(_startText);
-
-		if(_text.IsEqual(start))
-		{
-			return _text;
-		}
-
-		var index = start.LastIndexOf(_endMark);
-
-		return index == -1 ? _text : start[..index];
+		return _text.ExtractData(_startText,$"{_endMark}");
 	}
 
 	/// <summary>
-	/// 문자만 남긴다.
+	/// Extract Letters
 	/// </summary>
-	public static string ExtractOnlyCharacter(this string _text)
+	public static string ExtractOnlyLetters(this string _text)
 	{
-        return _text.IsEmpty() ? null : Regex.Replace(_text,@"\d",string.Empty);
-    }
-
-	/// <summary>
-	/// 숫자만 남긴다.
-	/// </summary>
-	public static string ExtractOnlyNumber(this string _text)
-	{
-		if(_text.IsEmpty())
-		{
-			return null;
-		}
-
-		var match = Regex.Match(_text,@"\d+");
-
-		return match.Success ? match.Value : string.Empty;
+		return _text.IsEmpty() ? null : Regex.Replace(_text,@"[^a-zA-Z]",string.Empty);
 	}
 
-	public static int ExtractOnlyNumberToInt(this string _text,int _default)
+	/// <summary>
+	/// Extract Digits
+	/// </summary>
+	public static string ExtractOnlyDigits(this string _text)
 	{
-		return ExtractOnlyNumber(_text).ToInt(_default);
+		return _text.IsEmpty() ? null : Regex.Replace(_text,@"\D",string.Empty);
+	}
+
+	/// <summary>
+	/// Extract Alphanumeric
+	/// </summary>
+	public static string ExtractAlphanumeric(this string _text)
+	{
+		return _text.IsEmpty() ? null : Regex.Replace(_text,@"[^0-9a-zA-Z_]+",string.Empty);
+	}
+
+	public static int ExtractOnlyDigitsToInt(this string _text,int _default)
+	{
+		return ExtractOnlyDigits(_text).ToInt(_default);
 	}
 	#endregion Extract
 
@@ -717,9 +621,6 @@ public static class StringExtension
 	}
 	#endregion Layer
 
-	/// <summary>
-	/// 캐시된 색상 데이터를 모두 삭제합니다.
-	/// </summary>
 	public static void ClearCacheData()
 	{
 		s_HexColorDict.Clear();

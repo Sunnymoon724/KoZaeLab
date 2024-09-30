@@ -30,18 +30,18 @@ namespace KZLib.KZFiles
 
 		private void LoadMidiFile(BinaryReader _reader)
 		{
-			var chunkHeader = Encoding.UTF8.GetString(_reader.ReadBytes(4));
+			var chunkId = Encoding.UTF8.GetString(_reader.ReadBytes(4));
 
-			if(chunkHeader != FILE_HEADER_CHUNK)
+			if(chunkId != FILE_HEADER_CHUNK)
 			{
-				throw new Exception("헤더 청크를 찾을 수 없습니다.");
+				throw new InvalidOperationException($"{chunkId} is not {FILE_HEADER_CHUNK}");
 			}
 
 			var chunkSize = _reader.ReadInt32();
 
 			if(chunkSize != 6)
 			{
-				throw new Exception("헤더 청크의 길이는 6byte 이어야 합니다.");
+				throw new InvalidOperationException("size must be 6byte.");
 			}
 
 			m_FileFormat = _reader.ReadInt16();
@@ -61,11 +61,11 @@ namespace KZLib.KZFiles
 			var eventList = new List<MidiEvent>();
 			long totalTime = 0L;
 
-			var chunkHeader = Encoding.UTF8.GetString(_reader.ReadBytes(4));
+			var chunkId = Encoding.UTF8.GetString(_reader.ReadBytes(4));
 
-			if(chunkHeader != FILE_TRACK_CHUNK)
+			if(chunkId != FILE_TRACK_CHUNK)
 			{
-				throw new NullReferenceException("트랙 청크를 찾을 수 없습니다.");
+				throw new InvalidOperationException($"{chunkId} is not {FILE_TRACK_CHUNK}");
 			}
 
 			var chunkSize = _reader.ReadInt32();
@@ -86,7 +86,7 @@ namespace KZLib.KZFiles
 
 			if(_reader.BaseStream.Position != endPosition)
 			{
-				throw new Exception("현재 트랙청크에 대한 트랙 길이가 잘못되었습니다.");
+				throw new ArgumentException("Track chunk size is not enough.");
 			}
 
 			return new MidiTrack(eventList,totalTime);
@@ -133,7 +133,7 @@ namespace KZLib.KZFiles
 				0xF0 => ReadSystemEvent(_reader,deltaTime, channel),
 				//MetaEvent
 				0xFF => ReadMetaEvent(_reader,deltaTime),
-				_ => throw new Exception(string.Format("지원하지 않는 이벤트 입니다.[{0:X2}]",code)),
+				_ => throw new ArgumentException($"Not supported code. [{code:X2}]"),
 			};
 		}
 
@@ -193,7 +193,7 @@ namespace KZLib.KZFiles
 
 					if(data.Length != length)
 					{
-						throw new Exception("메타 이벤트의 데이터를 완전히 읽지 못했습니다.");
+						throw new InvalidOperationException("MetaEvent is not complete.");
 					}
 
 					return new MetaDataEvent(status,data,_deltaTime);

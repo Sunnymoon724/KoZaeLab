@@ -7,7 +7,6 @@ using System;
 using NPOI.SS.UserModel;
 using NPOI.HSSF.UserModel;
 using NPOI.XSSF.UserModel;
-using System.Text.RegularExpressions;
 using Sirenix.Utilities;
 
 namespace KZLib.KZFiles
@@ -38,7 +37,7 @@ namespace KZLib.KZFiles
 				return;
 			}
 
-			throw new ArgumentException("파일이 잘못 되었습니다.");
+			throw new ArgumentException("File extension is invalid.");
 		}
 
 		public IEnumerable<string> SheetNameGroup
@@ -54,6 +53,7 @@ namespace KZLib.KZFiles
 
 		/// <summary>
 		/// 엑셀 시트의 데이터 유효성을 열거형 딕셔너리로 반환합니다.
+		/// Convert Validation Constraint To Enum Dict
 		/// </summary>
 		public Dictionary<string,string[]> GetEnumDict(string _sheetName)
 		{
@@ -71,7 +71,7 @@ namespace KZLib.KZFiles
 
 				for(var i=0;i<explicitArray.Length;i++)
 				{
-					explicitArray[i] = Regex.Replace(explicitArray[i],@"[^0-9a-zA-Z_]+",string.Empty);
+					explicitArray[i] = explicitArray[i].ExtractAlphanumeric();
 				}
 
 				var header = GetHeader(sheet,explicitArray);
@@ -87,9 +87,6 @@ namespace KZLib.KZFiles
 			return explicitDict;
 		}
 
-		/// <summary>
-		/// 엑셀 시트의 데이터 유효성을 1행으로 확인하여, 해당 열의 header를 반환합니다.
-		/// </summary>
 		private string GetHeader(ISheet _sheet,string[] _dataArray)
 		{
 			var row = GetSheet(_sheet.SheetName).GetRow(1);
@@ -109,11 +106,11 @@ namespace KZLib.KZFiles
 
 		private ISheet GetSheet(string _sheetName)
 		{
-			return m_Workbook.GetSheet(_sheetName) ?? throw new NullReferenceException("시트가 없습니다.");
+			return m_Workbook.GetSheet(_sheetName) ?? throw new NullReferenceException("sheet is null.");
 		}
 
 		/// <summary>
-		/// 열의 제목과 인덱스를 반환합니다.
+		/// Get title & index
 		/// </summary>
 		public IEnumerable<(string,int)> GetTitleGroup(string _sheetName)
 		{
@@ -130,7 +127,7 @@ namespace KZLib.KZFiles
 
 				if(KEY_WORD_ARRAY.Any(x=>x.IsEqual(header.ToLowerInvariant())))
 				{
-					LogTag.File.W("{0}는 헤더로 사용할 수 없습니다.",header);
+					LogTag.File.W($"{header} is invalid title.");
 
 					continue;
 				}
@@ -140,28 +137,28 @@ namespace KZLib.KZFiles
 		}
 
 		/// <summary>
-		/// sheetName의 row번째 행의 값을 가져옵니다.
+		/// Get data group in row
 		/// </summary>
 		public IEnumerable<string> GetRowGroup(string _sheetName,int _row)
 		{
 			var sheet = GetSheet(_sheetName);
-			var row = sheet.GetRow(_row) ?? throw new NullReferenceException(string.Format("{0}에서 {1}번째 행의 값이 비어있습니다.",_sheetName,_row));
+			var row = sheet.GetRow(_row) ?? throw new NullReferenceException($"The value in row {_row} of {_sheetName} is empty.");
 
             return Enumerable.Range(0,row.LastCellNum).Select(i => ParseCell(row.GetCell(i)));
 		}
 
 		/// <summary>
-		/// _sheetName의 (_rowArray 번째) 행의 값을 가져옵니다.
+		/// Get data group in rows
 		/// </summary>
 		public IEnumerable<string>[] GetRowGroupArray(string _sheetName,int[] _rowArray)
 		{
 			var sheet = GetSheet(_sheetName);
 
-			return _rowArray.Select(i => sheet.GetRow(i) ?? throw new NullReferenceException(string.Format("{0}에서 {1}번째 행의 값이 비어있습니다.",_sheetName,i))).Select(row => Enumerable.Range(0,row.LastCellNum).Select(j => ParseCell(row.GetCell(j))).ToArray()).ToArray();
+			return _rowArray.Select(i => sheet.GetRow(i) ?? throw new NullReferenceException($"The value in row {i} of {_sheetName} is empty.")).Select(row => Enumerable.Range(0,row.LastCellNum).Select(j => ParseCell(row.GetCell(j))).ToArray()).ToArray();
 		}
 
 		/// <summary>
-		/// _sheetName의 _column번째 열의 값을 가져옵니다.
+		/// Get data group in column
 		/// </summary>
 		public IEnumerable<string> GetColumnGroup(string _sheetName,int _column)
 		{
@@ -175,7 +172,7 @@ namespace KZLib.KZFiles
 		}
 
 		/// <summary>
-		/// _sheetName의 (_columnArray 번째) 열의 값을 가져옵니다.
+		/// Get data group in columns
 		/// </summary>
 		public IEnumerable<string>[] GetColumnGroupArray(string _sheetName,int[] _columnArray)
 		{
@@ -235,7 +232,7 @@ namespace KZLib.KZFiles
 						}
 						catch(Exception _ex)
 						{
-							LogTag.File.E(string.Format("엑셀 파일에 문제가 있습니다. 시트:{0} 오류:{1} 위치: {2}",_sheetName,_ex.Message,string.Format("행[{0}]/열[{1}]",i+1,headerArray[j])));
+							LogTag.File.E($"There is a problem with the excel file. [sheet : {_sheetName} / error : {_ex.Message} / location : row({i+1})/column({headerArray[j]})]");
 						}
 					}
 				}
@@ -245,7 +242,7 @@ namespace KZLib.KZFiles
 		}
 
 		/// <summary>
-		/// sheetName의 시트를 range로 지정한 구역만큼 가지고 옵니다.(range에서 x,y는 시작 지점 w,h는 크기)
+		/// Get data group in range (x,y -> start point, w,h -> range size)
 		/// </summary>
 		public string[,] ConvertToArray(string _sheetName,RectInt _range)
 		{
@@ -265,9 +262,6 @@ namespace KZLib.KZFiles
 			return resultArray;
 		}
 
-		/// <summary>
-		/// 엑셀 셀의 데이터를 파싱하여, type 형식에 맞게 반환합니다.
-		/// </summary>
 		private object ConvertData(ICell _cell,Type _type)
 		{
 			var text = GetCellText(_cell);
@@ -301,9 +295,6 @@ namespace KZLib.KZFiles
 			}
 		}
 
-        /// <summary>
-        /// text를 type 형식에 맞게 반환합니다.
-        /// </summary>
 		private object ConvertToObject(string _text,Type _type)
 		{
 			if(_type.IsEnum)
@@ -312,19 +303,19 @@ namespace KZLib.KZFiles
 			}
 			else if(_type.Equals(typeof(Vector3)))
 			{
-				return _text.TryToVector3(out var _result) ? _result : throw new ArgumentException(string.Format("{0}는 vector3가 아닙니다.",_text));
+				return _text.TryToVector3(out var _result) ? _result : throw new ArgumentException($"{_text} is not vector3.");
 			}
 			else if(_type.IsPrimitive)
 			{
 				return Convert.ChangeType(_text,_type);
 			}
 
-			throw new InvalidCastException(string.Format("{0}을 캐스팅 할 수 있는 타입이 없습니다.",_type));
+			throw new InvalidCastException($"There is no type that can be cast from {_type}.");
 		}
 
 		private string GetCellText(ICell _cell)
 		{
-			return (_cell.CellType == CellType.Numeric || _cell.CellType == CellType.Formula) ? string.Format("{0}",_cell.NumericCellValue) : _cell.StringCellValue;
+			return (_cell.CellType == CellType.Numeric || _cell.CellType == CellType.Formula) ? $"{_cell.NumericCellValue}" : _cell.StringCellValue;
 		}
 
 		private string ParseCell(ICell _cell)

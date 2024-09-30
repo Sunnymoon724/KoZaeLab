@@ -29,7 +29,7 @@ namespace KZLib.KZFiles
 			{
 				if((value < 1) || (value > 16))
 				{
-					throw new ArgumentOutOfRangeException(string.Format("채널은 1-16 사이 입니다. [{0}]",value));
+					throw new ArgumentOutOfRangeException($"Channel must be between 1 and 16. [{value}]");
 				}
 
 				m_Channel = value;

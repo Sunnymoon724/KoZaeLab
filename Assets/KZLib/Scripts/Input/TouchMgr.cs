@@ -6,19 +6,19 @@ using UnityEngine.EventSystems;
 namespace KZLib
 {
 	/// <summary>
-	/// 터치 이벤트는 Down, Holding(Drag), Up 3개만 쓰며 Holding과 Drag는 받은 쪽에서 처리
+	/// Touch Event is Down, Holding(Drag), Up
 	/// </summary>
 	public class TouchMgr : LoadSingletonMB<TouchMgr>
 	{
 		private bool m_Block = false;
 
-		[VerticalGroup("0",Order = 0),ShowInInspector,LabelText("블락 상태"),KZIsValid("블락 아님","블락 중")]
+		[VerticalGroup("0",Order = 0),ShowInInspector,LabelText("Is Block"),KZIsValid("No","Yes")]
 		public bool IsBlock => !m_Block;
 
-		[VerticalGroup("1",Order = 1),SerializeField,LabelText("터치 이펙트 사용")]
+		[VerticalGroup("1",Order = 1),SerializeField,LabelText("Use Touch Effect")]
 		private bool m_UseTouchEffect = false;
 
-		[VerticalGroup("1",Order = 1),SerializeField,LabelText("터치 이펙트 이름"),ShowIf(nameof(m_UseTouchEffect))]
+		[VerticalGroup("1",Order = 1),SerializeField,LabelText("Touch Effect Name"),ShowIf(nameof(m_UseTouchEffect))]
 		private string m_TouchEffectName = null;
 
 		private void Update()

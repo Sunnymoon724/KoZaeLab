@@ -17,7 +17,7 @@ namespace KZLib.KZAttribute
 	{
 		protected override string GetNewPath()
 		{
-			return FileUtility.GetFolderPathInPanel("위치를 수정 합니다.");
+			return FileUtility.GetFolderPathInPanel("Change new path.");
 		}
 
 		protected override Rect OnClickToOpen(Rect _rect,bool _isValid)

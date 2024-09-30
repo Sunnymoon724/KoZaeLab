@@ -68,17 +68,17 @@ namespace KZLib.KZAttribute
 
 				if(Attribute.IsIncludeAssets)
 				{
-					// 내부에 있는 경우
+					//? Path in assets folder
 					if(!FileUtility.IsIncludeAssetsHeader(dataPath))
 					{
-						UnityUtility.DisplayError(string.Format("{0}가 Assets 폴더 안에 있지 않습니다. 다시 확인해 주세요.",dataPath));
+						UnityUtility.DisplayError($"{dataPath} is not in assets folder.");
 					}
 
 					ValueEntry.SmartValue = FileUtility.RemoveAssetsHeader(dataPath);
 				}
 				else
 				{
-					// 외부에 있는 경우
+					//? Path in project folder
 					ValueEntry.SmartValue = dataPath;
 				}
 			});
@@ -91,7 +91,7 @@ namespace KZLib.KZAttribute
 			var isValid = IsValidPath();
 			var rect = DrawPrefixLabel(_label);
 
-			//? 그 외에 버튼 추가
+			//? Add other buttons
 			foreach(var onClicked in m_OnClickedList)
 			{
 				rect = onClicked(rect,isValid);
@@ -102,7 +102,6 @@ namespace KZLib.KZAttribute
 				// }
 			}
 
-			//? 텍스트
 			EditorGUI.LabelField(rect,ValueEntry.SmartValue,GetValidateStyle(isValid,Global.WRONG_HEX_COLOR));
 		}
 
