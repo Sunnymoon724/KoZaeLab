@@ -19,10 +19,8 @@ namespace KZLib.KZAttribute
 	{
 		protected override void DoDrawPropertyLayout(GUIContent _label)
 		{
-			//? label
 			var rect = DrawPrefixLabel(_label);
 
-			//? 텍스트
 			EditorGUI.LabelField(rect,ValueEntry.SmartValue,GetValidateStyle(GameUtility.CheckVersion(ValueEntry.SmartValue),Global.DISABLE_HEX_COLOR));
 		}
 	}

@@ -30,7 +30,7 @@ namespace KZLib.KZFiles
 		{
 			if(_length != _count)
 			{
-				throw new Exception("값이 유효하지 않습니다.");
+				throw new ArgumentException("length is not equal to count.");
 			}
 
 			Text = Encoding.UTF8.GetString(_reader.ReadBytes(_count));
@@ -86,7 +86,7 @@ namespace KZLib.KZFiles
 		{
 			if(_length != 3) 
 			{
-				throw new Exception("템포의 길이가 유효하지 않습니다.");
+				throw new InvalidOperationException("Tempo is not 3 bytes.");
 			}
 
 			MicrosecondsPerQuarterNote = (_reader.ReadByte() << 16) + (_reader.ReadByte() << 8) + _reader.ReadByte();

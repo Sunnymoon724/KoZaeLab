@@ -3,7 +3,7 @@ using System;
 using Newtonsoft.Json;
 
 /// <summary>
-/// 사용 예시
+/// example
 /// new JsonSerializerSettings() { Converters = { new Vector3IntConverter() } }
 /// </summary>
 namespace KZLib.KZFiles.Converter

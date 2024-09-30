@@ -3,7 +3,6 @@ using KZLib;
 
 #if UNITY_EDITOR
 
-using System;
 using UnityEditor.Callbacks;
 using UnityEditorInternal;
 using UnityEditor;
@@ -14,67 +13,28 @@ using System.Text.RegularExpressions;
 
 public class LogTag : Enumeration
 {
-	/// <summary>
-	/// 시스템 관련
-	/// </summary>
 	public static readonly LogTag System = new(nameof(System));
-
-	/// <summary>
-	/// 씬 관련
-	/// </summary>
 	public static readonly LogTag Scene = new(nameof(Scene));
-
-	/// <summary>
-	/// 빌드 관련
-	/// </summary>
 	public static readonly LogTag Build = new(nameof(Build));
-
-	/// <summary>
-	/// 네트워크 관련 - 서버
-	/// </summary>
 	public static readonly LogTag Server = new(nameof(Server));
-	/// <summary>
-	/// 네트워크 관련 - 클라이언트
-	/// </summary>
 	public static readonly LogTag Client = new(nameof(Client));
 
-	/// <summary>
-	/// 데이터 관련
-	/// </summary>
 	public static readonly LogTag Data = new(nameof(Data));
-	/// <summary>
-	/// UI 관련
-	/// </summary>
 	public static readonly LogTag UI = new(nameof(UI));
-	/// <summary>
-	/// 이펙트 관련
-	/// </summary>
 	public static readonly LogTag Effect = new(nameof(Effect));
-	/// <summary>
-	/// 사운드 관련
-	/// </summary>
 	public static readonly LogTag Sound = new(nameof(Sound));
 
-	/// <summary>
-	/// 에디터 관련
-	/// </summary>
 	public static readonly LogTag Editor = new(nameof(Editor));
 
-	/// <summary>
-	/// 파일 관련
-	/// </summary>
 	public static readonly LogTag File = new(nameof(File));
 
-	/// <summary>
-	/// 테스트 관련
-	/// </summary>
 	public static readonly LogTag Test = new(nameof(Test));
 
 	public LogTag(string _name) : base(_name) { }
 }
 
 /// <summary>
-/// 실제 로그는 에디터 상태일때만 출력됩니다.
+/// Show Only Editor
 /// </summary>
 public static class LogExtension
 {
@@ -133,7 +93,6 @@ public static class LogExtension
 	{
 		var name = EditorUtility.InstanceIDToObject(_instance).name;
 
-		//? LogTag 에서 호출한 Log만 제어하기 위해서
 		if(name.IsEmpty() || !name.IsEqual(nameof(LogTag)))
 		{
 			return false;

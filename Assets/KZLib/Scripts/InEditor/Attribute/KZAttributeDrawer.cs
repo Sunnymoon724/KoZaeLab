@@ -30,12 +30,12 @@ namespace KZLib.KZAttribute
 
 			if(isValid)
 			{
-				//? 에러가 없는 경우
+				//? No Error
 				DoDrawPropertyLayout(_label);
 			}
 			else
 			{
-				//? 에러가 있는 경우
+				//? Include Error
 				SirenixEditorGUI.ErrorMessageBox(m_ErrorMessage);
 
 				CallNextDrawer(_label);

@@ -26,7 +26,7 @@ namespace KZLib.KZFiles
 			{
 				if(value < 0 || value > 127)
 				{
-					throw new ArgumentOutOfRangeException($"노트는 1-127 사이 입니다. [{value}]");
+					throw new ArgumentOutOfRangeException($"Note must be 0-127. [{value}]");
 				}
 
 				m_Data1 = value;
@@ -40,7 +40,7 @@ namespace KZLib.KZFiles
 			{
 				if(value < 0 || value > 127)
 				{
-					throw new ArgumentOutOfRangeException($"속도는 1-127 사이 입니다. [{value}]");
+					throw new ArgumentOutOfRangeException($"Speed must be 0-127.[{value}]");
 				}
 
 				m_Data2 = value;
@@ -106,7 +106,7 @@ namespace KZLib.KZFiles
 					};
 				}
 
-				return $"{NOTE_NAME_ARRAY[NoteNumber % 12]}{(NoteNumber / 12)}";
+				return $"{NOTE_NAME_ARRAY[NoteNumber%12]}{NoteNumber/12}";
 			}
 		}
 
