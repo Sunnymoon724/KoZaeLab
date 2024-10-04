@@ -6,7 +6,7 @@ namespace KZLib.KZSchedule
 {
 	public class SpriteRendererListProgressSchedule : VisualProgressSchedule
 	{
-		[VerticalGroup("리스트",Order = -1),SerializeField,LabelText("렌더러 리스트"),ListDrawerSettings(DraggableItems = false),OnValueChanged(nameof(OnChangeGraphic))]
+		[VerticalGroup("List",Order = -1),SerializeField,LabelText("Renderer List"),ListDrawerSettings(DraggableItems = false),OnValueChanged(nameof(OnChangeGraphic))]
 		private List<SpriteRenderer> m_SpriteRendererList = new();
 
 		private void OnChangeGraphic()

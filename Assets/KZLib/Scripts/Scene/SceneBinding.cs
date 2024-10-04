@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 namespace KZLib
 {
 	/// <summary>
-	/// 유니티 씬 + 기타 에셋들을 불러 초기화 하기 위한 용도
+	/// Unity Scene + Initialize asset 
 	/// </summary>
 	public interface ISceneBinding<TParam>
 	{
@@ -59,7 +59,7 @@ namespace KZLib
 
 			if(!scene.IsValid())
 			{
-				throw new InvalidOperationException(string.Format("{0}이라는 이름의 싼은 없습니다.",_previous));
+				throw new InvalidOperationException($"{_previous} is not in the scene.");
 			}
 
 			_onProgress?.Invoke(0.0f);

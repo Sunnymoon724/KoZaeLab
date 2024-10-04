@@ -15,10 +15,10 @@ namespace KZLib.KZSchedule
 		[SerializeField,HideInInspector]
 		private List<int> m_IndexList = new();
 
-		[SerializeField,LabelText("텍스트 메쉬")]
+		[SerializeField,LabelText("Text Mesh")]
 		protected TMP_Text m_TextMesh = null;
 
-		[VerticalGroup("Text",Order = 0),ShowInInspector,LabelText("무작위 모드")]
+		[VerticalGroup("Text",Order = 0),ShowInInspector,LabelText("Random Mode")]
 		private bool RandomMode
 		{
 			get => m_RandomMode;
@@ -30,7 +30,7 @@ namespace KZLib.KZSchedule
 			}
 		}
 
-		[VerticalGroup("Text",Order = 0),SerializeField,LabelText("텍스트들"),OnValueChanged(nameof(OnChangeTextList))]
+		[VerticalGroup("Text",Order = 0),SerializeField,LabelText("Text List"),OnValueChanged(nameof(OnChangeTextList))]
 		private List<string> m_TextList = new();
 
 		private int MaxIndex => m_TextList.Count-1;

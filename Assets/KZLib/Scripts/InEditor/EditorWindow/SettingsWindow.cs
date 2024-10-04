@@ -3,7 +3,6 @@ using Sirenix.OdinInspector.Editor;
 using UnityEngine;
 using System.Collections.Generic;
 using KZLib.KZEditor;
-using UnityEditor;
 
 namespace KZLib.KZWindow
 {
@@ -19,18 +18,18 @@ namespace KZLib.KZWindow
 			tree.DefaultMenuStyle = OdinMenuStyle.TreeViewStyle;
 			tree.Selection.SupportsMultiSelect = false;
 
-			tree.Add("게임 설정",GameSettings.In);
+			tree.Add("Game Settings",GameSettings.In);
 
 			AddSettings(tree,new Dictionary<string,string>
 			{
-				{ "빌드 설정", nameof(BuildSettings) },
-				{ "메타 설정", nameof(MetaSettings) },
-				{ "언어 설정", nameof(LanguageSettings) },
-				{ "통신 설정", nameof(NetworkSettings) },
+				{ "Build Settings", nameof(BuildSettings) },
+				{ "Meta Settings", nameof(MetaSettings) },
+				{ "Language Settings", nameof(LanguageSettings) },
+				{ "Network Settings", nameof(NetworkSettings) },
 			});
 
-			tree.Add("게임 설정/퀄리티 프리셋",GraphicQualityPresetSettings.In);
-			tree.Add("게임 설정/하이라키 커스텀",m_HierarchyCustom);
+			tree.Add("Game Settings/Quality Preset",GraphicQualityPresetSettings.In);
+			tree.Add("Game Settings/Hierarchy Custom",m_HierarchyCustom);
 
 			AddMetaData(tree);
 
@@ -56,7 +55,7 @@ namespace KZLib.KZWindow
 					dataList.Add(pair.Value);
 				}
 
-				_tree.Add(string.Format("메타 설정/{0}",type.Name),new MetaDataTable(type.Name,dataList));
+				_tree.Add(string.Format("Meta Settings/{0}",type.Name),new MetaDataTable(type.Name,dataList));
 			}
 		}
 
@@ -85,7 +84,6 @@ namespace KZLib.KZWindow
 			{
 				asset = CreateInstance<TObject>();
 
-				// 생성
 				var dataPath = FileUtility.PathCombine("Resources/ScriptableObjects",typeof(TObject).Name);
 
 				UnityUtility.SaveAsset(dataPath,asset);

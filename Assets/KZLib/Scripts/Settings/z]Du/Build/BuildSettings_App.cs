@@ -84,6 +84,31 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 	protected int BundleVersionCode { get => PlayerSettings.Android.bundleVersionCode; set => PlayerSettings.Android.bundleVersionCode = value; }
 
 	[VerticalGroup("빌드 설정/앱 설정/버튼",Order = 30),Button("앱 빌드",ButtonSizes.Large),PropertyTooltip("앱을 빌드합니다.")]
+
+	#region Game Version
+	[SerializeField,HideInInspector]
+	private string m_GameVersion = null;
+
+	[TitleGroup("일반 설정",BoldTitle = false,Order = 0)]
+	[BoxGroup("일반 설정/0",ShowLabel = false),ShowInInspector,LabelText("게임 버전")]
+	public string GameVersion
+	{
+		get => m_GameVersion;
+		set
+		{
+#if UNITY_EDITOR
+			if(m_GameVersion == value)
+			{
+				return;
+			}
+
+			m_GameVersion = value;
+
+			PlayerSettings.bundleVersion = value;
+#endif
+		}
+	}
+	#endregion Game Version
 	public void OnBuildApp()
 	{
 		if(!UnityUtility.DisplayCheckBeforeExecute("앱 빌드"))
@@ -99,7 +124,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 		LogTag.Build.I("앱 빌드 시작");
 
 		var sceneArray = EditorBuildSettings.scenes.Where(x=>x.enabled).Select(y=>y.path).ToArray();
-		var appName = string.Format("{0} [{1}_{2}]",Application.productName,GameSettings.In.GameMode.First(),GameSettings.In.GameVersion);
+		var appName = string.Format("{0} [{1}_{2}]",Application.productName,GameSettings.In.GameMode.First(),GameVersion);
 
 		foreach(var name in Enum.GetNames(typeof(BuildTarget)))
 		{

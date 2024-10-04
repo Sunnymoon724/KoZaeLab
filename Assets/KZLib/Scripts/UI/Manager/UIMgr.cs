@@ -11,11 +11,6 @@ namespace KZLib
 		public static readonly Vector3 HIDE_POS = new(0.0f,3000.0f,0.0f);
 		public static readonly Vector3 DEFAULT_POS = Vector3.zero;
 
-		[SerializeField]
-		private int m_ScreenWidth = Global.BASE_WIDTH;
-		[SerializeField]
-		private int m_ScreenHeight = Global.BASE_HEIGHT;
-
 		//? 캔버스들 (처음에 넣고 도중에 수정 불가능)
 		private readonly List<RepositoryUI> m_RepositoryList = new();
 
@@ -43,9 +38,7 @@ namespace KZLib
 				m_RepositoryList.Add(m_Repository3D);
 			}
 
-			Broadcaster.EnableListener(EventTag.ChangeGraphicOption,OnSetScreenSize);
-
-			OnSetScreenSize();
+			ChangeScreenSize(new(Screen.width,Screen.height));
 
 			m_UIPrefabPath = GameSettings.In.UIPrefabPath;
 		}
@@ -53,34 +46,21 @@ namespace KZLib
 		protected override void Release()
 		{
 			m_DontReleaseSet.Clear();
-
-			Broadcaster.DisableListener(EventTag.ChangeGraphicOption,OnSetScreenSize);
 		}
 
-        private void OnSetScreenSize()
+		public void ChangeScreenSize(Vector2Int _size)
 		{
 			if(!m_Repository2D)
 			{
 				return;
 			}
 
-			var option = GameDataMgr.In.Access<GameData.GraphicOption>();
-			var resolution = option.ScreenResolution;
-
-			if(m_ScreenWidth == resolution.Width && m_ScreenHeight == resolution.Height)
-			{
-				return;
-			}
-
-			m_ScreenWidth = resolution.Width;
-			m_ScreenHeight = resolution.Height;
-
 			var scaler = m_Repository2D.GetComponent<CanvasScaler>();
 
-			scaler.referenceResolution = new Vector2(m_ScreenWidth,m_ScreenHeight);
+			scaler.referenceResolution = new Vector2(_size.x,_size.y);
 
-			m_Repository2D.CanvasCamera.aspect = m_ScreenWidth/m_ScreenHeight;
-			m_Repository2D.CanvasCamera.orthographicSize = m_ScreenHeight/200.0f;
+			m_Repository2D.CanvasCamera.aspect = _size.x/_size.y;
+			m_Repository2D.CanvasCamera.orthographicSize = _size.y/200.0f;
 		}
 
 		public void RegisterDontRelease(UITag _tag)

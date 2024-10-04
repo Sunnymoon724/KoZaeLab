@@ -89,7 +89,7 @@ namespace KZLib
 		{
 			if(!m_AssetDataDict.ContainsKey(_path))
 			{
-				throw new NullReferenceException(string.Format("에셋이 존재하지 않습니다. [{0}]",_path));
+				throw new NullReferenceException($"asset is not exist. [{_path}]");
 			}
 
 			var data = m_AssetDataDict[_path];
@@ -103,7 +103,7 @@ namespace KZLib
 
 			if(dataGroup.IsNullOrEmpty())
 			{
-				throw new NullReferenceException(string.Format("에셋이 존재하지 않습니다. [{0}]",_path));
+				throw new NullReferenceException($"asset is not exist. [{_path}]");
 			}
 
 			return dataGroup.Select(x => x.Value.Asset as TObject).Where(y => y != null).ToArray();

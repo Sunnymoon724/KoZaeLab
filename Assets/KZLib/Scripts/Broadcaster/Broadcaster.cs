@@ -36,7 +36,13 @@ namespace KZLib
 
 			if(s_ListenerDict.TryGetValue(_eventTag,out var listener))
 			{
-				ValidateType(_eventTag,_callback,listener);
+				var listenerType = listener.GetType();
+				var callbackType = _callback.GetType();
+
+				if(listenerType != callbackType)
+				{
+					throw new InvalidOperationException($"{listenerType.Name} != {callbackType.Name} in {_eventTag}");
+				}
 
 				s_ListenerDict[_eventTag] = _enable ? Delegate.Combine(listener,_callback) : Delegate.Remove(listener,_callback);
 
@@ -71,28 +77,6 @@ namespace KZLib
 			}
 
 			throw new InvalidOperationException($"{listener.GetType().Name} is not in {_eventTag}.");
-		}
-
-		private static void ValidateType(EventTag _eventTag,Delegate _callback,Delegate _listener)
-		{
-			var listenerType = _listener.GetType();
-			var callbackType = _callback.GetType();
-
-			if(listenerType != callbackType)
-			{
-				throw new InvalidOperationException($"{listenerType.Name} != {callbackType.Name} in {_eventTag}");
-			}
-		}
-
-		private static void ValidateType(EventTag _eventTag,Delegate _callback)
-		{
-			var listenerType = s_ListenerDict[_eventTag].GetType();
-			var callBackType = _callback.GetType();
-
-			if(listenerType != callBackType)
-			{
-				throw new InvalidOperationException($"{listenerType.Name} != {callBackType.Name} in {_eventTag}");
-			}
 		}
 	}
 }
