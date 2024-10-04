@@ -8,7 +8,7 @@ namespace KZLib.KZSchedule
 	{
 		private enum ModeType { Fade, Free }
 
-		[FoldoutGroup("시각 옵션",Order = 0),SerializeField,LabelText("모드 타입"),ValueDropdown(nameof(ModeTypeList))]
+		[FoldoutGroup("Visual Option",Order = 0),SerializeField,LabelText("Mode Type"),ValueDropdown(nameof(ModeTypeList))]
 		private ModeType m_ModeType = ModeType.Fade;
 
 		protected bool IsFadeMode => m_ModeType == ModeType.Fade;
@@ -20,7 +20,7 @@ namespace KZLib.KZSchedule
 		[SerializeField,HideInInspector]
 		private Vector3 m_FadeDuration = Vector3.zero;
 
-		[VerticalGroup("시각 옵션/페이드",Order = 0),ShowInInspector,LabelText("페이드 시간"),ShowIf(nameof(IsFadeMode))]
+		[VerticalGroup("Visual Option/Fade",Order = 0),ShowInInspector,LabelText("Fade Duration"),ShowIf(nameof(IsFadeMode))]
 		protected Vector3 FadeDuration
 		{
 			get => m_FadeDuration;
@@ -47,7 +47,7 @@ namespace KZLib.KZSchedule
 		#endregion Fade Mode
 
 		#region Free Mode
-		[VerticalGroup("시각 옵션/자유",Order = 1),SerializeField,LabelText("메터리얼 사용"),ShowIf(nameof(IsFreeMode))]
+		[VerticalGroup("Visual Option/Free",Order = 1),SerializeField,LabelText("Use Material"),ShowIf(nameof(IsFreeMode))]
 		private bool m_UseMaterial = false;
 
 		protected bool ShowMaterial => IsFreeMode && m_UseMaterial;
@@ -55,35 +55,35 @@ namespace KZLib.KZSchedule
 
 		private enum ColorType { AnimationCurve, Gradient };
 
-		[VerticalGroup("시각 옵션/자유",Order = 0),SerializeField,LabelText("그라데이션 사용"),ShowIf(nameof(HideMaterial))]
+		[VerticalGroup("Visual Option/Free",Order = 0),SerializeField,LabelText("Use Gradient"),ShowIf(nameof(HideMaterial))]
 		private bool m_UseGradient = false;
 
 		private bool UseCurve => HideMaterial && !m_UseGradient;
 		private bool UseGradient => HideMaterial && m_UseGradient;
 
-		[VerticalGroup("시각 옵션/자유",Order = 0),SerializeField,LabelText("알파만 사용"),ShowIf(nameof(UseCurve))]
+		[VerticalGroup("Visual Option/Free",Order = 0),SerializeField,LabelText("Use Only Alpha"),ShowIf(nameof(UseCurve))]
 		private bool m_UseOnlyAlpha = false;
 
 		private bool UseColor => UseCurve && !m_UseOnlyAlpha;
 		private bool UseAlpha => UseCurve && m_UseOnlyAlpha;
 
-		[VerticalGroup("시각 옵션/자유",Order = 0),SerializeField,LabelText("시작 색상"),ShowIf(nameof(UseColor))]
+		[VerticalGroup("Visual Option/Free",Order = 0),SerializeField,LabelText("Low Color"),ShowIf(nameof(UseColor))]
 		private Color m_LowColor = Color.white;
-		[VerticalGroup("시각 옵션/자유",Order = 0),SerializeField,LabelText("종료 색상"),ShowIf(nameof(UseColor))]
+		[VerticalGroup("Visual Option/Free",Order = 0),SerializeField,LabelText("High Color"),ShowIf(nameof(UseColor))]
 		private Color m_HighColor = Color.white;
 
-		[VerticalGroup("시각 옵션/자유",Order = 0),SerializeField,LabelText("시작 색상"),ShowIf(nameof(UseAlpha))]
+		[VerticalGroup("Visual Option/Free",Order = 0),SerializeField,LabelText("Low Alpha"),ShowIf(nameof(UseAlpha))]
 		private float m_LowAlpha = 0.0f;
-		[VerticalGroup("시각 옵션/자유",Order = 0),SerializeField,LabelText("종료 색상"),ShowIf(nameof(UseAlpha))]
+		[VerticalGroup("Visual Option/Free",Order = 0),SerializeField,LabelText("High Alpha"),ShowIf(nameof(UseAlpha))]
 		private float m_HighAlpha = 1.0f;
 
-		[VerticalGroup("시각 옵션/자유",Order = 0),SerializeField,LabelText("진행 방법"),ShowIf(nameof(UseCurve))]
+		[VerticalGroup("Visual Option/Free",Order = 0),SerializeField,LabelText("Progress Curve"),ShowIf(nameof(UseCurve))]
 		private AnimationCurve m_ColorCurve = AnimationCurve.Linear(0.0f,0.0f,1.0f,1.0f);
 
-		[VerticalGroup("시각 옵션/자유",Order = 0),SerializeField,LabelText("진행 색상"),ShowIf(nameof(UseGradient))]
+		[VerticalGroup("Visual Option/Free",Order = 0),SerializeField,LabelText("Gradient"),ShowIf(nameof(UseGradient))]
 		private Gradient m_Gradient = new();
 
-		[VerticalGroup("시각 옵션/자유",Order = 0),SerializeField,LabelText("머터리얼 변수"),ShowIf(nameof(ShowMaterial))]
+		[VerticalGroup("Visual Option/Free",Order = 0),SerializeField,LabelText("Material Name"),ShowIf(nameof(ShowMaterial))]
 		protected string m_MaterialName = "";
 		#endregion Free Mode
 
@@ -112,8 +112,8 @@ namespace KZLib.KZSchedule
 			{
 				return new ValueDropdownList<ModeType>
 				{
-					{ "페이드 모드",ModeType.Fade },
-					{ "자유 모드",ModeType.Free },
+					{ "Fade Mode",ModeType.Fade },
+					{ "Free Mode",ModeType.Free },
 				};
 			}
 		}

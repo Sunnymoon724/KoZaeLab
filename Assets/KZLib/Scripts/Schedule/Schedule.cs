@@ -9,7 +9,7 @@ namespace KZLib.KZSchedule
 	{
 		public record ScheduleParam();
 
-		[FoldoutGroup("기본 옵션",Order = 5),SerializeField,LabelText("자동 재생")]
+		[FoldoutGroup("General Option",Order = 5),SerializeField,LabelText("Auto Play")]
 		protected bool m_AutoPlay = false;
 
 		protected CancellationTokenSource m_TokenSource = null;

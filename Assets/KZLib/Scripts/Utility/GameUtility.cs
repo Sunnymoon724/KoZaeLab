@@ -19,7 +19,7 @@ public static class GameUtility
 
 	public static bool CheckVersion(string _version)
 	{
-		var version = GameSettings.In.GameVersion;
+		var version = 0.0f;//GameSettings.In.GameVersion;
 
 		return version.CompareTo(_version) >= 0;
 	}

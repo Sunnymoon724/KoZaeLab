@@ -18,18 +18,18 @@ namespace KZLib
 		private bool m_SceneChanging = false;
 		public bool IsSceneChanging => m_SceneChanging;
 
-		[HorizontalGroup("이름",Order = 0),ShowInInspector,KZRichText,LabelText("현재 씬 이름")]
+		[HorizontalGroup("Name",Order = 0),ShowInInspector,KZRichText,LabelText("Current Scene Name")]
 		protected string CurrentSceneName
 		{
 			get
 			{
 				var current = CurrentScene;
 
-				return current == null ? "씬이 없습니다." : current.SceneName;
+				return current == null ? "Scene is none." : current.SceneName;
 			}
 		}
 
-		[HorizontalGroup("스택",Order = 1),SerializeField,DisplayAsString,LabelText("씬 스택"),ListDrawerSettings(ShowFoldout = false,IsReadOnly = true)]
+		[HorizontalGroup("Stack",Order = 1),SerializeField,DisplayAsString,LabelText("Scene Stack"),ListDrawerSettings(ShowFoldout = false,IsReadOnly = true)]
 		private Stack<SceneBinding> m_SceneStack = new();
 
 		protected override void Release()
@@ -98,14 +98,14 @@ namespace KZLib
 
 			GameUtility.LockInput();
 
-			// 점점 어두워짐
+			// darker
 			await UIMgr.In.PlayTransitionOutAsync(_data,false);
 
 			if(_loading)
 			{
 				var panel = UIMgr.In.Open<LoadingPanelUI>(UITag.LoadingPanelUI);
 
-				// 점점 밝아짐
+				// brighter
 				await UIMgr.In.PlayTransitionInAsync(_data,false);
 
 				var count = (float) _onTaskArray.Length;
@@ -121,7 +121,7 @@ namespace KZLib
 					});
 				}
 
-				// 점점 어두워짐
+				// darker
 				await UIMgr.In.PlayTransitionOutAsync(_data,false);
 
 				UIMgr.In.Close(UITag.LoadingPanelUI);
@@ -145,15 +145,15 @@ namespace KZLib
 		{
 			if(_sceneName.IsEmpty())
 			{
-				throw new NullReferenceException("씬이 없습니다.");
+				throw new NullReferenceException("Scene name is empty.");
 			}
 
 			_onProgress?.Invoke(0.0f);
 
-			LogTag.Scene.I("{0} 생성을 시작합니다.",_sceneName);
+			LogTag.Scene.I($"{_sceneName} create start.");
 
-			var sceneType = Type.GetType(_sceneName) ?? throw new NullReferenceException(string.Format("{0}이 존재하지 않습니다.",_sceneName));
-			var sceneBiding = (SceneBinding) Activator.CreateInstance(sceneType) ?? throw new NullReferenceException(string.Format("{0} 생성이 실패했습니다.",_sceneName));
+			var sceneType = Type.GetType(_sceneName) ?? throw new NullReferenceException($"{_sceneName} is not exists.");
+			var sceneBiding = (SceneBinding) Activator.CreateInstance(sceneType) ?? throw new NullReferenceException($"{_sceneName} create failed.");
 
 			m_SceneStack.Push(sceneBiding);
 
@@ -162,7 +162,7 @@ namespace KZLib
 				_onProgress?.Invoke(progress*0.99f);
 			},_param);
 
-			LogTag.Scene.I("{0} 생성이 끝났습니다.",_sceneName);
+			LogTag.Scene.I($"{_sceneName} create end.");
 
 			_onProgress?.Invoke(1.0f);
 		}
@@ -180,13 +180,15 @@ namespace KZLib
 
 			var sceneName = current.SceneName;
 
-			LogTag.Scene.I("{0} 제거를 시작합니다.",sceneName);
+			LogTag.Scene.I($"{sceneName} remove start.");
 
 			m_SceneStack.Pop();
 
 			var previous = CurrentScene;
 
 			// 현재 씬을 지우고 이전 씬의 액티브를 킨다.
+
+			// Release current scene & Active on previous scene
 			await current.ReleaseAsync(previous?.SceneName,(progress)=>
 			{
 				_onProgress?.Invoke(progress*0.99f);
@@ -195,7 +197,7 @@ namespace KZLib
 #if UNITY_EDITOR
 			EditorUtility.UnloadUnusedAssetsImmediate(true);
 #endif
-			LogTag.Scene.I("{0} 제거가 끝났습니다.",sceneName);
+			LogTag.Scene.I($"{sceneName} remove end.");
 
 			GameUtility.ClearUnloadedAssetMemory();
 

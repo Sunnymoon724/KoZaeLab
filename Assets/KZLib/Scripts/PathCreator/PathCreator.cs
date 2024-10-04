@@ -15,7 +15,7 @@ namespace KZLib.KZDevelop
 
 	public partial class PathCreator : BaseComponent
 	{
-		[VerticalGroup("0",Order = 0),SerializeField,LabelText("공간 타입")]
+		[VerticalGroup("0",Order = 0),SerializeField,LabelText("Space Type")]
 		private SpaceType m_PathSpaceType = SpaceType.xyz;
 		public SpaceType PathSpaceType => m_PathSpaceType;
 
@@ -28,21 +28,21 @@ namespace KZLib.KZDevelop
 		[SerializeField,HideInInspector]
 		private float m_Resolution = 50.0f;
 
-		private string ResolutionLabel => IsCurveMode ? "곡선 정밀도" : "정점까지 최대 길이";
+		private string ResolutionLabel => IsCurveMode ? "Curve Resolution" : "Vertex Distance";
 		private float MinResolution => IsCurveMode ? 1.0f : 0.0f;
 
-		[VerticalGroup("5",Order = 5),SerializeField,LabelText("핸들 리스트"),DisplayAsString,ListDrawerSettings(DraggableItems = false,HideAddButton = true,HideRemoveButton = true)]
+		[VerticalGroup("5",Order = 5),SerializeField,LabelText("Handle List"),DisplayAsString,ListDrawerSettings(DraggableItems = false,HideAddButton = true,HideRemoveButton = true)]
 		private List<Vector3> m_HandleList = new();
 		public Vector3[] HandleArray => m_HandleList.ToArray();
 
 		[SerializeField,HideInInspector]
 		private Vector3[] m_PointArray = null;
 
-		[VerticalGroup("3",Order = 3),SerializeField,LabelText("경로 길이"),DisplayAsString]
+		[VerticalGroup("3",Order = 3),SerializeField,LabelText("Path Length"),DisplayAsString]
 		private float m_PathLength = 0.0f;
 		public float PathLength => m_PathLength;
 
-		[VerticalGroup("3",Order = 3),SerializeField,LabelText("라인 렌더러")]
+		[VerticalGroup("3",Order = 3),SerializeField,LabelText("Line Renderer")]
 		private LineRenderer m_LineRenderer = null;
 
 		[NonSerialized]
@@ -94,7 +94,7 @@ namespace KZLib.KZDevelop
 			m_LineRenderer.endWidth = _width.y;
 		}
 
-		[VerticalGroup("0",Order = 0),ShowInInspector,LabelText("그리기 모드")]
+		[VerticalGroup("0",Order = 0),ShowInInspector,LabelText("Current DrawMode")]
 		public PathDrawMode DrawMode
 		{
 			get => m_DrawMode;
@@ -129,7 +129,7 @@ namespace KZLib.KZDevelop
 		}
 
 #if UNITY_EDITOR
-		[VerticalGroup("10",Order = 10),Button("경로 초기화",ButtonSizes.Medium)]
+		[VerticalGroup("10",Order = 10),Button("Reset Path",ButtonSizes.Medium)]
 		public void OnResetPath()
 		{
 			Undo.RecordObject(this,"Reset Path");
