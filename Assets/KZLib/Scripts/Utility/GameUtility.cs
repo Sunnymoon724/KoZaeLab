@@ -19,26 +19,24 @@ public static class GameUtility
 
 	public static bool CheckVersion(string _version)
 	{
-		var version = 0.0f;//GameSettings.In.GameVersion;
-
-		return version.CompareTo(_version) >= 0;
+		return GameSettings.In.GameVersion.CompareTo(_version) >= 0;
 	}
 
 	public static string CheckMetaData(IMetaData _metaData,int _metaId)
 	{
 		if(_metaData == null || !_metaData.IsExist)
 		{
-			//? 존재 X
-			return string.Format("<color={0}>{1}</color>",Global.WRONG_HEX_COLOR,_metaId);
+			//? Not exist
+			return $"<color={Global.WRONG_HEX_COLOR}>{_metaId}</color>";
 		}
 
 		if(!CheckVersion(_metaData.Version))
 		{
-			//? 버전이 안맞음
-			return string.Format("<color={0}>{1}</color>",Global.DISABLE_HEX_COLOR,_metaId);
+			//? Version error
+			return $"<color={Global.DISABLE_HEX_COLOR}>{_metaId}</color>";
 		}
 
-		return string.Format("{0}",_metaId);
+		return $"{_metaId}";
 	}
 
 	public static void LockInput()
@@ -53,7 +51,7 @@ public static class GameUtility
 	
 	private static void SetInput(bool _lock)
 	{
-		// TODO 인풋 체크하기
+		// TODO Check Input
 
 		if(UIMgr.HasInstance)
 		{
@@ -67,11 +65,11 @@ public static class GameUtility
 	}
 
 	/// <summary>
-	/// 새로운 주의 월요일을 리턴한다. 
+	/// Get New Week Monday
 	/// </summary>
 	public static DateTime GetNewWeekMonday()
 	{
-		// 다음주 월요일을 계산한다.
+		//? Calculate next Monday.
 		var today = DateTime.Today;
 
 		for(var i=1;i<8;i++)
@@ -87,16 +85,13 @@ public static class GameUtility
 		return today;
 	}
 
-	/// <summary>
-	/// 오늘 남은 시간
-	/// </summary>
 	public static TimeSpan GetRemainTime()
 	{
 		return GetNextDay().Date-DateTime.Now;
 	}
 
 	/// <summary>
-	/// 다음 요일 12:00 정각을 리턴함
+	/// Get Next Day -> 12:00
 	/// </summary>
 	public static DateTime GetNextDay()
 	{
@@ -138,13 +133,12 @@ public static class GameUtility
 
 	public static void ReleaseManager()
 	{
-		//? SingletonMB 릴리즈
-
+		//? Release SingletonMB
 		ReleaseSingletonMB<SceneMgr>();
 		ReleaseSingletonMB<UIMgr>();
 		ReleaseSingletonMB<CameraMgr>();
 
-		//? Singleton 릴리즈
+		//? Release Singleton
 		ReleaseSingleton<MetaDataMgr>();
 		ReleaseSingleton<GameDataMgr>();
 		ReleaseSingleton<SaveDataMgr>();
@@ -193,7 +187,7 @@ public static class GameUtility
 			return assetPath;
 		}
 
-		throw new NullReferenceException(string.Format("템플릿 폴더에 해당 파일이 없습니다. [{0}]",_fileName));
+		throw new NullReferenceException($"{_fileName} is not exist in template folder.");
 	}
 
 	public static byte[] GetTestImageData()

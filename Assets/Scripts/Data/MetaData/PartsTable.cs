@@ -60,46 +60,46 @@
 // 	}
 // 	#endregion Parts Data
 
-// 	public class PartsTable : MetaDataTable
-// 	{
-// 		[SerializeField,HideInInspector]
-// 		private List<PartsData> m_PartsList = new();
+// // 	public class PartsTable : MetaDataTable
+// // 	{
+// // 		[SerializeField,HideInInspector]
+// // 		private List<PartsData> m_PartsList = new();
 
-// 		public override IEnumerable<IMetaData> DataGroup => m_PartsList;
+// // 		public override IEnumerable<IMetaData> DataGroup => m_PartsList;
 
-// #if UNITY_EDITOR
-// 		[BoxGroup("테이블",ShowLabel = false,Order = 1)]
-// 		[VerticalGroup("테이블/1",Order = 1),LabelText("데이터 리스트"),TableList(IsReadOnly = true,AlwaysExpanded = true,ShowPaging = true,NumberOfItemsPerPage = 10),ShowInInspector]
-// 		private readonly List<PartsData> m_MetaDataList = new();
+// // #if UNITY_EDITOR
+// // 		[BoxGroup("테이블",ShowLabel = false,Order = 1)]
+// // 		[VerticalGroup("테이블/1",Order = 1),LabelText("데이터 리스트"),TableList(IsReadOnly = true,AlwaysExpanded = true,ShowPaging = true,NumberOfItemsPerPage = 10),ShowInInspector]
+// // 		private readonly List<PartsData> m_MetaDataList = new();
 
-// 		protected override string TableName => "Parts";
+// // 		protected override string TableName => "Parts";
 
-// 		public override void OnRefresh()
-// 		{
-// 			m_PartsList.Clear();
+// // 		public override void OnRefresh()
+// // 		{
+// // 			m_PartsList.Clear();
 
-// 			var file = new ExcelFile(CurrentPath);
-// 			var dataList = new List<PartsData>();
+// // 			var file = new ExcelFile(CurrentPath);
+// // 			var dataList = new List<PartsData>();
 
-// 			foreach(var data in file.Deserialize<PartsData>(TableName))
-// 			{
-// 				dataList.Add(data.Initialize());
-// 			}
+// // 			foreach(var data in file.Deserialize<PartsData>(TableName))
+// // 			{
+// // 				dataList.Add(data.Initialize());
+// // 			}
 
-// 			m_PartsList.AddRange(dataList.OrderBy(x=>x.MetaId));
+// // 			m_PartsList.AddRange(dataList.OrderBy(x=>x.MetaId));
 
-// 			base.OnRefresh();
-// 		}
+// // 			base.OnRefresh();
+// // 		}
 
-// 		protected override void SetMetaDataList(IEnumerable<IMetaData> _dataGroup)
-// 		{
-// 			m_MetaDataList.Clear();
+// // 		protected override void SetMetaDataList(IEnumerable<IMetaData> _dataGroup)
+// // 		{
+// // 			m_MetaDataList.Clear();
 
-// 			foreach(var data in _dataGroup)
-// 			{
-// 				m_MetaDataList.Add(data as PartsData);
-// 			}
-// 		}
-// #endif
-// 	}
+// // 			foreach(var data in _dataGroup)
+// // 			{
+// // 				m_MetaDataList.Add(data as PartsData);
+// // 			}
+// // 		}
+// // #endif
+// // 	}
 // }

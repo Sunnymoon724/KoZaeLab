@@ -6,7 +6,7 @@ using UnityEngine;
 public static partial class FileUtility
 {
 	/// <summary>
-	/// 모든 경로 합침
+	/// Combine all path
 	/// </summary>
 	public static string PathCombine(params string[] _pathArray)
 	{
@@ -14,7 +14,7 @@ public static partial class FileUtility
 	}
 
 	/// <summary>
-	/// Assets 폴더를 기준으로 나온다. (Assets의 외부는 프로젝트 부모 폴더 기준)
+	/// It is based on the Assets folder.
 	/// </summary>
 	public static string GetAbsolutePath(string _path,bool _isIncludeAssets)
 	{
@@ -24,7 +24,7 @@ public static partial class FileUtility
 		}
 		else if(_isIncludeAssets)
 		{
-			//? AssetsPath로 변경 후 사용
+			//? Change AssetsPath
 			return NormalizePath(Path.GetFullPath(GetAssetsPath(_path)));
 		}
 		else
@@ -39,64 +39,46 @@ public static partial class FileUtility
 	}
 
 	/// <summary>
-	/// 이름 + 확장자명 반환 (폴더는 이름만)
+	/// File : name+extension / Folder : name
 	/// </summary>
 	public static string GetFileName(string _filePath)
 	{
 		return Path.GetFileName(_filePath);
 	}
 
-	/// <summary>
-	/// 이름만 반환
-	/// </summary>
 	public static string GetOnlyName(string _path)
 	{
 		return Path.GetFileNameWithoutExtension(_path);
 	}
 
-	/// <summary>
-	/// 확장자명만 반환
-	/// </summary>
 	public static string GetExtension(string _filePath)
 	{
 		return Path.GetExtension(_filePath);
 	}
 
-	/// <summary>
-	/// 부모 경로 반환
-	/// </summary>
 	public static string GetParentPath(string _path)
 	{
 		return Path.GetDirectoryName(_path);
 	}
 
 	/// <summary>
-	/// 현재 경로에서 확장자명을 빼고 반환
+	/// Remove extension from path
 	/// </summary>
 	public static string GetPathWithoutExtension(string _path)
 	{
 		return Regex.Replace(_path,@"\.[^.]*$","");
 	}
 
-	/// <summary>
-	/// 확장자명을 변경함
-	/// </summary>
 	public static string ChangeExtension(string _path,string _extension)
 	{
 		return Path.ChangeExtension(_path,_extension);
 	}
 
-	/// <summary>
-	/// 부모 경로를 절대경로로 반환
-	/// </summary>
 	public static string GetParentAbsolutePath(string _path,bool _isIncludeAssets)
 	{
 		return GetAbsolutePath(GetParentPath(_path),_isIncludeAssets);
 	}
 
-	/// <summary>
-	/// 프로젝트의 경로 반환 (Assets폴더의 부모)
-	/// </summary>
 	public static string GetProjectPath()
 	{
 		var directoryInfo = Directory.GetParent(Application.dataPath);
@@ -104,9 +86,6 @@ public static partial class FileUtility
 		return NormalizePath(directoryInfo.FullName);
 	}
 
-	/// <summary>
-	/// 프로젝트의 상위 경로 반환 (Assets폴더의 부모의 부모)
-	/// </summary>
 	public static string GetProjectParentPath()
 	{
 		var directoryInfo = Directory.GetParent(Application.dataPath);
@@ -115,17 +94,11 @@ public static partial class FileUtility
 		return NormalizePath(parentDirectoryInfo.FullName);
 	}
 
-	/// <summary>
-	/// Assets에서부터 시작하는 경로를 반환
-	/// </summary>
 	public static string GetAssetsPath(string _path)
 	{
 		return IsStartWithAssetsHeader(_path) ? NormalizePath(_path) : PathCombine(Global.ASSETS_HEADER,_path);
 	}
 
-	/// <summary>
-	/// Assets 밑의 로컬 경로를 반환
-	/// </summary>
 	public static string GetLocalPath(string _path)
 	{
 		return IsStartWithAssetsHeader(_path) ? RemoveAssetsHeader(_path) : NormalizePath(_path);
@@ -141,31 +114,25 @@ public static partial class FileUtility
 		return _path.StartsWith(Global.ASSETS_HEADER);
 	}
 
-	/// <summary>
-	/// 경로가 폴더인지 파일인지 파악
-	/// </summary>
 	public static bool IsFilePath(string _filePath)
 	{
 		return Path.HasExtension(_filePath);
 	}
 
-	/// <summary>
-	/// 존재 여부 파악 (에디터가 아니면 Empty만 파악)
-	/// </summary>
 	public static bool IsExist(string _path,bool _needException = false)
 	{
 		if(_path.IsEmpty())
 		{
 			if(_needException)
 			{
-				throw new NullReferenceException("경로가 null 입니다.");
+				throw new NullReferenceException("Path is null.");
 			}
 
 			return false;
 		}
 
 #if UNITY_EDITOR
-		//? 내부 경로 체크
+		//? Check inner path
 		var fullPath = GetAbsolutePath(_path,true);
 
 		if(File.Exists(fullPath))
@@ -177,7 +144,7 @@ public static partial class FileUtility
 			return true;
 		}
 
-		//? 외부 경로 체크
+		//? Check outer path
 		fullPath = GetAbsolutePath(_path,false);
 
 		if(File.Exists(fullPath))
@@ -193,14 +160,14 @@ public static partial class FileUtility
 		{
 			if(_needException)
 			{
-				throw new FileNotFoundException(string.Format("파일이 존재하지 않습니다. [{0}]",fullPath));
+				throw new FileNotFoundException($"File is not exist. [{fullPath}]");
 			}
 		}
 		else
 		{
 			if(_needException)
 			{
-				throw new DirectoryNotFoundException(string.Format("폴더가 존재하지 않습니다. [{0}]",fullPath));
+				throw new DirectoryNotFoundException($"Folder is not exist. [{fullPath}]");
 			}
 		}
 
@@ -210,9 +177,6 @@ public static partial class FileUtility
 #endif
 	}
 
-	/// <summary>
-	/// header를 제거한 파일 경로를 반환함.
-	/// </summary>
 	public static string RemoveHeaderDirectory(string _path,string _header)
 	{
 		var path = NormalizePath(_path);
@@ -221,9 +185,6 @@ public static partial class FileUtility
 		return path[(path.IndexOf(header)+header.Length+1)..];
 	}
 
-	/// <summary>
-	/// header를 Assets을 사용.
-	/// </summary>
 	public static string RemoveAssetsHeader(string _path)
 	{
 		return RemoveHeaderDirectory(_path,Global.ASSETS_HEADER);
@@ -240,7 +201,7 @@ public static partial class FileUtility
 
 		while(File.Exists(newPath))
 		{
-			newPath = PathCombine(directory,string.Format("{0} ({1}){2}",name,count,extension));
+			newPath = PathCombine(directory,$"{name} ({count}){extension}");
 			count++;
 		}
 

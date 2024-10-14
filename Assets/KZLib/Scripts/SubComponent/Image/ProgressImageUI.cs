@@ -10,13 +10,13 @@ public class ProgressImageUI : BaseImageUI
 	[SerializeField,HideInInspector]
 	private float m_CurrentValue = 1.0f;
 
-	[LabelText("최솟 값"),SerializeField,KZMaxClamp(nameof(m_MaxValue))]
+	[LabelText("Min Value"),SerializeField,KZMaxClamp(nameof(m_MaxValue))]
 	private float m_MinValue = 0.0f;
 
-	[LabelText("최댓 값"),SerializeField,KZMinClamp(nameof(m_MinValue))]
+	[LabelText("Max Value"),SerializeField,KZMinClamp(nameof(m_MinValue))]
 	private float m_MaxValue = 1.0f;
 
-	[BoxGroup("값",Order = 2),ShowInInspector,LabelText("현재 값"),PropertyRange(nameof(m_MinValue),nameof(m_MaxValue))]
+	[BoxGroup("Value",Order = 2),ShowInInspector,LabelText("Current Value"),PropertyRange(nameof(m_MinValue),nameof(m_MaxValue))]
 	public float CurrentValue
 	{
 		get => m_CurrentValue;
@@ -34,17 +34,17 @@ public class ProgressImageUI : BaseImageUI
 				m_Image.fillAmount = CurrentProgress;
 			}
 
-			if(m_UseColor)
+			if(m_UseGradient)
 			{
 				m_Image.color = m_GradientColor.Evaluate(CurrentProgress);
 			}
 		}
 	}
 
-	[BoxGroup("옵션",Order = 1)]
-	[HorizontalGroup("옵션/0"),LabelText("그라데이션 사용"),SerializeField,ToggleLeft]
-	private bool m_UseColor = false;
-	[HorizontalGroup("옵션/0"),HideLabel,SerializeField,ShowIf(nameof(m_UseColor))]
+	[BoxGroup("Option",Order = 1)]
+	[HorizontalGroup("Option/0"),LabelText("Use Gradient"),SerializeField,ToggleLeft]
+	private bool m_UseGradient = false;
+	[HorizontalGroup("Option/0"),HideLabel,SerializeField,ShowIf(nameof(m_UseGradient))]
 	private Gradient m_GradientColor = null;
 
 	public float CurrentProgress => (CurrentValue-m_MinValue)/(m_MaxValue-m_MinValue);

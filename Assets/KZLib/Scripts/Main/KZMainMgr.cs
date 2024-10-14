@@ -32,19 +32,9 @@ namespace KZLib
 			{
 				if(!m_GameLanguage.HasValue)
 				{
-					var language = CommonSaveData.GetEnum("[System] GameLanguage",SystemLanguage.Unknown);
+					var option = GameDataMgr.In.Access<GameData.LanguageOption>();
 
-					if(language == SystemLanguage.Unknown)
-					{
-#if UNITY_EDITOR
-						language = SystemLanguage.English;
-#else
-						language = Application.systemLanguage;
-#endif
-						CommonSaveData.SetEnum("[System] GameLanguage",language);
-					}
-
-					m_GameLanguage = language;
+					m_GameLanguage = option.GameLanguage;
 				}
 
 				return m_GameLanguage.Value;
@@ -59,14 +49,9 @@ namespace KZLib
 
 				m_GameLanguage = value;
 
-				CommonSaveData.SetEnum("[System] GameLanguage",m_GameLanguage.Value);
+				var option = GameDataMgr.In.Access<GameData.LanguageOption>();
 
-				if(GameDataMgr.HasInstance)
-				{
-					var option = GameDataMgr.In.Access<GameData.LanguageOption>();
-
-					option.SetGameLanguage(m_GameLanguage.Value);
-				}
+				option.GameLanguage = m_GameLanguage.Value;
 			}
 		}
 

@@ -15,7 +15,7 @@ namespace KZLib.KZNetwork
 			//? 제목
 			var content = $"```ansi\n{_content}\n```";
 			//? 기기ID
-			var username = $"{GameSettings.In.GetPresetOrDeviceID()}";
+			var username = $"{GameSettings.In.PresetNameOrDeviceId}";
 
 			var webHook = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new WebHookData(content,username,_embedArray)));
 

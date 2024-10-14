@@ -186,8 +186,6 @@ namespace KZLib
 
 			var previous = CurrentScene;
 
-			// 현재 씬을 지우고 이전 씬의 액티브를 킨다.
-
 			// Release current scene & Active on previous scene
 			await current.ReleaseAsync(previous?.SceneName,(progress)=>
 			{

@@ -87,7 +87,7 @@ public static class UniTaskUtility
 	}
 
 	/// <summary>
-	/// 지정된 시간 또는 조건이 충족될 때까지 대기하는 코루틴.
+	/// Wait time or condition
 	/// </summary>
 	public static async UniTask WaitForSecondsOrConditionAsync(float _duration,Func<bool> _onCondition,bool _ignoreTimescale = false,CancellationToken _token = default)
 	{

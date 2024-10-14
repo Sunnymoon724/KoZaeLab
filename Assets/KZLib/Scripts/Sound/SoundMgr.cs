@@ -6,24 +6,17 @@ namespace KZLib
 	{
 		private bool m_Disposed = false;
 
-		//? BGM 관련
+		//? BGM
 		private AudioSource m_BGMSource = null;
 		public AudioSource BGMSource => m_BGMSource;
 
-		//? UI 관련
+		//? UI
 		private AudioSource m_UISource = null;
 
 		protected override void Initialize()
 		{
-			if(CameraMgr.HasInstance)
-			{
-				m_BGMSource = CameraMgr.In.gameObject.GetComponentInChildren<AudioSource>();
-			}
-			else
-			{
-				//? 카메라 매니저가 없으면 메인 카메라에 오디오 리스너를 생성함
-				m_BGMSource = Camera.main.gameObject.GetOrAddComponent<AudioSource>();
-			}
+			//? Use CameraMgr or Camera main
+			m_BGMSource = CameraMgr.HasInstance ? CameraMgr.In.gameObject.GetComponentInChildren<AudioSource>() : Camera.main.gameObject.GetOrAddComponent<AudioSource>();
 
 			if(UIMgr.HasInstance)
 			{
@@ -59,15 +52,15 @@ namespace KZLib
 		{
 			var option = GameDataMgr.In.Access<GameData.SoundOption>();
 
-			var master = option.Master;
-			var music = option.Music;
-			var effect = option.Effect;
+			var master = option.MasterVolume;
+			var music = option.MusicVolume;
+			var effect = option.EffectVolume;
 
-			m_BGMSource.volume = master.Volume*music.Volume;
-			m_BGMSource.mute = master.Mute || music.Mute;
+			m_BGMSource.volume = master.volume*music.volume;
+			m_BGMSource.mute = master.mute || music.mute;
 
-			m_UISource.volume = master.Volume*effect.Volume;
-			m_UISource.mute= master.Mute || effect.Mute;
+			m_UISource.volume = master.volume*effect.volume;
+			m_UISource.mute= master.mute || effect.mute;
 		}
 
 		public void PlayUIShot(string _path,float _volume = 1.0f)
@@ -94,7 +87,6 @@ namespace KZLib
 
 		public void PlayBGM(AudioClip _clip,float _time = 0.0f)
 		{
-			//? 중복 금지
 			if(m_BGMSource.clip != null && m_BGMSource.clip.name.IsEqual(_clip.name))
 			{
 				return;

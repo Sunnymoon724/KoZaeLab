@@ -11,16 +11,16 @@ public static partial class FileUtility
 	private const int WAV_HEADER_SIZE = 44;
 
 	/// <summary>
-	/// 실제 경로를 생성함 (폴더면 폴더 생성 / 파일이면 부모 폴더 생성)
+	/// Create folder. (path is file ? create parent folder. : create folder)
 	/// </summary>
 	public static void CreateFolder(string _path)
 	{
 		if(_path.IsEmpty())
 		{
-			throw new NullReferenceException("폴더의 경로가 null 입니다.");
+			throw new NullReferenceException("Path is null.");
 		}
 
-		// 현재 경로가 파일이면 부모 폴더 경로를 아니면 현재 경로의 풀 경로를 받아옴
+		// Path is file ? Get parent path. : Get path
 		var fullPath = IsFilePath(_path) ? GetParentPath(_path) : _path;
 
 		if(!Directory.Exists(fullPath))
@@ -29,41 +29,28 @@ public static partial class FileUtility
 		}
 	}
 
-	/// <summary>
-	/// 파일 쓰기
-	/// </summary>
+	public static void WriteByteToFile(string _filePath,byte[] _bytes)
+	{
+		CreateFolder(_filePath);
+
+		File.WriteAllBytes(_filePath,_bytes);
+	}
+
 	public static void WriteTextToFile(string _filePath,string _text)
 	{
 		CreateFolder(_filePath);
 
-		using var writer = new StreamWriter(_filePath);
-		writer.Write(_text);
+		File.WriteAllText(_filePath,_text);
 	}
 
-	/// <summary>
-	/// 파일 쓰기
-	/// </summary>
 	public static void WriteJsonToFile<TObject>(string _filePath,TObject _object)
 	{
 		WriteTextToFile(_filePath,JsonConvert.SerializeObject(_object));
 	}
 
-	/// <summary>
-	/// byte[] 저장
-	/// </summary>
 	public static void WriteTextureToFile(string _filePath,Texture2D _texture)
 	{
-		WriteDataToFile(_filePath,_texture.EncodeToPNG());
-	}
-
-	/// <summary>
-	/// byte[] 저장
-	/// </summary>
-	public static void WriteDataToFile(string _filePath,byte[] _dataArray)
-	{
-		CreateFolder(_filePath);
-
-		File.WriteAllBytes(_filePath,_dataArray);
+		WriteByteToFile(_filePath,_texture.EncodeToPNG());
 	}
 
 	public static void WriteAudioClipToWav(string _filePath,AudioClip _clip)
@@ -135,7 +122,7 @@ public static partial class FileUtility
 	public static void AddOrUpdateTemplateText(string _folderPath,string _templateName,string _scriptName,string _newData,Func<string,string> _onUpdate)
 	{
 		var absolutePath = GetAbsolutePath(PathCombine(_folderPath,_scriptName),true);
-		var templateText = IsExist(absolutePath) ? ReadDataFromFile(absolutePath) : GetTemplateText(_templateName);
+		var templateText = IsExist(absolutePath) ? ReadFileToText(absolutePath) : GetTemplateText(_templateName);
 
 		if(templateText.IsEmpty() || templateText.Contains(_newData))
 		{
@@ -155,14 +142,14 @@ public static partial class FileUtility
 	public static string GetTemplateText(string _templatePath)
 	{
 		var absolutePath = GameUtility.GetTemplateFileAbsolutePath(_templatePath);
-		var data = ReadDataFromFile(absolutePath);
+		var text = ReadFileToText(absolutePath);
 
-		if(data.IsEmpty())
+		if(text.IsEmpty())
 		{
-			UnityUtility.DisplayErrorPathLink(absolutePath);
+			UnityUtility.DisplayErrorPath(absolutePath);
 		}
 
-		return data;
+		return text;
 	}
 }
 #endif

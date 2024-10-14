@@ -1,31 +1,32 @@
+using System;
 using System.IO;
 
 public static partial class FileUtility
 {
-	public static byte[] ReadFile(string _filePath)
+	public static string ReadFileToText(string _filePath)
 	{
-		return IsExist(_filePath,true) ? File.ReadAllBytes(_filePath) : null;
+		return ReadFile(_filePath,File.ReadAllText);
 	}
 
-	public static bool TryReadDataFromFile(string _filePath,out string _text)
+	public static byte[] ReadFileToBytes(string _filePath)
 	{
-		if(!IsExist(_filePath,true))
-		{
-			_text = null;
+		return ReadFile(_filePath,File.ReadAllBytes);
+	}
 
-			return false;
+	private static TRead ReadFile<TRead>(string _filePath,Func<string,TRead> _onRead)
+	{
+		if(IsExist(_filePath,true))
+		{
+			try
+			{
+				return _onRead(_filePath);
+			}
+			catch(Exception _ex)
+			{
+				LogTag.File.E($"Error reading file: {_ex.Message}");
+			}
 		}
 
-		using var fileStream = File.Open(_filePath,FileMode.Open,FileAccess.Read);
-		using var stream = new StreamReader(fileStream);
-
-		_text = stream.ReadToEnd();
-
-		return true;
-	}
-
-	public static string ReadDataFromFile(string _filePath)
-	{
-		return TryReadDataFromFile(_filePath,out var result) ? result : string.Empty;
+		return default;
 	}
 }

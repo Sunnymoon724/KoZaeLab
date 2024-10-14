@@ -21,41 +21,26 @@ public static partial class MathUtility
 	#endregion Distance
 
 	#region Clamp
-	/// <summary>
-	/// <para> 만약 음수가 나오면 순환이므로 최대값을 반환한다.</para>
-	/// </summary>
 	public static int LoopClamp(int _index,int _size)
 	{
 		return _size < 1 ? 0 : _index < 0 ? _size-1+(_index+1)%_size : _index%_size;
 	}
 
-	/// <summary>
-	/// <para> 만약 음수가 나오면 순환이므로 최대값을 반환한다.</para>
-	/// </summary>
 	public static float LoopClamp(float _index,int _size)
 	{
 		return _size < 1 ? 0 : _index < 0.0f ? _size-1+(_index+1)%_size : _index%_size;
 	}
 
-	/// <summary>
-	/// 비교 가능한 오브젝트를 범위 안의 오브젝트로 자른다.
-	/// </summary>
 	public static TCompare Clamp<TCompare>(TCompare _curValue,TCompare _minValue,TCompare _maxValue) where TCompare : IComparable<TCompare>
 	{
 		return _curValue.CompareTo(_minValue) < 0 ? _minValue : _curValue.CompareTo(_maxValue) > 0 ? _maxValue : _curValue;
 	}
 
-	/// <summary>
-	/// 비교 가능한 오브젝트를 범위 안의 오브젝트로 자른다.
-	/// </summary>
 	public static TCompare MinClamp<TCompare>(TCompare _curValue,TCompare _minValue) where TCompare : IComparable<TCompare>
 	{
 		return Clamp(_curValue,_minValue,_curValue);
 	}
 
-	/// <summary>
-	/// 비교 가능한 오브젝트를 범위 안의 오브젝트로 자른다.
-	/// </summary>
 	public static TCompare MaxClamp<TCompare>(TCompare _curValue,TCompare _maxValue) where TCompare : IComparable<TCompare>
 	{
 		return Clamp(_curValue,_curValue,_maxValue);
@@ -96,15 +81,14 @@ public static partial class MathUtility
 
 	#region Alignment
 	/// <summary>
-	/// 정해진 크기만큼 중앙배열 하는 숫자를 반환한다.
-	/// <para> 예시) 0 / -0.5 +0.5 / -1 0 +1 / -1.5 -0.5 +0.5 +1.5 ...</para>
+	/// Set alignment ( 0 / -0.5 +0.5 / -1 0 +1 / -1.5 -0.5 +0.5 +1.5)
 	/// </summary>
 	public static float[] MiddleAlignment(int _length)
 	{
 		var pivotArray = new float[_length];
 		var pivot = pivotArray.Length/2.0f;
 
-		// 홀수 일 때
+		//? odd
 		if(_length%2 == 1)
 		{
 			for(var i=0;i<(int)pivot;i++)
@@ -113,7 +97,7 @@ public static partial class MathUtility
 				pivotArray[(int) Mathf.Ceil(pivot)+(i+0)]=+(i+1);
 			}
 		}
-		// 짝수 일 때
+		//? even
 		else
 		{
 			var divide = 0.5f;
@@ -128,9 +112,6 @@ public static partial class MathUtility
 		return pivotArray;
 	}
 
-	/// <summary>
-	/// 게임 오브젝트 정렬
-	/// </summary>
 	public static void SetAlignmentGameObjectList(List<GameObject> _objectList,int _xMax,int _hMax,float _xGap,float _yGap)
 	{
 		var widthAble   = _xMax != -1;

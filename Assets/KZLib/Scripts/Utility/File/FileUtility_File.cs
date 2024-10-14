@@ -29,10 +29,6 @@ public static partial class FileUtility
 	}
 
 #if UNITY_EDITOR
-	/// <summary>
-	/// 에디터에서 해당 폴더나 파일을 오픈합니다.
-	/// </summary>
-	/// <param name="_path"></param>
 	public static void Open(string _path)
 	{
 		if(IsExist(_path))
@@ -41,7 +37,7 @@ public static partial class FileUtility
 		}
 		else
 		{
-			UnityUtility.DisplayErrorPathLink(_path);
+			UnityUtility.DisplayErrorPath(_path);
 		}
 	}
 #endif

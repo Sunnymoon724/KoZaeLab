@@ -3,7 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public class TimerComponent : BaseTextUI
+public class TimerTextUI : BaseTextUI
 {
 	private CancellationTokenSource m_TokenSource = null;
 
@@ -73,6 +73,6 @@ public class TimerComponent : BaseTextUI
 
 	private void UpdateText(TimeSpan _time,string _format)
     {
-        m_Text.SetSafeTextMeshPro(string.IsNullOrEmpty(_format) ? _time.ToString() : _time.ToString(_format));
+        m_TextMesh.SetSafeTextMeshPro(string.IsNullOrEmpty(_format) ? _time.ToString() : _time.ToString(_format));
     }
 }

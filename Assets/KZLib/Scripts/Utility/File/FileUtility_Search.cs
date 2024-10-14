@@ -5,7 +5,7 @@ using System.IO;
 public static partial class FileUtility
 {
 	/// <summary>
-	/// .meta는 알아서 제외 합니다.
+	/// .meta is not included
 	/// </summary>
 	public static string[] GetAllFilePathInFolder(string _folderPath)
 	{
@@ -13,7 +13,7 @@ public static partial class FileUtility
 
 		if(IsFilePath(_folderPath))
 		{
-			throw new NullReferenceException("파일 경로 입니다.");
+			throw new NullReferenceException($"Path is filePath. [{_folderPath}]");
 		}
 		
 		var fileList = new List<string>();

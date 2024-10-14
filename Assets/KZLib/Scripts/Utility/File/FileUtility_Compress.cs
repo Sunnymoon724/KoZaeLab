@@ -5,14 +5,74 @@ using System.IO.Compression;
 
 public static partial class FileUtility
 {
-	/// <summary>
-	/// Assets 내부 폴더는 압축되지 않습니다.
-	/// </summary>
+	public static byte[] CompressBytes(byte[] _bytes)
+	{
+		using var memoryStream = new MemoryStream();
+
+		using(var archive = new ZipArchive(memoryStream,ZipArchiveMode.Create,true))
+		{
+			var entry = archive.CreateEntry("data.bin",CompressionLevel.Optimal);
+
+			using var entryStream = entry.Open();
+
+			entryStream.Write(_bytes,0,_bytes.Length);
+		}
+
+		return memoryStream.ToArray();
+	}
+
+	public static byte[] CompressZip(string _sourcePath)
+	{
+		var absolutePath = GetAbsolutePath(_sourcePath,false);
+
+		if(!IsExist(absolutePath,true))
+		{
+			return null;
+		}
+
+		if(IsFilePath(absolutePath))
+		{
+			using var memoryStream = new MemoryStream();
+
+			using(var archive = new ZipArchive(memoryStream,ZipArchiveMode.Create,true))
+			{
+				var entry = archive.CreateEntry(Path.GetFileName(absolutePath),CompressionLevel.Optimal);
+
+				using var entryStream = entry.Open();
+				using var fileStream = File.OpenRead(absolutePath);
+
+				fileStream.CopyTo(entryStream);
+			}
+
+			return memoryStream.ToArray();
+		}
+		else
+		{
+			using var memoryStream = new MemoryStream();
+
+			using(var archive = new ZipArchive(memoryStream,ZipArchiveMode.Create,true))
+			{
+				foreach(var filePath in Directory.GetFiles(absolutePath,"*.*",SearchOption.AllDirectories))
+				{
+					var relativePath = Path.GetRelativePath(absolutePath,filePath);
+					var entry = archive.CreateEntry(relativePath,CompressionLevel.Optimal);
+
+					using var entryStream = entry.Open();
+					using var fileStream = File.OpenRead(filePath);
+
+					fileStream.CopyTo(entryStream);
+				}
+			}
+
+			return memoryStream.ToArray();
+		}
+	}
+
 	public static void CompressZip(string _sourcePath,string _destinationPath)
 	{
-		var sourcePath = GetAbsolutePath(_sourcePath,false);
+		var bytes = CompressZip(_sourcePath);
 
-		if(!IsExist(sourcePath,true))
+		if(bytes == null)
 		{
 			return;
 		}
@@ -25,34 +85,36 @@ public static partial class FileUtility
 		}
 		else if(!extension.IsEqual(".zip"))
 		{
-			throw new ArgumentException(string.Format("지원하지 않는 확장자 입니다. [{0}]",_destinationPath));
+			throw new ArgumentException($"Not supported extension. [{_destinationPath}]");
 		}
 
 		var destinationPath = GetUniquePath(GetAbsolutePath(_destinationPath,false));
 
-		CreateFolder(destinationPath);
-
-		if(IsFilePath(sourcePath))
-		{
-			using var zipArchive = ZipFile.Open(destinationPath,ZipArchiveMode.Create);
-			zipArchive.CreateEntryFromFile(sourcePath,Path.GetFileName(sourcePath));
-		}
-		else
-		{
-			ZipFile.CreateFromDirectory(sourcePath,destinationPath);
-		}
+		WriteByteToFile(destinationPath,bytes);
 	}
 
-	/// <summary>
-	/// Assets 내부 폴더는 압축 해제되지 않습니다.
-	/// </summary>
+	public static byte[] DecompressBytes(byte[] _bytes)
+	{
+		using var compressedStream = new MemoryStream(_bytes);
+		using var archive = new ZipArchive(compressedStream,ZipArchiveMode.Read);
+
+		var entry = archive.Entries[0];
+
+		using var entryStream = entry.Open();
+		using var memoryStream = new MemoryStream();
+
+		entryStream.CopyTo(memoryStream);
+
+		return memoryStream.ToArray();
+	}
+
 	public static void DecompressZip(string _sourcePath,string _destinationPath)
 	{
 		var extension = GetExtension(_sourcePath);
 
 		if(!extension.IsEqual(".zip"))
 		{
-			throw new ArgumentException(string.Format("지원하지 않는 확장자 입니다. [{0}]",_sourcePath));
+			throw new ArgumentException($"Not supported extension. [{_destinationPath}]");
 		}
 
 		var sourcePath = GetAbsolutePath(_sourcePath,false);
@@ -66,15 +128,22 @@ public static partial class FileUtility
 
 		CreateFolder(destinationPath);
 
-		using var archive = ZipFile.OpenRead(sourcePath);
+		using var zipStream = new FileStream(destinationPath,FileMode.Open);
+		using var archive = new ZipArchive(zipStream,ZipArchiveMode.Read);
 
 		foreach(var entry in archive.Entries)
 		{
-			var fileName = PathCombine(destinationPath,entry.FullName);
+			var fullPath = Path.Combine(destinationPath,entry.FullName);
 
-			CreateFolder(fileName);
+			if(!entry.FullName.EndsWith("/"))
+			{
+				CreateFolder(fullPath);
 
-			entry.ExtractToFile(fileName,true);
+				using var entryStream = entry.Open();
+				using var fileStream = new FileStream(fullPath,FileMode.Create);
+
+				entryStream.CopyTo(fileStream);
+			}
 		}
 	}
 }

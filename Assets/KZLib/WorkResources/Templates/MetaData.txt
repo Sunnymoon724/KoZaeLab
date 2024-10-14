@@ -1,0 +1,40 @@
+using KZLib;
+using KZLib.KZAttribute;
+using KZLib.KZFiles;
+using Sirenix.OdinInspector;
+using MessagePack;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+namespace MetaData
+{
+	[MessagePackObject]
+	public class $ClassNameData : IMetaData
+	{
+		#region Field
+		$MemberFields
+		[SerializeField,HideInInspector] private bool m_Exist;
+		#endregion Field
+
+		#region Property
+		[BoxGroup("General")]
+		$MemberProperties
+		[HorizontalGroup("General/0"),LabelText("IsExist"),LabelWidth(100),ShowInInspector,KZIsValid("Exist","Error")]
+		public bool IsExist => m_Exist;
+		#endregion Property
+
+		#region Initialize
+		public $ClassNameData() { }
+
+#if UNITY_EDITOR
+		public $ClassNameData Initialize()
+		{
+			m_Exist = true;
+
+			return this;
+		}
+#endif
+		#endregion Initialize
+	}
+}

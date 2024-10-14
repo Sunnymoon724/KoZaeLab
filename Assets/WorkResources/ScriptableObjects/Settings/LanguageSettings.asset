@@ -22,8 +22,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   m_Initialize: 1
-  m_SheetList:
-  - m_LocalFilePath: Documents/Language/LanguagePack.xlsx
+  m_SheetData:
+    m_LocalFilePath: Documents/Language/LanguagePack.xlsx
     m_SheetName: Language
     m_SheetNameList:
     - Language

@@ -4,9 +4,6 @@ using UnityEngine;
 public static partial class MathUtility
 {
 	#region Parabola
-	/// <summary>
-	/// 포물선 구하기
-	/// </summary>
 	public static Vector3 Parabola(Vector3 _start,Vector3 _velocity,float _time,float? _gravity = null)
 	{
 		var result = Vector3.zero;
@@ -20,9 +17,6 @@ public static partial class MathUtility
 	}
 	#endregion Parabola
 
-	/// <summary>
-	/// 탄도 쏘는 함수
-	/// </summary>
 	public static Vector3 GetTrajectoryVelocity(Transform _projectile,Transform _target,float _angle,float? _gravity = null)
 	{
 		var startXZ = _projectile.position.MaskY();

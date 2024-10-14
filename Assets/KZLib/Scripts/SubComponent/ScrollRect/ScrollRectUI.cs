@@ -10,22 +10,22 @@ public partial class ScrollRectUI : BaseComponentUI
 {
 	private enum MoveToType { Top, Center, Bottom, }
 
-	[SerializeField,LabelText("스크롤 렉트")]
+	[SerializeField,LabelText("Scroll Rect")]
 	private ScrollRect m_ScrollRect = null;
 
-	[SerializeField,ReadOnly,LabelText("세로 여부")]
+	[SerializeField,ReadOnly,LabelText("Is Vertical")]
 	private bool m_IsVertical = false;
 
-	[SerializeField,LabelText("주변 여백")]
+	[SerializeField,LabelText("Padding")]
 	private float m_Padding = 0.0f;
 
-	[SerializeField,LabelText("사이 공간")]
+	[SerializeField,LabelText("Space")]
 	private float m_Space = 0.0f;
 
-	[SerializeField,LabelText("피봇")]
+	[SerializeField,LabelText("Pivot")]
 	private SlotUI m_Pivot = null;
 
-	[SerializeField,ReadOnly,LabelText("슬롯 딕셔너리")]
+	[SerializeField,ReadOnly,LabelText("Slot Dictionary")]
 	private Dictionary<int,SlotUI> m_SlotDict = new();
 
 	private float m_SlotSize = 0.0f;
@@ -51,7 +51,7 @@ public partial class ScrollRectUI : BaseComponentUI
 
 		if(!m_Pivot)
 		{
-			throw new NullReferenceException("피벗이 없습니다.");
+			throw new NullReferenceException("Pivot is null");
 		}
 
 		m_IsVertical = m_ScrollRect.vertical;
@@ -245,7 +245,7 @@ public partial class ScrollRectUI : BaseComponentUI
 			{
 				var data = m_ObjectPool.Get(m_ScrollRect.content);
 
-				data.gameObject.name = string.Format("Slot_{0}",i);
+				data.gameObject.name = $"Slot_{i}";
 				data.gameObject.SetActiveSelf(true);
 
 				m_SlotDict.Add(i,data);

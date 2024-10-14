@@ -8,30 +8,44 @@ namespace GameData
 {
 	public class LanguageOption : Option
 	{
+		// https://docs.google.com/document/d/1x3wfhsAR4urxCOhi3jqwoCRwp7DUmZqGPip6rsrGF_k/edit?usp=sharing
 		protected override string OPTION_KEY => "Language Option";
 		protected override EventTag Tag => EventTag.ChangeLanguageOption;
 
-		private class Language
+		private class LanguageData
 		{
-			public SystemLanguage CurrentLanguage { get; set; }
+			[JsonProperty("UseVibration")]
+			private SystemLanguage m_CurrentLanguage = GameSettings.In.GameLanguage;
+
+			[JsonIgnore]
+			public SystemLanguage CurrentLanguage => m_CurrentLanguage;
+
+			public bool SetCurrentLanguage(SystemLanguage _language)
+			{
+				if(m_CurrentLanguage == _language)
+				{
+					return false;
+				}
+
+				m_CurrentLanguage = _language;
+
+				return true;
+			}
 		}
 
-		// https://docs.google.com/document/d/1x3wfhsAR4urxCOhi3jqwoCRwp7DUmZqGPip6rsrGF_k/edit?usp=sharing
-		private const SystemLanguage DEFAULT_LANGUAGE = SystemLanguage.English;
-
-		private Language m_Language = null;
+		private LanguageData m_LanguageData = null;
 
 		private readonly Dictionary<SystemLanguage,Dictionary<string,string>> m_LanguageDict = new();
 
 		public override void Initialize()
 		{
-			var language = CommonSaveData.GetEnum("[System] GameLanguage",DEFAULT_LANGUAGE);
+			base.Initialize();
 
-			m_Language = GetOption(new Language() { CurrentLanguage = language, });
+			LoadOption(ref m_LanguageData);
 
 			m_LanguageDict.Clear();
 
-			foreach(var textAsset in ResMgr.In.GetTextAssetArray(GameSettings.In.LanguagePath))
+			foreach(var textAsset in ResMgr.In.GetTextAssetArray(GameSettings.In.LanguageFilePath))
 			{
 				var languageDict = JsonConvert.DeserializeObject<Dictionary<string,string>>(textAsset.text);
 
@@ -47,27 +61,31 @@ namespace GameData
 		public override void Release()
 		{
 			m_LanguageDict.Clear();
+
+			SaveOption(m_LanguageData,false);
 		}
 
-		public void SetGameLanguage(SystemLanguage _language)
+		public SystemLanguage GameLanguage
 		{
-			if(m_Language.CurrentLanguage == _language)
+			get => m_LanguageData.CurrentLanguage;
+			set
 			{
-				return;
+				if(!m_LanguageDict.ContainsKey(value))
+				{
+					LogTag.Data.W($"{value} is not exist.");
+
+					return;
+				}
+
+				if(!m_LanguageData.SetCurrentLanguage(value))
+				{
+					return;
+				}
+
+				LogTag.Data.I($"Language is changed. [{value}]");
+
+				SaveOption(m_LanguageData,true);
 			}
-
-			if(!m_LanguageDict.ContainsKey(_language))
-			{
-				LogTag.Data.W($"{_language} is not exist.");
-
-				return;
-			}
-
-			LogTag.Data.I($"Language is changed. [{_language}]");
-
-			m_Language.CurrentLanguage = _language;
-
-			SaveOption(m_Language);
 		}
 
 		public string ToLocalizeText(string _key)
@@ -77,7 +95,7 @@ namespace GameData
 				throw new NullReferenceException("Data is empty.");
 			}
 
-			if(m_LanguageDict.TryGetValue(m_Language.CurrentLanguage,out var dataDict))
+			if(m_LanguageDict.TryGetValue(m_LanguageData.CurrentLanguage,out var dataDict))
 			{
 				if(dataDict.TryGetValue(_key,out var value))
 				{
@@ -86,7 +104,7 @@ namespace GameData
 			}
 			else
 			{
-				if(m_LanguageDict[DEFAULT_LANGUAGE].TryGetValue(_key,out var value))
+				if(m_LanguageDict[SystemLanguage.English].TryGetValue(_key,out var value))
 				{
 					return value;
 				}

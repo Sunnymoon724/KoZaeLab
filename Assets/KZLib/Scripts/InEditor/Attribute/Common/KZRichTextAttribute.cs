@@ -38,7 +38,7 @@ namespace KZLib.KZAttribute
 		{
 			var rect = DrawPrefixLabel(_label);
 
-			var style = LABEL_STYLE;
+			var style = new GUIStyle(GUI.skin.label);
 			style.richText = true;
 
 			EditorGUI.LabelField(rect,Label,style);

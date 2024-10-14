@@ -10,7 +10,7 @@ public static partial class MathUtility
 
 	#region Integer
 	/// <summary>
-	/// min 에서 max 사이의 숫자를 무작위로 반환한다.
+	/// min <= n <= max
 	/// </summary>
 	public static int GetRndInt(int _min,int _max)
 	{
@@ -21,7 +21,7 @@ public static partial class MathUtility
 	{
 		if(_weightedArray.IsNullOrEmpty())
 		{
-			throw new ArgumentException("가중치가 없습니다.");
+			throw new ArgumentException("No weight.");
 		}
 
 		if(_weightedArray.Length == 1)
@@ -35,7 +35,7 @@ public static partial class MathUtility
 		{
 			if(weight < 0.0f)
 			{
-				throw new ArgumentException("가중치가 음수입니다.");
+				throw new ArgumentException("Weight is less than 0.");
 			}
 
 			total += weight;
@@ -59,7 +59,7 @@ public static partial class MathUtility
 
 	#region Single
 	/// <summary>
-	/// (0<= n < 1) 무작위 숫자를 반환한다.
+	/// 0<= n < 1
 	/// </summary>
 	public static float GetRndFloat()
 	{
@@ -67,7 +67,7 @@ public static partial class MathUtility
 	}
 
 	/// <summary>
-	/// -value 에서 +value 사이의 숫자를 무작위로 반환한다.
+	/// -value <= n <= +value
 	/// </summary>
 	public static float GetRndFloat(float _value,int? _decimals = null)
 	{
@@ -75,8 +75,7 @@ public static partial class MathUtility
 	}
 
 	/// <summary>
-	/// min 에서 max 사이의 숫자를 무작위로 반환한다.
-	/// dot 는 소수점 N째 자리를 의미한다.
+	/// min <= n <= max
 	/// </summary>
 	public static float GetRndFloat(float _min,float _max,int? _decimals = null)
 	{
@@ -88,7 +87,7 @@ public static partial class MathUtility
 
 	#region Double
 	/// <summary>
-	/// (0<= n < 1) 무작위 숫자를 반환한다.
+	/// 0<= n < 1
 	/// </summary>
 	public static double GetRndDouble()
 	{
@@ -96,7 +95,7 @@ public static partial class MathUtility
 	}
 
 	/// <summary>
-	/// -value 에서 +value 사이의 숫자를 무작위로 반환한다.
+	/// -value <= n <= +value
 	/// </summary>
 	public static double GetRndDouble(double _value,int? _decimals = null)
 	{
@@ -104,8 +103,7 @@ public static partial class MathUtility
 	}
 
 	/// <summary>
-	/// min 에서 max 사이의 숫자를 무작위로 반환한다.
-	/// dot 는 소수점 N째 자리를 의미한다.
+	/// min <= n <= max
 	/// </summary>
 	public static double GetRndDouble(double _min,double _max,int? _decimals = null)
 	{
@@ -117,7 +115,7 @@ public static partial class MathUtility
 
 	#region Boolean
 	/// <summary>
-	/// true or false 반환한다.
+	/// true or false
 	/// </summary>
 	public static bool GetRndBool()
 	{
@@ -160,17 +158,11 @@ public static partial class MathUtility
 	#endregion String
 
 	#region Gaussian
-	/// <summary>
-	/// 정규분포에서 무작위 정수 반환
-	/// </summary>
 	public static int GetGaussian(int _mean,int _deviation)
 	{
 		return _mean+(int) GetGaussian()*_deviation;
 	}
 
-	/// <summary>
-	/// 정규분포에서 무작위 정수 반환
-	/// </summary>
 	public static int GetGaussian(int _mean,int _deviation,int _min,int _max)
 	{
 		int pivot;
@@ -183,17 +175,11 @@ public static partial class MathUtility
 		return pivot;
 	}
 
-	/// <summary>
-	/// 정규분포에서 무작위 실수 반환
-	/// </summary>
 	public static float GetGaussian(float _mean,float _deviation)
 	{
 		return _mean+GetGaussian()*_deviation;
 	}
 
-	/// <summary>
-	/// 정규분포에서 무작위 실수 반환
-	/// </summary>
 	public static float GetGaussian(float _mean,float _deviation,float _min,float _max)
 	{
 		float pivot;
@@ -206,9 +192,6 @@ public static partial class MathUtility
 		return pivot;
 	}
 
-	/// <summary>
-	/// 정규분포에서 무작위 실수 반환
-	/// </summary>
 	public static float GetGaussian()
 	{
 		float pivot,value1,value2;
@@ -226,7 +209,7 @@ public static partial class MathUtility
 	#endregion Gaussian
 
 	/// <summary>
-	/// -1, 0, 1 반환
+	/// -1, 0, 1
 	/// </summary>
 	public static int GetRndSign(bool _includeZero = true)
 	{
@@ -234,7 +217,7 @@ public static partial class MathUtility
 	}
 
 	/// <summary>
-	/// 0에서 1의 실수를 반환해서 percent와 비교하여 판단한다.
+	/// Check value in [0,1].
 	/// </summary>
 	public static bool CheckProbability(float _percent)
 	{
@@ -242,7 +225,7 @@ public static partial class MathUtility
 	}
 
 	/// <summary>
-	/// _low와 _high 사이의 실수를 반환해서 percent와 비교하여 판단한다.
+	/// Check value in [low,high].
 	/// </summary>
 	public static bool CheckProbabilityInRange(float _low,float _high)
 	{
@@ -250,17 +233,17 @@ public static partial class MathUtility
 
 		if(_low == _high)
 		{
-			// 확률 범위가 같은 경우
+			//! low == high
 			return _low > 0.0f || value <= _low;
 		}
 		else if (_low > _high)
 		{
-			// 확률 범위가 역전된 경우
+			//! low > high
 			return _high > 0.0f || (_high <= value && value <= _low);
 		}
 		else
 		{
-			// 정상적인 확률 범위인 경우
+			//! low < high
 			return _low > 0.0f || (_low <= value && value <= _high);
 		}
 	}

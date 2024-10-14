@@ -107,7 +107,7 @@ public static partial class UnityUtility
 
 		if(guidArray.Length > 1)
 		{
-			LogTag.System.W("검색된 결과가 2개 이상입니다. [{0} 사용]",guidArray[0]);
+			LogTag.System.W($"Result is not one. -> Use {guidArray[0]}");
 		}
 
 		return AssetDatabase.LoadAssetAtPath<TObject>(AssetDatabase.GUIDToAssetPath(guidArray[0]));
@@ -165,7 +165,7 @@ public static partial class UnityUtility
 		AssetDatabase.SaveAssets();
 		AssetDatabase.Refresh();
 
-		LogTag.System.I("{0}가 {1}에 저장 되었습니다.",_asset.name,_dataPath);
+		LogTag.System.I($"{_asset.name} is saved in {_dataPath}.");
 	}
 #endif
 

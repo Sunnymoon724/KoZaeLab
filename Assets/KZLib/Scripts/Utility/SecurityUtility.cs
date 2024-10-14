@@ -6,8 +6,7 @@ using System.Text;
 public static class SecurityUtility
 {
 	/// <summary>
-	/// 데이터를 UTF8으로 인코딩 하여 byte[]로 만들고 이걸 password를 받아서 AES로 암호화를 한다.
-	/// 그 다음 Base64로 디코딩을 하여 데이터를 변경한다.
+	/// Encode UTF8 -> Encrypt by AES -> Convert Base64
 	/// </summary>
 	public static string AESEncryptData(string _password,string _source)
 	{
@@ -45,8 +44,7 @@ public static class SecurityUtility
 	}
 
 	/// <summary>
-	/// 데이터를 Base64인코딩을 하여 byte[]로 만들고 이걸 password를 받아서 AES로 복호화를 한다.
-	/// 그 다음 UTF8로 바꾸어 원래 데이터로 변경한다.
+	/// Convert Base64 -> Decrypt by AES -> Encode UTF8
 	/// </summary>
 	public static string AESDecryptData(string _password,string _source)
 	{
@@ -100,9 +98,6 @@ public static class SecurityUtility
 		return Convert.FromBase64String(_source);
 	}
 
-	/// <summary>
-	/// HMAC인증을 위한 용도
-	/// </summary>
 	public static string HMACSignature(byte[] _key,string _sign)
 	{
 		var data = new HMACSHA256()

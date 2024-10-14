@@ -2,14 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
-
-
-#if UNITY_EDITOR
-
-using UnityEditor;
-
-#endif
-
 public static partial class UnityUtility
 {
 	public static void SetCanvasCullTransparentMeshOff(GameObject _panel)

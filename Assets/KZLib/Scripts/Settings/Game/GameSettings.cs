@@ -2,41 +2,23 @@
 using UnityEngine;
 using System.Collections;
 using KZLib.KZAttribute;
+using System.Collections.Generic;
 
 #if UNITY_EDITOR
 
-using UnityEditor;
 using UnityEditor.AddressableAssets;
 
 #endif
 
-public partial class GameSettings : InnerBaseSettings<GameSettings>
+public class GameSettings : InnerBaseSettings<GameSettings>
 {
-#if UNITY_EDITOR
-	protected override void Initialize()
-	{
-		base.Initialize();
-
-		GameMode = DEVELOP_MODE;
-
-		ScreenResolution = new Vector2Int(Global.BASE_WIDTH,Global.BASE_HEIGHT);
-		FullScreen = true;
-		GraphicQualityPreset = GraphicsQualityPresetType.QualityHighest;
-		FrameRate = Global.FRAME_RATE_60;
-
-		Screen.SetResolution(m_ScreenResolution.x,m_ScreenResolution.y,FullScreen);
-		Application.targetFrameRate = m_FrameRate;
-	}
-
-#endif
-
 	#region General
-
 	#region Game Mode
 	[SerializeField,HideInInspector]
 	private string m_GameMode = DEVELOP_MODE;
 
-	[BoxGroup("일반 설정/0",ShowLabel = false),ShowInInspector,LabelText("게임 모드"),ValueDropdown(nameof(GameModeList))]
+	[TitleGroup("General",BoldTitle = false,Order = 0)]
+	[BoxGroup("General/GameMode",ShowLabel = false,Order = 0),ShowInInspector,LabelText("Game Mode"),ValueDropdown(nameof(GameModeList))]
 	public string GameMode
 	{
 		get => m_GameMode;
@@ -66,7 +48,7 @@ public partial class GameSettings : InnerBaseSettings<GameSettings>
 				BuildSettings.In.InitializeBundleSetting(setting);
 			}
 
-			//? 어드레서블 그룹에서 PlayModeScript 설정 변경
+			//? Change AddressableAssetSetting
 			setting.ActivePlayModeDataBuilderIndex = IsServerResource ? 2 : 0;
 #endif
 		}
@@ -75,9 +57,9 @@ public partial class GameSettings : InnerBaseSettings<GameSettings>
 	private enum StateType { Local_State, Server_State }
 
 	[SerializeField,HideInInspector]
-	private StateType m_ResourceState;
+	private StateType m_ResourceState = StateType.Local_State;
 
-	[BoxGroup("일반 설정/0",ShowLabel = false),ShowInInspector,LabelText("리소스 상태"),ValueDropdown(nameof(StateList)),EnableIf(nameof(LockState))]
+	[BoxGroup("General/GameMode",ShowLabel = false,Order = 0),ShowInInspector,LabelText("Resource State"),ValueDropdown(nameof(StateList)),EnableIf(nameof(LockState))]
 	private StateType ResourceState
 	{
 		get => m_ResourceState;
@@ -93,32 +75,32 @@ public partial class GameSettings : InnerBaseSettings<GameSettings>
 	}
 
 	[SerializeField,HideInInspector]
-	private StateType m_SaveDataState;
+	private StateType m_SaveState;
 
-	[BoxGroup("일반 설정/0",ShowLabel = false),ShowInInspector,LabelText("세이브 상태"),ValueDropdown(nameof(StateList)),EnableIf(nameof(LockState))]
-	private StateType SaveDataState
+	[BoxGroup("General/GameMode",ShowLabel = false,Order = 0),ShowInInspector,LabelText("Save State"),ValueDropdown(nameof(StateList)),EnableIf(nameof(LockState))]
+	private StateType SaveState
 	{
-		get => m_SaveDataState;
+		get => m_SaveState;
 		set
 		{
-			if(m_SaveDataState == value)
+			if(m_SaveState == value)
 			{
 				return;
 			}
 
-			m_SaveDataState = value;
+			m_SaveState = value;
 		}
 	}
 
-	private static IEnumerable GameModeList
+	private IEnumerable GameModeList
 	{
 		get
 		{
 			return new ValueDropdownList<string>()
 			{
-				{ "개발자 모드", DEVELOP_MODE	},
-				{ "커스텀 모드", CUSTOM_MODE	},
-				{ "라이브 모드", LIVE_MODE		},
+				{ "Develop Mode",	DEVELOP_MODE	},
+				{ "Custom Mode",	CUSTOM_MODE		},
+				{ "Live Mode",		LIVE_MODE		},
 			};
 		}
 	}
@@ -126,19 +108,19 @@ public partial class GameSettings : InnerBaseSettings<GameSettings>
 	private void SetGameModeState(StateType _type)
 	{
 		ResourceState = _type;
-		SaveDataState = _type;
+		SaveState = _type;
 	}
 
 	private bool LockState = false;
 
-	private static IEnumerable StateList
+	private IEnumerable StateList
 	{
 		get
 		{
 			return new ValueDropdownList<StateType>()
 			{
-				{ "로컬 상태", StateType.Local_State	},
-				{ "서버 상태", StateType.Server_State	},
+				{ "Local State",	StateType.Local_State	},
+				{ "Server State",	StateType.Server_State	},
 			};
 		}
 	}
@@ -152,72 +134,163 @@ public partial class GameSettings : InnerBaseSettings<GameSettings>
 	public bool IsLiveMode => GameMode.IsEqual(LIVE_MODE);
 
 	public bool IsLocalResource => ResourceState == StateType.Local_State;
-	public bool IsLocalSaveData => SaveDataState == StateType.Local_State;
+	public bool IsLocalSave => SaveState == StateType.Local_State;
 	public bool IsServerResource => !IsLocalResource;
-	public bool IsServerData => !IsLocalSaveData;
+	public bool IsServerData => !IsLocalSave;
 	#endregion Game Mode
-	#endregion General
 
-	#region Path
-	[TitleGroup("경로 설정",BoldTitle = false,Order = 1)]
-	[BoxGroup("경로 설정/0",ShowLabel = false),SerializeField,LabelText("설정 창 경로"),KZFolderPath]
-	private string m_SettingPath = "Scripts/InEditor/SettingsWindow";
-	public string SettingPath => m_SettingPath;
+	#region GameVersion
+	[SerializeField,HideInInspector]
+	private string m_GameVersion = "0.1";
 
-	[BoxGroup("경로 설정/0",ShowLabel = false),SerializeField,LabelText("메타 데이터 스크립트 경로"),KZFolderPath]
-	private string m_MetaScriptPath = "Scripts/Data/MetaData";
-	public string MetaScriptPath => m_MetaScriptPath;
+	[BoxGroup("General/GameVersion",ShowLabel = false,Order = 1),ShowInInspector,LabelText("Game Version")]
+	public string GameVersion
+	{
+		get => m_GameVersion;
+		private set
+		{
+			if(m_GameVersion == value)
+			{
+				return;
+			}
 
-	[BoxGroup("경로 설정/0",ShowLabel = false),SerializeField,LabelText("메타 데이터 에셋 경로"),KZFolderPath]
-	private string m_MetaAssetPath = "Resources/ScriptableObjects/MetaData";
-	public string MetaAssetPath => m_MetaAssetPath;
+			m_GameVersion = value;
+		}
+	}
+	#endregion GameVersion
 
-	[BoxGroup("경로 설정/0",ShowLabel = false),SerializeField,LabelText("언어 데이터 에셋 경로"),KZFolderPath]
-	private string m_LanguagePath = "Resources/Texts/Languages";
-	public string LanguagePath => m_LanguagePath;
+	#region Game Language
+	[SerializeField,HideInInspector]
+	private SystemLanguage m_GameLanguage = SystemLanguage.English;
 
-	[BoxGroup("경로 설정/0",ShowLabel = false),SerializeField,LabelText("UI 경로"),KZFolderPath]
-	private string m_UIPrefabPath = "Resources/Prefabs/UI";
-	public string UIPrefabPath => m_UIPrefabPath;
-	
-	[BoxGroup("경로 설정/0",ShowLabel = false),SerializeField,LabelText("이펙트 경로"),KZFolderPath]
-	private string m_EffectPrefabPath = "Resources/Prefabs/Efx";
-	public string EffectPrefabPath => m_EffectPrefabPath;
-	#endregion Path
+	[BoxGroup("General/GameLanguage",ShowLabel = false,Order = 2),ShowInInspector,LabelText("Game Language"),InlineButton(nameof(OnChangeDefaultLanguage),Label = "",Icon = SdfIconType.Reply)]
+	public SystemLanguage GameLanguage
+	{
+		get
+		{
+#if UNITY_EDITOR
+			return m_GameLanguage;
+#else
+			return Application.systemLanguage;
+#endif
+		}
+		private set
+		{
+			if(m_GameLanguage == value)
+			{
+				return;
+			}
 
-	#region Graphic
+			m_GameLanguage = value;
+		}
+	}
+
+	private void OnChangeDefaultLanguage()
+	{
+		GameLanguage = SystemLanguage.English;
+	}
+	#endregion Game Language
+
+	#region Game Graphic
 	[SerializeField,HideInInspector]
 	private Vector2Int m_ScreenResolution = new(Global.BASE_WIDTH,Global.BASE_HEIGHT);
 
-	[TitleGroup("그래픽 설정",BoldTitle = false,Order = 2)]
-	[BoxGroup("그래픽 설정/0",ShowLabel = false),ShowInInspector,LabelText("스크린 해상도")]
+	[BoxGroup("General/GameGraphic",ShowLabel = false,Order = 3),ShowInInspector,LabelText("Screen Resolution")]
 	public Vector2Int ScreenResolution { get => m_ScreenResolution; private set => m_ScreenResolution = value; }
-
-	[SerializeField,HideInInspector]
-	private bool m_IsFullScreen = true;
-
-	[BoxGroup("그래픽 설정/0",ShowLabel = false),ShowInInspector,LabelText("스크린 최대화")]
-	public bool FullScreen { get => m_IsFullScreen; private set => m_IsFullScreen = value; }
 
 	public float ScreenAspect => ScreenResolution.x / (float) ScreenResolution.y;
 
 	[SerializeField,HideInInspector]
 	private int m_FrameRate = Global.FRAME_RATE_60;
 
-	[BoxGroup("그래픽 설정/0",ShowLabel = false),ShowInInspector,LabelText("프레임 레이트")]
-	public int FrameRate
-	{
-		get => m_FrameRate;
-		private set
-		{
-			m_FrameRate = value;
-		}
-	}
+	[BoxGroup("General/GameGraphic",ShowLabel = false,Order = 3),ShowInInspector,LabelText("Frame Rate")]
+	public int FrameRate { get => m_FrameRate; private set => m_FrameRate = value; }
 
 	[SerializeField,HideInInspector]
 	private GraphicsQualityPresetType m_GraphicQualityPreset = GraphicsQualityPresetType.QualityHighest;
 
-	[BoxGroup("그래픽 설정/0",ShowLabel = false),ShowInInspector,LabelText("그래픽 퀄리티 프리셋")]
+	[BoxGroup("General/GameGraphic",ShowLabel = false,Order = 3),ShowInInspector,LabelText("Graphic Quality Preset")]
 	public GraphicsQualityPresetType GraphicQualityPreset { get => m_GraphicQualityPreset; private set => m_GraphicQualityPreset = value; }
-	#endregion Graphic
+	#endregion Game Graphic
+	#endregion General
+
+	#region Path
+	#region Setting
+	[TitleGroup("Path",BoldTitle = false,Order = 1)]
+	[BoxGroup("Path/Setting",ShowLabel = false,Order = 0),SerializeField,LabelText("Settings Window Path"),KZFolderPath]
+	private string m_SettingPath = "Scripts/InEditor/SettingsWindow";
+	public string SettingPath => m_SettingPath;
+	#endregion Setting
+
+	#region Sheet
+	[BoxGroup("Path/Sheet",ShowLabel = false,Order = 1),SerializeField,LabelText("Meta Data Script Path"),KZFolderPath]
+	private string m_MetaDataScriptPath = "Scripts/Data/MetaData";
+	public string MetaDataScriptPath => m_MetaDataScriptPath;
+
+	[BoxGroup("Path/Sheet",ShowLabel = false,Order = 1),SerializeField,LabelText("Meta Data File Path"),KZFolderPath]
+	private string m_MetaDataFilePath = "Resources/Texts/MetaData";
+	public string MetaDataFilePath => m_MetaDataFilePath;
+
+	[BoxGroup("Path/Sheet",ShowLabel = false,Order = 1),SerializeField,LabelText("Language File Path"),KZFolderPath]
+	private string m_LanguageFilePath = "Resources/Texts/Languages";
+	public string LanguageFilePath => m_LanguageFilePath;
+	#endregion Sheet
+
+	#region Resource
+	[BoxGroup("Path/Resource",ShowLabel = false,Order = 2),SerializeField,LabelText("UI Prefab Path"),KZFolderPath]
+	private string m_UIPrefabPath = "Resources/Prefabs/UI";
+	public string UIPrefabPath => m_UIPrefabPath;
+	
+	[BoxGroup("Path/Resource",ShowLabel = false,Order = 2),SerializeField,LabelText("Effect Prefab Path"),KZFolderPath]
+	private string m_EffectPrefabPath = "Resources/Prefabs/Efx";
+	public string EffectPrefabPath => m_EffectPrefabPath;
+	#endregion Resource
+	#endregion Path
+
+	#region Hud
+	[TitleGroup("Hud",BoldTitle = false,Order = 3)]
+	[BoxGroup("Hud/Option",ShowLabel = false),SerializeField,LabelText("Use Hud")]
+	private bool m_UseHeadUpDisplay = false;
+
+	//? Live Mode -> Do Not Use Hud
+	public bool UseHeadUpDisplay => !IsLiveMode && m_UseHeadUpDisplay;
+
+	public bool UseProfileSetting => UseFrameSetting || UseMemorySetting || UseAudioSetting;
+
+	#region Detail
+	[BoxGroup("Hud/Detail")]
+	[HorizontalGroup("Hud/Detail/Profile",Order = 0),SerializeField,LabelText("Use Frame"),ToggleLeft,ShowIf(nameof(UseHeadUpDisplay))]
+	private bool m_UseFrameSetting = true;
+	public bool UseFrameSetting => m_UseFrameSetting;
+
+	[HorizontalGroup("Hud/Detail/Profile",Order = 0),SerializeField,LabelText("Use Memory"),ToggleLeft,ShowIf(nameof(UseHeadUpDisplay))]
+	private bool m_UseMemorySetting = true;
+	public bool UseMemorySetting => m_UseMemorySetting;
+
+	[HorizontalGroup("Hud/Detail/Profile",Order = 0),SerializeField,LabelText("Use Audio"),ToggleLeft,ShowIf(nameof(UseHeadUpDisplay))]
+	private bool m_UseAudioSetting = true;
+	public bool UseAudioSetting => m_UseAudioSetting;
+
+	[PropertySpace(5)]
+	[HorizontalGroup("Hud/Detail/Log",Order = 1),SerializeField,LabelText("Use Log"),ToggleLeft,ShowIf(nameof(UseHeadUpDisplay))]
+	private bool m_UseLogSetting = true;
+	public bool UseLogSetting => m_UseLogSetting;
+	#endregion Detail
+	#endregion Hud
+
+	#region Preset
+	[TitleGroup("Preset",BoldTitle = false,Order = 4)]
+	[BoxGroup("Preset/0",ShowLabel = false),SerializeField,LabelText("Preset Dict"),DictionaryDrawerSettings(KeyLabel = "Device Id",ValueLabel = "Preset Name")]
+	private Dictionary<string,string> m_PresetNameDict = new();
+
+	public string PresetNameOrDeviceId
+	{
+		get
+		{
+			var deviceId = SystemInfo.deviceUniqueIdentifier;
+
+			return m_PresetNameDict.TryGetValue(deviceId,out var preset) ? preset : deviceId;
+		}
+	}
+	#endregion Preset
 }

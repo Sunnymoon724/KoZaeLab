@@ -63,7 +63,6 @@ public static class WebRequestUtility
 	{
 		var link = NetworkSettings.In.GetDiscordLink(_key);
 
-		//? 디코 사용중이 아님
 		if(link.IsEmpty())
 		{
 			return;

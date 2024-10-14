@@ -8,16 +8,16 @@ using UnityEngine.Events;
 
 public class ScheduleButtonUI : BaseButtonUI
 {
-	[SerializeField,LabelText("클릭 전 스케쥴")]
+	[SerializeField,LabelText("Click Before Schedule")]
 	private Schedule m_BeforeSchedule = null;
 
-	[SerializeField,LabelText("클릭 이벤트")]
+	[SerializeField,LabelText("Click Event")]
 	private UnityEvent m_OnClickedEvent = null;
 
-	[SerializeField,LabelText("클릭 후 스케쥴")]
+	[SerializeField,LabelText("Click After Schedule")]
 	private Schedule m_AfterSchedule = null;
 
-	[SerializeField,LabelText("사용 후 리셋")]
+	[SerializeField,LabelText("Reset After Clicked")]
 	private bool m_UseReset = false;
 
 	private CancellationTokenSource m_TokenSource = null;

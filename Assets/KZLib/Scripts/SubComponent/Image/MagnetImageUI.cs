@@ -13,7 +13,7 @@ public class MagnetImageUI : BaseImageUI
 	[SerializeField,HideInInspector]
 	private RectTransform m_Target = null;
 
-	[ShowInInspector,LabelText("간격")]
+	[ShowInInspector,LabelText("Space")]
 	private float Space
 	{
 		get => m_Space;
@@ -33,10 +33,10 @@ public class MagnetImageUI : BaseImageUI
 		}
 	}
 
-	[SerializeField,LabelText("방향")]
+	[SerializeField,LabelText("Direction")]
 	private DirectionType m_Direction = DirectionType.None;
 
-	[ShowInInspector,LabelText("타겟")]
+	[ShowInInspector,LabelText("Target")]
 	private RectTransform Target
 	{
 		get => m_Target;
@@ -44,7 +44,7 @@ public class MagnetImageUI : BaseImageUI
 		{
 			if(this == value)
 			{
-				LogTag.UI.W("자기 자신을 타겟으로 지정할 수 없습니다.");
+				LogTag.UI.W("Target is not self.");
 
 				return;
 			}
