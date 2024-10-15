@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using KZLib.KZResolver;
 using MessagePack;
 using UnityEngine;
 
@@ -13,6 +14,8 @@ namespace KZLib
 		int MetaId { get; }
 		string Version { get; }
 		bool IsExist { get; }
+
+		IMetaData Initialize();
 	}
 
 	public class MetaDataMgr : DataSingleton<MetaDataMgr>
@@ -144,7 +147,7 @@ namespace KZLib
 			}
 
 			var type = ReflectionUtility.FindType($"MetaData.{_textAsset.name}");
-			var deserialize = MessagePackSerializer.Deserialize(type.MakeArrayType(),_textAsset.bytes);
+			var deserialize = MessagePackSerializer.Deserialize(type.MakeArrayType(),_textAsset.bytes,MessagePackSerializerOptions.Standard.WithResolver(MessagePackResolver.In));
 
 			if(deserialize is not object[] resultArray)
 			{

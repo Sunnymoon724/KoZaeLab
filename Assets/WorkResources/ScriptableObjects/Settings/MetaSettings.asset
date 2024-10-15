@@ -51,7 +51,7 @@ MonoBehaviour:
     - Color342
     m_HeaderList:
     - m_Name: MetaId
-      m_Type: 1
+      m_Type: 2
       m_IsArray: 0
     - m_Name: Version
       m_Type: 0
@@ -61,25 +61,25 @@ MonoBehaviour:
       m_IsArray: 0
     - m_Name: Color_0
       m_Type: 0
-      m_IsArray: 1
+      m_IsArray: 0
     - m_Name: Color_1
       m_Type: 0
-      m_IsArray: 1
+      m_IsArray: 0
     - m_Name: Color_2
       m_Type: 0
-      m_IsArray: 1
+      m_IsArray: 0
     - m_Name: Color_3
       m_Type: 0
-      m_IsArray: 1
+      m_IsArray: 0
     - m_Name: Color_4
       m_Type: 0
-      m_IsArray: 1
+      m_IsArray: 0
     - m_Name: Color_5
       m_Type: 0
-      m_IsArray: 1
+      m_IsArray: 0
     - m_Name: Color_6
       m_Type: 0
-      m_IsArray: 1
+      m_IsArray: 0
   - m_LocalFilePath: Documents/Table/CreatureMetaData.xlsx
     m_SheetName: Creature
     m_SheetNameList:

@@ -83,14 +83,21 @@ namespace KZLib
 					{
 						m_PoolTimer = 0.0f;
 
+						var removeList = new List<string>();
+
 						foreach(var pair in m_CacheDataDict)
 						{
 							pair.Value.RemoveAll(x => x.IsOverdue);
 
 							if(pair.Value.Count == 0)
 							{
-								m_CacheDataDict.RemoveSafe(pair.Key);
+								removeList.Add(pair.Key);
 							}
+						}
+
+						foreach(var remove in removeList)
+						{
+							m_CacheDataDict.RemoveSafe(remove);
 						}
 					}
 				}

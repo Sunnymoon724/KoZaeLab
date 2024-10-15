@@ -10,6 +10,7 @@ using KZLib;
 using KZLib.KZFiles;
 using MessagePack;
 using System.Collections;
+using KZLib.KZResolver;
 
 public class MetaSettings : SheetSettings<MetaSettings>
 {
@@ -34,6 +35,13 @@ public class MetaSettings : SheetSettings<MetaSettings>
 	[Serializable]
 	private class MetaSheetData : SheetData
 	{
+		public static readonly string NewLineTapTap = $"{Environment.NewLine}\t\t";
+		public static readonly string NewLineTapTapTap = $"{Environment.NewLine}\t\t\t";
+
+		public static readonly string NewLineNewLineTapTap = $"{Environment.NewLine}{Environment.NewLine}\t\t";
+		public static readonly string NewLineNewLineTapTapTap = $"{Environment.NewLine}{Environment.NewLine}\t\t\t";
+		public static readonly string DoubleNewLine = $"{Environment.NewLine}{Environment.NewLine}";
+
 		[HorizontalGroup("Menu/Name",Order = 1),ShowInInspector,LabelText("Sheet Name"),LabelWidth(100),ValueDropdown(nameof(m_SheetNameList))]
 		public string SheetName
 		{
@@ -119,7 +127,7 @@ public class MetaSettings : SheetSettings<MetaSettings>
 		{
 			var excelFile = new ExcelFile(AbsoluteFilePath);
 
-			if(MetaType != null)
+			if(MetaType == null)
 			{
 				var fileName = $"{GameSettings.In.MetaDataScriptPath}/{SheetName}Data.cs";
 				var scriptPath = FileUtility.GetAbsolutePath(fileName,true);
@@ -189,8 +197,9 @@ public class MetaSettings : SheetSettings<MetaSettings>
 
 			data = data.Replace("$ClassName",SheetName);
 			data = data.Replace("$MemberFields",MemberFields);
-			data = data.Replace("$MemberProperties",MemberProperties);
-			data = data.Replace("$SheetName",SheetName);
+			data = data.Replace("$GeneralMemberProperties",GeneralMemberProperties);
+			data = data.Replace("$InfoMemberProperties",InfoMemberProperties);
+			data = data.Replace("$ClassConstructor",ClassConstructor);
 
 			FileUtility.WriteTextToFile(_scriptPath,data);
 		}
@@ -205,22 +214,90 @@ public class MetaSettings : SheetSettings<MetaSettings>
 			return false;
 		}
 
-		private string MemberFields => MergeMemberData((member)=>{ return member.ToFieldText(); },$"{Environment.NewLine}\t\t");
-		private string MemberProperties => MergeMemberData((member)=>{ return member.ToPropertyText(); },$"{Environment.NewLine}{Environment.NewLine}\t\t");
-
-		private string MergeMemberData(Func<MetaCellData,string> _onGetData,string _spaceText)
+		private string MemberFields
 		{
-			var builder = new StringBuilder();
-
-			builder.Append(_onGetData(m_HeaderList[0]));
-
-			for(var i=1;i<m_HeaderList.Count;i++)
+			get
 			{
-				builder.Append(_spaceText);
-				builder.Append(_onGetData(m_HeaderList[i]));
-			}
+				var builder = new StringBuilder();
 
-			return builder.ToString();
+				builder.Append(m_HeaderList[0].ToFieldText());
+				builder.Append(NewLineTapTap);
+				builder.Append(m_HeaderList[1].ToFieldText());
+				builder.Append(NewLineNewLineTapTap);
+
+				for(var i=2;i<m_HeaderList.Count;i++)
+				{
+					builder.Append(m_HeaderList[i].ToFieldText());
+					builder.Append(NewLineTapTap);
+				}
+
+				return builder.ToString();
+			}
+		}
+
+		private string GeneralMemberProperties
+		{
+			get
+			{
+				var builder = new StringBuilder();
+
+				builder.Append(m_HeaderList[0].ToPropertyText("General",1));
+				builder.Append(NewLineTapTap);
+				builder.Append(m_HeaderList[1].ToPropertyText("General",2));
+
+				return builder.ToString();
+			}
+		}
+
+		private string InfoMemberProperties
+		{
+			get
+			{
+				var builder = new StringBuilder();
+
+				for(var i=2;i<m_HeaderList.Count;i++)
+				{
+					builder.Append(m_HeaderList[i].ToPropertyText("Info",i+1));
+					builder.Append(NewLineTapTap);
+				}
+
+				return builder.ToString();
+			}
+		}
+
+		private string ClassConstructor
+		{
+			get
+			{
+				var builder = new StringBuilder();
+
+				builder.Append($"public {SheetName}Data(bool _exist");
+
+				for(var i=0;i<m_HeaderList.Count;i++)
+				{
+					builder.Append($",{m_HeaderList[i].ToConstructorArgument()}");
+				}
+
+				builder.Append($"){NewLineTapTap}{{");
+				builder.Append($"{NewLineTapTapTap}");
+				builder.Append($"{m_HeaderList[0].ToConstructorInitialize()}");
+				builder.Append($"{NewLineTapTapTap}");
+				builder.Append($"{m_HeaderList[1].ToConstructorInitialize()}");
+				builder.Append($"{Environment.NewLine}");
+
+				for(var i=2;i<m_HeaderList.Count;i++)
+				{
+					builder.Append($"{NewLineTapTapTap}");
+					builder.Append($"{m_HeaderList[i].ToConstructorInitialize()}");
+				}
+
+				builder.Append($"{Environment.NewLine}");
+				builder.Append($"{NewLineTapTapTap}");
+
+				builder.Append($"m_Exist = _exist;{NewLineTapTap}}}");
+
+				return builder.ToString();
+			}
 		}
 	}
 	#endregion Meta Sheet Data
@@ -258,38 +335,43 @@ public class MetaSettings : SheetSettings<MetaSettings>
 			IsArray = _isArray;
 		}
 
+		public string ToConstructorArgument()
+		{
+			return $"{(string.Concat(DataTypeToString(),IsArray ? "[]" : ""))} _{Name.ToFirstCharacterToLower()}";
+		}
+
+		public string ToConstructorInitialize()
+		{
+			return $"m_{Name} = _{Name.ToFirstCharacterToLower()};";
+		}
+
 		public string ToFieldText()
 		{
 			return $"[SerializeField,HideInInspector] private {(string.Concat(DataTypeToString(),IsArray ? "[]" : ""))} m_{Name};";
 		}
 
-		public string ToPropertyText()
+		public string ToPropertyText(string _group,int _key)
 		{
 			var builder = new StringBuilder();
 			var type = DataTypeToString();
 
 			if(IsArray)
 			{
-				// Add Header
-				builder.Append($"[HorizontalGroup(\"General/0\"),LabelText(\"{Name}\"),ShowInInspector,PropertyTooltip(\"${Name}_ToolTip\"),KZRichText]{Environment.NewLine}\t\t");
+				builder.Append($"[HorizontalGroup(\"{_group}/0\"),LabelText(\"{Name}\"),LabelWidth(100),ShowInInspector,PropertyTooltip(\"${Name}_ToolTip\"),KZRichText]");
+				builder.Append(MetaSheetData.NewLineTapTap);
+				builder.Append($"private string {Name}_Display => {Name}.IsNullOrEmpty() ? \"NULL\" : string.Join(\" | \",{Name});");
+				builder.Append(MetaSheetData.NewLineTapTap);
+				builder.Append($"private string {Name}_ToolTip => {Name}_Display.RemoveRichText();");
+				builder.Append(MetaSheetData.NewLineNewLineTapTap);
 
-				// Add Display
-				builder.Append($"private string {Name}_Display => {Name}.IsNullOrEmpty() ? \"NULL\" : string.Join(\" | \",{Name});{Environment.NewLine}\t\t");
-				// Add ToolTip
-				builder.Append($"private string {Name}_ToolTip => {Name}_Display.RemoveRichText();{Environment.NewLine}{Environment.NewLine}\t\t");
-
-				// Add Property
-				builder.Append($"private {type}[] {Name} {{ get => m_{Name}; set => m_{Name} = value; }}{Environment.NewLine}\t\t");
-
-				// Add IEnumerable
-				builder.Append($"public IEnumerable<{type}> {Name}Group => m_{Name};");
+				builder.Append($"[Key({_key})]");
+				builder.Append(MetaSheetData.NewLineTapTap);
+				builder.Append($"public {type}[] {Name} {{ get => m_{Name}; private set => m_{Name} = value; }}");
 			}
 			else
 			{
-				// Add Header
-				builder.Append($"[HorizontalGroup(\"General/0\"),LabelText(\"{Name}\"),ShowInInspector,DisplayAsString,PropertyTooltip(\"${Name}\")]{Environment.NewLine}\t\t");
-
-				// Add Property
+				builder.Append($"[HorizontalGroup(\"{_group}/0\"),LabelText(\"{Name}\"),LabelWidth(100),ShowInInspector,DisplayAsString,PropertyTooltip(\"${Name}\"),Key({_key})]");
+				builder.Append(MetaSheetData.NewLineTapTap);
 				builder.Append($"public {type} {Name} {{ get => m_{Name}; private set => m_{Name} = value; }}");
 			}
 
@@ -339,7 +421,7 @@ public class MetaSettings : SheetSettings<MetaSettings>
 				continue;
 			}
 
-			dataList.Add(metaData);
+			dataList.Add(metaData.Initialize());
 		}
 
 		if(dataList.Count < 1)
@@ -347,7 +429,7 @@ public class MetaSettings : SheetSettings<MetaSettings>
 			throw new ArgumentException($"{_type} data count is 0.");
 		}
 
-		var bytes = MessagePackSerializer.Serialize(dataList);
+		var bytes = MessagePackSerializer.Serialize(dataList,MessagePackSerializerOptions.Standard.WithResolver(MessagePackResolver.In));
 
 		FileUtility.WriteByteToFile(FileUtility.GetAbsolutePath($"{GameSettings.In.MetaDataFilePath}/{_type.Name}.bytes",true),bytes);
 

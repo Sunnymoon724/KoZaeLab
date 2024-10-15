@@ -1,11 +1,9 @@
 using KZLib;
 using KZLib.KZAttribute;
-using KZLib.KZFiles;
 using Sirenix.OdinInspector;
 using MessagePack;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace MetaData
 {
@@ -18,23 +16,26 @@ namespace MetaData
 		#endregion Field
 
 		#region Property
-		[BoxGroup("General")]
-		$MemberProperties
-		[HorizontalGroup("General/0"),LabelText("IsExist"),LabelWidth(100),ShowInInspector,KZIsValid("Exist","Error")]
+		[VerticalGroup("General")]
+		$GeneralMemberProperties
+
+		[VerticalGroup("Info")]
+		$InfoMemberProperties
+		[HorizontalGroup("General/1"),LabelText("IsExist"),LabelWidth(100),ShowInInspector,KZIsValid,Key(0)]
 		public bool IsExist => m_Exist;
 		#endregion Property
 
 		#region Initialize
 		public $ClassNameData() { }
+		[SerializationConstructor]
+		$ClassConstructor
 
-#if UNITY_EDITOR
-		public $ClassNameData Initialize()
+		public IMetaData Initialize()
 		{
 			m_Exist = true;
 
 			return this;
 		}
-#endif
 		#endregion Initialize
 	}
 }
