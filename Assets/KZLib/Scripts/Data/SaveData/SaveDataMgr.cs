@@ -46,7 +46,7 @@ namespace KZLib
 				CreateTable(_tableName);
 			}
 
-			LogTag.Data.I("Sql Load Complete. [{0}]",_tableName);
+			LogTag.Data.I($"Sql Load Complete. [{_tableName}]");
 		}
 
 		protected override void ClearAll()
@@ -140,8 +140,6 @@ namespace KZLib
 		private void UpdateToTable(string _tableName,string _key,string _value,string _code)
 		{
 			ExecuteNonQuery($"UPDATE {_tableName} SET value = '{_value}', code = '{_code}' WHERE key = '{_key}'");
-
-			// ExecuteNonQuery($"update {_tableName} set key = '{_key}', value = '{_value}', code = '{_code}' where key = '{_key}'");
 		}
 
 		private void DeleteFromTable(string _tableName,string _key)

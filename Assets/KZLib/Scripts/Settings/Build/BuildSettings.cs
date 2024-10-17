@@ -6,6 +6,8 @@ using UnityEditor;
 
 public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 {
+	private const string BUILD_REPORT = "Build Report";
+
 	private bool DisableNow => true;
 
 	[Flags]
@@ -43,7 +45,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 				EditorUserBuildSettings.SwitchActiveBuildTargetAsync(BuildPipeline.GetBuildTargetGroup(currentTarget),currentTarget);
 			}
 
-			await WebRequestUtility.SendBuildReportAsync(LogMgr.In.LogDataGroup);
+			await WebRequestUtility.PostWebHook_DiscordAsync(BUILD_REPORT,LogMgr.In.LogDataGroup);
 		}
 	}
 

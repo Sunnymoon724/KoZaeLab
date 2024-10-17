@@ -39,9 +39,9 @@ public class LogTag : Enumeration
 public static class LogExtension
 {
 	#region I : Info Log
-	public static void I(this LogTag _log,object _message,params object[] _arguments)
+	public static void I(this LogTag _log,string _message)
 	{
-		var text = LogMgr.In.ShowLog(_log,_message,_arguments);
+		var text = LogMgr.In.ShowLog(_log,_message);
 
 #if UNITY_EDITOR
 		Debug.Log(text);
@@ -50,9 +50,9 @@ public static class LogExtension
 	#endregion I : Info Log
 
 	#region W : Warning Log
-	public static void W(this LogTag _log,object _message,params object[] _arguments)
+	public static void W(this LogTag _log,string _message)
 	{
-		var text = LogMgr.In.ShowLog(_log,_message,_arguments);
+		var text = LogMgr.In.ShowLog(_log,_message);
 
 #if UNITY_EDITOR
 		Debug.LogWarning(text);
@@ -61,9 +61,9 @@ public static class LogExtension
 	#endregion W : Warning Log
 
 	#region E : Error Log
-	public static void E(this LogTag _log,object _message,params object[] _arguments)
+	public static void E(this LogTag _log,string _message)
 	{
-		var text = LogMgr.In.ShowLog(_log,_message,_arguments);
+		var text = LogMgr.In.ShowLog(_log,_message);
 
 #if UNITY_EDITOR
 		Debug.LogError(text);
@@ -72,24 +72,24 @@ public static class LogExtension
 	#endregion E : Error Log
 
 	#region A : Assert Log
-	public static void A(this LogTag _log,bool _condition,object _message,params object[] _arguments)
+	public static void A(this LogTag _log,bool _condition,string _message)
 	{
 		if(!_condition)
 		{
 			return;
 		}
 
-		var text = LogMgr.In.ShowLog(_log,_message,_arguments);
+		var text = LogMgr.In.ShowLog(_log,_message);
 
 #if UNITY_EDITOR
-		Debug.AssertFormat(_condition,text,_arguments);
+		Debug.AssertFormat(_condition,text);
 #endif
 	}
 	#endregion A : Assert Log
 
 #if UNITY_EDITOR
 	[OnOpenAsset(0)]
-	private static bool OnOpenDebugLog(int _instance,int _line)
+	private static bool OnOpenDebugLog(int _instance,int _)
 	{
 		var name = EditorUtility.InstanceIDToObject(_instance).name;
 

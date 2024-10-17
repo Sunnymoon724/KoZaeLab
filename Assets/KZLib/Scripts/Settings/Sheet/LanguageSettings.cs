@@ -15,7 +15,6 @@ public class LanguageSettings : SheetSettings<LanguageSettings>
 	private const string LANGUAGE_KEY = "Key";
 	private const string ENGLISH = "English";
 
-	[PropertySpace(10)]
 	[HorizontalGroup("Sheet/Data",Order = 1),SerializeField,HideLabel,HideIf(nameof(IsShowAddButton))]
 	private LanguageSheetData m_SheetData = null;
 

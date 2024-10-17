@@ -39,7 +39,7 @@ namespace KZLib.KZTest
 
 			m_Stopwatch.Stop();
 
-			LogTag.Test.I("스케쥴 테스트 종료 [경과 시간: {0}초]",m_Stopwatch.ElapsedMilliseconds/1000.0f);
+			LogTag.Test.I($"스케쥴 테스트 종료 [경과 시간: {m_Stopwatch.ElapsedMilliseconds/1000.0f}초]");
 		}
 	}
 }
