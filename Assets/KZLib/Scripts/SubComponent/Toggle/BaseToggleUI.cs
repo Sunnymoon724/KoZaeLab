@@ -17,7 +17,7 @@ public abstract class BaseToggleUI : BaseComponentUI
 		private bool m_InverseSelf = false;
 
 		[BoxGroup("0",ShowLabel = false,Order = 0)]
-		[HorizontalGroup("0/1",Order = 1),ShowInInspector,LabelText("토글 여부")]
+		[HorizontalGroup("0/1",Order = 1),ShowInInspector,LabelText("Is On")]
 		public bool IsOn
 		{
 			get => m_IsOn;
@@ -29,7 +29,7 @@ public abstract class BaseToggleUI : BaseComponentUI
 			}
 		}
 
-		[HorizontalGroup("0/1",Order = 1),ShowInInspector,LabelText("반전 설정")]
+		[HorizontalGroup("0/1",Order = 1),ShowInInspector,LabelText("Inverse Self")]
 		public bool InverseSelf
 		{
 			get => m_InverseSelf;
@@ -46,10 +46,10 @@ public abstract class BaseToggleUI : BaseComponentUI
 		protected abstract void Set();
 	}
 
-	[VerticalGroup("0",Order = 0),SerializeField,LabelText("토글")]
+	[VerticalGroup("0",Order = 0),SerializeField,LabelText("Toggle")]
 	protected Toggle m_Toggle = null;
 
-	[VerticalGroup("0",Order = 0),ShowInInspector,LabelText("토글 여부"),KZIsValid("O","X")]
+	[VerticalGroup("0",Order = 0),ShowInInspector,LabelText("Is On"),KZIsValid("O","X")]
 	public bool IsOn => m_Toggle != null && m_Toggle.isOn;
 
 	protected abstract IEnumerable<ToggleChild> ChildGroup { get; }
@@ -100,8 +100,4 @@ public abstract class BaseToggleUI : BaseComponentUI
 	{
 		m_Toggle.group = _group;
 	}
-
-	
-
-	// protected abstract void OnClickedToggle(bool _toggle);
 }

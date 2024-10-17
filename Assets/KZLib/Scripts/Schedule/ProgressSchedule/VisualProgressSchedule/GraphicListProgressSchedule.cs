@@ -7,10 +7,10 @@ namespace KZLib.KZSchedule
 {
 	public class GraphicListProgressSchedule : VisualProgressSchedule
 	{
-		[VerticalGroup("리스트",Order = -1),SerializeField,LabelText("그래픽 리스트"),ListDrawerSettings(DraggableItems = false),OnValueChanged(nameof(OnChangeGraphic))]
+		[VerticalGroup("List",Order = -1),SerializeField,LabelText("Graphic List"),ListDrawerSettings(DraggableItems = false),OnValueChanged(nameof(OnChangeGraphic))]
 		private List<Graphic> m_GraphicList = new();
 
-		[FoldoutGroup("시각 옵션",Order = 0),SerializeField,LabelText("이미지 체우기 사용")]
+		[FoldoutGroup("Visual Option",Order = 0),SerializeField,LabelText("Use Fill Amount")]
 		private bool m_UseFillAmount = false;
 
 		private void OnChangeGraphic()

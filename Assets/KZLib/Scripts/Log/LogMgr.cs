@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
 using System;
 
 #if !UNITY_EDITOR
@@ -54,12 +53,12 @@ namespace KZLib
 
 		private void OnGetLog(string _condition,string _stackTrace,LogType _type)
 		{
-			var head = string.Format("<{0}> {1}",GetLogTag(_type),DateTime.Now.ToString("MM/dd HH:mm:ss:ff"));
+			var head = $"<{GetLogTag(_type)}> {DateTime.Now:MM/dd HH:mm:ss:ff}";
 			var body = string.Empty;
 
 			if(_type == LogType.Exception)
 			{
-				body = string.Format("{0}\n\n{1}",_condition,_stackTrace);
+				body = $"{_condition}\n\n{_stackTrace}";
 			}
 			else
 			{
@@ -67,7 +66,7 @@ namespace KZLib
 				var index = stackTraceArray.FindIndex(x => x.Contains(nameof(LogTag)));
 				var stackTrace = stackTraceArray[index+1];
 
-				body = string.Format("{0}\n\n{1}",_condition,stackTrace);
+				body = $"{_condition}\n\n{stackTrace}";
 			}
 
 			AddLog(head,body);
@@ -83,25 +82,9 @@ namespace KZLib
 			};
 		}
 
-		public string ShowLog(LogTag _tag,object _message,params object[] _argumentArray)
+		public string ShowLog(LogTag _tag,string _message)
 		{
-			var text = string.Format("[{0}] {1}",_tag,ConvertText(_message));
-
-			if(_argumentArray.IsNullOrEmpty())
-			{
-				return text;
-			}
-			else
-			{
-				var objectArray = new object[_argumentArray.Length];
-
-				for(var i=0;i<_argumentArray.Length;i++)
-				{
-					objectArray[i] = _argumentArray[i] is not string && _argumentArray[i] is IEnumerable dataGroup ? ConvertText(dataGroup) : _argumentArray[i];
-				}
-
-				return string.Format(text,objectArray);
-			}
+			return $"[{_tag}] {_message}";
 		}
 
 		private void AddLog(string _head,string _body)
@@ -117,30 +100,6 @@ namespace KZLib
 				SendBugAsync().Forget();
 			}
 #endif
-		}
-
-		private string ConvertText(object _object)
-		{
-			if(_object == null)
-			{
-				return "NULL";
-			}
-
-			if(_object is not string && _object is IEnumerable dataGroup)
-			{
-				var textList = new List<string>();
-
-				foreach(var data in dataGroup)
-				{
-					textList.Add(ConvertText(data));
-				}
-
-				var count = textList.Count;
-
-				return count == 0 ? string.Format("Empty - [{0}]",_object) : string.Format("{0} - [{1}]",count,string.Join(" & ",textList));
-			}
-
-			return _object.ToString();
 		}
 
 		public void ClearLog()

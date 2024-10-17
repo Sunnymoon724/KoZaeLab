@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(LineRenderer))]
 public abstract class BaseLineRenderer : BaseComponent
 {
-	[SerializeField,LabelText("라인 렌더러")]
+	[SerializeField,LabelText("Line Renderer")]
 	protected LineRenderer m_LineRenderer = null;
 
 	private MaterialPropertyBlock m_PropertyBlock = null;

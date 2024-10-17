@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 /// <summary>
-/// 씬에 있으면 사용하고 없으면 에러 (씬이 사라지면 같이 사라짐)
+/// Not exist in scene -> error
 /// </summary>
 public abstract class SingletonMB<TBehaviour> : SerializedMonoBehaviour where TBehaviour : SerializedMonoBehaviour
 {
@@ -13,7 +13,7 @@ public abstract class SingletonMB<TBehaviour> : SerializedMonoBehaviour where TB
 
 	private void Awake()
 	{
-		//! 중복 처리
+		//! Check only one
 		if(s_Instance)
 		{
 			UnityUtility.DestroyObject(gameObject);
@@ -25,7 +25,7 @@ public abstract class SingletonMB<TBehaviour> : SerializedMonoBehaviour where TB
 
 		if(!s_Instance)
 		{
-			throw new NullReferenceException(string.Format("{0}이 존재하지 않습니다.",typeof(TBehaviour)));
+			throw new NullReferenceException($"{typeof(TBehaviour)} is not exist.");
 		}
 
 		Initialize();
@@ -51,7 +51,7 @@ public abstract class SingletonMB<TBehaviour> : SerializedMonoBehaviour where TB
 }
 
 /// <summary>
-/// 없으면 자동으로 게임 오브젝트를 만들어서 생성한다.
+/// Not exist in scene -> auto create
 /// </summary>
 public class AutoSingletonMB<TBehaviour> : SerializedMonoBehaviour where TBehaviour : SerializedMonoBehaviour
 {
@@ -97,7 +97,7 @@ public class AutoSingletonMB<TBehaviour> : SerializedMonoBehaviour where TBehavi
 }
 
 /// <summary>
-/// Resources폴더에서 가져오며 없으면 에러
+/// Load in resources folder.
 /// </summary>
 public class LoadSingletonMB<TBehaviour> : AutoSingletonMB<TBehaviour> where TBehaviour : SerializedMonoBehaviour
 {

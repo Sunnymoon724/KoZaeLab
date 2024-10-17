@@ -26,7 +26,7 @@ public enum EaseType
 public static partial class MathUtility
 {
 	/// <summary>
-	/// EaseType 변환
+	/// To EaseType
 	/// </summary>
 	public static AnimationCurve GetEaseCurve(EaseType _type)
 	{
@@ -249,11 +249,11 @@ public static partial class MathUtility
 			#endregion Custom
 		}
 
-		throw new ArgumentException("정의 되어 있지 않습니다.");
+		throw new ArgumentException("Not Defined.");
 	}
 
 	/// <summary>
-	/// 증가 -> 감소 or 감소 -> 증가 직선 그래프
+	/// Increase -> Decrease or Decrease -> Increase
 	/// </summary>
 	public static AnimationCurve GetIncrementalCurve(bool _increaseStart)
 	{

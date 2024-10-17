@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class LinkButtonUI : BaseButtonUI
 {
-	[SerializeField,LabelText("링크 URL")]
+	[SerializeField,LabelText("Link URL")]
 	private string m_LinkURL = null;
 
 	protected override void Initialize()

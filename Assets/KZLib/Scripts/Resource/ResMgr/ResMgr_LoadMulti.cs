@@ -80,33 +80,35 @@ namespace KZLib
 		{
 			if(_folderPath.IsEmpty())
 			{
-				throw new NullReferenceException("폴더가 없습니다.");
+				throw new NullReferenceException("No path.");
 			}
 
-			var resourceArray = GetDataArray<TObject>(_folderPath);
+			// use cache data
+			var cacheDataArray = GetCacheDataArray<TObject>(_folderPath);
 
-			if(resourceArray.IsNullOrEmpty())
+			if(cacheDataArray.IsNullOrEmpty())
 			{
-				//? 리소스가 없을 경우 로드 한다.
-				resourceArray = LoadDataArray<TObject>(_folderPath);
+				// load data
+				cacheDataArray = LoadDataArray<TObject>(_folderPath);
 
-				if(resourceArray.IsNullOrEmpty())
+				if(cacheDataArray.IsNullOrEmpty())
 				{
-					LogTag.System.W(string.Format("리소스가 없습니다.[폴더 경로 : {0}]",_folderPath));
+					LogTag.System.W(string.Format($"Resources is not exist. [path : {_folderPath}]"));
 
 					return null;
 				}
 
-				PutDataArray(_folderPath,resourceArray);
+				PutDataArray(_folderPath,cacheDataArray);
 			}
 
+			// data is GameObject -> copy data
 			if(typeof(TObject) == typeof(GameObject))
 			{
-				var dataArray = new TObject[resourceArray.Length];
+				var dataArray = new TObject[cacheDataArray.Length];
 
-				for(var i=0;i<resourceArray.Length;i++)
+				for(var i=0;i<cacheDataArray.Length;i++)
 				{
-					var data = UnityUtility.CopyObject(resourceArray[i]);
+					var data = UnityUtility.CopyObject(cacheDataArray[i]);
 
 					if(GameSettings.In.IsServerResource)
 					{
@@ -119,7 +121,7 @@ namespace KZLib
 				return dataArray;
 			}
 
-			return resourceArray;
+			return cacheDataArray;
 		}
 
 		private TObject[] LoadDataArray<TObject>(string _folderPath) where TObject : Object
@@ -127,23 +129,23 @@ namespace KZLib
 #if UNITY_EDITOR
 			if(FileUtility.IsFilePath(_folderPath))
 			{
-				throw new NullReferenceException(string.Format("경로가 파일 경로 입니다.[경로 : {0}]",_folderPath));
+				throw new ArgumentException($"Path is file path.[path : {_folderPath}]");
 			}
 #endif
-
-			//? Resources로 시작하는건 리소스 폴더이므로
 			if(_folderPath.StartsWith(RESOURCES))
 			{
 				return Resources.LoadAll<TObject>(FileUtility.RemoveHeaderDirectory(_folderPath,RESOURCES));
 			}
 
+			var assetPath = FileUtility.GetAssetsPath(_folderPath);
+
 			if(GameSettings.In.IsServerResource)
 			{
-				return AddressablesMgr.In.GetObjectArray<TObject>(_folderPath);
+				return AddressablesMgr.In.GetObjectArray<TObject>(assetPath);
 			}
 
 #if UNITY_EDITOR
-			return UnityUtility.LoadAssetGroupInFolder<TObject>(_folderPath).ToArray();
+			return UnityUtility.LoadAssetGroupInFolder<TObject>(assetPath).ToArray();
 #else
 			return null;
 #endif

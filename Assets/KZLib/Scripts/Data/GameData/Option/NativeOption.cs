@@ -1,4 +1,5 @@
-﻿
+﻿using Newtonsoft.Json;
+
 namespace GameData
 {
 	public class NativeOption : Option
@@ -6,36 +7,54 @@ namespace GameData
 		protected override string OPTION_KEY => "Native Option";
 		protected override EventTag Tag => EventTag.ChangeNativeOption;
 
-		private class Native
+		private class NativeData
 		{
-			public bool UseVibration { get; set; }
+			[JsonProperty("UseVibration")]
+			private bool m_UseVibration = true;
+
+			[JsonIgnore]
+			public bool UseVibration => m_UseVibration;
+
+			public bool SetUseVibration(bool _vibration)
+			{
+				if(m_UseVibration == _vibration)
+				{
+					return false;
+				}
+
+				m_UseVibration = _vibration;
+
+				return true;
+			}
 		}
 
-		private Native m_Native = null;
+		private NativeData m_NativeData = null;
 
 		public override void Initialize()
 		{
-			m_Native = GetOption(new Native());
+			base.Initialize();
+
+			LoadOption(ref m_NativeData);
 		}
 
 		public override void Release()
 		{
-
+			SaveOption(m_NativeData,false);
 		}
 
 		public bool UseVibration
 		{
-			get => m_Native.UseVibration;
+			get => m_NativeData.UseVibration;
 			set
 			{
-				if(m_Native.UseVibration == value)
+				if(m_NativeData.SetUseVibration(value))
 				{
 					return;
 				}
 
-				m_Native.UseVibration = value;
+				LogTag.Data.I($"Vibration is changed. [{value}]");
 
-				SaveOption(m_Native);
+				SaveOption(m_NativeData,true);
 			}
 		}
 	}

@@ -52,7 +52,6 @@ namespace KZLib.KZFiles
 		}
 
 		/// <summary>
-		/// 엑셀 시트의 데이터 유효성을 열거형 딕셔너리로 반환합니다.
 		/// Convert Validation Constraint To Enum Dict
 		/// </summary>
 		public Dictionary<string,string[]> GetEnumDict(string _sheetName)
@@ -112,7 +111,7 @@ namespace KZLib.KZFiles
 		/// <summary>
 		/// Get title & index
 		/// </summary>
-		public IEnumerable<(string,int)> GetTitleGroup(string _sheetName)
+		public IEnumerable<(string Title,int Index)> GetTitleGroup(string _sheetName)
 		{
 			var headerList = GetRowGroup(_sheetName,0).ToList();
 
@@ -228,7 +227,63 @@ namespace KZLib.KZFiles
 					{
 						try
 						{
-							property.SetValue(data,ConvertData(cell,property.PropertyType),null);
+							property.SetValue(data,ConvertData(cell,property.PropertyType));
+						}
+						catch(Exception _ex)
+						{
+							LogTag.File.E($"There is a problem with the excel file. [sheet : {_sheetName} / error : {_ex.Message} / location : row({i+1})/column({headerArray[j]})]");
+						}
+					}
+				}
+
+				yield return data;
+			}
+		}
+
+		public IEnumerable<object> Deserialize(string _sheetName,Type _type,int _startRow = 1)
+		{
+			var sheet = GetSheet(_sheetName);
+			var propertyInfoArray = _type.GetProperties(Flags.InstanceAnyVisibility);
+			var lastRow = sheet.LastRowNum;
+			var startRow = Mathf.Clamp(_startRow,0,lastRow);
+
+			var headerRow = sheet.GetRow(0);
+			var headerArray = Enumerable.Range(0,headerRow.LastCellNum).Select(i => ParseCell(headerRow.GetCell(i))).ToArray();
+
+			for(var i=startRow;i<=lastRow;i++)
+			{
+				var row = sheet.GetRow(i);
+
+				if(row == null)
+				{
+					continue;
+				}
+
+				var data = Activator.CreateInstance(_type);
+
+				for(var j=0;j<headerArray.Length;j++)
+				{
+					var cell = row.GetCell(j);
+
+					if(cell == null || cell.CellType == CellType.Blank)
+					{
+						continue;
+					}
+
+					var index = propertyInfoArray.FindIndex(x=>x.Name.IsEqual(headerArray[j]));
+
+					if(index == -1)
+					{
+						continue;
+					}
+
+					var property = propertyInfoArray[index];
+
+					if(property.CanWrite)
+					{
+						try
+						{
+							property.SetValue(data,ConvertData(cell,property.PropertyType));
 						}
 						catch(Exception _ex)
 						{

@@ -34,7 +34,7 @@ namespace KZLib.KZDevelop
 		}
 
 
-		[VerticalGroup("1",Order = 1),ShowInInspector,LabelText("폐쇄 여부"),ShowIf(nameof(IsCurveMode))]
+		[VerticalGroup("1",Order = 1),ShowInInspector,LabelText("Is Closed"),ShowIf(nameof(IsCurveMode))]
 		public bool IsClosed
 		{
 			get => m_Closed;

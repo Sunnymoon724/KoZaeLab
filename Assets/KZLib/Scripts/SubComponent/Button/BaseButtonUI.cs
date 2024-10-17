@@ -5,7 +5,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Button))]
 public abstract class BaseButtonUI : BaseComponentUI
 {
-	[SerializeField,LabelText("버튼")]
+	[SerializeField,LabelText("Button")]
 	protected Button m_Button = null;
 
 	protected override void OnEnable()

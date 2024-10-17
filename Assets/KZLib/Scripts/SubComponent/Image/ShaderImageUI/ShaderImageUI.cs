@@ -6,7 +6,7 @@ public class ShaderImageUI : BaseImageUI
 	[SerializeField,HideInInspector]
 	protected Shader m_Shader = null;
 
-	[ShowInInspector,LabelText("쉐이더")]
+	[ShowInInspector,LabelText("Shader")]
 	protected Shader Shader
 	{
 		get => m_Shader;

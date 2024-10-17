@@ -12,7 +12,7 @@ public class LocalizeTextUI : BaseTextUI
 	[SerializeField,HideInInspector]
 	private string m_LocalizeKey = null;
 
-	[VerticalGroup("1",Order = 1),ShowInInspector,LabelText("언어팩 키 값")]
+	[VerticalGroup("1",Order = 1),ShowInInspector,LabelText("Localize Key")]
 	public string LocalizeKey
 	{
 		get => m_LocalizeKey;
@@ -29,13 +29,13 @@ public class LocalizeTextUI : BaseTextUI
 	}
 
 #if UNITY_EDITOR
-	[VerticalGroup("3",Order = 3),SerializeField,LabelText("언어팩 보기")]
-	private bool m_ShowList = false;
+	[VerticalGroup("3",Order = 3),SerializeField,LabelText("Show LanguagePack")]
+	private bool m_ShowLanguagePack = false;
 
-	[VerticalGroup("3",Order = 3),SerializeField,LabelText("언어팩 리스트"),ListDrawerSettings(ShowFoldout = false),ReadOnly,DisplayAsString,TextArea,ShowIf(nameof(ShowList))]
+	[VerticalGroup("3",Order = 3),SerializeField,LabelText("Language List"),ListDrawerSettings(ShowFoldout = false),ReadOnly,DisplayAsString,TextArea,ShowIf(nameof(ShowList))]
 	private List<string> m_LocalizeTextList = new();
 
-	private bool ShowList => m_ShowList && m_LocalizeTextList.Count > 0;
+	private bool ShowList => m_ShowLanguagePack && m_LocalizeTextList.Count > 0;
 #endif
 
 	protected override void Initialize()
@@ -66,7 +66,7 @@ public class LocalizeTextUI : BaseTextUI
 	{
 		var localize = m_LocalizeKey.ToLocalize();
 
-		m_Text.SetSafeTextMeshPro(localize);
+		m_TextMesh.SetSafeTextMeshPro(localize);
 	}
 
 	public void SetLocalizeKey(string _key)

@@ -1,7 +1,7 @@
 
 namespace MetaData
 {
-	public enum DataType
+	public enum PartsType
 	{
 		Core,
 		Drive,

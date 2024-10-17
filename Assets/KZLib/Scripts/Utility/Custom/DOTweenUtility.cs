@@ -12,7 +12,7 @@ public static class DOTweenUtility
 	{
 		if(_onUpdate == null)
 		{
-			throw new ArgumentNullException("트윈에 업데이트가 없습니다.");
+			throw new ArgumentNullException("Update is null.");
 		}
 
 		var tween = DOTween.To(()=>_start,x=>_onUpdate(x),_finish,_duration);
@@ -26,7 +26,7 @@ public static class DOTweenUtility
 	}
 
 	/// <summary>
-	/// 일정 시간 뒤에 실행 (반복도 가능)
+	/// Play Delay
 	/// </summary>
 	public static Tween PlayTimer(float _duration,int _count,Action _onComplete)
 	{
@@ -48,6 +48,6 @@ public static class DOTweenUtility
 
 	private static string GetTag(string _header)
 	{
-		return string.Format("{0}_{1}",_header,DateTime.Now.ToString("HH:mm:ss"));
+		return $"{_header}_{DateTime.Now:HH:mm:ss}";
 	}
 }

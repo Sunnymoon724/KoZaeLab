@@ -59,11 +59,6 @@ namespace KZLib
 			}
 		}
 
-		protected override void Initialize()
-		{
-			
-		}
-
 		protected override void Release(bool _disposing)
 		{
 			if(m_Disposed)
@@ -106,11 +101,11 @@ namespace KZLib
 				{
 					var name = _shaderName[(_shaderName.LastIndexOf('/') + 1)..];
 
-					shader = Resources.Load(string.Format("Shaders/{0}",name)) as Shader;
+					shader = Resources.Load($"Shaders/{name}") as Shader;
 
 					if(shader == null)
 					{
-						throw new NullReferenceException(string.Format("쉐이더 {0}이 없습니다.",_shaderName));
+						throw new NullReferenceException($"Shader {_shaderName} not found.");
 					}
 				}
 

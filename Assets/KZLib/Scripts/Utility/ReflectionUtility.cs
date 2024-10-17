@@ -6,42 +6,43 @@ using Sirenix.Utilities;
 
 public static class ReflectionUtility
 {
-	private static readonly Dictionary<string,Assembly> s_AssemblyDict = new();
 	private static readonly Dictionary<string,Type> s_TypeDict = new();
 
-	private static Dictionary<string,Assembly> AssemblyDict
+	public static object CreateObject(Type _type,object _data)
 	{
-		get
-		{
-			if(s_AssemblyDict.Count == 0)
-			{
-				foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
-				{
-					s_AssemblyDict.Add(assembly.FullName,assembly);
-				}
-			}
+		var result = Activator.CreateInstance(_type);
 
-			return s_AssemblyDict;
-		}
+
+        // foreach(var property in result.GetType().GetProperties())
+        // {
+        //     var targetProp = target.GetType().GetProperty(prop.Name);
+
+        //     if (targetProp != null && targetProp.CanWrite)
+        //     {
+        //         var value = prop.GetValue(source);
+        //         targetProp.SetValue(target, value);
+        //     }
+        // }
+
+		return result;
 	}
 
-	/// <summary>
-	/// 이름으로 타입 찾기
-	/// </summary>
-	public static Type FindType(string _typeName)
+	public static Type FindType(string _typeName,string _namespaceName = null)
 	{
-		if(s_TypeDict.ContainsKey(_typeName))
-			{
-				return s_TypeDict[_typeName];
-			}
+		var fullName = _namespaceName.IsEmpty() ? $"{_typeName}" :$"{_namespaceName}.{_typeName}";
 
-		foreach(var assembly in AssemblyDict.Values)
+		if(s_TypeDict.TryGetValue(fullName,out var type))
 		{
-			var type = assembly.GetType(_typeName);
+			return type;
+		}
+
+		foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
+		{
+			type = assembly.GetType(fullName);
 
 			if(type != null)
 			{
-				s_TypeDict.Add(_typeName,type);
+				s_TypeDict.Add(fullName,type);
 
 				return type;
 			}
@@ -50,57 +51,31 @@ public static class ReflectionUtility
 		return null;
 	}
 
-	/// <summary>
-	/// 이름으로 타입 찾기
-	/// </summary>
-	public static IEnumerable<Type> FindTypeGroup(string _typeName)
+	public static IEnumerable<Type> FindTypeGroup(string _namespaceName)
 	{
-		var typeList = new List<Type>();
-
-		foreach(var assembly in AssemblyDict.Values)
+		foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
 		{
 			foreach(var type in assembly.GetTypes())
 			{
-				if(type.Name.Contains(_typeName))
+				if(type.Namespace.IsEqual(_namespaceName))
 				{
-					if(s_TypeDict.ContainsKey(type.Name))
-					{
-						s_TypeDict.Add(type.Name,type);
-					}
-
-					typeList.Add(type);
+					yield return type;
 				}
 			}
 		}
-
-		return typeList;
-	}
-
-	/// <summary>
-	/// 이름으로 타입 찾기
-	/// </summary>
-	public static Type FindType(string _typeFullName,string _assemblyName)
-	{
-		return AssemblyDict.TryGetValue(_assemblyName,out var assembly) ? assembly.GetType(_typeFullName) : null;
 	}
 
 	public static IEnumerable<Type> FindDerivedTypeGroup(Type _type)
 	{
-		return FindDerivedTypeGroup(_type,AssemblyDict.Values);
-	}
-
-	public static IEnumerable<Type> FindDerivedTypeGroup(Type _type,IEnumerable<Assembly> _assemblyGroup)
-	{
-		var typeList = new List<Type>();
-
-		foreach(var assembly in _assemblyGroup)
+		foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
 		{
-			typeList.AddRange(FindDerivedTypeGroup(_type,assembly));
+			foreach(var derivedType in FindDerivedTypeGroup(_type, assembly))
+			{
+				yield return derivedType;
+			}
 		}
-
-		return typeList;
 	}
-	
+
 	public static IEnumerable<Type> FindDerivedTypeGroup(Type _type,Assembly _assembly)
 	{
 		return FindDerivedTypeGroup(_type,_assembly.GetTypes());
@@ -108,19 +83,15 @@ public static class ReflectionUtility
 	
 	public static IEnumerable<Type> FindDerivedTypeGroup(Type _type,IEnumerable<Type> _typeGroup)
 	{
-		var typeList = new List<Type>();
-
 		foreach(var type in _typeGroup)
 		{
 			if(_type.IsAssignableFrom(type) && type != _type)
 			{
-				typeList.Add(type);
+				yield return type;
 			}
 		}
-
-		return typeList;
 	}
-	
+
 	public static int GetTypeDepth(Type _type)
 	{
 		var depth = 0;
@@ -147,41 +118,6 @@ public static class ReflectionUtility
 		return type;
 	}
 
-	public static Type GetValueType(MemberInfo _info)
-	{
-		return _info switch
-		{
-			FieldInfo field => field.FieldType,
-			PropertyInfo property => property.PropertyType,
-			_ => throw new NotSupportedException(string.Format("지원하지 않는 타입 입니다.[ 이름 : {0} 타입 : {1}]",_info.Name,_info.GetType())),
-		};
-	}
-
-	public static object GetValue(MemberInfo _info,object _object)
-	{
-		return _info switch
-		{
-			FieldInfo field => field.GetValue(_object),
-			PropertyInfo property => property.GetValue(_object),
-			_ => throw new NotSupportedException(string.Format("지원하지 않는 타입 입니다.[ 이름 : {0} 타입 : {1}]",_info.Name,_info.GetType())),
-		};
-	}
-	
-	public static void SetValue(MemberInfo _info,object _object,object _value)
-	{
-		switch(_info)
-		{
-			case FieldInfo field:
-				field.SetValue(_object, _value);
-				break;
-			case PropertyInfo property:
-				property.SetValue(_object, _value);
-				break;
-			default:
-				throw new NotSupportedException(string.Format("지원하지 않는 타입 입니다.[ 이름 : {0} 타입 : {1}]",_info.Name,_info.GetType()));
-		}
-	}
-	
 	public static IEnumerable<TAttribute> GetAttributeGroup<TAttribute>(ICustomAttributeProvider _info,bool _inherit = false) where TAttribute : Attribute
 	{
 		return _info.IsDefined(typeof(TAttribute),_inherit) ? _info.GetCustomAttributes(typeof(TAttribute),_inherit).Cast<TAttribute>() : Enumerable.Empty<TAttribute>();
@@ -220,16 +156,8 @@ public static class ReflectionUtility
 		return default;
 	}
 
-	// public static void ExecuteMethod(object _object,string _name)
-	// {
-	// 	var methodInfo = _object.GetType().GetMethod(_name,Flags.InstanceAnyVisibility);
-
-	// 	methodInfo?.Invoke(_object,null);
-	// }
-
 	public static void ClearCacheData()
 	{
-		s_AssemblyDict.Clear();
 		s_TypeDict.Clear();
 	}
 }

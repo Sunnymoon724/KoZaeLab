@@ -11,13 +11,13 @@ namespace KZLib
 	{
 		private record LoadingData(string DataPath,bool IsFilePath,Transform Parent);
 
-		private record CachedData
+		private record CacheData
 		{
 			public Object[] DataArray { get; }
 
 			private readonly long m_Duration = 0L;
 
-			public CachedData(Object[] _dataArray,long _duration)
+			public CacheData(Object[] _dataArray,long _duration)
 			{
 				DataArray = _dataArray;
 				m_Duration = _duration;
@@ -31,8 +31,8 @@ namespace KZLib
 		private const string RESOURCES = "Resources";
 		private const float UPDATE_PERIOD = 0.1f;
 
-		private const float POOL_LOOP_TIME = 30.0f;   // 30초
-		private const double DEFAULT_DELETE_TIME = 60.0d;	// 60초
+		private const float POOL_LOOP_TIME = 30.0f;   // 30s
+		private const double DEFAULT_DELETE_TIME = 60.0d;	// 60s
 
 		private CancellationTokenSource m_TokenSource = null;
 
@@ -40,8 +40,7 @@ namespace KZLib
 
 		private readonly Queue<LoadingData> m_LoadingQueue = new();
 
-		private readonly Dictionary<string,List<CachedData>> m_CachedDataDict = new();
-		private readonly List<CachedData> m_RemoveList = new();
+		private readonly Dictionary<string,List<CacheData>> m_CacheDataDict = new();
 
 		protected override void Initialize()
 		{
@@ -61,7 +60,7 @@ namespace KZLib
 
 			if(_disposing)
 			{
-				m_CachedDataDict.Clear();
+				m_CacheDataDict.Clear();
 				m_LoadingQueue.Clear();
 			}
 
@@ -76,7 +75,7 @@ namespace KZLib
 			{
 				await UniTask.Delay(TimeSpan.FromSeconds(UPDATE_PERIOD),true,cancellationToken : m_TokenSource.Token);
 
-				// 오브젝트 풀 정리
+				// Check ObjectPool 
 				{
 					m_PoolTimer += UPDATE_PERIOD;
 
@@ -84,19 +83,26 @@ namespace KZLib
 					{
 						m_PoolTimer = 0.0f;
 
-						foreach(var pair in m_CachedDataDict)
+						var removeList = new List<string>();
+
+						foreach(var pair in m_CacheDataDict)
 						{
 							pair.Value.RemoveAll(x => x.IsOverdue);
 
 							if(pair.Value.Count == 0)
 							{
-								m_CachedDataDict.RemoveSafe(pair.Key);
+								removeList.Add(pair.Key);
 							}
+						}
+
+						foreach(var remove in removeList)
+						{
+							m_CacheDataDict.RemoveSafe(remove);
 						}
 					}
 				}
 
-				// 로딩 큐 체크하고 있으면 로딩 큐 실행
+				// Set Loading Queue
 				if(m_LoadingQueue.Count > 0)
 				{
 					var loadingData = m_LoadingQueue.Dequeue();
@@ -111,19 +117,16 @@ namespace KZLib
 			m_LoadingQueue.Enqueue(new LoadingData(_path,_isFilePath,_parent));
 		}
 
-		private TObject GetData<TObject>(string _path) where TObject : Object
+		private TObject GetCacheData<TObject>(string _path) where TObject : Object
 		{
-			if(m_CachedDataDict.TryGetValue(_path,out var dataList) && dataList.Count > 0)
-			{
-				return dataList[0].DataArray[0] as TObject;
-			}
+			var dataArray = GetCacheDataArray<TObject>(_path);
 
-			return null;
+			return dataArray?.Length > 0 ? dataArray[0] : null;
 		}
 
-		private TObject[] GetDataArray<TObject>(string _path) where TObject : Object
+		private TObject[] GetCacheDataArray<TObject>(string _path) where TObject : Object
 		{
-			if(m_CachedDataDict.TryGetValue(_path,out var dataList) && dataList.Count > 0)
+			if(m_CacheDataDict.TryGetValue(_path,out var dataList) && dataList.Count > 0)
 			{
 				var data = dataList[0];
 
@@ -143,13 +146,13 @@ namespace KZLib
 
 		private void PutDataArray<TObject>(string _path,TObject[] _objectArray) where TObject : Object
 		{
-			if(!m_CachedDataDict.TryGetValue(_path,out var list))
+			if(!m_CacheDataDict.TryGetValue(_path,out var list))
 			{
-				list = new List<CachedData>();
-				m_CachedDataDict.Add(_path,list);
+				list = new List<CacheData>();
+				m_CacheDataDict.Add(_path,list);
 			}
 
-			list.Add(new CachedData(_objectArray,DateTime.Now.AddSeconds(DEFAULT_DELETE_TIME).Ticks));
+			list.Add(new CacheData(_objectArray,DateTime.Now.AddSeconds(DEFAULT_DELETE_TIME).Ticks));
 		}
 	}
 }

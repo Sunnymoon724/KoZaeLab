@@ -5,15 +5,14 @@ using Mono.Data.Sqlite;
 namespace KZLib
 {
 	/// <summary>
-	/// Storing local data using SQL -> Encrypted, but not secure.
+	/// saving local data using Sql. / Encrypted, but not secure.
 	/// </summary>
 	public class SaveDataMgr : DataSingleton<SaveDataMgr>
 	{
-		private const int STRING_TYPE = 1;
 		private const string DATABASE_NAME = "KZLibDB.db";
 
 		// Key (tableName) Value[ Key (key) Value (data) ]
-		private readonly Dictionary<string,Dictionary<string,string>> m_SaveDataDict = new();
+		private readonly Dictionary<string,Dictionary<string,string>> m_CacheDataDict = new();
 
 		private SqliteConnection m_Connection = null;
 		private SqliteCommand m_Command = null;
@@ -21,12 +20,12 @@ namespace KZLib
 
 		protected override void Initialize()
 		{
-			m_Connection = new SqliteConnection(GetDataBasePath(DATABASE_NAME));
+			m_Connection = new SqliteConnection(DataBasePath);
 			m_Connection.Open();
-			m_SaveDataDict.Clear();
+			m_CacheDataDict.Clear();
 		}
 
-		public void LoadSQLTable(string _tableName)
+		public void LoadSqlTable(string _tableName)
 		{
 			if(_tableName.IsEmpty())
 			{
@@ -35,40 +34,30 @@ namespace KZLib
 
 			if(HasTable(_tableName))
 			{
-				if(!m_SaveDataDict.ContainsKey(_tableName))
+				if(!m_CacheDataDict.ContainsKey(_tableName))
 				{
-					m_SaveDataDict.Add(_tableName,new Dictionary<string,string>());
+					m_CacheDataDict.Add(_tableName,new Dictionary<string,string>());
 				}
 
-				LoadTable(_tableName,m_SaveDataDict[_tableName]);
+				LoadTable(_tableName,m_CacheDataDict[_tableName]);
 			}
 			else
 			{
 				CreateTable(_tableName);
 			}
 
-			LogTag.Data.I("SQL Load Complete. [{0}]",_tableName);
+			LogTag.Data.I($"Sql Load Complete. [{_tableName}]");
 		}
 
 		protected override void ClearAll()
 		{
-			if(m_Command != null)
-			{
-				m_Command.Dispose();
-				m_Command = null;
-			}
+			m_Command?.Dispose();
+			m_DataReader?.Close();
+			m_Connection?.Close();
 
-			if(m_DataReader != null)
-			{
-				m_DataReader.Close();
-				m_DataReader = null;
-			}
-
-			if(m_Connection != null)
-			{
-				m_Connection.Close();
-				m_Connection = null;
-			}
+			m_Command = null;
+			m_DataReader = null;
+			m_Connection = null;
 		}
 
 		public bool HasKey(string _tableName,string _key)
@@ -78,12 +67,12 @@ namespace KZLib
 				return false;
 			}
 
-			return m_SaveDataDict.ContainsKey(SecurityUtility.AESEncryptData(_tableName,_key));
+			return m_CacheDataDict.ContainsKey(SecurityUtility.AESEncryptData(_tableName,_key));
 		}
 
 		public IEnumerable<string> GetTableNameGroup()
 		{
-			var result = ExecuteSQL("select name from sqlite_master where type = 'table'");
+			var result = ExecuteSql("SELECT name FROM sqlite_master WHERE type = 'table'");
 
 			if(!result || m_DataReader == null)
 			{
@@ -94,40 +83,27 @@ namespace KZLib
 
 			while(m_DataReader.Read())
 			{
-				LoadSQLTable(m_DataReader[0].ToString());
+				yield return m_DataReader[0].ToString();
 			}
 
 			m_DataReader.Close();
-
-			foreach(var pair in m_SaveDataDict)
-			{
-				if(pair.Value.Count > 0)
-				{
-					yield return pair.Key;
-				}
-			}
 		}
 
 		public IReadOnlyDictionary<string,string> GetDataInTable(string _tableName)
 		{
-			if(m_SaveDataDict.TryGetValue(_tableName,out var dataDict))
-			{
-				return dataDict;
-			}
-
-			return null;
+			return m_CacheDataDict.TryGetValue(_tableName,out var dataDict) ? dataDict : null;
 		}
 
 		public bool TryGetData(string _tableName,string _key,out string _result)
 		{
 			_result = null;
 
-			return m_SaveDataDict.TryGetValue(_tableName,out var dataDict) && dataDict.TryGetValue(_key,out _result);
+			return m_CacheDataDict.TryGetValue(_tableName,out var dataDict) && dataDict.TryGetValue(_key,out _result);
 		}
 
 		public void SetData(string _tableName,string _key,string _data)
 		{
-			if(!m_SaveDataDict.TryGetValue(_tableName,out var dataDict))
+			if(!m_CacheDataDict.TryGetValue(_tableName,out var dataDict))
 			{
 				throw new ArgumentException($"{_tableName} is not found.");
 			}
@@ -150,7 +126,7 @@ namespace KZLib
 
 		public void RemoveKey(string _tableName,string _key)
 		{
-			if(m_SaveDataDict.TryGetValue(_tableName, out var dataDict) && dataDict.Remove(_key))
+			if(m_CacheDataDict.TryGetValue(_tableName, out var dataDict) && dataDict.Remove(_key))
 			{
 				DeleteFromTable(_tableName,_key);
 			}
@@ -158,22 +134,22 @@ namespace KZLib
 
 		private void InsertToTable(string _tableName,string _key,string _value,string _code)
 		{
-			ExecuteNonQuery($"insert into {_tableName} (key, dataType, dataString, dataCode ) values ( '{_key}', {STRING_TYPE}, '{_value}', '{_code}')");
+			ExecuteNonQuery($"INSERT INTO {_tableName} (key, value, code ) VALUES ( '{_key}', '{_value}', '{_code}')");
 		}
 
 		private void UpdateToTable(string _tableName,string _key,string _value,string _code)
 		{
-			ExecuteNonQuery($"update {_tableName} set key = '{_key}', dataType = {STRING_TYPE}, dataString = '{_value}', dataCode = '{_code}' where key = '{_key}'");
+			ExecuteNonQuery($"UPDATE {_tableName} SET value = '{_value}', code = '{_code}' WHERE key = '{_key}'");
 		}
 
 		private void DeleteFromTable(string _tableName,string _key)
 		{
-			ExecuteNonQuery($"delete from {_tableName} where key = '{_key}'");
+			ExecuteNonQuery($"DELETE FROM {_tableName} WHERE key = '{_key}'");
 		}
 
 		private bool HasTable(string _tableName)
 		{
-			var result = ExecuteSQL($"select name from sqlite_master where type = 'table' and name = '{_tableName}'");
+			var result = ExecuteSql($"SELECT name FROM sqlite_master WHERE type = 'table' AND name = '{_tableName}'");
 
 			if(!result || m_DataReader == null)
 			{
@@ -181,6 +157,7 @@ namespace KZLib
 			}
 
 			var exists = m_DataReader.Read();
+
             m_DataReader.Close();
 
             return exists;
@@ -188,22 +165,24 @@ namespace KZLib
 
 		private void CreateTable(string _tableName)
 		{
-			ExecuteNonQuery($"create table {_tableName} (key text not null , dataType integer, dataString text, dataCode text, unique (key))");
+			ExecuteNonQuery($"CREATE TABLE {_tableName} (key TEXT NOT NULL, value TEXT, code TEXT, UNIQUE (key))");
 
-			m_SaveDataDict.Add(_tableName,new Dictionary<string,string>());
+			m_CacheDataDict.Add(_tableName,new Dictionary<string,string>());
 		}
 
 		public void DeleteTable(string _tableName)
 		{
-			if(ExecuteNonQuery($"drop table {_tableName}") > 0)
+			if(ExecuteNonQuery($"DROP TABLE {_tableName}") > 0)
 			{
-				m_SaveDataDict.Remove(_tableName);
+				m_CacheDataDict.Remove(_tableName);
 			}
 		}
 
 		private bool LoadTable(string _tableName,Dictionary<string,string> _dataDict)
 		{
-			if(!SelectFullFromTable(_tableName))
+			var result = ExecuteSql($"SELECT * FROM {_tableName}");
+
+			if(!result || m_DataReader == null)
 			{
 				return false;
 			}
@@ -212,44 +191,54 @@ namespace KZLib
 
 			while(m_DataReader.Read())
 			{
-				var key = m_DataReader.GetString(m_DataReader.GetOrdinal("key"));
-				var type = m_DataReader.GetInt32(m_DataReader.GetOrdinal("dataType"));
-				var code = m_DataReader.GetString(m_DataReader.GetOrdinal("dataCode"));
+				var key = GetValue("key");
 
-				if(type == STRING_TYPE)
+				if(key == null)
 				{
-					var data = m_DataReader.GetString(m_DataReader.GetOrdinal("dataString"));
+					continue;
+				}
 
-					if(code.IsEqual(SecurityUtility.Base64Encode(data)))
-					{
-						_dataDict.AddOrUpdate(key,data);
-					}
-					else
-					{
-						removeList.Add(key);
+				var code = GetValue("code");
+				var value = GetValue("value");
 
-						throw new NullReferenceException($"data code error. [{SecurityUtility.AESDecryptData(_tableName,key)}]");
-					}
+				if(code == null || value == null)
+				{
+					removeList.Add(key);
+
+					LogTag.Data.W($"{code} == null || {value} == null -> remove {key}");
+
+					continue;
+				}
+
+				var encode = SecurityUtility.Base64Encode(value);
+
+				if(code.IsEqual(SecurityUtility.Base64Encode(value)))
+				{
+					_dataDict.AddOrUpdate(key,encode);
 				}
 				else
 				{
-					throw new NullReferenceException($"not support data type. [{type}]");
+					removeList.Add(key);
+
+					LogTag.Data.W($"data(encode) != code [{encode} != {code}] -> remove {key}");
 				}
 			}
 
 			m_DataReader.Close();
 
 			foreach(var remove in removeList)
-            {
-                DeleteFromTable(_tableName,remove);
-            }
+			{
+				DeleteFromTable(_tableName,remove);
+			}
 
 			return true;
 		}
 
-		private bool SelectFullFromTable(string _tableName)
+		private string GetValue(string _name)
 		{
-			return ExecuteSQL($"select * from {_tableName}");
+			var index = m_DataReader.GetOrdinal(_name);
+
+			return index != -1 ? m_DataReader.GetString(index) : null;
 		}
 
 		private int ExecuteNonQuery(string _source)
@@ -260,7 +249,7 @@ namespace KZLib
 			return command.ExecuteNonQuery();
 		}
 
-		private bool ExecuteSQL(string _command)
+		private bool ExecuteSql(string _command)
 		{
 			using var command = m_Connection.CreateCommand();
 			command.CommandText = _command;
@@ -269,17 +258,20 @@ namespace KZLib
 			return m_DataReader != null;
 		}
 
-		private string GetDataBasePath(string _fileName)
-        {
+		private string DataBasePath
+		{
+			get
+			{
 #if UNITY_EDITOR
-            return $"data source={FileUtility.GetProjectParentPath()}/{_fileName}";
+			return $"data source={FileUtility.GetProjectParentPath()}/{DATABASE_NAME}";
 #elif !UNITY_EDITOR && UNITY_ANDROID
-            return $"URI=file:{UnityEngine.Application.persistentDataPath}/{_fileName}";
+			return $"URI=file:{UnityEngine.Application.persistentDataPath}/{DATABASE_NAME}";
 #elif !UNITY_EDITOR && UNITY_STANDALONE
-            return $"URI=file:{UnityEngine.Application.dataPath}/{_fileName}";
+			return $"URI=file:{UnityEngine.Application.dataPath}/{DATABASE_NAME}";
 #else
-            return $"data source={UnityEngine.Application.persistentDataPath}/{_fileName}";
+			return $"data source={UnityEngine.Application.persistentDataPath}/{DATABASE_NAME}";
 #endif
-        }
+			}
+		}
 	}
 }

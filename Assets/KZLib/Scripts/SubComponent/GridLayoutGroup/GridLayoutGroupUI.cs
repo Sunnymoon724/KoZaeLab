@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 셀을 저장하고 알아서 꺼내서 사용함
+/// Save the cell and retrieve it as needed.
 /// </summary>
 [RequireComponent(typeof(GridLayoutGroup))]
 public class GridLayoutGroupUI : BaseComponentUI
@@ -38,12 +38,12 @@ public class GridLayoutGroupUI : BaseComponentUI
 
 		if(!m_Pivot)
 		{
-			throw new NullReferenceException("피벗이 없습니다.");
+			throw new NullReferenceException("Pivot is null");
 		}
 
 		if(!m_Storage)
 		{
-			throw new NullReferenceException("스토리지가 없습니다.");
+			throw new NullReferenceException("Storage is null");
 		}
 
 		m_Pivot.gameObject.SetActiveSelf(false);

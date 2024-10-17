@@ -1,5 +1,4 @@
 ﻿using KZLib;
-using KZLib.KZDevelop;
 
 namespace GameData
 {
@@ -8,16 +7,26 @@ namespace GameData
 		protected abstract string OPTION_KEY { get; }
 		protected abstract EventTag Tag { get; }
 
-		private class Handler : SaveDataHandler
-		{
-			protected override string TABLE_NAME => "Option_Table";
+		protected SaveDataHandler m_SaveHandler = null;
 
-			protected override bool NewSave => true;
+		public virtual void Initialize()
+		{
+			m_SaveHandler = new("Option_Table",false);
 		}
 
-		private readonly Handler m_SaveHandler = new();
+		protected void LoadOption<TData>(ref TData _data) where TData : class,new()
+		{
+			if(m_SaveHandler.HasKey(OPTION_KEY))
+			{
+				_data = GetOption<TData>();
+			}
+			else
+			{
+				_data = new TData();
 
-		public abstract void Initialize();
+				SaveOption(_data,false);
+			}
+		}
 
 		public abstract void Release();
 
@@ -26,11 +35,19 @@ namespace GameData
 			return m_SaveHandler.GetObject(OPTION_KEY,_default);
 		}
 
-		protected void SaveOption(object _object)
+		protected TData GetOption<TData>() where TData : class,new()
+		{
+			return m_SaveHandler.GetObject<TData>(OPTION_KEY,null);
+		}
+
+		protected void SaveOption(object _object,bool _notify)
 		{
 			m_SaveHandler.SetObject(OPTION_KEY,_object);
 
-			Broadcaster.SendEvent(Tag);
+			if(_notify)
+			{
+				Broadcaster.SendEvent(Tag);
+			}
 		}
 	}
 }

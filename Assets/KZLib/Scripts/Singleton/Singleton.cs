@@ -32,11 +32,12 @@ public abstract class Singleton<TClass> : IDisposable where TClass : class,new()
 
 		if(_disposing)
 		{
-			// 관리 데이터 제거
-			// 이벤트 핸들러 제거
+			// Dispose managed state.
+			// Remove event listener
 		}
 
-		// 비관리 데이터 제거
+		// Dispose not managed resources.
+		// Set large fields to null.
 
 		m_Disposed = true;
 		s_Instance = null;
