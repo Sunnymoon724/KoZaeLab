@@ -3,21 +3,23 @@ using Newtonsoft.Json;
 
 namespace KZLib
 {
-	public abstract class SaveDataHandler
+	public class SaveDataHandler
 	{
-		protected abstract string TABLE_NAME { get; }
+		private readonly string m_TableName = null;
 
-		protected virtual bool IsEncrypt => false;
-		protected virtual bool NewSave => false;
+		private readonly bool m_Encrypt = false;
 
-		public SaveDataHandler()
+		public SaveDataHandler(string _tableName,bool _encrypt = false)
 		{
-			SaveDataMgr.In.LoadSQLTable(TABLE_NAME);
+			m_TableName = _tableName;
+			m_Encrypt = _encrypt;
+
+			SaveDataMgr.In.LoadSqlTable(m_TableName);
 		}
 
 		public bool HasKey(string _key)
 		{
-			return SaveDataMgr.In.HasKey(TABLE_NAME,EncryptText(_key));
+			return SaveDataMgr.In.HasKey(m_TableName,EncryptText(_key));
 		}
 
 		public void SetString(string _key,string _string)
@@ -62,116 +64,46 @@ namespace KZLib
 
 		private void SetData(string _key,string _data)
 		{
-			var data = IsEncrypt ? SecurityUtility.AESEncryptData(TABLE_NAME,_data) : _data;
+			var data = m_Encrypt ? SecurityUtility.AESEncryptData(m_TableName,_data) : _data;
 
-			SaveDataMgr.In.SetData(TABLE_NAME,EncryptText(_key),data);
+			SaveDataMgr.In.SetData(m_TableName,EncryptText(_key),data);
 		}
 
 		public string GetString(string _key,string _default = null)
 		{
 			var data = GetData(_key);
 
-			if(!data.IsEmpty())
-			{
-				return data;
-			}
-
-			if(NewSave)
-			{
-				SetString(_key,_default);
-			}
-
-			return _default;
+			return !data.IsEmpty() ? data : _default;
 		}
 
 		public int GetInt(string _key,int _default = 0)
 		{
-			if(int.TryParse(GetData(_key),out var result))
-			{
-				return result;
-			}
-
-			if(NewSave)
-			{
-				SetInt(_key,_default);
-			}
-
-			return _default;
+			return int.TryParse(GetData(_key),out var result) ? result : _default;
 		}
 
 		public long GetLong(string _key,long _default = 0L)
 		{
-			if(long.TryParse(GetData(_key),out var result))
-			{
-				return result;
-			}
-
-			if(NewSave)
-			{
-				SetLong(_key,_default);
-			}
-
-			return _default;
+			return long.TryParse(GetData(_key),out var result) ? result : _default;
 		}
 
 		public float GetFloat(string _key,float _default = 0.0f)
 		{
-			if(float.TryParse(GetData(_key),out var result))
-			{
-				return result;
-			}
-
-			if(NewSave)
-			{
-				SetFloat(_key,_default);
-			}
-
-			return _default;
+			return float.TryParse(GetData(_key),out var result) ? result : _default;
 		}
 
 		public double GetDouble(string _key,double _default = 0.0d)
 		{
-			if(double.TryParse(GetData(_key),out var result))
-			{
-				return result;
-			}
-
-			if(NewSave)
-			{
-				SetDouble(_key,_default);
-			}
-
-			return _default;
+			return double.TryParse(GetData(_key),out var result) ? result : _default;
 		}
 
 		public bool GetBool(string _key,bool _default = true)
 		{
-			if(bool.TryParse(GetData(_key),out var result))
-			{
-				return result;
-			}
-
-			if(NewSave)
-			{
-				SetBool(_key,_default);
-			}
-
-			return _default;
+			return bool.TryParse(GetData(_key),out var result) ? result : _default;
 		}
 
 		public TEnum GetEnum<TEnum>(string _key,TEnum _default = default) where TEnum : struct
 		{
-			if(Enum.TryParse(GetData(_key),true,out TEnum result))
-			{
-				return result;
-			}
-
-			if(NewSave)
-			{
-				SetEnum(_key,_default);
-			}
-
-			return _default;
+			return Enum.TryParse(GetData(_key),true,out TEnum result) ? result : _default;
 		}
 
 		public TData GetObject<TData>(string _key,TData _default = default)
@@ -189,11 +121,6 @@ namespace KZLib
 				}
 
 				return result;
-			}
-
-			if(NewSave)
-			{
-				SetObject(_key,_default);
 			}
 
 			return _default;
@@ -216,32 +143,27 @@ namespace KZLib
 				return result;
 			}
 
-			if(NewSave)
-			{
-				SetObject(_key,_default);
-			}
-
 			return _default;
 		}
 
 		private string GetData(string _key)
 		{
-			return SaveDataMgr.In.TryGetData(TABLE_NAME,EncryptText(_key),out var result) ? DecryptText(result) : null;
+			return SaveDataMgr.In.TryGetData(m_TableName,EncryptText(_key),out var result) ? DecryptText(result) : null;
 		}
 
 		public void RemoveKey(string _key)
 		{
-			SaveDataMgr.In.RemoveKey(TABLE_NAME,EncryptText(_key));
+			SaveDataMgr.In.RemoveKey(m_TableName,EncryptText(_key));
 		}
 
 		private string EncryptText(string _text)
 		{
-			return IsEncrypt ? SecurityUtility.AESEncryptData(TABLE_NAME,_text) : _text;
+			return m_Encrypt ? SecurityUtility.AESEncryptData(m_TableName,_text) : _text;
 		}
 
 		private string DecryptText(string _text)
 		{
-			return IsEncrypt ? SecurityUtility.AESDecryptData(TABLE_NAME,_text) : _text;
+			return m_Encrypt ? SecurityUtility.AESDecryptData(m_TableName,_text) : _text;
 		}
 	}
 }

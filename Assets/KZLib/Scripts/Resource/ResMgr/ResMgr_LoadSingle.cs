@@ -90,27 +90,31 @@ namespace KZLib
 		{
 			if(_filePath.IsEmpty())
 			{
-				throw new NullReferenceException("경로가 없습니다.");
+				throw new NullReferenceException("No path.");
 			}
 
-			var resource = GetData<TObject>(_filePath);
+			// use cache data
+			var cacheData = GetCacheData<TObject>(_filePath);
 
-			if(!resource)
+			if(!cacheData)
 			{
-				//? 리소스가 없을 경우 로드 한다.
-				resource = LoadData<TObject>(_filePath);
+				// load data
+				cacheData = LoadData<TObject>(_filePath);
 
-				if(!resource)
+				if(!cacheData)
 				{
-					throw new NullReferenceException(string.Format("리소스가 없습니다.[파일 경로 : {0}]",_filePath));
+					LogTag.System.W(string.Format($"Resources is not exist. [path : {_filePath}]"));
+
+					return null;
 				}
 
-				PutData(_filePath,resource);
+				PutData(_filePath,cacheData);
 			}
 
+			// data is GameObject -> copy data
 			if(typeof(TObject) == typeof(GameObject))
 			{
-				var data = UnityUtility.CopyObject(resource);
+				var data = UnityUtility.CopyObject(cacheData);
 
 				if(GameSettings.In.IsServerResource)
 				{
@@ -120,7 +124,7 @@ namespace KZLib
 				return data;
 			}
 
-			return resource;
+			return cacheData;
 		}
 
 		private TObject LoadData<TObject>(string _filePath) where TObject : Object
@@ -128,10 +132,9 @@ namespace KZLib
 #if UNITY_EDITOR
 			if(!FileUtility.IsFilePath(_filePath))
 			{
-				throw new NullReferenceException(string.Format("경로가 폴더 경로 입니다.[경로 : {0}]",_filePath));
+				throw new ArgumentException($"Path is folder path.[path : {_filePath}]");
 			}
 #endif
-			//? Resources 안의 파일 이므로 바로 로드 한다.
 			if(_filePath.StartsWith(RESOURCES))
 			{
 				var filePath = FileUtility.RemoveHeaderDirectory(_filePath,RESOURCES);
@@ -139,7 +142,6 @@ namespace KZLib
 				return Resources.Load<TObject>(filePath[..filePath.LastIndexOf('.')]);
 			}
 
-			//? 경로에 Assets을 포함시킨다.
 			var assetPath = FileUtility.GetAssetsPath(_filePath);
 
 			if(GameSettings.In.IsServerResource)
@@ -147,7 +149,6 @@ namespace KZLib
 				return AddressablesMgr.In.GetObject<TObject>(assetPath);
 			}
 
-			//? 에디터에서만 사용
 #if UNITY_EDITOR
 			return AssetDatabase.LoadAssetAtPath<TObject>(assetPath);
 #else

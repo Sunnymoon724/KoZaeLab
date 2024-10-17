@@ -1,130 +1,179 @@
 ﻿using System;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace GameData
 {
-	public record ScreenResolutionData(int Width,int Height,bool IsFull)
-	{
-		public ScreenResolutionData(Vector2Int _resolution,bool _isFull) : this(_resolution.x,_resolution.y,_isFull) { }
-	}
-
 	public class GraphicOption : Option
 	{
 		protected override string OPTION_KEY => "Graphic Option";
 		protected override EventTag Tag => EventTag.ChangeGraphicOption;
 
 		[Serializable]
-		private class Graphic
+		private class GraphicData
 		{
-			public Vector2Int Resolution { get; set; }
-			public bool FullScreen { get; set; }
-			public int FrameRate { get; set; }
-			public long GraphicQuality { get; set; }
+			[JsonProperty("CurrentResolution")]
+			private ScreenResolution m_CurrentResolution = new(GameSettings.In.ScreenResolution,true);
+
+			[JsonIgnore]
+			public ScreenResolution CurrentResolution => m_CurrentResolution;
+
+			public bool SetCurrentResolution(ScreenResolution _resolution)
+			{
+				if(m_CurrentResolution == _resolution)
+				{
+					return false;
+				}
+
+				m_CurrentResolution = _resolution;
+
+				Screen.SetResolution(m_CurrentResolution.width,m_CurrentResolution.height,m_CurrentResolution.full);
+
+				return true;
+			}
+
+			[JsonProperty("CurrentFrameRate")]
+			private int m_CurrentFrameRate = GameSettings.In.FrameRate;
+
+			[JsonIgnore]
+			public int CurrentFrameRate => m_CurrentFrameRate;
+
+			public bool SetCurrentFrameRate(int _frameRate)
+			{
+				if(m_CurrentFrameRate == _frameRate)
+				{
+					return false;
+				}
+
+				m_CurrentFrameRate = _frameRate;
+
+				Application.targetFrameRate = m_CurrentFrameRate;
+
+				return true;
+			}
+
+			[JsonProperty("GraphicQuality")]
+			private long m_GraphicQuality = GraphicQualityPresetSettings.In.GetPresetQuality(GameSettings.In.GraphicQualityPreset);
+
+			public bool AddGraphicQuality(GraphicQualityTag _qualityTag)
+			{
+				var quality = m_GraphicQuality.AddFlag(_qualityTag.QualityOption);
+
+				if(m_GraphicQuality == quality)
+				{
+					return false;
+				}
+
+				m_GraphicQuality = quality;
+
+				CheckGraphicQuality();
+
+				return true;
+			}
+
+			public bool RemoveGraphicQuality(GraphicQualityTag _qualityTag)
+			{
+				var quality = m_GraphicQuality.RemoveFlag(_qualityTag.QualityOption);
+
+				if(m_GraphicQuality == quality)
+				{
+					return false;
+				}
+
+				m_GraphicQuality = quality;
+
+				CheckGraphicQuality();
+
+				return true;
+			}
+
+
+			private void CheckGraphicQuality()
+			{
+				QualitySettings.globalTextureMipmapLimit = IsIncludeGraphicQualityOption(GraphicQualityTag.GlobalTextureMipmapLimit) ? 0 : 1;
+				QualitySettings.anisotropicFiltering = IsIncludeGraphicQualityOption(GraphicQualityTag.AnisotropicFiltering) ? AnisotropicFiltering.ForceEnable : AnisotropicFiltering.Disable;
+				QualitySettings.vSyncCount = IsIncludeGraphicQualityOption(GraphicQualityTag.VerticalSync) ? 1 : 0;
+			}
+
+			public bool IsIncludeGraphicQualityOption(GraphicQualityTag _qualityTag)
+			{
+				return m_GraphicQuality.HasFlag(_qualityTag.QualityOption);
+			}
 		}
 
-		private Graphic m_Graphic = null;
+		private GraphicData m_GraphicData = null;
 
 		public override void Initialize()
 		{
-			m_Graphic = GetOption(new Graphic()
-			{
-				Resolution		= GameSettings.In.ScreenResolution,
-				FullScreen		= GameSettings.In.FullScreen,
-				FrameRate		= GameSettings.In.FrameRate,
-				GraphicQuality	= GraphicQualityPresetSettings.In.GetPresetQuality(GameSettings.In.GraphicQualityPreset),
-			});
+			base.Initialize();
 
-			Screen.SetResolution(m_Graphic.Resolution.x,m_Graphic.Resolution.y,m_Graphic.FullScreen);
-			Application.targetFrameRate = m_Graphic.FrameRate;
-
-			CheckGraphicQuality(false);
+			LoadOption(ref m_GraphicData);
 		}
 
 		public override void Release()
 		{
-			
+			SaveOption(m_GraphicData,false);
 		}
 
-		public ScreenResolutionData ScreenResolution
+		public ScreenResolution GameResolution
 		{
-			get => new(m_Graphic.Resolution,m_Graphic.FullScreen);
+			get => m_GraphicData.CurrentResolution;
 			set
 			{
-				if((m_Graphic.Resolution.x == value.Width) && (m_Graphic.Resolution.y == value.Height) && (m_Graphic.FullScreen == value.IsFull))
+				if(!m_GraphicData.SetCurrentResolution(value))
 				{
 					return;
 				}
 
-				m_Graphic.Resolution = new Vector2Int(value.Width,value.Height);
-				m_Graphic.FullScreen = value.IsFull;
+				LogTag.Data.I($"ScreenResolution is changed. [{value}]");
 
-				Screen.SetResolution(m_Graphic.Resolution.x,m_Graphic.Resolution.y,m_Graphic.FullScreen);
-
-				SaveOption(m_Graphic);
+				SaveOption(m_GraphicData,true);
 			}
 		}
 
-		public int FrameRate
+		public int GameFrameRate
 		{
-			get => m_Graphic.FrameRate;
+			get => m_GraphicData.CurrentFrameRate;
 			set
 			{
-				if(m_Graphic.FrameRate == value)
+				if(!m_GraphicData.SetCurrentFrameRate(value))
 				{
 					return;
 				}
 
-				m_Graphic.FrameRate = value;
+				LogTag.Data.I($"FrameRate is changed. [{value}]");
 
-				Application.targetFrameRate = m_Graphic.FrameRate;
-
-				SaveOption(m_Graphic);
+				SaveOption(m_GraphicData,true);
 			}
+		}
+
+		public bool IsIncludeGraphicQualityOption(GraphicQualityTag _qualityTag)
+		{
+			return m_GraphicData.IsIncludeGraphicQualityOption(_qualityTag);
 		}
 
 		public void AddGraphicQuality(GraphicQualityTag _qualityTag)
 		{
-			var quality = m_Graphic.GraphicQuality.AddFlag(_qualityTag.QualityOption);
-
-			if(m_Graphic.GraphicQuality == quality)
+			if(m_GraphicData.AddGraphicQuality(_qualityTag))
 			{
 				return;
 			}
 
-			m_Graphic.GraphicQuality = quality;
+			LogTag.Data.I($"Quality is added. [+{_qualityTag}]");
 
-			CheckGraphicQuality(true);
+			SaveOption(m_GraphicData,true);
 		}
 
 		public void RemoveGraphicQuality(GraphicQualityTag _qualityTag)
 		{
-			var quality = m_Graphic.GraphicQuality.RemoveFlag(_qualityTag.QualityOption);
-
-			if(m_Graphic.GraphicQuality == quality)
+			if(m_GraphicData.RemoveGraphicQuality(_qualityTag))
 			{
 				return;
 			}
 
-			m_Graphic.GraphicQuality = quality;
+			LogTag.Data.I($"Quality is removed. [-{_qualityTag}]");
 
-			CheckGraphicQuality(true);
-		}
-
-		private void CheckGraphicQuality(bool _isSave)
-		{
-			QualitySettings.globalTextureMipmapLimit = IsIncludeGraphicQualityOption(GraphicQualityTag.GlobalTextureMipmapLimit) ? 0 : 1;
-			QualitySettings.anisotropicFiltering = IsIncludeGraphicQualityOption(GraphicQualityTag.AnisotropicFiltering) ? AnisotropicFiltering.ForceEnable : AnisotropicFiltering.Disable;
-			QualitySettings.vSyncCount = IsIncludeGraphicQualityOption(GraphicQualityTag.VerticalSync) ? 1 : 0;
-
-			if(_isSave)
-			{
-				SaveOption(m_Graphic);
-			}
-		}
-
-		public bool IsIncludeGraphicQualityOption(GraphicQualityTag _tag)
-		{
-			return m_Graphic.GraphicQuality.HasFlag(_tag.QualityOption);
+			SaveOption(m_GraphicData,true);
 		}
     }
 }

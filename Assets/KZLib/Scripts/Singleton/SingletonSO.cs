@@ -7,9 +7,6 @@ using UnityEditor;
 
 #endif
 
-/// <summary>
-/// 해당 경로에서 체크해서 없으면 에러
-/// </summary>
 public abstract class SingletonSO<TObject> : SerializedScriptableObject where TObject : SerializedScriptableObject
 {
 	protected static TObject s_Instance = null;
@@ -31,7 +28,7 @@ public abstract class SingletonSO<TObject> : SerializedScriptableObject where TO
 	{
 		s_Instance = CreateInstance<TObject>();
 
-		var filePath = string.Format("{0}.asset",_path.StartsWith(Global.ASSETS_HEADER) ? _path : string.Format("Assets/Resources/{0}",_path));
+		var filePath = $"{(_path.StartsWith(Global.ASSETS_HEADER) ? _path : $"Assets/Resources/{_path}")}.asset";
 
 		FileUtility.CreateFolder(FileUtility.GetAbsolutePath(filePath,true));
 
@@ -60,7 +57,7 @@ public abstract class SingletonSO<TObject> : SerializedScriptableObject where TO
 	}
 
 	/// <summary>
-	/// 시작할 떄 쓰임
+	/// Start
 	/// </summary>
 	protected virtual void Open() { }
 
@@ -69,7 +66,7 @@ public abstract class SingletonSO<TObject> : SerializedScriptableObject where TO
 	private bool m_Initialize = false;
 
 	/// <summary>
-	/// 처음 생성 될때만 쓰임
+	/// Only Create
 	/// </summary>
 	protected virtual void Initialize() { }
 #endif

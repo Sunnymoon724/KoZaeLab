@@ -17,8 +17,6 @@ namespace KZLib.KZAttribute
 	{
 		protected string m_ErrorMessage = null;
 
-		protected static readonly GUIStyle LABEL_STYLE = new(GUI.skin.label);
-
 		protected abstract void DoDrawPropertyLayout(GUIContent _label);
 
 		protected override void DrawPropertyLayout(GUIContent _label)
@@ -65,7 +63,7 @@ namespace KZLib.KZAttribute
 
 		protected GUIStyle GetValidateStyle(bool _isValid,string _wrongHexColor = null)
 		{
-			var style = LABEL_STYLE;
+			var style = new GUIStyle(GUI.skin.label);
 
 			style.normal.textColor = _isValid ? style.normal.textColor : _wrongHexColor?.ToColor() ?? style.normal.textColor;
 

@@ -176,7 +176,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Option/AddOn/Add Network Settings",false,KZCategory.Option_Add)]
 		private static void OnAddNetworkSettings()
 		{
-			if(AddSettings("통신 설정",NetworkSettings.IsExist))
+			if(AddSettings("Network",NetworkSettings.IsExist))
 			{
 				NetworkSettings.CreateSettings();
 			}
@@ -207,7 +207,7 @@ namespace KZLib.KZMenu
 		{
 			if(Application.internetReachability != NetworkReachability.NotReachable)
 			{
-				LogTag.Editor.I("인터넷이 연결되어 있습니다. [상태 : {0}]",Application.internetReachability);
+				LogTag.Editor.I($"인터넷이 연결되어 있습니다. [상태 : {Application.internetReachability}]");
 
 				return;
 			}

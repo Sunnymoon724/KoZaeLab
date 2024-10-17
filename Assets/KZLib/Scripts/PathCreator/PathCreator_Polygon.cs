@@ -24,7 +24,7 @@ namespace KZLib.KZDevelop
 		private Vector3 m_CenterPosition = Vector3.zero;
 		public Vector3 CenterPosition => m_CenterPosition;
 
-		[VerticalGroup("5",Order = 5),SerializeField,PropertyRange(0.0f,1.0f),ListDrawerSettings(DraggableItems = false,HideAddButton = true,HideRemoveButton = true,OnTitleBarGUI = nameof(OnRefreshDistance)),LabelText("정점 간 거리"),HideIf(nameof(IsCurveMode))]
+		[VerticalGroup("5",Order = 5),SerializeField,PropertyRange(0.0f,1.0f),ListDrawerSettings(DraggableItems = false,HideAddButton = true,HideRemoveButton = true,OnTitleBarGUI = nameof(OnRefreshDistance)),LabelText("Vertex Distance"),HideIf(nameof(IsCurveMode))]
 		private List<float> m_VertexDistanceList = new();
 
 		private void GetShapePointArray()
@@ -88,7 +88,7 @@ namespace KZLib.KZDevelop
 #endif
 		}
 
-		[VerticalGroup("1",Order = 1),ShowInInspector,PropertyRange(3,360),LabelText("사이드 갯수"),HideIf(nameof(IsCurveMode))]
+		[VerticalGroup("1",Order = 1),ShowInInspector,PropertyRange(3,360),LabelText("Side Count"),HideIf(nameof(IsCurveMode))]
 		public int SideCount
 		{
 			get => m_SideCount;
@@ -118,7 +118,7 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		[VerticalGroup("1",Order = 1),ShowInInspector,PropertyRange(-180.0f,+180.0f),LabelText("각도"),HideIf(nameof(IsCurveMode))]
+		[VerticalGroup("1",Order = 1),ShowInInspector,PropertyRange(-180.0f,+180.0f),LabelText("Rotation"),HideIf(nameof(IsCurveMode))]
 		public float Rotation
 		{
 			get => m_Rotation;
@@ -135,7 +135,7 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		[VerticalGroup("1",Order = 1),ShowInInspector,LabelText("반전 여부"),HideIf(nameof(IsCurveMode))]
+		[VerticalGroup("1",Order = 1),ShowInInspector,LabelText("Is Reverse"),HideIf(nameof(IsCurveMode))]
 		public bool IsReverse
 		{
 			get => m_Reverse;

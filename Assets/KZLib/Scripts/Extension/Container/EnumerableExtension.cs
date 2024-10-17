@@ -267,6 +267,8 @@ public static class EnumerableExtension
 
 	public static string ToString<TValue>(this IEnumerable<TValue> _sources,string _separator)
 	{
-		return string.Join(_separator,_sources);
+		var count = _sources.Count();
+
+		return count == 0 ? string.Format("Empty - [{0}]",_sources) : string.Format("{0} - [{1}]",count,string.Join(_separator,_sources));
 	}
 }

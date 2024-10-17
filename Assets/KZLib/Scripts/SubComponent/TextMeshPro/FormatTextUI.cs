@@ -5,12 +5,12 @@ namespace HudPanel
 {
 	public class FormatTextUI : BaseTextUI
 	{
-		[SerializeField,LabelText("포멧 텍스트")]
+		[SerializeField,LabelText("Format Text")]
 		private string m_FormatText = null;
 
 		public void SetFormatText(params object[] _argumentArray)
 		{
-			m_Text.SetSafeTextMeshPro(_argumentArray == null ? null : string.Format(m_FormatText,_argumentArray));
+			m_TextMesh.SetSafeTextMeshPro(_argumentArray == null ? null : string.Format(m_FormatText,_argumentArray));
 		}
 	}
 }

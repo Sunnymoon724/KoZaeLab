@@ -7,24 +7,16 @@ namespace GameData
 {
 	public class Account : IGameData
 	{
-		private class Handler : SaveDataHandler
-		{
-			protected override string TABLE_NAME => "Account_Table";
-
-			protected override bool IsEncrypt => true;
-			protected override bool NewSave => true;
-		}
-
 		private interface IAccountData { }
 
-		private Handler m_SaveHandler = null;
+		private SaveDataHandler m_SaveHandler = null;
 		private readonly List<string> m_DataKeyList = new();
 
 		private Dictionary<string,IAccountData> m_AccountDataDict = null;
 
 		public virtual void Initialize()
 		{
-			m_SaveHandler = new();
+			m_SaveHandler = new("Account_Table",true);
 
 			Broadcaster.EnableListener<string>(EventTag.UpdateAccount,OnUpdateData);
 		}
@@ -38,7 +30,7 @@ namespace GameData
 		{
 			m_AccountDataDict = new();
 
-			if(GameSettings.In.IsLocalSaveData)
+			if(GameSettings.In.IsLocalSave)
 			{
 				await LoadLocalDataAsync();
 			}
@@ -52,13 +44,28 @@ namespace GameData
 		{
 			foreach(var key in m_DataKeyList)
 			{
-				var type = Type.GetType(string.Format("GameData.Account+{0}",key.Replace(" ","")));
-				var data = Activator.CreateInstance(type);
-
-				m_AccountDataDict.Add(key,m_SaveHandler.GetObject(key,type,data) as IAccountData);
+				m_AccountDataDict.Add(key,GetAccountData(key));
 			}
 
 			await UniTask.Yield();
+		}
+
+		private IAccountData GetAccountData(string _key)
+		{
+			var type = Type.GetType(string.Format("GameData.Account+{0}",_key.Replace(" ","")));
+
+			if(m_SaveHandler.HasKey(_key))
+			{
+				return m_SaveHandler.GetObject(_key,type) as IAccountData;
+			}
+			else
+			{
+				var data = Activator.CreateInstance(type) as IAccountData;
+
+				m_SaveHandler.SetObject(_key,data);
+
+				return data;
+			}
 		}
 
 		protected virtual async UniTask LoadServerDataAsync()
@@ -68,7 +75,7 @@ namespace GameData
 
 		private void OnUpdateData(string _key)
 		{
-			if(GameSettings.In.IsLocalSaveData)
+			if(GameSettings.In.IsLocalSave)
 			{
 				UpdateLocalData(_key);
 			}

@@ -20,12 +20,12 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("버튼 그룹/0"),Button("이미지 변환하기",ButtonSizes.Large),EnableIf(nameof(IsExist))]
 		private void OnSetImage()
 		{
-			var fileData = FileUtility.ReadFile(m_SpritePath);
+			var bytes = FileUtility.ReadFileToBytes(m_SpritePath);
 			var texture = new Texture2D(1,1);
 
 			try
 			{
-				if(texture.LoadImage(fileData))
+				if(texture.LoadImage(bytes))
 				{
 					var color = m_AfterColor;
 					var pixelArray = texture.GetPixels32();

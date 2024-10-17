@@ -35,7 +35,7 @@ namespace KZLib.KZAttribute
 			var rect = EditorGUILayout.GetControlRect();
 
 			var labelContent = new GUIContent(Attribute.SuffixText);
-			var width = LABEL_STYLE.CalcSize(labelContent).x+LABEL_SPACING;
+			var width = new GUIStyle(GUI.skin.label).CalcSize(labelContent).x+LABEL_SPACING;
 
 			rect.xMax -= width;
 
@@ -44,7 +44,7 @@ namespace KZLib.KZAttribute
 			rect.xMin = rect.xMax+LABEL_SPACING;
 			rect.xMax += width;
 
-			EditorGUI.LabelField(rect,labelContent,LABEL_STYLE);
+			EditorGUI.LabelField(rect,labelContent,new GUIStyle(GUI.skin.label));
 		}
 
 		protected abstract TValue DrawField(Rect _rect,string _labelText);

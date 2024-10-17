@@ -95,11 +95,6 @@ namespace KZLib.KZAttribute
 			foreach(var onClicked in m_OnClickedList)
 			{
 				rect = onClicked(rect,isValid);
-
-				// if(Event.current.type == EventType.Repaint && rect.Contains(Event.current.mousePosition))
-				// {
-				// 	GUI.Label(rect, new GUIContent("","툴팁"));
-				// }
 			}
 
 			EditorGUI.LabelField(rect,ValueEntry.SmartValue,GetValidateStyle(isValid,Global.WRONG_HEX_COLOR));

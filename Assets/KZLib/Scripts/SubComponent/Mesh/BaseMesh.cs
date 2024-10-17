@@ -6,9 +6,9 @@ public abstract class BaseMesh : BaseComponent
 {
 	protected const long MAX_INDEX_COUNT = 65535L;
 
-	[SerializeField,LabelText("메쉬 필터")]
+	[SerializeField,LabelText("Mesh Filter")]
 	protected MeshFilter m_MeshFilter = null;
-	[SerializeField,LabelText("메쉬 렌더러")]
+	[SerializeField,LabelText("Mesh Renderer")]
 	protected MeshRenderer m_MeshRenderer = null;
 
 	private MaterialPropertyBlock m_PropertyBlock = null;

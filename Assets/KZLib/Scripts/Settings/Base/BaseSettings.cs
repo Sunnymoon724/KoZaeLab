@@ -13,7 +13,7 @@ public abstract class BaseSettings<TObject> : SingletonSO<TObject> where TObject
 }
 
 /// <summary>
-/// Assets/Resources/Settings/ 폴더 안에서 불러오며 없으면 새로 만들고 Assets/Resources/Settings/ 안에 생성한다.
+/// Load [Assets/Resources/Settings/] folder. Not exist -> create in [Assets/Resources/Settings/]
 /// </summary>
 public abstract class InnerBaseSettings<TObject> : BaseSettings<TObject> where TObject : SerializedScriptableObject
 {
@@ -48,7 +48,7 @@ public abstract class InnerBaseSettings<TObject> : BaseSettings<TObject> where T
 }
 
 /// <summary>
-/// Assets/WorkResources/Settings/ 폴더 안에서 불러오며 없으면 새로 만들고 Assets/WorkResources/Settings/ 안에 생성한다. (오직 에디터용)
+/// Load [Assets/WorkResources/Settings/] folder. Not exist -> create in [Assets/WorkResources/Settings/] (Only Editor)
 /// </summary>
 public abstract class OuterBaseSettings<TObject> : BaseSettings<TObject> where TObject : SerializedScriptableObject
 {

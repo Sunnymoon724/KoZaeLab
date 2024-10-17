@@ -87,7 +87,8 @@ namespace KZLib
 			{
 				var point = new Vector2(_point.x-Screen.width/2.0f,_point.y-Screen.height/2.0f)/100.0f;
 
-				EffectMgr.In.PlayEffect(m_TouchEffectName,point,transform);
+				// TODO 주석 제거
+				// EffectMgr.In.PlayEffect(m_TouchEffectName,point,transform);
 			}
 		}
 

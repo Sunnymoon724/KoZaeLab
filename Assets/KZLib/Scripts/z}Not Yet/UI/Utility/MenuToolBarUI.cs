@@ -101,14 +101,14 @@ namespace KZLib
 
 				if(cell == null)
 				{
-					LogTag.UI.E("{0}은 정의되어 있지 않습니다.",data.MenuType);
+					LogTag.UI.E($"{data.MenuType}은 정의되어 있지 않습니다.");
 
 					continue;
 				}
 
 				if(data.OnClicked == null)
 				{
-					throw new NullReferenceException(string.Format("{0}의 실행 함수가 없습니다.",data.MenuType));
+					throw new NullReferenceException($"{data.MenuType}의 실행 함수가 없습니다.");
 				}
 
 				cellList.Add(new CellData(cell.MenuName,null,m_UseCommonSprite ? m_MenuSprite : cell.MenuSprite,m_UseCommonAudio ? m_MenuAudioClip : cell.MenuAudioClip,data.OnClicked));

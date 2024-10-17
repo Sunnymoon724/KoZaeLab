@@ -8,16 +8,16 @@ namespace KZLib.KZSchedule
 {
 	public class ScheduleGroup : Schedule
 	{
-		[SerializeField,LabelText("스케쥴 그룹 리스트")]
+		[SerializeField,LabelText("Schedule Group List")]
 		private List<ScheduleData> m_ScheduleList = new();
 
 		[Serializable]
 		private class ScheduleData
 		{
-			[SerializeField,LabelText("딜레이 시간")]
+			[SerializeField,LabelText("Delay Time")]
 			private float m_DelayTime = 0.0f;
 
-			[SerializeField,LabelText("스케쥴 리스트"),ListDrawerSettings(ShowFoldout = false,DraggableItems = false)]
+			[SerializeField,LabelText("Schedule List"),ListDrawerSettings(ShowFoldout = false,DraggableItems = false)]
 			private List<Schedule> m_ScheduleList = new();
 
 			public async UniTask PlayScheduleAsync(ScheduleParam _param)

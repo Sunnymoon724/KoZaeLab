@@ -5,7 +5,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public abstract class BaseImageUI : BaseComponentUI
 {
-	[SerializeField,LabelText("이미지")]
+	[SerializeField,LabelText("Image")]
 	protected Image m_Image = null;
 
 	protected override void Reset()

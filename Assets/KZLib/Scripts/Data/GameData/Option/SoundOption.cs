@@ -3,96 +3,137 @@
 namespace GameData
 {
 	public enum SoundType { Master, Music, Effect }
-	public record SoundData(float Volume,bool Mute);
 
 	public class SoundOption : Option
 	{
 		protected override string OPTION_KEY => "Sound Option";
 		protected override EventTag Tag => EventTag.ChangeSoundOption;
 
-		private class Sound
+		private class SoundData
 		{
-			[JsonProperty("Master")]
-			public SoundData Master { get; set; }
+			[JsonProperty("MasterVolume")]
+			private SoundVolume m_MasterVolume = new(1.0f,false);
 
-			[JsonProperty("Music")]
-			public SoundData Music { get; set; }
+			[JsonIgnore]
+			public SoundVolume MasterVolume => m_MasterVolume;
 
-			[JsonProperty("Effect")]
-			public SoundData Effect { get; set; }
+			public bool SetMasterVolume(SoundVolume _sound)
+			{
+				if(m_MasterVolume == _sound)
+				{
+					return false;
+				}
+
+				m_MasterVolume = _sound;
+
+				return true;
+			}
+
+			[JsonProperty("MusicVolume")]
+			private SoundVolume m_MusicVolume = new(1.0f,false);
+
+			[JsonIgnore]
+			public SoundVolume MusicVolume => m_MasterVolume;
+
+			public bool SetMusicVolume(SoundVolume _sound)
+			{
+				if(m_MusicVolume == _sound)
+				{
+					return false;
+				}
+
+				m_MusicVolume = _sound;
+
+				return true;
+			}
+
+			[JsonProperty("EffectVolume")]
+			private SoundVolume m_EffectVolume = new(1.0f,false);
+
+			[JsonIgnore]
+			public SoundVolume EffectVolume => m_MasterVolume;
+
+			public bool SetEffectVolume(SoundVolume _sound)
+			{
+				if(m_EffectVolume == _sound)
+				{
+					return false;
+				}
+
+				m_EffectVolume = _sound;
+
+				return true;
+			}
 		}
 
-		private Sound m_Sound = null;
+		private SoundData m_SoundData = null;
 
 		public override void Initialize()
 		{
-			m_Sound = GetOption(new Sound()
-			{
-				Master	= new SoundData(1.0f,false),
-				Music	= new SoundData(1.0f,false),
-				Effect	= new SoundData(1.0f,false),
-			});
+			base.Initialize();
+
+			LoadOption(ref m_SoundData);
 		}
 
 		public override void Release()
 		{
-			
+			SaveOption(m_SoundData,false);
 		}
 
 		/// <summary>
 		/// Master Sound
 		/// </summary>
-		public SoundData Master
+		public SoundVolume MasterVolume
 		{
-			get => m_Sound.Master;
+			get => m_SoundData.MasterVolume;
 			set
 			{
-				if(m_Sound.Master == value)
+				if(m_SoundData.SetMasterVolume(value))
 				{
 					return;
 				}
 
-				m_Sound.Master = value;
+				LogTag.Data.I($"Master Volume is changed. [{value}]");
 
-				SaveOption(m_Sound);
+				SaveOption(m_SoundData,true);
 			}
 		}
 
 		/// <summary>
 		/// Background Music
 		/// </summary>
-		public SoundData Music
+		public SoundVolume MusicVolume
 		{
-			get => m_Sound.Music;
+			get => m_SoundData.MusicVolume;
 			set
 			{
-				if(m_Sound.Music == value)
+				if(m_SoundData.SetMusicVolume(value))
 				{
 					return;
 				}
 
-				m_Sound.Music = value;
+				LogTag.Data.I($"Music Volume is changed. [{value}]");
 
-				SaveOption(m_Sound);
+				SaveOption(m_SoundData,true);
 			}
 		}
 
 		/// <summary>
 		/// Sound Effect 
 		/// </summary>
-		public SoundData Effect
+		public SoundVolume EffectVolume
 		{
-			get => m_Sound.Effect;
+			get => m_SoundData.EffectVolume;
 			set
 			{
-				if(m_Sound.Effect == value)
+				if(m_SoundData.SetEffectVolume(value))
 				{
 					return;
 				}
 
-				m_Sound.Effect = value;
+				LogTag.Data.I($"Effect Volume is changed. [{value}]");
 
-				SaveOption(m_Sound);
+				SaveOption(m_SoundData,true);
 			}
 		}
 	}

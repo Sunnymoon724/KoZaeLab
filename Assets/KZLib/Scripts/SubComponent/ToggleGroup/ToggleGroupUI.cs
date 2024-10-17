@@ -6,18 +6,18 @@ using UnityEngine.UI;
 [RequireComponent(typeof(ToggleGroup))]
 public class ToggleGroupUI : BaseComponentUI
 {
-	[SerializeField,LabelText("토글")]
+	[SerializeField,LabelText("Toggle Group")]
 	protected ToggleGroup m_ToggleGroup = null;
 
-	[SerializeField,LabelText("시작 인덱스")]
+	[SerializeField,LabelText("Start Index")]
 	private int m_StartIndex = -1;
 
-	[SerializeField,LabelText("토글 리스트"),ListDrawerSettings(DraggableItems = false,ShowFoldout = false,HideAddButton = true,CustomRemoveIndexFunction = nameof(OnRemoveToggleByIndex)),OnValueChanged(nameof(OnChangeList))]
+	[SerializeField,LabelText("Toggle List"),ListDrawerSettings(DraggableItems = false,ShowFoldout = false,HideAddButton = true,CustomRemoveIndexFunction = nameof(OnRemoveToggleByIndex)),OnValueChanged(nameof(OnChangeList))]
 	private List<BaseToggleUI> m_ToggleUIList = new();
 
 	[PropertySpace(5)]
 
-	[ShowInInspector,LabelText("선택된 토글"),ReadOnly]
+	[ShowInInspector,LabelText("Selected Toggle"),ReadOnly]
 	private Toggle SelectedToggle => m_ToggleGroup == null ? null : m_ToggleGroup.GetFirstActiveToggle();
 
 	protected override void Initialize()
