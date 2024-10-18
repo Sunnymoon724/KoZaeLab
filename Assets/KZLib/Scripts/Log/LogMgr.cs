@@ -82,7 +82,7 @@ namespace KZLib
 			};
 		}
 
-		public string ShowLog(LogTag _tag,string _message)
+		public string ShowLog(LogTag _tag,object _message)
 		{
 			return $"[{_tag}] {_message}";
 		}

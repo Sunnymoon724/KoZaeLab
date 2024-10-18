@@ -13,16 +13,16 @@ namespace KZLib.KZWindow
 		private const int TOGGLE_ORDER = 0;
 		private const int PRESET_ORDER = 1;
 
-		private enum ShowType { All, OnlyValid, OnlyInvalid, }
+		protected enum ShowType { All, OnlyValid, OnlyInvalid, }
 
 		[SerializeField,HideInInspector]
 		private ShowType m_CurrentType;
 
 		[HorizontalGroup("Toggle",Order = TOGGLE_ORDER),HideLabel,EnumToggleButtons,ShowInInspector]
-		private ShowType CurrentType
+		protected ShowType CurrentType
 		{
 			get => m_CurrentType;
-			set
+			private set
 			{
 				m_CurrentType = value;
 				m_IsExistPreset = true;
@@ -56,14 +56,12 @@ namespace KZLib.KZWindow
 		}
 
 		[HorizontalGroup("Preset",Order = PRESET_ORDER),ShowInInspector,HideLabel,KZRichText,HideIf(nameof(m_IsExistPreset))]
-		private string Exist_Display => "존재하지 않습니다.";
+		protected string Exist_Display => "Not Exist.";
 
 		[HorizontalGroup("Preset",Order = PRESET_ORDER),SerializeField,LabelText("프리셋 리스트"),ListDrawerSettings(ShowFoldout = false),ShowIf(nameof(m_IsExistPreset)),Searchable]
 		private List<Preset> m_PresetList = new();
 
-#pragma warning disable 0414
 		private bool m_IsExistPreset = false;
-#pragma warning restore 0414
 
 		protected override void Initialize()
 		{

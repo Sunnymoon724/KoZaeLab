@@ -3,15 +3,16 @@ using Sirenix.OdinInspector.Editor;
 
 namespace KZLib.KZWindow
 {
-	public partial class ManualWindow : OdinMenuEditorWindow
+	public class ManualWindow : OdinMenuEditorWindow
 	{
 		protected override OdinMenuTree BuildMenuTree()
 		{
 			var tree = new OdinMenuTree
 			{
-				{ "메쉬 파인더",CreateInstance<MeshFindWindow>() },
-				{ "스프라이트 에디터",CreateInstance<SpriteEditWindow>() },
-				{ "프리셋 에디터",CreateInstance<PresetEditWindow>() },
+				{ "Easing",CreateInstance<EasingWindow>() },
+				{ "Mesh Find",CreateInstance<MeshFindWindow>() },
+				{ "Sprite Edit",CreateInstance<SpriteEditWindow>() },
+				{ "Preset Edit",CreateInstance<PresetEditWindow>() },
 			};
 
 			tree.Config.DrawSearchToolbar = true;

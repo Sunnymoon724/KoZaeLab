@@ -16,8 +16,8 @@ namespace KZLib.KZWindow
 
 		private static bool m_ReplaceMesh = false;
 
-		[TitleGroup("메쉬 검색",BoldTitle = false,Order = 0)]
-		[HorizontalGroup("메쉬 검색/0",Order = 0),LabelText("메쉬 이름"),ShowInInspector,InlineButton(nameof(OnToggleReplace),SdfIconType.ChevronDown,"")]
+		[TitleGroup("Find Mesh",BoldTitle = false,Order = 0)]
+		[HorizontalGroup("Find Mesh/0",Order = 0),LabelText("Mesh Name"),ShowInInspector,InlineButton(nameof(OnToggleReplace),SdfIconType.ChevronDown,"")]
 		private Mesh MeshObject
 		{
 			get => m_MeshObject;
@@ -52,12 +52,12 @@ namespace KZLib.KZWindow
 
 				if(m_MeshDataList.IsNullOrEmpty())
 				{
-					UnityUtility.DisplayInfo("메쉬를 가진 프리펩이 없습니다.");
+					UnityUtility.DisplayInfo("There is no prefab with a mesh.");
 				}
 			}
 		}
 
-		[HorizontalGroup("메쉬 검색/1",Order = 1),LabelText("변경 메쉬"),ShowInInspector,ShowIf(nameof(m_ReplaceMesh))]
+		[HorizontalGroup("Find Mesh/1",Order = 1),LabelText("Replace Mesh"),ShowInInspector,ShowIf(nameof(m_ReplaceMesh))]
 		private Mesh ReplaceMeshObject
 		{
 			get => m_ReplaceMeshObject;
@@ -79,7 +79,7 @@ namespace KZLib.KZWindow
 
 		private bool IsExistMesh => m_MeshObject != null;
 
-		[VerticalGroup("2",Order = 2),LabelText("프리펩 리스트"),SerializeField,ShowIf(nameof(IsExistPrefab)),ListDrawerSettings(ShowFoldout = false,DraggableItems = false,HideAddButton = true,HideRemoveButton = true,OnTitleBarGUI = nameof(OnMeshToolBar))]
+		[VerticalGroup("2",Order = 2),LabelText("Prefab List"),SerializeField,ShowIf(nameof(IsExistPrefab)),ListDrawerSettings(ShowFoldout = false,DraggableItems = false,HideAddButton = true,HideRemoveButton = true,OnTitleBarGUI = nameof(OnMeshToolBar))]
 		private List<MeshData> m_MeshDataList = new();
 		private bool IsExistPrefab => IsExistMesh && !m_MeshDataList.IsNullOrEmpty();
 
@@ -128,11 +128,11 @@ namespace KZLib.KZWindow
 
 					if(result)
 					{
-						LogTag.Editor.W(string.Format("{0}의 {1}가 변경 하여 저장 했습니다.",m_Path,changed));
+						LogTag.Editor.I($"{changed} is changed. and saved to {m_Path}.");
 					}
 					else
 					{
-						LogTag.Editor.W(string.Format("{0}의 {1}을 변경하려고 했으나 저장에 실패했습니다.",m_Path,changed));
+						LogTag.Editor.W($"{changed} try to change and save. but not saved to {m_Path}.");
 					}
 				}
 			}

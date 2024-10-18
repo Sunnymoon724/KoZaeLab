@@ -14,8 +14,8 @@ public static partial class TransformExtension
 
 		while(_origin.parent)
 		{
-			builder.Insert(0, '/');
-			builder.Insert(0, _origin.parent.name);
+			builder.Insert(0,'/');
+			builder.Insert(0,_origin.parent.name);
 
 			_origin = _origin.parent;
 		}

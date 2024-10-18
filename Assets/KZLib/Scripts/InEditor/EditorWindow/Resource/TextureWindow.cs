@@ -1,6 +1,5 @@
 #if UNITY_EDITOR
 using Sirenix.OdinInspector.Editor;
-using UnityEditor;
 using UnityEngine;
 
 namespace KZLib.KZWindow
@@ -18,16 +17,15 @@ namespace KZLib.KZWindow
 
 		protected override void OnImGUI()
 		{
-			if(m_Texture == null)
+			if(!m_Texture)
 			{
-				GUILayout.Label("텍스쳐가 없습니다.");
+				GUILayout.Label("Texture is null");
 
 				return;
 			}
 
 			var current = Event.current;
 
-			// 마우스 휠로 확대 및 축소
 			if(current.type == EventType.ScrollWheel)
 			{
 				m_Scale += -current.delta.y*0.1f;
@@ -45,8 +43,6 @@ namespace KZLib.KZWindow
 
 			GUI.DrawTexture(new Rect(startX,startY,width,height),m_Texture,ScaleMode.ScaleToFit);
 			GUI.EndScrollView();
-
-			// GUILayout.Label(string.Format("텍스쳐 이름 : {0}",m_Texture.name));
 		}
 	}
 }

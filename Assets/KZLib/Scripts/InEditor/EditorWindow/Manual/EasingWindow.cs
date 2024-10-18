@@ -1,5 +1,7 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
+using KZLib.KZAttribute;
+using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -8,42 +10,49 @@ namespace KZLib.KZWindow
 {
 	public class EasingWindow : OdinEditorWindow
 	{
+		[SerializeField,HideInInspector]
+		private float m_CurrentValue = 0.0f;
+
+		
+		[HorizontalGroup("Type",Order = 0),SerializeField,LabelText("Ease Type")]
 		private EaseType m_EaseType = EaseType.Linear;
 
-		private float m_Value = 0.0f;
-
-		protected override void OnImGUI()
+		[HorizontalGroup("Value",Order = 1)]
+		[HorizontalGroup("Value/0",Order = 0),ShowInInspector,LabelText("Current Value"),PropertyRange(0.0f,1.0f)]
+		private float CurrentValue
 		{
-			m_EaseType = (EaseType) EditorGUILayout.EnumPopup("이지 타입",m_EaseType);
+			get => m_CurrentValue;
+			set
+			{
+				m_CurrentValue = value;
 
-			m_Value = EditorGUILayout.Slider("값 설정",m_Value,0.0f,1.0f);
+				m_ResultValue = MathUtility.GetEaseCurve(m_EaseType).Evaluate(value);
+			}
+		}
 
-			var curve = MathUtility.GetEaseCurve(m_EaseType);
+		[HorizontalGroup("Value/1",Order = 1),SerializeField,LabelText("Result Value"),KZRichText]
+		private float m_ResultValue = 0.0f;
 
-			EditorGUILayout.LabelField("결과 값",string.Format("{0}",curve.Evaluate(m_Value)));
+		[HorizontalGroup("Graph",Order = 2),OnInspectorGUI]
+		private void DrawGraph()
+		{
+			GUILayout.Space(20);
 
-			var rect = EditorGUILayout.GetControlRect();
-
-			float minSize = Mathf.Min(rect.width,position.height-rect.yMin);
-
-			rect.width = minSize;
-			rect.height = minSize;
-
-			Handles.BeginGUI();
+			var rect = GUILayoutUtility.GetRect(500,500);
 
 			DrawGrid(rect,20.0f);
 
-			if(m_EaseType != EaseType.Linear)
+			if(Event.current.type == EventType.Repaint)
 			{
-				DrawGraphLine(rect,EaseType.Linear,Color.blue);
+				Handles.BeginGUI();
+
+				DrawGraphLine(rect,Color.blue);
+
+				Handles.EndGUI();
 			}
-
-			DrawGraphLine(rect,m_EaseType,Color.white);
-
-			Handles.EndGUI();
 		}
 
-		void DrawGrid(Rect _rect,float _size)
+		private void DrawGrid(Rect _rect,float _size)
 		{
 			Handles.color = new Color(0.5f,0.5f,0.5f,0.2f);
 
@@ -63,12 +72,12 @@ namespace KZLib.KZWindow
 			Handles.DrawLine(new Vector3(_rect.x,_rect.y+_rect.height/2.0f,0.0f),new Vector3(_rect.x+_rect.width,_rect.y+_rect.height/2.0f,0.0f));
 		}
 
-		void DrawGraphLine(Rect _rect,EaseType _type,Color _color)
+		private void DrawGraphLine(Rect _rect,Color _color)
 		{
 			Handles.color = _color;
 
 			var pointList = new List<Vector3>();
-			var curve = MathUtility.GetEaseCurve(_type);
+			var curve = MathUtility.GetEaseCurve(m_EaseType);
 
 			for(var i=0.0f;i<1.0f;i+=0.01f)
 			{

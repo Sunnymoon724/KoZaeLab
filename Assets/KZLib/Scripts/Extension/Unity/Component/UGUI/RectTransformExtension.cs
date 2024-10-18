@@ -154,9 +154,6 @@ public static partial class RectTransformExtension
 		return cornerArray;
 	}
 
-	/// <summary>
-	/// RectTransform UI 앵커 부모로 최대확장하기
-	/// </summary>
 	public static void ExpandAnchorSize(this RectTransform _rectTransform)
 	{
 		_rectTransform.anchorMin = Vector2.zero;

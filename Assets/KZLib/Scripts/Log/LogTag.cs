@@ -39,7 +39,7 @@ public class LogTag : Enumeration
 public static class LogExtension
 {
 	#region I : Info Log
-	public static void I(this LogTag _log,string _message)
+	public static void I(this LogTag _log,object _message)
 	{
 		var text = LogMgr.In.ShowLog(_log,_message);
 
@@ -50,7 +50,7 @@ public static class LogExtension
 	#endregion I : Info Log
 
 	#region W : Warning Log
-	public static void W(this LogTag _log,string _message)
+	public static void W(this LogTag _log,object _message)
 	{
 		var text = LogMgr.In.ShowLog(_log,_message);
 
@@ -61,7 +61,7 @@ public static class LogExtension
 	#endregion W : Warning Log
 
 	#region E : Error Log
-	public static void E(this LogTag _log,string _message)
+	public static void E(this LogTag _log,object _message)
 	{
 		var text = LogMgr.In.ShowLog(_log,_message);
 
@@ -70,22 +70,6 @@ public static class LogExtension
 #endif
 	}
 	#endregion E : Error Log
-
-	#region A : Assert Log
-	public static void A(this LogTag _log,bool _condition,string _message)
-	{
-		if(!_condition)
-		{
-			return;
-		}
-
-		var text = LogMgr.In.ShowLog(_log,_message);
-
-#if UNITY_EDITOR
-		Debug.AssertFormat(_condition,text);
-#endif
-	}
-	#endregion A : Assert Log
 
 #if UNITY_EDITOR
 	[OnOpenAsset(0)]

@@ -10,15 +10,15 @@ namespace KZLib.KZWindow
 	public class SpriteEditWindow : OdinEditorWindow
 	{
 #pragma warning disable IDE0051
-		[BoxGroup("버튼 그룹",ShowLabel = false,Order = 1)]
-		[HorizontalGroup("버튼 그룹/0"),Button("이미지 가져오기",ButtonSizes.Large)]
+		[BoxGroup("Button",ShowLabel = false,Order = 1)]
+		[HorizontalGroup("Button/0"),Button("Get Image",ButtonSizes.Large)]
         private void OnGetImage()
         {
-			m_SpritePath = FileUtility.GetFilePathInPanel("위치를 수정 합니다.",".png");
+			m_SpritePath = FileUtility.GetFilePathInPanel("Change new path.",".png");
 		}
 
-		[HorizontalGroup("버튼 그룹/0"),Button("이미지 변환하기",ButtonSizes.Large),EnableIf(nameof(IsExist))]
-		private void OnSetImage()
+		[HorizontalGroup("Button/0"),Button("Convert Image",ButtonSizes.Large),EnableIf(nameof(IsExist))]
+		private void OnConvertImage()
 		{
 			var bytes = FileUtility.ReadFileToBytes(m_SpritePath);
 			var texture = new Texture2D(1,1);
@@ -51,35 +51,36 @@ namespace KZLib.KZWindow
 						texture.SetPixels32(pixelArray);
 
 						FileUtility.WriteTextureToFile(string.Concat(FileUtility.GetPathWithoutExtension(m_SpritePath),"_Convert.png"),texture);
-						UnityUtility.DisplayInfo("이미지 변경 완료");
+
+						UnityUtility.DisplayInfo("Image change completed");
 					}
 				}
 				else
 				{
-					throw new Exception("파일을 읽지 못했습니다.");
+					throw new Exception("Fail to load image.");
 				}
 			}
 			catch(Exception _ex)
 			{
-				UnityUtility.DisplayError(string.Format("이미지 변경 실패 [{0}]",_ex.Message));
+				UnityUtility.DisplayError($"Image change failed. [{_ex.Message}]");
 			}
 		}
 #pragma warning restore IDE0051
 
 		private bool IsExist => !m_SpritePath.IsEmpty() && !m_BeforeColor.Equals(m_AfterColor);
 
-		[BoxGroup("변수 그룹",ShowLabel = false,Order = 2)]
-		[HorizontalGroup("변수 그룹/0"),LabelText("스프라이트 경로"),SerializeField,KZTexturePath]
+		[BoxGroup("Variable",ShowLabel = false,Order = 2)]
+		[HorizontalGroup("Variable/0"),LabelText("Sprite Path"),SerializeField,KZTexturePath]
 		private string m_SpritePath = null;
-		[HorizontalGroup("변수 그룹/1"),LabelText("변경 전 색상"),SerializeField]
+		[HorizontalGroup("Variable/1"),LabelText("Before Color"),SerializeField]
 		private Color32 m_BeforeColor = Color.white;
-		[HorizontalGroup("변수 그룹/1"),LabelText("변경 후 색상"),SerializeField]
+		[HorizontalGroup("Variable/1"),LabelText("After Color"),SerializeField]
 		private Color32 m_AfterColor = Color.white;
 
-		[BoxGroup("옵션 그룹",ShowLabel = false,Order = 3)]
-		[HorizontalGroup("옵션 그룹/0"),LabelText("오차 범위"),SerializeField]
+		[BoxGroup("Option",ShowLabel = false,Order = 3)]
+		[HorizontalGroup("Option/0"),LabelText("Error Range"),SerializeField]
 		private uint m_ErrorRange = 0;
-		[HorizontalGroup("옵션 그룹/1"),LabelText("알파 포함 변경"),SerializeField]
+		[HorizontalGroup("Option/1"),LabelText("Include Alpha"),SerializeField]
 		private bool m_IncludeAlpha = false;
 
 		private bool ChangeColor(Color32 _color)
