@@ -220,7 +220,6 @@ MonoBehaviour:
   m_Screen: {fileID: 2642141442286311993}
   m_VideoPlayer: {fileID: 4092074075805612466}
   m_Aspect: {fileID: 6522297718218743851}
-  m_Subtitle: {fileID: 0}
 --- !u!1 &7054755214244170949
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,7 +264,7 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7054755214244170949}
-  m_CullTransparentMesh: 0
+  m_CullTransparentMesh: 1
 --- !u!114 &2808493510474634795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -341,7 +340,7 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8025254714915275177}
-  m_CullTransparentMesh: 0
+  m_CullTransparentMesh: 1
 --- !u!114 &2642141442286311993
 MonoBehaviour:
   m_ObjectHideFlags: 0

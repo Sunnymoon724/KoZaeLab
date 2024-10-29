@@ -10,7 +10,7 @@ namespace KZLib.KZMenu
 	{
 		#region UI
 		#region Empty Panel
-		[MenuItem("GameObject/UI/Empty Panel",false,0)]
+		[MenuItem("GameObject/UI/Empty Panel",false,1000)]
 		private static void OnCreateEmptyPanel()
 		{
 			Undo.IncrementCurrentGroup();
@@ -26,8 +26,27 @@ namespace KZLib.KZMenu
 		}
 		#endregion Empty Panel
 
+		#region UIShape
+		[MenuItem("GameObject/UI/Shape",false,1021)]
+		private static void OnCreateShape()
+		{
+			Undo.IncrementCurrentGroup();
+
+			var group = Undo.GetCurrentGroup();
+			var shape = CreatePanel("Shape");
+
+			shape.AddComponent<UIShape>();
+
+			Undo.RegisterCreatedObjectUndo(shape,"Create Shape");
+
+			LinkCanvas(shape);
+
+			Undo.CollapseUndoOperations(group);
+		}
+		#endregion UIShape
+
 		#region Focus Scroller
-		[MenuItem("GameObject/UI/Focus Scroller",false,20)]
+		[MenuItem("GameObject/UI/Focus Scroller",false,1025)]
 		private static void OnCreateFocusScroller()
 		{
 			Undo.IncrementCurrentGroup();

@@ -8,7 +8,7 @@ namespace KZLib.KZSample
 	{
 		private record SampleData : CellData
 		{
-			public SampleData(int _index) : base(string.Format("{0}",_index),null,null,null,null) { }
+			public SampleData(int _index) : base($"{_index}",null,null,null,null) { }
 		}
 
 		[VerticalGroup("0",Order = 0),SerializeField]
@@ -42,7 +42,7 @@ namespace KZLib.KZSample
 
 		[VerticalGroup("2",Order = 2),SerializeField,Range(0.0f,1.0f)]
 		private float m_Duration = 0.5f;
-		[VerticalGroup("2",Order = 2),SerializeField,ValueDropdown("m_OrderList")]
+		[VerticalGroup("2",Order = 2),SerializeField,ValueDropdown(nameof(m_OrderList))]
 		private int m_Order = 0;
 
 		private readonly List<int> m_OrderList = new();

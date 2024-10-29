@@ -5,40 +5,29 @@ using KZLib;
 using KZLib.KZResolver;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
+using UnityEditor;
+using UnityEditor.VersionControl;
 using UnityEngine;
-
-public class MapCoordinate
-{
-    public List<Vector3Int> coordinateList;
-
-    // public Vector2 GetLocation()
-    // {
-    //     return new Vector2(Coordinate.x,Coordinate.y);
-    // }
-}
 
 public class Test2 : MonoBehaviour
 {
-    private readonly CircularQueue<int> m_Queue = new(100);
-
     [Button("Check")]
     void Button()
     {
+        var pathGroup = UnityUtility.GetAssetPathGroup("t:prefab");
 
-        m_Queue.Enqueue(1);
-        m_Queue.Enqueue(1);
-
-        if(m_Queue.All(x=>x == 1))
+        foreach(var path in pathGroup)
         {
-            Debug.Log("All 1");
-        }
-    }
+            var asset = AssetDatabase.LoadAssetAtPath<GameObject>(path);
 
-    private void Update()
-    {
-        if(Input.GetKey(KeyCode.Space))
-        {
-            Broadcaster.SendEvent(EventTag.ChangeLanguageOption);
+            var rendererGroup = asset.GetComponentsInChildren<CanvasRenderer>();
+
+            foreach(var renderer in rendererGroup)
+            {
+                renderer.cullTransparentMesh = true;
+            }
+
+            AssetDatabase.SaveAssets();
         }
     }
 }

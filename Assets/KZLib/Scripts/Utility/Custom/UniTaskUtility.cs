@@ -94,15 +94,38 @@ public static class UniTaskUtility
 		await UniTask.WhenAny(UniTask.Delay(TimeSpan.FromSeconds(_duration),_ignoreTimescale,cancellationToken : _token),UniTask.WaitUntil(_onCondition,cancellationToken : _token));
 	}
 
-	public static async UniTask ExecuteOverTimeAsync(float _start,float _finish,float _duration,Action<float> _onProgress,bool _ignoreTimescale = false,AnimationCurve _curve = null,CancellationToken _token = default)
+	public static async UniTask WaitForConditionAsync(Func<bool> _onCondition,Action<float> _onTimer,bool _ignoreTimescale = false,CancellationToken _token = default)
 	{
-		await ExecuteDurationAsync(_duration,_curve,_ignoreTimescale,(progress)=>
+		if(_onCondition == null)
 		{
-			_onProgress?.Invoke((_finish-_start)*progress+_start);
-		},_token);
+			return;
+		}
+
+		var elapsedTime = 0.0f;
+
+		while(!_onCondition())
+		{
+			if(_token.IsCancellationRequested)
+			{
+				return;
+			}
+
+			_onTimer?.Invoke(elapsedTime);
+
+			await UniTask.Yield(_token);
+
+			var deltaTime = GetDeltaTime(_ignoreTimescale);
+
+			if(deltaTime > 0.0f)
+			{
+				elapsedTime += deltaTime;
+			}
+		}
+
+		_onTimer?.Invoke(elapsedTime);
 	}
 
-	private static async UniTask ExecuteDurationAsync(float _duration,AnimationCurve _curve,bool _ignoreTimescale,Action<float> _onProgress,CancellationToken _token)
+	public static async UniTask ExecuteOverTimeAsync(float _start,float _finish,float _duration,Action<float> _onProgress,bool _ignoreTimescale = false,AnimationCurve _curve = null,CancellationToken _token = default)
 	{
 		if(_duration == 0.0f)
 		{
@@ -121,11 +144,11 @@ public static class UniTaskUtility
 
 			var progress = _duration > 0.0f ? Mathf.Clamp01(elapsedTime/_duration) : 1.0f;
 
-			_onProgress?.Invoke(curve.Evaluate(progress));
+			_onProgress?.Invoke((_finish-_start)*curve.Evaluate(progress)+_start);
 
 			await UniTask.Yield(_token);
 
-			var deltaTime = _ignoreTimescale ? Time.unscaledDeltaTime : Time.deltaTime;
+			var deltaTime = GetDeltaTime(_ignoreTimescale);
 
 			if(deltaTime > 0.0f)
 			{
@@ -133,6 +156,11 @@ public static class UniTaskUtility
 			}
 		}
 
-		_onProgress?.Invoke(curve.Evaluate(1.0f));
+		_onProgress?.Invoke(_finish);
+	}
+
+	private static float GetDeltaTime(bool _ignoreTimescale)
+	{
+		return _ignoreTimescale ? Time.unscaledDeltaTime : Time.deltaTime;
 	}
 }

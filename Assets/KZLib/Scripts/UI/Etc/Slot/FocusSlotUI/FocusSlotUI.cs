@@ -6,11 +6,11 @@ public abstract class FocusSlotUI : SlotUI,IFocusSlotUI
 	[SerializeField,HideInInspector]
 	private float m_CurrentLocation = 0.5f;
 
-	[FoldoutGroup("포커스",Order = 6)]
-	[VerticalGroup("포커스/0",Order = 0),SerializeField]
+	[FoldoutGroup("Focus",Order = 6)]
+	[VerticalGroup("Focus/0",Order = 0),SerializeField]
 	protected RectTransform m_Slot = null;
 
-	[VerticalGroup("포커스/0",Order = 0),ShowInInspector,PropertyRange(0.0f,1.0f)]
+	[VerticalGroup("Focus/0",Order = 0),ShowInInspector,PropertyRange(0.0f,1.0f)]
 	protected float CurrentLocation
 	{
 		get => m_CurrentLocation;
@@ -20,7 +20,7 @@ public abstract class FocusSlotUI : SlotUI,IFocusSlotUI
 		}
 	}
 
-	[VerticalGroup("포커스/0",Order = 0),SerializeField,ReadOnly]
+	[VerticalGroup("Focus/0",Order = 0),SerializeField,ReadOnly]
 	private bool m_Center = false;
 
 	protected bool IsCenter => m_Center;

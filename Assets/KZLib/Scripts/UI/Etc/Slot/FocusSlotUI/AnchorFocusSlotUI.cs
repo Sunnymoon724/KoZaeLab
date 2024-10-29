@@ -3,10 +3,10 @@ using UnityEngine;
 
 public abstract class AnchorFocusSlotUI : FocusSlotUI
 {
-	[VerticalGroup("포커스/0",Order = 0),SerializeField]
+	[VerticalGroup("Focus/0",Order = 0),SerializeField]
 	private bool m_Vertical = false;
 
-	[VerticalGroup("포커스/0",Order = 0),SerializeField]
+	[VerticalGroup("Focus/0",Order = 0),SerializeField]
 	private float m_AnchorValue = 0.2f;
 
 	public override void UpdateLocation(float _location)

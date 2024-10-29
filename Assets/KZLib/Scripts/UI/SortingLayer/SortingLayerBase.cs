@@ -20,18 +20,18 @@ public abstract class SortingLayerBase : BaseComponentUI
 
 	private bool IsParentSortingLayerExist => m_ParentSortingLayer;
 
-	[FoldoutGroup("소팅레이어",Order = -20),ShowInInspector,LabelText("로컬 순서"),KZRichText]
+	[FoldoutGroup("Sorting Layer",Order = -20),ShowInInspector,LabelText("Local Order"),KZRichText]
 	public int LocalSortingLayerOrder => m_SortingLayerOrder;
-	[FoldoutGroup("소팅레이어",Order = -20),ShowInInspector,LabelText("부모 순서"),KZRichText,ShowIf(nameof(IsParentSortingLayerExist))]
+	[FoldoutGroup("Sorting Layer",Order = -20),ShowInInspector,LabelText("Parent Order"),KZRichText,ShowIf(nameof(IsParentSortingLayerExist))]
 	protected int ParentSortingLayerOrder => IsParentSortingLayerExist ? m_ParentSortingLayer.SortingLayerOrder : DEFAULT_SORTING_LAYER_ORDER;
 
-    [FoldoutGroup("소팅레이어",Order = -20),ShowInInspector,LabelText("실제 순서"),KZRichText,PropertyTooltip("내 순서 + 부모 순서")]
+    [FoldoutGroup("Sorting Layer",Order = -20),ShowInInspector,LabelText("Current Order"),KZRichText,PropertyTooltip("My Order + Parent Order")]
     public int SortingLayerOrder => IsParentSortingLayerExist ? m_ParentSortingLayer.SortingLayerOrder+m_SortingLayerOrder : DEFAULT_SORTING_LAYER_ORDER+m_SortingLayerOrder;
-    [FoldoutGroup("소팅레이어",Order = -20),ShowInInspector,LabelText("순서 범위"),KZRichText]
-	protected string LayerRange_Display => string.Format("{0} - {1}",m_SortingLayerOrderMin,m_SortingLayerOrderMax);
+    [FoldoutGroup("Sorting Layer",Order = -20),ShowInInspector,LabelText("Order Range"),KZRichText]
+	protected string LayerRange_Display => $"{m_SortingLayerOrderMin} - {m_SortingLayerOrderMax}";
 
-	[FoldoutGroup("소팅레이어",Order = -20),ShowInInspector,LabelText("자식 포함 갯수"),KZRichText]
-	protected string LayerCount_Display => string.Format("{0} 개",m_SortingLayerCount);
+	[FoldoutGroup("Sorting Layer",Order = -20),ShowInInspector,LabelText("Layer Count"),KZRichText]
+	protected string LayerCount_Display => $"{m_SortingLayerCount}";
 
 	protected override void Reset()
 	{

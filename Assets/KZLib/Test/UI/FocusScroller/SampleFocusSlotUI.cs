@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SampleFocusSlotUI : FocusSlotUI
 {
-	[FoldoutGroup("기타",Order = 5),SerializeField]
+	[FoldoutGroup("Animator",Order = 5),SerializeField]
 	private Animator m_Animator = null;
 
 	public override void UpdateLocation(float _location)

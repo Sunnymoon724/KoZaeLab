@@ -106,7 +106,7 @@ namespace KZLib.KZSchedule
 			}
 		}
 
-		private static IEnumerable ModeTypeList
+		private IEnumerable ModeTypeList
 		{
 			get
 			{

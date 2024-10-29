@@ -6,12 +6,12 @@ using UnityEngine;
 
 public abstract class RepositoryUI : SortingLayerCanvas
 {
-	[VerticalGroup("캔버스",Order = -25),SerializeField]
+	[VerticalGroup("Canvas",Order = -25),SerializeField]
 	protected CanvasGroup m_CanvasGroup = null;
 
 	public Camera CanvasCamera => m_Canvas.worldCamera;
 
-	//? 현재 존재하는 창들.
+	//? Current Opened Window List
 	[SerializeField,DictionaryDrawerSettings(IsReadOnly = true,DisplayMode = DictionaryDisplayOptions.Foldout)]
 	protected List<WindowUI> m_OpenedWindowList = new();
 

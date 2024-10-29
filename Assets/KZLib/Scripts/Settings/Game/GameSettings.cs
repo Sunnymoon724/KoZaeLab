@@ -241,9 +241,9 @@ public class GameSettings : InnerBaseSettings<GameSettings>
 	private string m_UIPrefabPath = "Resources/Prefabs/UI";
 	public string UIPrefabPath => m_UIPrefabPath;
 	
-	[BoxGroup("Path/Resource",ShowLabel = false,Order = 2),SerializeField,LabelText("Effect Prefab Path"),KZFolderPath]
-	private string m_EffectPrefabPath = "Resources/Prefabs/Efx";
-	public string EffectPrefabPath => m_EffectPrefabPath;
+	[BoxGroup("Path/Resource",ShowLabel = false,Order = 2),SerializeField,LabelText("FX Prefab Path"),KZFolderPath]
+	private string m_FXPrefabPath = "Resources/Prefabs/FX";
+	public string FXPrefabPath => m_FXPrefabPath;
 	#endregion Resource
 	#endregion Path
 

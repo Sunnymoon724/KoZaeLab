@@ -43,20 +43,6 @@ public abstract class WindowUI : SortingLayerCanvas,IWindowUI
 
 	protected Sequence m_OpenSequence = null;
 	protected Sequence m_CloseSequence = null;
-	private MenuToolBarUI m_MenuToolBar = null;
-
-	protected MenuToolBarUI MenuToolBar
-	{
-		get
-		{
-			if(!m_MenuToolBar)
-			{
-				m_MenuToolBar = GetComponentInChildren<MenuToolBarUI>(true);
-			}
-
-			return m_MenuToolBar;
-		}
-	}
 
 	protected override void Initialize() { }
 

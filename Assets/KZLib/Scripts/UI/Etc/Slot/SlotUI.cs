@@ -17,26 +17,26 @@ public class SlotUI : BaseComponentUI
 	}
 
 	#region IMAGE
-	[FoldoutGroup("이미지",Order = SlotOrder.IMAGE),SerializeField,ShowIf(nameof(UseImage))]
+	[FoldoutGroup("Image",Order = SlotOrder.IMAGE),SerializeField,ShowIf(nameof(UseImage))]
 	protected Image m_Image = null;
-	[FoldoutGroup("이미지",Order = SlotOrder.IMAGE),SerializeField,ShowIf(nameof(UseImage))]
+	[FoldoutGroup("Image",Order = SlotOrder.IMAGE),SerializeField,ShowIf(nameof(UseImage))]
 	protected UIEffect m_ImageEffect = null;
 
 	protected virtual bool UseImage => true;
 	#endregion IMAGE
 
 	#region  TEXT
-	[FoldoutGroup("텍스트",Order = SlotOrder.TEXT),SerializeField,ShowIf(nameof(UseText))]
+	[FoldoutGroup("Text",Order = SlotOrder.TEXT),SerializeField,ShowIf(nameof(UseText))]
 	protected TMP_Text m_NameText = null;
 
-	[FoldoutGroup("텍스트",Order = SlotOrder.TEXT),SerializeField,ShowIf(nameof(UseText))]
+	[FoldoutGroup("Text",Order = SlotOrder.TEXT),SerializeField,ShowIf(nameof(UseText))]
 	protected TMP_Text m_DescriptionText = null;
 
 	protected virtual bool UseText => true;
 	#endregion TEXT
 
 	#region BUTTON
-	[FoldoutGroup("버튼",Order = SlotOrder.BUTTON),SerializeField,ShowIf(nameof(UseButton))]
+	[FoldoutGroup("Button",Order = SlotOrder.BUTTON),SerializeField,ShowIf(nameof(UseButton))]
 	protected Button m_Button = null;
 
 	private Action m_OnClicked = null;

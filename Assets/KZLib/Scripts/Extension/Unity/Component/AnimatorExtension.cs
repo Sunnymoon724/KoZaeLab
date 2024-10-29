@@ -61,7 +61,17 @@ public static class AnimatorExtension
 
 	public static async UniTask WaitForAnimationFinishAsync(this Animator _animator,int _animationHashName,int _layerIndex = 0,CancellationToken _token = default)
 	{
-		await UniTask.WaitWhile(()=> _animator.GetCurrentAnimatorStateInfo(_layerIndex).shortNameHash == _animationHashName && _animator.GetCurrentAnimatorStateInfo(_layerIndex).normalizedTime < 1.0f,cancellationToken : _token);
+		await UniTask.WaitUntil(()=>IsAnimationFinish(_animator,_animationHashName,_layerIndex),cancellationToken : _token);
+	}
+
+	public static bool IsAnimationFinish(this Animator _animator,string _animationName,int _layerIndex = 0)
+	{
+		return IsAnimationFinish(_animator,Animator.StringToHash(_animationName),_layerIndex);
+	}
+
+	public static bool IsAnimationFinish(this Animator _animator,int _animationHashName,int _layerIndex = 0)
+	{
+		return _animator.GetCurrentAnimatorStateInfo(_layerIndex).shortNameHash == _animationHashName && _animator.GetCurrentAnimatorStateInfo(_layerIndex).normalizedTime >= 1.0f;
 	}
 
 	public static async UniTask WaitForAnimationStartAsync(this Animator _animator,string _animationName,int _layerIndex = 0,CancellationToken _token = default)
@@ -71,21 +81,35 @@ public static class AnimatorExtension
 
 	public static async UniTask WaitForAnimationStartAsync(this Animator _animator,int _animationHashName,int _layerIndex = 0,CancellationToken _token = default)
 	{
-		await UniTask.WaitWhile(()=> _animator.GetCurrentAnimatorStateInfo(_layerIndex).shortNameHash == _animationHashName && _animator.GetCurrentAnimatorStateInfo(_layerIndex).normalizedTime > 0.0f,cancellationToken : _token);
+		await UniTask.WaitUntil(()=>IsAnimationStart(_animator,_animationHashName,_layerIndex),cancellationToken : _token);
 	}
 
-	public static float GetAnimationClipLength(this Animator _animator,string _animationName,int _layerIndex = 0)
+	public static bool IsAnimationStart(this Animator _animator,string _animationName,int _layerIndex = 0)
 	{
-		var clipInfoArray = _animator.GetCurrentAnimatorClipInfo(_layerIndex);
+		return IsAnimationStart(_animator,Animator.StringToHash(_animationName),_layerIndex);
+	}
 
-		var index = clipInfoArray.FindIndex(x=>x.clip.name.IsEqual(_animationName));
+	public static bool IsAnimationStart(this Animator _animator,int _animationHashName,int _layerIndex = 0)
+	{
+		return _animator.GetCurrentAnimatorStateInfo(_layerIndex).shortNameHash == _animationHashName && _animator.GetCurrentAnimatorStateInfo(_layerIndex).normalizedTime <= 0.0f;
+	}
 
-		if(index == -1)
+	public static float GetAnimationClipLength(this Animator _animator,string _animationName)
+	{
+		var controller = _animator.runtimeAnimatorController;
+
+		if(controller != null)
 		{
-			return -1.0f;
+			foreach(var clip in controller.animationClips)
+			{
+				if(_animationName.IsEqual(clip.name))
+				{
+					return clip.length;
+				}
+			}
 		}
 
-		return clipInfoArray[index].clip.length;
+		return -1.0f;
 	}
 
 #if UNITY_EDITOR

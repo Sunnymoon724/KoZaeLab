@@ -5,8 +5,8 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Canvas),typeof(GraphicRaycaster))]
 public abstract class SortingLayerCanvas : SortingLayerBase
 {
-	[InfoBox("캔버스가 없습니다.",InfoMessageType.Error,"@this.m_Canvas == null")]
-	[VerticalGroup("캔버스",Order = -25),SerializeField,LabelText("캔버스")]
+	[InfoBox("canvas is null",InfoMessageType.Error,"@this.m_Canvas == null")]
+	[VerticalGroup("Canvas",Order = -25),SerializeField]
 	protected Canvas m_Canvas = null;
 
 	protected override void Reset()

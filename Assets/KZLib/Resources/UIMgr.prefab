@@ -561,8 +561,6 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  m_ScreenWidth: 1920
-  m_ScreenHeight: 1080
   m_Repository2D: {fileID: 2723151152758295912}
   m_Repository3D: {fileID: 8379910995629666888}
 --- !u!1 &4115095267771910500
