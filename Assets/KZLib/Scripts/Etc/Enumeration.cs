@@ -60,7 +60,7 @@ namespace KZLib
 				return data;
 			}
 
-			throw new InvalidOperationException(string.Format("{0} is not in the Enum. [Enum type: {1}]", _name, nameof(TEnumeration)));
+			throw new InvalidOperationException($"{_name} is not in the Enum. [Enum type: {nameof(TEnumeration)}]");
 		}
 
 		public static bool TryParse<TEnumeration>(string _name,out TEnumeration _result) where TEnumeration : Enumeration

@@ -191,7 +191,7 @@ namespace KZLib
 #if UNITY_EDITOR
 				InitializeTestMode();
 #else
-				throw new Exception("에디터가 아니면 테스트 모드를 할 수 없습니다.");
+				throw new Exception("This cannot be tested outside of the editor mode.");
 #endif
 			}
 			else
@@ -260,7 +260,7 @@ namespace KZLib
 
 			m_Playing = false;
 
-			GameUtility.ReleaseManager();
+			CommonUtility.ReleaseManager();
 		}
 
 		protected virtual void Update()

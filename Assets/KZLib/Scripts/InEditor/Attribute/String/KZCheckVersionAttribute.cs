@@ -21,7 +21,7 @@ namespace KZLib.KZAttribute
 		{
 			var rect = DrawPrefixLabel(_label);
 
-			EditorGUI.LabelField(rect,ValueEntry.SmartValue,GetValidateStyle(GameUtility.CheckVersion(ValueEntry.SmartValue),Global.DISABLE_HEX_COLOR));
+			EditorGUI.LabelField(rect,ValueEntry.SmartValue,GetValidateStyle(CommonUtility.CheckVersion(ValueEntry.SmartValue),Global.DISABLE_HEX_COLOR));
 		}
 	}
 #endif

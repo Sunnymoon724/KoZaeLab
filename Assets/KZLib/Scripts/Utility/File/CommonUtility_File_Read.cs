@@ -1,13 +1,15 @@
 using System;
 using System.IO;
 
-public static partial class FileUtility
+public static partial class CommonUtility
 {
+	/// <param name="_filePath">The absolute file path.</param>
 	public static string ReadFileToText(string _filePath)
 	{
 		return ReadFile(_filePath,File.ReadAllText);
 	}
 
+	/// <param name="_filePath">The absolute file path.</param>
 	public static byte[] ReadFileToBytes(string _filePath)
 	{
 		return ReadFile(_filePath,File.ReadAllBytes);
@@ -15,18 +17,8 @@ public static partial class FileUtility
 
 	private static TRead ReadFile<TRead>(string _filePath,Func<string,TRead> _onRead)
 	{
-		if(IsExist(_filePath,true))
-		{
-			try
-			{
-				return _onRead(_filePath);
-			}
-			catch(Exception _ex)
-			{
-				LogTag.File.E($"Error reading file: {_ex.Message}");
-			}
-		}
+		IsFileExist(_filePath,true);
 
-		return default;
+		return _onRead(_filePath);
 	}
 }

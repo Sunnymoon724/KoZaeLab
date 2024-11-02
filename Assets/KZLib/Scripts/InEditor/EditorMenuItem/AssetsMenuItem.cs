@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using KZLib.KZWindow;
@@ -38,14 +39,14 @@ namespace KZLib.KZMenu
 
 		private static void LoadAssetsPath()
 		{
-			if(UnityUtility.DisplayCancelableProgressBar("Asset finder load","Loading asset finder",0.1f))
+			if(CommonUtility.DisplayCancelableProgressBar("Asset finder load","Loading asset finder",0.1f))
 			{
-				UnityUtility.ClearProgressBar();
+				CommonUtility.ClearProgressBar();
 
 				return;
 			}
 
-			var pathGroup = UnityUtility.GetAssetPathGroup();
+			var pathGroup = CommonUtility.GetAssetPathGroup();
 			var totalCount = pathGroup.Count();
 			var index = 0;
 			var dependantDict = new Dictionary<string,string[]>();
@@ -54,9 +55,9 @@ namespace KZLib.KZMenu
 			{
 				dependantDict.AddOrUpdate(path,AssetDatabase.GetDependencies(path,false));
 
-				if(UnityUtility.DisplayCancelableProgressBar("Asset finder load",$"Loading asset finder [{index}/{totalCount}]",index++,totalCount))
+				if(CommonUtility.DisplayCancelableProgressBar("Asset finder load",$"Loading asset finder [{index}/{totalCount}]",index++,totalCount))
 				{
-					UnityUtility.ClearProgressBar();
+					CommonUtility.ClearProgressBar();
 
 					return;
 				}
@@ -77,7 +78,7 @@ namespace KZLib.KZMenu
 				}
 			}
 
-			UnityUtility.ClearProgressBar();
+			CommonUtility.ClearProgressBar();
 		}
 
 		public static void ReLoad()
@@ -96,7 +97,7 @@ namespace KZLib.KZMenu
 
 			var path = AssetDatabase.GetAssetPath(Selection.activeObject);
 
-			if(!FileUtility.IsFilePath(path))
+			if(!CommonUtility.IsFilePath(path))
 			{
 				LogTag.Editor.W("Selection is folder.");
 
@@ -121,13 +122,13 @@ namespace KZLib.KZMenu
 			{
 				var asset = AssetDatabase.GetAssetPath(selected);
 
-				textList.Add($"Finding assets using <b> {FileUtility.GetOnlyName(asset)} </b>");
+				textList.Add($"Finding assets using <b> {CommonUtility.GetOnlyName(asset)} </b>");
 
 				if(AssetsPathListDict.TryGetValue(asset,out var dependantList))
 				{
 					foreach(var dependant in dependantList)
 					{
-						textList.Add($"<a href=\"{dependant}\">{FileUtility.GetOnlyName(dependant)}</a> ");
+						textList.Add($"<a href=\"{dependant}\">{CommonUtility.GetOnlyName(dependant)}</a> ");
 					}
 				}
 			}
@@ -161,7 +162,7 @@ namespace KZLib.KZMenu
 			{
 				var asset = AssetDatabase.GetAssetPath(selected);
 
-				textList.Add($"Finding assets with <b> {FileUtility.GetOnlyName(asset)} </b>");
+				textList.Add($"Finding assets with <b> {CommonUtility.GetOnlyName(asset)} </b>");
 
 				foreach(var dependant in AssetDatabase.GetDependencies(asset,false))
 				{
@@ -170,7 +171,7 @@ namespace KZLib.KZMenu
 						continue;
 					}
 
-					textList.Add(string.Format("<a href=\"{0}\">{1}</a> ",dependant,FileUtility.GetOnlyName(dependant)));
+					textList.Add(string.Format("<a href=\"{0}\">{1}</a> ",dependant,CommonUtility.GetOnlyName(dependant)));
 				}
 			}
 
@@ -196,16 +197,16 @@ namespace KZLib.KZMenu
 		private static void OnCreateScriptableObject()
 		{
 			var selection = Selection.activeObject;
-			var dataPath = FileUtility.NormalizePath($"Resources/ScriptableObjects/{selection.name}.asset");
+			var dataPath = CommonUtility.NormalizePath($"Resources/ScriptableObjects/{selection.name}.asset");
 
-			if(!UnityUtility.DisplayCheck("Create scriptableObject",$"Create scriptableObject? \n Name : {selection.name} \n Path : {dataPath}"))
+			if(!CommonUtility.DisplayCheck("Create scriptableObject",$"Create scriptableObject? \n Name : {selection.name} \n Path : {dataPath}"))
 			{
 				return;
 			}
 
-			if(FileUtility.IsExist(dataPath))
+			if(CommonUtility.IsFileExist(dataPath))
 			{
-				UnityUtility.DisplayError($"{dataPath} is exist.");
+				CommonUtility.DisplayError(new NullReferenceException($"{dataPath} is exist."));
 
 				return;
 			}
@@ -213,7 +214,7 @@ namespace KZLib.KZMenu
 			var script = selection as MonoScript;
 			var asset = ScriptableObject.CreateInstance(script.GetClass());
 
-			UnityUtility.SaveAsset(dataPath,asset);
+			CommonUtility.SaveAsset(dataPath,asset);
 		}
 
 		[MenuItem("Assets/KZSubMenu/Script/Create ScriptableObject",true,(int) MenuType.Script)]

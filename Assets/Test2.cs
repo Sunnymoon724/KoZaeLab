@@ -14,7 +14,7 @@ public class Test2 : MonoBehaviour
     [Button("Check")]
     void Button()
     {
-        var pathGroup = UnityUtility.GetAssetPathGroup("t:prefab");
+        var pathGroup = CommonUtility.GetAssetPathGroup("t:prefab");
 
         foreach(var path in pathGroup)
         {

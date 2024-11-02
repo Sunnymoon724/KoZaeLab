@@ -17,7 +17,7 @@ public abstract class SingletonSO<TObject> : SerializedScriptableObject where TO
 		{
 			if(!s_Instance)
 			{
-				s_Instance = Resources.Load<TObject>(FileUtility.PathCombine("ScriptableObjects",typeof(TObject).Name));
+				s_Instance = Resources.Load<TObject>(CommonUtility.PathCombine("ScriptableObjects",typeof(TObject).Name));
 			}
 
 			return s_Instance;
@@ -30,9 +30,9 @@ public abstract class SingletonSO<TObject> : SerializedScriptableObject where TO
 
 		var filePath = $"{(_path.StartsWith(Global.ASSETS_HEADER) ? _path : $"Assets/Resources/{_path}")}.asset";
 
-		FileUtility.CreateFolder(FileUtility.GetAbsolutePath(filePath,true));
+		CommonUtility.CreateFolder(CommonUtility.GetAbsolutePath(filePath,true));
 
-		AssetDatabase.CreateAsset(s_Instance,FileUtility.GetAssetsPath(filePath));
+		AssetDatabase.CreateAsset(s_Instance,CommonUtility.GetAssetsPath(filePath));
 		AssetDatabase.Refresh();
 	}
 

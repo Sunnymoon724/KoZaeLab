@@ -3,7 +3,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-public static partial class FileUtility
+public static partial class CommonUtility
 {
 	/// <summary>
 	/// Combine all path
@@ -18,6 +18,7 @@ public static partial class FileUtility
 	/// </summary>
 	public static string GetAbsolutePath(string _path,bool _isIncludeAssets)
 	{
+		//? ex) @"C:~"
 		if(Path.IsPathRooted(_path))
 		{
 			return NormalizePath(_path);
@@ -81,17 +82,12 @@ public static partial class FileUtility
 
 	public static string GetProjectPath()
 	{
-		var directoryInfo = Directory.GetParent(Application.dataPath);
-
-		return NormalizePath(directoryInfo.FullName);
+		return NormalizePath(Path.GetFullPath(Path.Join(Application.dataPath,"../")));
 	}
 
 	public static string GetProjectParentPath()
 	{
-		var directoryInfo = Directory.GetParent(Application.dataPath);
-		var parentDirectoryInfo = Directory.GetParent(directoryInfo.FullName);
-
-		return NormalizePath(parentDirectoryInfo.FullName);
+		return NormalizePath(Path.GetFullPath(Path.Join(Application.dataPath,"../../")));
 	}
 
 	public static string GetAssetsPath(string _path)
@@ -119,9 +115,20 @@ public static partial class FileUtility
 		return Path.HasExtension(_filePath);
 	}
 
-	public static bool IsExist(string _path,bool _needException = false)
+	public static string[] GetFilePathArray(string _folderPath,string _pattern = null)
 	{
-		if(_path.IsEmpty())
+		return _pattern == null ? Directory.GetFiles(_folderPath) : Directory.GetFiles(_folderPath,_pattern);
+	}
+
+	public static string[] GetFolderPathArray(string _folderPath,string _pattern = null)
+	{
+		return _pattern == null ? Directory.GetDirectories(_folderPath) : Directory.GetDirectories(_folderPath,_pattern);
+	}
+
+	/// <param name="_filePath">The absolute file path.</param>
+	public static bool IsFileExist(string _filePath,bool _needException = false)
+	{
+		if(_filePath.IsEmpty())
 		{
 			if(_needException)
 			{
@@ -131,51 +138,96 @@ public static partial class FileUtility
 			return false;
 		}
 
-#if UNITY_EDITOR
-		//? Check inner path
-		var fullPath = GetAbsolutePath(_path,true);
+		var result = File.Exists(_filePath);
 
-		if(File.Exists(fullPath))
+		if(!result && _needException)
 		{
-			return true;
-		}
-		else if(Directory.Exists(fullPath))
-		{
-			return true;
+			throw new FileNotFoundException($"{_filePath} is not file path.");
 		}
 
-		//? Check outer path
-		fullPath = GetAbsolutePath(_path,false);
-
-		if(File.Exists(fullPath))
-		{
-			return true;
-		}
-		else if(Directory.Exists(fullPath))
-		{
-			return true;
-		}
-
-		if(IsFilePath(_path))
-		{
-			if(_needException)
-			{
-				throw new FileNotFoundException($"File is not exist. [{fullPath}]");
-			}
-		}
-		else
-		{
-			if(_needException)
-			{
-				throw new DirectoryNotFoundException($"Folder is not exist. [{fullPath}]");
-			}
-		}
-
-		return false;
-#else
-		return true;
-#endif
+		return result;
 	}
+
+	/// <param name="_filePath">The absolute folder path.</param>
+	public static bool IsFolderExist(string _folderPath,bool _needException = false)
+	{
+		if(_folderPath.IsEmpty())
+		{
+			if(_needException)
+			{
+				throw new NullReferenceException("Path is null.");
+			}
+
+			return false;
+		}
+
+		var result = Directory.Exists(_folderPath);
+
+		if(!result && _needException)
+		{
+			throw new FileNotFoundException($"{_folderPath} is not folder path.");
+		}
+
+		return result;
+	}
+
+// 	public static bool IsExist(string _path,bool _needException = false)
+// 	{
+// 		if(_path.IsEmpty())
+// 		{
+// 			if(_needException)
+// 			{
+// 				throw new NullReferenceException("Path is null.");
+// 			}
+
+// 			return false;
+// 		}
+
+// #if UNITY_EDITOR
+// 		//? Check inner path
+// 		var fullPath = GetAbsolutePath(_path,true);
+
+// 		if(File.Exists(fullPath))
+// 		{
+// 			return true;
+// 		}
+// 		else if(Directory.Exists(fullPath))
+// 		{
+// 			return true;
+// 		}
+
+// 		//? Check outer path
+// 		fullPath = GetAbsolutePath(_path,false);
+
+// 		if(File.Exists(fullPath))
+// 		{
+// 			return true;
+// 		}
+// 		else if(Directory.Exists(fullPath))
+// 		{
+// 			return true;
+// 		}
+
+// 		if(IsFilePath(_path))
+// 		{
+// 			if(_needException)
+// 			{
+// 				throw new FileNotFoundException($"File is not exist. [{fullPath}]");
+// 			}
+// 		}
+// 		else
+// 		{
+// 			if(_needException)
+// 			{
+// 				throw new DirectoryNotFoundException($"Folder is not exist. [{fullPath}]");
+// 			}
+// 		}
+
+// 		return false;
+// #else
+// 		return true;
+// #endif
+// 	}
 
 	public static string RemoveHeaderDirectory(string _path,string _header)
 	{
@@ -199,7 +251,7 @@ public static partial class FileUtility
 		var count = 1;
 		var newPath = _path;
 
-		while(File.Exists(newPath))
+		while(IsFileExist(newPath))
 		{
 			newPath = PathCombine(directory,$"{name} ({count}){extension}");
 			count++;

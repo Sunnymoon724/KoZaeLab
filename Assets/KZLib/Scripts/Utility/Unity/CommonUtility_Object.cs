@@ -11,7 +11,7 @@ using UnityEditor;
 
 using Object = UnityEngine.Object;
 
-public static partial class UnityUtility
+public static partial class CommonUtility
 {	
 	public static TObject CopyObject<TObject>(TObject _object,Transform _parent = null) where TObject : Object
 	{
@@ -134,9 +134,9 @@ public static partial class UnityUtility
 	{
 		var assetList = new List<TObject>();
 
-		foreach(var path in FileUtility.GetAllFilePathInFolder(FileUtility.GetAbsolutePath(_folderPath,true)))
+		foreach(var path in GetAllFilePathInFolder(GetAbsolutePath(_folderPath,true)))
 		{
-			var asset = AssetDatabase.LoadAssetAtPath<TObject>(FileUtility.GetAssetsPath(path));
+			var asset = AssetDatabase.LoadAssetAtPath<TObject>(GetAssetsPath(path));
 
 			if(asset != null)
 			{
@@ -149,12 +149,12 @@ public static partial class UnityUtility
 
 	public static void SaveAsset(string _dataPath,Object _asset)
 	{
-		var folderPath = FileUtility.GetParentAbsolutePath(_dataPath,true);
-		var assetPath = FileUtility.GetAssetsPath(_dataPath);
+		var folderPath = GetParentAbsolutePath(_dataPath,true);
+		var assetPath = GetAssetsPath(_dataPath);
 
-		FileUtility.CreateFolder(folderPath);
+		CreateFolder(folderPath);
 
-		if(FileUtility.IsExist(_dataPath))
+		if(IsFileExist(_dataPath))
 		{
 			AssetDatabase.DeleteAsset(assetPath);
 		}

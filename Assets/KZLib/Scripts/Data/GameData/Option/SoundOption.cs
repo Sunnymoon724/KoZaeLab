@@ -93,7 +93,7 @@ namespace GameData
 					return;
 				}
 
-				LogTag.Data.I($"Master Volume is changed. [{value}]");
+				LogTag.System.I($"Master Volume is changed. [{value}]");
 
 				SaveOption(m_SoundData,true);
 			}
@@ -112,7 +112,7 @@ namespace GameData
 					return;
 				}
 
-				LogTag.Data.I($"Music Volume is changed. [{value}]");
+				LogTag.System.I($"Music Volume is changed. [{value}]");
 
 				SaveOption(m_SoundData,true);
 			}
@@ -131,7 +131,7 @@ namespace GameData
 					return;
 				}
 
-				LogTag.Data.I($"Effect Volume is changed. [{value}]");
+				LogTag.System.I($"Effect Volume is changed. [{value}]");
 
 				SaveOption(m_SoundData,true);
 			}

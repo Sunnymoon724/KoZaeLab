@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public static class DateTimeExtension
 {
@@ -13,5 +14,10 @@ public static class DateTimeExtension
 	public static DateTime GetNextDay(this DateTime _dateTime)
 	{
 		return _dateTime.Date.AddDays(1);
+	}
+
+	public static bool IsEqual(this DateTime _dateTime1,DateTime _dateTime2)
+	{
+		return _dateTime1 == _dateTime2 || Mathf.Abs(_dateTime1.Ticks-_dateTime2.Ticks) < 100;
 	}
 }

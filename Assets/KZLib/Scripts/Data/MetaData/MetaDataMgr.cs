@@ -52,7 +52,7 @@ namespace KZLib
 			var accumulatedTime = 0.0d;
 			var stopwatch = new Stopwatch();
 
-			LogTag.Data.I("Meta Data Load Start");
+			LogTag.System.I("Meta Data Load Start");
 
 			for(var i=0;i<assetArray.Length;i++)
 			{
@@ -72,7 +72,7 @@ namespace KZLib
 
 			stopwatch.Stop();
 
-			LogTag.Data.I($"Meta Data Load Complete [Count : {assetArray.Length} / Duration : {(DateTime.Now-start).TotalSeconds}]");
+			LogTag.System.I($"Meta Data Load Complete [Count : {assetArray.Length} / Duration : {(DateTime.Now-start).TotalSeconds}]");
 
 			m_Loaded = true;
 		}
@@ -163,7 +163,7 @@ namespace KZLib
 					continue;
 				}
 
-				if(!GameUtility.CheckVersion(metaData.Version) || !metaData.IsExist)
+				if(!CommonUtility.CheckVersion(metaData.Version) || !metaData.IsExist)
 				{
 					continue;
 				}
@@ -207,7 +207,7 @@ namespace KZLib
 				LoadMetaFile(assetArray[i]);
 			}
 
-			LogTag.Data.I($"Meta Data Load Complete [Count : {assetArray.Length} / Duration : {(DateTime.Now-start).TotalSeconds}]");
+			LogTag.System.I($"Meta Data Load Complete [Count : {assetArray.Length} / Duration : {(DateTime.Now-start).TotalSeconds}]");
 
 			m_Loaded = true;
 		}

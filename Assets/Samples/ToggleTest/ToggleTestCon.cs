@@ -6,6 +6,6 @@ public class ToggleTest : MonoBehaviour
 {
 	public void OnClick()
 	{
-		LogTag.Effect.I("AAA");
+		LogTag.UI.I("AAA");
 	}
 }

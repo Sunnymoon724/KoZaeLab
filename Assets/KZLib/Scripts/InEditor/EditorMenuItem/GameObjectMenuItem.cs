@@ -143,7 +143,7 @@ namespace KZLib.KZMenu
 
 		#region Category Line
 		[MenuItem("GameObject/Create Category Line",false,0)]
-		private static void CreateCategoryLine()
+		private static void OnCreateCategoryLine()
 		{
 			Undo.IncrementCurrentGroup();
 
@@ -152,11 +152,11 @@ namespace KZLib.KZMenu
 
 			Undo.RegisterCreatedObjectUndo(line,"Create CategoryLine");
 
-			var selection = Selection.activeGameObject;
+			var selected = Selection.activeGameObject;
 
-			if(selection)
+			if(selected)
 			{
-				var root = selection.transform.root;
+				var root = selected.transform.root;
 
 				line.transform.SetSiblingIndex(root.GetSiblingIndex()+1);
 			}
@@ -164,6 +164,28 @@ namespace KZLib.KZMenu
 			Undo.CollapseUndoOperations(group);
 		}
 		#endregion Category Line
+
+		#region Copy Hierarchy
+		[MenuItem("GameObject/Copy Hierarchy",false,-10)]
+		private static void OnCopyHierarchy()
+		{
+			var selected = Selection.activeGameObject;
+
+			if(!selected)
+			{
+				return;
+			}
+
+			CommonUtility.CopyToClipBoard(selected.transform.GetHierarchy());
+		}
+
+		[MenuItem("GameObject/Copy Hierarchy",true)]
+		private static bool IsCopyHierarchy()
+		{
+			return Selection.gameObjects.Length == 1;
+		}
+
+		#endregion Copy Hierarchy
 	}
 }	
 #endif

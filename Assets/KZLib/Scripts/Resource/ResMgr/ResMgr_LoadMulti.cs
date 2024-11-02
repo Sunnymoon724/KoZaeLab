@@ -108,7 +108,7 @@ namespace KZLib
 
 				for(var i=0;i<cacheDataArray.Length;i++)
 				{
-					var data = UnityUtility.CopyObject(cacheDataArray[i]);
+					var data = CommonUtility.CopyObject(cacheDataArray[i]);
 
 					if(GameSettings.In.IsServerResource)
 					{
@@ -127,17 +127,17 @@ namespace KZLib
 		private TObject[] LoadDataArray<TObject>(string _folderPath) where TObject : Object
 		{
 #if UNITY_EDITOR
-			if(FileUtility.IsFilePath(_folderPath))
+			if(CommonUtility.IsFilePath(_folderPath))
 			{
 				throw new ArgumentException($"Path is file path.[path : {_folderPath}]");
 			}
 #endif
 			if(_folderPath.StartsWith(RESOURCES))
 			{
-				return Resources.LoadAll<TObject>(FileUtility.RemoveHeaderDirectory(_folderPath,RESOURCES));
+				return Resources.LoadAll<TObject>(CommonUtility.RemoveHeaderDirectory(_folderPath,RESOURCES));
 			}
 
-			var assetPath = FileUtility.GetAssetsPath(_folderPath);
+			var assetPath = CommonUtility.GetAssetsPath(_folderPath);
 
 			if(GameSettings.In.IsServerResource)
 			{
@@ -145,7 +145,7 @@ namespace KZLib
 			}
 
 #if UNITY_EDITOR
-			return UnityUtility.LoadAssetGroupInFolder<TObject>(assetPath).ToArray();
+			return CommonUtility.LoadAssetGroupInFolder<TObject>(assetPath).ToArray();
 #else
 			return null;
 #endif

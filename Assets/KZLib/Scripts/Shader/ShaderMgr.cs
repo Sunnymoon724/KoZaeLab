@@ -72,17 +72,17 @@ namespace KZLib
 
 				if(m_Grayscale)
 				{
-					UnityUtility.DestroyObject(m_Grayscale);
+					CommonUtility.DestroyObject(m_Grayscale);
 				}
 
 				if(m_Blur)
 				{
-					UnityUtility.DestroyObject(m_Blur);
+					CommonUtility.DestroyObject(m_Blur);
 				}
 
 				if(m_GrayscaleBlur)
 				{
-					UnityUtility.DestroyObject(m_GrayscaleBlur);
+					CommonUtility.DestroyObject(m_GrayscaleBlur);
 				}
 			}
 

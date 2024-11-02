@@ -130,7 +130,7 @@ public class MetaSettings : SheetSettings<MetaSettings>
 			if(MetaType == null)
 			{
 				var fileName = $"{GameSettings.In.MetaDataScriptPath}/{SheetName}Data.cs";
-				var scriptPath = FileUtility.GetAbsolutePath(fileName,true);
+				var scriptPath = CommonUtility.GetAbsolutePath(fileName,true);
 
 				//? Create script
 				WriteScript(scriptPath);
@@ -172,7 +172,7 @@ public class MetaSettings : SheetSettings<MetaSettings>
 
 					var enumText = $"{Environment.NewLine}\tpublic enum {pair.Key}{Environment.NewLine}\t{{{Environment.NewLine}{builder}\t}}";
 
-					FileUtility.AddOrUpdateTemplateText(GameSettings.In.MetaDataScriptPath,"MetaDataEnum.txt","MetaDataEnum.cs",enumText,(text)=>
+					CommonUtility.AddOrUpdateTemplateText(GameSettings.In.MetaDataScriptPath,"MetaDataEnum.txt","MetaDataEnum.cs",enumText,(text)=>
 					{
 						var footer = text[..text.LastIndexOf("}")];
 
@@ -186,14 +186,14 @@ public class MetaSettings : SheetSettings<MetaSettings>
 
 		private void WriteScript(string _scriptPath)
 		{
-			if(FileUtility.IsExist(_scriptPath))
+			if(CommonUtility.IsFileExist(_scriptPath))
 			{
 				LogTag.Editor.W($"Script is exist. [Path : {_scriptPath}]");
 
 				return;
 			}
 
-			var data = FileUtility.GetTemplateText("MetaData.txt");
+			var data = CommonUtility.GetTemplateText("MetaData.txt");
 
 			data = data.Replace("$ClassName",SheetName);
 			data = data.Replace("$MemberFields",MemberFields);
@@ -201,7 +201,7 @@ public class MetaSettings : SheetSettings<MetaSettings>
 			data = data.Replace("$InfoMemberProperties",InfoMemberProperties);
 			data = data.Replace("$ClassConstructor",ClassConstructor);
 
-			FileUtility.WriteTextToFile(_scriptPath,data);
+			CommonUtility.WriteTextToFile(_scriptPath,data);
 		}
 
 		private bool IsExistEnum()
@@ -410,7 +410,13 @@ public class MetaSettings : SheetSettings<MetaSettings>
 
 	public void RefreshMetaData(Type _type)
 	{
-		var sheet = m_SheetList.Find(x => x.MetaType.Equals(_type)) ?? throw new NullReferenceException($"{_type} sheet is not exist.");
+		var sheet = m_SheetList.Find(x => x.MetaType.Equals(_type));
+
+		if(sheet == null)
+		{
+			CommonUtility.DisplayError(new NullReferenceException($"{_type} sheet is not exist."));
+		}
+
 		var excelFile = new ExcelFile(sheet.AbsoluteFilePath);
 		var dataList = Activator.CreateInstance(typeof(List<>).MakeGenericType(_type)) as IList;
 
@@ -426,12 +432,12 @@ public class MetaSettings : SheetSettings<MetaSettings>
 
 		if(dataList.Count < 1)
 		{
-			throw new ArgumentException($"{_type} data count is 0.");
+			CommonUtility.DisplayError(new ArgumentException($"{_type} data count is 0."));
 		}
 
 		var bytes = MessagePackSerializer.Serialize(dataList,MessagePackSerializerOptions.Standard.WithResolver(MessagePackResolver.In));
 
-		FileUtility.WriteByteToFile(FileUtility.GetAbsolutePath($"{GameSettings.In.MetaDataFilePath}/{_type.Name}.bytes",true),bytes);
+		CommonUtility.WriteByteToFile(CommonUtility.GetAbsolutePath($"{GameSettings.In.MetaDataFilePath}/{_type.Name}.bytes",true),bytes);
 
 		AssetDatabase.Refresh();
 

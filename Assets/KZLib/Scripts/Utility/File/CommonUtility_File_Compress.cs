@@ -3,10 +3,15 @@ using System;
 using System.IO;
 using System.IO.Compression;
 
-public static partial class FileUtility
+public static partial class CommonUtility
 {
 	public static byte[] CompressBytes(byte[] _bytes)
 	{
+		if(_bytes == null || _bytes.Length == 0)
+		{
+			throw new NullReferenceException("Bytes is null.");
+		}
+
 		using var memoryStream = new MemoryStream();
 
 		using(var archive = new ZipArchive(memoryStream,ZipArchiveMode.Create,true))
@@ -21,40 +26,26 @@ public static partial class FileUtility
 		return memoryStream.ToArray();
 	}
 
+	/// <param name="_sourcePath">The absolute path of the file or folder.</param>
 	public static byte[] CompressZip(string _sourcePath)
 	{
-		var absolutePath = GetAbsolutePath(_sourcePath,false);
-
-		if(!IsExist(absolutePath,true))
+		if(IsFilePath(_sourcePath))
 		{
-			return null;
-		}
+			IsFileExist(_sourcePath,true);
 
-		if(IsFilePath(absolutePath))
-		{
-			using var memoryStream = new MemoryStream();
-
-			using(var archive = new ZipArchive(memoryStream,ZipArchiveMode.Create,true))
-			{
-				var entry = archive.CreateEntry(Path.GetFileName(absolutePath),CompressionLevel.Optimal);
-
-				using var entryStream = entry.Open();
-				using var fileStream = File.OpenRead(absolutePath);
-
-				fileStream.CopyTo(entryStream);
-			}
-
-			return memoryStream.ToArray();
+			return CompressBytes(ReadFileToBytes(_sourcePath));
 		}
 		else
 		{
+			IsFolderExist(_sourcePath,true);
+
 			using var memoryStream = new MemoryStream();
 
 			using(var archive = new ZipArchive(memoryStream,ZipArchiveMode.Create,true))
 			{
-				foreach(var filePath in Directory.GetFiles(absolutePath,"*.*",SearchOption.AllDirectories))
+				foreach(var filePath in Directory.GetFiles(_sourcePath,"*.*",SearchOption.AllDirectories))
 				{
-					var relativePath = Path.GetRelativePath(absolutePath,filePath);
+					var relativePath = Path.GetRelativePath(_sourcePath,filePath);
 					var entry = archive.CreateEntry(relativePath,CompressionLevel.Optimal);
 
 					using var entryStream = entry.Open();
@@ -68,29 +59,27 @@ public static partial class FileUtility
 		}
 	}
 
+	/// <param name="_sourcePath">The absolute path of the file or folder.</param>
+	/// <param name="_destinationPath">The absolute path of the file or folder.</param>
 	public static void CompressZip(string _sourcePath,string _destinationPath)
 	{
-		var bytes = CompressZip(_sourcePath);
-
-		if(bytes == null)
-		{
-			return;
-		}
-
+		var compress = CompressZip(_sourcePath) ?? throw new InvalidOperationException($"{_sourcePath} compress failed.");
 		var extension = GetExtension(_destinationPath);
 
-		if(extension.IsEmpty())
-		{
-			_destinationPath = string.Format("{0}.zip",_destinationPath);
-		}
-		else if(!extension.IsEqual(".zip"))
+		if(!extension.IsEqual(".zip"))
 		{
 			throw new ArgumentException($"Not supported extension. [{_destinationPath}]");
 		}
 
-		var destinationPath = GetUniquePath(GetAbsolutePath(_destinationPath,false));
+		if(extension.IsEmpty())
+		{
+			_destinationPath = $"{_destinationPath}.zip";
+		}
 
-		WriteByteToFile(destinationPath,bytes);
+		//? destinationPath == unique file path
+		var destinationPath = GetUniquePath(_destinationPath);
+
+		WriteByteToFile(destinationPath,compress);
 	}
 
 	public static byte[] DecompressBytes(byte[] _bytes)
@@ -108,27 +97,31 @@ public static partial class FileUtility
 		return memoryStream.ToArray();
 	}
 
+	/// <param name="_sourcePath">The absolute path of the file.</param>
+	/// <param name="_destinationPath">The absolute path of the folder.</param>
 	public static void DecompressZip(string _sourcePath,string _destinationPath)
 	{
-		var extension = GetExtension(_sourcePath);
+		var sourceExtension = GetExtension(_sourcePath);
+		var destinationExtension = GetExtension(_destinationPath);
 
-		if(!extension.IsEqual(".zip"))
+		if(!sourceExtension.IsEqual(".zip"))
 		{
-			throw new ArgumentException($"Not supported extension. [{_destinationPath}]");
+			throw new ArgumentException($"{_sourcePath} is not zip file.");
 		}
 
-		var sourcePath = GetAbsolutePath(_sourcePath,false);
-
-		if(!IsExist(sourcePath,true))
+		if(!destinationExtension.IsEmpty())
 		{
-			return;
+			throw new ArgumentException($"{_destinationPath} is not folder path.");
 		}
 
-		var destinationPath = GetUniquePath(GetAbsolutePath(_destinationPath,false));
+		IsFileExist(_sourcePath,true);
+
+		//? destinationPath == unique folder path
+		var destinationPath = GetUniquePath(_destinationPath);
 
 		CreateFolder(destinationPath);
 
-		using var zipStream = new FileStream(destinationPath,FileMode.Open);
+		using var zipStream = new FileStream(_sourcePath,FileMode.Open);
 		using var archive = new ZipArchive(zipStream,ZipArchiveMode.Read);
 
 		foreach(var entry in archive.Entries)

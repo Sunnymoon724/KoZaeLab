@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
-public static partial class UnityUtility
+public static partial class CommonUtility
 {
 	public static void SetCanvasCullTransparentMeshOff(GameObject _panel)
 	{

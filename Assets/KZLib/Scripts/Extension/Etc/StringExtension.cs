@@ -40,6 +40,16 @@ public static class StringExtension
 	}
 	#endregion Normalize
 
+	#region Encoding
+	public static string CP949ToUTF8(this string _text)
+	{
+		var cp949 = Encoding.GetEncoding("ks_c_5601-1987");
+		var utf8 = Encoding.UTF8;
+
+		return utf8.GetString(Encoding.Convert(cp949,utf8,cp949.GetBytes(_text)));
+	}
+	#endregion Encoding
+
 	#region Character
 	/// <summary>
 	/// Check character in string
@@ -611,7 +621,7 @@ public static class StringExtension
 #if UNITY_EDITOR
 		if(layer == -1 && _autoCreate)
 		{
-			UnityUtility.AddLayer(_layerName);
+			CommonUtility.AddLayer(_layerName);
 
 			layer = LayerMask.NameToLayer(_layerName);
 		}

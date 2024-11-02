@@ -57,7 +57,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 				return;
 			}
 
-			UnityUtility.ChangePackageName(value);
+			CommonUtility.ChangePackageName(value);
 		}
 	}
 
@@ -66,7 +66,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 	{
 		get
 		{
-			var sceneGroup = EditorBuildSettings.scenes.Where(x=>x.enabled).Select(y=>FileUtility.GetOnlyName(y.path));
+			var sceneGroup = EditorBuildSettings.scenes.Where(x=>x.enabled).Select(y=>CommonUtility.GetOnlyName(y.path));
 
 			return $"{string.Join("|",sceneGroup)}  [Count : {sceneGroup.Count()}]";
 		}
@@ -107,7 +107,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 	[VerticalGroup("Build/App/Button",Order = 30),Button("Build App",ButtonSizes.Large)]
 	public void OnBuildApp()
 	{
-		if(!UnityUtility.DisplayCheckBeforeExecute("App Build"))
+		if(!CommonUtility.DisplayCheckBeforeExecute("App Build"))
 		{
 			return;
 		}
@@ -125,13 +125,9 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 		foreach(var name in Enum.GetNames(typeof(BuildTarget)))
 		{
 			var target = name.ToEnum<BuildTarget>();
+			var platform = name.ToEnum(BuildPlatformType.None);
 
-			if(!Enum.TryParse(name,true,out BuildPlatformType platform))
-			{
-				continue;
-			}
-
-			if(!m_BuildPlatform.HasFlag(platform))
+			if(platform == BuildPlatformType.None || !m_BuildPlatform.HasFlag(platform))
 			{
 				continue;
 			}
@@ -149,7 +145,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 				{
 					LogTag.Build.I("Open folder.");
 
-					FileUtility.Open(AppFullPath);
+					CommonUtility.Open(AppFullPath);
 				}
 
 				if(m_UploadAfterAppBuild)
@@ -198,7 +194,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 
 				var text = string.Join("\n",textList);
 
-				throw new Exception($"{target} build failed. [result : {text}]");
+				CommonUtility.DisplayError(new Exception($"{target} build failed. [result : {text}]"));
 			}
 		}
 	}
@@ -229,15 +225,15 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 		{
 			case BuildTarget.Android:
 			{
-				return FileUtility.PathCombine(AppFullPath,$"{_appName}.apk");
+				return CommonUtility.PathCombine(AppFullPath,$"{_appName}.apk");
 			}
 			case BuildTarget.iOS:
 			{
-				return FileUtility.PathCombine(AppFullPath,_appName);
+				return CommonUtility.PathCombine(AppFullPath,_appName);
 			}
 			default:
 			{
-				return FileUtility.PathCombine(AppFullPath,_appName);
+				return CommonUtility.PathCombine(AppFullPath,_appName);
 			}
 		}
 	}

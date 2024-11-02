@@ -15,7 +15,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 
 	private string GetFullPath(string _type)
 	{
-		return FileUtility.PathCombine(FileUtility.GetProjectPath(),"Builds",_type,CurrentBuildTargetToString);
+		return CommonUtility.PathCombine(CommonUtility.GetProjectPath(),"Builds",_type,CurrentBuildTargetToString);
 	}
 
 	private BuildTarget CurrentBuildTarget => EditorUserBuildSettings.activeBuildTarget;
@@ -38,7 +38,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 		}
 		finally
 		{
-			UnityUtility.ClearProgressBar();
+			CommonUtility.ClearProgressBar();
 
 			if(CurrentBuildTarget != currentTarget)
 			{
@@ -51,7 +51,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 
 	private (string FileName,byte[] FileData) ConvertToFileGroup(string _filePath)
 	{
-		return (FileUtility.GetFileName(_filePath),CurrentBuildTarget == BuildTarget.Android ? FileUtility.ReadFileToBytes(_filePath) : FileUtility.CompressZip(_filePath));
+		return (CommonUtility.GetFileName(_filePath),CurrentBuildTarget == BuildTarget.Android ? CommonUtility.ReadFileToBytes(_filePath) : CommonUtility.CompressZip(_filePath));
 	}
 }
 #endif

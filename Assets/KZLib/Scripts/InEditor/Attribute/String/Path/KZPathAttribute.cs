@@ -69,12 +69,12 @@ namespace KZLib.KZAttribute
 				if(Attribute.IsIncludeAssets)
 				{
 					//? Path in assets folder
-					if(!FileUtility.IsIncludeAssetsHeader(dataPath))
+					if(!CommonUtility.IsIncludeAssetsHeader(dataPath))
 					{
-						UnityUtility.DisplayError($"{dataPath} is not in assets folder.");
+						CommonUtility.DisplayError(new NullReferenceException($"{dataPath} is not in assets folder."));
 					}
 
-					ValueEntry.SmartValue = FileUtility.RemoveAssetsHeader(dataPath);
+					ValueEntry.SmartValue = CommonUtility.RemoveAssetsHeader(dataPath);
 				}
 				else
 				{
@@ -121,7 +121,7 @@ namespace KZLib.KZAttribute
 		{
 			return DrawButton(_rect,SdfIconType.Folder2,_isValid,()=>
 			{
-				FileUtility.Open(FileUtility.GetParentPath(FileUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets)));
+				CommonUtility.Open(CommonUtility.GetParentPath(CommonUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets)));
 			});
 		}
 	}

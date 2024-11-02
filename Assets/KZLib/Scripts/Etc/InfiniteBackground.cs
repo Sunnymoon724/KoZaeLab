@@ -38,7 +38,7 @@ namespace KZLib
 
 			for(var i=0;i<m_Count;i++)
 			{
-				var prefab = UnityUtility.CopyObject(m_Pivot.gameObject,transform);
+				var prefab = CommonUtility.CopyObject(m_Pivot.gameObject,transform);
 
 				prefab.transform.SetLocalPositionXY(m_StartPoint+new Vector2(i*m_Width,0.0f));
 				prefab.SetActiveSelf(true);

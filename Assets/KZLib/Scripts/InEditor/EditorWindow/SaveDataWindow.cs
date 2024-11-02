@@ -36,7 +36,7 @@ namespace KZLib.KZWindow
 					m_Data = value;
 
 					var key = RealKey;
-					var data = m_IsEncrypted ? SecurityUtility.AESEncryptData(m_TableName,value) : value;
+					var data = m_IsEncrypted ? CommonUtility.AESEncryptData(m_TableName,value) : value;
 
 					SaveDataMgr.In.SetData(m_TableName,key,data);
 
@@ -44,7 +44,7 @@ namespace KZLib.KZWindow
 				}
 			}
 
-			public string RealKey => m_IsEncrypted ? SecurityUtility.AESEncryptData(m_TableName,m_Key) : m_Key;
+			public string RealKey => m_IsEncrypted ? CommonUtility.AESEncryptData(m_TableName,m_Key) : m_Key;
 
 			private readonly bool m_IsEncrypted = false;
 			private readonly string m_TableName = null;
@@ -95,7 +95,7 @@ namespace KZLib.KZWindow
 
 				try
 				{
-					var key = SecurityUtility.AESDecryptData(value,data.Key);
+					var key = CommonUtility.AESDecryptData(value,data.Key);
 				}
 				catch(CryptographicException)
 				{
@@ -104,8 +104,8 @@ namespace KZLib.KZWindow
 
 				foreach(var pair in SaveDataMgr.In.GetDataInTable(TableName))
 				{
-					var key = isEncrypted ? SecurityUtility.AESDecryptData(TableName,pair.Key) : pair.Key;
-					var result = isEncrypted ? SecurityUtility.AESDecryptData(TableName,pair.Value) : pair.Value;
+					var key = isEncrypted ? CommonUtility.AESDecryptData(TableName,pair.Key) : pair.Key;
+					var result = isEncrypted ? CommonUtility.AESDecryptData(TableName,pair.Value) : pair.Value;
 
 					m_DataList.Add(new SaveData(TableName,key,result,isEncrypted));
 				}

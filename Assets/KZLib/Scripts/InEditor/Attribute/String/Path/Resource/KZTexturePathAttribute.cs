@@ -30,7 +30,7 @@ namespace KZLib.KZAttribute
 		{
 			var viewer = EditorWindow.GetWindow<TextureWindow>("Viewer");
 
-			var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(FileUtility.GetAssetsPath(ValueEntry.SmartValue));
+			var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(CommonUtility.GetAssetsPath(ValueEntry.SmartValue));
 
 			viewer.SetTexture(sprite.texture);
 			viewer.Show();

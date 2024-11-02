@@ -17,20 +17,20 @@ namespace KZLib.KZAttribute
 	{
 		protected override string GetNewPath()
 		{
-			return FileUtility.GetFolderPathInPanel("Change new path.");
+			return CommonUtility.GetFolderPathInPanel("Change new path.");
 		}
 
 		protected override Rect OnClickToOpen(Rect _rect,bool _isValid)
 		{
 			return DrawButton(_rect,SdfIconType.Folder2,_isValid,()=>
 			{
-				FileUtility.Open(FileUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets));
+				CommonUtility.Open(CommonUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets));
 			});
 		}
 
 		protected override bool IsValidPath()
 		{
-			return FileUtility.IsExist(ValueEntry.SmartValue);
+			return CommonUtility.IsFolderExist(ValueEntry.SmartValue);
 		}
     }
 #endif

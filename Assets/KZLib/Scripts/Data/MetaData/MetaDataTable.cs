@@ -53,10 +53,10 @@ namespace KZLib
 		[HorizontalGroup("Option/Menu/Export",Order = 0),Button("ToJson",ButtonSizes.Medium)]
 		protected void OnExportToJson()
 		{
-			var filePath = FileUtility.PathCombine(FileUtility.GetParentAbsolutePath(m_CurrentPath,true),string.Format("{0}.json",m_TableName));
+			var filePath = CommonUtility.PathCombine(CommonUtility.GetParentAbsolutePath(m_CurrentPath,true),string.Format("{0}.json",m_TableName));
 			var text = JsonConvert.SerializeObject(m_MetaDataList);
 
-			FileUtility.WriteTextToFile(filePath,text);
+			CommonUtility.WriteTextToFile(filePath,text);
 		}
 
 		[BoxGroup("Table",ShowLabel = false,Order = 1)]

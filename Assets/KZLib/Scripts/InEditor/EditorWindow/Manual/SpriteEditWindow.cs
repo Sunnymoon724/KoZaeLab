@@ -9,63 +9,54 @@ namespace KZLib.KZWindow
 {
 	public class SpriteEditWindow : OdinEditorWindow
 	{
-#pragma warning disable IDE0051
 		[BoxGroup("Button",ShowLabel = false,Order = 1)]
 		[HorizontalGroup("Button/0"),Button("Get Image",ButtonSizes.Large)]
-        private void OnGetImage()
+        protected void OnGetImage()
         {
-			m_SpritePath = FileUtility.GetFilePathInPanel("Change new path.",".png");
+			m_SpritePath = CommonUtility.GetFilePathInPanel("Change new path.",".png");
 		}
 
 		[HorizontalGroup("Button/0"),Button("Convert Image",ButtonSizes.Large),EnableIf(nameof(IsExist))]
-		private void OnConvertImage()
+		protected void OnConvertImage()
 		{
-			var bytes = FileUtility.ReadFileToBytes(m_SpritePath);
+			var bytes = CommonUtility.ReadFileToBytes(m_SpritePath);
 			var texture = new Texture2D(1,1);
 
-			try
+			if(texture.LoadImage(bytes))
 			{
-				if(texture.LoadImage(bytes))
+				var color = m_AfterColor;
+				var pixelArray = texture.GetPixels32();
+				var flag = false;
+
+				for(var i=0;i<pixelArray.Length;i++)
 				{
-					var color = m_AfterColor;
-					var pixelArray = texture.GetPixels32();
-					var flag = false;
-
-					for(var i=0;i<pixelArray.Length;i++)
+					if(ChangeColor(pixelArray[i]))
 					{
-						if(ChangeColor(pixelArray[i]))
+						if(!m_IncludeAlpha)
 						{
-							if(!m_IncludeAlpha)
-							{
-								color.a = pixelArray[i].a;
-							}
-
-							pixelArray[i] = color;
-
-							flag = true;
+							color.a = pixelArray[i].a;
 						}
-					}
 
-					if(flag)
-					{
-						texture.SetPixels32(pixelArray);
+						pixelArray[i] = color;
 
-						FileUtility.WriteTextureToFile(string.Concat(FileUtility.GetPathWithoutExtension(m_SpritePath),"_Convert.png"),texture);
-
-						UnityUtility.DisplayInfo("Image change completed");
+						flag = true;
 					}
 				}
-				else
+
+				if(flag)
 				{
-					throw new Exception("Fail to load image.");
+					texture.SetPixels32(pixelArray);
+
+					CommonUtility.WriteTextureToFile(string.Concat(CommonUtility.GetPathWithoutExtension(m_SpritePath),"_Convert.png"),texture);
+
+					CommonUtility.DisplayInfo("Image change completed");
 				}
 			}
-			catch(Exception _ex)
+			else
 			{
-				UnityUtility.DisplayError($"Image change failed. [{_ex.Message}]");
+				CommonUtility.DisplayError(new Exception("Fail to load image."));
 			}
 		}
-#pragma warning restore IDE0051
 
 		private bool IsExist => !m_SpritePath.IsEmpty() && !m_BeforeColor.Equals(m_AfterColor);
 

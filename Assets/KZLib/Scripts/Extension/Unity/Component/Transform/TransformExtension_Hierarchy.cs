@@ -126,7 +126,7 @@ public static partial class TransformExtension
 
 	public static Transform AddChild(this Transform _origin,GameObject _prefab)
 	{
-		var child = UnityUtility.CopyObject(_prefab);
+		var child = CommonUtility.CopyObject(_prefab);
 
 		_origin.SetChildInside(child.transform,true);
 
@@ -147,7 +147,7 @@ public static partial class TransformExtension
 
 	public static Transform AddUIChild(this Transform _origin,GameObject _prefab)
 	{
-		var child = UnityUtility.CopyObject(_prefab);
+		var child = CommonUtility.CopyObject(_prefab);
 
 		_origin.SetChildInside(child.transform,false);
 
@@ -256,7 +256,7 @@ public static partial class TransformExtension
 
 			child.SetParent(null);
 
-			UnityUtility.DestroyObject(child.gameObject);
+			CommonUtility.DestroyObject(child.gameObject);
 		}
 
 		return _transform;
@@ -291,7 +291,7 @@ public static partial class TransformExtension
 				continue;
 			}
 
-			UnityUtility.DestroyObject(child.gameObject);
+			CommonUtility.DestroyObject(child.gameObject);
 		}
 
 		return _transform;

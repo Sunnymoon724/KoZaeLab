@@ -75,7 +75,7 @@ public abstract class EffectClip : BaseComponent
 
 		if(!IsPlayable)
 		{
-			LogTag.Effect.W($"{gameObject.name} duration is 0.");
+			LogTag.FX.W($"{gameObject.name} duration is 0.");
 
 			EndEffect(false);
 
@@ -116,7 +116,7 @@ public abstract class EffectClip : BaseComponent
 		// fail -> destroy
 		if(!_result)
 		{
-			UnityUtility.DestroyObject(gameObject);
+			CommonUtility.DestroyObject(gameObject);
 
 			return;
 		}

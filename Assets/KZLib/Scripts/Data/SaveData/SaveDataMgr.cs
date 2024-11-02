@@ -46,7 +46,7 @@ namespace KZLib
 				CreateTable(_tableName);
 			}
 
-			LogTag.Data.I($"Sql Load Complete. [{_tableName}]");
+			LogTag.System.I($"Sql Load Complete. [{_tableName}]");
 		}
 
 		protected override void ClearAll()
@@ -67,7 +67,7 @@ namespace KZLib
 				return false;
 			}
 
-			return m_CacheDataDict.ContainsKey(SecurityUtility.AESEncryptData(_tableName,_key));
+			return m_CacheDataDict.ContainsKey(CommonUtility.AESEncryptData(_tableName,_key));
 		}
 
 		public IEnumerable<string> GetTableNameGroup()
@@ -108,7 +108,7 @@ namespace KZLib
 				throw new ArgumentException($"{_tableName} is not found.");
 			}
 
-			var code = SecurityUtility.Base64Encode(_data);
+			var code = CommonUtility.Base64Encode(_data);
 
 			if(dataDict.ContainsKey(_key))
 			{
@@ -205,14 +205,14 @@ namespace KZLib
 				{
 					removeList.Add(key);
 
-					LogTag.Data.W($"{code} == null || {value} == null -> remove {key}");
+					LogTag.System.W($"{code} == null || {value} == null -> remove {key}");
 
 					continue;
 				}
 
-				var encode = SecurityUtility.Base64Encode(value);
+				var encode = CommonUtility.Base64Encode(value);
 
-				if(code.IsEqual(SecurityUtility.Base64Encode(value)))
+				if(code.IsEqual(CommonUtility.Base64Encode(value)))
 				{
 					_dataDict.AddOrUpdate(key,encode);
 				}
@@ -220,7 +220,7 @@ namespace KZLib
 				{
 					removeList.Add(key);
 
-					LogTag.Data.W($"data(encode) != code [{encode} != {code}] -> remove {key}");
+					LogTag.System.W($"data(encode) != code [{encode} != {code}] -> remove {key}");
 				}
 			}
 
@@ -263,7 +263,7 @@ namespace KZLib
 			get
 			{
 #if UNITY_EDITOR
-			return $"data source={FileUtility.GetProjectParentPath()}/{DATABASE_NAME}";
+			return $"data source={CommonUtility.GetProjectParentPath()}/{DATABASE_NAME}";
 #elif !UNITY_EDITOR && UNITY_ANDROID
 			return $"URI=file:{UnityEngine.Application.persistentDataPath}/{DATABASE_NAME}";
 #elif !UNITY_EDITOR && UNITY_STANDALONE

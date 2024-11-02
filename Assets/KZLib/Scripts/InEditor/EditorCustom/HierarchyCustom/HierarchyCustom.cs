@@ -36,19 +36,19 @@ namespace KZLib.KZEditor
 		[InitializeOnLoadMethod]
 		private static void Initialize()
 		{
-			UnityUtility.AddTag(Global.CATEGORY_TAG);
+			CommonUtility.AddTag(Global.CATEGORY_TAG);
 
 			SetHierarchy();
 		}
 
 		protected override void DoResetCustom()
 		{
-			if(UnityUtility.DisplayCheck("Hierarchy Custom Reset","Hierarchy Custom Reset?"))
+			if(CommonUtility.DisplayCheck("Hierarchy Custom Reset","Hierarchy Custom Reset?"))
 			{
 				EditorPrefs.DeleteKey(HIERARCHY_DATA);
 				s_Hierarchy = null;
 
-				UnityUtility.DisplayInfo("Hierarchy Custom Reset Complete");
+				CommonUtility.DisplayInfo("Hierarchy Custom Reset Complete");
 			}
 		}
 

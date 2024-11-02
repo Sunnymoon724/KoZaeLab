@@ -125,7 +125,7 @@ namespace GameData
 					return;
 				}
 
-				LogTag.Data.I($"ScreenResolution is changed. [{value}]");
+				LogTag.System.I($"ScreenResolution is changed. [{value}]");
 
 				SaveOption(m_GraphicData,true);
 			}
@@ -141,7 +141,7 @@ namespace GameData
 					return;
 				}
 
-				LogTag.Data.I($"FrameRate is changed. [{value}]");
+				LogTag.System.I($"FrameRate is changed. [{value}]");
 
 				SaveOption(m_GraphicData,true);
 			}
@@ -159,7 +159,7 @@ namespace GameData
 				return;
 			}
 
-			LogTag.Data.I($"Quality is added. [+{_qualityTag}]");
+			LogTag.System.I($"Quality is added. [+{_qualityTag}]");
 
 			SaveOption(m_GraphicData,true);
 		}
@@ -171,7 +171,7 @@ namespace GameData
 				return;
 			}
 
-			LogTag.Data.I($"Quality is removed. [-{_qualityTag}]");
+			LogTag.System.I($"Quality is removed. [-{_qualityTag}]");
 
 			SaveOption(m_GraphicData,true);
 		}

@@ -42,7 +42,7 @@ public class ShaderImageUI : BaseImageUI
 
 		if(m_Image && m_Image.material)
 		{
-			UnityUtility.DestroyObject(m_Image.material);
+			CommonUtility.DestroyObject(m_Image.material);
 
 			m_Image.material = null;
 		}

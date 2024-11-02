@@ -72,7 +72,7 @@ namespace GameData
 			{
 				if(!m_LanguageDict.ContainsKey(value))
 				{
-					LogTag.Data.W($"{value} is not exist.");
+					LogTag.System.W($"{value} is not exist.");
 
 					return;
 				}
@@ -82,7 +82,7 @@ namespace GameData
 					return;
 				}
 
-				LogTag.Data.I($"Language is changed. [{value}]");
+				LogTag.System.I($"Language is changed. [{value}]");
 
 				SaveOption(m_LanguageData,true);
 			}

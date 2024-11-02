@@ -19,10 +19,10 @@ namespace KZLib.KZFiles
 
 		public ExcelFile(string _filePath)
 		{
-			FileUtility.IsExist(_filePath,true);
+			CommonUtility.IsFileExist(_filePath,true);
 
 			using var stream = new FileStream(_filePath,FileMode.Open,FileAccess.Read,FileShare.ReadWrite);
-			var extension = FileUtility.GetExtension(_filePath);
+			var extension = CommonUtility.GetExtension(_filePath);
 
 			if(extension.IsEqual(".xls"))
 			{
@@ -126,7 +126,7 @@ namespace KZLib.KZFiles
 
 				if(KEY_WORD_ARRAY.Any(x=>x.IsEqual(header.ToLowerInvariant())))
 				{
-					LogTag.File.W($"{header} is invalid title.");
+					LogTag.System.W($"{header} is invalid title.");
 
 					continue;
 				}
@@ -231,7 +231,7 @@ namespace KZLib.KZFiles
 						}
 						catch(Exception _ex)
 						{
-							LogTag.File.E($"There is a problem with the excel file. [sheet : {_sheetName} / error : {_ex.Message} / location : row({i+1})/column({headerArray[j]})]");
+							LogTag.System.E($"There is a problem with the excel file. [sheet : {_sheetName} / error : {_ex.Message} / location : row({i+1})/column({headerArray[j]})]");
 						}
 					}
 				}
@@ -287,7 +287,7 @@ namespace KZLib.KZFiles
 						}
 						catch(Exception _ex)
 						{
-							LogTag.File.E($"There is a problem with the excel file. [sheet : {_sheetName} / error : {_ex.Message} / location : row({i+1})/column({headerArray[j]})]");
+							LogTag.System.E($"There is a problem with the excel file. [sheet : {_sheetName} / error : {_ex.Message} / location : row({i+1})/column({headerArray[j]})]");
 						}
 					}
 				}

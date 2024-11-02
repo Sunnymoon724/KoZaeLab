@@ -116,7 +116,7 @@ public static class EnumerableExtension
 		{
 			if(weight < 0.0f)
 			{
-				throw new ArgumentException("가중치가 음수입니다.");
+				throw new ArgumentException($"{weight} < 0.0f");
 			}
 
 			total += weight;
@@ -155,9 +155,6 @@ public static class EnumerableExtension
 		return default;
 	}
 
-	/// <summary>
-	/// 임의의 값을 지정된 횟수만큼 가져옵니다.
-	/// </summary>
 	public static List<TValue> GetRndValueList<TValue>(this IEnumerable<TValue> _sources,int _count,bool _overlap = true)
 	{
 		if(_sources.IsNullOrEmpty())
@@ -186,7 +183,7 @@ public static class EnumerableExtension
 		return resultList;
 	}
 
-	public static bool Exist<TValue>(this IEnumerable<TValue> _sources,Func<TValue,bool> _predicate)
+	public static bool Exist<TValue>(this IEnumerable<TValue> _sources,Predicate<TValue> _predicate)
 	{
 		foreach(var data in _sources)
 		{
@@ -199,7 +196,7 @@ public static class EnumerableExtension
 		return false;
 	}
 
-	public static void Each<TValue>(this IEnumerable<TValue> _sources,Action<TValue,int> _predicate)
+	public static void Enumerate<TValue>(this IEnumerable<TValue> _sources,Action<TValue,int> _predicate)
 	{
 		var index = 0;
 
@@ -269,6 +266,6 @@ public static class EnumerableExtension
 	{
 		var count = _sources.Count();
 
-		return count == 0 ? string.Format("Empty - [{0}]",_sources) : string.Format("{0} - [{1}]",count,string.Join(_separator,_sources));
+		return count == 0 ? $"Empty - [{_sources}]" : $"{count} - [{string.Join(_separator, _sources)}]";
 	}
 }

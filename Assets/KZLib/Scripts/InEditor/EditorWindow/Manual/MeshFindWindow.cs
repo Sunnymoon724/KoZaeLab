@@ -37,7 +37,7 @@ namespace KZLib.KZWindow
 
 				m_MeshDataList.Clear();
 
-				foreach(var pair in UnityUtility.LoadAssetDataGroup<GameObject>("t:prefab"))
+				foreach(var pair in CommonUtility.LoadAssetDataGroup<GameObject>("t:prefab"))
 				{
 					foreach(var filter in pair.Item2.GetComponentsInChildren<MeshFilter>(true))
 					{
@@ -52,7 +52,7 @@ namespace KZLib.KZWindow
 
 				if(m_MeshDataList.IsNullOrEmpty())
 				{
-					UnityUtility.DisplayInfo("There is no prefab with a mesh.");
+					CommonUtility.DisplayInfo("There is no prefab with a mesh.");
 				}
 			}
 		}

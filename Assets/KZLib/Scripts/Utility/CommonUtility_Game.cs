@@ -8,7 +8,7 @@ using UnityEditor;
 
 #endif
 
-public static class GameUtility
+public static partial class CommonUtility
 {
 	public static void ClearUnloadedAssetMemory()
 	{
@@ -157,7 +157,7 @@ public static class GameUtility
 	{
 		if(AutoSingletonMB<TBehaviour>.HasInstance)
 		{
-			UnityUtility.DestroyObject(AutoSingletonMB<TBehaviour>.In.gameObject);
+			CommonUtility.DestroyObject(AutoSingletonMB<TBehaviour>.In.gameObject);
 		}
 	}
 
@@ -172,17 +172,17 @@ public static class GameUtility
 #if UNITY_EDITOR
 	public static string GetTemplateFilePath(string _fileName)
 	{
-		var projectPath = FileUtility.GetProjectPath();
+		var projectPath = GetProjectPath();
 		var packagePath = string.Format("Packages/com.bsheepstudio.kzlib/WorkResources/Templates/{0}",_fileName);
 
-		if(FileUtility.IsExist(FileUtility.PathCombine(projectPath,packagePath)))
+		if(IsFileExist(PathCombine(projectPath,packagePath)))
 		{
 			return packagePath;
 		}
 
 		var assetPath = string.Format("Assets/KZLib/WorkResources/Templates/{0}",_fileName);
 
-		if(FileUtility.IsExist(FileUtility.GetAbsolutePath(assetPath,true)))
+		if(IsFileExist(GetAbsolutePath(assetPath,true)))
 		{
 			return assetPath;
 		}
@@ -201,7 +201,7 @@ public static class GameUtility
 	{
 		var filePath = GetTemplateFilePath(_fileName);
 
-		return FileUtility.IsStartWithAssetsHeader(filePath) ? FileUtility.GetAbsolutePath(filePath,true) : FileUtility.PathCombine(FileUtility.GetProjectPath(),filePath);
+		return IsStartWithAssetsHeader(filePath) ? GetAbsolutePath(filePath,true) : PathCombine(GetProjectPath(),filePath);
 	}
 #endif
 }

@@ -78,7 +78,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 	{
 		var setting = AddressableAssetSettingsDefaultObject.Settings;
 
-		if(!UnityUtility.DisplayCheckBeforeExecute("Bundle Build"))
+		if(!CommonUtility.DisplayCheckBeforeExecute("Bundle Build"))
 		{
 			return;
 		}
@@ -118,7 +118,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 		{
 			LogTag.Build.I("Open folder.");
 
-			FileUtility.Open(BundleFullPath);
+			CommonUtility.Open(BundleFullPath);
 		}
 
 		if(m_IsUploadAfterBundleBuild)

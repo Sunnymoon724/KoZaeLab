@@ -64,7 +64,7 @@ namespace KZLib
 
 		private void SetData(string _key,string _data)
 		{
-			var data = m_Encrypt ? SecurityUtility.AESEncryptData(m_TableName,_data) : _data;
+			var data = m_Encrypt ? CommonUtility.AESEncryptData(m_TableName,_data) : _data;
 
 			SaveDataMgr.In.SetData(m_TableName,EncryptText(_key),data);
 		}
@@ -101,7 +101,7 @@ namespace KZLib
 			return bool.TryParse(GetData(_key),out var result) ? result : _default;
 		}
 
-		public TEnum GetEnum<TEnum>(string _key,TEnum _default = default) where TEnum : struct
+		public TEnum GetEnum<TEnum>(string _key,TEnum _default = default) where TEnum : struct,Enum
 		{
 			return Enum.TryParse(GetData(_key),true,out TEnum result) ? result : _default;
 		}
@@ -158,12 +158,12 @@ namespace KZLib
 
 		private string EncryptText(string _text)
 		{
-			return m_Encrypt ? SecurityUtility.AESEncryptData(m_TableName,_text) : _text;
+			return m_Encrypt ? CommonUtility.AESEncryptData(m_TableName,_text) : _text;
 		}
 
 		private string DecryptText(string _text)
 		{
-			return m_Encrypt ? SecurityUtility.AESDecryptData(m_TableName,_text) : _text;
+			return m_Encrypt ? CommonUtility.AESDecryptData(m_TableName,_text) : _text;
 		}
 	}
 }

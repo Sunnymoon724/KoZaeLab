@@ -48,7 +48,7 @@ namespace KZLib
 
 		public TComponent Get(Transform _parent = null)
 		{
-			var data = m_PoolQueue.Count > 0 ? m_PoolQueue.Dequeue() : UnityUtility.CopyObject(m_Pivot).GetComponent<TComponent>();
+			var data = m_PoolQueue.Count > 0 ? m_PoolQueue.Dequeue() : CommonUtility.CopyObject(m_Pivot).GetComponent<TComponent>();
 
 			if(_parent)
 			{

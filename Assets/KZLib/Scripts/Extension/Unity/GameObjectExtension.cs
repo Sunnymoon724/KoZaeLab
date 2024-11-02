@@ -116,6 +116,11 @@ public static class GameObjectExtension
 		return _object.GetComponent<TComponent>() ?? _object.AddComponent<TComponent>();
 	}
 
+	public static bool IsInComponent<TComponent>(this GameObject _object) where TComponent : Component
+	{
+		return _object.GetComponent<TComponent>() is not null;
+	}
+
 	public static void ReAssignShader(this GameObject _object)
 	{
 		foreach(var graphic in _object.GetComponentsInChildren<TMPro.TMP_Text>(true))

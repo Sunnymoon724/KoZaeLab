@@ -11,7 +11,7 @@ namespace KZLib
 		public static readonly Vector3 HIDE_POS = new(0.0f,3000.0f,0.0f);
 		public static readonly Vector3 DEFAULT_POS = Vector3.zero;
 
-		//? 캔버스들 (처음에 넣고 도중에 수정 불가능)
+		//? Canvas List
 		private readonly List<RepositoryUI> m_RepositoryList = new();
 
 		[SerializeField] private RepositoryUI2D m_Repository2D = null;
@@ -70,7 +70,7 @@ namespace KZLib
 
 		#region Register
 		/// <summary>
-		/// 등록만 하고 열지는 않는다.
+		/// Register -> Not open
 		/// </summary>
 		public WindowUI Register(UITag _tag,bool _disable = true)
 		{
@@ -127,28 +127,28 @@ namespace KZLib
 
 		private WindowUI MakeUI(UITag _tag)
 		{
-			var data = ResMgr.In.GetObject(GetUIPath(_tag));
+			var result = ResMgr.In.GetObject(GetUIPath(_tag));
 
-			if(!data)
+			if(!result)
 			{
-				throw new NullReferenceException(string.Format("{0}의 타입의 UI 프리펩이 없습니다.",_tag.ToString()));
+				throw new NullReferenceException($"{_tag} is not exist.");
 			}
 
-			if(!data.TryGetComponent<WindowUI>(out var window))
+			if(!result.TryGetComponent<WindowUI>(out var window))
 			{
-				UnityUtility.DestroyObject(data);
+				CommonUtility.DestroyObject(result);
 
-				throw new NullReferenceException(string.Format("{0}의 타입의 UI 스크립트가 없습니다.",_tag.ToString()));
+				throw new NullReferenceException($"Component is not exist in {_tag}.");
 			}
 
 			if(window.Tag != _tag)
 			{
-				UnityUtility.DestroyObject(data);
+				CommonUtility.DestroyObject(result);
 
-				throw new NullReferenceException(string.Format("만들어진 UI[{0}]와 해당 UI[{1}]의 타입이 다름니다.",window.Tag,_tag.ToString()));
+				throw new NullReferenceException($"ui tag is not matched. [{window.Tag} != {_tag}]");
 			}
 
-			transform.SetUIChild(data.transform);
+			transform.SetUIChild(result.transform);
 
 			if(IsLibraryUI(_tag))
 			{
@@ -256,9 +256,6 @@ namespace KZLib
 			return window.IsHide;
 		}
 
-		/// <summary>
-		/// _tagGroup에 해당하는 UI의 상태를 바꾼다. null이면 모든 UI의 상태를 바꾼다.
-		/// </summary>
 		public IEnumerable<UITag> HideAll(bool _hide,IEnumerable<UITag> _includeGroup = null,IEnumerable<UITag> _excludeGroup = null)
 		{
 			var tagList = new List<UITag>();

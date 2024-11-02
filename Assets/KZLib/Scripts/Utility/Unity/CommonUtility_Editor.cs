@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEditorInternal;
 
-public static partial class UnityUtility
+public static partial class CommonUtility
 {
 	#region Tag & Layer
 	public static void AddTag(string _tag)
@@ -131,21 +131,16 @@ public static partial class UnityUtility
 	#endregion Player Settings
 
 	#region DisplayDialog
-	public static void DisplayErrorPath(string _path)
+	public static void DisplayError(Exception _exception)
 	{
-		DisplayError($"{_path} is not exist.");
-	}
+		DisplayDialogWindow("Error",_exception.Message,"Ok");
 
-	public static void DisplayError(string _message)
-	{
-		DisplayDialogWindow("Error",_message,"ok");
-
-		throw new Exception(_message);
+		throw _exception;
 	}
 
 	public static void DisplayInfo(string _message)
 	{
-		DisplayDialogWindow("Info",_message,"ok");
+		DisplayDialogWindow("Info",_message,"Ok");
 	}
 
 	public static bool DisplayCheckBeforeExecute(string _name)

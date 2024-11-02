@@ -53,7 +53,7 @@ namespace TransitionPanel
 
 			if(TransitionMaterial)
 			{
-				UnityUtility.DestroyObject(TransitionMaterial);
+				CommonUtility.DestroyObject(TransitionMaterial);
 			}
 		}
 

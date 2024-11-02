@@ -2,34 +2,16 @@
 using UnityEditor;
 using UnityEngine;
 
-public static partial class FileUtility
+public static partial class CommonUtility
 {
 	public static string GetFilePathInPanel(string _header,string _kind = "*")
 	{
-		var filePath = EditorUtility.OpenFilePanel(_header,Application.dataPath,_kind);
-
-		if(filePath.IsEmpty())
-		{
-			return string.Empty;
-		}
-
-		IsExist(filePath,true);
-
-		return filePath;
+		return EditorUtility.OpenFilePanel(_header,Application.dataPath,_kind);
 	}
 
 	public static string GetFolderPathInPanel(string _header)
 	{
-		var folderPath = EditorUtility.OpenFolderPanel(_header,Application.dataPath,string.Empty);
-
-		if(folderPath.IsEmpty())
-		{
-			return string.Empty;
-		}
-
-		IsExist(folderPath);
-
-		return folderPath;
+		return EditorUtility.OpenFolderPanel(_header,Application.dataPath,string.Empty);
 	}
 
 	public static string GetTSVFile()
@@ -60,12 +42,7 @@ public static partial class FileUtility
 	{
 		var filePath = GetFilePathInPanel(_header,_kind);
 
-		if(filePath.IsEmpty())
-		{
-			return string.Empty;
-		}
-
-		return ReadFileToText(filePath);
+		return filePath.IsEmpty() ? null : ReadFileToText(filePath);
 	}
 }
 #endif

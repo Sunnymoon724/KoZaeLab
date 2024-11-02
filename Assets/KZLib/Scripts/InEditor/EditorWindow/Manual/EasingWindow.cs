@@ -19,7 +19,7 @@ namespace KZLib.KZWindow
 
 		[HorizontalGroup("Value",Order = 1)]
 		[HorizontalGroup("Value/0",Order = 0),ShowInInspector,LabelText("Current Value"),PropertyRange(0.0f,1.0f)]
-		private float CurrentValue
+		protected float CurrentValue
 		{
 			get => m_CurrentValue;
 			set
@@ -31,10 +31,10 @@ namespace KZLib.KZWindow
 		}
 
 		[HorizontalGroup("Value/1",Order = 1),SerializeField,LabelText("Result Value"),KZRichText]
-		private float m_ResultValue = 0.0f;
+		protected float m_ResultValue = 0.0f;
 
 		[HorizontalGroup("Graph",Order = 2),OnInspectorGUI]
-		private void DrawGraph()
+		protected void DrawGraph()
 		{
 			GUILayout.Space(20);
 

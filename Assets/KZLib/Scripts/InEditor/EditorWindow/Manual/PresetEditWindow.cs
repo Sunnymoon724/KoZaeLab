@@ -29,7 +29,7 @@ namespace KZLib.KZWindow
 
 				m_PresetList.Clear();
 
-				m_PresetList.AddRange(UnityUtility.LoadAssetGroup<Preset>("t:preset"));
+				m_PresetList.AddRange(CommonUtility.LoadAssetGroup<Preset>("t:preset"));
 
 				if(m_PresetList.IsNullOrEmpty())
 				{

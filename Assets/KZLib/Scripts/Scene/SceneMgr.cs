@@ -15,6 +15,8 @@ namespace KZLib
 {
 	public class SceneMgr : AutoSingletonMB<SceneMgr>
 	{
+		private const float UNLOAD_MIN_TIME = 300.0f;
+
 		private bool m_SceneChanging = false;
 		public bool IsSceneChanging => m_SceneChanging;
 
@@ -32,9 +34,18 @@ namespace KZLib
 		[HorizontalGroup("Stack",Order = 1),SerializeField,DisplayAsString,LabelText("Scene Stack"),ListDrawerSettings(ShowFoldout = false,IsReadOnly = true)]
 		private Stack<SceneBinding> m_SceneStack = new();
 
+		private float m_LastUnloadTime = 0.0f;
+
+		protected override void Initialize()
+		{
+			Application.lowMemory += OnLowMemory;
+		}
+
 		protected override void Release()
 		{
-			GameUtility.ClearUnloadedAssetMemory();
+			Application.lowMemory -= OnLowMemory;
+
+			CommonUtility.ClearUnloadedAssetMemory();
 		}
 
 		public void ReloadScene(TransitionData _data,bool _loading,SceneBinding.BindingParam _param = null)
@@ -96,7 +107,7 @@ namespace KZLib
 
 			m_SceneChanging = true;
 
-			GameUtility.LockInput();
+			CommonUtility.LockInput();
 
 			// darker
 			await UIMgr.In.PlayTransitionOutAsync(_data,false);
@@ -136,7 +147,7 @@ namespace KZLib
 
 			await UIMgr.In.PlayTransitionInAsync(_data,true);
 
-			GameUtility.UnLockInput();
+			CommonUtility.UnLockInput();
 
 			m_SceneChanging = false;
 		}
@@ -150,7 +161,7 @@ namespace KZLib
 
 			_onProgress?.Invoke(0.0f);
 
-			LogTag.Scene.I($"{_sceneName} create start.");
+			LogTag.System.I($"{_sceneName} create start.");
 
 			var sceneType = Type.GetType(_sceneName) ?? throw new NullReferenceException($"{_sceneName} is not exists.");
 			var sceneBiding = (SceneBinding) Activator.CreateInstance(sceneType) ?? throw new NullReferenceException($"{_sceneName} create failed.");
@@ -162,7 +173,7 @@ namespace KZLib
 				_onProgress?.Invoke(progress*0.99f);
 			},_param);
 
-			LogTag.Scene.I($"{_sceneName} create end.");
+			LogTag.System.I($"{_sceneName} create end.");
 
 			_onProgress?.Invoke(1.0f);
 		}
@@ -180,7 +191,7 @@ namespace KZLib
 
 			var sceneName = current.SceneName;
 
-			LogTag.Scene.I($"{sceneName} remove start.");
+			LogTag.System.I($"{sceneName} remove start.");
 
 			m_SceneStack.Pop();
 
@@ -195,13 +206,24 @@ namespace KZLib
 #if UNITY_EDITOR
 			EditorUtility.UnloadUnusedAssetsImmediate(true);
 #endif
-			LogTag.Scene.I($"{sceneName} remove end.");
+			LogTag.System.I($"{sceneName} remove end.");
 
-			GameUtility.ClearUnloadedAssetMemory();
+			CommonUtility.ClearUnloadedAssetMemory();
 
 			_onProgress?.Invoke(1.0f);
 		}
 
 		private SceneBinding CurrentScene => m_SceneStack.IsNullOrEmpty() ? null : m_SceneStack.Peek();
+
+		private void OnLowMemory()
+		{
+			if(Time.unscaledTime-m_LastUnloadTime < UNLOAD_MIN_TIME)
+			{
+				return;
+			}
+
+			m_LastUnloadTime = Time.unscaledTime;
+			Resources.UnloadUnusedAssets();
+		}
 	}
 }

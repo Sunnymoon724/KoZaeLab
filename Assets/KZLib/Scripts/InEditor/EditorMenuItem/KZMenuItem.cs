@@ -42,58 +42,58 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Option/Delete All Mgr",false,(int) MenuType.Option_Delete)]
 		private static void OnDeleteAllMgr()
 		{
-			if(!UnityUtility.DisplayCheck("Delete all manager","Delete all manager?"))
+			if(!CommonUtility.DisplayCheck("Delete all manager","Delete all manager?"))
 			{
 				return;
 			}
 
-			GameUtility.ReleaseManager();
+			CommonUtility.ReleaseManager();
 
 			AssetsMenuItem.ReLoad();
 
-			UnityUtility.DisplayInfo("Managers are deleted.");
+			CommonUtility.DisplayInfo("Managers are deleted.");
 		}
 
 		[MenuItem("KZMenu/Option/Delete Empty Folder",false,(int) MenuType.Option_Delete)]
 		private static void OnDeleteAllEmptyFolder()
 		{
-			if(!UnityUtility.DisplayCheck("Delete all empty folder","Delete all empty folder?"))
+			if(!CommonUtility.DisplayCheck("Delete all empty folder","Delete all empty folder?"))
 			{
 				return;
 			}
 
-			FileUtility.DeleteEmptyDirectory(Application.dataPath,()=>
+			CommonUtility.DeleteEmptyDirectory(Application.dataPath,()=>
 			{
 				AssetDatabase.Refresh();
 
-				UnityUtility.DisplayInfo("Empty folder are deleted");
+				CommonUtility.DisplayInfo("Empty folder are deleted");
 			});
 		}
 
 		[MenuItem("KZMenu/Option/Unload Unused Assets Immediate",false,(int) MenuType.Option_Delete)]
 		private static void OnUnloadUnusedAssets()
 		{
-			if(!UnityUtility.DisplayCheck("Unload unused assets","Unload unused assets?"))
+			if(!CommonUtility.DisplayCheck("Unload unused assets","Unload unused assets?"))
 			{
 				return;
 			}
 
 			EditorUtility.UnloadUnusedAssetsImmediate(true);
 
-			UnityUtility.DisplayInfo("Assets are unloaded");
+			CommonUtility.DisplayInfo("Assets are unloaded");
 		}
 
 		[MenuItem("KZMenu/Option/Find Missing Component",false,(int) MenuType.Option_Find)]
 		private static void OnFindMissingComponent()
 		{
-			if(!UnityUtility.DisplayCheck("Find missing component","Find missing component?"))
+			if(!CommonUtility.DisplayCheck("Find missing component","Find missing component?"))
 			{
 				return;
 			}
 
 			var builder = new StringBuilder();
 
-			foreach(var pair in UnityUtility.LoadAssetDataGroup<GameObject>("t:prefab"))
+			foreach(var pair in CommonUtility.LoadAssetDataGroup<GameObject>("t:prefab"))
 			{
 				pair.Item2.transform.TraverseChildren((child)=>
 				{
@@ -124,7 +124,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Option/Find Missing MeshFilter",false,(int) MenuType.Option_Find)]
 		private static void OnFindMissingMeshFilter()
 		{
-			if(!UnityUtility.DisplayCheck("Find missing meshFilter","Find missing meshFilter?"))
+			if(!CommonUtility.DisplayCheck("Find missing meshFilter","Find missing meshFilter?"))
 			{
 				return;
 			}
@@ -132,7 +132,7 @@ namespace KZLib.KZMenu
 			var builder = new StringBuilder();
 			var resultList = new List<string>();
 
-			foreach(var pair in UnityUtility.LoadAssetDataGroup<GameObject>("t:prefab"))
+			foreach(var pair in CommonUtility.LoadAssetDataGroup<GameObject>("t:prefab"))
 			{
 				pair.Item2.transform.TraverseChildren((child)=>
 				{
@@ -223,13 +223,13 @@ namespace KZLib.KZMenu
 		{
 			if(_isExist)
 			{
-				UnityUtility.DisplayInfo($"{_name} is already exist.\n");
+				CommonUtility.DisplayInfo($"{_name} is already exist.\n");
 
 				return false;
 			}
 			else
 			{
-				return UnityUtility.DisplayCheck($"Add {_name}",$"Add {_name}?");
+				return CommonUtility.DisplayCheck($"Add {_name}",$"Add {_name}?");
 			}
 		}
 
@@ -298,14 +298,14 @@ namespace KZLib.KZMenu
 
 		private static string GetScenePath(string _sceneName)
 		{
-			var pathGroup = UnityUtility.GetAssetPathGroup(string.Format("t:Scene {0}",_sceneName));
+			var pathGroup = CommonUtility.GetAssetPathGroup(string.Format("t:Scene {0}",_sceneName));
 
 			return pathGroup.IsNullOrEmpty() ? string.Empty : pathGroup.First();
 		}
 
 		private static void OnOpenScene(string _title,string _sceneName)
 		{
-			if(UnityUtility.DisplayCheck($"Open {_title} scene",$"Open {_title} scene?"))
+			if(CommonUtility.DisplayCheck($"Open {_title} scene",$"Open {_title} scene?"))
 			{
 				var scenePath = GetScenePath(_sceneName);
 

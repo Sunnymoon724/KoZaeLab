@@ -71,7 +71,7 @@ public abstract class RepositoryUI : SortingLayerCanvas
 		{
 			if(ResMgr.HasInstance)
 			{
-				UnityUtility.DestroyObject(_window.gameObject);
+				CommonUtility.DestroyObject(_window.gameObject);
 			}
 		}
 	}

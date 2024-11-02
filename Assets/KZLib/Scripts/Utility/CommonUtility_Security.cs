@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-public static class SecurityUtility
+public static partial class CommonUtility
 {
 	/// <summary>
 	/// Encode UTF8 -> Encrypt by AES -> Convert Base64
@@ -110,7 +110,7 @@ public static class SecurityUtility
 
 	public static string GetCheckSum(string _filePath)
 	{
-		FileUtility.IsExist(_filePath,true);
+		IsFileExist(_filePath);
 
 		using var stream = File.OpenRead(_filePath);
 		var md5 = new MD5CryptoServiceProvider();

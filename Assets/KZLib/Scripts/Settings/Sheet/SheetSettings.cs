@@ -14,19 +14,19 @@ public abstract class SheetSettings<TObject> : OuterBaseSettings<TObject> where 
 	[HorizontalGroup("Sheet/Add",Order = 0),Button("Add Sheet",ButtonSizes.Large),PropertyTooltip("File must not be inside the Unity folder."),ShowIf(nameof(IsShowAddButton))]
     protected void OnAddSheet()
     {
-		var filePath = FileUtility.GetExcelFilePath();
+		var filePath = CommonUtility.GetExcelFilePath();
 
 		if(filePath.IsEmpty())
 		{
 			return;
 		}
 
-		if(FileUtility.IsIncludeAssetsHeader(filePath))
+		if(CommonUtility.IsIncludeAssetsHeader(filePath))
 		{
-			UnityUtility.DisplayError($"{filePath} is included in the Assets folder.");
+			CommonUtility.DisplayError(new NullReferenceException($"{filePath} is included in the Assets folder."));
 		}
 
-		var localPath = filePath[(FileUtility.GetProjectParentPath().Length+1)..];
+		var localPath = filePath[(CommonUtility.GetProjectParentPath().Length+1)..];
 
 		SetSheetData(localPath);
 	}
@@ -47,7 +47,7 @@ public abstract class SheetSettings<TObject> : OuterBaseSettings<TObject> where 
 
 		protected string m_ErrorLog = null;
 
-		protected bool IsExistPath => FileUtility.IsExist(AbsoluteFilePath);
+		protected bool IsExistPath => CommonUtility.IsFileExist(AbsoluteFilePath);
 		protected bool IsExistSheetName => !m_SheetName.IsEmpty();
 
 		[HorizontalGroup("Menu",Order = 0)]
@@ -55,10 +55,10 @@ public abstract class SheetSettings<TObject> : OuterBaseSettings<TObject> where 
 		protected string LocalFilePath
 		{
 			get => m_LocalFilePath;
-			set => m_LocalFilePath = FileUtility.RemoveHeaderDirectory(value,FileUtility.GetProjectParentPath());
+			set => m_LocalFilePath = CommonUtility.RemoveHeaderDirectory(value,CommonUtility.GetProjectParentPath());
 		}
 
-		public string AbsoluteFilePath => FileUtility.GetAbsolutePath(m_LocalFilePath,false);
+		public string AbsoluteFilePath => CommonUtility.GetAbsolutePath(m_LocalFilePath,false);
 
 		public SheetData(string _path)
 		{
@@ -92,7 +92,7 @@ public abstract class SheetSettings<TObject> : OuterBaseSettings<TObject> where 
 
 			if(m_SheetNameList.Count <= 0)
 			{
-				UnityUtility.DisplayError("Sheet name is not exist.");
+				CommonUtility.DisplayError(new NullReferenceException("Sheet name is not exist."));
 			}
 		}
 

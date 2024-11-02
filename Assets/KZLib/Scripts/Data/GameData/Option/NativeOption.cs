@@ -52,7 +52,7 @@ namespace GameData
 					return;
 				}
 
-				LogTag.Data.I($"Vibration is changed. [{value}]");
+				LogTag.System.I($"Vibration is changed. [{value}]");
 
 				SaveOption(m_NativeData,true);
 			}

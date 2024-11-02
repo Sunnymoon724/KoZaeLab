@@ -138,7 +138,7 @@ namespace KZLib
 			{
 				if(clip)
 				{
-					UnityUtility.DestroyObject(clip.gameObject);
+					CommonUtility.DestroyObject(clip.gameObject);
 				}
 			}
 
@@ -200,7 +200,7 @@ namespace KZLib
 			{
 				if(Clip)
 				{
-					UnityUtility.DestroyObject(Clip.gameObject);
+					CommonUtility.DestroyObject(Clip.gameObject);
 
 					return true;
 				}

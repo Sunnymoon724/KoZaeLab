@@ -24,7 +24,7 @@ public class HudTestCon : MonoBehaviour
 
 			await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 
-			LogTag.Sound.E("Sound Error");
+			LogTag.System.E("System Error");
 
 			await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 		}

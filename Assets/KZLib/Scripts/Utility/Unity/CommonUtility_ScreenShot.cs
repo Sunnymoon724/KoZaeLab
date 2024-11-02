@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public static partial class UnityUtility
+public static partial class CommonUtility
 {
 	public static Texture2D GetScreenShot(TextureFormat _format = TextureFormat.ARGB32)
 	{

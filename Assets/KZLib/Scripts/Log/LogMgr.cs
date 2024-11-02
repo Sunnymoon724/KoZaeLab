@@ -21,7 +21,7 @@ namespace KZLib
 		public IEnumerable<MessageData> LogDataGroup => m_LogDataQueue;
 
 #if !UNITY_EDITOR
-		private const int COOL_TIME_TIMER = 30; // 30초
+		private const int COOL_TIME_TIMER = 30; // 30s
 		private bool m_SendLock = false;
 #endif
 
@@ -77,14 +77,9 @@ namespace KZLib
 			return _logType switch
 			{
 				LogType.Warning => "Warning",
-				LogType.Error or LogType.Exception => "Error",
+				LogType.Error or LogType.Exception or LogType.Assert => "Error",
 				_ => "Info",
 			};
-		}
-
-		public string ShowLog(LogTag _tag,object _message)
-		{
-			return $"[{_tag}] {_message}";
 		}
 
 		private void AddLog(string _head,string _body)
@@ -114,7 +109,7 @@ namespace KZLib
 
 			await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
 
-			var texture = UnityUtility.GetScreenShot();
+			var texture = CommonUtility.GetScreenShot();
 
 			await WebRequestUtility.SendBugReportAsync(m_LogDataQueue,texture.EncodeToPNG());
 

@@ -51,7 +51,7 @@ public partial class NetworkSettings : InnerBaseSettings<NetworkSettings>
 	[HorizontalGroup("Network/GoogleDrive/Test/0",Order = 0),Button("Post Image",ButtonSizes.Large),ShowIf(nameof(m_UseGoogleDrive)),EnableIf(nameof(IsExistGoogleDrive))]
 	protected void OnPostImage_GoogleDrive()
 	{
-		WebRequestUtility.PostFile_GoogleDrive("Test","Ostrich.png",GameUtility.GetTestImageData(),"image/png");
+		WebRequestUtility.PostFile_GoogleDrive("Test","Ostrich.png",CommonUtility.GetTestImageData(),"image/png");
 	}
 
 	[HorizontalGroup("Network/GoogleDrive/Test/5",Order = 5),ShowInInspector,TableList(HideToolbar = true,AlwaysExpanded = true,IsReadOnly = true),ShowIf(nameof(m_UseGoogleDrive)),EnableIf(nameof(IsExistGoogleDrive))]

@@ -2,6 +2,9 @@
 
 namespace KZLib
 {
+	/// <summary>
+	/// BGM & UI [effect -> UI or use EffectClip]
+	/// </summary>
 	public class SoundMgr : Singleton<SoundMgr>
 	{
 		private bool m_Disposed = false;
@@ -63,6 +66,7 @@ namespace KZLib
 			m_UISource.mute= master.mute || effect.mute;
 		}
 
+		#region UI
 		public void PlayUIShot(string _path,float _volume = 1.0f)
 		{
 			PlayUIShot(ResMgr.In.GetAudioClip(_path),_volume);
@@ -72,10 +76,15 @@ namespace KZLib
 		{
 			m_UISource.PlayOneShot(_clip,_volume);
 		}
+		#endregion UI
 
-		public void ReplayBGM(float _time = 0.0f)
+		#region BGM
+		public void ReplayBGM(float? _time = null)
 		{
-			m_BGMSource.time = _time;
+			if(_time != null)
+			{
+				m_BGMSource.time = _time.Value;
+			}
 
 			m_BGMSource.Play();
 		}
@@ -99,6 +108,16 @@ namespace KZLib
 			m_BGMSource.Play();
 		}
 
+		public void PauseBGM()
+		{
+			m_BGMSource.Pause();
+		}
+
+		public bool IsPlayingBGM()
+		{
+			return m_BGMSource.isPlaying;
+		}
+
 		public void StopBGM(bool _clear)
 		{
 			m_BGMSource.Stop();
@@ -108,5 +127,6 @@ namespace KZLib
 				m_BGMSource.clip = null;
 			}
 		}
+		#endregion BGM
 	}
 }

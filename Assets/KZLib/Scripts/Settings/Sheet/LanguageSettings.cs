@@ -142,7 +142,7 @@ public class LanguageSettings : SheetSettings<LanguageSettings>
 				var result = JsonConvert.SerializeObject(languageDict,Formatting.Indented);
 				var filePath = $"{GameSettings.In.LanguageFilePath}/{language}.json";
 
-				FileUtility.WriteTextToFile(FileUtility.GetAbsolutePath(filePath,false),result);
+				CommonUtility.WriteTextToFile(CommonUtility.GetAbsolutePath(filePath,false),result);
 
 				languageList.Add(language);
 			}
@@ -154,7 +154,7 @@ public class LanguageSettings : SheetSettings<LanguageSettings>
 				GameDataMgr.In.Clear<GameData.Option>();
 			}
 
-			UnityUtility.DisplayInfo($"Language is created. [{string.Join(",",languageList)}]");
+			CommonUtility.DisplayInfo($"Language is created. [{string.Join(",",languageList)}]");
 		}
 	}
 	#endregion Language Sheet Data

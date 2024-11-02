@@ -29,7 +29,7 @@ public partial class NetworkSettings : InnerBaseSettings<NetworkSettings>
 	[HorizontalGroup("Network/Discord/Test/0"),Button("Post Image",ButtonSizes.Large),ShowIf(nameof(m_UseDiscord)),EnableIf(nameof(IsExistDiscord))]
 	protected void OnPostImageTest_Discord()
 	{
-		WebRequestUtility.PostWebHook_Discord("Image Test",new MessageData[] { new("Test","Hello World") },GameUtility.GetTestImageData());
+		WebRequestUtility.PostWebHook_Discord("Image Test",new MessageData[] { new("Test","Hello World") },CommonUtility.GetTestImageData());
 	}
 #endif
 }

@@ -50,7 +50,7 @@ namespace KZLib.KZWindow
 		{
 			foreach(var pair in _settingsDict)
 			{
-				var settings = UnityUtility.LoadAsset<ScriptableObject>($"t:ScriptableObject {pair.Value}");
+				var settings = CommonUtility.LoadAsset<ScriptableObject>($"t:ScriptableObject {pair.Value}");
 
 				if(settings == null)
 				{
