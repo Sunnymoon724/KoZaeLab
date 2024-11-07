@@ -2,7 +2,6 @@
 using KZLib;
 using System.Runtime.CompilerServices;
 
-
 #if UNITY_EDITOR
 
 using UnityEditor.Callbacks;
@@ -19,8 +18,7 @@ public class LogTag : Enumeration
 
 	public static readonly LogTag Build = new(nameof(Build));
 
-	public static readonly LogTag Server = new(nameof(Server));
-	public static readonly LogTag Client = new(nameof(Client));
+	public static readonly LogTag Network = new(nameof(Network));
 
 	public static readonly LogTag UI = new(nameof(UI));
 	public static readonly LogTag FX = new(nameof(FX));
@@ -38,10 +36,9 @@ public class LogTag : Enumeration
 public static class LogExtension
 {
 	#region I : Info Log
-	public static void I(this LogTag _log,object _message)
+	public static void I(this LogTag _log,object _message,[CallerMemberName] string _memberName = null,[CallerFilePath] string _filePath = null,[CallerLineNumber] int _lineNum = 0)
 	{
-		var text = CreateLog(_log,_message);
-
+		var text = LogMgr.In.CreateLog(_log,_message,_memberName,_filePath,_lineNum);
 #if UNITY_EDITOR
 		Debug.Log(text);
 #endif
@@ -49,10 +46,9 @@ public static class LogExtension
 	#endregion I : Info Log
 
 	#region W : Warning Log
-	public static void W(this LogTag _log,object _message)
+	public static void W(this LogTag _log,object _message,[CallerMemberName] string _memberName = null,[CallerFilePath] string _filePath = null,[CallerLineNumber] int _lineNum = 0)
 	{
-		var text = CreateLog(_log,_message);
-
+		var text = LogMgr.In.CreateLog(_log,_message,_memberName,_filePath,_lineNum);
 #if UNITY_EDITOR
 		Debug.LogWarning(text);
 #endif
@@ -60,10 +56,9 @@ public static class LogExtension
 	#endregion W : Warning Log
 
 	#region E : Error Log
-	public static void E(this LogTag _log,object _message)
+	public static void E(this LogTag _log,object _message,[CallerMemberName] string _memberName = null,[CallerFilePath] string _filePath = null,[CallerLineNumber] int _lineNum = 0)
 	{
-		var text = CreateLog(_log,_message);
-
+		var text = LogMgr.In.CreateLog(_log,_message,_memberName,_filePath,_lineNum);
 #if UNITY_EDITOR
 		Debug.LogError(text);
 #endif
@@ -71,25 +66,19 @@ public static class LogExtension
 	#endregion E : Error Log
 
 	#region A : Assert Log
-	public static void A(this LogTag _log,bool _condition,object _message)
+	public static void A(this LogTag _log,bool _condition,object _message,[CallerMemberName] string _memberName = null,[CallerFilePath] string _filePath = null,[CallerLineNumber] int _lineNum = 0)
 	{
 		if(_condition)
 		{
 			return;
 		}
 
-		var text = CreateLog(_log,_message);
-
+		var text = LogMgr.In.CreateLog(_log,_message,_memberName,_filePath,_lineNum);
 #if UNITY_EDITOR
 		Debug.Assert(_condition,_message);
 #endif
 	}
 	#endregion A : Assert Log
-
-	private static string CreateLog(LogTag _tag,object _message)
-	{
-		return $"[{_tag}] {_message}";
-	}
 
 #if UNITY_EDITOR
 	[OnOpenAsset(0)]

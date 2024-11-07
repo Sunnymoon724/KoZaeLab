@@ -189,6 +189,21 @@ namespace KZLib.KZMenu
 			return !MetaSettings.IsExist;
 		}
 
+		[MenuItem("KZMenu/Option/AddOn/Add Config Settings",false,(int) MenuType.Option_Add)]
+		private static void OnAddConfigSettings()
+		{
+			if(AddSettings("Config Settings",ConfigSettings.IsExist))
+			{
+				ConfigSettings.CreateSettings();
+			}
+		}
+
+		[MenuItem("KZMenu/Option/AddOn/Add Config Settings",true)]
+		private static bool IsExistConfigSettings()
+		{
+			return !ConfigSettings.IsExist;
+		}
+
 		[MenuItem("KZMenu/Option/AddOn/Add Language Settings",false,(int) MenuType.Option_Add)]
 		private static void OnAddLanguageSettings()
 		{

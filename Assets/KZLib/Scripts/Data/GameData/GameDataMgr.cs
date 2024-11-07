@@ -38,6 +38,7 @@ namespace KZLib
 			if(m_GameDataDict.TryGetValue(key,out var data))
 			{
 				data.Release();
+
 				m_GameDataDict.Remove(key);
 			}
 		}

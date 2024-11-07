@@ -223,17 +223,25 @@ public class GameSettings : InnerBaseSettings<GameSettings>
 	#endregion Setting
 
 	#region Sheet
-	[BoxGroup("Path/Sheet",ShowLabel = false,Order = 1),SerializeField,LabelText("Meta Data Script Path"),KZFolderPath]
+	[BoxGroup("Path/Sheet",ShowLabel = false,Order = 1),SerializeField,LabelText("MetaData Script Path"),KZFolderPath]
 	private string m_MetaDataScriptPath = "Scripts/Data/MetaData";
 	public string MetaDataScriptPath => m_MetaDataScriptPath;
 
-	[BoxGroup("Path/Sheet",ShowLabel = false,Order = 1),SerializeField,LabelText("Meta Data File Path"),KZFolderPath]
+	[BoxGroup("Path/Sheet",ShowLabel = false,Order = 1),SerializeField,LabelText("MetaData File Path"),KZFolderPath]
 	private string m_MetaDataFilePath = "Resources/Texts/MetaData";
 	public string MetaDataFilePath => m_MetaDataFilePath;
 
 	[BoxGroup("Path/Sheet",ShowLabel = false,Order = 1),SerializeField,LabelText("Language File Path"),KZFolderPath]
 	private string m_LanguageFilePath = "Resources/Texts/Languages";
 	public string LanguageFilePath => m_LanguageFilePath;
+
+	[BoxGroup("Path/Sheet",ShowLabel = false,Order = 1),SerializeField,LabelText("ConfigData File Path"),KZFolderPath]
+	private string m_ConfigDataFilePath = "Resources/Texts/ConfigData";
+	public string ConfigDataFilePath => m_ConfigDataFilePath;
+
+	[BoxGroup("Path/Sheet",ShowLabel = false,Order = 1),SerializeField,LabelText("Custom ConfigData File Path"),KZFolderPath(true,false)]
+	private string m_CustomConfigDataFilePath = "Documents/Custom/ConfigData";
+	public string CustomConfigDataFilePath => m_CustomConfigDataFilePath;
 	#endregion Sheet
 
 	#region Resource

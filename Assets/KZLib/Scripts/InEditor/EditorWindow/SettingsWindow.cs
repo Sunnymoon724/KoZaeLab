@@ -24,6 +24,7 @@ namespace KZLib.KZWindow
 			{
 				{ "Build Settings",		nameof(BuildSettings)		},
 				{ "Meta Settings",		nameof(MetaSettings)		},
+				{ "Config Settings",	nameof(ConfigSettings)		},
 				{ "Language Settings",	nameof(LanguageSettings)	},
 				{ "Network Settings",	nameof(NetworkSettings)		},
 			});
@@ -38,6 +39,11 @@ namespace KZLib.KZWindow
 
 		private void AddMetaData(OdinMenuTree _tree)
 		{
+			if(!MetaSettings.IsExist)
+			{
+				return;
+			}
+
 			MetaDataMgr.In.Load_Editor();
 
 			foreach(var type in MetaSettings.In.GetMetaTypeGroup())

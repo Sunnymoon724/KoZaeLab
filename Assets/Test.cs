@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.RegularExpressions;
 using Cysharp.Threading.Tasks;
 using KZLib;
 using KZLib.KZSchedule;
@@ -9,18 +12,17 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-    private void OnEnable()
+    private void Start()
     {
-        Broadcaster.EnableListener(EventTag.ChangeLanguageOption,OnSetLocalizeText);
+        Start2(2);
     }
 
-    private void OnDisable()
+    private void Start2(int _aaa)
     {
-        Broadcaster.DisableListener(EventTag.ChangeLanguageOption,OnSetLocalizeText);
-    }
+        LogTag.Test.E("test");
 
-    private void OnSetLocalizeText()
-    {
-        LogTag.Test.I("test");
+        Debug.LogError("test");
+
+        throw new Exception("test");
     }
 }

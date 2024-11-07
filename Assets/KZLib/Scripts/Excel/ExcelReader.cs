@@ -1,0 +1,321 @@
+#if UNITY_EDITOR
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using ExcelDataReader;
+using UnityEngine;
+
+namespace KZLib.KZReader
+{
+	public class ExcelReader
+	{
+		[SerializeField]
+		private DataSet m_DataSet = null;
+
+		public ExcelReader(string _filePath)
+		{
+			CommonUtility.IsFileExist(_filePath,true);
+
+			using var stream = new FileStream(_filePath,FileMode.Open,FileAccess.Read);
+			using var reader = ExcelReaderFactory.CreateReader(stream);
+
+			m_DataSet = reader.AsDataSet();
+		}
+
+		private DataTableCollection TableCollection
+		{
+			get
+			{
+				if(m_DataSet == null)
+				{
+					throw new NullReferenceException("DataSet is null in ExcelReader");
+				}
+
+				return m_DataSet.Tables;
+			}
+		}
+
+		public IEnumerable<string> SheetNameGroup
+		{
+			get
+			{
+				var tableCollection = TableCollection;
+
+				for(var i=0;i<tableCollection.Count;i++)
+				{
+					yield return tableCollection[i].TableName;
+				}
+			}
+		}
+
+		private DataTable GetSheet(string _sheetName)
+		{
+			var tableCollection = TableCollection;
+
+			return tableCollection.Contains(_sheetName) ? tableCollection[_sheetName] : throw new ArgumentException($"The sheet '{_sheetName}' does not exist in tableCollection.");
+		}
+
+		/// <summary>
+		/// Get data group in row
+		/// </summary>
+		public List<string> GetRowList(string _sheetName,int _row)
+		{
+			var rowCollection = GetSheet(_sheetName).Rows;
+
+			if(_row < 0 || _row >= rowCollection.Count)
+			{
+				throw new ArgumentOutOfRangeException($"{_row} is out of range in rowCollection. [{_sheetName}]");
+			}
+
+			var cellArray = rowCollection[_row].ItemArray ?? throw new NullReferenceException($"ItemArray is null for row {_row} in sheet [{_sheetName}]");
+
+			var rowList = new List<string>();
+
+			foreach(var cell in cellArray)
+			{
+				rowList.Add(cell.ToString());
+			}
+
+			return rowList;
+		}
+
+		/// <summary>
+		/// Get data group in rows
+		/// </summary>
+		public string[][] GetRowJaggedArray(string _sheetName,params int[] _rowArray)
+		{
+			var jaggedArray = new string[_rowArray.Length][];
+
+			for(var i=0;i<_rowArray.Length;i++)
+			{
+				var rowList = GetRowList(_sheetName,_rowArray[i]);
+
+				jaggedArray[i] = new string[rowList.Count];
+
+				rowList.CopyTo(jaggedArray[i]);
+			}
+
+			return jaggedArray;
+		}
+
+		/// <summary>
+		/// Get data group in column
+		/// </summary>
+		public List<string> GetColumnList(string _sheetName,int _column)
+		{
+			var sheet = GetSheet(_sheetName);
+
+			if(_column < 0 || _column >= sheet.Columns.Count)
+			{
+				throw new ArgumentOutOfRangeException($"{_column} is out of range in columnCollection. [{_sheetName}]");
+			}
+
+			var columnList = new List<string>();
+
+			foreach(DataRow row in sheet.Rows)
+			{
+				columnList.Add(row[_column].ToString());
+			}
+
+			return columnList;
+		}
+
+		/// <summary>
+		/// Get data group in columns
+		/// </summary>
+		public string[][] GetColumnJaggedArray(string _sheetName,params int[] _columnArray)
+		{
+			var jaggedArray = new string[_columnArray.Length][];
+
+			for(var i=0;i<_columnArray.Length;i++)
+			{
+				var columnList = GetColumnList(_sheetName,_columnArray[i]);
+
+				jaggedArray[i] = new string[columnList.Count];
+
+				columnList.CopyTo(jaggedArray[i]);
+			}
+
+			return jaggedArray;
+		}
+
+
+		public IEnumerable<TData> Deserialize<TData>(string _sheetName,int _startRow = 1)
+		{
+			var type = typeof(TData);
+
+			foreach(var result in Deserialize(_sheetName,type,_startRow))
+			{
+				yield return (TData) result;
+			}
+		}
+
+		public IEnumerable<object> Deserialize(string _sheetName,Type _type,int _startRow = 1)
+		{
+			var sheet = GetSheet(_sheetName);
+			var propertyInfoArray = _type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			var rowCollection = sheet.Rows;
+
+			var lastRow = rowCollection.Count;
+			var startRow = Mathf.Clamp(_startRow,0,lastRow);
+
+			var headerList = GetRowList(_sheetName,0);
+
+			for(var i=startRow;i<=lastRow;i++)
+			{
+				var cellArray = rowCollection[i].ItemArray;
+
+				if(cellArray.IsNullOrEmpty())
+				{
+					continue;
+				}
+
+				var data = Activator.CreateInstance(_type);
+
+				for(var j=0;j<headerList.Count;j++)
+				{
+					var cell = cellArray[j];
+
+					if(cell == null)
+					{
+						continue;
+					}
+
+					var index = propertyInfoArray.FindIndex(x=>x.Name.IsEqual(headerList[j]));
+
+					if(index == -1)
+					{
+						continue;
+					}
+
+					var property = propertyInfoArray[index];
+
+					if(property.CanWrite)
+					{
+						try
+						{
+							property.SetValue(data,ConvertData(cell.ToString(),property.PropertyType));
+						}
+						catch(Exception _ex)
+						{
+							LogTag.System.E($"There is a problem with the excel file. [sheet : {_sheetName} / error : {_ex.Message} / location : row({i+1})/column({headerList[j]})]");
+						}
+					}
+				}
+
+				yield return data;
+			}
+		}
+
+		/// <summary>
+		/// Get data group in range (x,y -> start point, w,h -> range size)
+		/// </summary>
+		public string[,] ConvertToArray(string _sheetName,RectInt _range)
+		{
+			var sheet = GetSheet(_sheetName);
+			var resultArray = new string[_range.width,_range.height];
+
+			for(var i=_range.x;i<_range.x+_range.width;i++)
+			{
+				var cellArray = sheet.Rows[i].ItemArray;
+
+				for(var j=_range.y;j<_range.y+_range.height;j++)
+				{
+					resultArray[i,j] = cellArray.IsNullOrEmpty() ? string.Empty : cellArray[j].ToString();
+				}
+			}
+
+			return resultArray;
+		}
+
+		/// <summary>
+		/// Get title & index
+		/// </summary>
+		public IEnumerable<(string Title,int Index)> GetTitleGroup(string _sheetName)
+		{
+			var headerList = GetRowList(_sheetName,0);
+
+			for(var i=0;i<headerList.Count;i++)
+			{
+				var header = headerList[i];
+
+				if(header.IsEmpty())
+				{
+					continue;
+				}
+
+				if(KEY_WORD_ARRAY.Any(x=>x.IsEqual(header)))
+				{
+					throw new InvalidDataException($"{header} is invalid title.");
+				}
+
+				yield return (header,i);
+			}
+		}
+
+		private object ConvertData(string _cell,Type _type)
+		{
+			if(_type == typeof(string))
+			{
+				return _cell.NormalizeNewLines();
+			}
+			else if(_type.IsArray)
+			{
+				var dataArray = _cell.Replace(" ","").TrimEnd('&',' ').Split('&');
+
+				if(dataArray.Length == 0)
+				{
+					return Array.CreateInstance(_type.GetElementType(),0);
+				}
+
+				var type = _type.GetElementType();
+				var resultArray = Array.CreateInstance(type,dataArray.Length);
+
+				for(var i=0;i<dataArray.Length;i++)
+				{
+					resultArray.SetValue(ConvertToObject(dataArray[i],type),i);
+				}
+
+				return resultArray;
+			}
+			else
+			{
+				return ConvertToObject(_cell,_type);
+			}
+		}
+
+		private object ConvertToObject(string _text,Type _type)
+		{
+			if(_type.IsEnum)
+			{
+				return Enum.Parse(_type,_text);
+			}
+			else if(_type.Equals(typeof(Vector3)))
+			{
+				return _text.TryToVector3(out var _result) ? _result : throw new ArgumentException($"{_text} is not vector3.");
+			}
+			else if(_type.IsPrimitive)
+			{
+				return Convert.ChangeType(_text,_type);
+			}
+
+			throw new InvalidCastException($"There is no type that can be cast from {_type}.");
+		}
+
+		private static string[] KEY_WORD_ARRAY => new string[]
+		{
+			"abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked", 
+			"class", "const", "continue", "decimal", "default", "delegate", "do", "double", "else", "enum",
+			"event", "explicit", "extern", "false", "finally", "fixed", "float", "for", "foreach", "goto",
+			"if", "implicit", "in", "int", "interface", "internal", "is", "lock", "long",
+			"namespace", "new", "null", "object", "operator", "out", "override", "params", "private", "protected",
+			"public", "readonly", "ref", "return", "sbyte", "sealed", "short", "sizeof", "stackalloc", "static", 
+			"string", "struct", "switch", "this", "throw", "true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe",
+			"ushort", "using", "virtual", "void", "volatile", "while",
+		};
+	}
+}
+#endif

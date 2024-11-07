@@ -24,7 +24,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 
 	private async UniTaskVoid BuildAsync(Func<UniTask> _onBuildTask)
 	{
-		LogMgr.In.ClearLog();
+		LogMgr.In.ClearLogData();
 
 		var currentTarget = CurrentBuildTarget;
 

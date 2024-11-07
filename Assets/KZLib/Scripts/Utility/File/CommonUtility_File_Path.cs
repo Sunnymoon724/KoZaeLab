@@ -82,12 +82,12 @@ public static partial class CommonUtility
 
 	public static string GetProjectPath()
 	{
-		return NormalizePath(Path.GetFullPath(Path.Join(Application.dataPath,"../")));
+		return NormalizePath(Path.GetFullPath(Path.Join(Application.dataPath,"..")));
 	}
 
 	public static string GetProjectParentPath()
 	{
-		return NormalizePath(Path.GetFullPath(Path.Join(Application.dataPath,"../../")));
+		return NormalizePath(Path.GetFullPath(Path.Join(Application.dataPath,"../..")));
 	}
 
 	public static string GetAssetsPath(string _path)
@@ -170,64 +170,6 @@ public static partial class CommonUtility
 
 		return result;
 	}
-
-// 	public static bool IsExist(string _path,bool _needException = false)
-// 	{
-// 		if(_path.IsEmpty())
-// 		{
-// 			if(_needException)
-// 			{
-// 				throw new NullReferenceException("Path is null.");
-// 			}
-
-// 			return false;
-// 		}
-
-// #if UNITY_EDITOR
-// 		//? Check inner path
-// 		var fullPath = GetAbsolutePath(_path,true);
-
-// 		if(File.Exists(fullPath))
-// 		{
-// 			return true;
-// 		}
-// 		else if(Directory.Exists(fullPath))
-// 		{
-// 			return true;
-// 		}
-
-// 		//? Check outer path
-// 		fullPath = GetAbsolutePath(_path,false);
-
-// 		if(File.Exists(fullPath))
-// 		{
-// 			return true;
-// 		}
-// 		else if(Directory.Exists(fullPath))
-// 		{
-// 			return true;
-// 		}
-
-// 		if(IsFilePath(_path))
-// 		{
-// 			if(_needException)
-// 			{
-// 				throw new FileNotFoundException($"File is not exist. [{fullPath}]");
-// 			}
-// 		}
-// 		else
-// 		{
-// 			if(_needException)
-// 			{
-// 				throw new DirectoryNotFoundException($"Folder is not exist. [{fullPath}]");
-// 			}
-// 		}
-
-// 		return false;
-// #else
-// 		return true;
-// #endif
-// 	}
 
 	public static string RemoveHeaderDirectory(string _path,string _header)
 	{

@@ -41,7 +41,7 @@ namespace KZLib.KZAttribute
 
 		protected override bool IsValidPath()
 		{
-			return CommonUtility.IsFileExist(ValueEntry.SmartValue);
+			return CommonUtility.IsFileExist(CommonUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets));
 		}
 
 		protected class ResourceViewer<UObject> : OdinEditorWindow where UObject : UnityEngine.Object

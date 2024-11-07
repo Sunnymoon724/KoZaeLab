@@ -4,10 +4,12 @@ using UnityEngine;
 using KZLib.KZAttribute;
 using System.Collections.Generic;
 using System;
-using KZLib.KZFiles;
+using KZLib.KZReader;
 
 public abstract class SheetSettings<TObject> : OuterBaseSettings<TObject> where TObject : SerializedScriptableObject
 {
+	protected enum DataType { String, Short, Int, Long, Float, Double, Enum, Bool, Vector3, Object }
+
 	protected abstract bool IsShowAddButton { get; }
 
 	[BoxGroup("Sheet",ShowLabel = false)]
@@ -26,9 +28,7 @@ public abstract class SheetSettings<TObject> : OuterBaseSettings<TObject> where 
 			CommonUtility.DisplayError(new NullReferenceException($"{filePath} is included in the Assets folder."));
 		}
 
-		var localPath = filePath[(CommonUtility.GetProjectParentPath().Length+1)..];
-
-		SetSheetData(localPath);
+		SetSheetData(filePath);
 	}
 
 	protected abstract void SetSheetData(string _filePath);
@@ -55,14 +55,14 @@ public abstract class SheetSettings<TObject> : OuterBaseSettings<TObject> where 
 		protected string LocalFilePath
 		{
 			get => m_LocalFilePath;
-			set => m_LocalFilePath = CommonUtility.RemoveHeaderDirectory(value,CommonUtility.GetProjectParentPath());
+			private set => m_LocalFilePath = CommonUtility.RemoveHeaderDirectory(value,CommonUtility.GetProjectParentPath());
 		}
 
 		public string AbsoluteFilePath => CommonUtility.GetAbsolutePath(m_LocalFilePath,false);
 
 		public SheetData(string _path)
 		{
-			m_LocalFilePath = _path;
+			LocalFilePath = _path;
 
 			OnRefreshSheet();
 		}
@@ -76,11 +76,11 @@ public abstract class SheetSettings<TObject> : OuterBaseSettings<TObject> where 
 		{
 			m_SheetNameList.Clear();
 
-			var excelFile = new ExcelFile(AbsoluteFilePath);
+			var reader = new ExcelReader(AbsoluteFilePath);
 
-			foreach(var sheetName in excelFile.SheetNameGroup)
+			foreach(var sheetName in reader.SheetNameGroup)
 			{
-				var titleGroup = excelFile.GetTitleGroup(sheetName);
+				var titleGroup = reader.GetTitleGroup(sheetName);
 
 				if(titleGroup.IsNullOrEmpty() || !IsValidSheetName(titleGroup,TitleArray))
 				{

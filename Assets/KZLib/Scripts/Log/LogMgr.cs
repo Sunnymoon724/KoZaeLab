@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Text;
+using System.Text.RegularExpressions;
 
 #if !UNITY_EDITOR
 
@@ -13,6 +15,8 @@ namespace KZLib
 	public class LogMgr : Singleton<LogMgr>
 	{
 		private bool m_Disposed = false;
+
+		private static readonly Regex FILE_NAME_EXTRACTOR = new(@"([^\\\/]+)(?=\.[^.\\\/]+$)", RegexOptions.Compiled);
 
 		private const int MAX_LOG_COUNT = 100;
 
@@ -51,9 +55,37 @@ namespace KZLib
 			base.Release(_disposing);
 		}
 
+		public string CreateLog(LogTag _tag,object _message,string _memberName,string _filePath,int _lineNum)
+		{
+			var builder = new StringBuilder();
+
+			builder.Append($"[{_tag}] {_message}");
+
+			builder.Append(" [");
+
+			if(!_memberName.IsEmpty())
+			{
+				builder.Append($"at {_memberName}(..)");
+			}
+
+			if(!_filePath.IsEmpty())
+			{
+				var match = FILE_NAME_EXTRACTOR.Match(_filePath);
+
+				if(match.Success)
+				{
+					builder.Append($" - in {match.Groups[1].Value}:{_lineNum}");
+				}
+			}
+
+			builder.Append("]");
+
+			return builder.ToString();
+		}
+
 		private void OnGetLog(string _condition,string _stackTrace,LogType _type)
 		{
-			var head = $"<{GetLogTag(_type)}> {DateTime.Now:MM/dd HH:mm:ss:ff}";
+			var head = $"<{GetLogTag(_type)}> {DateTime.Now:MM/dd HH:mm:ss}";
 			var body = string.Empty;
 
 			if(_type == LogType.Exception)
@@ -69,22 +101,7 @@ namespace KZLib
 				body = $"{_condition}\n\n{stackTrace}";
 			}
 
-			AddLog(head,body);
-		}
-
-		private string GetLogTag(LogType _logType)
-		{
-			return _logType switch
-			{
-				LogType.Warning => "Warning",
-				LogType.Error or LogType.Exception or LogType.Assert => "Error",
-				_ => "Info",
-			};
-		}
-
-		private void AddLog(string _head,string _body)
-		{
-			var data = new MessageData(_head,_body);
+			var data = new MessageData(head,body);
 
 			m_LogDataQueue.Enqueue(data);
 			OnAddLog?.Invoke(data);
@@ -97,7 +114,17 @@ namespace KZLib
 #endif
 		}
 
-		public void ClearLog()
+		private string GetLogTag(LogType _logType)
+		{
+			return _logType switch
+			{
+				LogType.Warning => "Warning",
+				LogType.Error or LogType.Exception or LogType.Assert => "Error",
+				_ => "Info",
+			};
+		}
+
+		public void ClearLogData()
 		{
 			m_LogDataQueue.Clear();
 		}

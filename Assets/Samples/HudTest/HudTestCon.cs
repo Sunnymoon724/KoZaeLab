@@ -16,7 +16,7 @@ public class HudTestCon : MonoBehaviour
 	{
 		while(true)
 		{
-			LogTag.Server.I("Server Info");
+			LogTag.Network.I("Network Info");
 
 			await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 

@@ -8,7 +8,7 @@ using System.Linq;
 using KZLib;
 using KZLib.KZAttribute;
 using Newtonsoft.Json;
-using KZLib.KZFiles;
+using KZLib.KZReader;
 
 public class LanguageSettings : SheetSettings<LanguageSettings>
 {
@@ -71,9 +71,9 @@ public class LanguageSettings : SheetSettings<LanguageSettings>
 
 			m_LanguageDataList.Clear();
 
-			var excelFile = new ExcelFile(AbsoluteFilePath);
+			var reader = new ExcelReader(AbsoluteFilePath);
 
-			foreach(var title in excelFile.GetTitleGroup(m_SheetName))
+			foreach(var title in reader.GetTitleGroup(m_SheetName))
 			{
 				if(title.Title.IsEnumDefined<SystemLanguage>())
 				{
@@ -84,18 +84,18 @@ public class LanguageSettings : SheetSettings<LanguageSettings>
 
 		protected override void OnCreateData()
 		{
-			var excelFile = new ExcelFile(AbsoluteFilePath);
-			var titleGroup = excelFile.GetTitleGroup(SheetName);
-			var keyArray = excelFile.GetColumnGroup(SheetName,0).ToArray();
-			var languageGroupArray = excelFile.GetColumnGroupArray(SheetName,titleGroup.Select(x=>x.Index).ToArray());
+			var reader = new ExcelReader(AbsoluteFilePath);
+			var titleGroup = reader.GetTitleGroup(SheetName);
+			var keyList = reader.GetColumnList(SheetName,0);
+			var languageJaggedArray = reader.GetColumnJaggedArray(SheetName,titleGroup.Select(x=>x.Index).ToArray());
 
 			var languageDict = new Dictionary<string,string>();
 			var languageList = new List<string>();
 
-			for(var i=1;i<languageGroupArray.Length;i++)
+			for(var i=1;i<languageJaggedArray.GetLength(0);i++)
 			{
-				var languageGroup = languageGroupArray[i];
-				var language = languageGroup.First();
+				var languageArray = languageJaggedArray[i];
+				var language = languageArray[0];
 
 				if(!language.IsEnumDefined<SystemLanguage>())
 				{
@@ -113,7 +113,7 @@ public class LanguageSettings : SheetSettings<LanguageSettings>
 
 				var index = 1;
 
-				foreach(var language2 in languageGroup.Skip(1))
+				foreach(var language2 in languageArray.Skip(1))
 				{
 					var text = language2;
 
@@ -122,7 +122,7 @@ public class LanguageSettings : SheetSettings<LanguageSettings>
 						text = text.NormalizeNewLines();
 					}
 
-					var key = keyArray[index++];
+					var key = keyList[index++];
 
 					if(!languageDict.ContainsKey(key))
 					{

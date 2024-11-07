@@ -1,0 +1,306 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d205a83b333492543a82eb3a3f27802f, type: 3}
+  m_Name: ConfigSettings
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  m_Initialize: 1
+  m_SheetList:
+  - m_LocalFilePath: Documents/Config/Debug.xlsx
+    m_SheetName: Sheet1
+    m_SheetNameList:
+    - Sheet1
+    m_ColumnList:
+    - m_Name: ShowDebugInfo
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 0
+    - m_Name: ShowAIDebugInfo
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: ShowCheatOnStart
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsCheckProtoData
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsOfflineMode
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: ServerStartTime
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: BindDebugBtnList
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: AutoCmdList
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: PresetCmdGroupList
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsSkipIntro
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsSkipPrivacyPopup
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: IsSkipTouchToStart
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: IsStopStageTimer
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsSkipHeroSpawnAni
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsSandBoxMode
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsSkipIdleRewardAtFirst
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: IsSkipAttendanceEventAtFirst
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: StartStage
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: SelectHierarchyPath
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: PlayerHeroNumList
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: SandBoxEnemyHeroNumList
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: PlayerHaveHeroList
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: PlayerPetNumList
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: TestArenaDeck
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: new()
+    - m_Name: PlayerDeckData
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: new()
+    - m_Name: PlayerAtkFixDamage
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: MonAtkFixDamage
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsStopHeroAI
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsStopMonAI
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsStopLeaderAI
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsStopFollowerAI
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsStopPetAI
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsStopMonMove
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsStopMyTeamAI
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsStopEnemyTeamAI
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsSkipSkillCooltime
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsSkipSkillStartCooltime
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: UseFakeUdid
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsUseDebugBtn
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsShowAllGachaSlotAnim
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: SaveMockUpMode
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: OpenTab
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: OpenPopup
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: DevMode
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: ShowPrologue
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsSkipGuideCursor
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsSkipPlayerLevelRewardPopup
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsSkipHotDealProductPopup
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsSkipGachaSpecialAnim
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsShowJapanAgePopup
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsShowUSAAgePopup
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsShowAutoSkillToolTip
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsSkipScreenPlayer
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsForceLoadAdFail
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsWriteBSLog
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: IsSkipGameNoticePopupAtFirst
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: UseSqliteImportPlayer
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: IsUseCohort
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: IsUseGachaWishList
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsAutoFillGachaWishList
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: 
+    - m_Name: IsUseArtifactMileageReward
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: IsUseAutoChallenge
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: IsUseAutoDungeon
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: IsUseAutoScenario
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: IsUseLikeBtn
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: IsUseMissionPass
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: IsUseExtendStone
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: IsUseStarExpPoint
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
+    - m_Name: IsUseHeroDamageFont
+      m_Type: 0
+      m_IsArray: 0
+      m_Default: false
