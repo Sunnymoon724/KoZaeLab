@@ -5,8 +5,17 @@ public static class TextMeshProExtension
 {
 	public static void SetSafeTextMeshPro(this TMP_Text _textMesh,string _text,Color? _color = null)
 	{
-		if(!IsValidTextMesh(_textMesh,_text))
+		if(!_textMesh)
 		{
+			LogTag.System.E("TextMeshPro is null");
+
+			return;
+		}
+
+		if(_text.IsEmpty())
+		{
+			_textMesh.gameObject.SetActiveSelf(false);
+
 			return;
 		}
 
@@ -17,8 +26,17 @@ public static class TextMeshProExtension
 
 	public static void SetLocalizeText(this TMP_Text _textMesh,string _text)
 	{
-		if(!IsValidTextMesh(_textMesh,_text))
+		if(!_textMesh)
 		{
+			LogTag.System.E("TextMeshPro is null");
+
+			return;
+		}
+
+		if(_text.IsEmpty())
+		{
+			_textMesh.gameObject.SetActiveSelf(false);
+
 			return;
 		}
 
@@ -34,23 +52,6 @@ public static class TextMeshProExtension
 		{
 			SetSafeTextMeshProInner(_textMesh,_text,null);
 		}
-	}
-
-	private static bool IsValidTextMesh(TMP_Text _textMesh,string _text)
-	{
-		if(!_textMesh)
-		{
-			return false;
-		}
-
-		if(_text.IsEmpty())
-		{
-			_textMesh.gameObject.SetActiveSelf(false);
-
-			return false;
-		}
-
-		return true;
 	}
 
 	private static void SetSafeTextMeshProInner(TMP_Text _textMesh,string _text,Color? _color)

@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 [RequireComponent(typeof(SortingGroup))]
 public class SortingLayerSortingGroup : SortingLayerBase
 {
-	[VerticalGroup("소팅 그룹",Order = -10),SerializeField,LabelText("소팅 그룹")]
+	[VerticalGroup("Sorting Group",Order = -10),SerializeField,LabelText("Sorting Group")]
 	private SortingGroup m_SortingGroup = null;
 
 	protected override void Reset()

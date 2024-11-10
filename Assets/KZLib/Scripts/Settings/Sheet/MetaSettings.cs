@@ -64,9 +64,9 @@ public class MetaSettings : SheetSettings<MetaSettings>
 
 		private void OnRemoveHeader(MetaCellData _data)
 		{
-			var index = TitleArray.FindIndex(x=>x.IsEqual(_data.Name));
+			var idx = TitleArray.IndexOf(x=>x.IsEqual(_data.Name));
 
-			if(index != -1)
+			if(idx != -1)
 			{
 				return;
 			}
@@ -103,7 +103,7 @@ public class MetaSettings : SheetSettings<MetaSettings>
 			}
 		}
 
-		public Type MetaType => ReflectionUtility.FindType($"{SheetName}Data","MetaData");
+		public Type MetaType => CommonUtility.FindType($"{SheetName}Data","MetaData");
 
 		protected override void OnRefreshSheet()
 		{

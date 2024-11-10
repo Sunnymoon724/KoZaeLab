@@ -80,7 +80,9 @@ namespace KZLib
 		{
 			if(_folderPath.IsEmpty())
 			{
-				throw new NullReferenceException("No path.");
+				LogTag.System.I("Path is null.");
+
+				return null;
 			}
 
 			// use cache data
@@ -93,7 +95,7 @@ namespace KZLib
 
 				if(cacheDataArray.IsNullOrEmpty())
 				{
-					LogTag.System.W(string.Format($"Resources is not exist. [path : {_folderPath}]"));
+					LogTag.System.E($"Resources is not exist. [path : {_folderPath}]");
 
 					return null;
 				}
@@ -129,7 +131,9 @@ namespace KZLib
 #if UNITY_EDITOR
 			if(CommonUtility.IsFilePath(_folderPath))
 			{
-				throw new ArgumentException($"Path is file path.[path : {_folderPath}]");
+				LogTag.System.E($"Path is folder path.[path : {_folderPath}]");
+
+				return null;
 			}
 #endif
 			if(_folderPath.StartsWith(RESOURCES))

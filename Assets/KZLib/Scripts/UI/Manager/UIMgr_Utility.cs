@@ -9,7 +9,7 @@ namespace KZLib
 
 		private string GetUIPath(UITag _tag)
 		{
-			return string.Format("{0}/{1}.prefab",IsLibraryUI(_tag) ? "Resources/Common" : m_UIPrefabPath,_tag);
+			return $"{(IsLibraryUI(_tag) ? "Resources/Common" : m_UIPrefabPath)}/{_tag}.prefab";
 		}
 
 		private bool IsLibraryUI(UITag _tag)

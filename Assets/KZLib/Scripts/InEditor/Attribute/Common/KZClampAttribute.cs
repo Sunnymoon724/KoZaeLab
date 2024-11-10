@@ -67,7 +67,7 @@ namespace KZLib.KZAttribute
 			var rect = EditorGUILayout.GetControlRect();
 			var current = DrawField(rect,GetLabelText(_label));
 
-			ValueEntry.SmartValue = MathUtility.Clamp(current,m_MinValue,m_MaxValue);
+			ValueEntry.SmartValue = CommonUtility.Clamp(current,m_MinValue,m_MaxValue);
 		}
 
 		protected abstract TValue DrawField(Rect _rect,string _label);

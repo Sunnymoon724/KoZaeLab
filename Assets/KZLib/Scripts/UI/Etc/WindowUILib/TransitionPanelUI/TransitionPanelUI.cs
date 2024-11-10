@@ -16,7 +16,7 @@ public class TransitionPanelUI : WindowUI2D
 
 		Hide(false);
 
-		//? 이미지가 점점 사라져야 화면이 밝아진다.
+		// Image is darker
 		await m_Schedule.PlayScheduleAsync(new ProgressSchedule.ProgressParam(_data.Duration,_reverse));
 
 		if(_autoHide)

@@ -15,12 +15,12 @@ public static class IntExtension
 
 	public static string ToStringComma(this int _integer)
 	{
-		return string.Format("{0:n0}",_integer);
+		return $"{_integer:n0}";
 	}
 
 	public static string ToStringSign(this int _integer)
 	{
-		return string.Format("{0:+#;-#;0}",_integer);
+		return $"{_integer:+#;-#;0}";
 	}
 
 	public static char ToHexChar(this int _integer)
@@ -30,22 +30,22 @@ public static class IntExtension
 
 	public static string ToHex(this int _decimal)
 	{
-		return string.Format("{0}",_decimal.ToHexChar());
+		return $"{_decimal.ToHexChar()}";
 	}
 
 	public static string ToHex8(this int _decimal)
 	{
-		return string.Format("{0:x2}",_decimal & 0xFF);
+		return $"{_decimal & 0xFF:x2}";
 	}
 
 	public static string ToHex24(this int _decimal)
 	{
-		return string.Format("{0:x6}",_decimal & 0xFFFFFF);
+		return $"{_decimal & 0xFFFFFF:x6}";
 	}
 
 	public static string ToHex32(this int _decimal)
 	{
-		return string.Format("{0:x8}", _decimal & 0xFFFFFFFF);
+		return $"{_decimal & 0xFFFFFFFF:x8}";
 	}
 
 	public static bool IsEnumDefined<TNumber>(this int _integer)
@@ -108,6 +108,7 @@ public static class IntExtension
 		}
 
 		var i = 5;
+
 		while(i*i <= _integer)
 		{
 			if(_integer%i == 0 || _integer % (i+2) == 0)

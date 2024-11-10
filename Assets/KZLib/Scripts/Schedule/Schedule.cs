@@ -16,9 +16,9 @@ namespace KZLib.KZSchedule
 
 		public bool IsPlaying => m_TokenSource != null;
 
-		public MoreAction OnStart { get; set; }
+		public NewAction onStart = new();
 
-		public MoreAction OnComplete { get; set; }
+		public NewAction onComplete = new();
 
 		protected override void OnEnable()
 		{
@@ -46,10 +46,10 @@ namespace KZLib.KZSchedule
 
 		private void KillSchedule()
 		{
-			UniTaskUtility.KillTokenSource(ref m_TokenSource);
+			CommonUtility.KillTokenSource(ref m_TokenSource);
 
-			OnStart = null;
-			OnComplete = null;
+			onStart.RemoveAllListeners();
+			onComplete.RemoveAllListeners();
 		}
 
 		public void PlaySchedule(ScheduleParam _param = null)
@@ -59,7 +59,7 @@ namespace KZLib.KZSchedule
 
 		public async virtual UniTask PlayScheduleAsync(ScheduleParam _param = null)
 		{
-			UniTaskUtility.RecycleTokenSource(ref m_TokenSource);
+			CommonUtility.RecycleTokenSource(ref m_TokenSource);
 
 			StartSchedule();
 
@@ -67,7 +67,7 @@ namespace KZLib.KZSchedule
 
 			CompleteSchedule();
 
-			UniTaskUtility.KillTokenSource(ref m_TokenSource);
+			CommonUtility.KillTokenSource(ref m_TokenSource);
 		}
 
 		public void Skip()
@@ -77,8 +77,8 @@ namespace KZLib.KZSchedule
 
 		public virtual void ResetSchedule() { }
 
-		protected virtual void StartSchedule() { OnStart?.Invoke(); }
-		protected virtual void CompleteSchedule() { OnComplete?.Invoke(); }
+		protected virtual void StartSchedule() { onStart?.Invoke(); }
+		protected virtual void CompleteSchedule() { onComplete?.Invoke(); }
 
 		protected abstract UniTask DoPlayScheduleAsync(ScheduleParam _param);
 	}

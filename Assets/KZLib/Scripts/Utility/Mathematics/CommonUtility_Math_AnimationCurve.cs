@@ -23,7 +23,7 @@ public enum EaseType
 	// Flash, InFlash, OutFlash, InOutFlash
 }
 
-public static partial class MathUtility
+public static partial class CommonUtility
 {
 	/// <summary>
 	/// To EaseType

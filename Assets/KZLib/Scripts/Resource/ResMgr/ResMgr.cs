@@ -56,7 +56,7 @@ namespace KZLib
 				return;
 			}
 
-			UniTaskUtility.KillTokenSource(ref m_TokenSource);
+			CommonUtility.KillTokenSource(ref m_TokenSource);
 
 			if(_disposing)
 			{
@@ -146,13 +146,13 @@ namespace KZLib
 
 		private void PutDataArray<TObject>(string _path,TObject[] _objectArray) where TObject : Object
 		{
-			if(!m_CacheDataDict.TryGetValue(_path,out var list))
+			if(!m_CacheDataDict.TryGetValue(_path,out var dataList))
 			{
-				list = new List<CacheData>();
-				m_CacheDataDict.Add(_path,list);
+				dataList = new List<CacheData>();
+				m_CacheDataDict.Add(_path,dataList);
 			}
 
-			list.Add(new CacheData(_objectArray,DateTime.Now.AddSeconds(DEFAULT_DELETE_TIME).Ticks));
+			dataList.Add(new CacheData(_objectArray,DateTime.Now.AddSeconds(DEFAULT_DELETE_TIME).Ticks));
 		}
 	}
 }

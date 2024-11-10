@@ -119,7 +119,7 @@ public static partial class CommonUtility
 	{
 		var size = _tick/1024.0d;
 
-		return size > 0.0d ? string.Format("{0:F2} MB/s",size/1024.0d) : string.Format("{0} B/s",_tick);
+		return size > 0.0d ? $"{size / 1024.0d:f2} MB/s" : $"{_tick} B/s";
 	}
 
 	public static void Quit()
@@ -148,7 +148,7 @@ public static partial class CommonUtility
 		ReleaseSingleton<SoundMgr>();
 		ReleaseSingleton<ShaderMgr>();
 
-		ReflectionUtility.ClearCacheData();
+		ClearCacheData();
 		StringExtension.ClearCacheData();
 		ColorExtension.ClearCacheData();
 	}
@@ -157,7 +157,7 @@ public static partial class CommonUtility
 	{
 		if(AutoSingletonMB<TBehaviour>.HasInstance)
 		{
-			CommonUtility.DestroyObject(AutoSingletonMB<TBehaviour>.In.gameObject);
+			DestroyObject(AutoSingletonMB<TBehaviour>.In.gameObject);
 		}
 	}
 
@@ -173,14 +173,14 @@ public static partial class CommonUtility
 	public static string GetTemplateFilePath(string _fileName)
 	{
 		var projectPath = GetProjectPath();
-		var packagePath = string.Format("Packages/com.bsheepstudio.kzlib/WorkResources/Templates/{0}",_fileName);
+		var packagePath = $"Packages/com.bsheepstudio.kzlib/WorkResources/Templates/{_fileName}";
 
 		if(IsFileExist(PathCombine(projectPath,packagePath)))
 		{
 			return packagePath;
 		}
 
-		var assetPath = string.Format("Assets/KZLib/WorkResources/Templates/{0}",_fileName);
+		var assetPath = $"Assets/KZLib/WorkResources/Templates/{_fileName}";
 
 		if(IsFileExist(GetAbsolutePath(assetPath,true)))
 		{

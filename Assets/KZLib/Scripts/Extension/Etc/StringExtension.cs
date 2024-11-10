@@ -17,9 +17,6 @@ public static class StringExtension
 	private static readonly Dictionary<string,Color> s_HexColorDict = new();
 
 	#region Normalize
-	/// <summary>
-	/// 슬래시 일반화
-	/// </summary>
 	public static string NormalizeNewLines(this string _text)
 	{
 		return _text.Replace("\\n",Environment.NewLine);
@@ -193,7 +190,7 @@ public static class StringExtension
 	{
 		if(_hexCode.Length == 7)
 		{
-			_hexCode = string.Format("{0}FF",_hexCode);
+			_hexCode = $"{_hexCode}FF";
 		}
 
 		if(s_HexColorDict.TryGetValue(_hexCode,out var color))
@@ -216,7 +213,7 @@ public static class StringExtension
 	/// </summary>
 	public static string ToColorText(this string _text,string _color)
 	{
-		return string.Format("<color=#{0}>{1}</color>",_color,_text);
+		return $"<color=#{_color}>{_text}</color>";
 	}
 
 	/// <summary>
@@ -266,12 +263,7 @@ public static class StringExtension
 
 	public static byte ToByte(this string _text,byte _default = 0x00)
 	{
-		if(_text.StartsWith("0x",StringComparison.OrdinalIgnoreCase))
-		{
-			return Convert.ToByte(_text,16);
-		}
-
-		return byte.TryParse(_text,out var num) ? num : _default;
+		return _text.StartsWith("0x",StringComparison.OrdinalIgnoreCase) ? Convert.ToByte(_text,16) : byte.TryParse(_text,out var num) ? num : _default;
 	}
 
 	public static int ToHexInt(this string _hexText,int _default = 0)
@@ -354,12 +346,7 @@ public static class StringExtension
 
 	private static string[] ConvertVectorArray(string _text)
 	{
-		if(_text.IsEmpty())
-		{
-			return null;
-		}
-
-		return _text.TrimParentheses().Split(',');
+		return _text.IsEmpty() ? null : _text.TrimParentheses().Split(',');
 	}
 	#endregion Convert Vector
 
@@ -369,12 +356,7 @@ public static class StringExtension
 	/// </summary>
 	public static string RemoveStart(this string _text,string _remove)
 	{
-		if(_text.IsEmpty() || _remove.IsEmpty())
-		{
-			return _text;
-		}
-
-		return _text.StartsWith(_remove) ? _text[_remove.Length..] : _text;
+		return (_text.IsEmpty() || _remove.IsEmpty()) ? _text : _text.StartsWith(_remove) ? _text[_remove.Length..] : _text;
 	}
 
 	/// <summary>
@@ -382,12 +364,7 @@ public static class StringExtension
 	/// </summary>
 	public static string RemoveEnd(this string _text,string _remove)
 	{
-		if(_text.IsEmpty() || _remove.IsEmpty())
-		{
-			return _text;
-		}
-
-		return _text.EndsWith(_remove) ? _text[..^_remove.Length] : _text;
+		return (_text.IsEmpty() || _remove.IsEmpty()) ? _text : _text.EndsWith(_remove) ? _text[..^_remove.Length] : _text;
 	}
 
 	/// <summary>
@@ -395,12 +372,7 @@ public static class StringExtension
 	/// </summary>
 	public static string RemoveStartCharacter(this string _text,int _count)
 	{
-		if(_text.IsEmpty() || _count <= 0)
-		{
-			return _text;
-		}
-
-		return _count >= _text.Length ? string.Empty : _text[_count..];
+		return (_text.IsEmpty() || _count <= 0) ? _text : _count >= _text.Length ? string.Empty : _text[_count..];
 	}
 
 	/// <summary>
@@ -408,12 +380,7 @@ public static class StringExtension
 	/// </summary>
 	public static string RemoveEndCharacter(this string _text,int _count)
 	{
-		if(_text.IsEmpty() || _count <= 0)
-		{
-			return _text;
-		}
-
-		return _count >= _text.Length ? string.Empty : _text[..^_count];
+		return (_text.IsEmpty() || _count <= 0) ? _text : _count >= _text.Length ? string.Empty : _text[..^_count];
 	}
 
 	/// <summary>

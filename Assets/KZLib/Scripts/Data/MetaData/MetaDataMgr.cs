@@ -146,7 +146,7 @@ namespace KZLib
 				return;
 			}
 
-			var type = ReflectionUtility.FindType($"MetaData.{_textAsset.name}");
+			var type = CommonUtility.FindType($"MetaData.{_textAsset.name}");
 			var deserialize = MessagePackSerializer.Deserialize(type.MakeArrayType(),_textAsset.bytes,MessagePackSerializerOptions.Standard.WithResolver(MessagePackResolver.In));
 
 			if(deserialize is not object[] resultArray)

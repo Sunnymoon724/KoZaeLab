@@ -1,5 +1,4 @@
 #if UNITY_EDITOR
-using System;
 using System.IO;
 using System.IO.Compression;
 
@@ -9,7 +8,9 @@ public static partial class CommonUtility
 	{
 		if(_bytes == null || _bytes.Length == 0)
 		{
-			throw new NullReferenceException("Bytes is null.");
+			LogTag.System.E("Bytes is null or empty");
+
+			return null;
 		}
 
 		using var memoryStream = new MemoryStream();
@@ -29,16 +30,17 @@ public static partial class CommonUtility
 	/// <param name="_sourcePath">The absolute path of the file or folder.</param>
 	public static byte[] CompressZip(string _sourcePath)
 	{
+		if(!IsPathExist(_sourcePath,true))
+		{
+			return null;
+		}
+
 		if(IsFilePath(_sourcePath))
 		{
-			IsFileExist(_sourcePath,true);
-
 			return CompressBytes(ReadFileToBytes(_sourcePath));
 		}
 		else
 		{
-			IsFolderExist(_sourcePath,true);
-
 			using var memoryStream = new MemoryStream();
 
 			using(var archive = new ZipArchive(memoryStream,ZipArchiveMode.Create,true))
@@ -63,17 +65,37 @@ public static partial class CommonUtility
 	/// <param name="_destinationPath">The absolute path of the file or folder.</param>
 	public static void CompressZip(string _sourcePath,string _destinationPath)
 	{
-		var compress = CompressZip(_sourcePath) ?? throw new InvalidOperationException($"{_sourcePath} compress failed.");
+		if(!IsPathExist(_destinationPath,true))
+		{
+			return;
+		}
+
 		var extension = GetExtension(_destinationPath);
 
 		if(!extension.IsEqual(".zip"))
 		{
-			throw new ArgumentException($"Not supported extension. [{_destinationPath}]");
+			LogTag.System.E($"Not supported extension. [{_destinationPath}]");
+
+			return;
 		}
 
 		if(extension.IsEmpty())
 		{
 			_destinationPath = $"{_destinationPath}.zip";
+		}
+
+		if(!IsPathExist(_sourcePath,true))
+		{
+			return;
+		}
+
+		var compress = CompressZip(_sourcePath);
+
+		if(compress == null)
+		{
+			LogTag.System.E($"Compress is failed. {_sourcePath}");
+
+			return;
 		}
 
 		//? destinationPath == unique file path
@@ -84,6 +106,13 @@ public static partial class CommonUtility
 
 	public static byte[] DecompressBytes(byte[] _bytes)
 	{
+		if(_bytes == null || _bytes.Length == 0)
+		{
+			LogTag.System.E("Bytes is null or empty");
+
+			return null;
+		}
+
 		using var compressedStream = new MemoryStream(_bytes);
 		using var archive = new ZipArchive(compressedStream,ZipArchiveMode.Read);
 
@@ -101,20 +130,33 @@ public static partial class CommonUtility
 	/// <param name="_destinationPath">The absolute path of the folder.</param>
 	public static void DecompressZip(string _sourcePath,string _destinationPath)
 	{
-		var sourceExtension = GetExtension(_sourcePath);
-		var destinationExtension = GetExtension(_destinationPath);
-
-		if(!sourceExtension.IsEqual(".zip"))
+		if(!IsPathExist(_destinationPath,true))
 		{
-			throw new ArgumentException($"{_sourcePath} is not zip file.");
+			return;
 		}
+
+		var destinationExtension = GetExtension(_destinationPath);
 
 		if(!destinationExtension.IsEmpty())
 		{
-			throw new ArgumentException($"{_destinationPath} is not folder path.");
+			LogTag.System.E($"{_destinationPath} is not folder path.");
+
+			return;
 		}
 
-		IsFileExist(_sourcePath,true);
+		if(!IsFileExist(_sourcePath,true))
+		{
+			return;
+		}
+
+		var sourceExtension = GetExtension(_sourcePath);
+
+		if(!sourceExtension.IsEqual(".zip"))
+		{
+			LogTag.System.E($"{_sourcePath} is not zip file.");
+
+			return;
+		}
 
 		//? destinationPath == unique folder path
 		var destinationPath = GetUniquePath(_destinationPath);

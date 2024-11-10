@@ -8,7 +8,10 @@ public static partial class CommonUtility
 	/// <param name="_folderPath">The absolute folder path.</param>
 	public static IEnumerable<string> GetAllFilePathInFolder(string _folderPath,bool _includeSubFolders = false)
 	{
-		IsFolderExist(_folderPath,true);
+		if(!IsFolderExist(_folderPath,true))
+		{
+			yield break;
+		}
 
 		if(_includeSubFolders)
 		{
@@ -35,7 +38,10 @@ public static partial class CommonUtility
 	/// <param name="_folderPath">The absolute folder path.</param>
 	public static string SearchFileInFolder(string _folderPath,string _fileName)
 	{
-		IsFolderExist(_folderPath,true);
+		if(!IsFolderExist(_folderPath,true))
+		{
+			return null;
+		}
 
 		foreach(var filePath in GetFilePathArray(_folderPath))
 		{
@@ -63,7 +69,10 @@ public static partial class CommonUtility
 	/// <param name="_folderPath">The absolute folder path.</param>
 	public static IEnumerable<string> SearchExtensionInFolder(string _folderPath,string _extension)
 	{
-		IsFolderExist(_folderPath,true);
+		if(!IsFolderExist(_folderPath,true))
+		{
+			yield break;
+		}
 
 		foreach(var filePath in GetFilePathArray(_folderPath,_extension))
 		{

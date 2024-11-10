@@ -59,7 +59,9 @@ namespace KZLib
 
 			if(!scene.IsValid())
 			{
-				throw new InvalidOperationException($"{_previous} is not in the scene.");
+				LogTag.System.E($"{_previous} is not in the scene.");
+
+				return;
 			}
 
 			_onProgress?.Invoke(0.0f);

@@ -17,7 +17,9 @@ namespace System.Collections.Generic
 		{
 			if(_capacity <= 0)
 			{
-				throw new ArgumentOutOfRangeException(nameof(_capacity),$"The capacity is {_capacity}.");
+				LogTag.System.E($"The capacity is {_capacity}.");
+
+				return;
 			}
 
 			m_Capacity = _capacity;
@@ -32,7 +34,9 @@ namespace System.Collections.Generic
 
 				if(m_Capacity <= 0)
 				{
-					throw new ArgumentOutOfRangeException(nameof(m_Capacity),$"The capacity is {m_Capacity}.");
+					LogTag.System.E($"The capacity is {m_Capacity}.");
+
+					return;
 				}
 
 				m_DataArray = new TData[m_Capacity];
@@ -52,7 +56,9 @@ namespace System.Collections.Generic
 
 				if(m_Capacity <= 0)
 				{
-					throw new ArgumentOutOfRangeException(nameof(m_Capacity),$"The capacity is {m_Capacity}.");
+					LogTag.System.E($"The capacity is {m_Capacity}.");
+
+					return;
 				}
 
 				m_DataArray = new TData[m_Capacity];
@@ -67,7 +73,9 @@ namespace System.Collections.Generic
 		{
 			if(_data == null)
 			{
-				throw new ArgumentNullException(nameof(_data),"Data cannot be null.");
+				LogTag.System.E("Data cannot be null.");
+
+				return;
 			}
 
 			lock(m_SyncRoot)
@@ -92,7 +100,9 @@ namespace System.Collections.Generic
 			{
 				if(IsEmpty)
 				{
-					throw new InvalidOperationException("Queue is empty.");
+					LogTag.System.E("Queue is empty.");
+
+					return default;
 				}
 
 				return m_DataArray[m_Front];
@@ -105,7 +115,9 @@ namespace System.Collections.Generic
 			{
 				if(IsEmpty)
 				{
-					throw new InvalidOperationException("Queue is empty.");
+					LogTag.System.E("Queue is empty.");
+
+					return default;
 				}
 
 				var data = m_DataArray[m_Front];
@@ -180,7 +192,9 @@ namespace System.Collections.Generic
 		{
 			if(_data == null)
 			{
-				throw new ArgumentNullException("Data is null.");
+				LogTag.System.E("Data is null.");
+
+				return false;
 			}
 
 			lock(m_SyncRoot)
@@ -205,12 +219,16 @@ namespace System.Collections.Generic
 		{
 			if(_array == null)
 			{
-				throw new NullReferenceException("Array is null.");
+				LogTag.System.E("Array is null.");
+
+				return;
 			}
 
 			if(_index < 0 || _index >= _array.Length)
 			{
-				throw new ArgumentOutOfRangeException($"Index {_index} is out of bounds for the array.");
+				LogTag.System.E($"Index {_index} is out of bounds for the array.");
+
+				return;
 			}
 
 			if(Count > 0)

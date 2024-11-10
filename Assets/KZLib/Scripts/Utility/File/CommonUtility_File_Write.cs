@@ -16,9 +16,9 @@ public static partial class CommonUtility
 	/// <param name="_path">The absolute path of the file or folder.</param>
 	public static void CreateFolder(string _path)
 	{
-		if(_path.IsEmpty())
+		if(!IsPathExist(_path,true))
 		{
-			throw new NullReferenceException("Path is null.");
+			return;
 		}
 
 		// Path is file ? Get parent path. : Get path
@@ -33,6 +33,11 @@ public static partial class CommonUtility
 	/// <param name="_filePath">The absolute path of the file.</param>
 	public static void CreateFile(string _filePath)
 	{
+		if(!IsPathExist(_filePath,true))
+		{
+			return;
+		}
+
 		if(!IsFileExist(_filePath))
 		{
 			File.Create(_filePath).Close();
@@ -42,6 +47,11 @@ public static partial class CommonUtility
 	/// <param name="_filePath">The absolute path of the file.</param>
 	public static void WriteByteToFile(string _filePath,byte[] _bytes)
 	{
+		if(!IsPathExist(_filePath,true))
+		{
+			return;
+		}
+
 		CreateFolder(_filePath);
 
 		File.WriteAllBytes(_filePath,_bytes);
@@ -50,6 +60,11 @@ public static partial class CommonUtility
 	/// <param name="_filePath">The absolute path of the file.</param>
 	public static void WriteTextToFile(string _filePath,string _text)
 	{
+		if(!IsPathExist(_filePath,true))
+		{
+			return;
+		}
+
 		CreateFolder(_filePath);
 
 		File.WriteAllText(_filePath,_text);
@@ -58,18 +73,33 @@ public static partial class CommonUtility
 	/// <param name="_filePath">The absolute path of the file.</param>
 	public static void WriteJsonToFile<TObject>(string _filePath,TObject _object)
 	{
+		if(!IsPathExist(_filePath,true))
+		{
+			return;
+		}
+
 		WriteTextToFile(_filePath,JsonConvert.SerializeObject(_object));
 	}
 
 	/// <param name="_filePath">The absolute path of the file.</param>
 	public static void WriteTextureToFile(string _filePath,Texture2D _texture)
 	{
+		if(!IsPathExist(_filePath,true))
+		{
+			return;
+		}
+
 		WriteByteToFile(_filePath,_texture.EncodeToPNG());
 	}
 
 	/// <param name="_filePath">The absolute path of the file.</param>
 	public static void WriteAudioClipToWav(string _filePath,AudioClip _clip)
 	{
+		if(!IsPathExist(_filePath,true))
+		{
+			return;
+		}
+
 		using var stream = CreateEmpty(_filePath,WAV_HEADER_SIZE);
 
 		ConvertAndWrite(stream,_clip);
@@ -152,6 +182,11 @@ public static partial class CommonUtility
 	/// <param name="_filePath">The absolute path of the file.</param>
 	public static string GetTemplateText(string _filePath)
 	{
+		if(!IsPathExist(_filePath,true))
+		{
+			return null;
+		}
+
 		return ReadFileToText(GetTemplateFileAbsolutePath(_filePath));
 	}
 
@@ -159,7 +194,10 @@ public static partial class CommonUtility
 	/// <param name="_destinationPath">The absolute path of the folder.</param>
 	public static void CopyFile(string _sourcePath,string _destinationPath,bool _isOverride)
 	{
-		IsFileExist(_sourcePath,true);
+		if(!IsFileExist(_sourcePath,true))
+		{
+			return;
+		}
 
 		var fileName = GetFileName(_sourcePath);
 		var destinationPath = PathCombine(_destinationPath,fileName);
@@ -176,7 +214,10 @@ public static partial class CommonUtility
 	/// <param name="_destinationPath">The absolute path of the folder.</param>
 	public static void CopyFolder(string _sourcePath,string _destinationPath,bool _isOverride)
 	{
-		IsFolderExist(_sourcePath,true);
+		if(!IsFolderExist(_sourcePath,true))
+		{
+			return;
+		}
 
 		CreateFolder(_destinationPath);
 

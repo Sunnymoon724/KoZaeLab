@@ -30,23 +30,23 @@ public class DrawLineRenderer : BaseLineRenderer
 	{
 		m_LineRenderer.positionCount = 0;
 
-		UniTaskUtility.KillTokenSource(ref m_TokenSource);
+		CommonUtility.KillTokenSource(ref m_TokenSource);
 	}
 
 	public async UniTask DrawLineAsync(Vector3[] _pointArray,float _speed,bool _ignoreTimescale)
 	{
-		UniTaskUtility.RecycleTokenSource(ref m_TokenSource);
+		CommonUtility.RecycleTokenSource(ref m_TokenSource);
 
 		m_LineRenderer.positionCount = 1;
 		m_LineRenderer.SetPosition(0,_pointArray[0]);
 
-		var duration = MathUtility.GetTotalDistance(_pointArray)/_speed;
+		var duration = CommonUtility.GetTotalDistance(_pointArray)/_speed;
 
 #if UNITY_EDITOR
 		m_StartGizmo = true;
 #endif
 
-		await UniTaskUtility.ExecuteOverTimeAsync(0.0f,_pointArray.Length-1,duration,(progress)=>
+		await CommonUtility.ExecuteOverTimeAsync(0.0f,_pointArray.Length-1,duration,(progress)=>
 		{
 			var prev = Mathf.FloorToInt(progress);
 			var next = Mathf.CeilToInt(progress);

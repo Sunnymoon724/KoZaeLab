@@ -15,12 +15,12 @@ namespace KZLib.KZSample
 		{
 			m_TimeSlider.onValueChanged.AddListener((value) =>
 			{
-				m_TimeText.SetSafeTextMeshPro(string.Format("{0}",value));
+				m_TimeText.SetSafeTextMeshPro($"{(object)value}");
 			});
 
 			m_IntensitySlider.onValueChanged.AddListener((value) =>
 			{
-				m_IntensityText.SetSafeTextMeshPro(string.Format("{0}",value));
+				m_IntensityText.SetSafeTextMeshPro($"{(object)value}");
 			});
 		}
 

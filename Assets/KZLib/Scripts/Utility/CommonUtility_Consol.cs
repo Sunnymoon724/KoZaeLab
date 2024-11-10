@@ -6,41 +6,40 @@ public static partial class CommonUtility
 	{
 		_errorLog = null;
 
-		using(var process = new Process())
+		using var process = new Process();
+
+		var startInfo = new ProcessStartInfo
 		{
-			var startInfo = new ProcessStartInfo
-			{
-				FileName = _command,
-				Arguments = _argument,
-				UseShellExecute = false,
-				RedirectStandardOutput = true,
-				RedirectStandardError = true,
-				CreateNoWindow = true,
-			};
+			FileName = _command,
+			Arguments = _argument,
+			UseShellExecute = false,
+			RedirectStandardOutput = true,
+			RedirectStandardError = true,
+			CreateNoWindow = true,
+		};
 
-			process.StartInfo = startInfo;
-			process.Start();
+		process.StartInfo = startInfo;
+		process.Start();
 
-			var output = process.StandardOutput.ReadToEnd();
-            var error = process.StandardError.ReadToEnd();
+		var output = process.StandardOutput.ReadToEnd();
+		var error = process.StandardError.ReadToEnd();
 
-			process.WaitForExit();
+		process.WaitForExit();
 
-			foreach(var line in output.Split('\n'))
-			{
-				LogTag.Editor.I($"Output : {line}");
-			}
-
-			if(!error.IsEmpty())
-			{
-				_errorLog = error;
-
-				LogTag.Editor.E($"Error : {error.CP949ToUTF8()}");
-
-				return false;
-			}
-
-			return true;
+		foreach(var line in output.Split('\n'))
+		{
+			LogTag.Editor.I($"Output : {line}");
 		}
+
+		if(!error.IsEmpty())
+		{
+			_errorLog = error;
+
+			LogTag.Editor.E($"Error : {error.CP949ToUTF8()}");
+
+			return false;
+		}
+
+		return true;
 	}
 }

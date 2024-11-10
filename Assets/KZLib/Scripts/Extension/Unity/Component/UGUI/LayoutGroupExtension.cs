@@ -5,6 +5,13 @@ public static class LayoutGroupExtension
 {
 	public static void ForceRebuild(this LayoutGroup _layoutGroup,bool _recursive = true)
 	{
+		if(!_layoutGroup)
+		{
+			LogTag.System.E("LayoutGroup is null.");
+
+			return;
+		}
+
 		if(_recursive)
 		{
 			RecursiveLayoutRebuild(_layoutGroup.transform as RectTransform);
@@ -17,6 +24,13 @@ public static class LayoutGroupExtension
 
 	public static void MarkForRebuild(this LayoutGroup _layoutGroup,bool _recursive = true)
 	{
+		if(!_layoutGroup)
+		{
+			LogTag.System.E("LayoutGroup is null.");
+
+			return;
+		}
+
 		if(_recursive)
 		{
 			RecursiveMarkForRebuild(_layoutGroup.transform as RectTransform);

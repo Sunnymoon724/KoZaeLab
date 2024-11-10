@@ -9,7 +9,7 @@ using UnityEditor;
 
 public abstract class BaseSettings<TObject> : SingletonSO<TObject> where TObject : SerializedScriptableObject
 {
-	public static bool IsExist => CommonUtility.IsExistAsset(string.Format("t:ScriptableObject {0}",typeof(TObject).Name));
+	public static bool IsExist => CommonUtility.IsExistAsset($"t:ScriptableObject {typeof(TObject).Name}");
 }
 
 /// <summary>
@@ -63,7 +63,7 @@ public abstract class OuterBaseSettings<TObject> : BaseSettings<TObject> where T
 #if UNITY_EDITOR
 				var path = CommonUtility.PathCombine(SETTINGS_PATH,typeof(TObject).Name);
 
-				s_Instance = AssetDatabase.LoadAssetAtPath<TObject>(string.Format("{0}.asset",path));
+				s_Instance = AssetDatabase.LoadAssetAtPath<TObject>($"{path}.asset");
 
 
 				if(!s_Instance)

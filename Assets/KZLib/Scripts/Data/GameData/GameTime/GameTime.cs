@@ -110,7 +110,7 @@ namespace GameData
 
 		public void StartTimer(string _key)
 		{
-			m_TimerDict.AddOrUpdate(_key,Time.realtimeSinceStartup);
+			m_TimerDict[_key] = Time.realtimeSinceStartup;
 		}
 
 		public bool GetTime(string _key,out float _seconds)

@@ -7,7 +7,7 @@ namespace HudPanel
 {
 	public class UILogSlot : SlotUI
 	{
-		[FoldoutGroup("이미지",Order = SlotOrder.IMAGE),SerializeField,ShowIf(nameof(UseImage))]
+		[FoldoutGroup("Image",Order = SlotOrder.IMAGE),SerializeField,ShowIf(nameof(UseImage))]
 		protected Image m_TagImage = null;
 
 		public override void SetCell(ICellData _cell)

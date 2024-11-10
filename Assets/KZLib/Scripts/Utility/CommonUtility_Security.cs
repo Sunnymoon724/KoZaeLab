@@ -12,7 +12,9 @@ public static partial class CommonUtility
 	{
 		if(_source.IsEmpty())
 		{
-			return	_source;
+			LogTag.System.E("Source is empty");
+
+			return _source;
 		}
 
 		var secretKey = new PasswordDeriveBytes(_password,Encoding.UTF8.GetBytes(_password.Length.ToString()));
@@ -50,7 +52,9 @@ public static partial class CommonUtility
 	{
 		if(_source.IsEmpty())
 		{
-			return	_source;
+			LogTag.System.E("Source is empty");
+
+			return _source;
 		}
 
 		var secretKey = new PasswordDeriveBytes(_password,Encoding.UTF8.GetBytes(_password.Length.ToString()));

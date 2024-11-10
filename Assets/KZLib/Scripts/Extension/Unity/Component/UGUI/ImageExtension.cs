@@ -6,6 +6,13 @@ public static class ImageExtension
 {
 	public static void SetDefaultImage(this Image _image,bool _isClearColor)
 	{
+		if(!_image)
+		{
+			LogTag.System.E("Image is null.");
+
+			return;
+		}
+
 		_image.color = _isClearColor ? Color.clear : Color.white;
 	}
 
@@ -13,6 +20,8 @@ public static class ImageExtension
 	{
 		if(!_image)
 		{
+			LogTag.System.E("Image is null.");
+
 			return;
 		}
 
@@ -38,7 +47,7 @@ public static class ImageExtension
 
 	public static async UniTask FadeImageAsync(this Image _image,float _duration,Color _prev,Color _next)
 	{
-		await UniTaskUtility.ExecuteOverTimeAsync(0.0f,1.0f,_duration,(progress)=>
+		await CommonUtility.ExecuteOverTimeAsync(0.0f,1.0f,_duration,(progress)=>
 		{
 			_image.color = Color.Lerp(_prev,_next,progress);
 		});

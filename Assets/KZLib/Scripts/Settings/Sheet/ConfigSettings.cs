@@ -96,7 +96,7 @@ public class ConfigSettings : SheetSettings<ConfigSettings>
 			}
 		}
 
-		public Type ConfigType => ReflectionUtility.FindType($"{SheetName}Data","ConfigData");
+		public Type ConfigType => CommonUtility.FindType($"{SheetName}Data","ConfigData");
 
 		protected override void OnRefreshSheet()
 		{

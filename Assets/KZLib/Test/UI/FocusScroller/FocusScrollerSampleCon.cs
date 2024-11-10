@@ -9,7 +9,7 @@ namespace KZLib.KZSample
 	{
 		private record SampleData : CellData
 		{
-			public SampleData(int _index) : base(string.Format("{0}",_index),null,null,null,null) { }
+			public SampleData(int _index) : base($"{_index}",null,null,null,null) { }
 		}
 
 		[VerticalGroup("0",Order = 0),SerializeField]

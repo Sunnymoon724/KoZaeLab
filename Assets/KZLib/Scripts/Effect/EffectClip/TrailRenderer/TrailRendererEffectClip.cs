@@ -47,6 +47,6 @@ public class TrailRendererEffectClip : EffectClip
 
 	protected async override UniTask PlayTaskAsync()
 	{
-		await UniTaskUtility.WaitForConditionAsync(()=>false,SetTime,m_IgnoreTimeScale,m_TokenSource.Token);
+		await CommonUtility.WaitForConditionAsync(()=>false,SetTime,m_IgnoreTimeScale,m_TokenSource.Token);
 	}
 }

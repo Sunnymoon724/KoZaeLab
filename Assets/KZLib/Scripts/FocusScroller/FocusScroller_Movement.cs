@@ -45,7 +45,7 @@ namespace KZLib.KZDevelop
 				Enable = _enable;
 				Elastic = _elastic;
 				Duration = _duration;
-				Curve = MathUtility.GetEaseCurve(_type);
+				Curve = CommonUtility.GetEaseCurve(_type);
 				StartTime = _startTime;
 				EndLocation = _endLocation;
 				m_OnComplete = _onComplete;
@@ -329,7 +329,7 @@ namespace KZLib.KZDevelop
 		{
 			if(_duration <= 0.0f)
 			{
-				Location = MathUtility.LoopClamp(_location,m_CellList.Count);
+				Location = CommonUtility.LoopClamp(_location,m_CellList.Count);
 
 				return;
 			}
@@ -368,7 +368,7 @@ namespace KZLib.KZDevelop
 				return Mathf.Clamp(_destination,0,count-1)-_source;
 			}
 
-			var amount = MathUtility.LoopClamp(_destination,count)-MathUtility.LoopClamp(_source,count);
+			var amount = CommonUtility.LoopClamp(_destination,count)-CommonUtility.LoopClamp(_source,count);
 
 			if(Mathf.Abs(amount) > count*0.5f)
 			{

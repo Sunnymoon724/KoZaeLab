@@ -1,7 +1,7 @@
 using System;
 using DG.Tweening;
 
-public static class DOTweenUtility
+public static partial class CommonUtility
 {
 	public static Tween SetProgress(float _start,float _finish,float _duration,Action<float> _onProgress,Action _onComplete = null)
 	{
@@ -12,7 +12,9 @@ public static class DOTweenUtility
 	{
 		if(_onUpdate == null)
 		{
-			throw new ArgumentNullException("Update is null.");
+			LogTag.System.E("Update is null.");
+
+			return null;
 		}
 
 		var tween = DOTween.To(()=>_start,x=>_onUpdate(x),_finish,_duration);

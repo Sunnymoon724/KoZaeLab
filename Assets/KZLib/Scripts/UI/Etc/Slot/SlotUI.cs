@@ -48,14 +48,14 @@ public class SlotUI : BaseComponentUI
 	{
 		base.OnEnable();
 
-		m_Button.AddListener(OnClicked);
+		m_Button.onClick.AddAction(OnClicked);
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
 
-		m_Button.RemoveListener(OnClicked);
+		m_Button.onClick.RemoveAction(OnClicked);
 	}
 
 	private void OnClicked()

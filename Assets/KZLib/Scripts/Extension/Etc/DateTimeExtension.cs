@@ -9,7 +9,7 @@ public static class DateTimeExtension
 	}
 
 	/// <summary>
-	/// 다음날 자정 DateTime 가져올때 사용.
+	/// -> 00:00
 	/// </summary>
 	public static DateTime GetNextDay(this DateTime _dateTime)
 	{

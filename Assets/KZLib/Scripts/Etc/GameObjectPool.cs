@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace KZLib
@@ -17,12 +16,16 @@ namespace KZLib
 		{
 			if(!_pivot)
 			{
-				throw new ArgumentNullException("Pivot is null.");
+				LogTag.System.E("Pivot is null.");
+
+				return;
 			}
 
 			if(!_storage)
 			{
-				throw new ArgumentNullException("Storage is null.");
+				LogTag.System.E("Storage is null.");
+
+				return;
 			}
 
 			m_Pivot = _pivot;
@@ -48,7 +51,7 @@ namespace KZLib
 
 		public TComponent Get(Transform _parent = null)
 		{
-			var data = m_PoolQueue.Count > 0 ? m_PoolQueue.Dequeue() : CommonUtility.CopyObject(m_Pivot).GetComponent<TComponent>();
+			var data = m_PoolQueue.Count > 0 ? m_PoolQueue.Dequeue() : CommonUtility.CopyObject(m_Pivot);
 
 			if(_parent)
 			{

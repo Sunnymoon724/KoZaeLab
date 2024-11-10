@@ -12,8 +12,8 @@ namespace HudPanel
 		
 		public void SetFrameData(int _frameRate,float _frameTime)
 		{
-			m_FrameRateText.SetSafeTextMeshPro(string.Format("{0:d2}",_frameRate));
-			m_FrameTimeText.SetSafeTextMeshPro(string.Format("{0:f2}",_frameTime));
+			m_FrameRateText.SetSafeTextMeshPro($"{_frameRate:d2}");
+			m_FrameTimeText.SetSafeTextMeshPro($"{_frameTime:f2}");
 		}
 	}
 }

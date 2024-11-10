@@ -2,17 +2,17 @@ using UnityEngine;
 
 public static class Vector2Extension
 {
-	#region Mask
-	public static Vector2 MaskX(this Vector2 _vector,float _x = 0.0f)
+	#region Set
+	public static Vector2 SetX(this Vector2 _vector,float _x = 0.0f)
 	{
 		return new Vector2(_x,_vector.y);
 	}
 
-	public static Vector2 MaskY(this Vector2 _vector,float _y = 0.0f)
+	public static Vector2 SetY(this Vector2 _vector,float _y = 0.0f)
 	{
 		return new Vector2(_vector.x,_y);
 	}
-	#endregion Mask
+	#endregion Set
 
 	#region Offset
 	public static Vector2 Offset(this Vector2 _vector,Vector2 _offset)

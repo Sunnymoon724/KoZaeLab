@@ -6,6 +6,8 @@ public static class SpriteRendererExtension
 	{
 		if(!_renderer)
 		{
+			LogTag.System.E("Renderer is null");
+
 			return;
 		}
 

@@ -45,7 +45,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 				EditorUserBuildSettings.SwitchActiveBuildTargetAsync(BuildPipeline.GetBuildTargetGroup(currentTarget),currentTarget);
 			}
 
-			await WebRequestUtility.PostWebHook_DiscordAsync(BUILD_REPORT,LogMgr.In.LogDataGroup);
+			await CommonUtility.PostWebHook_DiscordAsync(BUILD_REPORT,LogMgr.In.LogDataGroup);
 		}
 	}
 

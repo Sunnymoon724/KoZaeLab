@@ -7,13 +7,15 @@ namespace KZLib.KZEditor
 {
 	public partial class PathCreatorEditor : OdinEditor
 	{
+		private const int SHAPE_COUNT = 3;
+
 		private void SetShapePathInput(Event _event)
 		{
 			var handleArray = m_Creator.HandleArray;
 
-			m_MouseOverHandleIndex = -1;
+			m_MouseOverHandleIndex = Global.INVALID_INDEX;
 
-			for(var i=0;i<3;i++)
+			for(var i=0;i<SHAPE_COUNT;i++)
 			{
 				var radius = GetHandleDiameter(m_AnchorSize,handleArray[i])/2.0f;
 				var position = handleArray[i].TransformPoint(m_Creator.transform,m_Creator.PathSpaceType);
@@ -35,14 +37,14 @@ namespace KZLib.KZEditor
 					{
 						m_SelectedHandleIndex = m_MouseOverHandleIndex;
 
-						if(m_MouseOverHandleIndex != -1)
+						if(m_MouseOverHandleIndex != Global.INVALID_INDEX)
 						{
 							m_DragHandleIndex = m_SelectedHandleIndex;
 						}
 					}
 					break;
 
-					case EventType.MouseDrag when m_DragHandleIndex != -1:
+					case EventType.MouseDrag when m_DragHandleIndex != Global.INVALID_INDEX:
 					{
 						var currentPosition = handleArray[m_DragHandleIndex];
 						var newPosition = GetMousePosition(m_Creator);

@@ -32,7 +32,9 @@ public class DialogBoxPopupUI : WindowUI2D
 		{
 			if(data.OnClicked == null)
 			{
-				throw new NullReferenceException(string.Format("{0}의 실행 함수가 없습니다.",data.Title));
+				LogTag.UI.E($"{data.Title} is null");
+
+				return;
 			}
 
 			cellList.Add(data);

@@ -441,6 +441,4 @@ namespace KZLib.KZResolver
 			_writer.WriteEndObject();
 		}
 	}
-
-	
 }

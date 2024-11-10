@@ -45,7 +45,7 @@ namespace HudPanel
 
 			AudioListener.GetSpectrumData(m_SpectrumArray,0,FFTWindow.Blackman);
 
-			m_DecibelText.SetSafeTextMeshPro(string.Format("{0}",m_MaxDecibel));
+			m_DecibelText.SetSafeTextMeshPro($"{m_MaxDecibel}");
 
 			m_AudioGraphImageUI.UpdateGraph(m_SpectrumArray);
 		}

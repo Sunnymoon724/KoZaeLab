@@ -17,37 +17,31 @@ namespace KZLib
 
 		private async UniTask PlayTransitionOutInAsync(TransitionData _data,Func<UniTask> _onPlayTask)
 		{
-			// 점점 어두워짐
+			// darker
 			await PlayTransitionOutAsync(_data,false);
 
 			await _onPlayTask.Invoke();
 
-			// 점점 밝아짐
+			// brighter
 			await PlayTransitionInAsync(_data,true);
 		}
 
 		private async UniTask PlayTransitionOutInAsync(TransitionData _data,Action _onPlay)
 		{
-			// 점점 어두워짐
+			// darker
 			await PlayTransitionOutAsync(_data,false);
 
 			_onPlay.Invoke();
 
-			// 점점 밝아짐
+			// brighter
 			await PlayTransitionInAsync(_data,true);
 		}
 
-		/// <summary>
-		/// 패널을 알파값을 내려서 트렌지션인 한다.
-		/// </summary>
 		public async UniTask PlayTransitionInAsync(TransitionData _data,bool _autoHide = true)
 		{
 			await PlayTransitionAsync(_data,_autoHide,true);
 		}
 
-		/// <summary>
-		/// 패널을 알파값을 올려서 트렌지션아웃 한다.
-		/// </summary>
 		public async UniTask PlayTransitionOutAsync(TransitionData _data,bool _autoHide = true)
 		{
 			await PlayTransitionAsync(_data,_autoHide,false);

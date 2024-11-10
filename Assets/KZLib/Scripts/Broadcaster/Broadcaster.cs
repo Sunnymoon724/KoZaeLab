@@ -31,6 +31,8 @@ namespace KZLib
 		{
 			if(_callback == null)
 			{
+				LogTag.System.E("Callback is null");
+
 				return;
 			}
 
@@ -41,7 +43,9 @@ namespace KZLib
 
 				if(listenerType != callbackType)
 				{
-					throw new InvalidOperationException($"{listenerType.Name} != {callbackType.Name} in {_eventTag}");
+					LogTag.System.E($"{listenerType.Name} != {callbackType.Name} in {_eventTag}");
+
+					return;
 				}
 
 				s_ListenerDict[_eventTag] = _enable ? Delegate.Combine(listener,_callback) : Delegate.Remove(listener,_callback);
@@ -59,24 +63,26 @@ namespace KZLib
 
 		public static void SendEvent(EventTag _eventTag)
 		{
-			if(s_ListenerDict.TryGetValue(_eventTag,out var listener) && listener is Action action)
+			if(s_ListenerDict.TryGetValue(_eventTag,out var listener) && listener is Action onAction)
 			{
-				action();
+				onAction();
 			}
-
-			throw new InvalidOperationException($"{listener.GetType().Name} is not in {_eventTag}.");
+			else
+			{
+				LogTag.System.E($"{listener.GetType().Name} is not in {_eventTag}.");
+			}
 		}
 
 		public static void SendEvent<TDelegate>(EventTag _eventTag,TDelegate _param)
 		{
-			if(s_ListenerDict.TryGetValue(_eventTag,out var listener) && listener is Action<TDelegate> action)
+			if(s_ListenerDict.TryGetValue(_eventTag,out var listener) && listener is Action<TDelegate> onAction)
 			{
-				action(_param);
-
-				return;
+				onAction(_param);
 			}
-
-			throw new InvalidOperationException($"{listener.GetType().Name} is not in {_eventTag}.");
+			else
+			{
+				LogTag.System.E($"{listener.GetType().Name} is not in {_eventTag}.");
+			}
 		}
 	}
 }

@@ -99,21 +99,21 @@ public abstract class SheetSettings<TObject> : OuterBaseSettings<TObject> where 
 		[VerticalGroup("Button",Order = 2),Button("Create",ButtonSizes.Large),ShowIf(nameof(IsShowCreateButton)),EnableIf(nameof(IsCreateAble)),PropertyTooltip("$m_ErrorLog")]
 		protected abstract void OnCreateData();
 
-		private bool IsValidSheetName(IEnumerable<(string,int)> _titleGroup,string[] _titleArray)
+		private bool IsValidSheetName(IEnumerable<(string,int)> _nameGroup,string[] _titleArray)
 		{
-			var count = 0;
+			var cnt = 0;
 
 			foreach(var title in _titleArray)
 			{
-				var index = _titleGroup.FindIndex(x=>x.Item1.IsEqual(title));
+				var idx = _nameGroup.IndexOf(x=>x.Item1.IsEqual(title));
 
-				if(index != -1)
+				if(idx != -1)
 				{
-					count++;
+					cnt++;
 				}
 			}
 
-			return _titleArray.Length == count;
+			return _titleArray.Length == cnt;
 		}
 	}
 }

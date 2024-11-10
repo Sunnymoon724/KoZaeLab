@@ -6,7 +6,7 @@ using Cysharp.Threading.Tasks;
 using KZLib.KZNetwork;
 using Newtonsoft.Json.Linq;
 
-public static class WebRequestUtility
+public static partial class CommonUtility
 {
 	private const string BUG_REPORT = "Bug Report";
 
@@ -33,6 +33,8 @@ public static class WebRequestUtility
 
 		if(link.IsEmpty())
 		{
+			LogTag.System.E("Link is empty");
+
 			return;
 		}
 

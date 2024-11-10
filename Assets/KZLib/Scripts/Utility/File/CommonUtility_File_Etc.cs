@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 public static partial class CommonUtility
 {
@@ -8,9 +7,7 @@ public static partial class CommonUtility
 
 	public static long GetFileSizeByte(string _filePath)
 	{
-		IsFileExist(_filePath,true);
-
-		return new FileInfo(_filePath).Length;
+		return !IsFileExist(_filePath,true) ? 0L : new FileInfo(_filePath).Length;
 	}
 
 	public static long GetFileSizeKB(string _filePath)

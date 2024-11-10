@@ -23,7 +23,7 @@ public class TimerTextUI : BaseTextUI
 
 	public void StopTimer()
 	{
-		UniTaskUtility.KillTokenSource(ref m_TokenSource);
+		CommonUtility.KillTokenSource(ref m_TokenSource);
 	}
 
 	public void PlayTimer(long _duration,string _format,Action<TimeSpan> _onUpdate,Action _onComplete,bool _ignoreTimeScale = false)
@@ -38,7 +38,7 @@ public class TimerTextUI : BaseTextUI
 
 	public async UniTask PlayTimerAsync(TimeSpan _duration,string _format,Action<TimeSpan> _onUpdate,Action _onComplete,bool _ignoreTimeScale = false)
 	{
-		UniTaskUtility.RecycleTokenSource(ref m_TokenSource);
+		CommonUtility.RecycleTokenSource(ref m_TokenSource);
 
 		var remainingTime = TimeSpan.FromSeconds(_duration.TotalSeconds-Time.realtimeSinceStartup);
 

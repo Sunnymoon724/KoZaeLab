@@ -6,6 +6,8 @@ public static class MaterialExtension
 	{
 		if(!_material)
 		{
+			LogTag.System.E("Material is null");
+
 			return null;
 		}
 
@@ -18,6 +20,8 @@ public static class MaterialExtension
 	{
 		if(!_material)
 		{
+			LogTag.System.E("Material is null");
+
 			return null;
 		}
 
@@ -30,6 +34,8 @@ public static class MaterialExtension
 	{
 		if(!_material)
 		{
+			LogTag.System.E("Material is null");
+
 			return null;
 		}
 
@@ -42,6 +48,8 @@ public static class MaterialExtension
 	{
 		if(!_material)
 		{
+			LogTag.System.E("Material is null");
+
 			return null;
 		}
 
@@ -54,6 +62,8 @@ public static class MaterialExtension
 	{
 		if(!_material)
 		{
+			LogTag.System.E("Material is null");
+
 			return null;
 		}
 
@@ -66,6 +76,8 @@ public static class MaterialExtension
 	{
 		if(!_material)
 		{
+			LogTag.System.E("Material is null");
+
 			return null;
 		}
 
@@ -78,6 +90,8 @@ public static class MaterialExtension
 	{
 		if(!_material)
 		{
+			LogTag.System.E("Material is null");
+
 			return null;
 		}
 

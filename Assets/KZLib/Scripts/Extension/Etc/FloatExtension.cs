@@ -4,7 +4,7 @@ public static class FloatExtension
 {
 	public static string ToStringComma(this float _single)
 	{
-		return string.Format("{0:n0}",_single);
+		return $"{_single:n0}";
 	}
 
 	public static string ToStringPercent(this float _single,int _decimals)
@@ -14,11 +14,11 @@ public static class FloatExtension
 
 	public static string ToStringSign(this float _single)
 	{
-		return string.Format("{0}{1}",_single > 0.0 ? "+" : "",_single);
+		return $"{(_single > 0.0 ? "+" : "")}{_single}";
 	}
 
 	/// <summary>
-	/// 소수점 n번쨰 까지만 표시
+	/// double . _decimals
 	/// </summary>
 	public static float ToLimit(this float _single,int _decimals)
 	{
@@ -27,6 +27,9 @@ public static class FloatExtension
 		return Mathf.Floor(_single*factor)/factor;
 	}
 
+	/// <summary>
+	/// -180.0f ~ +180.0f
+	/// </summary>
 	public static float ToWrapAngle(this float _angle)
 	{
 		_angle %= Global.FULL_ANGLE;
@@ -59,9 +62,6 @@ public static class FloatExtension
 		return Approximately(_single,0.0f);
 	}
 
-	/// <summary>
-	/// 정수와 소수 분리
-	/// </summary>
 	public static void SeparateDecimal(this float _single,out int _integer,out float _fraction)
 	{
 		_integer = Mathf.FloorToInt(_single);

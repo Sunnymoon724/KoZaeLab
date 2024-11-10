@@ -79,8 +79,6 @@ namespace KZLib
 				yield break;
 			}
 
-			var nameList = new List<string>();
-
 			while(m_DataReader.Read())
 			{
 				yield return m_DataReader[0].ToString();
@@ -105,7 +103,9 @@ namespace KZLib
 		{
 			if(!m_CacheDataDict.TryGetValue(_tableName,out var dataDict))
 			{
-				throw new ArgumentException($"{_tableName} is not found.");
+				LogTag.System.E($"{_tableName} is not found.");
+
+				return;
 			}
 
 			var code = CommonUtility.Base64Encode(_data);
@@ -214,7 +214,7 @@ namespace KZLib
 
 				if(code.IsEqual(CommonUtility.Base64Encode(value)))
 				{
-					_dataDict.AddOrUpdate(key,encode);
+					_dataDict[key] = encode;
 				}
 				else
 				{

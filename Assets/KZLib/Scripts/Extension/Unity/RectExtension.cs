@@ -6,7 +6,7 @@ public static class RectExtension
 	{
 		var result = _rect;
 
-		if (_width != 0f && _height != 0f)
+		if(_width != 0.0f && _height != 0.0f)
 		{
 			result.xMin = _rect.xMin/_width;
 			result.xMax = _rect.xMax/_width;

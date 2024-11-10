@@ -30,7 +30,7 @@ namespace HudPanel
 
 		public void UpdateRender()
 		{
-			m_InfoText.SetSafeTextMeshPro(m_Recorder.Valid ? string.Format("{0}",m_Recorder.LastValue) : "-----");
+			m_InfoText.SetSafeTextMeshPro(m_Recorder.Valid ? $"{m_Recorder.LastValue}" : "-----");
 		}
 	}
 }

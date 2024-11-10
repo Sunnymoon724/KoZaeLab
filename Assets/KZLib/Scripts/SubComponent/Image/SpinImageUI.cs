@@ -8,7 +8,7 @@ public class SpinImageUI : BaseImageUI,IDragHandler
 	[SerializeField] private float m_Speed = 1.0f;
 	[SerializeField] private bool m_LockVertical = false;
 
-	public MoreAction OnDragHandler { get; set; }
+	public NewAction onDragHandler = new();
 
 	public void SetTarget(Transform _target)
 	{
@@ -31,6 +31,6 @@ public class SpinImageUI : BaseImageUI,IDragHandler
 
 		m_Target.localRotation = Quaternion.Euler(0.0f,-0.5f*delta.x*m_Speed,-0.5f*delta.y*m_Speed)*m_Target.localRotation;
 
-		OnDragHandler?.Invoke();
+		onDragHandler?.Invoke();
 	}
 }

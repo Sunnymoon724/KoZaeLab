@@ -52,7 +52,7 @@ namespace GameData
 
 		private IAccountData GetAccountData(string _key)
 		{
-			var type = Type.GetType(string.Format("GameData.Account+{0}",_key.Replace(" ","")));
+			var type = Type.GetType($"GameData.Account+{_key.Replace(" ", "")}");
 
 			if(m_SaveHandler.HasKey(_key))
 			{

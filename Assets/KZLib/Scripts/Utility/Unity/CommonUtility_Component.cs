@@ -30,27 +30,31 @@ public static partial class CommonUtility
 #if UNITY_EDITOR
 	public static IEnumerable<TComponent> GetComponentGroupInInUnity<TComponent>() where TComponent : Component
 	{
-		var componentList = new List<TComponent>(GetComponentGroupInActiveScene<TComponent>());
+		foreach(var component in GetComponentGroupInActiveScene<TComponent>())
+		{
+			yield return component;
+		}
 
 		foreach(var prefab in LoadAssetGroup<GameObject>("t:prefab"))
 		{
-			componentList.AddRange(prefab.GetComponentsInChildren<TComponent>(true));
+			foreach(var component in prefab.GetComponentsInChildren<TComponent>(true))
+			{
+				yield return component;
+			}
 		}
-
-		return componentList;
 	}
 
 	public static IEnumerable<TComponent> GetComponentGroupInActiveScene<TComponent>() where TComponent : Component
 	{
 		var scene = SceneManager.GetActiveScene();
-		var componentList = new List<TComponent>();
 
-		foreach(var data in scene.GetRootGameObjects())
+		foreach(var root in scene.GetRootGameObjects())
 		{
-			componentList.AddRange(data.GetComponentsInChildren<TComponent>(true));
+			foreach(var component in root.GetComponentsInChildren<TComponent>(true))
+			{
+				yield return component;
+			}
 		}
-
-		return componentList;
 	}
 #endif
 }

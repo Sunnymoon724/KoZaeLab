@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -93,7 +92,7 @@ namespace KZLib
 		#region Open
 		public void DelayOpen<TBase>(UITag _tag,object _param,float _delayTime) where TBase : class,IWindowUI
 		{
-			R3Utility.DelayAction(() => { Open<TBase>(_tag,_param); },_delayTime);
+			CommonUtility.DelayAction(() => { Open<TBase>(_tag,_param); },_delayTime);
 		}
 
 		public TBase Open<TBase>(UITag _tag,object _param = null) where TBase : class,IWindowUI
@@ -131,21 +130,27 @@ namespace KZLib
 
 			if(!result)
 			{
-				throw new NullReferenceException($"{_tag} is not exist.");
+				LogTag.UI.E($"{_tag} is not exist.");
+
+				return null;
 			}
 
 			if(!result.TryGetComponent<WindowUI>(out var window))
 			{
 				CommonUtility.DestroyObject(result);
 
-				throw new NullReferenceException($"Component is not exist in {_tag}.");
+				LogTag.UI.E($"Component is not exist in {_tag}.");
+
+				return null;
 			}
 
 			if(window.Tag != _tag)
 			{
 				CommonUtility.DestroyObject(result);
 
-				throw new NullReferenceException($"ui tag is not matched. [{window.Tag} != {_tag}]");
+				LogTag.UI.E($"UI tag is not matched. [{window.Tag} != {_tag}]");
+
+				return null;
 			}
 
 			transform.SetUIChild(result.transform);
@@ -227,9 +232,6 @@ namespace KZLib
 		#endregion Close
 
 		#region Hide
-		/// <summary>
-		/// UI의 상태를 바꾼다.
-		/// </summary>
 		public UITag Hide(UITag _tag,bool _hide)
 		{
 			var window = GetOpened(_tag);

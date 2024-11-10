@@ -14,7 +14,7 @@ namespace HudPanel
 		{
 			_size.ByteToString(out var size,out var unit);
 
-			m_SizeText.SetSafeTextMeshPro(string.Format("{0:N2}",size));
+			m_SizeText.SetSafeTextMeshPro($"{size:n2}");
 			m_UnitText.SetSafeTextMeshPro(unit);
 		}
 	}

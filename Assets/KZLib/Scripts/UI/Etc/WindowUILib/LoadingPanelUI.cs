@@ -10,9 +10,6 @@ namespace LoadingPanel
 	}
 }
 
-/// <summary>
-/// 로딩하는 경우
-/// </summary>
 public class LoadingPanelUI : WindowUI2D
 {
 	public override UITag Tag => UITag.LoadingPanelUI;

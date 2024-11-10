@@ -29,16 +29,16 @@ namespace HudPanel
 			m_DeviceModelText.SetSafeTextMeshPro(SystemInfo.deviceModel);
 
 			m_ProcessorTypeText.SetSafeTextMeshPro(SystemInfo.processorType);
-			m_ProcessorCountText.SetSafeTextMeshPro(string.Format("{0} cores",SystemInfo.processorCount));
+			m_ProcessorCountText.SetSafeTextMeshPro($"{SystemInfo.processorCount} cores");
 
-			m_MemorySizeText.SetSafeTextMeshPro(string.Format("{0} MB",SystemInfo.systemMemorySize));
+			m_MemorySizeText.SetSafeTextMeshPro($"{SystemInfo.systemMemorySize} MB");
 
 			m_GraphicDeviceNameText.SetSafeTextMeshPro(SystemInfo.graphicsDeviceName);
 			m_GraphicDeviceVenderText.SetSafeTextMeshPro(SystemInfo.graphicsDeviceVendor);
 			m_GraphicDeviceVersionText.SetSafeTextMeshPro(SystemInfo.graphicsDeviceVersion);
-			m_GraphicMemorySizeText.SetSafeTextMeshPro(string.Format("{0} MB",SystemInfo.graphicsMemorySize));
-			m_GraphicTextureSizeText.SetSafeTextMeshPro(string.Format("{0} px",SystemInfo.maxTextureSize));
-			m_GraphicShaderLevelText.SetSafeTextMeshPro(string.Format("{0}",SystemInfo.graphicsShaderLevel));
+			m_GraphicMemorySizeText.SetSafeTextMeshPro($"{SystemInfo.graphicsMemorySize} MB");
+			m_GraphicTextureSizeText.SetSafeTextMeshPro($"{SystemInfo.maxTextureSize} px");
+			m_GraphicShaderLevelText.SetSafeTextMeshPro($"{SystemInfo.graphicsShaderLevel}");
 		}
 
 		protected override void OnEnable()
@@ -47,8 +47,8 @@ namespace HudPanel
 
 			var resolution = Screen.currentResolution;
 
-			m_ScreenResolutionText.SetSafeTextMeshPro(string.Format("{0}x{1} {2:F3}Hz",resolution.width,resolution.height,resolution.refreshRateRatio));
-			m_WindowResolutionText.SetSafeTextMeshPro(string.Format("{0}x{1} {2:F3}Hz {3}dpi",Screen.width,Screen.height,resolution.refreshRateRatio,Screen.dpi));
+			m_ScreenResolutionText.SetSafeTextMeshPro($"{resolution.width}x{resolution.height} {resolution.refreshRateRatio:F3}Hz");
+			m_WindowResolutionText.SetSafeTextMeshPro($"{Screen.width}x{Screen.height} {resolution.refreshRateRatio:F3}Hz {Screen.dpi}dpi");
 		}
 	}
 }

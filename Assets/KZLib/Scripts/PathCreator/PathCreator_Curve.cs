@@ -17,7 +17,7 @@ namespace KZLib.KZDevelop
 
 		private void GetCurvePointArray()
 		{
-			m_PointArray = MathUtility.GetCubicBezierCurve(HandleArray,IsClosed,m_Resolution) ?? new Vector3[0];
+			m_PointArray = CommonUtility.GetCubicBezierCurve(HandleArray,IsClosed,m_Resolution) ?? new Vector3[0];
 		}
 
 		public void SetCurve(Vector3[] _handleArray,bool _isClosed,float _resolution)
@@ -188,13 +188,13 @@ namespace KZLib.KZDevelop
 				// 이전 컨트롤 점
 				if(_index+1 < length || IsClosed)
 				{
-					m_HandleList[MathUtility.LoopClamp(_index+1,length)] += deltaMove;
+					m_HandleList[CommonUtility.LoopClamp(_index+1,length)] += deltaMove;
 				}
 
 				// 이후 컨트롤 점
 				if(_index-1 >= 0 || IsClosed)
 				{
-					m_HandleList[MathUtility.LoopClamp(_index-1,length)] += deltaMove;
+					m_HandleList[CommonUtility.LoopClamp(_index-1,length)] += deltaMove;
 				}
 			}
 			//? 반대쪽 컨트롤 설정
@@ -206,8 +206,8 @@ namespace KZLib.KZDevelop
 
 				if(controlIndex >= 0 && controlIndex < length || IsClosed)
 				{
-					var anchor = m_HandleList[MathUtility.LoopClamp(anchorIndex,length)];
-					var index = MathUtility.LoopClamp(controlIndex,length);
+					var anchor = m_HandleList[CommonUtility.LoopClamp(anchorIndex,length)];
+					var index = CommonUtility.LoopClamp(controlIndex,length);
 
 					m_HandleList[index] = anchor+(anchor-position).normalized*(anchor-m_HandleList[index]).magnitude;
 				}

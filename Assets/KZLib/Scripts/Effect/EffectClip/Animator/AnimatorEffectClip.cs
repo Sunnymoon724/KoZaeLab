@@ -79,7 +79,7 @@ public class AnimatorEffectClip : EffectClip
 
 		await UniTask.Yield();
 
-		await UniTaskUtility.WaitForConditionAsync(()=>m_Animator.IsAnimationFinish(AnimationName),SetTime,m_IgnoreTimeScale,m_TokenSource.Token);
+		await CommonUtility.WaitForConditionAsync(()=>m_Animator.IsAnimationFinish(AnimationName),SetTime,m_IgnoreTimeScale,m_TokenSource.Token);
 	}
 
 	private List<string> AnimatorNameList

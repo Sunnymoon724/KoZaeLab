@@ -1,7 +1,7 @@
 using System;
 using R3;
 
-public static class R3Utility
+public static partial class CommonUtility
 {
 	public static IDisposable DelayAction(Action _onAction,float _second)
 	{

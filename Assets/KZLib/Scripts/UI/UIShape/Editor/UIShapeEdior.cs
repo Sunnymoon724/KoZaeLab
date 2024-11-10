@@ -131,7 +131,7 @@ namespace KZLib.KZEditor
 						{
 							var distance = m_PolygonVertexDistanceArrayProperty.GetArrayElementAtIndex(i);
 
-							distance.floatValue = EditorGUILayout.Slider(string.Format("Vertex {0}",i+1),distance.floatValue,0.0f,1.0f);
+							distance.floatValue = EditorGUILayout.Slider($"Vertex {i + 1}",distance.floatValue,0.0f,1.0f);
 						}
 
 						EditorGUILayout.EndVertical();

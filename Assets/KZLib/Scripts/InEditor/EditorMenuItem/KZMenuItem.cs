@@ -104,7 +104,7 @@ namespace KZLib.KZMenu
 							continue;
 						}
 
-						builder.Append(string.Format("<b> <a href=\"{0}\">{1}</a> </b>\n",pair.Item1,pair.Item2.name));
+						builder.Append($"<b> <a href=\"{pair.Item1}\">{pair.Item2.name}</a> </b>\n");
 					}
 				});
 			}
@@ -143,7 +143,7 @@ namespace KZLib.KZMenu
 						return;
 					}
 
-					builder.Append(string.Format("<b> <a href=\"{0}\">{1}</a> </b> [<b> {2} </b>]",pair.Item1,pair.Item2.name,child.GetHierarchy()));
+					builder.Append($"<b> <a href=\"{pair.Item1}\">{pair.Item2.name}</a> </b> [<b> {child.GetHierarchy()} </b>]");
 				});
 			}
 
@@ -313,7 +313,7 @@ namespace KZLib.KZMenu
 
 		private static string GetScenePath(string _sceneName)
 		{
-			var pathGroup = CommonUtility.GetAssetPathGroup(string.Format("t:Scene {0}",_sceneName));
+			var pathGroup = CommonUtility.GetAssetPathGroup($"t:Scene {_sceneName}");
 
 			return pathGroup.IsNullOrEmpty() ? string.Empty : pathGroup.First();
 		}

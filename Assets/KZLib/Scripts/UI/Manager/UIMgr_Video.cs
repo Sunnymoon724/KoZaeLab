@@ -5,18 +5,32 @@ namespace KZLib
 	public partial class UIMgr : LoadSingletonMB<UIMgr>
 	{
 		/// <summary>
-		/// 페이드 아웃 -> 비디오 로딩 -> 페이드 인 -> 비디오 실행 
+		/// fade out -> prepare video -> fade in -> play video
 		/// </summary>
 		public async UniTask WatchVideoAsync(VideoPanelUI.VideoParam _param)
 		{
+			if(_param == null)
+			{
+				LogTag.System.E("VideoParam is null");
+
+				return;
+			}
+
 			await WatchVideoInnerAsync(_param,false);
 		}
 
 		/// <summary>
-		/// 페이드 아웃 -> 비디오 로딩 -> 페이드 인 -> 비디오 실행 
+		/// fade out -> show loading -> fade in -> play video
 		/// </summary>
 		public async UniTask WatchVideoIncludeLoadingAsync(VideoPanelUI.VideoParam _param)
 		{
+			if(_param == null)
+			{
+				LogTag.System.E("VideoParam is null");
+
+				return;
+			}
+
 			await WatchVideoInnerAsync(_param,true);
 		}
 

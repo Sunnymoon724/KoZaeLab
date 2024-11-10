@@ -10,9 +10,9 @@ namespace KZLib.KZEditor
 		private void SetCurvePathInput(Event _event)
 		{
 			var handleArray = m_Creator.HandleArray;
-			var handleIndex = (m_MouseOverHandleIndex == -1) ? 0 : m_MouseOverHandleIndex;
+			var handleIndex = (m_MouseOverHandleIndex == Global.INVALID_INDEX) ? 0 : m_MouseOverHandleIndex;
 
-			m_MouseOverHandleIndex = -1;
+			m_MouseOverHandleIndex = Global.INVALID_INDEX;
 
 			for(var i=0;i<handleArray.Length;i++)
 			{
@@ -53,7 +53,7 @@ namespace KZLib.KZEditor
 							}
 						}
 						//? Delete
-						else if(m_MouseOverHandleIndex != -1 && (_event.control || _event.command))
+						else if(m_MouseOverHandleIndex != Global.INVALID_INDEX && (_event.control || _event.command))
 						{
 							Undo.RecordObject(m_Creator,"Delete Anchor");
 
@@ -61,17 +61,17 @@ namespace KZLib.KZEditor
 
 							if(m_MouseOverHandleIndex == m_SelectedHandleIndex)
 							{
-								m_SelectedHandleIndex = -1;
+								m_SelectedHandleIndex = Global.INVALID_INDEX;
 							}
 
-							m_MouseOverHandleIndex = -1;
+							m_MouseOverHandleIndex = Global.INVALID_INDEX;
 						}
 						//? Select
 						else
 						{
 							m_SelectedHandleIndex = m_MouseOverHandleIndex;
 
-							if(m_MouseOverHandleIndex != -1)
+							if(m_MouseOverHandleIndex != Global.INVALID_INDEX)
 							{
 								m_DragHandleIndex = m_SelectedHandleIndex;
 							}
@@ -79,7 +79,7 @@ namespace KZLib.KZEditor
 					}
 					break;
 
-					case EventType.MouseDrag when m_DragHandleIndex != -1:
+					case EventType.MouseDrag when m_DragHandleIndex != Global.INVALID_INDEX:
 					{
 						var currentPosition = handleArray[m_DragHandleIndex];
 						var newPosition = GetMousePosition(m_Creator);
@@ -96,7 +96,7 @@ namespace KZLib.KZEditor
 					break;
 					case EventType.MouseUp:
 					{
-						m_DragHandleIndex = -1;
+						m_DragHandleIndex = Global.INVALID_INDEX;
 					}
 					break;
 				}
@@ -113,7 +113,7 @@ namespace KZLib.KZEditor
 			for(var i=0;i<length;i++)
 			{
 				Handles.DrawDottedLine(_handleArray[i*3+0],_handleArray[i*3+1],5.0f);
-				Handles.DrawDottedLine(_handleArray[i*3+2],_handleArray[MathUtility.LoopClamp(i*3+3,_handleArray.Length)],5.0f);
+				Handles.DrawDottedLine(_handleArray[i*3+2],_handleArray[CommonUtility.LoopClamp(i*3+3,_handleArray.Length)],5.0f);
 			}
 
 			Handles.color = m_NormalLineColor;

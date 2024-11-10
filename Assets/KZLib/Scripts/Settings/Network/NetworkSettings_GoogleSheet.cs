@@ -34,7 +34,7 @@ public partial class NetworkSettings : InnerBaseSettings<NetworkSettings>
 	{
 		m_GoogleSheetArray = new string[1,1] { { "Loading..." } };
 
-		var result = await WebRequestUtility.GetSheet_GoogleSheetAsync("Test",m_GoogleSheetIndex);
+		var result = await CommonUtility.GetSheet_GoogleSheetAsync("Test",m_GoogleSheetIndex);
 
 		if(result.IsEmpty())
 		{
@@ -66,7 +66,7 @@ public partial class NetworkSettings : InnerBaseSettings<NetworkSettings>
 
 	private async UniTaskVoid PostText_GoogleSheet()
 	{
-		await WebRequestUtility.PostAddRow_GoogleSheetAsync("Test",m_GoogleSheetIndex,"Test\tAAA\tBBB\tCCC");
+		await CommonUtility.PostAddRow_GoogleSheetAsync("Test",m_GoogleSheetIndex,"Test\tAAA\tBBB\tCCC");
 
 		await GetSheet_GoogleSheetAsync();
 	}

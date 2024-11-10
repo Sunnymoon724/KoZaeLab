@@ -53,7 +53,7 @@ namespace KZLib
 		[HorizontalGroup("Option/Menu/Export",Order = 0),Button("ToJson",ButtonSizes.Medium)]
 		protected void OnExportToJson()
 		{
-			var filePath = CommonUtility.PathCombine(CommonUtility.GetParentAbsolutePath(m_CurrentPath,true),string.Format("{0}.json",m_TableName));
+			var filePath = CommonUtility.PathCombine(CommonUtility.GetParentAbsolutePath(m_CurrentPath,true),$"{m_TableName}.json");
 			var text = JsonConvert.SerializeObject(m_MetaDataList);
 
 			CommonUtility.WriteTextToFile(filePath,text);

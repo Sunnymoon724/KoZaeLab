@@ -8,12 +8,12 @@ public static class LongExtension
 
 	public static string ToStringComma(this long _long)
 	{
-		return string.Format("{0:n0}",_long);
+		return $"{_long:n0}";
 	}
 
 	public static string ToStringSign(this long _long)
 	{
-		return string.Format("{0:+#;-#;0}",_long);
+		return $"{_long:+#;-#;0}";
 	}
 
 	public static double ToSeconds(this long _milliSeconds)

@@ -10,18 +10,18 @@ public class SkipPanelUI : WindowUI2D
 
 	public override UITag Tag => UITag.SkipPanelUI;
 
-	[SerializeField,LabelText("스킵 보이는 시간"),ValidateInput("IsValidShowDuration","0초는 설정할 수 없습니다.",InfoMessageType.Error),PropertyTooltip("음수는 무한/0은 작동 안함")]
+	[SerializeField,LabelText("Skip Show Duration"),ValidateInput(nameof(IsValidShowDuration),"0 is not defined.",InfoMessageType.Error),PropertyTooltip("Negative numbers represent infinity, and zero doesn't work.")]
 	private float m_SkipShowDuration = 0.0f;
-	[SerializeField,LabelText("스킵 숨기는 시간"),MinValue(0.02f)]
+	[SerializeField,LabelText("Skip Hide Duration"),MinValue(0.02f)]
 	private float m_SkipHideDuration = 0.0f;
 
-	[SerializeField,LabelText("클릭 시 사운드")]
+	[SerializeField,LabelText("Click Sound")]
 	private AudioClip m_AudioClip = null;
 
-	[SerializeField,LabelText("스킵 보이게 하는 버튼")]
+	[SerializeField,LabelText("Trigger Button")]
 	private Button m_TriggerButton = null;
 
-	[SerializeField,LabelText("스킵 버튼")]
+	[SerializeField,LabelText("Skip Button")]
 	private Button m_SkipButton = null;
 
 	private bool IsValidShowDuration => m_SkipShowDuration != 0.0f;
@@ -32,7 +32,7 @@ public class SkipPanelUI : WindowUI2D
 
 		if(_param is SkipParam param)
 		{
-			m_SkipButton.SetListener(()=>
+			m_SkipButton.onClick.SetAction(()=>
 			{
 				param.OnClicked?.Invoke();
 
@@ -62,7 +62,7 @@ public class SkipPanelUI : WindowUI2D
 		SetButtonsState(_skipActive : false,_triggerActive : false);
 		ShowSkipButton(m_SkipShowDuration);
 
-		m_TriggerButton.AddListener(()=> { ShowSkipButton(0.0f); } );
+		m_TriggerButton.onClick.AddAction(()=> { ShowSkipButton(0.0f); } );
 	}
 
 	private void SetButtonsState(bool _skipActive,bool _triggerActive)
@@ -73,11 +73,11 @@ public class SkipPanelUI : WindowUI2D
 
 	private void ShowSkipButton(float _delay)
 	{
-		R3Utility.DelayAction(()=>
+		CommonUtility.DelayAction(()=>
 		{
 			SetButtonsState(_skipActive : true,_triggerActive : false);
 
-			R3Utility.DelayAction(HideSkipButton,m_SkipHideDuration);
+			CommonUtility.DelayAction(HideSkipButton,m_SkipHideDuration);
 		},_delay);
 	}
 

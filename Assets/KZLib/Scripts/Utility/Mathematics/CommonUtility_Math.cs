@@ -1,19 +1,28 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
-public static partial class MathUtility
+public static partial class CommonUtility
 {
 	#region Distance
-	public static float GetTotalDistance(IEnumerable<Vector3> _positionGroup)
+	public static float GetTotalDistance(IEnumerable<Vector3> _posGroup)
 	{
 		var distance = 0.0f;
-		var positionArray = _positionGroup.ToArray();
+		var prevPos = Vector3.zero;
+		var isFirst = true;
 
-		for(var i=1;i<positionArray.Length;i++)
+		foreach(var pos in _posGroup)
 		{
-			distance += Vector3.Distance(positionArray[i-1],positionArray[i]);
+			if(!isFirst)
+			{
+				distance += Vector3.Distance(prevPos,pos);
+			}
+			else
+			{
+				isFirst = false;
+			}
+
+			prevPos = pos;
 		}
 
 		return distance;
@@ -114,6 +123,13 @@ public static partial class MathUtility
 
 	public static void SetAlignmentGameObjectList(List<GameObject> _objectList,int _xMax,int _hMax,float _xGap,float _yGap)
 	{
+		if(_objectList.IsNullOrEmpty())
+		{
+			LogTag.System.E("List is null or empty");
+
+			return;
+		}
+
 		var widthAble   = _xMax != -1;
 		var heightAble  = _xMax != -1;
 		var widthArray  = widthAble ? MiddleAlignment(_xMax) : null;

@@ -74,40 +74,40 @@ public static partial class CommonUtility
 	#region Player Settings
 	public static void AddDefineSymbol(string _symbol,BuildTargetGroup _target)
 	{
-		var symbolGroup = PlayerSettings.GetScriptingDefineSymbolsForGroup(_target);
+		var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(_target);
 
-		if(symbolGroup.Contains(_symbol))
+		if(symbols.Contains(_symbol))
 		{
 			return;
 		}
 
-		PlayerSettings.SetScriptingDefineSymbolsForGroup(_target,$"{symbolGroup};{_symbol}");
+		PlayerSettings.SetScriptingDefineSymbolsForGroup(_target,$"{symbols};{_symbol}");
 	}
 
 	public static void RemoveDefineSymbol(string _symbol,BuildTargetGroup _target)
 	{
-		var symbolGroup = PlayerSettings.GetScriptingDefineSymbolsForGroup(_target);
+		var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(_target);
 
-		if(!symbolGroup.Contains(_symbol))
+		if(!symbols.Contains(_symbol))
 		{
 			return;
 		}
 
-		PlayerSettings.SetScriptingDefineSymbolsForGroup(_target,symbolGroup.Replace(_symbol,"").Replace(";;",";"));
+		PlayerSettings.SetScriptingDefineSymbolsForGroup(_target,symbols.Replace(_symbol,"").Replace(";;",";"));
 	}
 
 	public static void ChangeDefineSymbol(string[] _oldSymbolArray,string[] _newSymbolArray)
 	{
 		foreach(var target in GetBuildTargetGroup())
 		{
-			var symbolGroup = PlayerSettings.GetScriptingDefineSymbolsForGroup(target);
+			var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(target);
 
-			if(symbolGroup.IsEmpty())
+			if(symbols.IsEmpty())
 			{
 				continue;
 			}
 
-			var symbolList = symbolGroup.Split(';').ToList();
+			var symbolList = symbols.Split(';').ToList();
 
 			symbolList.RemoveRange(_oldSymbolArray);
 			symbolList.AddRange(_newSymbolArray);

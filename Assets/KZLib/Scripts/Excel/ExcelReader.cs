@@ -31,7 +31,9 @@ namespace KZLib.KZReader
 			{
 				if(m_DataSet == null)
 				{
-					throw new NullReferenceException("DataSet is null in ExcelReader");
+					LogTag.System.E("DataSet is null in ExcelReader");
+
+					return null;
 				}
 
 				return m_DataSet.Tables;
@@ -55,7 +57,16 @@ namespace KZLib.KZReader
 		{
 			var tableCollection = TableCollection;
 
-			return tableCollection.Contains(_sheetName) ? tableCollection[_sheetName] : throw new ArgumentException($"The sheet '{_sheetName}' does not exist in tableCollection.");
+			if(tableCollection.Contains(_sheetName))
+			{
+				return tableCollection[_sheetName];
+			}
+			else
+			{
+				LogTag.System.E($"The sheet '{_sheetName}' does not exist in tableCollection.");
+
+				return null;
+			}
 		}
 
 		/// <summary>
@@ -67,10 +78,19 @@ namespace KZLib.KZReader
 
 			if(_row < 0 || _row >= rowCollection.Count)
 			{
-				throw new ArgumentOutOfRangeException($"{_row} is out of range in rowCollection. [{_sheetName}]");
+				LogTag.System.E($"{_row} is out of range in rowCollection. [{_sheetName}]");
+
+				return null;
 			}
 
-			var cellArray = rowCollection[_row].ItemArray ?? throw new NullReferenceException($"ItemArray is null for row {_row} in sheet [{_sheetName}]");
+			var cellArray = rowCollection[_row].ItemArray;
+
+			if(cellArray.IsNullOrEmpty())
+			{
+				LogTag.System.E($"ItemArray is null for row {_row} in sheet [{_sheetName}]");
+
+				return null;
+			}
 
 			var rowList = new List<string>();
 
@@ -110,7 +130,9 @@ namespace KZLib.KZReader
 
 			if(_column < 0 || _column >= sheet.Columns.Count)
 			{
-				throw new ArgumentOutOfRangeException($"{_column} is out of range in columnCollection. [{_sheetName}]");
+				LogTag.System.E($"{_column} is out of range in columnCollection. [{_sheetName}]");
+
+				return null;
 			}
 
 			var columnList = new List<string>();
@@ -184,7 +206,7 @@ namespace KZLib.KZReader
 						continue;
 					}
 
-					var index = propertyInfoArray.FindIndex(x=>x.Name.IsEqual(headerList[j]));
+					var index = propertyInfoArray.IndexOf(x=>x.Name.IsEqual(headerList[j]));
 
 					if(index == -1)
 					{
@@ -249,7 +271,9 @@ namespace KZLib.KZReader
 
 				if(KEY_WORD_ARRAY.Any(x=>x.IsEqual(header)))
 				{
-					throw new InvalidDataException($"{header} is invalid title.");
+					LogTag.System.E($"{header} is invalid title.");
+
+					yield break;
 				}
 
 				yield return (header,i);
@@ -295,14 +319,25 @@ namespace KZLib.KZReader
 			}
 			else if(_type.Equals(typeof(Vector3)))
 			{
-				return _text.TryToVector3(out var _result) ? _result : throw new ArgumentException($"{_text} is not vector3.");
+				if(_text.TryToVector3(out var _result))
+				{
+					return _result;
+				}
+				else
+				{
+					LogTag.System.E($"{_text} is not vector3.");
+
+					return null;
+				}
 			}
 			else if(_type.IsPrimitive)
 			{
 				return Convert.ChangeType(_text,_type);
 			}
 
-			throw new InvalidCastException($"There is no type that can be cast from {_type}.");
+			LogTag.System.E($"There is no type that can be cast from {_type}.");
+
+			return null;
 		}
 
 		private static string[] KEY_WORD_ARRAY => new string[]

@@ -56,7 +56,7 @@ public abstract class EffectClip : BaseComponent
 	{
 		base.OnDisable();
 
-		UniTaskUtility.KillTokenSource(ref m_TokenSource);
+		CommonUtility.KillTokenSource(ref m_TokenSource);
 	}
 
 	public virtual void SetEffect(EffectParam _param)
@@ -69,7 +69,7 @@ public abstract class EffectClip : BaseComponent
 
 	protected async UniTask PlayEffectAsync()
 	{
-		UniTaskUtility.RecycleTokenSource(ref m_TokenSource);
+		CommonUtility.RecycleTokenSource(ref m_TokenSource);
 
 		m_CurrentTime = 0.0f;
 
@@ -84,7 +84,7 @@ public abstract class EffectClip : BaseComponent
 
 		var count = IsLoop ? -1 : 1;
 
-		await UniTaskUtility.LoopUniTaskAsync(async ()=>
+		await CommonUtility.LoopUniTaskAsync(async ()=>
 		{
 			m_CurrentTime = 0.0f;
 
@@ -95,7 +95,7 @@ public abstract class EffectClip : BaseComponent
 
 		EndEffect(true);
 
-		UniTaskUtility.KillTokenSource(ref m_TokenSource);
+		CommonUtility.KillTokenSource(ref m_TokenSource);
 	}
 
 	protected abstract UniTask PlayTaskAsync();

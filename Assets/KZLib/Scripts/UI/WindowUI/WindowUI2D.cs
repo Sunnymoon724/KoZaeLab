@@ -6,23 +6,23 @@ using DG.Tweening;
 
 public abstract class WindowUI2D : WindowUI
 {
-	[FoldoutGroup("UI 설정",Order = -10)]
-	[VerticalGroup("UI 설정/기본 설정",Order = 0),SerializeField,LabelText("저장 여부")]
+	[FoldoutGroup("UI ",Order = -10)]
+	[VerticalGroup("UI/General",Order = 0),SerializeField,LabelText("Pooling")]
 	private bool m_Pooling = true;
 	public override bool IsPooling => m_Pooling;
 
-	[VerticalGroup("UI 설정/기본 설정",Order = 0),SerializeField,LabelText("레이어"),PropertyTooltip("기본 값 : Panel,팝업 : PopUp")]
+	[VerticalGroup("UI/General",Order = 0),SerializeField,LabelText("Layer")]
 	private UILayerType m_Layer = UILayerType.Panel;
 	public override UILayerType Layer => m_Layer;
 
-	[VerticalGroup("UI 설정/기본 설정",Order = 0),SerializeField,LabelText("팝업 창"),ShowIf(nameof(IsPopup))]
+	[VerticalGroup("UI/General",Order = 0),SerializeField,LabelText("PopUp Transform"),ShowIf(nameof(IsPopup))]
 	private Transform m_PopUpTransform = null;
 	private bool IsPopup => Layer == UILayerType.PopUp;
 
-	[VerticalGroup("UI 설정/기본 설정",Order = 0),SerializeField,LabelText("UI 보정 렉트")]
+	[VerticalGroup("UI/General",Order = 0),SerializeField,LabelText("Adjust Rect")]
 	protected RectTransform m_AdjustRect = null;
 
-	[VerticalGroup("UI 설정/기본 설정",Order = 0),SerializeField,LabelText("창 순서")]
+	[VerticalGroup("UI/General",Order = 0),SerializeField,LabelText("Window Order")]
 	private UIPriorityType m_Priority = UIPriorityType.Normal;
 	public override UIPriorityType Priority => m_Priority;
 
@@ -78,10 +78,6 @@ public abstract class WindowUI2D : WindowUI
 		IsHide = _hide;
 	}
 
-	/// <summary>
-	/// 창에 링크를 걸어둔다.
-	/// 링크가 걸린 UI는 내가 Close될 때 같이 닫힌다.
-	/// </summary>
 	public void AddLink(WindowUI2D _window)
 	{
 		m_LinkedHashSet.Add(_window);

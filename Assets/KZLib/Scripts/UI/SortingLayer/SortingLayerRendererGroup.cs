@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SortingLayerRendererGroup : SortingLayerBase
 {
-	[VerticalGroup("렌더러 그룹",Order = -10),SerializeField,LabelText("렌더러 그룹")]
+	[VerticalGroup("Renderer Group",Order = -10),SerializeField,LabelText("Renderer Group")]
 	private Renderer[] m_RendererArray = null;
 
 	protected override void Reset()

@@ -5,9 +5,6 @@ using UnityEngine.UI;
 using UnityEngine.Video;
 using Cysharp.Threading.Tasks;
 
-/// <summary>
-/// 비디오 재생 시키는 패널
-/// </summary>
 public class VideoPanelUI : WindowUI2D
 {
 	public record VideoParam(string VideoPath,SubtitlePanelUI.SubtitleParam SubtitleParam,bool UseSkip,bool IsLoop);
@@ -67,7 +64,9 @@ public class VideoPanelUI : WindowUI2D
 
 			if(!clip)
 			{
-				throw new NullReferenceException(string.Format("비디오 경로가 잘못 되어 있습니다. [경로 : {0}]",param.VideoPath));
+				LogTag.System.E($"Video path is wrong. [{param.VideoPath}]");
+
+				return;
 			}
 
 			m_VideoPlayer.clip = clip;
@@ -159,6 +158,6 @@ public class VideoPanelUI : WindowUI2D
 
 	public void SeekFrame(long _frame)
 	{
-		m_VideoPlayer.frame = MathUtility.Clamp(_frame,0L,(long)m_VideoPlayer.frameCount);
+		m_VideoPlayer.frame = CommonUtility.Clamp(_frame,0L,(long)m_VideoPlayer.frameCount);
 	}
 }

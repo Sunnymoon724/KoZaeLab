@@ -38,7 +38,7 @@ public partial class NetworkSettings : InnerBaseSettings<NetworkSettings>
 
 	private async UniTaskVoid GetBoard_TrelloAsync()
 	{
-		var data = await WebRequestUtility.GetBoard_TrelloAsync();
+		var data = await CommonUtility.GetBoard_TrelloAsync();
 
 		ShowData_Trello(data);
 	}
@@ -56,7 +56,7 @@ public partial class NetworkSettings : InnerBaseSettings<NetworkSettings>
 
 	private async UniTaskVoid GetList_TrelloAsync()
 	{
-		var data = await WebRequestUtility.GetList_TrelloAsync(m_TrelloTestId);
+		var data = await CommonUtility.GetList_TrelloAsync(m_TrelloTestId);
 
 		ShowData_Trello(data);
 	}
@@ -69,7 +69,7 @@ public partial class NetworkSettings : InnerBaseSettings<NetworkSettings>
 
 	private async UniTaskVoid GetCard_TrelloAsync()
 	{
-		var data = await WebRequestUtility.GetCard_TrelloAsync(m_TrelloTestId);
+		var data = await CommonUtility.GetCard_TrelloAsync(m_TrelloTestId);
 
 		ShowData_Trello(data);
 	}
@@ -77,13 +77,13 @@ public partial class NetworkSettings : InnerBaseSettings<NetworkSettings>
 	[HorizontalGroup("Network/Trello/Test/3",Order = 3),Button("Post List",ButtonSizes.Large),ShowIf(nameof(m_UseTrello)),EnableIf(nameof(HasTestId))]
 	protected void OnPostList_Trello()
 	{
-		WebRequestUtility.PostList_Trello(m_TrelloTestId,"Test");
+		CommonUtility.PostList_Trello(m_TrelloTestId,"Test");
 	}
 
 	[HorizontalGroup("Network/Trello/Test/3",Order = 3),Button("Post Card",ButtonSizes.Large),ShowIf(nameof(m_UseTrello)),EnableIf(nameof(HasTestId))]
 	protected void OnPostCard_Trello()
 	{
-		WebRequestUtility.PostCard_Trello(m_TrelloTestId,"Test","Description");
+		CommonUtility.PostCard_Trello(m_TrelloTestId,"Test","Description");
 	}
 
 	[HorizontalGroup("Network/Trello/Test/5",Order = 5),ShowInInspector,TableList(HideToolbar = true,AlwaysExpanded = true),ShowIf(nameof(IsShowTrelloResultList)),EnableIf(nameof(IsExistTrello))]

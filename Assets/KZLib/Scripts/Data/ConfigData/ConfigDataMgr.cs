@@ -39,7 +39,9 @@ namespace KZLib
 				}
 				else
 				{
-					throw new FileNotFoundException($"Configuration file for {key} not found.");
+					LogTag.System.E($"Configuration file for {key} not found.");
+
+					return null;
 				}
 			}
 
@@ -83,7 +85,9 @@ namespace KZLib
 			}
 			catch(Exception _ex)
 			{
-				throw new SerializationException($"Failed to deserialize {_name}.yaml [{_ex.Message}]");
+				LogTag.System.E($"Failed to deserialize {_name}.yaml [{_ex.Message}]");
+
+				return null;
 			}
 		}
 

@@ -63,9 +63,9 @@ namespace KZLib.KZDevelop
 						GetShapePointArray();
 					}
 
-					OnChangedPath?.Invoke();
+					onChangedPath?.Invoke();
 
-					m_PathLength = MathUtility.GetTotalDistance(m_PointArray);
+					m_PathLength = CommonUtility.GetTotalDistance(m_PointArray);
 
 					if(m_LineRenderer)
 					{
@@ -81,7 +81,7 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		public MoreAction OnChangedPath { get; set; }
+		public NewAction onChangedPath = new();
 
 		public void SetDirty()
 		{
@@ -159,7 +159,7 @@ namespace KZLib.KZDevelop
 
 		private Vector3 ConvertPosition(Vector3 _position)
 		{
-			return PathSpaceType == SpaceType.xy ? _position.MaskZ() : PathSpaceType == SpaceType.xz ? _position.MaskY() : _position;
+			return PathSpaceType == SpaceType.xy ? _position.SetZ() : PathSpaceType == SpaceType.xz ? _position.SetY() : _position;
 		}
 
 		private void OnDrawGizmos()

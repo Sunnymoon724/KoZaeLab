@@ -8,6 +8,8 @@ public static class GameObjectExtension
 	{
 		if(!_object)
 		{
+			LogTag.System.E("GameObject is null");
+
 			return;
 		}
 
@@ -24,6 +26,8 @@ public static class GameObjectExtension
 	{
 		if(!_object)
 		{
+			LogTag.System.E("GameObject is null");
+
 			return;
 		}
 
@@ -40,6 +44,8 @@ public static class GameObjectExtension
 	{
 		if(!_object)
 		{
+			LogTag.System.E("GameObject is null");
+
 			return;
 		}
 
@@ -53,6 +59,8 @@ public static class GameObjectExtension
 	{
 		if(!_object)
 		{
+			LogTag.System.E("GameObject is null");
+
 			return;
 		}
 
@@ -68,6 +76,8 @@ public static class GameObjectExtension
 	{
 		if(!_object)
 		{
+			LogTag.System.E("GameObject is null");
+
 			return;
 		}
 
@@ -80,6 +90,8 @@ public static class GameObjectExtension
 	{
 		if(!_object)
 		{
+			LogTag.System.E("GameObject is null");
+
 			return;
 		}
 
@@ -90,6 +102,8 @@ public static class GameObjectExtension
 	{
 		if(!_object)
 		{
+			LogTag.System.E("GameObject is null");
+
 			return false;
 		}
 
@@ -98,7 +112,19 @@ public static class GameObjectExtension
 
 	public static bool IsExistMeshFilter(this GameObject _object)
 	{
+		if(!_object)
+		{
+			LogTag.System.E("GameObject is null");
+
+			return false;
+		}
+
 		var filterArray = _object.GetComponentsInChildren<MeshFilter>(true);
+
+		if(filterArray.Length <= 0)
+		{
+			return false;
+		}
 
 		for(var i=0;i<filterArray.Length;i++)
 		{
@@ -113,16 +139,37 @@ public static class GameObjectExtension
 
 	public static TComponent GetOrAddComponent<TComponent>(this GameObject _object) where TComponent : Component
 	{
+		if(!_object)
+		{
+			LogTag.System.E("GameObject is null");
+
+			return null;
+		}
+
 		return _object.GetComponent<TComponent>() ?? _object.AddComponent<TComponent>();
 	}
 
 	public static bool IsInComponent<TComponent>(this GameObject _object) where TComponent : Component
 	{
+		if(!_object)
+		{
+			LogTag.System.E("GameObject is null");
+
+			return false;
+		}
+
 		return _object.GetComponent<TComponent>() is not null;
 	}
 
 	public static void ReAssignShader(this GameObject _object)
 	{
+		if(!_object)
+		{
+			LogTag.System.E("GameObject is null");
+
+			return;
+		}
+
 		foreach(var graphic in _object.GetComponentsInChildren<TMPro.TMP_Text>(true))
 		{
 			if(!graphic.fontMaterial)
@@ -152,6 +199,13 @@ public static class GameObjectExtension
 	/// </summary>
 	public static void SkinMeshFlip(this GameObject _object)
 	{
+		if(!_object)
+		{
+			LogTag.System.E("GameObject is null");
+
+			return;
+		}
+
 		var mesh = _object.GetComponent<SkinnedMeshRenderer>().sharedMesh;
 
 		for(var i=0;i<mesh.vertices.Length;i++)

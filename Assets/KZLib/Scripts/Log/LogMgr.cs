@@ -29,7 +29,7 @@ namespace KZLib
 		private bool m_SendLock = false;
 #endif
 
-		public MoreAction<MessageData> OnAddLog { get; set; }
+		public NewAction<MessageData> onAddLog = new();
 
 		protected override void Initialize()
 		{
@@ -95,7 +95,7 @@ namespace KZLib
 			else
 			{
 				var stackTraceArray = _stackTrace.Split('\n');
-				var index = stackTraceArray.FindIndex(x => x.Contains(nameof(LogTag)));
+				var index = stackTraceArray.IndexOf(x => x.Contains(nameof(LogTag)));
 				var stackTrace = stackTraceArray[index+1];
 
 				body = $"{_condition}\n\n{stackTrace}";
@@ -104,7 +104,7 @@ namespace KZLib
 			var data = new MessageData(head,body);
 
 			m_LogDataQueue.Enqueue(data);
-			OnAddLog?.Invoke(data);
+			onAddLog?.Invoke(data);
 
 #if !UNITY_EDITOR
 			if(!m_SendLock && (_type == LogType.Exception))
@@ -138,7 +138,7 @@ namespace KZLib
 
 			var texture = CommonUtility.GetScreenShot();
 
-			await WebRequestUtility.SendBugReportAsync(m_LogDataQueue,texture.EncodeToPNG());
+			await CommonUtility.SendBugReportAsync(m_LogDataQueue,texture.EncodeToPNG());
 
 			//? Send once and wait for 30 seconds -> If sent too frequently, it can cause a load.
 			await UniTask.Delay(TimeSpan.FromSeconds(COOL_TIME_TIMER));

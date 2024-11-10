@@ -17,15 +17,15 @@ public abstract class AnchorFocusSlotUI : FocusSlotUI
 		{
 			var anchor = Mathf.Lerp(1.0f+m_AnchorValue,0.0f-m_AnchorValue,_location);
 
-			m_Slot.anchorMin = m_Slot.anchorMin.MaskY(anchor);
-			m_Slot.anchorMax = m_Slot.anchorMax.MaskY(anchor);
+			m_Slot.anchorMin = m_Slot.anchorMin.SetY(anchor);
+			m_Slot.anchorMax = m_Slot.anchorMax.SetY(anchor);
 		}
 		else
 		{
 			var anchor = Mathf.Lerp(0.0f-m_AnchorValue,1.0f+m_AnchorValue,_location);
 
-			m_Slot.anchorMin = m_Slot.anchorMin.MaskX(anchor);
-			m_Slot.anchorMax = m_Slot.anchorMax.MaskX(anchor);
+			m_Slot.anchorMin = m_Slot.anchorMin.SetX(anchor);
+			m_Slot.anchorMax = m_Slot.anchorMax.SetX(anchor);
 		}
 	}
 

@@ -155,7 +155,7 @@ public partial class ScrollRectUI : BaseComponentUI
 
 		var contentLocation = GetContentLocation();
 
-		UniTaskUtility.ExecuteOverTimeAsync(contentLocation,location,_duration,SetScrollLocation).Forget();
+		CommonUtility.ExecuteOverTimeAsync(contentLocation,location,_duration,SetScrollLocation).Forget();
 	}
 
 	private float FindReachLocation(int _index,MoveToType _type)
@@ -187,14 +187,14 @@ public partial class ScrollRectUI : BaseComponentUI
 	{
 		base.OnEnable();
 
-		m_ScrollRect.AddListener(OnScrollChanged);
+		m_ScrollRect.onValueChanged.AddAction(OnScrollChanged);
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
 
-		m_ScrollRect.RemoveListener(OnScrollChanged);
+		m_ScrollRect.onValueChanged.RemoveAction(OnScrollChanged);
 	}
 
 	private void OnScrollChanged(Vector2 _location)

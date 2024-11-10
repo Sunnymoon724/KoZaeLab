@@ -12,7 +12,9 @@ namespace System.Collections.Generic
 		{
 			if(_capacity <= 0)
 			{
-				throw new ArgumentOutOfRangeException(nameof(_capacity),$"The capacity is {_capacity}.");
+				LogTag.System.E($"The capacity is {_capacity}.");
+
+				return;
 			}
 
 			m_DataList = new List<TData>(_capacity);
@@ -44,7 +46,9 @@ namespace System.Collections.Generic
 			{
 				if(IsEmpty)
 				{
-					throw new InvalidOperationException("Heap is empty.");
+					LogTag.System.E("Heap is empty.");
+
+					return default;
 				}
 
 				var top = m_DataList[0];
@@ -67,7 +71,9 @@ namespace System.Collections.Generic
 			{
 				if(IsEmpty)
 				{
-					throw new InvalidOperationException("Heap is empty.");
+					LogTag.System.E("Heap is empty.");
+
+					return default;
 				}
 
 				return m_DataList[0];
@@ -168,12 +174,16 @@ namespace System.Collections.Generic
 		{
 			if(_array == null)
 			{
-				throw new NullReferenceException("Array is null.");
+				LogTag.System.E("Array is null.");
+
+				return;
 			}
 
 			if(_index < 0 || _index >= _array.Length)
 			{
-				throw new ArgumentOutOfRangeException($"Index {_index} is out of bounds for the array.");
+				LogTag.System.E($"Index {_index} is out of bounds for the array.");
+
+				return;
 			}
 
 			lock(m_SyncRoot)
@@ -184,7 +194,9 @@ namespace System.Collections.Generic
 				}
 				else
 				{
-					throw new ArgumentException("Invalid array type.");
+					LogTag.System.E("Invalid array type.");
+
+					return;
 				}
 			}
 		}
@@ -193,7 +205,9 @@ namespace System.Collections.Generic
 		{
 			if(_data == null)
 			{
-				throw new ArgumentNullException("Data is null.");
+				LogTag.System.E("Data is null.");
+
+				return false;
 			}
 
 			lock(m_SyncRoot)

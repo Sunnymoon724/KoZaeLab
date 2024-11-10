@@ -1,31 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Sirenix.Utilities;
 
-public static class ReflectionUtility
+public static partial class CommonUtility
 {
 	private static readonly Dictionary<string,Type> s_TypeDict = new();
-
-	public static object CreateObject(Type _type,object _data)
-	{
-		var result = Activator.CreateInstance(_type);
-
-
-        // foreach(var property in result.GetType().GetProperties())
-        // {
-        //     var targetProp = target.GetType().GetProperty(prop.Name);
-
-        //     if (targetProp != null && targetProp.CanWrite)
-        //     {
-        //         var value = prop.GetValue(source);
-        //         targetProp.SetValue(target, value);
-        //     }
-        // }
-
-		return result;
-	}
 
 	public static Type FindType(string _typeName,string _namespaceName = null)
 	{
@@ -120,7 +100,19 @@ public static class ReflectionUtility
 
 	public static IEnumerable<TAttribute> GetAttributeGroup<TAttribute>(ICustomAttributeProvider _info,bool _inherit = false) where TAttribute : Attribute
 	{
-		return _info.IsDefined(typeof(TAttribute),_inherit) ? _info.GetCustomAttributes(typeof(TAttribute),_inherit).Cast<TAttribute>() : Enumerable.Empty<TAttribute>();
+		var type = typeof(TAttribute);
+
+		if(_info.IsDefined(type,_inherit))
+		{
+			foreach(var attribute in _info.GetCustomAttributes(type,_inherit))
+			{
+				yield return attribute as TAttribute;
+			}
+		}
+		else
+		{
+			yield break;
+		}
 	}
 
 	public static bool IsDefined<TAttribute>(ICustomAttributeProvider _info,bool _inherit = false) where TAttribute : Attribute

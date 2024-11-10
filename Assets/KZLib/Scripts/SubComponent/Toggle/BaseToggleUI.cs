@@ -58,7 +58,7 @@ public abstract class BaseToggleUI : BaseComponentUI
 	{
 		base.Initialize();
 
-		m_Toggle.AddListener(OnClickedToggle);
+		m_Toggle.onValueChanged.AddAction(OnClickedToggle);
 
 		OnClickedToggle(m_Toggle.isOn);
 	}

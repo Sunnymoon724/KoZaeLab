@@ -3,11 +3,9 @@ using KZLib;
 
 public interface IWindowUI
 {
-	//? 열려고 할 때
 	void Open(object _param);
-	//? 닫으려고 할 때
 	void Close();
-	
+
 	void Hide(bool _hide);
 	bool IsHide { get; }
 
@@ -48,7 +46,7 @@ public abstract class WindowUI : SortingLayerCanvas,IWindowUI
 
 	public virtual void Open(object _param)
 	{
-		LogTag.UI.I($"{Tag}가 열렸습니다.");
+		LogTag.UI.I($"{Tag} is opened");
 
 		gameObject.SetActiveSelf(true);
 
@@ -61,7 +59,7 @@ public abstract class WindowUI : SortingLayerCanvas,IWindowUI
 
 		IsOpen = false;
 
-		LogTag.UI.I($"{Tag}가 닫혔습니다.");
+		LogTag.UI.I($"{Tag} is closed");
 	}
 
 	protected override void Release() { }
@@ -70,11 +68,11 @@ public abstract class WindowUI : SortingLayerCanvas,IWindowUI
 	{
 		if(_hide)
 		{
-			LogTag.UI.I($"{Tag}의 숨겨진 상태입니다.");
+			LogTag.UI.I($"{Tag} is hidden");
 		}
 		else
 		{
-			LogTag.UI.I($"{Tag}의 보여진 상태입니다.");
+			LogTag.UI.I($"{Tag} is shown");
 		}
 	}
 

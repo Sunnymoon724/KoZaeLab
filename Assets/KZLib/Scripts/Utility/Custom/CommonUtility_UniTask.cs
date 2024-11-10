@@ -3,16 +3,18 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public static class UniTaskUtility
+public static partial class CommonUtility
 {
 	public static void KillTokenSource(ref CancellationTokenSource _tokenSource)
 	{
-		if(_tokenSource != null)
+		if(_tokenSource == null)
 		{
-			_tokenSource.Cancel();
-			_tokenSource.Dispose();
-			_tokenSource = null;
+			return;
 		}
+
+		_tokenSource.Cancel();
+		_tokenSource.Dispose();
+		_tokenSource = null;
 	}
 
 	public static void RecycleTokenSource(ref CancellationTokenSource _tokenSource)
@@ -132,7 +134,7 @@ public static class UniTaskUtility
 			return;
 		}
 
-		var curve = _curve ?? MathUtility.GetEaseCurve(EaseType.Linear);
+		var curve = _curve ?? CommonUtility.GetEaseCurve(EaseType.Linear);
 		var elapsedTime = 0.0f;
 
 		while(_duration < 0.0f || elapsedTime < _duration)

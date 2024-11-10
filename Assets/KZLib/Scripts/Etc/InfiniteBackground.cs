@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -27,7 +26,9 @@ namespace KZLib
 		{
 			if(!m_Pivot)
 			{
-				throw new NullReferenceException("Pivot is null.");
+				LogTag.System.E("Pivot is null.");
+
+				return;
 			}
 
 			m_Width = m_Pivot.bounds.size.x*m_Pivot.transform.lossyScale.x;

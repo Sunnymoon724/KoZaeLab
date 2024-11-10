@@ -22,11 +22,11 @@ public class ScheduleButtonUI : BaseButtonUI
 
 	private CancellationTokenSource m_TokenSource = null;
 
-	public MoreAction OnClicked { get; set; }
+	public NewAction onClicked = new();
 
 	protected override void Initialize()
 	{
-		m_OnClickedEvent.AddListener(()=> { OnClicked?.Invoke(); });
+		m_OnClickedEvent.AddAction(()=> { onClicked?.Invoke(); });
 
 		base.Initialize();
 	}
@@ -35,19 +35,19 @@ public class ScheduleButtonUI : BaseButtonUI
 	{
 		base.Release();
 
-		UniTaskUtility.KillTokenSource(ref m_TokenSource);
+		CommonUtility.KillTokenSource(ref m_TokenSource);
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
 
-		UniTaskUtility.KillTokenSource(ref m_TokenSource);
+		CommonUtility.KillTokenSource(ref m_TokenSource);
 	}
 
 	protected override void OnClickedButton()
 	{
-		UniTaskUtility.RecycleTokenSource(ref m_TokenSource);
+		CommonUtility.RecycleTokenSource(ref m_TokenSource);
 
 		ClickedAsync().Forget();
 	}

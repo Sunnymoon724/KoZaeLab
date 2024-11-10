@@ -53,7 +53,7 @@ namespace KZLib.KZMenu
 
 			foreach(var path in pathGroup)
 			{
-				dependantDict.AddOrUpdate(path,AssetDatabase.GetDependencies(path,false));
+				dependantDict[path] = AssetDatabase.GetDependencies(path,false);
 
 				if(CommonUtility.DisplayCancelableProgressBar("Asset finder load",$"Loading asset finder [{index}/{totalCount}]",index++,totalCount))
 				{
@@ -171,7 +171,7 @@ namespace KZLib.KZMenu
 						continue;
 					}
 
-					textList.Add(string.Format("<a href=\"{0}\">{1}</a> ",dependant,CommonUtility.GetOnlyName(dependant)));
+					textList.Add($"<a href=\"{dependant}\">{CommonUtility.GetOnlyName(dependant)}</a> ");
 				}
 			}
 

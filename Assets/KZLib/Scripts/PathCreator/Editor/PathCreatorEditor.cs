@@ -11,9 +11,9 @@ namespace KZLib.KZEditor
 	{
 		private PathCreator m_Creator = null;
 
-		private int m_SelectedHandleIndex = -1;
-		private int m_DragHandleIndex = -1;
-		private int m_MouseOverHandleIndex = -1;
+		private int m_SelectedHandleIndex = Global.INVALID_INDEX;
+		private int m_DragHandleIndex = Global.INVALID_INDEX;
+		private int m_MouseOverHandleIndex = Global.INVALID_INDEX;
 
 		private Color m_HandleSelectColor = "#FFFF00FF".ToColor();
 
@@ -34,7 +34,7 @@ namespace KZLib.KZEditor
 
 			m_Creator = target as PathCreator;
 
-			m_Creator.OnChangedPath += OnResetState;
+			m_Creator.onChangedPath.AddListener(OnResetState);
 
 			Undo.undoRedoPerformed -= OnUndoRedo;
 			Undo.undoRedoPerformed += OnUndoRedo;
@@ -58,7 +58,7 @@ namespace KZLib.KZEditor
 
 		private void OnResetState()
 		{
-			m_MouseOverHandleIndex = -1;
+			m_MouseOverHandleIndex = Global.INVALID_INDEX;
 		}
 
 		public override void OnInspectorGUI()
@@ -124,7 +124,7 @@ namespace KZLib.KZEditor
 			{
 				if(handleArray.Length >= 3)
 				{
-					//? 도형은 중심, 시작점, 방향점 3개만 있으면 됨
+					//? center,start,direction
 					for(var i=0;i<3;i++)
 					{
 						DrawHandle(i,handleArray[i]);
@@ -169,7 +169,7 @@ namespace KZLib.KZEditor
 			var style = new GUIStyle();
 			style.normal.textColor = Color.white;
 
-			Handles.Label(position,string.Format("{0}",_index),style);
+			Handles.Label(position,$"{_index}",style);
 
 			Handles.color = cachedColor;
 		}

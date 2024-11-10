@@ -30,7 +30,7 @@ namespace KZLib
 
 			if(_includeDerivedType)
 			{
-				foreach(var derivedType in ReflectionUtility.FindDerivedTypeGroup(type))
+				foreach(var derivedType in CommonUtility.FindDerivedTypeGroup(type))
 				{
 					foreach(var enumeration in GetEnumerationFieldGroup<TEnumeration>(derivedType))
 					{
@@ -60,7 +60,9 @@ namespace KZLib
 				return data;
 			}
 
-			throw new InvalidOperationException($"{_name} is not in the Enum. [Enum type: {nameof(TEnumeration)}]");
+			LogTag.System.E($"{_name} is not in the Enum. [Enum type: {nameof(TEnumeration)}]");
+
+			return null;
 		}
 
 		public static bool TryParse<TEnumeration>(string _name,out TEnumeration _result) where TEnumeration : Enumeration

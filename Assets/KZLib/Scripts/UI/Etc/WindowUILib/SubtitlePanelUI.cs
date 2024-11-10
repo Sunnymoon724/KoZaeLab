@@ -7,9 +7,6 @@ using KZLib;
 using TMPro;
 using UnityEngine;
 
-/// <summary>
-/// 자막을 넣는 패널 (비디오, 컷씬? 등등) / 지금은 비디오만
-/// </summary>
 public class SubtitlePanelUI : WindowUI2D
 {
 	public record SubtitleParam(string SubtitlePath,TMP_FontAsset FontAsset);
@@ -64,14 +61,18 @@ public class SubtitlePanelUI : WindowUI2D
 
 			if(!textAsset)
 			{
-				throw new NullReferenceException(string.Format("자막 경로가 잘못 되어 있습니다. [경로 : {0}]",param.SubtitlePath));
+				LogTag.System.E($"Subtitle path is wrong. [{param.SubtitlePath}]");
+
+				return;
 			}
 
 			var subtitle = textAsset.text;
 
 			if(subtitle.IsEmpty())
 			{
-				throw new NullReferenceException("자막이 없습니다.");
+				LogTag.System.E($"Subtitle is empty");
+
+				return;
 			}
 
 			m_SubtitleList.Clear();
@@ -119,14 +120,14 @@ public class SubtitlePanelUI : WindowUI2D
 	{
 		base.Close();
 
-		UniTaskUtility.KillTokenSource(ref m_TokenSource);
+		CommonUtility.KillTokenSource(ref m_TokenSource);
 	}
 
 	public void SetVideoPanelUI(VideoPanelUI _videoPanel)
 	{
 		m_VideoPanelUI = _videoPanel;
 
-		UniTaskUtility.RecycleTokenSource(ref m_TokenSource);
+		CommonUtility.RecycleTokenSource(ref m_TokenSource);
 
 		UpdateSubTitleAsync().Forget();
 	}

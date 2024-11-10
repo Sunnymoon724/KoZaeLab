@@ -156,7 +156,9 @@ namespace KZLib
 		{
 			if(_sceneName.IsEmpty())
 			{
-				throw new NullReferenceException("Scene name is empty.");
+				LogTag.System.E("Scene name is empty.");
+
+				return;
 			}
 
 			_onProgress?.Invoke(0.0f);

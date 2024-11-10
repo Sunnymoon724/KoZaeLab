@@ -39,7 +39,7 @@ namespace KZLib.KZSchedule
 		[FoldoutGroup("General Option",Order = 5),SerializeField,LabelText("Ignore TimeScale")]
 		protected bool m_IgnoreTimeScale = false;
 
-		public MoreAction<float> OnProgress { get; set; }
+		public NewAction<float> onProgress = new();
 
 		protected abstract void SetProgress(float _progress);
 
@@ -63,11 +63,11 @@ namespace KZLib.KZSchedule
 			var start = param.IsReverse ? 1.0f : 0.0f;
 			var finish = param.IsReverse ? 0.0f : 1.0f;
 
-			await UniTaskUtility.LoopUniTaskAsync(async ()=>
+			await CommonUtility.LoopUniTaskAsync(async ()=>
 			{
-				await UniTaskUtility.ExecuteOverTimeAsync(start,finish,duration,(progress)=>
+				await CommonUtility.ExecuteOverTimeAsync(start,finish,duration,(progress)=>
 				{
-					OnProgress?.Invoke(progress);
+					onProgress?.Invoke(progress);
 					Progress = progress;
 				},m_IgnoreTimeScale,null,m_TokenSource.Token);
 			},m_LoopCount,m_TokenSource.Token);

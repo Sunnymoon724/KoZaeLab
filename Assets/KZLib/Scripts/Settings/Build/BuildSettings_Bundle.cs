@@ -90,7 +90,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 	{
 		LogTag.Build.I("Start Bundle Build");
 
-		// var bundleName = string.Format("{0} [{1}_{2}]",Application.productName,GameSettings.In.GameVersion,DateTime.Now.ToString("MM-dd HH-mm"));
+		// var bundleName = $"{Application.productName} [{GameSettings.In.GameVersion}_{DateTime.Now.ToString("MM-dd HH-mm")}]";
 
 		//? Change Remote Path
 		var setting = AddressableAssetSettingsDefaultObject.Settings;
@@ -175,7 +175,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 			// 			removeList.Remove(fileName);
 			// 		}
 
-			// 		var text = string.Format("{0}을 업로드합니다.[{1}/{2}]",fileName,i,fileArray.Length);
+			//		var text = $"{(object)fileName}을 업로드합니다.[{(object)i}/{(object)fileArray.Length}]";
 
 			// 		Log.Build.I(text);
 
@@ -198,7 +198,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 
 			// 		for(var i=0;i<removeList.Count;i++)
 			// 		{
-			// 			var text = string.Format("{0}을 삭제합니다.[{1}/{2}]",removeList[i],i,fileArray.Length);
+			//			var text = $"{(object)removeList[i]}을 삭제합니다.[{(object)i}/{(object)fileArray.Length}]";
 
 			// 			Log.Build.I(text);
 
@@ -228,7 +228,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 			// 	for(var i=0;i<fileArray.Length;i++)
 			// 	{
 			// 		var fileName = CommonUtility.GetFileName(fileArray[i]);
-			// 		var text = string.Format("{0}을 업로드합니다.[{1}/{2}]",fileName,i,fileArray.Length);
+			//		var text = $"{(object)fileName}을 업로드합니다.[{(object)i}/{(object)fileArray.Length}]";
 
 			// 		Log.Build.I(text);
 

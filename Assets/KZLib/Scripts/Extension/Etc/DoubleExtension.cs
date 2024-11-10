@@ -4,7 +4,7 @@ public static class DoubleExtension
 {
 	public static string ToStringComma(this double _double)
 	{
-		return string.Format("{0:n0}",_double);
+		return $"{_double:n0}";
 	}
 
 	public static string ToStringPercent(this double _double,int _decimals)
@@ -14,11 +14,11 @@ public static class DoubleExtension
 
 	public static string ToStringSign(this double _double)
 	{
-		return string.Format("{0}{1}",_double > 0.0d ? "+" : "",_double);
+		return $"{(_double > 0.0d ? "+" : "")}{_double}";
 	}
 
 	/// <summary>
-	/// 소수점 n번쨰 까지만 표시
+	/// double . _decimals
 	/// </summary>
 	public static double ToLimit(this double _double,int _decimals)
 	{
@@ -26,6 +26,10 @@ public static class DoubleExtension
 
 		return Math.Floor(_double*factor)/factor;
 	}
+
+	/// <summary>
+	/// -180.0d ~ +180.0d
+	/// </summary>
 
 	public static double ToWrapAngle(this double _angle)
 	{

@@ -12,9 +12,16 @@ using UnityEditor;
 using Object = UnityEngine.Object;
 
 public static partial class CommonUtility
-{	
+{
 	public static TObject CopyObject<TObject>(TObject _object,Transform _parent = null) where TObject : Object
 	{
+		if(!_object)
+		{
+			LogTag.System.E("Object is null");
+
+			return null;
+		}
+
 		var data = Object.Instantiate(_object,_parent);
 		data.name = _object.name;
 
@@ -42,14 +49,16 @@ public static partial class CommonUtility
 	{
 		if(!_object)
 		{
+			LogTag.System.E("Object is null");
+
 			return null;
 		}
-		
-		var binary = new BinaryFormatter();
-		var stream = new MemoryStream();
 
-		binary.Serialize(stream,_object);
-		
+		using var stream = new MemoryStream();
+		var binary = new BinaryFormatter();
+
+		binary.Serialize(stream, _object);
+
 		return stream.ToArray();
 	}
 
@@ -58,13 +67,11 @@ public static partial class CommonUtility
 	{
 		var guidArray = AssetDatabase.FindAssets(_filter,_searchInFolders);
 
-		return !guidArray.IsNullOrEmpty();
+		return guidArray.Length > 0;
 	}
 
 	public static IEnumerable<(string,TObject)> LoadAssetDataGroup<TObject>(string _filter = null,string[] _searchInFolders = null) where TObject : Object
 	{
-		var dataList = new List<(string,TObject)>();
-
 		foreach(var guid in AssetDatabase.FindAssets(_filter,_searchInFolders))
 		{
 			var path = AssetDatabase.GUIDToAssetPath(guid);
@@ -72,28 +79,22 @@ public static partial class CommonUtility
 
 			if(!path.IsEmpty() && asset != null)
 			{
-				dataList.Add((path,asset));
+				yield return (path,asset);
 			}
 		}
-
-		return dataList;
 	}
 
 	public static IEnumerable<string> GetAssetPathGroup(string _filter = null,string[] _searchInFolders = null)
 	{
-		var pathList = new List<string>();
-
 		foreach(var guid in AssetDatabase.FindAssets(_filter,_searchInFolders))
 		{
 			var path = AssetDatabase.GUIDToAssetPath(guid);
 
 			if(!path.IsEmpty())
 			{
-				pathList.Add(path);
+				yield return path;
 			}
 		}
-
-		return pathList;
 	}
 
 	public static TObject LoadAsset<TObject>(string _filter = null,string[] _searchInFolders = null) where TObject : Object
@@ -115,40 +116,39 @@ public static partial class CommonUtility
 
 	public static IEnumerable<TObject> LoadAssetGroup<TObject>(string _filter = null,string[] _searchInFolders = null) where TObject : Object
 	{
-		var assetList = new List<TObject>();
-
 		foreach(var guid in AssetDatabase.FindAssets(_filter,_searchInFolders))
 		{
 			var asset = AssetDatabase.LoadAssetAtPath<TObject>(AssetDatabase.GUIDToAssetPath(guid));
 
 			if(asset != null)
 			{
-				assetList.Add(asset);
+				yield return asset;
 			}
 		}
-
-		return assetList;
 	}
 
 	public static IEnumerable<TObject> LoadAssetGroupInFolder<TObject>(string _folderPath) where TObject : Object
 	{
-		var assetList = new List<TObject>();
-
 		foreach(var path in GetAllFilePathInFolder(GetAbsolutePath(_folderPath,true)))
 		{
 			var asset = AssetDatabase.LoadAssetAtPath<TObject>(GetAssetsPath(path));
 
 			if(asset != null)
 			{
-				assetList.Add(asset);
+				yield return asset;
 			}
 		}
-
-		return assetList;
 	}
 
 	public static void SaveAsset(string _dataPath,Object _asset)
 	{
+		if(_dataPath.IsEmpty() || !_asset)
+		{
+			LogTag.System.E($"Path or asset is null {_dataPath} or {_asset}");
+
+			return;
+		}
+
 		var folderPath = GetParentAbsolutePath(_dataPath,true);
 		var assetPath = GetAssetsPath(_dataPath);
 
@@ -168,23 +168,4 @@ public static partial class CommonUtility
 		LogTag.System.I($"{_asset.name} is saved in {_dataPath}.");
 	}
 #endif
-
-	// public static bool SetShadowsOffInMeshRenderer(GameObject _object)
-	// {
-	// 	var rendererArray = _object.GetComponentsInChildren<MeshRenderer>(true);
-	// 	var changed = false;
-
-	// 	for(int i=0;i<rendererArray.Length;i++)
-	// 	{
-	// 		if(rendererArray[i].receiveShadows)
-	// 		{
-	// 			changed = true;
-
-	// 			rendererArray[i].receiveShadows = false;
-	// 			rendererArray[i].shadowCastingMode = ShadowCastingMode.Off;
-	// 		}
-	// 	}
-
-	// 	return changed;
-	// }
 }

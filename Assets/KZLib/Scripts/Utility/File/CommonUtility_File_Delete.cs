@@ -7,7 +7,10 @@ public static partial class CommonUtility
 	/// <param name="_startPath">The absolute path of the folder.</param>
 	public static void DeleteEmptyDirectory(string _startPath,Action _onComplete = null)
 	{
-		IsFolderExist(_startPath,true);
+		if(!IsFolderExist(_startPath,true))
+		{
+			return;
+		}
 
 		DeleteEmptyDirectoryInner(_startPath);
 
@@ -46,7 +49,10 @@ public static partial class CommonUtility
 	/// <param name="_filePath">The absolute path of the file.</param>
 	public static void DeleteFile(string _filePath,Action _onComplete = null)
 	{
-		IsFileExist(_filePath,true);
+		if(!IsFileExist(_filePath,true))
+		{
+			return;
+		}
 
 		File.Delete(_filePath);
 

@@ -12,9 +12,6 @@ public static class CharExtension
 		return int.TryParse(_character.ToString(),NumberStyles.HexNumber,CultureInfo.CurrentCulture,out var number) ? number : _default;
 	}
 
-	/// <summary>
-	/// 해당 문자가 포함되어 있는지 파악한다.
-	/// </summary>
 	public static bool EqualsLetters(this char _character,params char[] _characterArray)
 	{
 		foreach(var character in _characterArray)

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 
 public static class BinaryReaderExtension
@@ -7,8 +6,8 @@ public static class BinaryReaderExtension
 	{
 		var bytes = new byte[_length];
 		_reader.Read(bytes,0,_length);
-		
-		return string.Join(":", bytes);
+
+		return string.Join(":",bytes);
 	}
 
 	public static short ReadInt16(this BinaryReader _reader)

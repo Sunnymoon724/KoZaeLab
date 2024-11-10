@@ -59,7 +59,7 @@ public class ParticleEffectClip : EffectClip
 
 	protected async override UniTask PlayTaskAsync()
 	{
-		await UniTaskUtility.WaitForConditionAsync(()=>!m_MainParticle.isPlaying,SetTime,m_IgnoreTimeScale,m_TokenSource.Token);
+		await CommonUtility.WaitForConditionAsync(()=>!m_MainParticle.isPlaying,SetTime,m_IgnoreTimeScale,m_TokenSource.Token);
 	}
 
 	private void SetColor(ParticleSystem.MainModule _module,Color _color)

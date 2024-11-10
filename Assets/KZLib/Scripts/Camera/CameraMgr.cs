@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using MetaData;
 using Sirenix.OdinInspector;
@@ -29,7 +28,9 @@ namespace KZLib
 
 			if(!m_MainCamera)
 			{
-				throw new NullReferenceException("Main camera is missing.");
+				LogTag.System.E("Main camera is missing.");
+
+				return;
 			}
 
 			var camera = m_MainCamera.GetComponent<Camera>();
@@ -54,7 +55,9 @@ namespace KZLib
 		{
 			if(!_cameraData.IsExist)
 			{
-				throw new NullReferenceException("Camera data is missing.");
+				LogTag.System.E("Camera data is not exist.");
+
+				return;
 			}
 
 			CurrentCamera.nearClipPlane = _cameraData.NearClipPlane;

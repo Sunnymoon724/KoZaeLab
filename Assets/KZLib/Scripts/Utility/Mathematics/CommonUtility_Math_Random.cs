@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Random = System.Random;
 
-public static partial class MathUtility
+public static partial class CommonUtility
 {
 	private static readonly Random s_Random = new();
 
@@ -17,11 +15,21 @@ public static partial class MathUtility
 		return _min == _max ? _min : s_Random.Next(_min,_max+1);
 	}
 
+	public static IEnumerable<int> GetRndIntGroup(int _min,int _max,int _count)
+	{
+		for(var i=0;i<_count;i++)
+		{
+			yield return GetRndInt(_min,_max);
+		}
+	}
+
 	public static int GetWeightedRndInt(float[] _weightedArray)
 	{
 		if(_weightedArray.IsNullOrEmpty())
 		{
-			throw new ArgumentException("No weight.");
+			LogTag.System.E("Weighted is null or empty");
+
+			return Global.INVALID_INDEX;
 		}
 
 		if(_weightedArray.Length == 1)
@@ -35,7 +43,9 @@ public static partial class MathUtility
 		{
 			if(weight < 0.0f)
 			{
-				throw new ArgumentException("Weight is less than 0.");
+				LogTag.System.E($"Weight is below zero -> {weight} < 0.0f");
+
+				return Global.INVALID_INDEX;
 			}
 
 			total += weight;
@@ -53,7 +63,7 @@ public static partial class MathUtility
 			pivot -= _weightedArray[i];
 		}
 
-		return 0;
+		return Global.INVALID_INDEX;
 	}
 	#endregion Integer
 
@@ -83,6 +93,14 @@ public static partial class MathUtility
 
 		return _decimals == null ? value : value.ToLimit(_decimals.Value);
 	}
+
+	public static IEnumerable<float> GetRndFloatGroup(float _min,float _max,int _count)
+	{
+		for(var i=0;i<_count;i++)
+		{
+			yield return GetRndFloat(_min,_max);
+		}
+	}
 	#endregion Single
 
 	#region Double
@@ -111,6 +129,14 @@ public static partial class MathUtility
 
 		return _decimals == null ? value : value.ToLimit(_decimals.Value);
 	}
+
+	public static IEnumerable<double> GetRndDoubleGroup(double _min,double _max,int _count)
+	{
+		for(var i=0;i<_count;i++)
+		{
+			yield return GetRndDouble(_min,_max);
+		}
+	}
 	#endregion Double
 
 	#region Boolean
@@ -122,13 +148,6 @@ public static partial class MathUtility
 		return GetRndInt(0,2) == 0;
 	}
 	#endregion Boolean
-
-	public static IEnumerable<int> GetRndGroup(int _min,int _max,int _count)
-	{
-		var shuffleGroup = Enumerable.Range(_min,_max+1).OrderBy(x => s_Random.Next());
-
-		return shuffleGroup.Take(_count);
-	}
 
 	#region String
 	public static string GetRndString(int _length,bool _overlap = true)

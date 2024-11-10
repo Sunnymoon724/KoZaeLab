@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using KZLib;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -18,10 +17,10 @@ namespace HudPanel
 			[HorizontalGroup("1",Order = 1),SerializeField,HideLabel]
 			private Color m_LogColor = Color.white;
 
-			[HorizontalGroup("0",Order = 0),SerializeField,LabelText("토글")]
+			[HorizontalGroup("0",Order = 0),SerializeField,LabelText("Toggle")]
 			private Toggle m_LogToggle = null;
 
-			[HorizontalGroup("0",Order = 0),SerializeField,LabelText("텍스트")]
+			[HorizontalGroup("0",Order = 0),SerializeField,LabelText("Text")]
 			private TMP_Text m_LogText = null;
 
 			private int m_LogCount = 0;
@@ -50,19 +49,16 @@ namespace HudPanel
 
 				m_LogText.SetSafeTextMeshPro(CheckCount(m_LogCount));
 
-				m_LogToggle.AddListener((dummy)=>
-				{
-					_onAction?.Invoke();
-				});
+				m_LogToggle.onValueChanged.AddAction((dummy)=> { _onAction?.Invoke(); });
 			}
 
-			private string CheckCount(int _count) => _count < 100 ? string.Format("{0}", _count) : "99+";
+			private string CheckCount(int _count) => _count < 100 ? $"{_count}" : "99+";
 		}
 		#endregion MsgData
 
 		private enum HudLogType { Info, Warning, Error }
 
-		[VerticalGroup("0",Order = 0),SerializeField,LabelText("로그 딕셔너리"),DictionaryDrawerSettings(DisplayMode = DictionaryDisplayOptions.Foldout)]
+		[VerticalGroup("0",Order = 0),SerializeField,LabelText("Log Data Group"),DictionaryDrawerSettings(DisplayMode = DictionaryDisplayOptions.Foldout)]
 		private Dictionary<HudLogType,HudLogData> m_HudLogDataDict = new();
 
 		[VerticalGroup("1",Order = 1),SerializeField]
@@ -83,7 +79,7 @@ namespace HudPanel
 				data.Initialize(SetScrollRect);
 			}
 
-			m_InputField.SetListener((text)=>
+			m_InputField.onValueChanged.SetAction((text)=>
 			{
 				m_CompareText = text.IsEmpty() ? null : text;
 
@@ -95,7 +91,7 @@ namespace HudPanel
 		{
 			base.OnEnable();
 
-			LogMgr.In.OnAddLog += OnUpdateLogScroll;
+			LogMgr.In.onAddLog.AddListener(OnUpdateLogScroll);
 
 			SetScrollRect();
 		}
@@ -104,7 +100,7 @@ namespace HudPanel
 		{
 			base.OnEnable();
 
-			LogMgr.In.OnAddLog -= OnUpdateLogScroll;
+			LogMgr.In.onAddLog.RemoveListener(OnUpdateLogScroll);
 		}
 
 		private void SetScrollRect()
@@ -151,7 +147,7 @@ namespace HudPanel
 				{
 					return new LogCellData(data.LogColor,head.Time,_data.Body,() =>
 					{
-						WebRequestUtility.PostWebHook_Discord("Log Window",new MessageData[] { _data });
+						CommonUtility.PostWebHook_Discord("Log Window",new MessageData[] { _data });
 					});
 				}
 			}

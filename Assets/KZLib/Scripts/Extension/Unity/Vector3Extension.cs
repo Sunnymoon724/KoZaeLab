@@ -2,37 +2,52 @@ using UnityEngine;
 
 public static class Vector3Extension
 {
-	#region Mask
-	public static Vector3 MaskX(this Vector3 _vector,float _x = 0.0f)
+	#region Set
+	public static Vector3 SetX(this Vector3 _vector,float _x = 0.0f)
 	{
 		return new Vector3(_x,_vector.y,_vector.z);
 	}
 
-	public static Vector3 MaskY(this Vector3 _vector,float _y = 0.0f)
+	public static Vector3 SetY(this Vector3 _vector,float _y = 0.0f)
 	{
 		return new Vector3(_vector.x,_y,_vector.z);
 	}
 
-	public static Vector3 MaskZ(this Vector3 _vector,float _z = 0.0f)
+	public static Vector3 SetZ(this Vector3 _vector,float _z = 0.0f)
 	{
 		return new Vector3(_vector.x,_vector.y,_z);
 	}
 
-	public static Vector3 MaskXY(this Vector3 _vector,float _x = 0.0f,float _y = 0.0f) 
+	public static Vector3 SetXY(this Vector3 _vector,float _x = 0.0f,float _y = 0.0f) 
 	{
 		return new Vector3(_x,_y,_vector.z);
 	}
-	
-	public static Vector3 MaskXZ(this Vector3 _vector,float _x = 0.0f,float _z = 0.0f) 
+
+	public static Vector3 SetXY(this Vector3 _vector,Vector2 _point = new Vector2())
+	{
+		return _vector.SetXY(_point.x,_point.y);
+	}
+
+	public static Vector3 SetXZ(this Vector3 _vector,float _x = 0.0f,float _z = 0.0f) 
 	{
 		return new Vector3(_x,_vector.y,_z);
 	}
-	
-	public static Vector3 MaskYZ(this Vector3 _vector,float _y = 0.0f,float _z = 0.0f) 
+
+	public static Vector3 SetXZ(this Vector3 _vector,Vector2 _point = new Vector2())
+	{
+		return _vector.SetXZ(_point.x,_point.y);
+	}
+
+	public static Vector3 SetYZ(this Vector3 _vector,float _y = 0.0f,float _z = 0.0f) 
 	{
 		return new Vector3(_vector.x,_y,_z);
 	}
-	#endregion Mask
+
+	public static Vector3 SetYZ(this Vector3 _vector,Vector2 _point = new Vector2())
+	{
+		return _vector.SetYZ(_point.x,_point.y);
+	}
+	#endregion Set
 
 	#region Offset
 	public static Vector3 Offset(this Vector3 _vector,Vector3 _offset)
@@ -129,16 +144,16 @@ public static class Vector3Extension
 
 	public static Vector3 PlaneDirection(this Vector3 _vector,Vector3 _target)
 	{
-		var pivot = _vector.MaskY(0.0f);
-		var target = _target.MaskY(0.0f);
+		var pivot = _vector.SetY();
+		var target = _target.SetY();
 		
 		return (pivot-target).normalized;
 	}
 
 	public static float PlaneDistance(this Vector3 _vector,Vector3 _target)
 	{
-		var pivot = _vector.MaskY(0.0f);
-		var target = _target.MaskY(0.0f);
+		var pivot = _vector.SetY();
+		var target = _target.SetY();
 		
 		return Vector3.Distance(pivot,target);
 	}

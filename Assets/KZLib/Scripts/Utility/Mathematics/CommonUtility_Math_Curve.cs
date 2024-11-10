@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static partial class MathUtility
+public static partial class CommonUtility
 {
 	#region Parabola
 	public static Vector3 Parabola(Vector3 _start,Vector3 _velocity,float _time,float? _gravity = null)
@@ -19,8 +19,8 @@ public static partial class MathUtility
 
 	public static Vector3 GetTrajectoryVelocity(Transform _projectile,Transform _target,float _angle,float? _gravity = null)
 	{
-		var startXZ = _projectile.position.MaskY();
-		var endXZ = _target.position.MaskY();
+		var startXZ = _projectile.position.SetY();
+		var endXZ = _target.position.SetY();
 
 		_projectile.LookAt(endXZ);
 
