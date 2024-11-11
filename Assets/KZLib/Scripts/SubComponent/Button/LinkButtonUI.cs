@@ -10,6 +10,8 @@ public class LinkButtonUI : BaseButtonUI
 	{
 		if(m_LinkURL.IsEmpty())
 		{
+			LogTag.System.I("Link is empty");
+
 			return;
 		}
 

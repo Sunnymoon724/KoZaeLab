@@ -6,9 +6,9 @@ public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDr
 {
 	private Canvas m_Canvas = null;
 
-	public NewAction onBeginDragHandler = new();
-	public NewAction onDragHandler = new();
-	public NewAction onEndDragHandler = new();
+	public NewAction onBeginDrag = new();
+	public NewAction onDrag = new();
+	public NewAction onEndDrag = new();
 
 	protected override void Initialize()
 	{
@@ -21,23 +21,25 @@ public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDr
 	{
 		if(m_Canvas == null)
 		{
+			LogTag.UI.E("Canvas is null");
+
 			return;
 		}
 
 		UIRectTransform.anchoredPosition += _data.delta/m_Canvas.scaleFactor;
 
-		onDragHandler?.Invoke();
+		onDrag?.Invoke();
 	}
 
 	void IBeginDragHandler.OnBeginDrag(PointerEventData _data)
 	{
 		transform.SetAsLastSibling();
 
-		onBeginDragHandler?.Invoke();
+		onBeginDrag?.Invoke();
 	}
 
 	void IEndDragHandler.OnEndDrag(PointerEventData _data)
 	{
-		onEndDragHandler?.Invoke();
+		onEndDrag?.Invoke();
 	}
 }

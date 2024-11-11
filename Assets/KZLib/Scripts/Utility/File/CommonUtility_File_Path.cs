@@ -86,12 +86,12 @@ public static partial class CommonUtility
 
 	public static string GetProjectPath()
 	{
-		return NormalizePath(Path.GetFullPath(Path.Join(Application.dataPath,".")));
+		return NormalizePath(Path.GetFullPath(Path.Join(Application.dataPath,"..")));
 	}
 
 	public static string GetProjectParentPath()
 	{
-		return NormalizePath(Path.GetFullPath(Path.Join(Application.dataPath,"../.")));
+		return NormalizePath(Path.GetFullPath(Path.Join(Application.dataPath,"../..")));
 	}
 
 	public static string GetAssetsPath(string _path)

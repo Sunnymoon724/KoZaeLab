@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using ExcelDataReader;
 using UnityEngine;
@@ -70,100 +69,131 @@ namespace KZLib.KZReader
 		}
 
 		/// <summary>
-		/// Get data group in row
+		/// empty or #start -> not exist
 		/// </summary>
-		public List<string> GetRowList(string _sheetName,int _row)
+		public bool IsExistRowArray(string _sheetName,int _idx)
 		{
 			var rowCollection = GetSheet(_sheetName).Rows;
 
-			if(_row < 0 || _row >= rowCollection.Count)
+			if(_idx < 0 || _idx >= rowCollection.Count)
 			{
-				LogTag.System.E($"{_row} is out of range in rowCollection. [{_sheetName}]");
+				LogTag.System.E($"{_idx} is out of range in rowCollection. [{_sheetName}]");
 
-				return null;
+				return false;
 			}
 
-			var cellArray = rowCollection[_row].ItemArray;
+			var cellArray = rowCollection[_idx].ItemArray;
 
 			if(cellArray.IsNullOrEmpty())
 			{
-				LogTag.System.E($"ItemArray is null for row {_row} in sheet [{_sheetName}]");
+				LogTag.System.E($"ItemArray is null for row {_idx} in sheet [{_sheetName}]");
+
+				return false;
+			}
+
+			var header = cellArray[0].ToString();
+
+			return !header.Contains("#") && !header.IsEmpty();
+		}
+
+		/// <summary>
+		/// Get data group in row
+		/// </summary>
+		public string[] GetRowArray(string _sheetName,int _idx)
+		{
+			var rowCollection = GetSheet(_sheetName).Rows;
+
+			if(_idx < 0 || _idx >= rowCollection.Count)
+			{
+				LogTag.System.E($"{_idx} is out of range in rowCollection. [{_sheetName}]");
 
 				return null;
 			}
 
-			var rowList = new List<string>();
+			var cellArray = rowCollection[_idx].ItemArray;
 
-			foreach(var cell in cellArray)
+			if(cellArray.IsNullOrEmpty())
 			{
-				rowList.Add(cell.ToString());
+				LogTag.System.E($"ItemArray is null for row {_idx} in sheet [{_sheetName}]");
+
+				return null;
 			}
 
-			return rowList;
+			if(!IsExistRowArray(_sheetName,0))
+			{
+				return null;
+			}
+
+			var rowArray = new string[cellArray.Length];
+
+			for(var i=0;i<cellArray.Length;i++)
+			{
+				rowArray[i] = cellArray[i].ToString();
+			}
+
+			return rowArray;
 		}
 
 		/// <summary>
 		/// Get data group in rows
 		/// </summary>
-		public string[][] GetRowJaggedArray(string _sheetName,params int[] _rowArray)
+		public string[][] GetRowJaggedArray(string _sheetName,params int[] _idxArray)
 		{
-			var jaggedArray = new string[_rowArray.Length][];
+			var jaggedList = new List<string[]>(_idxArray.Length);
 
-			for(var i=0;i<_rowArray.Length;i++)
+			for(var i=0;i<_idxArray.Length;i++)
 			{
-				var rowList = GetRowList(_sheetName,_rowArray[i]);
+				var rowArray = GetRowArray(_sheetName,_idxArray[i]);
 
-				jaggedArray[i] = new string[rowList.Count];
+				if(rowArray.IsNullOrEmpty())
+				{
+					continue;
+				}
 
-				rowList.CopyTo(jaggedArray[i]);
+				jaggedList.Add(rowArray);
 			}
 
-			return jaggedArray;
+			return jaggedList.ToArray();
 		}
 
 		/// <summary>
 		/// Get data group in column
 		/// </summary>
-		public List<string> GetColumnList(string _sheetName,int _column)
+		public string[] GetColumnArray(string _sheetName,int _idx)
 		{
 			var sheet = GetSheet(_sheetName);
 
-			if(_column < 0 || _column >= sheet.Columns.Count)
+			if(_idx < 0 || _idx >= sheet.Columns.Count)
 			{
-				LogTag.System.E($"{_column} is out of range in columnCollection. [{_sheetName}]");
+				LogTag.System.E($"{_idx} is out of range in columnCollection. [{_sheetName}]");
 
 				return null;
 			}
 
-			var columnList = new List<string>();
+			var columnArray = new string[sheet.Columns.Count];
 
-			foreach(DataRow row in sheet.Rows)
+			for(var i=0;i<sheet.Columns.Count;i++)
 			{
-				columnList.Add(row[_column].ToString());
+				columnArray[i] = sheet.Columns[_idx].ToString();
 			}
 
-			return columnList;
+			return columnArray;
 		}
 
 		/// <summary>
 		/// Get data group in columns
 		/// </summary>
-		public string[][] GetColumnJaggedArray(string _sheetName,params int[] _columnArray)
+		public string[][] GetColumnJaggedArray(string _sheetName,params int[] _idxArray)
 		{
-			var jaggedArray = new string[_columnArray.Length][];
+			var jaggedArray = new string[_idxArray.Length][];
 
-			for(var i=0;i<_columnArray.Length;i++)
+			for(var i=0;i<_idxArray.Length;i++)
 			{
-				var columnList = GetColumnList(_sheetName,_columnArray[i]);
-
-				jaggedArray[i] = new string[columnList.Count];
-
-				columnList.CopyTo(jaggedArray[i]);
+				jaggedArray[i] = GetColumnArray(_sheetName,_idxArray[i]);
 			}
 
 			return jaggedArray;
 		}
-
 
 		public IEnumerable<TData> Deserialize<TData>(string _sheetName,int _startRow = 1)
 		{
@@ -184,7 +214,7 @@ namespace KZLib.KZReader
 			var lastRow = rowCollection.Count;
 			var startRow = Mathf.Clamp(_startRow,0,lastRow);
 
-			var headerList = GetRowList(_sheetName,0);
+			var headerArray = GetRowArray(_sheetName,0);
 
 			for(var i=startRow;i<=lastRow;i++)
 			{
@@ -197,7 +227,7 @@ namespace KZLib.KZReader
 
 				var data = Activator.CreateInstance(_type);
 
-				for(var j=0;j<headerList.Count;j++)
+				for(var j=0;j<headerArray.Length;j++)
 				{
 					var cell = cellArray[j];
 
@@ -206,7 +236,7 @@ namespace KZLib.KZReader
 						continue;
 					}
 
-					var index = propertyInfoArray.IndexOf(x=>x.Name.IsEqual(headerList[j]));
+					var index = propertyInfoArray.IndexOf(x=>x.Name.IsEqual(headerArray[j]));
 
 					if(index == -1)
 					{
@@ -223,7 +253,7 @@ namespace KZLib.KZReader
 						}
 						catch(Exception _ex)
 						{
-							LogTag.System.E($"There is a problem with the excel file. [sheet : {_sheetName} / error : {_ex.Message} / location : row({i+1})/column({headerList[j]})]");
+							LogTag.System.E($"There is a problem with the excel file. [sheet : {_sheetName} / error : {_ex.Message} / location : row({i+1})/column({headerArray[j]})]");
 						}
 					}
 				}
@@ -258,22 +288,25 @@ namespace KZLib.KZReader
 		/// </summary>
 		public IEnumerable<(string Title,int Index)> GetTitleGroup(string _sheetName)
 		{
-			var headerList = GetRowList(_sheetName,0);
+			var headerArray = GetRowArray(_sheetName,0);
 
-			for(var i=0;i<headerList.Count;i++)
+			for(var i=0;i<headerArray.Length;i++)
 			{
-				var header = headerList[i];
+				var header = headerArray[i];
 
 				if(header.IsEmpty())
 				{
 					continue;
 				}
 
-				if(KEY_WORD_ARRAY.Any(x=>x.IsEqual(header)))
+				foreach(var keyword in KEY_WORD_ARRAY)
 				{
-					LogTag.System.E($"{header} is invalid title.");
+					if(keyword.IsEqual(header))
+					{
+						LogTag.System.E($"{header} is invalid title.");
 
-					yield break;
+						yield break;
+					}
 				}
 
 				yield return (header,i);

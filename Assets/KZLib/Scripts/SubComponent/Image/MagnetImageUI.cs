@@ -61,6 +61,8 @@ public class MagnetImageUI : BaseImageUI
 
 		if(IsValid)
 		{
+			LogTag.UI.E($"Target is null or direction is none {Target} or {m_Direction}");
+
 			return;
 		}
 
@@ -71,6 +73,8 @@ public class MagnetImageUI : BaseImageUI
 	{
 		if(IsValid)
 		{
+			LogTag.UI.E($"Target is null or direction is none {Target} or {m_Direction}");
+
 			return;
 		}
 

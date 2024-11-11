@@ -42,13 +42,13 @@ namespace KZLib.KZSample
 
 		[VerticalGroup("2",Order = 2),SerializeField,Range(0.0f,1.0f)]
 		private float m_Duration = 0.5f;
-		[VerticalGroup("2",Order = 2),SerializeField,ValueDropdown(nameof(m_OrderList))]
+		[VerticalGroup("2",Order = 2),SerializeField,LabelText("Number"),ValueDropdown(nameof(m_OrderList))]
 		private int m_Order = 0;
 
 		private readonly List<int> m_OrderList = new();
 
-		[HorizontalGroup("3",Order = 3),Button("Move To Top")]
-		private void OnMoveToTop()
+		[HorizontalGroup("3",Order = 3),Button("Number Move To Top",ButtonSizes.Medium)]
+		protected void OnMoveToTop()
 		{
 			if(m_VerticalScrollRect.gameObject.activeInHierarchy)
 			{
@@ -61,8 +61,8 @@ namespace KZLib.KZSample
 			}
 		}
 
-		[HorizontalGroup("3",Order = 3),Button("Move To Center")]
-		private void OnMoveToCenter()
+		[HorizontalGroup("3",Order = 3),Button("Number Move To Center",ButtonSizes.Medium)]
+		protected void OnMoveToCenter()
 		{
 			if(m_VerticalScrollRect.gameObject.activeInHierarchy)
 			{
@@ -75,8 +75,8 @@ namespace KZLib.KZSample
 			}
 		}
 
-		[HorizontalGroup("3",Order = 3),Button("Move To Bottom")]
-		private void OnMoveToBottom()
+		[HorizontalGroup("3",Order = 3),Button("Number Move To Bottom",ButtonSizes.Medium)]
+		protected void OnMoveToBottom()
 		{
 			if(m_VerticalScrollRect.gameObject.activeInHierarchy)
 			{

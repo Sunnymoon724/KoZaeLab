@@ -1,11 +1,12 @@
 using System;
 using DG.Tweening;
 
+// https://dotween.demigiant.com/
 public static partial class CommonUtility
 {
-	public static Tween SetProgress(float _start,float _finish,float _duration,Action<float> _onProgress,Action _onComplete = null)
+	public static Tween SetTweenProgress(float _start,float _finish,float _duration,Action<float> _onProgress,Action _onComplete = null)
 	{
-		return SetTween(_start,_finish,_duration,_onProgress,_onComplete).SetId(GetTag("Progress"));
+		return SetTween(_start,_finish,_duration,_onProgress,_onComplete);
 	}
 
 	private static Tween SetTween(float _start,float _finish,float _duration,Action<float> _onUpdate,Action _onComplete = null)
@@ -51,5 +52,13 @@ public static partial class CommonUtility
 	private static string GetTag(string _header)
 	{
 		return $"{_header}_{DateTime.Now:HH:mm:ss}";
+	}
+
+	public static void KillTween(Tween _tween,bool _complete = false)
+	{
+		if(_tween != null && _tween.IsActive())
+		{
+			_tween.Kill(_complete);
+		}
 	}
 }

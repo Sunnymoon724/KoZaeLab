@@ -1,9 +1,9 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
-using Cysharp.Threading.Tasks;
 using KZLib.KZAttribute;
-using System.Threading;
+using DG.Tweening;
+using System;
 
 public class ProgressImageUI : BaseImageUI
 {
@@ -49,7 +49,7 @@ public class ProgressImageUI : BaseImageUI
 
 	public float CurrentProgress => (CurrentValue-m_MinValue)/(m_MaxValue-m_MinValue);
 
-	private CancellationTokenSource m_TokenSource = null;
+	private Tween m_Tween = null;
 
 	protected override void Initialize()
 	{
@@ -62,14 +62,14 @@ public class ProgressImageUI : BaseImageUI
 	{
 		base.Release();
 
-		CommonUtility.KillTokenSource(ref m_TokenSource);
+		CommonUtility.KillTween(m_Tween);
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
 
-		CommonUtility.KillTokenSource(ref m_TokenSource);
+		CommonUtility.KillTween(m_Tween);
 	}
 
     public void SetRange(float _min,float _max)
@@ -85,11 +85,15 @@ public class ProgressImageUI : BaseImageUI
 		CurrentValue = _value;
 	}
 
-	public void SetValueDuration(float _value,float _duration)
+	public void SetValueDuration(float _value,float _duration,Action _onComplete = null)
 	{
-		CommonUtility.RecycleTokenSource(ref m_TokenSource);
+		CommonUtility.KillTween(m_Tween);
 
-		CommonUtility.ExecuteOverTimeAsync(CurrentValue,_value,_duration,SetValue,false,null,m_TokenSource.Token).Forget();
+		var amount = _value/m_MaxValue;
+
+		m_Tween = CommonUtility.SetTweenProgress(CurrentValue,_value,_duration,null,_onComplete);
+
+		m_Tween.Play();
 	}
 
 	protected override void Reset() 

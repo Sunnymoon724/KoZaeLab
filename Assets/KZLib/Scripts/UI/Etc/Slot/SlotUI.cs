@@ -48,14 +48,20 @@ public class SlotUI : BaseComponentUI
 	{
 		base.OnEnable();
 
-		m_Button.onClick.AddAction(OnClicked);
+		if(m_Button)
+		{
+			m_Button.onClick.AddAction(OnClicked);
+		}
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
 
-		m_Button.onClick.RemoveAction(OnClicked);
+		if(m_Button)
+		{
+			m_Button.onClick.RemoveAction(OnClicked);
+		}
 	}
 
 	private void OnClicked()
@@ -65,6 +71,12 @@ public class SlotUI : BaseComponentUI
 
     public virtual void SetCell(ICellData _cellData)
 	{
+		if(UseText)
+		{
+			SetName(_cellData.CellName);
+			SetDescription(_cellData.CellDescription);
+		}
+
 		if(UseText)
 		{
 			SetName(_cellData.CellName);
@@ -91,22 +103,34 @@ public class SlotUI : BaseComponentUI
 
 	protected virtual void SetName(string _text)
 	{
-		m_NameText.SetLocalizeText(_text);
+		if(m_NameText)
+		{
+			m_NameText.SetLocalizeText(_text);
+		}
 	}
 
 	protected virtual void SetDescription(string _text)
 	{
-		m_DescriptionText.SetLocalizeText(_text);
+		if(m_DescriptionText)
+		{
+			m_NameText.SetLocalizeText(_text);
+		}
 	}
 
 	protected virtual void SetImage(Sprite _sprite)
 	{
-		m_Image.SetSafeImage(_sprite);
+		if(m_Image)
+		{
+			m_Image.SetSafeImage(_sprite);
+		}
 	}
 
 	protected virtual void SetButton(Action _onClicked)
 	{
-		m_OnClicked = _onClicked;
+		if(m_Button)
+		{
+			m_OnClicked = _onClicked;
+		}
 	}
 }
 

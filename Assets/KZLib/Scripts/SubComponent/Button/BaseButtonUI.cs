@@ -12,12 +12,26 @@ public abstract class BaseButtonUI : BaseComponentUI
 	{
 		base.OnEnable();
 
+		if(!m_Button)
+		{
+			LogTag.System.I("Button is null");
+
+			return;
+		}
+
 		m_Button.onClick.AddAction(OnClickedButton);
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
+
+		if(!m_Button)
+		{
+			LogTag.System.I("Button is null");
+
+			return;
+		}
 
 		m_Button.onClick.RemoveAction(OnClickedButton);
 	}

@@ -10,7 +10,7 @@ public class ToggleGroupUI : BaseComponentUI
 	protected ToggleGroup m_ToggleGroup = null;
 
 	[SerializeField,LabelText("Start Index")]
-	private int m_StartIndex = -1;
+	private int m_StartIndex = Global.INVALID_INDEX;
 
 	[SerializeField,LabelText("Toggle List"),ListDrawerSettings(DraggableItems = false,ShowFoldout = false,HideAddButton = true,CustomRemoveIndexFunction = nameof(OnRemoveToggleByIndex)),OnValueChanged(nameof(OnChangeList))]
 	private List<BaseToggleUI> m_ToggleUIList = new();

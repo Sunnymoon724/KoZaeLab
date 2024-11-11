@@ -99,6 +99,40 @@ public abstract class SheetSettings<TObject> : OuterBaseSettings<TObject> where 
 		[VerticalGroup("Button",Order = 2),Button("Create",ButtonSizes.Large),ShowIf(nameof(IsShowCreateButton)),EnableIf(nameof(IsCreateAble)),PropertyTooltip("$m_ErrorLog")]
 		protected abstract void OnCreateData();
 
+		// private static string ConvertSchemeRecursive(string[] schemeArr, ref int idx)
+		// {
+		// 	switch (schemeArr[idx])
+		// 	{
+		// 		case "enum":
+		// 			return schemeArr[++idx];
+		// 		case "arr":
+		// 			++idx;
+		// 			return $"{ConvertSchemeRecursive(schemeArr, ref idx)}[]";
+		// 		case "list":
+		// 			++idx;
+		// 			var elemType = ConvertSchemeRecursive(schemeArr, ref idx);
+		// 			return $"List<{elemType}>";
+		// 		case "dict":
+		// 			++idx;
+		// 			var keyType = ConvertSchemeRecursive(schemeArr, ref idx);
+		// 			++idx;
+		// 			var valType = ConvertSchemeRecursive(schemeArr, ref idx);
+		// 			return $"Dictionary<{keyType}, {valType}>";
+		// 		default:
+		// 			return schemeArr[idx];
+		// 	}
+		// }
+
+		// private string DataTypeToString()
+		// {
+		// 	return Type switch
+		// 	{
+		// 		DataType.Enum => Name,
+		// 		DataType.Vector3 => Type.ToString(),
+		// 		_ => Type.ToString().ToLowerInvariant(),
+		// 	};
+		// }
+
 		private bool IsValidSheetName(IEnumerable<(string,int)> _nameGroup,string[] _titleArray)
 		{
 			var cnt = 0;
@@ -116,5 +150,79 @@ public abstract class SheetSettings<TObject> : OuterBaseSettings<TObject> where 
 			return _titleArray.Length == cnt;
 		}
 	}
+
+	#region Sheet Cell Data
+	[Serializable]
+	protected abstract class SheetCellData
+	{
+		[SerializeField,HideInInspector] private string m_Name = null;
+		[SerializeField,HideInInspector] private object m_Type = null;
+
+		[HorizontalGroup("0"),HideLabel,ShowInInspector,DisplayAsString]
+		public string Name { get => m_Name; private set => m_Name = value; }
+
+		[HorizontalGroup("0"),HideLabel,ShowInInspector,DisplayAsString]
+		public object Type { get => m_Type; private set => m_Type = value; }
+
+		public SheetCellData(string _name,string _type)
+		{
+			Name = _name;
+			Type = _type;
+		}
+
+		// public string ToConstructorArgument()
+		// {
+		// 	return $"{(string.Concat(DataTypeToString(),IsArray ? "[]" : ""))} _{Name.ToFirstCharacterToLower()}";
+		// }
+
+		// public string ToConstructorInitialize()
+		// {
+		// 	return $"m_{Name} = _{Name.ToFirstCharacterToLower()};";
+		// }
+
+		// public string ToFieldText()
+		// {
+		// 	return $"[SerializeField,HideInInspector] private {(string.Concat(DataTypeToString(),IsArray ? "[]" : ""))} m_{Name};";
+		// }
+
+		// public string ToPropertyText(string _group,int _key)
+		// {
+		// 	var builder = new StringBuilder();
+		// 	var type = DataTypeToString();
+
+		// 	if(IsArray)
+		// 	{
+		// 		builder.Append($"[HorizontalGroup(\"{_group}/0\"),LabelText(\"{Name}\"),LabelWidth(100),ShowInInspector,PropertyTooltip(\"${Name}_ToolTip\"),KZRichText]");
+		// 		builder.Append(ConfigSheetData.NewLineTapTap);
+		// 		builder.Append($"private string {Name}_Display => {Name}.IsNullOrEmpty() ? \"NULL\" : string.Join(\" | \",{Name});");
+		// 		builder.Append(ConfigSheetData.NewLineTapTap);
+		// 		builder.Append($"private string {Name}_ToolTip => {Name}_Display.RemoveRichText();");
+		// 		builder.Append(ConfigSheetData.NewLineNewLineTapTap);
+
+		// 		builder.Append($"[Key({_key})]");
+		// 		builder.Append(ConfigSheetData.NewLineTapTap);
+		// 		builder.Append($"public {type}[] {Name} {{ get => m_{Name}; private set => m_{Name} = value; }}");
+		// 	}
+		// 	else
+		// 	{
+		// 		builder.Append($"[HorizontalGroup(\"{_group}/0\"),LabelText(\"{Name}\"),LabelWidth(100),ShowInInspector,DisplayAsString,PropertyTooltip(\"${Name}\"),Key({_key})]");
+		// 		builder.Append(ConfigSheetData.NewLineTapTap);
+		// 		builder.Append($"public {type} {Name} {{ get => m_{Name}; private set => m_{Name} = value; }}");
+		// 	}
+
+		// 	return builder.ToString();
+		// }
+
+		// private string DataTypeToString()
+		// {
+		// 	return Type switch
+		// 	{
+		// 		DataType.Enum => Name,
+		// 		DataType.Vector3 => Type.ToString(),
+		// 		_ => Type.ToString().ToLowerInvariant(),
+		// 	};
+		// }
+	}
+	#endregion Sheet Cell Data
 }
 #endif

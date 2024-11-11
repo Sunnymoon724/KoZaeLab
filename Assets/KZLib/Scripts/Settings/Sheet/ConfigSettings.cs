@@ -14,8 +14,7 @@ using KZLib.KZReader;
 public class ConfigSettings : SheetSettings<ConfigSettings>
 {
 	private const string NAME = "Name";
-	private const string TYPE = "Type";
-	private const string WRITEABLE = "Writable";
+	private const string WRITEABLE = "Writeable";
 	private const string DEFAULT = "Default";
 
 	[PropertySpace(10)]
@@ -34,6 +33,10 @@ public class ConfigSettings : SheetSettings<ConfigSettings>
 	[Serializable]
 	private class ConfigSheetData : SheetData
 	{
+		private static readonly int[] INDEX_ARRAY = new int[] { 0,1,2,3,4 }; 
+		private const int NAME_INDEX = 0;
+		private const int TYPE_INDEX = 1;
+
 		public static readonly string NewLineTapTap = $"{Environment.NewLine}\t\t";
 		public static readonly string NewLineTapTapTap = $"{Environment.NewLine}\t\t\t";
 
@@ -50,27 +53,52 @@ public class ConfigSettings : SheetSettings<ConfigSettings>
 				m_SheetName = value;
 
 				m_ColumnList.Clear();
+				m_ColumnList2.Clear();
 
 				var reader = new ExcelReader(AbsoluteFilePath);
+				var headerArray = reader.GetRowArray(m_SheetName,0);
 
-				var columnJaggedArray = reader.GetColumnJaggedArray(m_SheetName,0,1);
+				if(headerArray.IsNullOrEmpty())
+				{
+					LogTag.System.E($"Header is null [{m_SheetName} in {AbsoluteFilePath}]");
+
+					return;
+				}
+
+				var columnJaggedArray = reader.GetColumnJaggedArray(m_SheetName,INDEX_ARRAY);
 
 				for(var i=1;i<columnJaggedArray[0].Length;i++)
 				{
-					m_ColumnList.Add(new ConfigCellData(columnJaggedArray[0][i].Replace(" ",""),DataType.String,false,columnJaggedArray[1][i]));
+					var isExist = reader.IsExistRowArray(m_SheetName,i);
+
+					if(!isExist)
+					{
+						continue;
+					}
+
+					m_ColumnList.Add(new ConfigCellData(
+						columnJaggedArray[NAME_INDEX][i],	// name
+						columnJaggedArray[TYPE_INDEX][i],	// type
+						DataType.String,
+						false,
+						columnJaggedArray[1][i]
+						));
 				}
 			}
 		}
 
 		[Space(10)]
-		[VerticalGroup("RowList",Order = 1),SerializeField,LabelText("Row List"),ListDrawerSettings(HideAddButton = true,ShowFoldout = false,DraggableItems = false),ShowIf(nameof(IsExistSheetName))]
+		[VerticalGroup("RowList",Order = 1),SerializeField,LabelText("Column List"),ListDrawerSettings(HideAddButton = true,ShowFoldout = false,DraggableItems = false),ShowIf(nameof(IsExistSheetName))]
 		private List<ConfigCellData> m_ColumnList = new();
+
+		[VerticalGroup("RowList",Order = 1),SerializeField,LabelText("Column2 List"),TableList(IsReadOnly = true),ShowIf(nameof(IsExistSheetName))]
+		private List<ConfigCellData> m_ColumnList2 = new();
 		private List<ConfigCellData> m_RowList = new();
 
 		public ConfigSheetData(string _path) : base(_path) { }
 
 		protected override string[] TitleArray => new[] { NAME, DEFAULT };
-		protected override bool IsShowCreateButton => m_RowList.Count != 0;
+		protected override bool IsShowCreateButton => m_ColumnList.Count != 0;
 
 		protected override bool IsCreateAble
 		{
@@ -232,36 +260,27 @@ public class ConfigSettings : SheetSettings<ConfigSettings>
 
 	#region Config Cell Data
 	[Serializable]
-	private class ConfigCellData
+	private class ConfigCellData : SheetCellData
 	{
-		[SerializeField,HideInInspector] private string m_Name = null;
-		[SerializeField,HideInInspector] private DataType m_Type = DataType.String;
-		[SerializeField,HideInInspector] private bool m_IsArray = false;
 		[SerializeField,HideInInspector] private string m_Default = null;
-
-		[HorizontalGroup("0"),HideLabel,ShowInInspector,DisplayAsString]
-		public string Name { get => m_Name; private set => m_Name = value; }
-
-		[HorizontalGroup("0"),HideLabel,ShowInInspector]
-		private DataType Type { get => m_Type; set => m_Type = value; }
-
-		[HorizontalGroup("0"),ShowInInspector,LabelText("IsArray"),ToggleLeft]
-		private bool IsArray { get => m_IsArray; set => m_IsArray = value; }
+		[SerializeField,HideInInspector] private string m_Comment = null;
 
 		[HorizontalGroup("0"),HideLabel,ShowInInspector,ReadOnly]
 		private string Default { get => m_Default; set => m_Default = value; }
+		[HorizontalGroup("0"),HideLabel,ShowInInspector,DisplayAsString]
+		private string Comment { get => m_Comment; set => m_Comment = value; }
 
-		public ConfigCellData(string _name,DataType _type,bool _isArray,string _default)
+		public ConfigCellData(string _name,string _type,string _default,string _comment) : base(_name,_type)
 		{
-			Name = _name;
-			Type = _type;
-			IsArray = _isArray;
 			Default = _default;
+			m_Comment = _comment;
 		}
 
 		public string ToConstructorArgument()
 		{
-			return $"{(string.Concat(DataTypeToString(),IsArray ? "[]" : ""))} _{Name.ToFirstCharacterToLower()}";
+			// return $"{(string.Concat(DataTypeToString(),IsArray ? "[]" : ""))} _{Name.ToFirstCharacterToLower()}";
+
+			return null;
 		}
 
 		public string ToConstructorInitialize()
@@ -271,7 +290,8 @@ public class ConfigSettings : SheetSettings<ConfigSettings>
 
 		public string ToFieldText()
 		{
-			return $"[SerializeField,HideInInspector] private {(string.Concat(DataTypeToString(),IsArray ? "[]" : ""))} m_{Name};";
+			return null;
+			// return $"[SerializeField,HideInInspector] private {(string.Concat(DataTypeToString(),IsArray ? "[]" : ""))} m_{Name};";
 		}
 
 		public string ToPropertyText(string _group,int _key)
@@ -279,20 +299,20 @@ public class ConfigSettings : SheetSettings<ConfigSettings>
 			var builder = new StringBuilder();
 			var type = DataTypeToString();
 
-			if(IsArray)
-			{
-				builder.Append($"[HorizontalGroup(\"{_group}/0\"),LabelText(\"{Name}\"),LabelWidth(100),ShowInInspector,PropertyTooltip(\"${Name}_ToolTip\"),KZRichText]");
-				builder.Append(ConfigSheetData.NewLineTapTap);
-				builder.Append($"private string {Name}_Display => {Name}.IsNullOrEmpty() ? \"NULL\" : string.Join(\" | \",{Name});");
-				builder.Append(ConfigSheetData.NewLineTapTap);
-				builder.Append($"private string {Name}_ToolTip => {Name}_Display.RemoveRichText();");
-				builder.Append(ConfigSheetData.NewLineNewLineTapTap);
+			// if(IsArray)
+			// {
+			// 	builder.Append($"[HorizontalGroup(\"{_group}/0\"),LabelText(\"{Name}\"),LabelWidth(100),ShowInInspector,PropertyTooltip(\"${Name}_ToolTip\"),KZRichText]");
+			// 	builder.Append(ConfigSheetData.NewLineTapTap);
+			// 	builder.Append($"private string {Name}_Display => {Name}.IsNullOrEmpty() ? \"NULL\" : string.Join(\" | \",{Name});");
+			// 	builder.Append(ConfigSheetData.NewLineTapTap);
+			// 	builder.Append($"private string {Name}_ToolTip => {Name}_Display.RemoveRichText();");
+			// 	builder.Append(ConfigSheetData.NewLineNewLineTapTap);
 
-				builder.Append($"[Key({_key})]");
-				builder.Append(ConfigSheetData.NewLineTapTap);
-				builder.Append($"public {type}[] {Name} {{ get => m_{Name}; private set => m_{Name} = value; }}");
-			}
-			else
+			// 	builder.Append($"[Key({_key})]");
+			// 	builder.Append(ConfigSheetData.NewLineTapTap);
+			// 	builder.Append($"public {type}[] {Name} {{ get => m_{Name}; private set => m_{Name} = value; }}");
+			// }
+			// else
 			{
 				builder.Append($"[HorizontalGroup(\"{_group}/0\"),LabelText(\"{Name}\"),LabelWidth(100),ShowInInspector,DisplayAsString,PropertyTooltip(\"${Name}\"),Key({_key})]");
 				builder.Append(ConfigSheetData.NewLineTapTap);

@@ -9,20 +9,19 @@ using KZLib;
 using KZLib.KZSchedule;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
+
+public delegate void Action2();
 
 public class Test : MonoBehaviour
 {
+    
     private void Start()
     {
-        Start2(2);
-    }
+        List<int> ww = new List<int>();
 
-    private void Start2(int _aaa)
-    {
-        LogTag.Test.E("test");
 
-        Debug.LogError("test");
-
-        throw new Exception("test");
+        ww.Add(0);
     }
 }

@@ -10,15 +10,15 @@ using UnityEngine.UI;
 [RequireComponent(typeof(GridLayoutGroup))]
 public class GridLayoutGroupUI : BaseComponentUI
 {
-	[VerticalGroup("기본",Order = 0),SerializeField]
+	[VerticalGroup("General",Order = 0),SerializeField]
 	private Transform m_Storage = null;
-	[VerticalGroup("기본",Order = 0),SerializeField]
+	[VerticalGroup("General",Order = 0),SerializeField]
 	private SlotUI m_Pivot = null;
 
-	[VerticalGroup("기본",Order = 0),SerializeField]
+	[VerticalGroup("General",Order = 0),SerializeField]
 	private GridLayoutGroup m_GridLayout = null;
 
-	[VerticalGroup("기본",Order = 0),SerializeField,ReadOnly]
+	[VerticalGroup("General",Order = 0),SerializeField,ReadOnly]
 	private List<SlotUI> m_SlotList = new();
 
 	private readonly List<ICellData> m_CellList = new();
@@ -38,12 +38,16 @@ public class GridLayoutGroupUI : BaseComponentUI
 
 		if(!m_Pivot)
 		{
-			throw new NullReferenceException("Pivot is null");
+			LogTag.UI.E("Pivot is null");
+
+			return;
 		}
 
 		if(!m_Storage)
 		{
-			throw new NullReferenceException("Storage is null");
+			LogTag.UI.E("Storage is null");
+
+			return;
 		}
 
 		m_Pivot.gameObject.SetActiveSelf(false);

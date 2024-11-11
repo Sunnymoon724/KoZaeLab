@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(ScrollRect))]
-public partial class ScrollRectUI : BaseComponentUI
+public class ScrollRectUI : BaseComponentUI
 {
 	private enum MoveToType { Top, Center, Bottom, }
 
@@ -40,6 +41,8 @@ public partial class ScrollRectUI : BaseComponentUI
 
 	private bool m_Initialize = false;
 
+	private Tween m_Tween = null;
+
 	protected override void Initialize()
 	{
 		if(m_Initialize)
@@ -51,7 +54,9 @@ public partial class ScrollRectUI : BaseComponentUI
 
 		if(!m_Pivot)
 		{
-			throw new NullReferenceException("Pivot is null");
+			LogTag.System.E("Pivot is null");
+
+			return;
 		}
 
 		m_IsVertical = m_ScrollRect.vertical;
@@ -135,11 +140,9 @@ public partial class ScrollRectUI : BaseComponentUI
 		MoveTo(_index,MoveToType.Bottom,_duration);
 	}
 
-	private void MoveTo(int _index,MoveToType _type,float _duration = 0.0f)
+	private void MoveTo(int _index,MoveToType _type,float _duration = 0.0f,Action _onComplete = null)
 	{
-		Initialize();
-
-		if(!m_CellList.ContainsIndex(_index))
+		if(!m_Initialize || !m_CellList.ContainsIndex(_index))
 		{
 			return;
 		}
@@ -150,12 +153,18 @@ public partial class ScrollRectUI : BaseComponentUI
 		{
 			SetScrollLocation(location);
 
+			_onComplete?.Invoke();
+
 			return;
 		}
 
-		var contentLocation = GetContentLocation();
+		var current = GetContentLocation();
 
-		CommonUtility.ExecuteOverTimeAsync(contentLocation,location,_duration,SetScrollLocation).Forget();
+		CommonUtility.KillTween(m_Tween);
+
+		m_Tween = CommonUtility.SetTweenProgress(current,location,_duration,SetScrollLocation,_onComplete);
+
+		m_Tween.Play();
 	}
 
 	private float FindReachLocation(int _index,MoveToType _type)
@@ -195,6 +204,15 @@ public partial class ScrollRectUI : BaseComponentUI
 		base.OnDisable();
 
 		m_ScrollRect.onValueChanged.RemoveAction(OnScrollChanged);
+
+		CommonUtility.KillTween(m_Tween);
+	}
+
+	protected override void Release()
+	{
+		base.Release();
+
+		CommonUtility.KillTween(m_Tween);
 	}
 
 	private void OnScrollChanged(Vector2 _location)

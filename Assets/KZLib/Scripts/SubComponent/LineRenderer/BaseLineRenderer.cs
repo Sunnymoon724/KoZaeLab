@@ -11,16 +11,6 @@ public abstract class BaseLineRenderer : BaseComponent
 
 	protected MaterialPropertyBlock PropertyBlock => m_PropertyBlock ??= new();
 
-	protected override void Reset()
-	{
-		base.Reset();
-
-		if(!m_LineRenderer)
-		{
-			m_LineRenderer = GetComponent<LineRenderer>();
-		}
-	}
-
 	public void SetLineRenderer(Vector2? _width = null,Color? _color = null)
 	{
 		if(_width.HasValue)
@@ -49,5 +39,15 @@ public abstract class BaseLineRenderer : BaseComponent
 		m_LineRenderer.BakeMesh(mesh,true);
 
 		return mesh;
+	}
+
+	protected override void Reset()
+	{
+		base.Reset();
+
+		if(!m_LineRenderer)
+		{
+			m_LineRenderer = GetComponent<LineRenderer>();
+		}
 	}
 }

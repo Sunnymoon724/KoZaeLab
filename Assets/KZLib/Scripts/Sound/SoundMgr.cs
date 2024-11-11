@@ -69,11 +69,25 @@ namespace KZLib
 		#region UI
 		public void PlayUIShot(string _path,float _volume = 1.0f)
 		{
+			if(_path.IsEmpty())
+			{
+				LogTag.System.I("Audio path is empty");
+
+				return;
+			}
+
 			PlayUIShot(ResMgr.In.GetAudioClip(_path),_volume);
 		}
 
 		public void PlayUIShot(AudioClip _clip,float _volume = 1.0f)
 		{
+			if(!_clip)
+			{
+				LogTag.System.I("Audio clip is null");
+
+				return;
+			}
+
 			m_UISource.PlayOneShot(_clip,_volume);
 		}
 		#endregion UI
@@ -91,11 +105,25 @@ namespace KZLib
 
 		public void PlayBGM(string _path,float _time = 0.0f)
 		{
+			if(_path.IsEmpty())
+			{
+				LogTag.System.I("Audio path is empty");
+
+				return;
+			}
+
 			PlayBGM(ResMgr.In.GetAudioClip(_path),_time);
 		}
 
 		public void PlayBGM(AudioClip _clip,float _time = 0.0f)
 		{
+			if(!_clip)
+			{
+				LogTag.System.I("Audio clip is null");
+
+				return;
+			}
+
 			if(m_BGMSource.clip != null && m_BGMSource.clip.name.IsEqual(_clip.name))
 			{
 				return;
