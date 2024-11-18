@@ -86,7 +86,7 @@ public class LanguageSettings : SheetSettings<LanguageSettings>
 		{
 			var reader = new ExcelReader(AbsoluteFilePath);
 			var titleGroup = reader.GetTitleGroup(SheetName);
-			var keyList = reader.GetColumnList(SheetName,0);
+			// var keyList = reader.GetColumnList(SheetName,0);
 			var languageJaggedArray = reader.GetColumnJaggedArray(SheetName,titleGroup.Select(x=>x.Index).ToArray());
 
 			var languageDict = new Dictionary<string,string>();
@@ -122,16 +122,16 @@ public class LanguageSettings : SheetSettings<LanguageSettings>
 						text = text.NormalizeNewLines();
 					}
 
-					var key = keyList[index++];
+					// var key = keyList[index++];
 
-					if(!languageDict.ContainsKey(key))
-					{
-						languageDict.Add(key, text);
-					}
-					else
-					{
-						LogTag.Editor.W($"{key} is duplicated.");
-					}
+					// if(!languageDict.ContainsKey(key))
+					// {
+					// 	languageDict.Add(key, text);
+					// }
+					// else
+					// {
+					// 	LogTag.Editor.W($"{key} is duplicated.");
+					// }
 				}
 
 				if(languageDict.IsNullOrEmpty())

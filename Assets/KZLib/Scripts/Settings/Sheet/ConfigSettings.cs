@@ -76,13 +76,13 @@ public class ConfigSettings : SheetSettings<ConfigSettings>
 						continue;
 					}
 
-					m_ColumnList.Add(new ConfigCellData(
-						columnJaggedArray[NAME_INDEX][i],	// name
-						columnJaggedArray[TYPE_INDEX][i],	// type
-						DataType.String,
-						false,
-						columnJaggedArray[1][i]
-						));
+					// m_ColumnList.Add(new ConfigCellData(
+					// 	columnJaggedArray[NAME_INDEX][i],	// name
+					// 	columnJaggedArray[TYPE_INDEX][i],	// type
+					// 	DataType.String,
+					// 	false,
+					// 	columnJaggedArray[1][i]
+					// 	));
 				}
 			}
 		}
