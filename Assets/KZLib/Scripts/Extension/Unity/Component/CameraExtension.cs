@@ -2,298 +2,301 @@ using UnityEngine;
 
 public static class CameraExtension
 {
-	public static Bounds OrthographicBounds(this Camera _camera)
+	public static Bounds OrthographicBounds(this Camera camera)
 	{
-		if(!_camera)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E("Camera is null");
-
 			return default;
 		}
 
 		var aspect = Screen.width / (float)Screen.height;
-		var height = _camera.orthographicSize*2.0f;
+		var height = camera.orthographicSize*2.0f;
 
-		return new Bounds(_camera.transform.position,new Vector3(height*aspect,height,0.0f));
+		return new Bounds(camera.transform.position,new Vector3(height*aspect,height,0.0f));
 	}
 
-	public static void ShowLayer(this Camera _camera,int _layerIndex)
+	public static void ShowLayer(this Camera camera,int layerIndex)
 	{
-		if(!_camera)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E("Camera is null");
-
 			return;
 		}
 
-		_camera.cullingMask = _camera.cullingMask.AddFlag(1 << _layerIndex);
+		camera.cullingMask = camera.cullingMask.AddFlag(1 << layerIndex);
 	}
 
-	public static void ShowLayer(this Camera _camera,params string[] _layerNameArray)
+	public static void ShowLayer(this Camera camera,params string[] layerNameArray)
 	{
-		if(!_camera)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E("Camera is null");
-
 			return;
 		}
 
-		_camera.cullingMask = _camera.cullingMask.AddFlag(LayerMask.GetMask(_layerNameArray));
+		camera.cullingMask = camera.cullingMask.AddFlag(LayerMask.GetMask(layerNameArray));
 	}
 
-	public static void HideLayer(this Camera _camera,int _layerIndex)
+	public static void HideLayer(this Camera camera,int layerIndex)
 	{
-		if(!_camera)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E("Camera is null");
-
 			return;
 		}
 
-		_camera.cullingMask = _camera.cullingMask.RemoveFlag(1 << _layerIndex);
+		camera.cullingMask = camera.cullingMask.RemoveFlag(1 << layerIndex);
 	}
 
-	public static void HideLayer(this Camera _camera,params string[] _layerNameArray)
+	public static void HideLayer(this Camera camera,params string[] layerNameArray)
 	{
-		if(!_camera)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E("Camera is null");
-
 			return;
 		}
 
-		_camera.cullingMask = _camera.cullingMask.RemoveFlag(LayerMask.GetMask(_layerNameArray));
+		camera.cullingMask = camera.cullingMask.RemoveFlag(LayerMask.GetMask(layerNameArray));
 	}
 
-	public static void ToggleLayerVisibility(this Camera _camera,int _layerIndex)
+	public static void ToggleLayerVisibility(this Camera camera,int layerIndex)
 	{
-		if(!_camera)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E("Camera is null");
-
 			return;
 		}
 
-		_camera.cullingMask ^= 1 << _layerIndex;
+		camera.cullingMask ^= 1 << layerIndex;
 	}
 
-	public static void ToggleLayerVisibility(this Camera _camera,params string[] _layerNameArray)
+	public static void ToggleLayerVisibility(this Camera camera,params string[] layerNameArray)
 	{
-		if(!_camera)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E("Camera is null");
-
 			return;
 		}
 
-		_camera.cullingMask ^= LayerMask.GetMask(_layerNameArray);
+		camera.cullingMask ^= LayerMask.GetMask(layerNameArray);
 	}
 
-	public static bool IsLayerShown(this Camera _camera,int _layerIndex)
+	public static bool IsLayerShown(this Camera camera,int layerIndex)
 	{
-		if(!_camera)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E("Camera is null");
-
-			return false;
+			return default;
 		}
 
-		return _camera.cullingMask.HasFlag(1 << _layerIndex);
+		return camera.cullingMask.HasFlag(1 << layerIndex);
 	}
 
-	public static bool IsLayerShown(this Camera _camera,params string[] _layerNameArray)
+	public static bool IsLayerShown(this Camera camera,params string[] layerNameArray)
 	{
-		if(!_camera)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E("Camera is null");
-
-			return false;
+			return default;
 		}
 
-		return _camera.cullingMask.HasFlag(LayerMask.GetMask(_layerNameArray));
+		return camera.cullingMask.HasFlag(LayerMask.GetMask(layerNameArray));
 	}
 
-	public static void SetLayerVisibility(this Camera _camera,bool _isShow,int _layerIndex)
+	public static void SetLayerVisibility(this Camera camera,bool isShow,int layerIndex)
 	{
-		if(!_camera)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E("Camera is null");
-
 			return;
 		}
 
-		if(_isShow)
+		if(isShow)
 		{
-			_camera.ShowLayer(_layerIndex);
+			camera.ShowLayer(layerIndex);
 		} 
 		else
 		{
-			_camera.HideLayer(_layerIndex);
+			camera.HideLayer(layerIndex);
 		}
 	}
 
-	public static void SetLayerVisibility(this Camera _camera,bool _isShow,params string[] _layerNameArray)
+	public static void SetLayerVisibility(this Camera camera,bool isShow,params string[] layerNameArray)
 	{
-		if(!_camera)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E("Camera is null");
-
 			return;
 		}
 
-		if(_isShow)
+		if(isShow)
 		{
-			_camera.ShowLayer(_layerNameArray);
+			camera.ShowLayer(layerNameArray);
 		} 
 		else
 		{
-			_camera.HideLayer(_layerNameArray);
+			camera.HideLayer(layerNameArray);
 		}
 	}
 
-	public static bool TryGetDistanceToPlane(this Camera _camera,Plane _plane,out float _distance)
+	public static bool TryGetDistanceToPlane(this Camera camera,Plane plane,out float distance)
 	{
-		if(!_camera)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E("Camera is null");
-
-			_distance = Global.INVALID_NUMBER;
+			distance = 0.0f;
 
 			return false;
 		}
 
-		var ray = _camera.ViewportPointToRay(Global.CENTER_VIEWPORT_POINT);
-		var hit = _plane.Raycast(ray,out _distance);
+		var ray = camera.ViewportPointToRay(Global.CENTER_VIEWPORT_POINT);
+		var hit = plane.Raycast(ray,out distance);
 
-		_distance += _camera.nearClipPlane;
+		distance += camera.nearClipPlane;
 
 		return hit;
 	}
 
-	public static bool TryGetDistanceToPointPlane(this Camera _camera,Vector3 _position,out float _distance)
+	public static bool TryGetDistanceToPositionPlane(this Camera camera,Vector3 position,out float distance)
 	{
-		if(!_camera)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E("Camera is null");
-
-			_distance = Global.INVALID_NUMBER;
+			distance = 0.0f;
 
 			return false;
 		}
 
-		var plane = new Plane(-_camera.transform.forward,_position);
+		var plane = new Plane(-camera.transform.forward,position);
 
-		return TryGetDistanceToPlane(_camera,plane,out _distance);
+		return TryGetDistanceToPlane(camera,plane,out distance);
 	}
 
-	public static bool TryGetDistanceToObjectPlane(this Camera _camera,Transform _target,out float _distance)
+	public static bool TryGetDistanceToObjectPlane(this Camera camera,Transform target,out float distance)
 	{
-		if(!_camera || !_target)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E($"Camera or Target null {_camera} or {_target}");
-
-			_distance = Global.INVALID_NUMBER;
+			distance = 0.0f;
 
 			return false;
 		}
 
-		return TryGetDistanceToPointPlane(_camera,_target.position,out _distance);
+		if(!target)
+		{
+			LogTag.System.E("Target is null");
+
+			distance = Global.INVALID_NUMBER;
+
+			return false;
+		}
+
+		return TryGetDistanceToPositionPlane(camera,target.position,out distance);
 	}
 
-	public static bool TryGetScaleForConsistentSize(this Camera _camera,Transform _transform,Transform _target,out float _scale)
+	public static bool TryGetScaleForConsistentSize(this Camera camera,Transform transform,Transform target,out float scale)
 	{
-		if(!_camera)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E("Camera is null");
-
-			_scale = Global.INVALID_NUMBER;
+			scale = 0.0f;
 
 			return false;
 		}
 
-		if(_camera.orthographic)
+		if(camera.orthographic)
 		{
-			_scale = 1.0f;
+			scale = 1.0f;
 
 			return true;
 		}
 		
-		if(!TryGetDistanceToObjectPlane(_camera,_transform,out var source) || TryGetDistanceToObjectPlane(_camera,_target,out var destination))
+		if(!TryGetDistanceToObjectPlane(camera,transform,out var source) || TryGetDistanceToObjectPlane(camera,target,out var destination))
 		{
-			_scale = 0.0f;
+			scale = 0.0f;
 
 			return false;
 		}
 
-		_scale = destination/source;
+		scale = destination/source;
 
-		return !float.IsInfinity(_scale) && !float.IsNaN(_scale);
+		return !float.IsInfinity(scale) && !float.IsNaN(scale);
 	}
 
-	public static bool TryCastPositionToTargetPlane(this Camera _camera,Transform _transform,Transform _target,out Vector3 _position)
+	public static bool TryCastPositionToTargetPlane(this Camera camera,Transform transform,Transform target,out Vector3 position)
 	{
-		if(!_camera || !_transform)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E($"Camera or Transform null {_camera} or {_transform}");
-
-			_position = default;
+			position = Vector3.zero;
 
 			return false;
 		}
 
-		return TryCastPositionToTargetPlane(_camera,_transform.position,_target,out _position);
+		if(!transform)
+		{
+			LogTag.System.E("Transform is null");
+
+			position = Vector3.zero;
+
+			return false;
+		}
+
+		return TryCastPositionToTargetPlane(camera,transform.position,target,out position);
 	}
 
-	public static bool TryCastPositionToTargetPlane(this Camera _camera,Vector3 _position1,Transform _target,out Vector3 _position2)
+	public static bool TryCastPositionToTargetPlane(this Camera camera,Vector3 position1,Transform target,out Vector3 position2)
 	{
-		if(!_camera || !_target)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E($"Camera or Target null {_camera} or {_target}");
-
-			_position2 = default;
+			position2 = Vector3.zero;
 
 			return false;
 		}
 
-		if(_camera.orthographic)
+		if(!target)
 		{
-			_position2 = _position1;
+			LogTag.System.E("Target is null");
+
+			position2 = Vector3.zero;
+
+			return false;
+		}
+
+		if(camera.orthographic)
+		{
+			position2 = position1;
 
 			return true;
 		}
 
-		var plane = new Plane(-_camera.transform.forward, _target.position);
-		var ray = _camera.ViewportPointToRay(_camera.WorldToViewportPoint(_position1));
+		var plane = new Plane(-camera.transform.forward, target.position);
+		var ray = camera.ViewportPointToRay(camera.WorldToViewportPoint(position1));
 
 		if(plane.Raycast(ray,out var distance))
 		{
-			_position2 = ray.GetPoint(distance);
+			position2 = ray.GetPoint(distance);
 
 			return true;
 		}
 
-		_position2 = default;
+		position2 = Vector3.zero;
 
 		return false;
 	}
 
 	/// <summary>
-	/// Calculate the screen space corners of the rect transform.
+	/// Transform the screen space corners of the rect transform.
 	/// </summary>
-	public static void CalculateCornerOnScreen(this Camera _camera,RectTransform _transform,Vector3[] _positionArray,float _factor = 1.0f)
+	public static void TransformCornersToScreen(this Camera camera,RectTransform transform,Vector3[] positionArray,float factor = 1.0f)
 	{
-		if(!_camera)
+		if(!IsValid(camera))
 		{
-			LogTag.System.E("Camera is null");
-
 			return;
 		}
 
-		_transform.GetWorldCorners(_positionArray);
+		transform.GetWorldCorners(positionArray);
 
 		for(var i=0;i<4;i++)
 		{
-			_positionArray[i] = _camera.WorldToScreenPoint(_positionArray[i])/_factor;
+			positionArray[i] = camera.WorldToScreenPoint(positionArray[i])/factor;
 		}
+	}
+
+	private static bool IsValid(Camera camera)
+	{
+		if(!camera)
+		{
+			LogTag.System.E("Camera is null");
+
+			return false;
+		}
+
+		return true;
 	}
 }

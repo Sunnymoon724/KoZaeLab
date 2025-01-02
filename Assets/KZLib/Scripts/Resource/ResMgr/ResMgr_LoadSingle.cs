@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Video;
-using System;
 using Object = UnityEngine.Object;
+using KZLib.KZUtility;
 
 #if UNITY_EDITOR
 
@@ -13,82 +13,82 @@ namespace KZLib
 {
 	public partial class ResMgr : Singleton<ResMgr>
 	{
-		public TComponent GetObject<TComponent>(string _filePath,Transform _parent = null,bool _immediately = true) where TComponent : Component
+		public TComponent GetObject<TComponent>(string filePath,Transform parent = null,bool immediately = true) where TComponent : Component
 		{
-			var data = GetObject(_filePath,_parent,_immediately);
+			var gameObject = GetObject(filePath,parent,immediately);
 
-			return data ? data.GetComponent<TComponent>() : null;
+			return gameObject ? gameObject.GetComponent<TComponent>() : null;
 		}
 
-		public GameObject GetObject(string _filePath,Transform _parent = null,bool _immediately = true)
+		public GameObject GetObject(string filePath,Transform parent = null,bool immediately = true)
 		{
-			if(_immediately)
+			if(immediately)
 			{
-				var data = GetResource<GameObject>(_filePath);
+				var gameObject = GetResource<GameObject>(filePath);
 
-				if(data)
+				if(gameObject)
 				{
-					data.transform.SetParent(_parent);
+					gameObject.transform.SetParent(parent);
 
-					return data;
+					return gameObject;
 				}
 			}
 			else
 			{
-				AddLoadingQueue(_filePath,true,_parent);
+				AddLoadingQueue(filePath,true,parent);
 			}
 
 			return null;
 		}
 
-		public AnimatorOverrideController GetAnimatorOverrideController(string _filePath)
+		public AnimatorOverrideController GetAnimatorOverrideController(string filePath)
 		{
-			return GetResource<AnimatorOverrideController>(_filePath);
+			return GetResource<AnimatorOverrideController>(filePath);
 		}
 
-		public AnimationClip GetAnimationClip(string _filePath)
+		public AnimationClip GetAnimationClip(string filePath)
 		{
-			return GetResource<AnimationClip>(_filePath);
+			return GetResource<AnimationClip>(filePath);
 		}
 
-		public ScriptableObject GetScriptableObject(string _filePath)
+		public ScriptableObject GetScriptableObject(string filePath)
 		{
-			return GetResource<ScriptableObject>(_filePath);
+			return GetResource<ScriptableObject>(filePath);
 		}
 
-		public TObject GetScriptableObject<TObject>(string _filePath) where TObject : ScriptableObject
+		public TObject GetScriptableObject<TObject>(string filePath) where TObject : ScriptableObject
 		{
-			return GetResource<TObject>(_filePath);
+			return GetResource<TObject>(filePath);
 		}
 
-		public AudioClip GetAudioClip(string _filePath)
+		public AudioClip GetAudioClip(string filePath)
 		{
-			return GetResource<AudioClip>(_filePath);
+			return GetResource<AudioClip>(filePath);
 		}
 
-		public VideoClip GetVideoClip(string _filePath)
+		public VideoClip GetVideoClip(string filePath)
 		{
-			return GetResource<VideoClip>(_filePath);
+			return GetResource<VideoClip>(filePath);
 		}
 
-		public Sprite GetSprite(string _filePath)
+		public Sprite GetSprite(string filePath)
 		{
-			return GetResource<Sprite>(_filePath);
+			return GetResource<Sprite>(filePath);
 		}
 
-		public TextAsset GetTextAsset(string _filePath)
+		public TextAsset GetTextAsset(string filePath)
 		{
-			return GetResource<TextAsset>(_filePath);
+			return GetResource<TextAsset>(filePath);
 		}
 
-		public Material GetMaterial(string _filePath)
+		public Material GetMaterial(string filePath)
 		{
-			return GetResource<Material>(_filePath);
+			return GetResource<Material>(filePath);
 		}
 
-		private TObject GetResource<TObject>(string _filePath) where TObject : Object
+		private TObject GetResource<TObject>(string filePath) where TObject : Object
 		{
-			if(_filePath.IsEmpty())
+			if(filePath.IsEmpty())
 			{
 				LogTag.System.I("Path is null.");
 
@@ -96,57 +96,57 @@ namespace KZLib
 			}
 
 			// use cache data
-			var cacheData = GetCacheData<TObject>(_filePath);
+			var cacheData = GetCacheData<TObject>(filePath);
 
 			if(!cacheData)
 			{
 				// load data
-				cacheData = LoadData<TObject>(_filePath);
+				cacheData = LoadData<TObject>(filePath);
 
 				if(!cacheData)
 				{
-					LogTag.System.E($"Resources is not exist. [path : {_filePath}]");
+					LogTag.System.E($"Resources is not exist. [path : {filePath}]");
 
 					return null;
 				}
 
-				PutData(_filePath,cacheData);
+				PutData(filePath,cacheData);
 			}
 
 			// data is GameObject -> copy data
 			if(typeof(TObject) == typeof(GameObject))
 			{
-				var data = CommonUtility.CopyObject(cacheData);
+				var gameObject = cacheData.CopyObject() as TObject;
 
 				if(GameSettings.In.IsServerResource)
 				{
-					(data as GameObject).ReAssignShader();
+					(gameObject as GameObject).ReAssignShader();
 				}
 
-				return data;
+				return gameObject;
 			}
 
 			return cacheData;
 		}
 
-		private TObject LoadData<TObject>(string _filePath) where TObject : Object
+		private TObject LoadData<TObject>(string filePath) where TObject : Object
 		{
 #if UNITY_EDITOR
-			if(!CommonUtility.IsFilePath(_filePath))
+			if(!CommonUtility.IsFilePath(filePath))
 			{
-				LogTag.System.E($"Path is folder path.[path : {_filePath}]");
+				LogTag.System.E($"Path is folder path.[path : {filePath}]");
 
 				return null;
 			}
 #endif
-			if(_filePath.StartsWith(RESOURCES))
+			if(filePath.StartsWith(RESOURCES))
 			{
-				var filePath = CommonUtility.RemoveHeaderDirectory(_filePath,RESOURCES);
+				var resourcePath = CommonUtility.RemoveTextInPath(filePath,RESOURCES);
 
-				return Resources.Load<TObject>(filePath[..filePath.LastIndexOf('.')]);
+				return Resources.Load<TObject>(resourcePath[..resourcePath.LastIndexOf('.')]);
 			}
 
-			var assetPath = CommonUtility.GetAssetsPath(_filePath);
+			var assetPath = CommonUtility.GetAssetsPath(filePath);
 
 			if(GameSettings.In.IsServerResource)
 			{

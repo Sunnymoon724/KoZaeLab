@@ -30,61 +30,61 @@ public static partial class CommonUtility
 	#endregion Distance
 
 	#region Clamp
-	public static int LoopClamp(int _index,int _size)
+	public static int LoopClamp(int index,int size)
 	{
-		return _size < 1 ? 0 : _index < 0 ? _size-1+(_index+1)%_size : _index%_size;
+		return size < 1 ? 0 : index < 0 ? size-1+(index+1)%size : index%size;
 	}
 
-	public static float LoopClamp(float _index,int _size)
+	public static float LoopClamp(float index,int size)
 	{
-		return _size < 1 ? 0 : _index < 0.0f ? _size-1+(_index+1)%_size : _index%_size;
+		return size < 1 ? 0 : index < 0.0f ? size-1+(index+1)%size : index%size;
 	}
 
-	public static TCompare Clamp<TCompare>(TCompare _curValue,TCompare _minValue,TCompare _maxValue) where TCompare : IComparable<TCompare>
+	public static TCompare Clamp<TCompare>(TCompare value,TCompare minValue,TCompare maxValue) where TCompare : IComparable<TCompare>
 	{
-		return _curValue.CompareTo(_minValue) < 0 ? _minValue : _curValue.CompareTo(_maxValue) > 0 ? _maxValue : _curValue;
+		return value.CompareTo(minValue) < 0 ? minValue : value.CompareTo(maxValue) > 0 ? maxValue : value;
 	}
 
-	public static TCompare MinClamp<TCompare>(TCompare _curValue,TCompare _minValue) where TCompare : IComparable<TCompare>
+	public static TCompare MinClamp<TCompare>(TCompare value,TCompare minValue) where TCompare : IComparable<TCompare>
 	{
-		return Clamp(_curValue,_minValue,_curValue);
+		return Clamp(value,minValue,value);
 	}
 
-	public static TCompare MaxClamp<TCompare>(TCompare _curValue,TCompare _maxValue) where TCompare : IComparable<TCompare>
+	public static TCompare MaxClamp<TCompare>(TCompare value,TCompare maxValue) where TCompare : IComparable<TCompare>
 	{
-		return Clamp(_curValue,_curValue,_maxValue);
+		return Clamp(value,value,maxValue);
 	}
 	#endregion Clamp
 
 	#region Slope
-	public static float SlopeToRadian(float _x,float _y)
+	public static float SlopeToRadian(float x,float y)
 	{
-		return SlopeToRadian(new Vector2(_x,_y));
+		return SlopeToRadian(new Vector2(x,y));
 	}
 
-	public static float SlopeToRadian(Vector2 _gradient)
+	public static float SlopeToRadian(Vector2 gradient)
 	{
-		return Mathf.Atan2(_gradient.y,_gradient.x);
+		return Mathf.Atan2(gradient.y,gradient.x);
 	}
 
-	public static Vector2 RadianToSlope(float _angle)
+	public static Vector2 RadianToSlope(float angle)
 	{
-		return new Vector2(Mathf.Cos(_angle),Mathf.Sin(_angle));
+		return new Vector2(Mathf.Cos(angle),Mathf.Sin(angle));
 	}
 
-	public static float SlopeToDegree(float _x,float _y)
+	public static float SlopeToDegree(float x,float y)
 	{
-		return SlopeToDegree(new Vector2(_x,_y));
+		return SlopeToDegree(new Vector2(x,y));
 	}
 
-	public static float SlopeToDegree(Vector2 _gradient)
+	public static float SlopeToDegree(Vector2 gradient)
 	{
-		return SlopeToRadian(_gradient)*Mathf.Rad2Deg;
+		return SlopeToRadian(gradient)*Mathf.Rad2Deg;
 	}
 
-	public static Vector2 DegreeToSlope(float _angle)
+	public static Vector2 DegreeToSlope(float angle)
 	{
-		return new Vector2(Mathf.Cos(_angle*Mathf.Deg2Rad),Mathf.Sin(_angle*Mathf.Deg2Rad));
+		return new Vector2(Mathf.Cos(angle*Mathf.Deg2Rad),Mathf.Sin(angle*Mathf.Deg2Rad));
 	}
 	#endregion Slope
 
@@ -92,13 +92,13 @@ public static partial class CommonUtility
 	/// <summary>
 	/// Set alignment ( 0 / -0.5 +0.5 / -1 0 +1 / -1.5 -0.5 +0.5 +1.5)
 	/// </summary>
-	public static float[] MiddleAlignment(int _length)
+	public static float[] MiddleAlignment(int length)
 	{
-		var pivotArray = new float[_length];
+		var pivotArray = new float[length];
 		var pivot = pivotArray.Length/2.0f;
 
 		//? odd
-		if(_length%2 == 1)
+		if(length%2 == 1)
 		{
 			for(var i=0;i<(int)pivot;i++)
 			{
@@ -121,26 +121,26 @@ public static partial class CommonUtility
 		return pivotArray;
 	}
 
-	public static void SetAlignmentGameObjectList(List<GameObject> _objectList,int _xMax,int _hMax,float _xGap,float _yGap)
+	public static void SetAlignmentGameObjectList(List<GameObject> objectList,int xMax,int hMax,float xGap,float yGap)
 	{
-		if(_objectList.IsNullOrEmpty())
+		if(objectList.IsNullOrEmpty())
 		{
 			LogTag.System.E("List is null or empty");
 
 			return;
 		}
 
-		var widthAble   = _xMax != -1;
-		var heightAble  = _xMax != -1;
-		var widthArray  = widthAble ? MiddleAlignment(_xMax) : null;
-		var heightArray = heightAble ? MiddleAlignment(Mathf.CeilToInt(_objectList.Count/(float) _hMax)) : null;
+		var widthAble   = xMax != -1;
+		var heightAble  = xMax != -1;
+		var widthArray  = widthAble ? MiddleAlignment(xMax) : null;
+		var heightArray = heightAble ? MiddleAlignment(Mathf.CeilToInt(objectList.Count/(float) hMax)) : null;
 
-		for(var i=0;i<_objectList.Count;i++)
+		for(var i=0;i<objectList.Count;i++)
 		{
-			var width   = widthAble     ? widthArray[i%_xMax]*_xGap     : _objectList[i].transform.position.x;
-			var height  = heightAble    ? heightArray[i/_hMax]*_yGap    : _objectList[i].transform.position.z;
+			var width   = widthAble     ? widthArray[i%xMax]*xGap     : objectList[i].transform.position.x;
+			var height  = heightAble    ? heightArray[i/hMax]*yGap    : objectList[i].transform.position.z;
 
-			_objectList[i].transform.position = new Vector3(width,0.0f,height);
+			objectList[i].transform.position = new Vector3(width,0.0f,height);
 		}
 	}
 	#endregion Alignment

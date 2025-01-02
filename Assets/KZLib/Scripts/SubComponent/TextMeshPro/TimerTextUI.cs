@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class TimerTextUI : BaseTextUI
 {
-	private CancellationTokenSource m_TokenSource = null;
+	private CancellationTokenSource m_tokenSource = null;
 
 	protected override void OnDisable()
 	{
@@ -23,28 +23,28 @@ public class TimerTextUI : BaseTextUI
 
 	public void StopTimer()
 	{
-		CommonUtility.KillTokenSource(ref m_TokenSource);
+		CommonUtility.KillTokenSource(ref m_tokenSource);
 	}
 
-	public void PlayTimer(long _duration,string _format,Action<TimeSpan> _onUpdate,Action _onComplete,bool _ignoreTimeScale = false)
+	public void PlayTimer(long duration,string format,Action<TimeSpan> onUpdate,Action onComplete,bool ignoreTimeScale = false)
 	{
-		PlayTimerAsync(new TimeSpan(_duration),_format,_onUpdate,_onComplete,_ignoreTimeScale).Forget();
+		PlayTimerAsync(new TimeSpan(duration),format,onUpdate,onComplete,ignoreTimeScale).Forget();
 	}
 
-	public void PlayTimer(TimeSpan _duration,string _format,Action<TimeSpan> _onUpdate,Action _onComplete,bool _ignoreTimeScale = false)
+	public void PlayTimer(TimeSpan duration,string format,Action<TimeSpan> onUpdate,Action onComplete,bool ignoreTimeScale = false)
 	{
-		PlayTimerAsync(_duration,_format,_onUpdate,_onComplete,_ignoreTimeScale).Forget();
+		PlayTimerAsync(duration,format,onUpdate,onComplete,ignoreTimeScale).Forget();
 	}
 
-	public async UniTask PlayTimerAsync(TimeSpan _duration,string _format,Action<TimeSpan> _onUpdate,Action _onComplete,bool _ignoreTimeScale = false)
+	public async UniTask PlayTimerAsync(TimeSpan duration,string format,Action<TimeSpan> onUpdate,Action onComplete,bool ignoreTimeScale = false)
 	{
-		CommonUtility.RecycleTokenSource(ref m_TokenSource);
+		CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
-		var remainingTime = TimeSpan.FromSeconds(_duration.TotalSeconds-Time.realtimeSinceStartup);
+		var remainingTime = TimeSpan.FromSeconds(duration.TotalSeconds-Time.realtimeSinceStartup);
 
 		if(remainingTime.TotalSeconds < 0.0d)
 		{
-			_onComplete?.Invoke();
+			onComplete?.Invoke();
 
 			StopTimer();
 
@@ -53,26 +53,26 @@ public class TimerTextUI : BaseTextUI
 
 		while(remainingTime.TotalSeconds > 0)
 		{
-			_onUpdate?.Invoke(remainingTime);
+			onUpdate?.Invoke(remainingTime);
 
-			UpdateText(remainingTime,_format);
+			UpdateText(remainingTime,format);
 
-			await UniTask.Delay(1000,_ignoreTimeScale,cancellationToken : m_TokenSource.Token);
+			await UniTask.Delay(1000,ignoreTimeScale,cancellationToken : m_tokenSource.Token);
 
-			remainingTime = TimeSpan.FromSeconds(_duration.TotalSeconds-Time.realtimeSinceStartup);
+			remainingTime = TimeSpan.FromSeconds(duration.TotalSeconds-Time.realtimeSinceStartup);
 		}
 
-		remainingTime = TimeSpan.FromSeconds(_duration.TotalSeconds-Time.realtimeSinceStartup);
+		remainingTime = TimeSpan.FromSeconds(duration.TotalSeconds-Time.realtimeSinceStartup);
 
-		_onUpdate?.Invoke(remainingTime);
+		onUpdate?.Invoke(remainingTime);
 
-		UpdateText(remainingTime,_format);
+		UpdateText(remainingTime,format);
 
-		_onComplete?.Invoke();
+		onComplete?.Invoke();
 	}
 
-	private void UpdateText(TimeSpan _time,string _format)
+	private void UpdateText(TimeSpan timeSpan,string format)
     {
-        m_TextMesh.SetSafeTextMeshPro(string.IsNullOrEmpty(_format) ? _time.ToString() : _time.ToString(_format));
+        m_textMesh.SetSafeTextMeshPro(string.IsNullOrEmpty(format) ? timeSpan.ToString() : timeSpan.ToString(format));
     }
 }

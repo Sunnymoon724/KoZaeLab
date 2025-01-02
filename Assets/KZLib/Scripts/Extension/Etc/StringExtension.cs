@@ -14,36 +14,36 @@ using Vector3 = UnityEngine.Vector3;
 
 public static class StringExtension
 {
-	private static readonly Dictionary<string,Color> s_HexColorDict = new();
+	private static readonly Dictionary<string,Color> s_hexColorDict = new();
 
 	#region Normalize
-	public static string NormalizeNewLines(this string _text)
+	public static string NormalizeNewLines(this string text)
 	{
-		return _text.Replace("\\n",Environment.NewLine);
+		return text.Replace("\\n",Environment.NewLine);
 	}
 
 	/// <summary>
 	/// Change path slash
 	/// </summary>
-	public static string PathConvertSlash(this string _path)
+	public static string PathConvertSlash(this string path)
 	{
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-		return _path.Replace('/',Path.DirectorySeparatorChar);
+		return path.Replace('/',Path.DirectorySeparatorChar);
 #elif UNITY_EDITOR_OSX || UNITY_Standalone_OSX || UNITY_IOS || UNITY_ANDROID
-		return _path.Replace('\\',Path.DirectorySeparatorChar);
+		return path.Replace('\\',Path.DirectorySeparatorChar);
 #else
-		return _path.Replace('\\','/');
+		return path.Replace('\\','/');
 #endif
 	}
 	#endregion Normalize
 
 	#region Encoding
-	public static string CP949ToUTF8(this string _text)
+	public static string CP949ToUTF8(this string text)
 	{
 		var cp949 = Encoding.GetEncoding("ks_c_5601-1987");
 		var utf8 = Encoding.UTF8;
 
-		return utf8.GetString(Encoding.Convert(cp949,utf8,cp949.GetBytes(_text)));
+		return utf8.GetString(Encoding.Convert(cp949,utf8,cp949.GetBytes(text)));
 	}
 	#endregion Encoding
 
@@ -51,86 +51,86 @@ public static class StringExtension
 	/// <summary>
 	/// Check character in string
 	/// </summary>
-	public static bool IsContainsCharacterArray(this string _text,params char[] _characterArray)
+	public static bool IsContainsCharacterArray(this string text,params char[] characterArray)
 	{
-		if(_text.IsEmpty() || _characterArray.IsNullOrEmpty())
+		if(text.IsEmpty() || characterArray.IsNullOrEmpty())
 		{
 			return false;
 		}
 
-		var characterSet = new HashSet<char>(_characterArray);
+		var characterSet = new HashSet<char>(characterArray);
 
-		return _text.Any(x => characterSet.Contains(x));
+		return text.Any(x => characterSet.Contains(x));
 	}
 	/// <summary>
 	/// Convert first character to uppercase
 	/// </summary>
-	public static string ToFirstCharacterToUpper(this string _text)
+	public static string ToFirstCharacterToUpper(this string text)
 	{
-		if(_text.IsEmpty())
+		if(text.IsEmpty())
 		{
-			return _text;
+			return text;
 		}
 
-		var text = char.ToUpperInvariant(_text[0]);
+		var upperText = char.ToUpperInvariant(text[0]);
 
-		return _text.Length > 1 ? $"{text}{_text[1..]}" : text.ToString();
+		return text.Length > 1 ? $"{upperText}{text[1..]}" : upperText.ToString();
 	}
 
 	/// <summary>
 	/// Convert first character to lowercase
 	/// </summary>
-	public static string ToFirstCharacterToLower(this string _text)
+	public static string ToFirstCharacterToLower(this string text)
 	{
-		if(_text.IsEmpty())
+		if(text.IsEmpty())
 		{
-			return _text;
+			return text;
 		}
 
-		var text = char.ToLowerInvariant(_text[0]);
+		var lowerText = char.ToLowerInvariant(text[0]);
 
-		return _text.Length > 1 ? $"{text}{_text[1..]}" : text.ToString();
+		return text.Length > 1 ? $"{lowerText}{text[1..]}" : lowerText.ToString();
 	}
 
 	/// <summary>
 	/// Get character 0 to count from first
 	/// </summary>
-	public static string GetStartCharacter(this string _text,int _count)
+	public static string GetStartCharacter(this string text,int count)
 	{
-		return _text.IsEmpty() || _count <= 0 ? _text : _text[..Mathf.Min(_count, _text.Length)];
+		return text.IsEmpty() || count <= 0 ? text : text[..Mathf.Min(count, text.Length)];
 	}
 
 	/// <summary>
 	/// Get character 0 to count from last
 	/// </summary>
-	public static string GetEndCharacter(this string _text,int _count)
+	public static string GetEndCharacter(this string text,int count)
 	{
-		return _text.IsEmpty() || _count <= 0 ? _text : _text[^(Mathf.Min(_count,_text.Length))..];
+		return text.IsEmpty() || count <= 0 ? text : text[^(Mathf.Min(count,text.Length))..];
 	}
 
 	/// <summary>
 	/// Count character in string
 	/// </summary>
-	public static int CountOf(this string _text,char _character)
+	public static int CountOf(this string text,char character)
 	{
-		return _text.Count(x => x == _character);
+		return text.Count(x => x == character);
 	}
 
 	/// <summary>
 	/// Get index of character in string
 	/// </summary>
-	public static int IndexOfOrder(this string _text,char _character,int _order)
+	public static int IndexOfOrder(this string text,char character,int order)
 	{
-		if(_text.IsEmpty())
+		if(text.IsEmpty())
 		{
 			return -1;
 		}
 
 		var index = -1;
 
-		for(var i=0;i<_order;i++)
+		for(var i=0;i<order;i++)
 		{
-			index = _text.IndexOf(_character,index+1);
+			index = text.IndexOf(character,index+1);
 
 			if(index == -1)
 			{
@@ -146,39 +146,39 @@ public static class StringExtension
 	/// Check empty text
 	/// </summary>
 	/// <param name="_text"></param>
-	public static bool IsEmpty(this string _text,bool _includeSpace = false)
+	public static bool IsEmpty(this string text,bool includeSpace = false)
 	{
-		return _includeSpace ? string.IsNullOrWhiteSpace(_text) : string.IsNullOrEmpty(_text);
+		return includeSpace ? string.IsNullOrWhiteSpace(text) : string.IsNullOrEmpty(text);
 	}
 
-	public static bool IsEqual(this string _text1,string _text2)
+	public static bool IsEqual(this string text1,string text2)
 	{
-		return string.Equals(_text1,_text2);
+		return string.Equals(text1,text2);
 	}
 
 	/// <summary>
 	/// Check match at index
 	/// </summary>
-	public static bool IsMatchAt(this string _text,int _index,string _match,bool _ignoreCase = false)
+	public static bool IsMatchAt(this string text,int index,string matchText,bool ignoreCase = false)
 	{
-		if(_text.IsEmpty() || _match.IsEmpty() || _index < 0 || _index+_match.Length > _text.Length)
+		if(text.IsEmpty() || matchText.IsEmpty() || index < 0 || index+matchText.Length > text.Length)
 		{
 			return false;
 		}
 
-		return _ignoreCase ? string.Equals(_text.Substring(_index,_match.Length),_match,StringComparison.OrdinalIgnoreCase) : _text.Substring(_index,_match.Length) == _match;
+		return ignoreCase ? string.Equals(text.Substring(index,matchText.Length),matchText,StringComparison.OrdinalIgnoreCase) : text.Substring(index,matchText.Length) == matchText;
 	}
 	#endregion Compare
 
 	#region Convert Enum
-	public static bool IsEnumDefined<TEnum>(this string _text)
+	public static bool IsEnumDefined<TEnum>(this string text)
 	{
-		return Enum.IsDefined(typeof(TEnum),_text);
+		return Enum.IsDefined(typeof(TEnum),text);
 	}
 
-	public static TEnum ToEnum<TEnum>(this string _text,TEnum _default = default) where TEnum : struct
+	public static TEnum ToEnum<TEnum>(this string text,TEnum defaultEnum = default) where TEnum : struct
 	{
-		return !_text.IsEmpty() && Enum.TryParse(_text,true,out TEnum data) ? data : _default;
+		return !text.IsEmpty() && Enum.TryParse(text,true,out TEnum data) ? data : defaultEnum;
 	}
 	#endregion Convert Enum
 
@@ -186,21 +186,21 @@ public static class StringExtension
 	/// <summary>
 	/// HexCode to Color
 	/// </summary>
-	public static Color ToColor(this string _hexCode)
+	public static Color ToColor(this string hexCode)
 	{
-		if(_hexCode.Length == 7)
+		if(hexCode.Length == 7)
 		{
-			_hexCode = $"{_hexCode}FF";
+			hexCode = $"{hexCode}FF";
 		}
 
-		if(s_HexColorDict.TryGetValue(_hexCode,out var color))
+		if(s_hexColorDict.TryGetValue(hexCode,out var color))
 		{
 			return color;
 		}
 
-		if(ColorUtility.TryParseHtmlString(_hexCode,out color))
+		if(ColorUtility.TryParseHtmlString(hexCode,out color))
 		{
-			s_HexColorDict.Add(_hexCode,color);
+			s_hexColorDict.Add(hexCode,color);
 
 			return color;
 		}
@@ -211,142 +211,140 @@ public static class StringExtension
 	/// <summary>
 	/// Add richText
 	/// </summary>
-	public static string ToColorText(this string _text,string _color)
+	public static string ToColorText(this string text,string color)
 	{
-		return $"<color=#{_color}>{_text}</color>";
+		return $"<color=#{color}>{text}</color>";
 	}
 
 	/// <summary>
 	/// Add richText
 	/// </summary>
-	public static string ToColorText(this string _text,Color _color)
+	public static string ToColorText(this string text,Color color)
 	{
-		return ToColorText(ColorUtility.ToHtmlStringRGBA(_color),_text);
+		return ToColorText(ColorUtility.ToHtmlStringRGBA(color),text);
 	}
 	#endregion Convert Color
 
 	#region Convert Number
-	public static BigInteger ToBigInteger(this string _text,BigInteger _default = default)
+	public static BigInteger ToBigInteger(this string text,BigInteger defaultNumber = default)
 	{
-		if(_text.IsEmpty())
+		if(text.IsEmpty())
 		{
-			return _default;
+			return defaultNumber;
 		}
 
-		return BigInteger.TryParse(_text,out var result) ? result : _default;
+		return BigInteger.TryParse(text,out var number) ? number : defaultNumber;
 	}
 
-	public static int ToInt(this string _text,int _default = 0)
+	public static int ToInt(this string text,int defaultNumber = 0)
 	{
-		if(_text.IsEmpty())
+		if(text.IsEmpty())
 		{
-			return _default;
+			return defaultNumber;
 		}
 
-		if(_text.StartsWith("0x",StringComparison.OrdinalIgnoreCase))
+		if(text.StartsWith("0x",StringComparison.OrdinalIgnoreCase))
 		{
-			return _text.ToHexInt(_default);
+			return text.ToHexInt(defaultNumber);
 		}
 
-		return int.TryParse(_text,out var num) ? num : _default;
+		return int.TryParse(text,out var number) ? number : defaultNumber;
 	}
 
-	public static float ToFloat(this string _text,float _default = 0.0f)
+	public static float ToFloat(this string text,float defaultNumber = 0.0f)
 	{
-		return float.TryParse(_text,out var num) ? num : _default;
+		return float.TryParse(text,out var number) ? number : defaultNumber;
 	}
 
-	public static double ToDouble(this string _text,double _default = 0.0d)
+	public static double ToDouble(this string text,double defaultNumber = 0.0d)
 	{
-		return double.TryParse(_text,out var num) ? num : _default;
+		return double.TryParse(text,out var number) ? number : defaultNumber;
 	}
 
-	public static byte ToByte(this string _text,byte _default = 0x00)
+	public static byte ToByte(this string text,byte defaultNumber = 0x00)
 	{
-		return _text.StartsWith("0x",StringComparison.OrdinalIgnoreCase) ? Convert.ToByte(_text,16) : byte.TryParse(_text,out var num) ? num : _default;
+		return text.StartsWith("0x",StringComparison.OrdinalIgnoreCase) ? Convert.ToByte(text,16) : byte.TryParse(text,out var number) ? number : defaultNumber;
 	}
 
-	public static int ToHexInt(this string _hexText,int _default = 0)
+	public static int ToHexInt(this string hexText,int defaultNumber = 0)
 	{
-		return int.TryParse(_hexText,NumberStyles.HexNumber,CultureInfo.CurrentCulture,out var num) ? num : _default;
+		return int.TryParse(hexText,NumberStyles.HexNumber,CultureInfo.CurrentCulture,out var number) ? number : defaultNumber;
 	}
 
-	public static float ToHexFloat(string _hexText,float _default = 0.0f)
+	public static float ToHexFloat(string hexText,float defaultNumber = 0.0f)
 	{
-		return uint.TryParse(_hexText,NumberStyles.AllowHexSpecifier,CultureInfo.CurrentCulture,out var num) ? BitConverter.ToSingle(BitConverter.GetBytes(num),0) : _default;
+		return uint.TryParse(hexText,NumberStyles.AllowHexSpecifier,CultureInfo.CurrentCulture,out var number) ? BitConverter.ToSingle(BitConverter.GetBytes(number),0) : defaultNumber;
 	}
 
-	private static float GetNumberInArray(string[] _textArray,int _index)
+	private static float GetNumberInArray(string[] textArray,int index)
 	{
-		return _textArray.ContainsIndex(_index) ? _textArray[_index].ToFloat() : 0.0f;
+		return textArray.ContainsIndex(index) ? textArray[index].ToFloat() : 0.0f;
 	}
 	#endregion Convert Number
 
 	#region Convert DateTime
-	public static DateTime ToDateTime(this string _text,CultureInfo _cultureInfo = null, DateTimeStyles _styles = DateTimeStyles.AdjustToUniversal)
+	public static DateTime ToDateTime(this string text,CultureInfo cultureInfo = null, DateTimeStyles dateTimeStyles = DateTimeStyles.AdjustToUniversal)
 	{
-		var cultureInfo = _cultureInfo ?? CultureInfo.CreateSpecificCulture("ko-KR");
-
-		return DateTime.ParseExact(_text,"yyyy-MM-dd HH:mm",cultureInfo,_styles);
+		return DateTime.ParseExact(text,"yyyy-MM-dd HH:mm",cultureInfo ?? CultureInfo.CreateSpecificCulture("ko-KR"),dateTimeStyles);
 	}
 	#endregion Convert DateTime
 
 	#region Convert Vector
-	public static Vector2 ToVector2(this string _text)
+	public static Vector2 ToVector2(this string text)
 	{
-		return _text.ToVector2(Vector2.zero);
+		return text.ToVector2(Vector2.zero);
 	}
 
-	public static Vector2 ToVector2(this string _text,Vector2 _default)
+	public static Vector2 ToVector2(this string text,Vector2 defaultVector)
 	{
-		return _text.TryToVector2(out var result) ? result : _default;
+		return text.TryToVector2(out var vector) ? vector : defaultVector;
 	}
 
-	public static bool TryToVector2(this string _text,out Vector2 _result)
+	public static bool TryToVector2(this string text,out Vector2 vector)
 	{
-		_result = Vector2.zero;
+		vector = Vector2.zero;
 
-		var vectorArray = ConvertVectorArray(_text);		
+		var vectorArray = ConvertVectorArray(text);		
 
 		if(vectorArray.IsNullOrEmpty())
 		{
 			return false;
 		}
 
-		_result = new Vector2(GetNumberInArray(vectorArray,0),GetNumberInArray(vectorArray,1));
+		vector = new Vector2(GetNumberInArray(vectorArray,0),GetNumberInArray(vectorArray,1));
 
 		return true;
 	}
 
-	public static Vector3 ToVector3(this string _text)
+	public static Vector3 ToVector3(this string text)
 	{
-		return _text.ToVector3(Vector3.zero);
+		return text.ToVector3(Vector3.zero);
 	}
 
-	public static Vector3 ToVector3(this string _text,Vector3 _default)
+	public static Vector3 ToVector3(this string text,Vector3 defaultVector)
 	{
-		return _text.TryToVector3(out var result) ? result : _default;
+		return text.TryToVector3(out var vector) ? vector : defaultVector;
 	}
 
-	public static bool TryToVector3(this string _text,out Vector3 _result)
+	public static bool TryToVector3(this string text,out Vector3 vector)
 	{
-		_result = Vector3.zero;
+		vector = Vector3.zero;
 
-		var vectorArray = ConvertVectorArray(_text);
+		var vectorArray = ConvertVectorArray(text);
 
 		if(vectorArray.IsNullOrEmpty())
 		{
 			return false;
 		}
 
-		_result = new Vector3(GetNumberInArray(vectorArray,0),GetNumberInArray(vectorArray,1),GetNumberInArray(vectorArray,2));
+		vector = new Vector3(GetNumberInArray(vectorArray,0),GetNumberInArray(vectorArray,1),GetNumberInArray(vectorArray,2));
 
 		return true;
 	}
 
-	private static string[] ConvertVectorArray(string _text)
+	private static string[] ConvertVectorArray(string text)
 	{
-		return _text.IsEmpty() ? null : _text.TrimParentheses().Split(',');
+		return text.IsEmpty() ? null : text.TrimParentheses().Split(',');
 	}
 	#endregion Convert Vector
 
@@ -354,41 +352,41 @@ public static class StringExtension
 	/// <summary>
 	/// Remove text from first
 	/// </summary>
-	public static string RemoveStart(this string _text,string _remove)
+	public static string RemoveStart(this string text,string removeText)
 	{
-		return (_text.IsEmpty() || _remove.IsEmpty()) ? _text : _text.StartsWith(_remove) ? _text[_remove.Length..] : _text;
+		return (text.IsEmpty() || removeText.IsEmpty()) ? text : text.StartsWith(removeText) ? text[removeText.Length..] : text;
 	}
 
 	/// <summary>
 	/// Remove text from last
 	/// </summary>
-	public static string RemoveEnd(this string _text,string _remove)
+	public static string RemoveEnd(this string text,string removeText)
 	{
-		return (_text.IsEmpty() || _remove.IsEmpty()) ? _text : _text.EndsWith(_remove) ? _text[..^_remove.Length] : _text;
+		return (text.IsEmpty() || removeText.IsEmpty()) ? text : text.EndsWith(removeText) ? text[..^removeText.Length] : text;
 	}
 
 	/// <summary>
 	/// Remove text by count from first
 	/// </summary>
-	public static string RemoveStartCharacter(this string _text,int _count)
+	public static string RemoveStartCharacter(this string text,int count)
 	{
-		return (_text.IsEmpty() || _count <= 0) ? _text : _count >= _text.Length ? string.Empty : _text[_count..];
+		return (text.IsEmpty() || count <= 0) ? text : count >= text.Length ? string.Empty : text[count..];
 	}
 
 	/// <summary>
 	/// Remove text by count from last
 	/// </summary>
-	public static string RemoveEndCharacter(this string _text,int _count)
+	public static string RemoveEndCharacter(this string text,int count)
 	{
-		return (_text.IsEmpty() || _count <= 0) ? _text : _count >= _text.Length ? string.Empty : _text[..^_count];
+		return (text.IsEmpty() || count <= 0) ? text : count >= text.Length ? string.Empty : text[..^count];
 	}
 
 	/// <summary>
 	/// Remove richText
 	/// </summary>
-	public static string RemoveRichText(this string _text)
+	public static string RemoveRichText(this string text)
 	{
-		return Regex.Replace(_text,"<.*?>",string.Empty);
+		return Regex.Replace(text,"<.*?>",string.Empty);
 	}
 	#endregion Remove
 
@@ -396,115 +394,115 @@ public static class StringExtension
 	/// <summary>
 	/// Trim text from first
 	/// </summary>
-	public static string TrimTextStart(this string _text,string _trim)
+	public static string TrimTextStart(this string text,string trimText)
 	{
-		if(_text.IsEmpty() || _trim.IsEmpty())
+		if(text.IsEmpty() || trimText.IsEmpty())
 		{
-			return _text;
+			return text;
 		}
 
-		while(_text.StartsWith(_trim))
+		while(text.StartsWith(trimText))
 		{
-			_text = _text[_trim.Length..];
+			text = text[trimText.Length..];
 		}
 
-		return _text;
+		return text;
 	}
 
 	/// <summary>
 	/// Trim text from last
 	/// </summary>
-	public static string TrimTextEnd(this string _text,string _trim)
+	public static string TrimTextEnd(this string text,string trimText)
 	{
-		if(_text.IsEmpty() || _trim.IsEmpty())
+		if(text.IsEmpty() || trimText.IsEmpty())
 		{
-			return _text;
+			return text;
 		}
 
-		while(_text.EndsWith(_trim))
+		while(text.EndsWith(trimText))
 		{
-			_text = _text[..^_trim.Length];
+			text = text[..^trimText.Length];
 		}
 
-		return _text;
+		return text;
 	}
 
 	/// <summary>
 	/// Trim all space
 	/// </summary>
-	public static string TrimAllSpace(this string _text)
+	public static string TrimAllSpace(this string text)
 	{
-        return _text.IsEmpty() ? _text : _text.Replace(" ",string.Empty);
+        return text.IsEmpty() ? text : text.Replace(" ",string.Empty);
 	}
 
 	/// <summary>
 	/// Trim all brackets
 	/// </summary>
-	public static string TrimBrackets(this string _text)
+	public static string TrimBrackets(this string text)
 	{
-		return _text.Trim('(',')','[',']','{','}','<','>');
+		return text.Trim('(',')','[',']','{','}','<','>');
 	}
-	public static string TrimParentheses(this string _text)
+	public static string TrimParentheses(this string text)
 	{
-		return _text.Trim('(',')');
+		return text.Trim('(',')');
 	}
-	public static string TrimBraces(this string _text)
+	public static string TrimBraces(this string text)
 	{
-		return _text.Trim('{','}');
+		return text.Trim('{','}');
 	}
-	public static string TrimSquareBrackets(this string _text)
+	public static string TrimSquareBrackets(this string text)
 	{
-		return _text.Trim('[',']');
+		return text.Trim('[',']');
 	}
-	public static string TrimAngleBrackets(this string _text)
+	public static string TrimAngleBrackets(this string text)
 	{
-		return _text.Trim('<','>');
+		return text.Trim('<','>');
 	}
 	#endregion Trim
 
 	#region Wrap
-	public static string WrapParentheses(this string _text)
+	public static string WrapParentheses(this string text)
 	{
-		return $"({_text})";
+		return $"({text})";
 	}
-	public static string WrapBraces(this string _text)
+	public static string WrapBraces(this string text)
 	{
-		return $"{{{_text}}}";
+		return $"{{{text}}}";
 	}
-	public static string WrapSquareBrackets(this string _text)
+	public static string WrapSquareBrackets(this string text)
 	{
-		return $"[{_text}]";
+		return $"[{text}]";
 	}
-	public static string WrapAngleBrackets(this string _text)
+	public static string WrapAngleBrackets(this string text)
 	{
-		return $"<{_text}>";
+		return $"<{text}>";
 	}
 	#endregion Wrap
 
 	#region Split
-	public static string[] SplitTextByBrackets(this string _text,StringSplitOptions _options = StringSplitOptions.None)
+	public static string[] SplitTextByBrackets(this string text,StringSplitOptions stringSplitOption = StringSplitOptions.None)
 	{
-		return _text.Split(new char[] { '(', ')', '[', ']', '{', '}', '<', '>' }, _options);
+		return text.Split(new char[] { '(', ')', '[', ']', '{', '}', '<', '>' }, stringSplitOption);
 	}
 
-	public static string[] SplitTextByParentheses(this string _text,StringSplitOptions _options = StringSplitOptions.None)
+	public static string[] SplitTextByParentheses(this string text,StringSplitOptions stringSplitOption = StringSplitOptions.None)
 	{
-		return _text.Split(new char[] { '(', ')' }, _options);
+		return text.Split(new char[] { '(', ')' }, stringSplitOption);
 	}
 
-	public static string[] SplitTextByBraces(this string _text,StringSplitOptions _options = StringSplitOptions.None)
+	public static string[] SplitTextByBraces(this string text,StringSplitOptions stringSplitOption = StringSplitOptions.None)
 	{
-		return _text.Split(new char[] { '{', '}' }, _options);
+		return text.Split(new char[] { '{', '}' }, stringSplitOption);
 	}
 
-	public static string[] SplitTextBySquareBrackets(this string _text,StringSplitOptions _options = StringSplitOptions.None)
+	public static string[] SplitTextBySquareBrackets(this string text,StringSplitOptions stringSplitOption = StringSplitOptions.None)
 	{
-		return _text.Split(new char[] { '[', ']' }, _options);
+		return text.Split(new char[] { '[', ']' }, stringSplitOption);
 	}
 
-	public static string[] SplitTextByAngleBrackets(this string _text,StringSplitOptions _options = StringSplitOptions.None)
+	public static string[] SplitTextByAngleBrackets(this string text,StringSplitOptions stringSplitOption = StringSplitOptions.None)
 	{
-		return _text.Split(new char[] { '<', '>' }, _options);
+		return text.Split(new char[] { '<', '>' }, stringSplitOption);
 	}
 	#endregion Split
 
@@ -512,85 +510,85 @@ public static class StringExtension
 	/// <summary>
 	/// Extract start to end
 	/// </summary>
-	public static string ExtractData(this string _text,string _startText,string _endText)
+	public static string ExtractText(this string text,string startText,string endText)
 	{
-		var start = _text.RemoveStart(_startText);
+		var start = text.RemoveStart(startText);
 
-		if(_text.IsEqual(start))
+		if(text.IsEqual(start))
 		{
-			return _text;
+			return text;
 		}
 
-		var end = start.RemoveEnd(_endText);
+		var end = start.RemoveEnd(endText);
 
-		return start.IsEqual(end) ? _text : end;
+		return start.IsEqual(end) ? text : end;
 	}
 
 	/// <summary>
 	/// Extract start to end
 	/// </summary>
-	public static string ExtractData(this string _text,char _startMark,char _endMark)
+	public static string ExtractText(this string text,char startMark,char endMark)
 	{
-		return _text.ExtractData($"{_startMark}",$"{_endMark}");
+		return text.ExtractText($"{startMark}",$"{endMark}");
 	}
 
 	/// <summary>
 	/// Extract start to end
 	/// </summary>
-	public static string ExtractData(this string _text,char _startMark,string _endText)
+	public static string ExtractText(this string text,char startMark,string endText)
 	{
-		return _text.ExtractData($"{_startMark}",_endText);
+		return text.ExtractText($"{startMark}",endText);
 	}
 
 	/// <summary>
 	/// Extract start to end
 	/// </summary>
-	public static string ExtractData(this string _text,string _startText,char _endMark)
+	public static string ExtractText(this string text,string startText,char endMark)
 	{
-		return _text.ExtractData(_startText,$"{_endMark}");
+		return text.ExtractText(startText,$"{endMark}");
 	}
 
 	/// <summary>
 	/// Extract Letters
 	/// </summary>
-	public static string ExtractOnlyLetters(this string _text)
+	public static string ExtractOnlyLetter(this string text)
 	{
-		return _text.IsEmpty() ? null : Regex.Replace(_text,@"[^a-zA-Z]",string.Empty);
+		return text.IsEmpty() ? null : Regex.Replace(text,@"[^a-zA-Z]",string.Empty);
 	}
 
 	/// <summary>
 	/// Extract Digits
 	/// </summary>
-	public static string ExtractOnlyDigits(this string _text)
+	public static string ExtractOnlyDigits(this string text)
 	{
-		return _text.IsEmpty() ? null : Regex.Replace(_text,@"\D",string.Empty);
+		return text.IsEmpty() ? null : Regex.Replace(text,@"\D",string.Empty);
 	}
 
 	/// <summary>
 	/// Extract Alphanumeric
 	/// </summary>
-	public static string ExtractAlphanumeric(this string _text)
+	public static string ExtractAlphanumeric(this string text)
 	{
-		return _text.IsEmpty() ? null : Regex.Replace(_text,@"[^0-9a-zA-Z_]+",string.Empty);
+		return text.IsEmpty() ? null : Regex.Replace(text,@"[^0-9a-zA-Z_]+",string.Empty);
 	}
 
-	public static int ExtractOnlyDigitsToInt(this string _text,int _default)
+	public static int ExtractOnlyDigitsToInt(this string text,int defaultNumber)
 	{
-		return ExtractOnlyDigits(_text).ToInt(_default);
+		return ExtractOnlyDigits(text).ToInt(defaultNumber);
 	}
 	#endregion Extract
 
 	#region Layer
-	public static int GetLayerByName(this string _layerName,bool _autoCreate = false)
+	public static int FindLayerByName(this string layerName,bool isAutoCreate = false)
 	{
-		var layer = LayerMask.NameToLayer(_layerName);
+		var layer = LayerMask.NameToLayer(layerName);
 
 #if UNITY_EDITOR
-		if(layer == -1 && _autoCreate)
+		if(layer == -1 && isAutoCreate)
 		{
-			CommonUtility.AddLayer(_layerName);
+			CommonUtility.AddLayer(layerName);
 
-			layer = LayerMask.NameToLayer(_layerName);
+			layer = LayerMask.NameToLayer(layerName);
 		}
 #endif
 
@@ -600,12 +598,12 @@ public static class StringExtension
 
 	public static void ClearCacheData()
 	{
-		s_HexColorDict.Clear();
+		s_hexColorDict.Clear();
 	}
 
-	public static string XmlToJson(this string _xml)
+	public static string XmlToJson(this string xmlText)
 	{
-		using var stream = new MemoryStream(Encoding.UTF8.GetBytes(_xml));
+		using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xmlText));
 		var xml = new XmlDocument();
 		xml.Load(stream);
 

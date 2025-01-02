@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using KZLib;
-using KZLib.KZDevelop;
+using KZLib.KZUtility;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -10,39 +10,39 @@ using UnityEngine;
 public class LocalizeTextUI : BaseTextUI
 {
 	[SerializeField,HideInInspector]
-	private string m_LocalizeKey = null;
+	private string m_localizeKey = null;
 
 	[VerticalGroup("1",Order = 1),ShowInInspector,LabelText("Localize Key")]
 	public string LocalizeKey
 	{
-		get => m_LocalizeKey;
+		get => m_localizeKey;
 		private set
 		{
 			SetLocalizeKey(value);
 
 #if UNITY_EDITOR
-			m_LocalizeTextList.Clear();
+			m_localizeTextList.Clear();
 
-			m_LocalizeTextList.AddRange(GameDataMgr.In.Access<GameData.LanguageOption>().GetLanguageGroup(m_LocalizeKey));
+			m_localizeTextList.AddRange(GameDataMgr.In.Access<GameData.LanguageOption>().GetLanguageGroup(m_localizeKey));
 #endif
 		}
 	}
 
 #if UNITY_EDITOR
 	[VerticalGroup("3",Order = 3),SerializeField,LabelText("Show LanguagePack")]
-	private bool m_ShowLanguagePack = false;
+	private bool m_showLanguagePack = false;
 
 	[VerticalGroup("3",Order = 3),SerializeField,LabelText("Language List"),ListDrawerSettings(ShowFoldout = false),ReadOnly,DisplayAsString,TextArea,ShowIf(nameof(ShowList))]
-	private List<string> m_LocalizeTextList = new();
+	private List<string> m_localizeTextList = new();
 
-	private bool ShowList => m_ShowLanguagePack && m_LocalizeTextList.Count > 0;
+	private bool ShowList => m_showLanguagePack && m_localizeTextList.Count > 0;
 #endif
 
 	protected override void Initialize()
 	{
 		base.Initialize();
 
-		if(!m_LocalizeKey.IsEmpty())
+		if(!m_localizeKey.IsEmpty())
 		{
 			OnSetLocalizeText();
 		}
@@ -52,31 +52,31 @@ public class LocalizeTextUI : BaseTextUI
 	{
 		base.OnEnable();
 
-		Broadcaster.EnableListener(EventTag.ChangeLanguageOption,OnSetLocalizeText);
+		EventMgr.In.EnableListener(EventTag.ChangeLanguageOption,OnSetLocalizeText);
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
 
-		Broadcaster.DisableListener(EventTag.ChangeLanguageOption,OnSetLocalizeText);
+		EventMgr.In.DisableListener(EventTag.ChangeLanguageOption,OnSetLocalizeText);
 	}
 
 	private void OnSetLocalizeText()
 	{
-		var localize = m_LocalizeKey.ToLocalize();
+		var localize = m_localizeKey.ToLocalize();
 
-		m_TextMesh.SetSafeTextMeshPro(localize);
+		m_textMesh.SetSafeTextMeshPro(localize);
 	}
 
-	public void SetLocalizeKey(string _key)
+	public void SetLocalizeKey(string key)
 	{
-		if(m_LocalizeKey.IsEqual(_key))
+		if(m_localizeKey.IsEqual(key))
 		{
 			return;
 		}
 		
-		m_LocalizeKey = _key;
+		m_localizeKey = key;
 
 		OnSetLocalizeText();
 	}

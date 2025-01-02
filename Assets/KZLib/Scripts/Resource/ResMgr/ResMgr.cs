@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using KZLib.KZUtility;
 using Object = UnityEngine.Object;
 
 namespace KZLib
@@ -13,20 +14,20 @@ namespace KZLib
 
 		private record CacheData
 		{
-			public Object[] DataArray { get; }
+			public Object[] CacheArray { get; }
 
-			private readonly long m_Duration = 0L;
+			private readonly long m_duration = 0L;
 
-			public CacheData(Object[] _dataArray,long _duration)
+			public CacheData(Object[] cacheArray,long duration)
 			{
-				DataArray = _dataArray;
-				m_Duration = _duration;
+				CacheArray = cacheArray;
+				m_duration = duration;
 			}
 
-			public bool IsOverdue => m_Duration < DateTime.Now.Ticks;
+			public bool IsOverdue => m_duration < DateTime.Now.Ticks;
 		}
 
-		private bool m_Disposed = false;
+		private bool m_disposed = false;
 
 		private const string RESOURCES = "Resources";
 		private const float UPDATE_PERIOD = 0.1f;
@@ -34,46 +35,46 @@ namespace KZLib
 		private const float POOL_LOOP_TIME = 30.0f;   // 30s
 		private const double DEFAULT_DELETE_TIME = 60.0d;	// 60s
 
-		private CancellationTokenSource m_TokenSource = null;
+		private CancellationTokenSource m_tokenSource = null;
 
 		private float m_PoolTimer = 0.0f;
 
-		private readonly Queue<LoadingData> m_LoadingQueue = new();
+		private readonly Queue<LoadingData> m_loadingQueue = new();
 
-		private readonly Dictionary<string,List<CacheData>> m_CacheDataDict = new();
+		private readonly Dictionary<string,List<CacheData>> m_cacheDataDict = new();
 
 		protected override void Initialize()
 		{
-			m_TokenSource = new();
+			m_tokenSource = new();
 
 			LoopProcessAsync().Forget();
 		}
 
-		protected override void Release(bool _disposing)
+		protected override void Release(bool disposing)
 		{
-			if(m_Disposed)
+			if(m_disposed)
 			{
 				return;
 			}
 
-			CommonUtility.KillTokenSource(ref m_TokenSource);
+			CommonUtility.KillTokenSource(ref m_tokenSource);
 
-			if(_disposing)
+			if(disposing)
 			{
-				m_CacheDataDict.Clear();
-				m_LoadingQueue.Clear();
+				m_cacheDataDict.Clear();
+				m_loadingQueue.Clear();
 			}
 
-			m_Disposed = true;
+			m_disposed = true;
 
-			base.Release(_disposing);
+			base.Release(disposing);
 		}
 
 		private async UniTaskVoid LoopProcessAsync()
 		{
 			while(true)
 			{
-				await UniTask.Delay(TimeSpan.FromSeconds(UPDATE_PERIOD),true,cancellationToken : m_TokenSource.Token);
+				await UniTask.Delay(TimeSpan.FromSeconds(UPDATE_PERIOD),true,cancellationToken : m_tokenSource.Token);
 
 				// Check ObjectPool 
 				{
@@ -85,7 +86,7 @@ namespace KZLib
 
 						var removeList = new List<string>();
 
-						foreach(var pair in m_CacheDataDict)
+						foreach(var pair in m_cacheDataDict)
 						{
 							pair.Value.RemoveAll(x => x.IsOverdue);
 
@@ -97,40 +98,40 @@ namespace KZLib
 
 						foreach(var remove in removeList)
 						{
-							m_CacheDataDict.RemoveSafe(remove);
+							m_cacheDataDict.RemoveSafe(remove);
 						}
 					}
 				}
 
 				// Set Loading Queue
-				if(m_LoadingQueue.Count > 0)
+				if(m_loadingQueue.Count > 0)
 				{
-					var loadingData = m_LoadingQueue.Dequeue();
+					var loadingData = m_loadingQueue.Dequeue();
 
 					GetObject(loadingData.DataPath,loadingData.Parent,true);
 				}
 			}
 		}
 
-		private void AddLoadingQueue(string _path,bool _isFilePath,Transform _parent = null)
+		private void AddLoadingQueue(string path,bool isFilePath,Transform parent = null)
 		{
-			m_LoadingQueue.Enqueue(new LoadingData(_path,_isFilePath,_parent));
+			m_loadingQueue.Enqueue(new LoadingData(path,isFilePath,parent));
 		}
 
-		private TObject GetCacheData<TObject>(string _path) where TObject : Object
+		private TObject GetCacheData<TObject>(string path) where TObject : Object
 		{
-			var dataArray = GetCacheDataArray<TObject>(_path);
+			var dataArray = GetCacheDataArray<TObject>(path);
 
 			return dataArray?.Length > 0 ? dataArray[0] : null;
 		}
 
-		private TObject[] GetCacheDataArray<TObject>(string _path) where TObject : Object
+		private TObject[] GetCacheDataArray<TObject>(string path) where TObject : Object
 		{
-			if(m_CacheDataDict.TryGetValue(_path,out var dataList) && dataList.Count > 0)
+			if(m_cacheDataDict.TryGetValue(path,out var dataList) && dataList.Count > 0)
 			{
 				var data = dataList[0];
 
-				if(data.DataArray is TObject[] resultArray)
+				if(data.CacheArray is TObject[] resultArray)
 				{
 					return resultArray;
 				}
@@ -139,20 +140,20 @@ namespace KZLib
 			return null;
 		}
 
-		private void PutData<TObject>(string _path,TObject _object) where TObject : Object
+		private void PutData<TObject>(string path,TObject cache) where TObject : Object
 		{
-			PutDataArray(_path,new TObject[] { _object });
+			PutDataArray(path,new TObject[] { cache });
 		}
 
-		private void PutDataArray<TObject>(string _path,TObject[] _objectArray) where TObject : Object
+		private void PutDataArray<TObject>(string path,TObject[] cacheArray) where TObject : Object
 		{
-			if(!m_CacheDataDict.TryGetValue(_path,out var dataList))
+			if(!m_cacheDataDict.TryGetValue(path,out var dataList))
 			{
 				dataList = new List<CacheData>();
-				m_CacheDataDict.Add(_path,dataList);
+				m_cacheDataDict.Add(path,dataList);
 			}
 
-			dataList.Add(new CacheData(_objectArray,DateTime.Now.AddSeconds(DEFAULT_DELETE_TIME).Ticks));
+			dataList.Add(new CacheData(cacheArray,DateTime.Now.AddSeconds(DEFAULT_DELETE_TIME).Ticks));
 		}
 	}
 }

@@ -11,9 +11,9 @@ namespace KZLib.KZAttribute
 #if UNITY_EDITOR
 	public class KZColorArrayAttributeDrawer : KZAttributeDrawer<KZColorArrayAttribute,Color[]>
 	{
-		protected override void DoDrawPropertyLayout(GUIContent _label)
+		protected override void _DrawPropertyLayout(GUIContent label)
 		{
-			var rect = DrawPrefixLabel(_label);
+			var rect = DrawPrefixLabel(label);
 			var colorArray = ValueEntry.SmartValue;
 
 			if(colorArray.IsNullOrEmpty())

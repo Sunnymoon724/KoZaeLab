@@ -7,81 +7,81 @@ public static partial class CommonUtility
 	/// <summary>
 	/// Combine all path
 	/// </summary>
-	public static string PathCombine(params string[] _pathArray)
+	public static string PathCombine(params string[] pathArray)
 	{
-		return NormalizePath(Path.Combine(_pathArray));
+		return NormalizePath(Path.Combine(pathArray));
 	}
 
 	/// <summary>
 	/// It is based on the Assets folder.
 	/// </summary>
-	public static string GetAbsolutePath(string _path,bool _isIncludeAssets)
+	public static string GetAbsolutePath(string path,bool isIncludeAssets)
 	{
-		if(!IsPathExist(_path,true))
+		if(!IsPathExist(path,false))
 		{
 			return null;
 		}
 
 		//? ex) @"C:~"
-		if(Path.IsPathRooted(_path))
+		if(Path.IsPathRooted(path))
 		{
-			return NormalizePath(_path);
+			return NormalizePath(path);
 		}
-		else if(_isIncludeAssets)
+		else if(isIncludeAssets)
 		{
 			//? Change AssetsPath
-			return NormalizePath(Path.GetFullPath(GetAssetsPath(_path)));
+			return NormalizePath(Path.GetFullPath(GetAssetsPath(path)));
 		}
 		else
 		{
-			return NormalizePath(Path.GetFullPath(_path,GetProjectParentPath()));
+			return NormalizePath(Path.GetFullPath(path,GetProjectParentPath()));
 		}
 	}
 
-	public static string NormalizePath(string _path)
+	public static string NormalizePath(string path)
 	{
-		return _path.Replace("\\","/");
+		return path.Replace("\\","/");
 	}
 
 	/// <summary>
 	/// File : name+extension / Folder : name
 	/// </summary>
-	public static string GetFileName(string _path)
+	public static string GetFileName(string path)
 	{
-		return IsPathExist(_path,true) ? Path.GetFileName(_path) : null;
+		return IsPathExist(path,true) ? Path.GetFileName(path) : null;
 	}
 
-	public static string GetOnlyName(string _path)
+	public static string GetOnlyName(string path)
 	{
-		return IsPathExist(_path,true) ? Path.GetFileNameWithoutExtension(_path) : null;
+		return IsPathExist(path,true) ? Path.GetFileNameWithoutExtension(path) : null;
 	}
 
-	public static string GetExtension(string _path)
+	public static string GetExtension(string path)
 	{
-		return IsPathExist(_path,true) ? Path.GetExtension(_path) : null;
+		return IsPathExist(path,true) ? Path.GetExtension(path) : null;
 	}
 
-	public static string GetParentPath(string _path)
+	public static string GetParentPath(string path)
 	{
-		return IsPathExist(_path,true) ? Path.GetDirectoryName(_path) : null;
+		return IsPathExist(path,true) ? Path.GetDirectoryName(path) : null;
 	}
 
 	/// <summary>
 	/// Remove extension from path
 	/// </summary>
-	public static string GetPathWithoutExtension(string _path)
+	public static string GetPathWithoutExtension(string path)
 	{
-		return IsPathExist(_path,true) ? Regex.Replace(_path,@"\.[^.]*$","") : null;
+		return IsPathExist(path,true) ? Regex.Replace(path,@"\.[^.]*$","") : null;
 	}
 
-	public static string ChangeExtension(string _path,string _extension)
+	public static string ChangeExtension(string path,string extension)
 	{
-		return IsPathExist(_path,true) ? Path.ChangeExtension(_path,_extension) : null;
+		return IsPathExist(path,true) ? Path.ChangeExtension(path,extension) : null;
 	}
 
-	public static string GetParentAbsolutePath(string _path,bool _isIncludeAssets)
+	public static string GetParentAbsolutePath(string path,bool isIncludeAssets)
 	{
-		return IsPathExist(_path,true) ? GetAbsolutePath(GetParentPath(_path),_isIncludeAssets) : null;
+		return IsPathExist(path,true) ? GetAbsolutePath(GetParentPath(path),isIncludeAssets) : null;
 	}
 
 	public static string GetProjectPath()
@@ -94,81 +94,84 @@ public static partial class CommonUtility
 		return NormalizePath(Path.GetFullPath(Path.Join(Application.dataPath,"../..")));
 	}
 
-	public static string GetAssetsPath(string _path)
+	/// <summary>
+	/// Assets/... -> ... (Local Path)
+	/// </summary>
+	public static string GetLocalPath(string path)
 	{
-		if(!IsPathExist(_path,true))
+		if(!IsPathExist(path,false))
 		{
 			return null;
 		}
 
-		return IsStartWithAssetsHeader(_path) ? NormalizePath(_path) : PathCombine(Global.ASSETS_HEADER,_path);
+		return IsIncludeAssetsHeader(path) ? RemoveAssetsHeader(path) : NormalizePath(path);
 	}
 
-	public static string GetLocalPath(string _path)
+	public static string GetAssetsPath(string path)
 	{
-		if(!IsPathExist(_path,true))
+		if(!IsPathExist(path,false))
 		{
 			return null;
 		}
 
-		return IsStartWithAssetsHeader(_path) ? RemoveAssetsHeader(_path) : NormalizePath(_path);
+		return PathCombine(Global.ASSETS_HEADER,GetLocalPath(path));
 	}
 
-	public static bool IsIncludeAssetsHeader(string _path)
+	public static bool IsIncludeAssetsHeader(string path)
 	{
-		if(!IsPathExist(_path,true))
+		if(!IsPathExist(path,false))
 		{
 			return false;
 		}
 
-		return _path.Contains(Global.ASSETS_HEADER);
+		return path.Contains(Global.ASSETS_HEADER);
 	}
 
-	public static bool IsStartWithAssetsHeader(string _path)
+	public static bool IsStartWithAssetsHeader(string path)
 	{
-		if(!IsPathExist(_path,true))
+		if(!IsPathExist(path,false))
 		{
 			return false;
 		}
 
-		return _path.StartsWith(Global.ASSETS_HEADER);
+		return path.StartsWith(Global.ASSETS_HEADER);
 	}
 
-	public static bool IsFilePath(string _filePath)
+	public static bool IsFilePath(string filePath)
 	{
-		if(!IsPathExist(_filePath,true))
+		if(!IsPathExist(filePath,false))
 		{
 			return false;
 		}
 
-		return Path.HasExtension(_filePath);
+		return Path.HasExtension(filePath);
 	}
 
-	public static string[] GetFilePathArray(string _folderPath,string _pattern = null)
+	public static string[] GetFilePathArray(string folderPath,string pattern = null)
 	{
-		if(!IsPathExist(_folderPath,true))
+		if(!IsPathExist(folderPath,false))
 		{
 			return null;
 		}
 
-		return _pattern == null ? Directory.GetFiles(_folderPath) : Directory.GetFiles(_folderPath,_pattern);
+		return pattern == null ? Directory.GetFiles(folderPath) : Directory.GetFiles(folderPath,pattern);
 	}
 
-	public static string[] GetFolderPathArray(string _folderPath,string _pattern = null)
+	public static string[] GetFolderPathArray(string folderPath,string pattern = null)
 	{
-		if(!IsPathExist(_folderPath,true))
+		if(!IsPathExist(folderPath,false))
 		{
 			return null;
 		}
 
-		return _pattern == null ? Directory.GetDirectories(_folderPath) : Directory.GetDirectories(_folderPath,_pattern);
+		return pattern == null ? Directory.GetDirectories(folderPath) : Directory.GetDirectories(folderPath,pattern);
 	}
 
-	private static bool IsPathExist(string _path,bool _showError = false)
+	private static bool IsPathExist(string path,bool showError = false)
 	{
-		if(_path.IsEmpty())
+		if(path.IsEmpty())
 		{
-			if(_showError)
+			if(showError)
 			{
 				LogTag.System.E("Path is null");
 			}
@@ -179,39 +182,19 @@ public static partial class CommonUtility
 		return true;
 	}
 
-	/// <param name="_filePath">The absolute file path.</param>
-	public static bool IsFileExist(string _filePath,bool _showError = false)
+	/// <param name="filePath">The absolute file path.</param>
+	public static bool IsFileExist(string filePath,bool showError = false)
 	{
-		if(!IsPathExist(_filePath,_showError))
+		if(!IsPathExist(filePath,showError))
 		{
 			return false;
 		}
 
-		var result = File.Exists(_filePath);
+		var result = File.Exists(filePath);
 
-		if(!result && _showError)
+		if(!result && showError)
 		{
-			LogTag.System.E($"{_filePath} is not file path");
-
-			return false;
-		}
-
-		return result;
-	}
-
-	/// <param name="_filePath">The absolute folder path.</param>
-	public static bool IsFolderExist(string _folderPath,bool _showError = false)
-	{
-		if(!IsPathExist(_folderPath,_showError))
-		{
-			return false;
-		}
-
-		var result = Directory.Exists(_folderPath);
-
-		if(!result && _showError)
-		{
-			LogTag.System.E($"{_folderPath} is not folder path");
+			LogTag.System.E($"{filePath} is not file path");
 
 			return false;
 		}
@@ -219,42 +202,81 @@ public static partial class CommonUtility
 		return result;
 	}
 
-	public static string RemoveHeaderDirectory(string _path,string _header)
+	/// <param name="filePath">The absolute folder path.</param>
+	public static bool IsFolderExist(string folderPath,bool showError = false)
 	{
-		if(!IsPathExist(_path,true))
+		if(!IsPathExist(folderPath,showError))
 		{
-			return null;
+			return false;
 		}
 
-		var path = NormalizePath(_path);
-		var header = NormalizePath(_header);
+		var result = Directory.Exists(folderPath);
 
-		return path[(path.IndexOf(header)+header.Length+1)..];
+		if(!result && showError)
+		{
+			LogTag.System.E($"{folderPath} is not folder path");
+
+			return false;
+		}
+
+		return result;
 	}
 
-	public static string RemoveAssetsHeader(string _path)
+	public static string RemoveTextInPath(string path,string text)
 	{
-		if(!IsPathExist(_path,true))
+		if(!IsPathExist(path,true))
 		{
-			return null;
+			return path;
 		}
 
-		return RemoveHeaderDirectory(_path,Global.ASSETS_HEADER);
+		if(text.IsEmpty())
+		{
+			return path;
+		}
+
+		var normalizePath = NormalizePath(path);
+		var textPath = NormalizePath(text);
+
+		var index = normalizePath.IndexOf(textPath);
+
+		if(index == Global.INVALID_INDEX)
+		{
+			return path;
+		}
+
+		int startIndex = index+textPath.Length;
+
+		if(startIndex < normalizePath.Length && (normalizePath[startIndex] == '/'))
+		{
+			startIndex++;
+		}
+
+		return normalizePath[startIndex..];
 	}
 
-	private static string GetUniquePath(string _path)
+	public static string RemoveAssetsHeader(string path)
 	{
-		if(!IsPathExist(_path,true))
+		if(!IsPathExist(path,true))
 		{
 			return null;
 		}
 
-		var directory = GetParentPath(_path);
-		var name = GetOnlyName(_path);
-		var extension = GetExtension(_path);
+		return RemoveTextInPath(path,Global.ASSETS_HEADER);
+	}
+
+	private static string GetUniquePath(string path)
+	{
+		if(!IsPathExist(path,true))
+		{
+			return null;
+		}
+
+		var directory = GetParentPath(path);
+		var name = GetOnlyName(path);
+		var extension = GetExtension(path);
 
 		var count = 1;
-		var newPath = _path;
+		var newPath = path;
 
 		while(IsFileExist(newPath))
 		{

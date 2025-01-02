@@ -5,7 +5,7 @@ using KZLib;
 public abstract class BaseCamera : BaseComponent
 {
 	[SerializeField]
-	protected Camera m_Camera = null;
+	protected Camera m_camera = null;
 
 	protected override void Initialize()
 	{
@@ -13,7 +13,7 @@ public abstract class BaseCamera : BaseComponent
 
 		if(CameraMgr.HasInstance)
 		{
-			CameraMgr.In.AddSubCamera(m_Camera);
+			CameraMgr.In.AddSubCamera(m_camera);
 		}
 	}
 
@@ -23,7 +23,7 @@ public abstract class BaseCamera : BaseComponent
 
 		if(CameraMgr.HasInstance)
 		{
-			CameraMgr.In.RemoveSubCamera(m_Camera);
+			CameraMgr.In.RemoveSubCamera(m_camera);
 		}
 	}
 
@@ -31,9 +31,9 @@ public abstract class BaseCamera : BaseComponent
 	{
 		base.Reset();
 
-		if(!m_Camera)
+		if(!m_camera)
 		{
-			m_Camera = GetComponent<Camera>();
+			m_camera = GetComponent<Camera>();
 		}
 	}
 }

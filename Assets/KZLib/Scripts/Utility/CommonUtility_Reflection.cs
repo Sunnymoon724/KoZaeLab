@@ -5,13 +5,13 @@ using Sirenix.Utilities;
 
 public static partial class CommonUtility
 {
-	private static readonly Dictionary<string,Type> s_TypeDict = new();
+	private static readonly Dictionary<string,Type> s_typeDict = new();
 
-	public static Type FindType(string _typeName,string _namespaceName = null)
+	public static Type FindType(string typeName,string namespaceName = null)
 	{
-		var fullName = _namespaceName.IsEmpty() ? $"{_typeName}" :$"{_namespaceName}.{_typeName}";
+		var fullName = namespaceName.IsEmpty() ? $"{typeName}" :$"{namespaceName}.{typeName}";
 
-		if(s_TypeDict.TryGetValue(fullName,out var type))
+		if(s_typeDict.TryGetValue(fullName,out var type))
 		{
 			return type;
 		}
@@ -22,7 +22,7 @@ public static partial class CommonUtility
 
 			if(type != null)
 			{
-				s_TypeDict.Add(fullName,type);
+				s_typeDict.Add(fullName,type);
 
 				return type;
 			}
@@ -31,13 +31,13 @@ public static partial class CommonUtility
 		return null;
 	}
 
-	public static IEnumerable<Type> FindTypeGroup(string _namespaceName)
+	public static IEnumerable<Type> FindTypeGroup(string namespaceName)
 	{
 		foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
 		{
 			foreach(var type in assembly.GetTypes())
 			{
-				if(type.Namespace.IsEqual(_namespaceName))
+				if(type.Namespace.IsEqual(namespaceName))
 				{
 					yield return type;
 				}
@@ -45,37 +45,36 @@ public static partial class CommonUtility
 		}
 	}
 
-	public static IEnumerable<Type> FindDerivedTypeGroup(Type _type)
+	public static IEnumerable<Type> FindDerivedTypeGroup(Type type)
 	{
 		foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
 		{
-			foreach(var derivedType in FindDerivedTypeGroup(_type, assembly))
+			foreach(var derivedType in FindDerivedTypeGroup(type,assembly))
 			{
 				yield return derivedType;
 			}
 		}
 	}
 
-	public static IEnumerable<Type> FindDerivedTypeGroup(Type _type,Assembly _assembly)
+	public static IEnumerable<Type> FindDerivedTypeGroup(Type type,Assembly assembly)
 	{
-		return FindDerivedTypeGroup(_type,_assembly.GetTypes());
+		return FindDerivedTypeGroup(type,assembly.GetTypes());
 	}
 	
-	public static IEnumerable<Type> FindDerivedTypeGroup(Type _type,IEnumerable<Type> _typeGroup)
+	public static IEnumerable<Type> FindDerivedTypeGroup(Type type,IEnumerable<Type> assemblyTypeGroup)
 	{
-		foreach(var type in _typeGroup)
+		foreach(var assemblyType in assemblyTypeGroup)
 		{
-			if(_type.IsAssignableFrom(type) && type != _type)
+			if(type.IsAssignableFrom(assemblyType) && assemblyType != type)
 			{
-				yield return type;
+				yield return assemblyType;
 			}
 		}
 	}
 
-	public static int GetTypeDepth(Type _type)
+	public static int CalculateTypeDepth(Type type)
 	{
 		var depth = 0;
-		var type = _type;
 
 		while(type != null)
 		{
@@ -85,11 +84,9 @@ public static partial class CommonUtility
 
 		return depth;
 	}
-	
-	public static Type GetRootBaseType(Type _type)
-	{
-		var type = _type;
 
+	public static Type FindRootBaseType(Type type)
+	{
 		while(type.BaseType != null)
 		{
 			type = type.BaseType;
@@ -98,13 +95,13 @@ public static partial class CommonUtility
 		return type;
 	}
 
-	public static IEnumerable<TAttribute> GetAttributeGroup<TAttribute>(ICustomAttributeProvider _info,bool _inherit = false) where TAttribute : Attribute
+	public static IEnumerable<TAttribute> FindAttributeGroup<TAttribute>(ICustomAttributeProvider attributeProvider,bool inherit = false) where TAttribute : Attribute
 	{
-		var type = typeof(TAttribute);
+		var attributeType = typeof(TAttribute);
 
-		if(_info.IsDefined(type,_inherit))
+		if(attributeProvider.IsDefined(attributeType,inherit))
 		{
-			foreach(var attribute in _info.GetCustomAttributes(type,_inherit))
+			foreach(var attribute in attributeProvider.GetCustomAttributes(attributeType,inherit))
 			{
 				yield return attribute as TAttribute;
 			}
@@ -120,29 +117,29 @@ public static partial class CommonUtility
 		return _info.IsDefined(typeof(TAttribute),_inherit);
 	}
 
-	public static TAttribute GetAttribute<TAttribute>(ICustomAttributeProvider _info,bool _inherit = false) where TAttribute : Attribute
+	public static TAttribute FindAttribute<TAttribute>(ICustomAttributeProvider attributeProvider,bool inherit = false) where TAttribute : Attribute
 	{
-		var attributeArray = _info.GetCustomAttributes(typeof(TAttribute),_inherit);
+		var attributeArray = attributeProvider.GetCustomAttributes(typeof(TAttribute),inherit);
 
 		return attributeArray.Length > 0 ? attributeArray[0] as TAttribute : null;
 	}
 
-	public static TMember GetValueInObject<TMember>(string _memberName,object _object,BindingFlags _binding = Flags.InstanceAnyVisibility)
+	public static TMember FindValueInObject<TMember>(string memberName,object value,BindingFlags bindingFlag = Flags.InstanceAnyVisibility)
 	{
-		var type = _object.GetType();
+		var valueType = value.GetType();
 
-		var propertyInfo = type.GetProperty(_memberName,_binding);
+		var propertyInfo = valueType.GetProperty(memberName,bindingFlag);
 
 		if(propertyInfo != null)
 		{
-			return (TMember) propertyInfo.GetValue(_object);
+			return (TMember) propertyInfo.GetValue(value);
 		}
 
-		var fieldInfo = type.GetField(_memberName,_binding);
+		var fieldInfo = valueType.GetField(memberName,bindingFlag);
 
 		if(fieldInfo != null)
 		{
-			return (TMember) fieldInfo.GetValue(_object);
+			return (TMember) fieldInfo.GetValue(value);
 		}
 
 		return default;
@@ -150,6 +147,6 @@ public static partial class CommonUtility
 
 	public static void ClearCacheData()
 	{
-		s_TypeDict.Clear();
+		s_typeDict.Clear();
 	}
 }

@@ -2,57 +2,57 @@
 
 public class AudioGraphImageUI : GraphImageUI
 {
-	public override void UpdateGraph(float[] _dataArray)
+	public override void UpdateGraph(float[] valueArray)
 	{
 		if(IsValidate)
 		{
 			return;
 		}
 
-		var iteration = Mathf.FloorToInt(_dataArray.Length/(float)m_GraphLength);
+		var iteration = Mathf.FloorToInt(valueArray.Length/(float)m_graphLength);
 
-		for(var i=0;i<m_GraphArray.Length;i++)
+		for(var i=0;i<m_graphArray.Length;i++)
 		{
 			var current = 0.0f;
 
 			for(var j=0;j<iteration;j++)
 			{
-				current += _dataArray[i*iteration+j];
+				current += valueArray[i*iteration+j];
 			}
 
 			var normalized = DecibelNormalized(LinearToDecibel(current/iteration));
 
 			if((i+1)%3 == 0 && i>1)
 			{
-				var value = (normalized+m_GraphArray[i-1]+m_GraphArray[i-2])/3.0f;
+				var value = (normalized+m_graphArray[i-1]+m_graphArray[i-2])/3.0f;
 
-				m_GraphArray[i] = value;
-				m_GraphArray[i-1] = value;
-				m_GraphArray[i-2] = -1;
+				m_graphArray[i] = value;
+				m_graphArray[i-1] = value;
+				m_graphArray[i-2] = -1;
 			}
 			else
 			{
-				m_GraphArray[i] = normalized;
+				m_graphArray[i] = normalized;
 			}
 		}
 
 		SetGraphArray();
 	}
 
-	private float LinearToDecibel(float _value)
+	private float LinearToDecibel(float value)
 	{
-		return Mathf.Clamp(Mathf.Log10(_value)*20.0f,-160.0f,0.0f);
+		return Mathf.Clamp(Mathf.Log10(value)*20.0f,-160.0f,0.0f);
 	}
 
-	private float DecibelNormalized(float _value)
+	private float DecibelNormalized(float value)
 	{
-		return (_value+160.0f)/160.0f;
+		return (value+160.0f)/160.0f;
 	}
 
 	protected override void Reset()
 	{
 		base.Reset();
 
-		m_GraphLength = 81;
+		m_graphLength = 81;
 	}
 }

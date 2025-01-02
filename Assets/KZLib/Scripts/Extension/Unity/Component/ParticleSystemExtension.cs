@@ -4,29 +4,37 @@ using System.Threading;
 
 public static class ParticleSystemExtension
 {
-	public static async UniTask PlayAndWaitForParticleAsync(this ParticleSystem _particleSystem)
+	public static async UniTask PlayAndWaitForParticleAsync(this ParticleSystem particleSystem)
 	{
-		if(!_particleSystem)
+		if(!IsValid(particleSystem))
 		{
-			LogTag.System.E("ParticleSystem is null");
-
 			return;
 		}
 
-		_particleSystem.Play();
+		particleSystem.Play();
 
-		await  _particleSystem.WaitForParticleAsync();
+		await  particleSystem.WaitForParticleAsync();
 	}
 
-	public static async UniTask WaitForParticleAsync(this ParticleSystem _particleSystem,CancellationToken _token = default)
+	public static async UniTask WaitForParticleAsync(this ParticleSystem particleSystem,CancellationToken cancellationToken = default)
 	{
-		if(!_particleSystem)
+		if(!IsValid(particleSystem))
 		{
-			LogTag.System.E("ParticleSystem is null");
-
 			return;
 		}
 
-		await UniTask.WaitWhile(() => _particleSystem.isPlaying,cancellationToken : _token);
+		await UniTask.WaitWhile(() => particleSystem.isPlaying,cancellationToken : cancellationToken);
+	}
+
+	private static bool IsValid(ParticleSystem particleSystem)
+	{
+		if(!particleSystem)
+		{
+			LogTag.System.E("ParticleSystem is null");
+
+			return false;
+		}
+
+		return true;
 	}
 }

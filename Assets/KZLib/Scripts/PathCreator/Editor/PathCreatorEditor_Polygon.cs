@@ -3,57 +3,57 @@ using UnityEditor;
 using UnityEngine;
 using Sirenix.OdinInspector.Editor;
 
-namespace KZLib.KZEditor
+namespace KZLib.KZDevelop
 {
 	public partial class PathCreatorEditor : OdinEditor
 	{
-		private const int SHAPE_COUNT = 3;
+		private const int c_shape_count = 3;
 
-		private void SetShapePathInput(Event _event)
+		private void SetShapePathInput(Event currentEvent)
 		{
-			var handleArray = m_Creator.HandleArray;
+			var handleArray = m_pathCreator.HandleArray;
 
-			m_MouseOverHandleIndex = Global.INVALID_INDEX;
+			m_mouseOverHandleIndex = Global.INVALID_INDEX;
 
-			for(var i=0;i<SHAPE_COUNT;i++)
+			for(var i=0;i<c_shape_count;i++)
 			{
-				var radius = GetHandleDiameter(m_AnchorSize,handleArray[i])/2.0f;
-				var position = handleArray[i].TransformPoint(m_Creator.transform,m_Creator.PathSpaceType);
+				var radius = GetHandleDiameter(m_anchorSize,handleArray[i])/2.0f;
+				var position = handleArray[i].TransformPoint(m_pathCreator.transform,m_pathCreator.PathSpaceType);
 	
 				if(HandleUtility.DistanceToCircle(position,radius) == 0.0f)
 				{
-					m_MouseOverHandleIndex = i;
+					m_mouseOverHandleIndex = i;
 					break;
 				}
 			}
 
 			HandleUtility.Repaint();
 
-			if(_event.button == 0)
+			if(currentEvent.button == 0)
 			{
-				switch(_event.type)
+				switch(currentEvent.type)
 				{
 					case EventType.MouseDown:
 					{
-						m_SelectedHandleIndex = m_MouseOverHandleIndex;
+						m_selectedHandleIndex = m_mouseOverHandleIndex;
 
-						if(m_MouseOverHandleIndex != Global.INVALID_INDEX)
+						if(m_mouseOverHandleIndex != Global.INVALID_INDEX)
 						{
-							m_DragHandleIndex = m_SelectedHandleIndex;
+							m_dragHandleIndex = m_selectedHandleIndex;
 						}
 					}
 					break;
 
-					case EventType.MouseDrag when m_DragHandleIndex != Global.INVALID_INDEX:
+					case EventType.MouseDrag when m_dragHandleIndex != Global.INVALID_INDEX:
 					{
-						var currentPosition = handleArray[m_DragHandleIndex];
-						var newPosition = GetMousePosition(m_Creator);
+						var currentPosition = handleArray[m_dragHandleIndex];
+						var newPosition = GetMousePosition();
 
 						if(currentPosition != newPosition)
 						{
-							Undo.RecordObject(m_Creator,"Move Center");
+							Undo.RecordObject(m_pathCreator,"Move Center");
 
-							m_Creator.MovePolygon(m_DragHandleIndex,newPosition);
+							m_pathCreator.MovePolygon(m_dragHandleIndex,newPosition);
 
 							Repaint();
 						}
@@ -61,19 +61,19 @@ namespace KZLib.KZEditor
 					break;
 					case EventType.MouseUp:
 					{
-						m_DragHandleIndex = -1;
+						m_dragHandleIndex = -1;
 					}
 					break;
 				}
 			}
 		}
 
-		private void DrawLineInShape(Vector3[] _)
+		private void DrawLineInShape()
 		{
 			var cachedColor = Handles.color;
 
-			Handles.color = m_NormalLineColor;
-			var pointArray = m_Creator.PointArray;
+			Handles.color = m_normalLineColor;
+			var pointArray = m_pathCreator.PointArray;
 
 			for(var i=0;i<pointArray.Length-1;i++)
 			{
@@ -85,9 +85,9 @@ namespace KZLib.KZEditor
 			Handles.color = cachedColor;
 		}
 
-		private bool IsShapeAnchor(int _index)
+		private bool IsShapeAnchor(int index)
 		{
-			return  _index == 0;
+			return  index == 0;
 		}
 	}
 }

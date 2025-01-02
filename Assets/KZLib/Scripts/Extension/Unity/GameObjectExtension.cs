@@ -1,125 +1,110 @@
 ﻿using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using KZLib;
 using UnityEngine;
 
 public static class GameObjectExtension
 {
-	public static void SetRenderOff(this GameObject _object)
+	public static void SetRenderOff(this GameObject gameObject)
 	{
-		if(!_object)
+		if(!IsValid(gameObject))
 		{
-			LogTag.System.E("GameObject is null");
-
 			return;
 		}
 
-		foreach(var renderer in _object.GetComponentsInChildren<Renderer>())
+		foreach(var renderer in gameObject.GetComponentsInChildren<Renderer>())
 		{
 			renderer.enabled = false;
 		}
 	}
 
 	/// <summary>
-	/// Check null & Set active
+	/// gameObject.activeSelf != active => SetActive()
 	/// </summary>
-	public static void SetActiveSelf(this GameObject _object,bool _active)
+	public static void SetActiveIfDifferent(this GameObject gameObject,bool value)
 	{
-		if(!_object)
+		if(!IsValid(gameObject))
 		{
-			LogTag.System.E("GameObject is null");
-
 			return;
 		}
 
-		if(_object.activeSelf != _active)
+		if(gameObject.activeSelf != value)
 		{
-			_object.SetActive(_active);
+			gameObject.SetActive(value);
 		}
 	}
 
 	/// <summary>
 	/// Toggle active
 	/// </summary>
-	public static void SetActiveToggle(this GameObject _object)
+	public static void SetActiveToggle(this GameObject gameObject)
 	{
-		if(!_object)
+		if(!IsValid(gameObject))
 		{
-			LogTag.System.E("GameObject is null");
-
 			return;
 		}
 
-		_object.SetActive(!_object.activeSelf);
+		gameObject.SetActive(!gameObject.activeSelf);
 	}
 
 	/// <summary>
 	/// Set active all children
 	/// </summary>
-	public static void SetActiveAll(this GameObject _object,bool _active,bool _includeSelf)
+	public static void SetActiveAll(this GameObject gameObject,bool value,bool includeSelf)
 	{
-		if(!_object)
+		if(!IsValid(gameObject))
 		{
-			LogTag.System.E("GameObject is null");
-
 			return;
 		}
 
-		if(_includeSelf)
+		if(includeSelf)
 		{
-			_object.SetActiveSelf(_active);
+			gameObject.SetActiveIfDifferent(value);
 		}
 
-		_object.transform.TraverseChildren((child)=> { child.gameObject.SetActiveSelf(_active); });
+		gameObject.transform.TraverseChildren((child)=> { child.gameObject.SetActiveIfDifferent(value); });
 	}
 
-	public static void SetAllLayer(this GameObject _object,int _layer)
+	public static void SetAllLayer(this GameObject gameObject,int layer)
 	{
-		if(!_object)
+		if(!IsValid(gameObject))
 		{
-			LogTag.System.E("GameObject is null");
-
 			return;
 		}
 
-		_object.layer = _layer;
+		gameObject.layer = layer;
 
-		_object.transform.TraverseChildren((child)=> { child.gameObject.layer = _layer; });
+		gameObject.transform.TraverseChildren((child)=> { child.gameObject.layer = layer; });
 	}
 
-	public static void SetAllLayer(this GameObject _object,string _layerMask)
+	public static void SetAllLayer(this GameObject gameObject,string layerName)
 	{
-		if(!_object)
+		if(!IsValid(gameObject))
 		{
-			LogTag.System.E("GameObject is null");
-
 			return;
 		}
 
-		SetAllLayer(_object,LayerMask.NameToLayer(_layerMask));
+		SetAllLayer(gameObject,LayerMask.NameToLayer(layerName));
 	}
 
-	public static bool IsPrefab(this GameObject _object)
+	public static bool IsPrefab(this GameObject gameObject)
 	{
-		if(!_object)
+		if(!IsValid(gameObject))
 		{
-			LogTag.System.E("GameObject is null");
-
 			return false;
 		}
 
-		return !_object.scene.IsValid() && !_object.scene.isLoaded && _object.GetInstanceID() >= 0 && !_object.hideFlags.HasFlag(HideFlags.HideInHierarchy);
+		return !gameObject.scene.IsValid() && !gameObject.scene.isLoaded && gameObject.GetInstanceID() >= 0 && !gameObject.hideFlags.HasFlag(HideFlags.HideInHierarchy);
 	}
 
-	public static bool IsExistMeshFilter(this GameObject _object)
+	public static bool IsExistMeshFilter(this GameObject gameObject)
 	{
-		if(!_object)
+		if(!IsValid(gameObject))
 		{
-			LogTag.System.E("GameObject is null");
-
 			return false;
 		}
 
-		var filterArray = _object.GetComponentsInChildren<MeshFilter>(true);
+		var filterArray = gameObject.GetComponentsInChildren<MeshFilter>(true);
 
 		if(filterArray.Length <= 0)
 		{
@@ -137,50 +122,45 @@ public static class GameObjectExtension
 		return true;
 	}
 
-	public static TComponent GetOrAddComponent<TComponent>(this GameObject _object) where TComponent : Component
+	public static TComponent GetOrAddComponent<TComponent>(this GameObject gameObject) where TComponent : Component
 	{
-		if(!_object)
+		if(!IsValid(gameObject))
 		{
-			LogTag.System.E("GameObject is null");
-
 			return null;
 		}
 
-		return _object.GetComponent<TComponent>() ?? _object.AddComponent<TComponent>();
+		return gameObject.GetComponent<TComponent>() ?? gameObject.AddComponent<TComponent>();
 	}
 
-	public static bool IsInComponent<TComponent>(this GameObject _object) where TComponent : Component
+	public static bool IsInComponent<TComponent>(this GameObject gameObject) where TComponent : Component
 	{
-		if(!_object)
+		if(!IsValid(gameObject))
 		{
-			LogTag.System.E("GameObject is null");
-
 			return false;
 		}
 
-		return _object.GetComponent<TComponent>() is not null;
+		return gameObject.GetComponent<TComponent>() is not null;
 	}
 
-	public static void ReAssignShader(this GameObject _object)
+	public static void ReAssignShader(this GameObject gameObject)
 	{
-		if(!_object)
+		if(!IsValid(gameObject))
 		{
-			LogTag.System.E("GameObject is null");
-
 			return;
 		}
 
-		foreach(var graphic in _object.GetComponentsInChildren<TMPro.TMP_Text>(true))
+
+		foreach(var graphic in gameObject.GetComponentsInChildren<TMPro.TMP_Text>(true))
 		{
 			if(!graphic.fontMaterial)
 			{
 				continue;
 			}
 
-			graphic.fontMaterial.shader = ShaderMgr.In.GetShader(graphic.fontMaterial.shader.name);
+			graphic.fontMaterial.shader = ShaderMgr.In.FindShader(graphic.fontMaterial.shader.name);
 		}
 
-		foreach(var renderer in _object.GetComponentsInChildren<Renderer>(true))
+		foreach(var renderer in gameObject.GetComponentsInChildren<Renderer>(true))
 		{
 			if(renderer.materials == null)
 			{
@@ -189,24 +169,37 @@ public static class GameObjectExtension
 
 			for(var i=0;i<renderer.materials.Length;i++)
 			{
-				renderer.materials[i].shader = ShaderMgr.In.GetShader(renderer.materials[i].shader.name);
+				renderer.materials[i].shader = ShaderMgr.In.FindShader(renderer.materials[i].shader.name);
 			}
+		}
+	}
+
+	public static void SetCanvasCullTransparentMeshOff(this GameObject gameObject)
+	{
+		if(!IsValid(gameObject))
+		{
+			return;
+		}
+
+		var canvas = gameObject.GetComponent<CanvasRenderer>();
+
+		if(canvas)
+		{
+			canvas.cullTransparentMesh = false;
 		}
 	}
 
 	/// <summary>
 	/// Check mesh flip
 	/// </summary>
-	public static void SkinMeshFlip(this GameObject _object)
+	public static void SkinMeshFlip(this GameObject gameObject)
 	{
-		if(!_object)
+		if(!IsValid(gameObject))
 		{
-			LogTag.System.E("GameObject is null");
-
 			return;
 		}
 
-		var mesh = _object.GetComponent<SkinnedMeshRenderer>().sharedMesh;
+		var mesh = gameObject.GetComponent<SkinnedMeshRenderer>().sharedMesh;
 
 		for(var i=0;i<mesh.vertices.Length;i++)
 		{
@@ -253,5 +246,17 @@ public static class GameObjectExtension
 		mesh.tangents = tangentList.ToArray();
 		mesh.boneWeights = boneWeightList.ToArray();
 		mesh.bindposes = bindposeList.ToArray();
+	}
+
+	private static bool IsValid(GameObject gameObject)
+	{
+		if(!gameObject)
+		{
+			LogTag.System.E("GameObject is null");
+
+			return false;
+		}
+
+		return true;
 	}
 }

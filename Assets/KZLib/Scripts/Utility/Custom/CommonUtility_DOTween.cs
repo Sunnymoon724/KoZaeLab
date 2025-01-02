@@ -4,25 +4,23 @@ using DG.Tweening;
 // https://dotween.demigiant.com/
 public static partial class CommonUtility
 {
-	public static Tween SetTweenProgress(float _start,float _finish,float _duration,Action<float> _onProgress,Action _onComplete = null)
+	public static Tween SetTweenProgress(float start,float finish,float duration,Action<float> onProgress,Action onComplete = null)
 	{
-		return SetTween(_start,_finish,_duration,_onProgress,_onComplete);
+		return SetTween(start,finish,duration,onProgress,onComplete).SetId(GetTag("Progress"));
 	}
 
-	private static Tween SetTween(float _start,float _finish,float _duration,Action<float> _onUpdate,Action _onComplete = null)
+	private static Tween SetTween(float start,float finish,float duration,Action<float> onUpdate,Action onComplete = null)
 	{
-		if(_onUpdate == null)
+		if(onUpdate == null)
 		{
-			LogTag.System.E("Update is null.");
-
-			return null;
+			throw new NullReferenceException("Tween update is null.");
 		}
 
-		var tween = DOTween.To(()=>_start,x=>_onUpdate(x),_finish,_duration);
+		var tween = DOTween.To(()=>start,x=>onUpdate(x),finish,duration);
 
-		if(_onComplete != null)
+		if(onComplete != null)
 		{
-			tween.OnComplete(()=> { _onComplete(); });
+			tween.OnComplete(()=>{ onComplete(); });
 		}
 
 		return tween;
@@ -31,34 +29,31 @@ public static partial class CommonUtility
 	/// <summary>
 	/// Play Delay
 	/// </summary>
-	public static Tween PlayTimer(float _duration,int _count,Action _onComplete)
+	public static Tween PlayTimer(float duration,int count,TweenCallback onComplete)
 	{
-		if(_count == 0)
+		if(count == 0)
 		{
 			return null;
 		}
 
-		return DOVirtual.DelayedCall(_duration,()=>
+		return DOVirtual.DelayedCall(duration,onComplete).SetLoops(count).SetId(GetTag("Timer"));
+	}
+
+	public static bool IsTweenPlaying(Tween tween)
+	{
+		return tween != null && tween.IsPlaying();
+	}
+
+	private static string GetTag(string prefix)
+	{
+		return $"{prefix}_{DateTime.Now:mm:ss}";
+	}
+
+	public static void KillTween(Tween tween,bool complete = false)
+	{
+		if(tween != null && tween.IsActive())
 		{
-			_onComplete();
-		}).SetLoops(_count).SetId(GetTag("Timer"));
-	}
-
-	public static bool IsTweenPlaying(Tween _tween)
-	{
-		return _tween != null && _tween.IsPlaying();
-	}
-
-	private static string GetTag(string _header)
-	{
-		return $"{_header}_{DateTime.Now:HH:mm:ss}";
-	}
-
-	public static void KillTween(Tween _tween,bool _complete = false)
-	{
-		if(_tween != null && _tween.IsActive())
-		{
-			_tween.Kill(_complete);
+			tween.Kill(complete);
 		}
 	}
 }

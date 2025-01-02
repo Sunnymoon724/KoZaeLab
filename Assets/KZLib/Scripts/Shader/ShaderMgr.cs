@@ -1,31 +1,32 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using KZLib.KZUtility;
 
 namespace KZLib
 {
 	public class ShaderMgr : Singleton<ShaderMgr>
 	{
-		private bool m_Disposed = false;
+		private bool m_disposed = false;
 
 		private readonly Dictionary<string,Shader> m_ShaderDict = new();
 
-		private Material m_Grayscale = null;
-		private Material m_Blur = null;
-		private Material m_GrayscaleBlur = null;
+		private Material m_grayscale = null;
+		private Material m_blur = null;
+		private Material m_grayscaleBlur = null;
 
 		public Material Grayscale
 		{
 			get
 			{
-				if(!m_Grayscale)
+				if(!m_grayscale)
 				{
-					m_Grayscale = GetMaterial("KZLib/TextureGrayscaleBlur");
-					m_Grayscale.SetFloat("_BlurSize",0.0f);
-					m_Grayscale.SetFloat("_Saturation",1.0f);
+					m_grayscale = GetMaterial("KZLib/TextureGrayscaleBlur");
+					m_grayscale.SetFloat("_BlurSize",0.0f);
+					m_grayscale.SetFloat("_Saturation",1.0f);
 				}
 
-				return m_Grayscale;
+				return m_grayscale;
 			}
 		}
 
@@ -33,14 +34,14 @@ namespace KZLib
 		{
 			get
 			{
-				if(!m_Blur)
+				if(!m_blur)
 				{
-					m_Blur = GetMaterial("KZLib/TextureGrayscaleBlur");
-					m_Blur.SetFloat("_BlurSize",0.8f);
-					m_Blur.SetFloat("_Saturation",0.0f);
+					m_blur = GetMaterial("KZLib/TextureGrayscaleBlur");
+					m_blur.SetFloat("_BlurSize",0.8f);
+					m_blur.SetFloat("_Saturation",0.0f);
 				}
 
-				return m_Blur;
+				return m_blur;
 			}
 		}
 
@@ -48,76 +49,76 @@ namespace KZLib
 		{
 			get
 			{
-				if(!m_GrayscaleBlur)
+				if(!m_grayscaleBlur)
 				{
-					m_GrayscaleBlur = GetMaterial("KZLib/TextureGrayscaleBlur");
-					m_GrayscaleBlur.SetFloat("_BlurSize",0.8f);
-					m_GrayscaleBlur.SetFloat("_Saturation",1.0f);
+					m_grayscaleBlur = GetMaterial("KZLib/TextureGrayscaleBlur");
+					m_grayscaleBlur.SetFloat("_BlurSize",0.8f);
+					m_grayscaleBlur.SetFloat("_Saturation",1.0f);
 				}
 
-				return m_GrayscaleBlur;
+				return m_grayscaleBlur;
 			}
 		}
 
-		protected override void Release(bool _disposing)
+		protected override void Release(bool disposing)
 		{
-			if(m_Disposed)
+			if(m_disposed)
 			{
 				return;
 			}
 
-			if(_disposing)
+			if(disposing)
 			{
 				m_ShaderDict.Clear();
 
-				if(m_Grayscale)
+				if(m_grayscale)
 				{
-					CommonUtility.DestroyObject(m_Grayscale);
+					m_grayscale.DestroyObject();
 				}
 
-				if(m_Blur)
+				if(m_blur)
 				{
-					CommonUtility.DestroyObject(m_Blur);
+					m_blur.DestroyObject();
 				}
 
-				if(m_GrayscaleBlur)
+				if(m_grayscaleBlur)
 				{
-					CommonUtility.DestroyObject(m_GrayscaleBlur);
+					m_grayscaleBlur.DestroyObject();
 				}
 			}
 
-			m_Disposed = true;
+			m_disposed = true;
 
-			base.Release(_disposing);
+			base.Release(disposing);
 		}
 
-		public Shader GetShader(string _shaderName)
+		public Shader FindShader(string shaderName)
 		{
-			if(!m_ShaderDict.ContainsKey(_shaderName))
+			if(!m_ShaderDict.ContainsKey(shaderName))
 			{
-				var shader = Shader.Find(_shaderName);
+				var shader = Shader.Find(shaderName);
 
 				if(shader == null)
 				{
-					var name = _shaderName[(_shaderName.LastIndexOf('/') + 1)..];
+					var name = shaderName[(shaderName.LastIndexOf('/') + 1)..];
 
 					shader = Resources.Load($"Shaders/{name}") as Shader;
 
 					if(shader == null)
 					{
-						throw new NullReferenceException($"Shader {_shaderName} not found.");
+						throw new NullReferenceException($"Shader {shaderName} not found.");
 					}
 				}
 
-				m_ShaderDict.Add(_shaderName,shader);
+				m_ShaderDict.Add(shaderName,shader);
 			}
 
-			return m_ShaderDict[_shaderName];
+			return m_ShaderDict[shaderName];
 		}
 
-		public Material GetMaterial(string _shaderName)
+		public Material GetMaterial(string shaderName)
 		{
-			return new Material(GetShader(_shaderName));
+			return new Material(FindShader(shaderName));
 		}
 	}
 }

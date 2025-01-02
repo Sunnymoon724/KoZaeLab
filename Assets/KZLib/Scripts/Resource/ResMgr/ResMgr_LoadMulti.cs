@@ -3,82 +3,83 @@ using UnityEngine.Video;
 using System;
 using Object = UnityEngine.Object;
 using System.Linq;
+using KZLib.KZUtility;
 
 namespace KZLib
 {
 	public partial class ResMgr : Singleton<ResMgr>
 	{
-		public TComponent[] GetObjectArray<TComponent>(string _folderPath,Transform _parent = null,bool _Immediately = true) where TComponent : Component
+		public TComponent[] GetObjectArray<TComponent>(string folderPath,Transform parent = null,bool immediately = true) where TComponent : Component
 		{
-			var dataArray = GetObjectArray(_folderPath,_parent,_Immediately);
+			var gameObjectArray = GetObjectArray(folderPath,parent,immediately);
 
-			return dataArray != null ? Array.ConvertAll(dataArray,x=>x.GetComponent<TComponent>()) : null;
+			return gameObjectArray != null ? Array.ConvertAll(gameObjectArray,x=>x.GetComponent<TComponent>()) : null;
 		}
 
-		public GameObject[] GetObjectArray(string _folderPath,Transform _parent = null,bool _Immediately = true)
+		public GameObject[] GetObjectArray(string folderPath,Transform parent = null,bool immediately = true)
 		{
-			if(_Immediately)
+			if(immediately)
 			{
-				var dataArray = GetResourceArray<GameObject>(_folderPath);
+				var gameObjectArray = GetResourceArray<GameObject>(folderPath);
 
-				foreach(var data in dataArray)
+				foreach(var gameObject in gameObjectArray)
 				{
-					data.transform.SetParent(_parent);
+					gameObject.transform.SetParent(parent);
 				}
 
-				return dataArray;
+				return gameObjectArray;
 			}
 			else
 			{
-				AddLoadingQueue(_folderPath,false,_parent);
+				AddLoadingQueue(folderPath,false,parent);
 			}
 
 			return null;
 		}
 
-		public AnimatorOverrideController[] GetAnimatorOverrideControllerArray(string _folderPath)
+		public AnimatorOverrideController[] GetAnimatorOverrideControllerArray(string folderPath)
 		{
-			return GetResourceArray<AnimatorOverrideController>(_folderPath);
+			return GetResourceArray<AnimatorOverrideController>(folderPath);
 		}
 
-		public AnimationClip[] GetAnimationClipArray(string _folderPath)
+		public AnimationClip[] GetAnimationClipArray(string folderPath)
 		{
-			return GetResourceArray<AnimationClip>(_folderPath);
+			return GetResourceArray<AnimationClip>(folderPath);
 		}
 
-		public ScriptableObject[] GetScriptableObjectArray(string _folderPath)
+		public ScriptableObject[] GetScriptableObjectArray(string folderPath)
 		{
-			return GetResourceArray<ScriptableObject>(_folderPath);
+			return GetResourceArray<ScriptableObject>(folderPath);
 		}
 
-		public AudioClip[] GetAudioClipArray(string _folderPath)
+		public AudioClip[] GetAudioClipArray(string folderPath)
 		{
-			return GetResourceArray<AudioClip>(_folderPath);
+			return GetResourceArray<AudioClip>(folderPath);
 		}
 
-		public VideoClip[] GetVideoClipArray(string _folderPath)
+		public VideoClip[] GetVideoClipArray(string folderPath)
 		{
-			return GetResourceArray<VideoClip>(_folderPath);
+			return GetResourceArray<VideoClip>(folderPath);
 		}
 
-		public Sprite[] GetSpriteArray(string _folderPath)
+		public Sprite[] GetSpriteArray(string folderPath)
 		{
-			return GetResourceArray<Sprite>(_folderPath);
+			return GetResourceArray<Sprite>(folderPath);
 		}
 
-		public TextAsset[] GetTextAssetArray(string _folderPath)
+		public TextAsset[] GetTextAssetArray(string folderPath)
 		{
-			return GetResourceArray<TextAsset>(_folderPath);
+			return GetResourceArray<TextAsset>(folderPath);
 		}
 
-		public Material[] GetMaterialArray(string _folderPath)
+		public Material[] GetMaterialArray(string folderPath)
 		{
-			return GetResourceArray<Material>(_folderPath);
+			return GetResourceArray<Material>(folderPath);
 		}
 
-		private TObject[] GetResourceArray<TObject>(string _folderPath) where TObject : Object
+		private TObject[] GetResourceArray<TObject>(string folderPath) where TObject : Object
 		{
-			if(_folderPath.IsEmpty())
+			if(folderPath.IsEmpty())
 			{
 				LogTag.System.I("Path is null.");
 
@@ -86,21 +87,21 @@ namespace KZLib
 			}
 
 			// use cache data
-			var cacheDataArray = GetCacheDataArray<TObject>(_folderPath);
+			var cacheDataArray = GetCacheDataArray<TObject>(folderPath);
 
 			if(cacheDataArray.IsNullOrEmpty())
 			{
 				// load data
-				cacheDataArray = LoadDataArray<TObject>(_folderPath);
+				cacheDataArray = LoadDataArray<TObject>(folderPath);
 
 				if(cacheDataArray.IsNullOrEmpty())
 				{
-					LogTag.System.E($"Resources is not exist. [path : {_folderPath}]");
+					LogTag.System.E($"Resources is not exist. [path : {folderPath}]");
 
 					return null;
 				}
 
-				PutDataArray(_folderPath,cacheDataArray);
+				PutDataArray(folderPath,cacheDataArray);
 			}
 
 			// data is GameObject -> copy data
@@ -110,14 +111,14 @@ namespace KZLib
 
 				for(var i=0;i<cacheDataArray.Length;i++)
 				{
-					var data = CommonUtility.CopyObject(cacheDataArray[i]);
+					var cacheData = cacheDataArray[i].CopyObject() as TObject;
 
 					if(GameSettings.In.IsServerResource)
 					{
-						(data as GameObject).ReAssignShader();
+						(cacheData as GameObject).ReAssignShader();
 					}
 
-					dataArray[i] = data;
+					dataArray[i] = cacheData;
 				}
 
 				return dataArray;
@@ -126,22 +127,22 @@ namespace KZLib
 			return cacheDataArray;
 		}
 
-		private TObject[] LoadDataArray<TObject>(string _folderPath) where TObject : Object
+		private TObject[] LoadDataArray<TObject>(string folderPath) where TObject : Object
 		{
 #if UNITY_EDITOR
-			if(CommonUtility.IsFilePath(_folderPath))
+			if(CommonUtility.IsFilePath(folderPath))
 			{
-				LogTag.System.E($"Path is folder path.[path : {_folderPath}]");
+				LogTag.System.E($"Path is folder path.[path : {folderPath}]");
 
 				return null;
 			}
 #endif
-			if(_folderPath.StartsWith(RESOURCES))
+			if(folderPath.StartsWith(RESOURCES))
 			{
-				return Resources.LoadAll<TObject>(CommonUtility.RemoveHeaderDirectory(_folderPath,RESOURCES));
+				return Resources.LoadAll<TObject>(CommonUtility.RemoveTextInPath(folderPath,RESOURCES));
 			}
 
-			var assetPath = CommonUtility.GetAssetsPath(_folderPath);
+			var assetPath = CommonUtility.GetAssetsPath(folderPath);
 
 			if(GameSettings.In.IsServerResource)
 			{
@@ -149,7 +150,7 @@ namespace KZLib
 			}
 
 #if UNITY_EDITOR
-			return CommonUtility.LoadAssetGroupInFolder<TObject>(assetPath).ToArray();
+			return CommonUtility.FindAssetGroupInFolder<TObject>(assetPath).ToArray();
 #else
 			return null;
 #endif

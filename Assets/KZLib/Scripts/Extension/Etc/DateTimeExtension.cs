@@ -3,21 +3,21 @@ using UnityEngine;
 
 public static class DateTimeExtension
 {
-	public static int[] ToArray(this DateTime _dateTime)
+	public static int[] ToArray(this DateTime dateTime)
 	{
-		return new int[] { _dateTime.Year,_dateTime.Month,_dateTime.Day,_dateTime.Hour,_dateTime.Minute,_dateTime.Second, };
+		return new int[] { dateTime.Year,dateTime.Month,dateTime.Day,dateTime.Hour,dateTime.Minute,dateTime.Second, };
 	}
 
 	/// <summary>
 	/// -> 00:00
 	/// </summary>
-	public static DateTime GetNextDay(this DateTime _dateTime)
+	public static DateTime GetNextDay(this DateTime dateTime)
 	{
-		return _dateTime.Date.AddDays(1);
+		return dateTime.Date.AddDays(1);
 	}
 
-	public static bool IsEqual(this DateTime _dateTime1,DateTime _dateTime2)
+	public static bool IsEqual(this DateTime dateTime1,DateTime dateTime2)
 	{
-		return _dateTime1 == _dateTime2 || Mathf.Abs(_dateTime1.Ticks-_dateTime2.Ticks) < 100;
+		return dateTime1 == dateTime2 || Mathf.Abs(dateTime1.Ticks-dateTime2.Ticks) < 100L;
 	}
 }

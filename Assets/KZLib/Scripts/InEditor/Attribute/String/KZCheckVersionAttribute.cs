@@ -17,9 +17,9 @@ namespace KZLib.KZAttribute
 #if UNITY_EDITOR
 	public class KZCheckVersionAttributeDrawer : KZAttributeDrawer<KZCheckVersionAttribute,string>
 	{
-		protected override void DoDrawPropertyLayout(GUIContent _label)
+		protected override void _DrawPropertyLayout(GUIContent label)
 		{
-			var rect = DrawPrefixLabel(_label);
+			var rect = DrawPrefixLabel(label);
 
 			EditorGUI.LabelField(rect,ValueEntry.SmartValue,GetValidateStyle(CommonUtility.CheckVersion(ValueEntry.SmartValue),Global.DISABLE_HEX_COLOR));
 		}

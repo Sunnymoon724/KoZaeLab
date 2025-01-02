@@ -12,18 +12,18 @@ public abstract class BaseToggleUI : BaseComponentUI
 	protected abstract class ToggleChild
 	{
 		[SerializeField,HideInInspector]
-		private bool m_IsOn = false;
+		private bool m_isOn = false;
 		[SerializeField,HideInInspector]
-		private bool m_InverseSelf = false;
+		private bool m_inverseSelf = false;
 
 		[BoxGroup("0",ShowLabel = false,Order = 0)]
 		[HorizontalGroup("0/1",Order = 1),ShowInInspector,LabelText("Is On")]
 		public bool IsOn
 		{
-			get => m_IsOn;
+			get => m_isOn;
 			set
 			{
-				m_IsOn = value;
+				m_isOn = value;
 
 				Set();
 			}
@@ -32,72 +32,72 @@ public abstract class BaseToggleUI : BaseComponentUI
 		[HorizontalGroup("0/1",Order = 1),ShowInInspector,LabelText("Inverse Self")]
 		public bool InverseSelf
 		{
-			get => m_InverseSelf;
+			get => m_inverseSelf;
 			set
 			{
-				m_InverseSelf = value;
+				m_inverseSelf = value;
 
 				Set();
 			}
 		}
 
-		protected bool IsOnNow => m_InverseSelf ? !IsOn : IsOn;
+		protected bool IsOnNow => m_inverseSelf ? !IsOn : IsOn;
 
 		protected abstract void Set();
 	}
 
 	[VerticalGroup("0",Order = 0),SerializeField,LabelText("Toggle")]
-	protected Toggle m_Toggle = null;
+	protected Toggle m_toggle = null;
 
 	[VerticalGroup("0",Order = 0),ShowInInspector,LabelText("Is On"),KZIsValid("O","X")]
-	public bool IsOn => m_Toggle != null && m_Toggle.isOn;
+	public bool IsOn => m_toggle != null && m_toggle.isOn;
 
-	protected abstract IEnumerable<ToggleChild> ChildGroup { get; }
+	protected abstract IEnumerable<ToggleChild> ToggleChildGroup { get; }
 
 	protected override void Initialize()
 	{
 		base.Initialize();
 
-		m_Toggle.onValueChanged.AddAction(OnClickedToggle);
+		m_toggle.onValueChanged.AddAction(OnClickedToggle);
 
-		OnClickedToggle(m_Toggle.isOn);
+		OnClickedToggle(m_toggle.isOn);
 	}
 
-	private void OnClickedToggle(bool _toggle)
+	private void OnClickedToggle(bool isToggle)
 	{
-		foreach(var child in ChildGroup)
+		foreach(var child in ToggleChildGroup)
 		{
-			child.IsOn = _toggle;
+			child.IsOn = isToggle;
 		}
 	}
 
 	public void Toggle()
 	{
-		m_Toggle.isOn = !m_Toggle.isOn;
+		m_toggle.isOn = !m_toggle.isOn;
 	}
 
-	public void Set(bool _isOn,bool _force = false)
+	public void Set(bool isOn,bool isForce = false)
 	{
-		if(!_force && m_Toggle.isOn == _isOn)
+		if(!isForce && m_toggle.isOn == isOn)
 		{
 			return;
 		}
 
-		m_Toggle.isOn = _isOn;
+		m_toggle.isOn = isOn;
 	}
 
 	protected override void Reset()
 	{
 		base.Reset();
 
-		if(!m_Toggle)
+		if(!m_toggle)
 		{
-			m_Toggle = GetComponent<Toggle>();
+			m_toggle = GetComponent<Toggle>();
 		}
 	}
 
-	public void SetToggleGroup(ToggleGroup _group)
+	public void SetToggleGroup(ToggleGroup toggleGroup)
 	{
-		m_Toggle.group = _group;
+		m_toggle.group = toggleGroup;
 	}
 }

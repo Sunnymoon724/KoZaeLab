@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
 using KZLib;
+using KZLib.KZUtility;
 using System.Runtime.CompilerServices;
+using System.Diagnostics;
+using System.Collections.Generic;
+
+using Debug = UnityEngine.Debug;
 
 #if UNITY_EDITOR
 
@@ -12,22 +17,23 @@ using System.Text.RegularExpressions;
 
 #endif
 
-public class LogTag : Enumeration
+public class LogTag : CustomTag
 {
-	public static readonly LogTag System = new(nameof(System));
+	public static readonly LogTag System	=	new(nameof(System));
 
-	public static readonly LogTag Build = new(nameof(Build));
+	public static readonly LogTag Build		=	new(nameof(Build));
 
-	public static readonly LogTag Network = new(nameof(Network));
+	public static readonly LogTag Security	=	new(nameof(Security));
+	public static readonly LogTag Network	=	new(nameof(Network));
 
-	public static readonly LogTag UI = new(nameof(UI));
-	public static readonly LogTag FX = new(nameof(FX));
+	public static readonly LogTag UI		=	new(nameof(UI));
+	public static readonly LogTag FX		=	new(nameof(FX));
 
-	public static readonly LogTag Editor = new(nameof(Editor));
+	public static readonly LogTag Editor	=	new(nameof(Editor));
 
-	public static readonly LogTag Test = new(nameof(Test));
+	public static readonly LogTag Test		=	new(nameof(Test));
 
-	public LogTag(string _name) : base(_name) { }
+	public LogTag(string name) : base(name) { }
 }
 
 /// <summary>
@@ -35,79 +41,105 @@ public class LogTag : Enumeration
 /// </summary>
 public static class LogExtension
 {
+	private static readonly HashSet<string> s_logHashSet = new();
+
 	#region I : Info Log
-	public static void I(this LogTag _log,object _message,[CallerMemberName] string _memberName = null,[CallerFilePath] string _filePath = null,[CallerLineNumber] int _lineNum = 0)
+	public static void I(this LogTag log,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		var text = LogMgr.In.CreateLog(_log,_message,_memberName,_filePath,_lineNum);
+		var text = LogMgr.In.CreateLog(log,message,memberName,filePath,lineNum);
 #if UNITY_EDITOR
 		Debug.Log(text);
 #endif
 	}
+
+	public static void IOnce(this LogTag log,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	{
+		if(CheckLogAtOnce())
+		{
+			log.I(message,memberName,filePath,lineNum);
+		}
+	}
 	#endregion I : Info Log
 
 	#region W : Warning Log
-	public static void W(this LogTag _log,object _message,[CallerMemberName] string _memberName = null,[CallerFilePath] string _filePath = null,[CallerLineNumber] int _lineNum = 0)
+	public static void W(this LogTag log,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		var text = LogMgr.In.CreateLog(_log,_message,_memberName,_filePath,_lineNum);
+		var text = LogMgr.In.CreateLog(log,message,memberName,filePath,lineNum);
 #if UNITY_EDITOR
 		Debug.LogWarning(text);
 #endif
 	}
+
+	public static void WOnce(this LogTag log,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	{
+		if(CheckLogAtOnce())
+		{
+			log.W(message,memberName,filePath,lineNum);
+		}
+	}
 	#endregion W : Warning Log
 
 	#region E : Error Log
-	public static void E(this LogTag _log,object _message,[CallerMemberName] string _memberName = null,[CallerFilePath] string _filePath = null,[CallerLineNumber] int _lineNum = 0)
+	public static void E(this LogTag log,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		var text = LogMgr.In.CreateLog(_log,_message,_memberName,_filePath,_lineNum);
+		var text = LogMgr.In.CreateLog(log,message,memberName,filePath,lineNum);
 #if UNITY_EDITOR
 		Debug.LogError(text);
 #endif
 	}
+
+	public static void EOnce(this LogTag log,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	{
+		if(CheckLogAtOnce())
+		{
+			log.E(message,memberName,filePath,lineNum);
+		}
+	}
 	#endregion E : Error Log
 
 	#region A : Assert Log
-	public static void A(this LogTag _log,bool _condition,object _message,[CallerMemberName] string _memberName = null,[CallerFilePath] string _filePath = null,[CallerLineNumber] int _lineNum = 0)
+	public static void A(this LogTag log,bool condition,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		if(_condition)
+		if(condition)
 		{
 			return;
 		}
 
-		var text = LogMgr.In.CreateLog(_log,_message,_memberName,_filePath,_lineNum);
+		var text = LogMgr.In.CreateLog(log,message,memberName,filePath,lineNum);
 #if UNITY_EDITOR
-		Debug.Assert(_condition,_message);
+		Debug.Assert(condition,message);
 #endif
 	}
 	#endregion A : Assert Log
 
 #if UNITY_EDITOR
 	[OnOpenAsset(0)]
-	private static bool OnOpenDebugLog(int _instance,int _)
+	private static bool OnOpenDebugLog(int instance,int _)
 	{
-		var name = EditorUtility.InstanceIDToObject(_instance).name;
+		var objectName = EditorUtility.InstanceIDToObject(instance).name;
 
-		if(name.IsEmpty() || !name.IsEqual(nameof(LogTag)))
+		if(objectName.IsEmpty() || !objectName.IsEqual(nameof(LogTag)))
 		{
 			return false;
 		}
 
-		var stackTrace = GetStackTrace();
+		var stackTrace = FindStackTrace();
 
 		if(stackTrace.IsEmpty())
 		{
 			return false;
 		}
 
-		var match = Regex.Match(stackTrace,@"\(at (.+)\)",RegexOptions.IgnoreCase);
+		var textMatch = Regex.Match(stackTrace,@"\(at (.+)\)",RegexOptions.IgnoreCase);
 
-		if(match.Success)
+		if(textMatch.Success)
 		{
-			match = match.NextMatch();
+			textMatch = textMatch.NextMatch();
 		}
 
-		if(match.Success)
+		if(textMatch.Success)
 		{
-			var pathArray = match.Groups[1].Value.Split(':');
+			var pathArray = textMatch.Groups[1].Value.Split(':');
 
 			if(pathArray.Length < 2 || !int.TryParse(pathArray[1],out int lineNumber))
 			{
@@ -122,7 +154,22 @@ public static class LogExtension
 		return false;
 	}
 
-	private static string GetStackTrace()
+	private static bool CheckLogAtOnce()
+	{
+		var stackFrame = new StackFrame(2,true);
+		var logInfo = $"{stackFrame.GetFileName()}:{stackFrame.GetFileLineNumber()}";
+
+		if(s_logHashSet.Contains(logInfo))
+		{
+			return false;
+		}
+
+		s_logHashSet.Add(logInfo);
+
+		return true;
+	}
+
+	private static string FindStackTrace()
 	{
 		var assembly = Assembly.GetAssembly(typeof(EditorWindow));
 

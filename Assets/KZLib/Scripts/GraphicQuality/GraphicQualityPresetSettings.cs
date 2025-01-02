@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using KZLib;
 using KZLib.KZAttribute;
+using KZLib.KZUtility;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -11,43 +11,43 @@ public class GraphicQualityPresetSettings : InnerBaseSettings<GraphicQualityPres
 	private class OptionData
 	{
 		[SerializeField,HideInInspector]
-		private long m_QualityOption = 0L;
+		private long m_qualityOption = 0L;
 		[SerializeField,HideInInspector]
-		private string m_Tag = null;
+		private string m_qualityType = null;
 
 		[HorizontalGroup("Name",Order = 0),ShowInInspector,HideLabel,KZRichText]
-		public string Name => $"{Mathf.Log(m_QualityOption,2)} : {m_Tag}";
+		public string Name => $"{Mathf.Log(m_qualityOption,2)} : {m_qualityType}";
 
-		public long QualityOption => m_QualityOption;
+		public long QualityOption => m_qualityOption;
 
-		public OptionData(GraphicQualityTag _tag)
+		public OptionData(GraphicQualityType qualityType)
 		{
-			m_QualityOption = _tag.QualityOption;
-			m_Tag = _tag.ToString();
+			m_qualityOption = qualityType.QualityOption;
+			m_qualityType = qualityType.ToString();
 		}
 	}
 
 	[HorizontalGroup("Button",Order = 0),Button("Refresh",ButtonSizes.Large)]
 	private void OnRefresh()
 	{
-		var tagList = new List<GraphicQualityTag>(Enumeration.GetEnumerationGroup<GraphicQualityTag>(true));
+		var qualityTypeList = new List<GraphicQualityType>(CustomTag.GetCustomTypeGroup<GraphicQualityType>());
 
-		foreach(var optionList in QualityPresetDicts.Values)
+		foreach(var optionList in QualityPresetDict.Values)
 		{
 			foreach(var option in optionList)
 			{
-				var tag = tagList.Find(x=>x.QualityOption == option.QualityOption);
+				var qualityType = qualityTypeList.Find(x=>x.QualityOption == option.QualityOption);
 
-				if(tag != null)
+				if(qualityType != null)
 				{
-					tagList.Remove(tag);
+					qualityTypeList.Remove(qualityType);
 				}
 			}
 		}
 
-		foreach(var tag in tagList)
+		foreach(var qualityType in qualityTypeList)
 		{
-			QualityPresetDicts[GraphicsQualityPresetType.QualityLowest].Add(new OptionData(tag));
+			QualityPresetDict[GraphicsQualityPresetType.QualityLowest].Add(new OptionData(qualityType));
 		}
 
 		OnChangedPreset();
@@ -65,13 +65,13 @@ public class GraphicQualityPresetSettings : InnerBaseSettings<GraphicQualityPres
 	[HorizontalGroup("Preset/0",Order = 0),LabelText("Highest Preset List"),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(OnChangedPreset))]
 	private List<OptionData> m_QualityHighestPresetList = new();
 
-	private Dictionary<GraphicsQualityPresetType,List<OptionData>> m_QualityPresetDicts = null;
+	private Dictionary<GraphicsQualityPresetType,List<OptionData>> m_qualityPresetDict = null;
 
-	private Dictionary<GraphicsQualityPresetType,List<OptionData>> QualityPresetDicts
+	private Dictionary<GraphicsQualityPresetType,List<OptionData>> QualityPresetDict
 	{
 		get
 		{
-			m_QualityPresetDicts ??= new Dictionary<GraphicsQualityPresetType,List<OptionData>>
+			m_qualityPresetDict ??= new Dictionary<GraphicsQualityPresetType,List<OptionData>>
 			{
 				{ GraphicsQualityPresetType.QualityLowest,	m_QualityLowestPresetList },
 				{ GraphicsQualityPresetType.QualityLow,		m_QualityLowPresetList },
@@ -80,18 +80,18 @@ public class GraphicQualityPresetSettings : InnerBaseSettings<GraphicQualityPres
 				{ GraphicsQualityPresetType.QualityHighest,	m_QualityHighestPresetList },
 			};
 
-			return m_QualityPresetDicts;
+			return m_qualityPresetDict;
 		}
 	}
 
 	[SerializeField,HideInInspector]
-	private Dictionary<GraphicsQualityPresetType,long> m_QualityDict = null;
+	private Dictionary<GraphicsQualityPresetType,long> m_qualityDict = null;
 
 	private Dictionary<GraphicsQualityPresetType,long> QualityDict
 	{
 		get
 		{
-			m_QualityDict ??= new Dictionary<GraphicsQualityPresetType,long>
+			m_qualityDict ??= new Dictionary<GraphicsQualityPresetType,long>
 			{
 				{ GraphicsQualityPresetType.QualityLowest,	0L },
 				{ GraphicsQualityPresetType.QualityLow,		0L },
@@ -100,7 +100,7 @@ public class GraphicQualityPresetSettings : InnerBaseSettings<GraphicQualityPres
 				{ GraphicsQualityPresetType.QualityHighest,	0L },
 			};
 
-			return m_QualityDict;
+			return m_qualityDict;
 		}
 	}
 
@@ -108,7 +108,7 @@ public class GraphicQualityPresetSettings : InnerBaseSettings<GraphicQualityPres
 	{
 		var quality = 0L;
 
-		foreach(var pair in m_QualityPresetDicts)
+		foreach(var pair in m_qualityPresetDict)
 		{
 			foreach(var preset in pair.Value)
 			{
@@ -121,5 +121,5 @@ public class GraphicQualityPresetSettings : InnerBaseSettings<GraphicQualityPres
 		}
 	}
 
-	public long GetPresetQuality(GraphicsQualityPresetType _type) => QualityDict[_type];
+	public long GetPresetQuality(GraphicsQualityPresetType presetType) => QualityDict[presetType];
 }

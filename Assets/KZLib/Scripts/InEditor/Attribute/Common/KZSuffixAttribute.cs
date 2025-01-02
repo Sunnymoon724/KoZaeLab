@@ -19,74 +19,74 @@ namespace KZLib.KZAttribute
 	{
 		public string SuffixText { get; }
 
-		public KZSuffixAttribute(string _suffix)
+		public KZSuffixAttribute(string suffixText)
 		{
-			SuffixText = _suffix;
+			SuffixText = suffixText;
 		}
 	}
 
 #if UNITY_EDITOR
 	public abstract class KZSuffixAttributeDrawer<TValue> : KZAttributeDrawer<KZSuffixAttribute,TValue>
 	{
-		private const int LABEL_SPACING = 5;
+		private const int c_label_space = 5;
 
-		protected override void DoDrawPropertyLayout(GUIContent _label)
+		protected override void _DrawPropertyLayout(GUIContent label)
 		{
 			var rect = EditorGUILayout.GetControlRect();
 
 			var labelContent = new GUIContent(Attribute.SuffixText);
-			var width = new GUIStyle(GUI.skin.label).CalcSize(labelContent).x+LABEL_SPACING;
+			var width = new GUIStyle(GUI.skin.label).CalcSize(labelContent).x+c_label_space;
 
 			rect.xMax -= width;
 
-			ValueEntry.SmartValue = DrawField(rect,GetLabelText(_label));
+			ValueEntry.SmartValue = DrawField(rect,GetLabelText(label));
 
-			rect.xMin = rect.xMax+LABEL_SPACING;
+			rect.xMin = rect.xMax+c_label_space;
 			rect.xMax += width;
 
 			EditorGUI.LabelField(rect,labelContent,new GUIStyle(GUI.skin.label));
 		}
 
-		protected abstract TValue DrawField(Rect _rect,string _labelText);
+		protected abstract TValue DrawField(Rect rect,string labelText);
 	}
 
 	public class KZSuffixStringAttributeDrawer : KZSuffixAttributeDrawer<string>
 	{
-		protected override string DrawField(Rect _rect,string _label)
+		protected override string DrawField(Rect rect,string label)
 		{
-			return EditorGUI.TextField(_rect,_label,ValueEntry.SmartValue);
+			return EditorGUI.TextField(rect,label,ValueEntry.SmartValue);
 		}
 	}
 
 	public class KZSuffixIntAttributeDrawer : KZSuffixAttributeDrawer<int>
 	{
-		protected override int DrawField(Rect _rect,string _label)
+		protected override int DrawField(Rect rect,string label)
 		{
-			return EditorGUI.IntField(_rect,_label,ValueEntry.SmartValue);
+			return EditorGUI.IntField(rect,label,ValueEntry.SmartValue);
 		}
 	}
 
 	public class KZSuffixLongAttributeDrawer : KZSuffixAttributeDrawer<long>
 	{
-		protected override long DrawField(Rect _rect,string _label)
+		protected override long DrawField(Rect rect,string label)
 		{
-			return EditorGUI.LongField(_rect,_label,ValueEntry.SmartValue);
+			return EditorGUI.LongField(rect,label,ValueEntry.SmartValue);
 		}
 	}
 
 	public class KZSuffixFloatAttributeDrawer : KZSuffixAttributeDrawer<float>
 	{
-		protected override float DrawField(Rect _rect,string _label)
+		protected override float DrawField(Rect rect,string label)
 		{
-			return EditorGUI.FloatField(_rect,_label,ValueEntry.SmartValue);
+			return EditorGUI.FloatField(rect,label,ValueEntry.SmartValue);
 		}
 	}
 
 	public class KZSuffixDoubleAttributeDrawer : KZSuffixAttributeDrawer<double>
 	{
-		protected override double DrawField(Rect _rect,string _label)
+		protected override double DrawField(Rect rect,string label)
 		{
-			return EditorGUI.DoubleField(_rect,_label,ValueEntry.SmartValue);
+			return EditorGUI.DoubleField(rect,label,ValueEntry.SmartValue);
 		}
 	}
 #endif

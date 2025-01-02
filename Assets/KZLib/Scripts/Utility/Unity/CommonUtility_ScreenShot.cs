@@ -2,11 +2,11 @@
 
 public static partial class CommonUtility
 {
-	public static Texture2D GetScreenShot(TextureFormat _format = TextureFormat.ARGB32)
+	public static Texture2D GetScreenShot(TextureFormat textureFormat = TextureFormat.ARGB32)
 	{
 		var width = Screen.width;
 		var height = Screen.height;
-		var texture = new Texture2D(width,height,_format,false);
+		var texture = new Texture2D(width,height,textureFormat,false);
 
 		texture.ReadPixels(new Rect(0,0,width,height),0,0);
 		texture.Apply();
@@ -14,9 +14,9 @@ public static partial class CommonUtility
 		return texture;
 	}
 
-	public static Texture2D GetCameraScreenShot(Camera _camera,TextureFormat _format = TextureFormat.RGB24)
+	public static Texture2D GetCameraScreenShot(Camera camera,TextureFormat textureFormat = TextureFormat.RGB24)
 	{
-		if(!_camera)
+		if(!camera)
 		{
 			LogTag.System.E("Camera is null");
 
@@ -27,33 +27,33 @@ public static partial class CommonUtility
 		var height = Screen.height;
 		var renderTexture = new RenderTexture(width,height,24);
 
-		_camera.targetTexture = renderTexture;
-		_camera.Render();
+		camera.targetTexture = renderTexture;
+		camera.Render();
 
 		RenderTexture.active = renderTexture;
 
-		var texture = CreateTexture2D(width,height,_format);
+		var texture = CreateTexture2D(width,height,textureFormat);
 
-		_camera.targetTexture = null;
+		camera.targetTexture = null;
 		RenderTexture.active = null;
 
-		DestroyObject(renderTexture);
+		renderTexture.DestroyObject();
 
 		return texture;
 	}
 
-	private static Texture2D CreateTexture2D(int _width,int _height,TextureFormat _format)
+	private static Texture2D CreateTexture2D(int width,int height,TextureFormat textureFormat)
 	{
-		if(_width == 0 || _height == 0)
+		if(width == 0 || height == 0)
 		{
-			LogTag.System.E($"Size is below zero {_width} or {_height}");
+			LogTag.System.E($"Size is below zero {width} or {height}");
 
 			return null;
 		}
 
-		var texture = new Texture2D(_width,_height,_format,false);
+		var texture = new Texture2D(width,height,textureFormat,false);
 
-		texture.ReadPixels(new Rect(0.0f,0.0f,_width,_height),0,0);
+		texture.ReadPixels(new Rect(0.0f,0.0f,width,height),0,0);
 		texture.Apply();
 
 		return texture;

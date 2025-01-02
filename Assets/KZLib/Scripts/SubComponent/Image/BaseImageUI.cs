@@ -6,15 +6,15 @@ using UnityEngine.UI;
 public abstract class BaseImageUI : BaseComponentUI
 {
 	[SerializeField,LabelText("Image")]
-	protected Image m_Image = null;
+	protected Image m_image = null;
 
 	protected override void Reset()
 	{
 		base.Reset();
 
-		if(!m_Image)
+		if(!m_image)
 		{
-			m_Image = GetComponent<Image>();
+			m_image = GetComponent<Image>();
 		}
 	}
 }

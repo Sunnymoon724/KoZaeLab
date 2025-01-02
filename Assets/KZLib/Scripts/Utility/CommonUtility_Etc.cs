@@ -6,12 +6,12 @@ using UnityEditor;
 
 public static partial class CommonUtility
 {
-	public static void CopyToClipBoard(string _text)
+	public static void CopyToClipBoard(string text)
 	{
 #if UNITY_EDITOR
-		EditorGUIUtility.systemCopyBuffer = _text;
+		EditorGUIUtility.systemCopyBuffer = text;
 #else
-		GUIUtility.systemCopyBuffer = _text;
+		GUIUtility.systemCopyBuffer = text;
 #endif
 	}
 }

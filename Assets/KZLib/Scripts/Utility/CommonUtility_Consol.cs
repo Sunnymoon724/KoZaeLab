@@ -2,16 +2,16 @@ using System.Diagnostics;
 
 public static partial class CommonUtility
 {
-	public static bool RunCommandConsole(string _command,string _argument,out string _errorLog)
+	public static bool RunCommandConsole(string command,string argument,out string errorLog)
 	{
-		_errorLog = null;
+		errorLog = null;
 
 		using var process = new Process();
 
 		var startInfo = new ProcessStartInfo
 		{
-			FileName = _command,
-			Arguments = _argument,
+			FileName = command,
+			Arguments = argument,
 			UseShellExecute = false,
 			RedirectStandardOutput = true,
 			RedirectStandardError = true,
@@ -33,7 +33,7 @@ public static partial class CommonUtility
 
 		if(!error.IsEmpty())
 		{
-			_errorLog = error;
+			errorLog = error;
 
 			LogTag.Editor.E($"Error : {error.CP949ToUTF8()}");
 

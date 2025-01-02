@@ -1,47 +1,38 @@
 #if UNITY_EDITOR
-using Sirenix.OdinInspector.Editor;
 using UnityEngine;
 
 namespace KZLib.KZWindow
 {
-	public class TextureWindow : OdinEditorWindow
+	public class TextureWindow : ResourceWindow<Texture2D>
 	{
-		private Texture2D m_Texture = null;
-		private Vector2 m_ScrollPosition = Vector2.zero;
-		private float m_Scale = 1.0f;
+		private Vector2 m_scrollPosition = Vector2.zero;
+		private float m_scale = 1.0f;
 
-		public void SetTexture(Texture2D _texture)
+		public override void SetResource(Texture2D texture2D)
 		{
-			m_Texture = _texture;
+			base.SetResource(texture2D);
 		}
 
-		protected override void OnImGUI()
+		protected override void _OnImGUI()
 		{
-			if(!m_Texture)
-			{
-				GUILayout.Label("Texture is null");
-
-				return;
-			}
-
 			var current = Event.current;
 
 			if(current.type == EventType.ScrollWheel)
 			{
-				m_Scale += -current.delta.y*0.1f;
-				m_Scale = Mathf.Clamp(m_Scale,0.1f,10.0f);
+				m_scale += -current.delta.y*0.1f;
+				m_scale = Mathf.Clamp(m_scale,0.1f,10.0f);
 
 				Repaint();
 			}
 
-			var width = m_Texture.width*m_Scale;
-			var height = m_Texture.height*m_Scale;
+			var width = m_resource.width*m_scale;
+			var height = m_resource.height*m_scale;
 			var startX = (position.width-width)*0.5f;
 			var startY = (position.height-height)*0.5f;
 
-			m_ScrollPosition = GUI.BeginScrollView(new Rect(0.0f,0.0f,position.width,position.height),m_ScrollPosition,new Rect(0.0f,0.0f,width,height));
+			m_scrollPosition = GUI.BeginScrollView(new Rect(0.0f,0.0f,position.width,position.height),m_scrollPosition,new Rect(0.0f,0.0f,width,height));
 
-			GUI.DrawTexture(new Rect(startX,startY,width,height),m_Texture,ScaleMode.ScaleToFit);
+			GUI.DrawTexture(new Rect(startX,startY,width,height),m_resource,ScaleMode.ScaleToFit);
 			GUI.EndScrollView();
 		}
 	}

@@ -23,13 +23,13 @@ namespace KZLib.KZTest
 
 			if(Input.GetKeyDown(KeyCode.Q))
 			{
-				m_Schedule.gameObject.SetActiveSelf(false);
+				m_Schedule.gameObject.SetActiveIfDifferent(false);
 			}
 		}
 
 		private async UniTaskVoid PlayTestAsync()
 		{
-			m_Schedule.gameObject.SetActiveSelf(true);
+			m_Schedule.gameObject.SetActiveIfDifferent(true);
 
 			LogTag.Test.I("스케쥴 테스트 시작");
 

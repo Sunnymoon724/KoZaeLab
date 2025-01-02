@@ -8,7 +8,7 @@ namespace KZLib.KZAttribute
 	[Conditional("UNITY_EDITOR")]
 	public class KZDocumentPathAttribute : KZResourcePathAttribute
 	{
-		public KZDocumentPathAttribute(bool _changePathBtn = true,bool _isIncludeAssets = false) : base(_changePathBtn,_isIncludeAssets) { }
+		public KZDocumentPathAttribute(bool changePathBtn = true,bool isIncludeAssets = false) : base(changePathBtn,isIncludeAssets) { }
 	}
 
 #if UNITY_EDITOR

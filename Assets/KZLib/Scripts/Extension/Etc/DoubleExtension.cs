@@ -2,70 +2,67 @@ using System;
 
 public static class DoubleExtension
 {
-	public static string ToStringComma(this double _double)
+	public static string ToStringComma(this double number)
 	{
-		return $"{_double:n0}";
+		return $"{number:n0}";
 	}
 
-	public static string ToStringPercent(this double _double,int _decimals)
+	public static string ToStringPercent(this double number,int decimalPoint)
 	{
-		return string.Format(string.Concat("{0:f",_decimals,"}%"),_double);
+		return string.Format(string.Concat("{0:f",decimalPoint,"}%"),number);
 	}
 
-	public static string ToStringSign(this double _double)
+	public static string ToStringSign(this double number)
 	{
-		return $"{(_double > 0.0d ? "+" : "")}{_double}";
+		return $"{(number > 0.0d ? "+" : "")}{number}";
 	}
 
-	/// <summary>
-	/// double . _decimals
-	/// </summary>
-	public static double ToLimit(this double _double,int _decimals)
+	public static double ToLimit(this double number,int decimalPoint)
 	{
-		var factor = Math.Pow(10.0d,_decimals);
+		var factor = Math.Pow(10.0d,decimalPoint);
 
-		return Math.Floor(_double*factor)/factor;
+		return Math.Floor(number*factor)/factor;
 	}
 
 	/// <summary>
 	/// -180.0d ~ +180.0d
 	/// </summary>
 
-	public static double ToWrapAngle(this double _angle)
+	public static double ToWrapAngle(this double angle)
 	{
-		_angle %= Global.FULL_ANGLE;
+		angle %= Global.FULL_ANGLE;
 
-		while(_angle > +Global.HALF_ANGLE)
+		while(angle > +Global.HALF_ANGLE)
 		{
-			_angle -= Global.FULL_ANGLE;
+			angle -= Global.FULL_ANGLE;
 		}
 
-		while(_angle < -Global.HALF_ANGLE)
+		while(angle < -Global.HALF_ANGLE)
 		{
-			_angle += Global.FULL_ANGLE;
+			angle += Global.FULL_ANGLE;
 		}
 
-		return _angle;
+		return angle;
 	}
 
-	public static long ToMilliseconds(this double _seconds)
+	public static long ToMilliseconds(this double second)
 	{
-		return (long) _seconds*1000L;
+		return (long) second*1000L;
 	}
 
-	public static bool Approximately(this double _double,double _number,double _delta = 1e-15d)
+	public static bool Approximately(this double number1,double number2,double delta = 1e-15d)
 	{
-		return Math.Abs(_double-_number) <= _delta;
+		return Math.Abs(number1-number2) <= delta;
 	}
 
-	public static bool ApproximatelyZero(this double _double,double _delta = 1e-15d)
+	public static bool ApproximatelyZero(this double number,double delta = 1e-15d)
 	{
-		return Approximately(_double,0.0d,_delta);
+		return Approximately(number,0.0d,delta);
 	}
 
-	public static void SeparateDecimal(this double _double,out int _integer,out double _fraction)
+	public static void SeparateDecimal(this double number,out int integer,out double fraction)
 	{
-		_integer = (int) Math.Truncate(_double);
-        _fraction = Math.Abs(_double-_integer);
+		integer = (int) Math.Truncate(number);
+        fraction = Math.Abs(number-integer);
 	}
 }

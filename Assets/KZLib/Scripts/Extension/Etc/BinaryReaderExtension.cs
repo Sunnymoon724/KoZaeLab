@@ -2,32 +2,32 @@ using System.IO;
 
 public static class BinaryReaderExtension
 {
-	public static string ReadTextAddColon(this BinaryReader _reader,int _length)
+	public static string ReadTextAddColon(this BinaryReader binaryReader,int _length)
 	{
 		var bytes = new byte[_length];
-		_reader.Read(bytes,0,_length);
+		binaryReader.Read(bytes,0,_length);
 
 		return string.Join(":",bytes);
 	}
 
-	public static short ReadInt16(this BinaryReader _reader)
+	public static short ReadInt16(this BinaryReader binaryReader)
 	{
-		return (short)((_reader.ReadByte() << 8) | _reader.ReadByte());
+		return (short)((binaryReader.ReadByte() << 8) | binaryReader.ReadByte());
 	}
 
-	public static int ReadInt32(this BinaryReader _reader)
+	public static int ReadInt32(this BinaryReader binaryReader)
 	{
-		return (_reader.ReadByte() << 24) | (_reader.ReadByte() << 16) | (_reader.ReadByte() << 8) | _reader.ReadByte();
+		return (binaryReader.ReadByte() << 24) | (binaryReader.ReadByte() << 16) | (binaryReader.ReadByte() << 8) | binaryReader.ReadByte();
 	}
 
-	public static int ReadVariableLength(this BinaryReader _reader)
+	public static int ReadVariableLength(this BinaryReader binaryReader)
 	{
 		var value = 0;
 		int next;
 
 		do
 		{
-			next = _reader.ReadByte();
+			next = binaryReader.ReadByte();
 			value <<= 7;
 			value |= next & 0x7F;
 

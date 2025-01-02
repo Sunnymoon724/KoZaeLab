@@ -1,45 +1,45 @@
-using KZLib;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDragHandler
 {
-	private Canvas m_Canvas = null;
+	private Canvas m_canvas = null;
 
-	public NewAction onBeginDrag = new();
-	public NewAction onDrag = new();
-	public NewAction onEndDrag = new();
+	public event UnityAction OnDragStart;
+	public event UnityAction OnDragUpdate;
+	public event UnityAction OnDragEnd;
 
 	protected override void Initialize()
 	{
 		base.Initialize();
 
-		m_Canvas = gameObject.GetComponentInParent<Canvas>();
+		m_canvas = gameObject.GetComponentInParent<Canvas>();
 	}
 
-	void IDragHandler.OnDrag(PointerEventData _data)
+	void IDragHandler.OnDrag(PointerEventData eventData)
 	{
-		if(m_Canvas == null)
+		if(m_canvas == null)
 		{
 			LogTag.UI.E("Canvas is null");
 
 			return;
 		}
 
-		UIRectTransform.anchoredPosition += _data.delta/m_Canvas.scaleFactor;
+		UIRectTransform.anchoredPosition += eventData.delta/m_canvas.scaleFactor;
 
-		onDrag?.Invoke();
+		OnDragUpdate?.Invoke();
 	}
 
-	void IBeginDragHandler.OnBeginDrag(PointerEventData _data)
+	void IBeginDragHandler.OnBeginDrag(PointerEventData eventData)
 	{
 		transform.SetAsLastSibling();
 
-		onBeginDrag?.Invoke();
+		OnDragStart?.Invoke();
 	}
 
-	void IEndDragHandler.OnEndDrag(PointerEventData _data)
+	void IEndDragHandler.OnEndDrag(PointerEventData eventData)
 	{
-		onEndDrag?.Invoke();
+		OnDragEnd?.Invoke();
 	}
 }

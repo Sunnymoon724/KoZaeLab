@@ -5,17 +5,17 @@ using UnityEngine;
 public class AudioButtonUI : BaseButtonUI
 {
 	[SerializeField,LabelText("Path Mode")]
-	private bool m_PathMode = false;
-	[SerializeField,LabelText("Audio Path"),ShowIf(nameof(m_PathMode))]
-	private string m_AudioPath = null;
-	[SerializeField,LabelText("Audio Clip"),HideIf(nameof(m_PathMode))]
-	private AudioClip m_AudioClip = null;
+	private bool m_pathMode = false;
+	[SerializeField,LabelText("Audio Path"),ShowIf(nameof(m_pathMode))]
+	private string m_audioPath = null;
+	[SerializeField,LabelText("Audio Clip"),HideIf(nameof(m_pathMode))]
+	private AudioClip m_audioClip = null;
 
 	protected override void Initialize()
 	{
-		if(m_PathMode)
+		if(m_pathMode)
 		{
-			m_AudioClip = ResMgr.In.GetAudioClip(m_AudioPath);
+			m_audioClip = ResMgr.In.GetAudioClip(m_audioPath);
 		}
 
 		base.Initialize();
@@ -23,22 +23,22 @@ public class AudioButtonUI : BaseButtonUI
 
 	protected override void OnClickedButton()
 	{
-		SoundMgr.In.PlayUIShot(m_AudioClip);
+		SoundMgr.In.PlayUIShot(m_audioClip);
 	}
 
-	public void SetAudio(AudioClip _clip)
+	public void SetAudio(AudioClip audioClip)
 	{
-		m_AudioClip = _clip;
+		m_audioClip = audioClip;
 
-		m_PathMode = false;
+		m_pathMode = false;
 	}
 
-	public void SetAudio(string _audioPath)
+	public void SetAudio(string audioPath)
 	{
-		m_AudioPath = _audioPath;
+		m_audioPath = audioPath;
 
-		m_AudioClip = ResMgr.In.GetAudioClip(m_AudioPath);
+		m_audioClip = ResMgr.In.GetAudioClip(m_audioPath);
 
-		m_PathMode = true;
+		m_pathMode = true;
 	}
 }

@@ -2,44 +2,44 @@ using System.Collections.Generic;
 using MetaData;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using KZLib.KZUtility;
+using System;
 
 namespace KZLib
 {
 	public class CameraMgr : LoadSingletonMB<CameraMgr>
 	{
 		[SerializeField,LabelText("Main Camera")]
-		private Camera m_MainCamera = null;
-		private Camera m_OverrideCamera = null;
-		public Camera CurrentCamera => m_OverrideCamera == null ? m_MainCamera : m_OverrideCamera;
+		private Camera m_mainCamera = null;
+		private Camera m_overrideCamera = null;
+		public Camera CurrentCamera => m_overrideCamera == null ? m_mainCamera : m_overrideCamera;
 
 		[ShowInInspector,ReadOnly,LabelText("Camera Target")]
-		private Transform m_Target = null;
+		private Transform m_target = null;
 
 		[SerializeField,LabelText("Lock X Rotate")]
-		private bool m_LockRotateX = false;
+		private bool m_lockRotateX = false;
 
-		private readonly Dictionary<Camera,bool> m_SubCameraDict = new();
+		private readonly Dictionary<Camera,bool> m_subCameraDict = new();
 
-		private float m_FarFactor = 1.0f;
+		private float m_farFactor = 1.0f;
 
 		protected override void Initialize()
 		{
 			base.Initialize();
 
-			if(!m_MainCamera)
+			if(!m_mainCamera)
 			{
-				LogTag.System.E("Main camera is missing.");
-
-				return;
+				throw new NullReferenceException("Main camera is missing.");
 			}
 
-			var camera = m_MainCamera.GetComponent<Camera>();
+			var camera = m_mainCamera.GetComponent<Camera>();
 
 			camera.allowDynamicResolution = true;
 
 			SetCameraBackgroundColor(Color.black);
 
-			Broadcaster.EnableListener(EventTag.ChangeGraphicOption,OnChangeFarClipPlane);
+			EventMgr.In.EnableListener(EventTag.ChangeGraphicOption,OnChangeFarClipPlane);
 
 			OnChangeFarClipPlane();
 		}
@@ -48,69 +48,69 @@ namespace KZLib
 		{
 			base.Release();
 
-			Broadcaster.DisableListener(EventTag.ChangeGraphicOption,OnChangeFarClipPlane);
+			EventMgr.In.DisableListener(EventTag.ChangeGraphicOption,OnChangeFarClipPlane);
 		}
 
-		public void SetCameraData(CameraData _cameraData)
+		public void SetCameraData(CameraData cameraData)
 		{
-			if(!_cameraData.IsExist)
+			if(!cameraData.IsExist)
 			{
 				LogTag.System.E("Camera data is not exist.");
 
 				return;
 			}
 
-			CurrentCamera.nearClipPlane = _cameraData.NearClipPlane;
-			CurrentCamera.farClipPlane = m_FarFactor*_cameraData.FarClipPlane;
+			CurrentCamera.nearClipPlane = cameraData.NearClipPlane;
+			CurrentCamera.farClipPlane = m_farFactor*cameraData.FarClipPlane;
 
-			CurrentCamera.orthographic = _cameraData.Orthographic;
-			CurrentCamera.orthographicSize = _cameraData.FieldOfView;
-			CurrentCamera.fieldOfView = _cameraData.FieldOfView;
+			CurrentCamera.orthographic = cameraData.Orthographic;
+			CurrentCamera.orthographicSize = cameraData.FieldOfView;
+			CurrentCamera.fieldOfView = cameraData.FieldOfView;
 
-			var position = m_Target ? m_Target.position : Vector3.zero;
+			var position = m_target ? m_target.position : Vector3.zero;
 
-			CurrentCamera.transform.SetPositionAndRotation(position +_cameraData.Position,Quaternion.Euler(_cameraData.Rotation));
+			CurrentCamera.transform.SetPositionAndRotation(position +cameraData.Position,Quaternion.Euler(cameraData.Rotation));
 
 			SetSubCameraDict();
 		}
 
-		public void SetCamera(Camera _overrideCamera)
+		public void SetCamera(Camera overrideCamera)
 		{
-			var onCamera = _overrideCamera != null;
+			var onCamera = overrideCamera != null;
 
-			m_OverrideCamera = _overrideCamera;
+			m_overrideCamera = overrideCamera;
 
-			if(m_OverrideCamera != null)
+			if(m_overrideCamera != null)
 			{
-				m_OverrideCamera.gameObject.SetActiveSelf(onCamera);
+				m_overrideCamera.gameObject.SetActiveIfDifferent(onCamera);
 			}
 
-			m_MainCamera.gameObject.SetActiveSelf(!onCamera);
+			m_mainCamera.gameObject.SetActiveIfDifferent(!onCamera);
 		}
 
-		public void SetEnableCamera(bool _enable)
+		public void SetEnableCamera(bool enable)
 		{
-			m_MainCamera.enabled = _enable;
+			m_mainCamera.enabled = enable;
 		}
 
-		public void SetTarget(Transform _target)
+		public void SetTarget(Transform target)
 		{
-			m_Target = _target;
+			m_target = target;
 		}
 
-		public void LookTarget(Transform _target,float _duration = 0.0f)
+		public void LookTarget(Transform target,float duration = 0.0f)
 		{
-			SetTarget(_target);
+			SetTarget(target);
 
-			if(_target)
+			if(target)
 			{
 				return;
 			}
 
-			var pivot = (_target.position-transform.position).normalized;
+			var pivot = (target.position-transform.position).normalized;
 			var rotation = Quaternion.LookRotation(pivot).eulerAngles;
 
-			if(m_LockRotateX)
+			if(m_lockRotateX)
 			{
 				rotation.x = transform.rotation.eulerAngles.x;
 			}
@@ -125,40 +125,40 @@ namespace KZLib
 		private void OnChangeFarClipPlane()
 		{
 			var option = GameDataMgr.In.Access<GameData.GraphicOption>();
-			var flag = option.IsIncludeGraphicQualityOption(GraphicQualityTag.CameraFarHalf);
+			var flag = option.IsIncludeGraphicQualityOption(GraphicQualityType.CameraFarHalf);
 
-			m_FarFactor = flag ? 0.5f : 1.0f;
+			m_farFactor = flag ? 0.5f : 1.0f;
 		}
 
-		public void AddSubCamera(Camera _camera,bool _dependency = true)
+		public void AddSubCamera(Camera camera,bool dependency = true)
 		{
-			if(!m_SubCameraDict.ContainsKey(_camera))
+			if(!m_subCameraDict.ContainsKey(camera))
 			{
-				m_SubCameraDict.Add(_camera,_dependency);
+				m_subCameraDict.Add(camera,dependency);
 			}
 
-			_camera.depth = m_MainCamera.depth+1;
-			_camera.clearFlags = CameraClearFlags.Nothing;
+			camera.depth = m_mainCamera.depth+1;
+			camera.clearFlags = CameraClearFlags.Nothing;
 		}
 
-		public void RemoveSubCamera(Camera _camera)
+		public void RemoveSubCamera(Camera camera)
 		{
-			if(m_SubCameraDict.ContainsKey(_camera))
+			if(m_subCameraDict.ContainsKey(camera))
 			{
 				return;
 			}
 
-			m_SubCameraDict.Remove(_camera);
+			m_subCameraDict.Remove(camera);
 
-			_camera.depth = -1;
-			_camera.clearFlags = CameraClearFlags.Color;
+			camera.depth = -1;
+			camera.clearFlags = CameraClearFlags.Color;
 		}
 
 		private void SetSubCameraDict()
 		{
 			var main = CurrentCamera;
 
-			foreach(var pair in m_SubCameraDict)
+			foreach(var pair in m_subCameraDict)
 			{
 				if(!pair.Value)
 				{
@@ -176,9 +176,9 @@ namespace KZLib
 			}
 		}
 
-		private void SetCameraBackgroundColor(Color _color)
+		private void SetCameraBackgroundColor(Color color)
 		{
-			m_MainCamera.backgroundColor = _color;
+			m_mainCamera.backgroundColor = color;
 		}
 	}
 }

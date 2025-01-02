@@ -4,52 +4,60 @@ using UnityEngine.UI;
 
 public static class ImageExtension
 {
-	public static void SetDefaultImage(this Image _image,bool _isClearColor)
+	public static void SetDefaultImage(this Image image,bool isClearColor)
 	{
-		if(!_image)
+		if(!IsValid(image))
 		{
-			LogTag.System.E("Image is null.");
-
 			return;
 		}
 
-		_image.color = _isClearColor ? Color.clear : Color.white;
+		image.color = isClearColor ? Color.clear : Color.white;
 	}
 
-	public static void SetSafeImage(this Image _image,Sprite _sprite,Material _material = null,Color? _color = null)
+	public static void SetSafeImage(this Image image,Sprite sprite,Material material = null,Color? color = null)
 	{
-		if(!_image)
-		{
-			LogTag.System.E("Image is null.");
-
-			return;
-		}
-
-		if(!_sprite)
-		{
-			_image.gameObject.SetActiveSelf(false);
-
-			return;
-		}
-
-		_image.gameObject.SetActiveSelf(true);
-
-		_image.sprite = _sprite;
-		_image.material = _material;
-
-		if(!_color.HasValue)
+		if(!IsValid(image))
 		{
 			return;
 		}
 
-		_image.color = _color.Value;
+		if(!sprite)
+		{
+			image.gameObject.SetActiveIfDifferent(false);
+
+			return;
+		}
+
+		image.gameObject.SetActiveIfDifferent(true);
+
+		image.sprite = sprite;
+		image.material = material;
+
+		if(!color.HasValue)
+		{
+			return;
+		}
+
+		image.color = color.Value;
 	}
 
-	public static async UniTask FadeImageAsync(this Image _image,float _duration,Color _prev,Color _next)
+	public static async UniTask FadeImageAsync(this Image image,float duration,Color prevColor,Color nextColor)
 	{
-		await CommonUtility.ExecuteOverTimeAsync(0.0f,1.0f,_duration,(progress)=>
+		await CommonUtility.ExecuteOverTimeAsync(0.0f,1.0f,duration,(progress)=>
 		{
-			_image.color = Color.Lerp(_prev,_next,progress);
+			image.color = Color.Lerp(prevColor,nextColor,progress);
 		});
+	}
+
+	private static bool IsValid(Image image)
+	{
+		if(!image)
+		{
+			LogTag.System.E("Image is null");
+
+			return false;
+		}
+
+		return true;
 	}
 }

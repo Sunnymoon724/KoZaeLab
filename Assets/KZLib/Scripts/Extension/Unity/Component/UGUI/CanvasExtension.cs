@@ -2,15 +2,25 @@ using UnityEngine;
 
 public static class CanvasExtension
 {
-	public static Camera GetEventCamera(this Canvas _canvas)
+	public static Camera GetEventCamera(this Canvas canvas)
 	{
-		if(!_canvas)
+		if(!IsValid(canvas))
 		{
-			LogTag.System.E("Canvas is null.");
-
 			return null;
 		}
 
-		return !_canvas.worldCamera ? Camera.main : _canvas.worldCamera;
+		return !canvas.worldCamera ? Camera.main : canvas.worldCamera;
+	}
+
+	private static bool IsValid(Canvas canvas)
+	{
+		if(!canvas)
+		{
+			LogTag.System.E("Canvas is null");
+
+			return false;
+		}
+
+		return true;
 	}
 }

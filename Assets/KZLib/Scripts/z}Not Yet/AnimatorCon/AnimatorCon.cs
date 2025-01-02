@@ -77,7 +77,7 @@ namespace KZLib
 
 			if(_duration <= 0.0f)
 			{
-				PlayAnimationInner(m_CurrentStateName,0,1.0f);
+				_PlayAnimation(m_CurrentStateName,0,1.0f);
 
 				m_Duration = 0.0f;
 				IsLoop = false;
@@ -105,7 +105,7 @@ namespace KZLib
 			return m_Animator.runtimeAnimatorController.animationClips.Any(x => x.name.Contains(_stateName));
 		}
 
-		private void PlayAnimationInner(string _stateName,int _layer,float _time)
+		private void _PlayAnimation(string _stateName,int _layer,float _time)
 		{
 			m_Animator.Play(_stateName,_layer,_time);
 	#if UNITY_EDITOR
@@ -135,7 +135,7 @@ namespace KZLib
 
 			// 메타데이터 사용 시 해당 프레임으로 이벤트 체크
 
-			PlayAnimationInner(m_CurrentStateName,0,percent);
+			_PlayAnimation(m_CurrentStateName,0,percent);
 
 			if(percent >= 1.0f)
 			{

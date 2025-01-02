@@ -3,40 +3,48 @@ using UnityEngine;
 
 public static class MonoBehaviourExtension
 {
-	public static void StartRunInEditMode(this MonoBehaviour _behaviour)
+	public static void StartRunInEditMode(this MonoBehaviour behaviour)
 	{
-		if(!_behaviour)
+		if(!IsValid(behaviour))
 		{
-			LogTag.System.E("MonoBehaviour is null");
-
 			return;
 		}
 
-		_behaviour.runInEditMode = true;
+		behaviour.runInEditMode = true;
 	}
 	
-	public static void StopRunInEditMode(this MonoBehaviour _behaviour)
+	public static void StopRunInEditMode(this MonoBehaviour behaviour)
 	{
-		if(!_behaviour)
+		if(!IsValid(behaviour))
 		{
-			LogTag.System.E("MonoBehaviour is null");
-
 			return;
 		}
 
-		var enabled = _behaviour.enabled;
+		var enabled = behaviour.enabled;
 
 		if(enabled)
 		{
-			_behaviour.enabled = false;
+			behaviour.enabled = false;
 		}
 
-		_behaviour.runInEditMode = false;
+		behaviour.runInEditMode = false;
 
 		if(enabled)
 		{
-			_behaviour.enabled = true;
+			behaviour.enabled = true;
 		}
+	}
+
+	private static bool IsValid(MonoBehaviour behaviour)
+	{
+		if(!behaviour)
+		{
+			LogTag.System.E("MonoBehaviour is null");
+
+			return false;
+		}
+
+		return true;
 	}
 }
 #endif

@@ -1,6 +1,7 @@
 using System;
 using KZLib;
 using UnityEngine;
+using KZLib.KZUtility;
 
 #if UNITY_EDITOR
 
@@ -17,27 +18,27 @@ public static partial class CommonUtility
 		GC.Collect();
 	}
 
-	public static bool CheckVersion(string _version)
+	public static bool CheckVersion(string version)
 	{
-		return GameSettings.In.GameVersion.CompareTo(_version) >= 0;
+		return GameSettings.In.GameVersion.CompareTo(version) >= 0;
 	}
 
-	public static string CheckMetaData(IMetaData _metaData,int _metaId)
-	{
-		if(_metaData == null || !_metaData.IsExist)
-		{
-			//? Not exist
-			return $"<color={Global.WRONG_HEX_COLOR}>{_metaId}</color>";
-		}
+	// public static string CheckMetaData(IMetaData _metaData,int _metaId)
+	// {
+	// 	if(_metaData == null || !_metaData.IsExist)
+	// 	{
+	// 		//? Not exist
+	// 		return $"<color={Global.WRONG_HEX_COLOR}>{_metaId}</color>";
+	// 	}
 
-		if(!CheckVersion(_metaData.Version))
-		{
-			//? Version error
-			return $"<color={Global.DISABLE_HEX_COLOR}>{_metaId}</color>";
-		}
+	// 	if(!CheckVersion(_metaData.Version))
+	// 	{
+	// 		//? Version error
+	// 		return $"<color={Global.DISABLE_HEX_COLOR}>{_metaId}</color>";
+	// 	}
 
-		return $"{_metaId}";
-	}
+	// 	return $"{_metaId}";
+	// }
 
 	public static void LockInput()
 	{
@@ -49,13 +50,13 @@ public static partial class CommonUtility
 		SetInput(false);
 	}
 	
-	private static void SetInput(bool _lock)
+	private static void SetInput(bool isLock)
 	{
 		// TODO Check Input
 
 		if(UIMgr.HasInstance)
 		{
-			UIMgr.In.BlockInput(_lock);
+			UIMgr.In.BlockInput(isLock);
 		}
 	}
 
@@ -67,7 +68,7 @@ public static partial class CommonUtility
 	/// <summary>
 	/// Get New Week Monday
 	/// </summary>
-	public static DateTime GetNewWeekMonday()
+	public static DateTime FindNewWeekMonday()
 	{
 		//? Calculate next Monday.
 		var today = DateTime.Today;
@@ -115,11 +116,11 @@ public static partial class CommonUtility
 		return Time.timeScale == 0.0f;
 	}
 
-	public static string GetDownloadSpeed(long _tick)
+	public static string GetDownloadSpeed(long tick)
 	{
-		var size = _tick/1024.0d;
+		var size = tick/1024.0d;
 
-		return size > 0.0d ? $"{size / 1024.0d:f2} MB/s" : $"{_tick} B/s";
+		return size > 0.0d ? $"{size / 1024.0d:f2} MB/s" : $"{tick} B/s";
 	}
 
 	public static void Quit()
@@ -157,7 +158,7 @@ public static partial class CommonUtility
 	{
 		if(AutoSingletonMB<TBehaviour>.HasInstance)
 		{
-			DestroyObject(AutoSingletonMB<TBehaviour>.In.gameObject);
+			AutoSingletonMB<TBehaviour>.In.gameObject.DestroyObject();
 		}
 	}
 
@@ -170,38 +171,38 @@ public static partial class CommonUtility
 	}
 
 #if UNITY_EDITOR
-	public static string GetTemplateFilePath(string _fileName)
+	public static string FindTemplateFilePath(string fileName)
 	{
 		var projectPath = GetProjectPath();
-		var packagePath = $"Packages/com.bsheepstudio.kzlib/WorkResources/Templates/{_fileName}";
+		var packagePath = $"Packages/com.bsheepstudio.kzlib/WorkResources/Templates/{fileName}";
 
 		if(IsFileExist(PathCombine(projectPath,packagePath)))
 		{
 			return packagePath;
 		}
 
-		var assetPath = $"Assets/KZLib/WorkResources/Templates/{_fileName}";
+		var assetPath = $"Assets/KZLib/WorkResources/Templates/{fileName}";
 
 		if(IsFileExist(GetAbsolutePath(assetPath,true)))
 		{
 			return assetPath;
 		}
 
-		throw new NullReferenceException($"{_fileName} is not exist in template folder.");
+		throw new NullReferenceException($"{fileName} is not exist in template folder.");
 	}
 
-	public static byte[] GetTestImageData()
+	public static byte[] FindTestImageData()
 	{
-		var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(GetTemplateFilePath("Ostrich.png"));
+		var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(FindTemplateFilePath("Ostrich.png"));
 
 		return sprite != null ? sprite.texture.EncodeToPNG() : null;
 	}
 
-	public static string GetTemplateFileAbsolutePath(string _fileName)
+	public static string FindTemplateFileAbsolutePath(string fileName)
 	{
-		var filePath = GetTemplateFilePath(_fileName);
+		var templateFilePath = FindTemplateFilePath(fileName);
 
-		return IsStartWithAssetsHeader(filePath) ? GetAbsolutePath(filePath,true) : PathCombine(GetProjectPath(),filePath);
+		return IsStartWithAssetsHeader(templateFilePath) ? GetAbsolutePath(templateFilePath,true) : PathCombine(GetProjectPath(),templateFilePath);
 	}
 #endif
 }

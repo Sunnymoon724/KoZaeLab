@@ -1,40 +1,40 @@
 ﻿#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
-using KZLib.KZDevelop;
 using Sirenix.OdinInspector.Editor;
 
-namespace KZLib.KZEditor
+namespace KZLib.KZDevelop
 {
 	[CustomEditor(typeof(PathCreator))]
 	public partial class PathCreatorEditor : OdinEditor
 	{
-		private PathCreator m_Creator = null;
+		private PathCreator m_pathCreator = null;
 
-		private int m_SelectedHandleIndex = Global.INVALID_INDEX;
-		private int m_DragHandleIndex = Global.INVALID_INDEX;
-		private int m_MouseOverHandleIndex = Global.INVALID_INDEX;
+		private int m_selectedHandleIndex = Global.INVALID_INDEX;
+		private int m_dragHandleIndex = Global.INVALID_INDEX;
+		private int m_mouseOverHandleIndex = Global.INVALID_INDEX;
 
-		private Color m_HandleSelectColor = "#FFFF00FF".ToColor();
+		private Color m_handleSelectColor = "#FFFF00FF".ToColor();
 
-		private readonly float m_AnchorSize = 10.0f;
-		private Color m_AnchorNormalColor = "#FF5F5FFF".ToColor();
-		private Color m_AnchorHighlightColor = "#BC0A0AFF".ToColor();
+		private readonly float m_anchorSize = 10.0f;
+		private Color m_anchorNormalColor = "#FF5F5FFF".ToColor();
+		private Color m_anchorHighlightColor = "#BC0A0AFF".ToColor();
 
-		private readonly float m_ControlSize = 7.0f;
-		private Color m_ControlNormalColor = "#5999FFFF".ToColor();
-		private Color m_ControlHighlightColor = "#3232C0FF".ToColor();
+		private readonly float m_controlSize = 7.0f;
+		private Color m_controlNormalColor = "#5999FFFF".ToColor();
+		private Color m_controlHighlightColor = "#3232C0FF".ToColor();
 
-		private Color m_NormalLineColor = "#00FF00FF".ToColor();
-		private Color m_GuideLineColor = "#FFFFFFFF".ToColor();
+		private Color m_normalLineColor = "#00FF00FF".ToColor();
+		private Color m_guideLineColor = "#FFFFFFFF".ToColor();
 
 		protected override void OnEnable()
 		{
 			base.OnEnable();
 
-			m_Creator = target as PathCreator;
+			m_pathCreator = target as PathCreator;
 
-			m_Creator.onChangedPath.AddListener(OnResetState);
+			m_pathCreator.OnPathChanged -= OnResetState;
+			m_pathCreator.OnPathChanged += OnResetState;
 
 			Undo.undoRedoPerformed -= OnUndoRedo;
 			Undo.undoRedoPerformed += OnUndoRedo;
@@ -51,14 +51,14 @@ namespace KZLib.KZEditor
 
 		private void OnUndoRedo()
 		{
-			m_Creator.SetDirty();
+			m_pathCreator.SetDirty();
 
 			Repaint();
 		}
 
 		private void OnResetState()
 		{
-			m_MouseOverHandleIndex = Global.INVALID_INDEX;
+			m_mouseOverHandleIndex = Global.INVALID_INDEX;
 		}
 
 		public override void OnInspectorGUI()
@@ -92,15 +92,15 @@ namespace KZLib.KZEditor
 			}
 		}
 
-		private void SetPathInput(Event _event)
+		private void SetPathInput(Event currentEvent)
 		{
-			if(m_Creator.IsCurveMode)
+			if(m_pathCreator.IsCurveMode)
 			{
-				SetCurvePathInput(_event);
+				SetCurvePathInput(currentEvent);
 			}
 			else
 			{
-				SetShapePathInput(_event);
+				SetShapePathInput(currentEvent);
 			}
 		}
 
@@ -111,9 +111,9 @@ namespace KZLib.KZEditor
 				return;
 			}
 
-			var handleArray = m_Creator.HandleArray;
+			var handleArray = m_pathCreator.HandleArray;
 
-			if(m_Creator.IsCurveMode)
+			if(m_pathCreator.IsCurveMode)
 			{
 				for(var i=0;i<handleArray.Length;i++)
 				{
@@ -135,65 +135,65 @@ namespace KZLib.KZEditor
 			DrawLine(handleArray);
 		}
 
-		private void DrawLine(Vector3[] _handleArray)
+		private void DrawLine(Vector3[] handleArray)
 		{
-			if(m_Creator.IsCurveMode)
+			if(m_pathCreator.IsCurveMode)
 			{
-				DrawLineInCurve(_handleArray);
+				DrawLineInCurve(handleArray);
 			}
 			else
 			{
-				DrawLineInShape(_handleArray);
+				DrawLineInShape();
 			}
 		}
 
-		private void DrawHandle(int _index,Vector3 _position)
+		private void DrawHandle(int index,Vector3 position)
 		{
-			var position = _position.TransformPoint(m_Creator.transform,m_Creator.PathSpaceType);
+			var transformPoint = position.TransformPoint(m_pathCreator.transform,m_pathCreator.PathSpaceType);
 
-			var isSelected = _index == m_SelectedHandleIndex;
-			var isMouseOver = _index == m_MouseOverHandleIndex;
-			var isAnchor = m_Creator.IsCurveMode ? IsCurveAnchor(_index) : IsShapeAnchor(_index);
-			var diameter = GetHandleDiameter(isAnchor ? m_AnchorSize : m_ControlSize,_position);
+			var isSelected = index == m_selectedHandleIndex;
+			var isMouseOver = index == m_mouseOverHandleIndex;
+			var isAnchor = m_pathCreator.IsCurveMode ? IsCurveAnchor(index) : IsShapeAnchor(index);
+			var diameter = GetHandleDiameter(isAnchor ? m_anchorSize : m_controlSize,position);
 
-			var handleId = GUIUtility.GetControlID(_index.GetHashCode(),FocusType.Passive);
+			var handleId = GUIUtility.GetControlID(index.GetHashCode(),FocusType.Passive);
 
 			var cachedColor = Handles.color;
-			var highlight = isAnchor ? m_AnchorHighlightColor : m_ControlHighlightColor;
-			var normal = isAnchor ? m_AnchorNormalColor : m_ControlNormalColor;
+			var highlight = isAnchor ? m_anchorHighlightColor : m_controlHighlightColor;
+			var normal = isAnchor ? m_anchorNormalColor : m_controlNormalColor;
 
-			Handles.color = isSelected ? m_HandleSelectColor : isMouseOver ? highlight : normal;
+			Handles.color = isSelected ? m_handleSelectColor : isMouseOver ? highlight : normal;
 
-			Handles.SphereHandleCap(handleId,position,Quaternion.LookRotation(Vector3.up),diameter,EventType.Repaint);
+			Handles.SphereHandleCap(handleId,transformPoint,Quaternion.LookRotation(Vector3.up),diameter,EventType.Repaint);
 
 			var style = new GUIStyle();
 			style.normal.textColor = Color.white;
 
-			Handles.Label(position,$"{_index}",style);
+			Handles.Label(transformPoint,$"{index}",style);
 
 			Handles.color = cachedColor;
 		}
 
-		private float GetHandleDiameter(float _diameter,Vector3 _position)
+		private float GetHandleDiameter(float diameter,Vector3 position)
 		{
-			return _diameter*0.01f*HandleUtility.GetHandleSize(_position)*2.5f;
+			return diameter*0.01f*HandleUtility.GetHandleSize(position)*2.5f;
 		}
 
-		private Vector3 GetMousePosition(PathCreator _creator,float _depth = 10.0f)
+		private Vector3 GetMousePosition(float depth = 10.0f)
 		{
 			var ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-			var position = ray.GetPoint(_depth);
+			var position = ray.GetPoint(depth);
 
-			if(_creator.PathSpaceType == SpaceType.xy && ray.direction.z != 0.0f)
+			if(m_pathCreator.PathSpaceType == SpaceType.xy && ray.direction.z != 0.0f)
 			{
 				position = ray.GetPoint(Mathf.Abs(ray.origin.z/ray.direction.z));
 			}
-			else if(_creator.PathSpaceType == SpaceType.xz && ray.direction.y != 0)
+			else if(m_pathCreator.PathSpaceType == SpaceType.xz && ray.direction.y != 0)
 			{
 				position = ray.GetPoint(Mathf.Abs(ray.origin.y/ray.direction.y));
 			}
 
-			return position.InverseTransformPoint(_creator.transform,_creator.PathSpaceType);
+			return position.InverseTransformPoint(m_pathCreator.transform,m_pathCreator.PathSpaceType);
 		}
 	}
 }

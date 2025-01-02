@@ -7,19 +7,18 @@ namespace KZLib.KZWindow
 	{
 		protected override OdinMenuTree BuildMenuTree()
 		{
-			var tree = new OdinMenuTree
+			var menuTree = new OdinMenuTree
 			{
-				{ "Easing",CreateInstance<EasingWindow>() },
-				{ "Mesh Find",CreateInstance<MeshFindWindow>() },
-				{ "Sprite Edit",CreateInstance<SpriteEditWindow>() },
-				{ "Preset Edit",CreateInstance<PresetEditWindow>() },
+				{ "Easing Graph",CreateInstance<EasingGraphWindow>() },
+				{ "Mesh Finder",CreateInstance<MeshFinderWindow>() },
+				{ "Pixel Editor",CreateInstance<PixelEditorWindow>() },
 			};
 
-			tree.Config.DrawSearchToolbar = true;
-			tree.DefaultMenuStyle = OdinMenuStyle.TreeViewStyle;
-			tree.Selection.SupportsMultiSelect = false;
+			menuTree.Config.DrawSearchToolbar = true;
+			menuTree.DefaultMenuStyle = OdinMenuStyle.TreeViewStyle;
+			menuTree.Selection.SupportsMultiSelect = false;
 
-			return tree;
+			return menuTree;
 		}
 	}
 }

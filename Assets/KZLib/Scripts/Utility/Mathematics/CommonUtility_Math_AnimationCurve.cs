@@ -28,9 +28,9 @@ public static partial class CommonUtility
 	/// <summary>
 	/// To EaseType
 	/// </summary>
-	public static AnimationCurve GetEaseCurve(EaseType _type)
+	public static AnimationCurve GetEaseCurve(EaseType easeType)
 	{
-		switch(_type)
+		switch(easeType)
 		{
 			#region Sine
 			case EaseType.InSine:
@@ -255,11 +255,11 @@ public static partial class CommonUtility
 	/// <summary>
 	/// Increase -> Decrease or Decrease -> Increase
 	/// </summary>
-	public static AnimationCurve GetIncrementalCurve(bool _increaseStart)
+	public static AnimationCurve GetIncrementalCurve(bool increaseStart)
 	{
 		var curve = new AnimationCurve();
 
-		if(_increaseStart)
+		if(increaseStart)
 		{
 			curve.AddKey(new Keyframe(0.0f,0.0f,+0.0f,+2.0f));
 			curve.AddKey(new Keyframe(0.5f,1.0f,+2.0f,-2.0f));

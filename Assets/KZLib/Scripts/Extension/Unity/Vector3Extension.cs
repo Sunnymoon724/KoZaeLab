@@ -3,371 +3,371 @@ using UnityEngine;
 public static class Vector3Extension
 {
 	#region Set
-	public static Vector3 SetX(this Vector3 _vector,float _x = 0.0f)
+	public static Vector3 SetX(this Vector3 vector,float x = 0.0f)
 	{
-		return new Vector3(_x,_vector.y,_vector.z);
+		return new Vector3(x,vector.y,vector.z);
 	}
 
-	public static Vector3 SetY(this Vector3 _vector,float _y = 0.0f)
+	public static Vector3 SetY(this Vector3 vector,float y = 0.0f)
 	{
-		return new Vector3(_vector.x,_y,_vector.z);
+		return new Vector3(vector.x,y,vector.z);
 	}
 
-	public static Vector3 SetZ(this Vector3 _vector,float _z = 0.0f)
+	public static Vector3 SetZ(this Vector3 vector,float z = 0.0f)
 	{
-		return new Vector3(_vector.x,_vector.y,_z);
+		return new Vector3(vector.x,vector.y,z);
 	}
 
-	public static Vector3 SetXY(this Vector3 _vector,float _x = 0.0f,float _y = 0.0f) 
+	public static Vector3 SetXY(this Vector3 vector,float x = 0.0f,float y = 0.0f) 
 	{
-		return new Vector3(_x,_y,_vector.z);
+		return new Vector3(x,y,vector.z);
 	}
 
-	public static Vector3 SetXY(this Vector3 _vector,Vector2 _point = new Vector2())
+	public static Vector3 SetXY(this Vector3 vector,Vector2 point)
 	{
-		return _vector.SetXY(_point.x,_point.y);
+		return vector.SetXY(point.x,point.y);
 	}
 
-	public static Vector3 SetXZ(this Vector3 _vector,float _x = 0.0f,float _z = 0.0f) 
+	public static Vector3 SetXZ(this Vector3 vector,float x = 0.0f,float z = 0.0f) 
 	{
-		return new Vector3(_x,_vector.y,_z);
+		return new Vector3(x,vector.y,z);
 	}
 
-	public static Vector3 SetXZ(this Vector3 _vector,Vector2 _point = new Vector2())
+	public static Vector3 SetXZ(this Vector3 vector,Vector2 point)
 	{
-		return _vector.SetXZ(_point.x,_point.y);
+		return vector.SetXZ(point.x,point.y);
 	}
 
-	public static Vector3 SetYZ(this Vector3 _vector,float _y = 0.0f,float _z = 0.0f) 
+	public static Vector3 SetYZ(this Vector3 vector,float y = 0.0f,float z = 0.0f) 
 	{
-		return new Vector3(_vector.x,_y,_z);
+		return new Vector3(vector.x,y,z);
 	}
 
-	public static Vector3 SetYZ(this Vector3 _vector,Vector2 _point = new Vector2())
+	public static Vector3 SetYZ(this Vector3 vector,Vector2 point)
 	{
-		return _vector.SetYZ(_point.x,_point.y);
+		return vector.SetYZ(point.x,point.y);
 	}
 	#endregion Set
 
 	#region Offset
-	public static Vector3 Offset(this Vector3 _vector,Vector3 _offset)
+	public static Vector3 Offset(this Vector3 vector,Vector3 offset)
 	{
-		return new Vector3(_vector.x+_offset.x,_vector.y+_offset.y,_vector.z+_offset.z);
+		return new Vector3(vector.x+offset.x,vector.y+offset.y,vector.z+offset.z);
 	}
 
-	public static Vector3 OffsetXY(this Vector3 _vector,Vector2 _offset)
+	public static Vector3 OffsetXY(this Vector3 vector,Vector2 offset)
 	{
-		return _vector.Offset(new(_offset.x,_offset.y,0.0f));
+		return vector.Offset(new(offset.x,offset.y,0.0f));
 	}
 
-	public static Vector3 OffsetXZ(this Vector3 _vector,Vector2 _offset)
+	public static Vector3 OffsetXZ(this Vector3 vector,Vector2 offset)
 	{
-		return _vector.Offset(new(_offset.x,0.0f,_offset.y));
+		return vector.Offset(new(offset.x,0.0f,offset.y));
 	}
 
-	public static Vector3 OffsetYZ(this Vector3 _vector,Vector2 _offset)
+	public static Vector3 OffsetYZ(this Vector3 vector,Vector2 offset)
 	{
-		return _vector.Offset(new(0.0f,_offset.x,_offset.y));
+		return vector.Offset(new(0.0f,offset.x,offset.y));
 	}
 
-	public static Vector3 OffsetX(this Vector3 _vector,float _x)
+	public static Vector3 OffsetX(this Vector3 vector,float x)
 	{
-		return _vector.Offset(new(_x,0.0f,0.0f));
+		return vector.Offset(new(x,0.0f,0.0f));
 	}
 
-	public static Vector3 OffsetY(this Vector3 _vector,float _y)
+	public static Vector3 OffsetY(this Vector3 vector,float y)
 	{
-		return _vector.Offset(new(0.0f,_y,0.0f));
+		return vector.Offset(new(0.0f,y,0.0f));
 	}
 
-	public static Vector3 OffsetZ(this Vector3 _vector,float _z)
+	public static Vector3 OffsetZ(this Vector3 vector,float z)
 	{
-		return _vector.Offset(new(0.0f,0.0f,_z));
+		return vector.Offset(new(0.0f,0.0f,z));
 	}
 	#endregion Offset
 
 	#region Invert
-	public static Vector3 Invert(this Vector3 _vector)
+	public static Vector3 Invert(this Vector3 vector)
 	{
-		return new Vector3(-_vector.x,-_vector.y,-_vector.z);
+		return new Vector3(-vector.x,-vector.y,-vector.z);
 	}
 
-	public static Vector3 InvertX(this Vector3 _vector)
+	public static Vector3 InvertX(this Vector3 vector)
 	{
-		return new Vector3(-_vector.x,_vector.y,_vector.z);
+		return new Vector3(-vector.x,vector.y,vector.z);
 	}
 
-	public static Vector3 InvertY(this Vector3 _vector)
+	public static Vector3 InvertY(this Vector3 vector)
 	{
-		return new Vector3(_vector.x,-_vector.y,_vector.z);
+		return new Vector3(vector.x,-vector.y,vector.z);
 	}
 
-	public static Vector3 InvertZ(this Vector3 _vector)
+	public static Vector3 InvertZ(this Vector3 vector)
 	{
-		return new Vector3(_vector.x,_vector.y,-_vector.z);
+		return new Vector3(vector.x,vector.y,-vector.z);
 	}
 
-	public static Vector3 InvertXY(this Vector3 _vector)
+	public static Vector3 InvertXY(this Vector3 vector)
 	{
-		return new Vector3(-_vector.x,-_vector.y,_vector.z);
+		return new Vector3(-vector.x,-vector.y,vector.z);
 	}
 
-	public static Vector3 InvertXZ(this Vector3 _vector)
+	public static Vector3 InvertXZ(this Vector3 vector)
 	{
-		return new Vector3(-_vector.x,_vector.y,-_vector.z);
+		return new Vector3(-vector.x,vector.y,-vector.z);
 	}
 
-	public static Vector3 InvertYZ(this Vector3 _vector)
+	public static Vector3 InvertYZ(this Vector3 vector)
 	{
-		return new Vector3(_vector.x,-_vector.y,-_vector.z);
+		return new Vector3(vector.x,-vector.y,-vector.z);
 	}
 	#endregion Invert
 
 	#region ToVector
-	public static Vector2 ToVector2(this Vector3 _vector)
+	public static Vector2 ToVector2(this Vector3 vector)
 	{
-		return new(_vector.x,_vector.y);
+		return new(vector.x,vector.y);
 	}
 
-	public static Vector4 ToVector4(this Vector3 _vector,float _w = 0.0f)
+	public static Vector4 ToVector4(this Vector3 vector,float w = 0.0f)
 	{
-		return new(_vector.x,_vector.y,_vector.z,_w);
+		return new(vector.x,vector.y,vector.z,w);
 	}
 
-	public static string ToVectorString(this Vector3 _vector,int _decimals = 2)
+	public static string ToVectorString(this Vector3 vector,int decimalPoint = 2)
 	{
-		var format = $"({"{0:f"}{_decimals}}}, {"{1:f"}{_decimals}}}, {"{2:f"}{_decimals}}})";
+		var format = $"({"{0:f"}{decimalPoint}}}, {"{1:f"}{decimalPoint}}}, {"{2:f"}{decimalPoint}}})";
 
-		return string.Format(format,_vector.x,_vector.y,_vector.z);
+		return string.Format(format,vector.x,vector.y,vector.z);
 	}
 	#endregion ToVector
 
-	public static Vector3 PlaneDirection(this Vector3 _vector,Vector3 _target)
+	public static Vector3 PlaneDirection(this Vector3 vector,Vector3 target)
 	{
-		var pivot = _vector.SetY();
-		var target = _target.SetY();
+		var pivot = vector.SetY();
+		var result = target.SetY();
 		
-		return (pivot-target).normalized;
+		return (pivot-result).normalized;
 	}
 
-	public static float PlaneDistance(this Vector3 _vector,Vector3 _target)
+	public static float PlaneDistance(this Vector3 vector,Vector3 target)
 	{
-		var pivot = _vector.SetY();
-		var target = _target.SetY();
+		var pivot = vector.SetY();
+		var result = target.SetY();
 		
-		return Vector3.Distance(pivot,target);
+		return Vector3.Distance(pivot,result);
 	}
 
-	public static bool IsEquals(this Vector3 _vector1,Vector3 _vector2)
+	public static bool IsEquals(this Vector3 vector1,Vector3 vector2)
 	{
-		return _vector1.x.Approximately(_vector2.x) && _vector1.y.Approximately(_vector2.y) && _vector1.z.Approximately(_vector2.z);
+		return vector1.x.Approximately(vector2.x) && vector1.y.Approximately(vector2.y) && vector1.z.Approximately(vector2.z);
 	}
 	
-	public static bool IsZero(this Vector3 _vector)
+	public static bool IsZero(this Vector3 vector)
 	{
-		return _vector.x.ApproximatelyZero() && _vector.y.ApproximatelyZero() && _vector.z.ApproximatelyZero();
+		return vector.x.ApproximatelyZero() && vector.y.ApproximatelyZero() && vector.z.ApproximatelyZero();
 	}
 
-	public static Vector3 Reciprocal(this Vector3 _vector)
+	public static Vector3 Reciprocal(this Vector3 vector)
 	{
-		return new Vector3(1.0f/_vector.x,1.0f/_vector.y,1.0f/_vector.z);
+		return new Vector3(1.0f/vector.x,1.0f/vector.y,1.0f/vector.z);
 	}
 
-	public static Vector3 DistanceEach(this Vector3 _vector1,Vector3 _vector2)
+	public static Vector3 DistanceEach(this Vector3 vector1,Vector3 vector2)
 	{
-		return new Vector3(Mathf.Abs(_vector1.x-_vector2.x),Mathf.Abs(_vector1.y-_vector2.y),Mathf.Abs(_vector1.z-_vector2.z));
+		return new Vector3(Mathf.Abs(vector1.x-vector2.x),Mathf.Abs(vector1.y-vector2.y),Mathf.Abs(vector1.z-vector2.z));
 	}
 
-	public static Vector3 Round(this Vector3 _vector)
+	public static Vector3 Round(this Vector3 vector)
 	{
-		return new Vector3(Mathf.Round(_vector.x),Mathf.Round(_vector.y),Mathf.Round(_vector.z));
+		return new Vector3(Mathf.Round(vector.x),Mathf.Round(vector.y),Mathf.Round(vector.z));
 	}
 
-	public static Vector3 Ceil(this Vector3 _vector)
+	public static Vector3 Ceil(this Vector3 vector)
 	{
-		return new Vector3(Mathf.Ceil(_vector.x),Mathf.Ceil(_vector.y),Mathf.Ceil(_vector.z));
+		return new Vector3(Mathf.Ceil(vector.x),Mathf.Ceil(vector.y),Mathf.Ceil(vector.z));
 	}
 
-	public static Vector3 Floor(this Vector3 _vector)
+	public static Vector3 Floor(this Vector3 vector)
 	{
-		return new Vector3(Mathf.Floor(_vector.x),Mathf.Floor(_vector.y),Mathf.Floor(_vector.z));
+		return new Vector3(Mathf.Floor(vector.x),Mathf.Floor(vector.y),Mathf.Floor(vector.z));
 	}
 
-	public static Vector3 Abs(this Vector3 _vector)
+	public static Vector3 Abs(this Vector3 vector)
 	{
-		return new Vector3(Mathf.Abs(_vector.x),Mathf.Abs(_vector.y),Mathf.Abs(_vector.z));
+		return new Vector3(Mathf.Abs(vector.x),Mathf.Abs(vector.y),Mathf.Abs(vector.z));
 	}
 
-	public static Vector3 Clamp(this Vector3 _vector,float _min,float _max)
+	public static Vector3 Clamp(this Vector3 vector,float min,float max)
 	{
-		return new Vector3(Mathf.Clamp(_vector.x,_min,_max),Mathf.Clamp(_vector.y,_min,_max),Mathf.Clamp(_vector.z,_min,_max));
+		return new Vector3(Mathf.Clamp(vector.x,min,max),Mathf.Clamp(vector.y,min,max),Mathf.Clamp(vector.z,min,max));
 	}
 
-	public static Vector3 Clamp01(this Vector3 _vector)
+	public static Vector3 Clamp01(this Vector3 vector)
 	{
-		return new Vector3(Mathf.Clamp01(_vector.x),Mathf.Clamp01(_vector.y),Mathf.Clamp01(_vector.z));
+		return new Vector3(Mathf.Clamp01(vector.x),Mathf.Clamp01(vector.y),Mathf.Clamp01(vector.z));
 	}
 
-	public static float MaxValue(this Vector3 _vector)
+	public static float MaxValue(this Vector3 vector)
 	{
-		return _vector.x >= _vector.y ? (_vector.z >= _vector.x ? _vector.z : _vector.x) : (_vector.z >= _vector.y ? _vector.z : _vector.y);
+		return vector.x >= vector.y ? (vector.z >= vector.x ? vector.z : vector.x) : (vector.z >= vector.y ? vector.z : vector.y);
 	}
 
-	public static float MinValue(this Vector3 _vector)
+	public static float MinValue(this Vector3 vector)
 	{
-		return _vector.x <= _vector.y ? (_vector.z <= _vector.x ? _vector.z : _vector.x) : (_vector.z <= _vector.y ? _vector.z : _vector.y);
+		return vector.x <= vector.y ? (vector.z <= vector.x ? vector.z : vector.x) : (vector.z <= vector.y ? vector.z : vector.y);
 	}
 
-	public static Vector3 MultiplyEach(this Vector3 _vector1,Vector3 _vector2)
+	public static Vector3 MultiplyEach(this Vector3 vector1,Vector3 vector2)
 	{
-		return new Vector3(_vector1.x*_vector2.x,_vector1.y*_vector2.y,_vector1.z*_vector2.z);
+		return new Vector3(vector1.x*vector2.x,vector1.y*vector2.y,vector1.z*vector2.z);
 	}
 
-	public static Vector3 MiddleVector(this Vector3 _vector1,Vector3 _vector2)
+	public static Vector3 MiddleVector(this Vector3 vector1,Vector3 vector2)
 	{
-		return new Vector3((_vector2.x-_vector1.x)/2.0f,(_vector2.y-_vector1.y)/2.0f,(_vector2.z-_vector1.z)/2.0f);
+		return new Vector3((vector2.x-vector1.x)/2.0f,(vector2.y-vector1.y)/2.0f,(vector2.z-vector1.z)/2.0f);
 	}
 
-	public static Color ToRGB(this Vector3 _hsv)
+	public static Color ToRGB(this Vector3 hsv)
 	{
-		return Color.HSVToRGB(_hsv.x,_hsv.y,_hsv.z);
+		return Color.HSVToRGB(hsv.x,hsv.y,hsv.z);
 	}
 
-	public static Color ToColor(this Vector3 _vector)
+	public static Color ToColor(this Vector3 vector)
 	{
-		return new Color(_vector.x/255.0f,_vector.y/255.0f,_vector.z/255.0f,1.0f);
+		return new Color(vector.x/255.0f,vector.y/255.0f,vector.z/255.0f,1.0f);
 	}
 
-	public static (Vector3 Position,int Index) GetClosestPoint(this Vector3 _position,params Vector3[] _positionArray)
+	public static (Vector3 Position,int Index) CalculateGetClosestPosition(this Vector3 position,params Vector3[] positionArray)
 	{
 		var index = -1;
-		var position = Vector3.zero;
-		var closest = float.MaxValue;
+		var closestPosition = Vector3.zero;
+		var closestDistance = float.MaxValue;
 
-		for(var i=0;i<_positionArray.Length;i++)
+		for(var i=0;i<positionArray.Length;i++)
 		{
-			var distance = (_position-_positionArray[i]).sqrMagnitude;
+			var distance = (position-positionArray[i]).sqrMagnitude;
 
-			if(distance < closest)
+			if(distance < closestDistance)
 			{
-				closest = distance;
+				closestDistance = distance;
 
 				index = i;
-				position = _positionArray[i];
+				closestPosition = positionArray[i];
 			}
 		}
 
-		return (position,index);
+		return (closestPosition,index);
 	}
 
-	public static (Vector3 Position,float Distance) GetClosestPointOnRay(this Vector3 _position,Vector3 _origin,Vector3 _direction)
+	public static (Vector3 Position,float Distance) CalculateClosestPositionOnRay(this Vector3 position,Vector3 origin,Vector3 direction)
 	{
-		var distance = Vector3.Dot(_position-_origin,_direction);
+		var distance = Vector3.Dot(position-origin,direction);
 
-		return (_origin+_direction*distance,distance);
+		return (origin+direction*distance,distance);
 	}
 
-	public static (Vector3 Position,float Distance) GetClosestPointOnSegment(this Vector3 _position,Vector3 _start,Vector3 _end)
+	// public static (Vector3 Position,float Distance) CalculateClosestPositionOnSegment(this Vector3 position,Vector3 start,Vector3 end)
+	// {
+	// 	var direction = end-start;
+	// 	var magnitude = direction.magnitude;
+
+	// 	direction.Normalize();
+
+	// 	var distance = Mathf.Clamp(Vector3.Dot(position-start,direction),0.0f,magnitude);
+
+	// 	return (start+direction*distance,distance);
+	// }
+
+	public static Vector2 CalculateAnglesTo(this Vector3 vector,Vector3 compare)
 	{
-		var direction = _end-_start;
-		var magnitude = direction.magnitude;
-
-		direction.Normalize();
-
-		var distance = Mathf.Clamp(Vector3.Dot(_position-_start,direction),0.0f,magnitude);
-
-		return (_start+direction*distance,distance);
+		return new Vector2(-Mathf.Asin(Vector3.Cross(compare,vector).y)*Mathf.Rad2Deg,-Mathf.Asin(Vector3.Cross(compare,vector).x)*Mathf.Rad2Deg);
 	}
-
-	public static Vector2 GetAnglesTo(this Vector3 _vector,Vector3 _compare)
+	public static Vector3 RotateAround(this Vector3 position,Vector3 pivot,Quaternion rotation)
 	{
-		return new Vector2(-Mathf.Asin(Vector3.Cross(_compare,_vector).y)*Mathf.Rad2Deg,-Mathf.Asin(Vector3.Cross(_compare,_vector).x)*Mathf.Rad2Deg);
-	}
-	public static Vector3 RotateAround(this Vector3 _position,Vector3 _pivot,Quaternion _rotation)
-	{
-		return _rotation*(_position-_pivot)+_pivot;
-	}
-	
-	public static Vector3 ApplyTransform(this Vector3 _vector,Transform _transform)
-	{
-		return _vector.Transform(_transform.position,_transform.rotation,_transform.lossyScale);
+		return rotation*(position-pivot)+pivot;
 	}
 	
-	public static Vector3 Transform(this Vector3 _vector,Vector3 _position,Quaternion _rotation,Vector3 _scale)
+	public static Vector3 ApplyTransform(this Vector3 vector,Transform transform)
 	{
-		_vector = Vector3.Scale(_vector,new Vector3(_scale.x,_scale.y,_scale.z));
-		_vector = _vector.RotateAround(Vector3.zero,_rotation);
-		_vector += _position;
+		return vector.Transform(transform.position,transform.rotation,transform.lossyScale);
+	}
+	
+	public static Vector3 Transform(this Vector3 vector,Vector3 position,Quaternion rotation,Vector3 _scale)
+	{
+		vector = Vector3.Scale(vector,new Vector3(_scale.x,_scale.y,_scale.z));
+		vector = vector.RotateAround(Vector3.zero,rotation);
+		vector += position;
 
-		return _vector;
+		return vector;
 	}
 
-	public static Vector3 InverseApplyTransform(this Vector3 _vector,Transform _transform)
+	public static Vector3 InverseApplyTransform(this Vector3 vector,Transform transform)
 	{
-		return _vector.InverseTransform(_transform.position,_transform.rotation,_transform.lossyScale);
+		return vector.InverseTransform(transform.position,transform.rotation,transform.lossyScale);
 	}
 
-	public static Vector3 InverseTransform(this Vector3 _vector,Vector3 _position,Quaternion _rotation,Vector3 _scale)
+	public static Vector3 InverseTransform(this Vector3 vector,Vector3 position,Quaternion rotation,Vector3 scale)
 	{
-		_vector -= _position;
-		_vector = _vector.RotateAround(Vector3.zero,Quaternion.Inverse(_rotation));
-		_vector = Vector3.Scale(_vector,_scale.Reciprocal());
+		vector -= position;
+		vector = vector.RotateAround(Vector3.zero,Quaternion.Inverse(rotation));
+		vector = Vector3.Scale(vector,scale.Reciprocal());
 
-		return _vector;
+		return vector;
 	}
 
-	public static Vector3 ToLocalPosition(Vector3 _position,Camera _worldCam,Camera _uiCam,Transform _relativeTo)
+	public static Vector3 ToLocalPosition(Vector3 position,Camera worldCam,Camera uiCam,Transform relativeTo)
 	{
-		_position = _worldCam.WorldToViewportPoint(_position);
-		_position = _uiCam.ViewportToWorldPoint(_position);
+		position = worldCam.WorldToViewportPoint(position);
+		position = uiCam.ViewportToWorldPoint(position);
 
-		if(!_relativeTo || !_relativeTo.parent)
+		if(!relativeTo || !relativeTo.parent)
 		{
-			return _position;
+			return position;
 		}
 
-		return _relativeTo.parent.InverseTransformPoint(_position);
+		return relativeTo.parent.InverseTransformPoint(position);
 	}
 
-	public static Vector3 VectorByTransform(this Vector3 _vector,Transform _target)
+	public static Vector3 VectorByTransform(this Vector3 vector,Transform target)
 	{
-		var matrix = Matrix4x4.TRS(Vector3.zero,_target.rotation,Vector3.one);
-		var result = matrix.MultiplyPoint3x4(_vector);
+		var matrix = Matrix4x4.TRS(Vector3.zero,target.rotation,Vector3.one);
+		var result = matrix.MultiplyPoint3x4(vector);
 
-		result += _target.position;
+		result += target.position;
 
 		return result;
 	}
 
-	public static Vector3 SmoothDampAngle(this Vector3 _vector,Vector3 _target,ref Vector3 _velocity,float _smoothTime)
+	public static Vector3 SmoothDampAngle(this Vector3 vector,Vector3 target,ref Vector3 velocity,float smoothTime)
 	{
-		return new Vector3(Mathf.SmoothDampAngle(_vector.x,_target.x,ref _velocity.x,_smoothTime),Mathf.SmoothDampAngle(_vector.y,_target.y,ref _velocity.y,_smoothTime),Mathf.SmoothDampAngle(_vector.z,_target.z,ref _velocity.z,_smoothTime));
+		return new Vector3(Mathf.SmoothDampAngle(vector.x,target.x,ref velocity.x,smoothTime),Mathf.SmoothDampAngle(vector.y,target.y,ref velocity.y,smoothTime),Mathf.SmoothDampAngle(vector.z,target.z,ref velocity.z,smoothTime));
 	}
 
-	public static bool IsInside(this Vector3 _vector,Collider _collider)
+	public static bool IsInside(this Vector3 vector,Collider collider)
 	{
-		return _vector == _collider.ClosestPoint(_vector);
+		return vector == collider.ClosestPoint(vector);
 	}
 
-	public static Vector3 To(this Vector3 _source,Vector3 _destination)
+	public static Vector3 To(this Vector3 source,Vector3 destination)
 	{
-		return _destination-_source;
+		return destination-source;
 	}
 
-	public static Vector3 TransformPoint(this Vector3 _position,Transform _transform,SpaceType _type)
+	public static Vector3 TransformPoint(this Vector3 position,Transform transform,SpaceType spaceType)
 	{
-		var (Position,Rotation,Scale) = LockTransformToSpace(_transform,_type);
-		var position = _transform.TransformPoint(_position);
+		var (Position,Rotation,Scale) = LockTransformToSpace(transform,spaceType);
+		var resultPoint = transform.TransformPoint(position);
 
-		_transform.SetPositionAndRotation(Position,Rotation);
-		_transform.localScale = Scale;
+		transform.SetPositionAndRotation(Position,Rotation);
+		transform.localScale = Scale;
 
-		return position;
+		return resultPoint;
 	}
 
-	public static Vector3 InverseTransformPoint(this Vector3 _position,Transform _transform,SpaceType _type)
+	public static Vector3 InverseTransformPoint(this Vector3 _position,Transform _transform,SpaceType spaceType)
 	{
-		var (Position,Rotation,Scale) = LockTransformToSpace(_transform,_type);
+		var (Position,Rotation,Scale) = LockTransformToSpace(_transform,spaceType);
 		var position = _transform.InverseTransformPoint(_position);
 
 		_transform.SetPositionAndRotation(Position,Rotation);
@@ -376,25 +376,25 @@ public static class Vector3Extension
 		return position;
 	}
 
-	private static (Vector3 Position,Quaternion Rotation,Vector3 Scale) LockTransformToSpace(Transform _transform,SpaceType _space)
+	private static (Vector3 Position,Quaternion Rotation,Vector3 Scale) LockTransformToSpace(Transform transform,SpaceType spaceType)
 	{
-		_transform.GetPositionAndRotation(out var position,out var rotation);
+		transform.GetPositionAndRotation(out var position,out var rotation);
 
-        var scale = _transform.localScale;
+        var scale = transform.localScale;
 
-		if(_space == SpaceType.xy)
+		if(spaceType == SpaceType.xy)
 		{
 			position.z = 0.0f;
 		}
-		else if(_space == SpaceType.xz)
+		else if(spaceType == SpaceType.xz)
 		{
 			position.y = 0.0f;
 		}
 
 		var max = Mathf.Max(scale.x,scale.y,scale.z);
 
-		_transform.SetPositionAndRotation(position,rotation);
-		_transform.localScale = Vector3.one*max;
+		transform.SetPositionAndRotation(position,rotation);
+		transform.localScale = Vector3.one*max;
 
 		return (position,rotation,scale);
 	}

@@ -10,14 +10,15 @@ using UnityEngine;
 #endif
 
 using UnityEngine;
+using KZLib.KZUtility;
 
 namespace KZLib
 {
 	public class VibrationMgr : Singleton<VibrationMgr>
 	{
-		private bool m_Disposed = false;
+		private bool m_disposed = false;
 
-		private bool m_UseVibration = true;
+		private bool m_useVibration = true;
 
 #if UNITY_IOS && !UNITY_EDITOR
 		[DllImport("__Internal")]
@@ -32,69 +33,69 @@ namespace KZLib
 		[DllImport("__Internal")]
 		static extern void StopVibration();
 #elif UNITY_ANDROID && !UNITY_EDITOR
-		private AndroidJavaObject m_Vibration = null;
-		private AndroidJavaObject m_Activity = null;
+		private AndroidJavaObject m_vibration = null;
+		private AndroidJavaObject m_activity = null;
 #endif
 
 		protected override void Initialize()
 		{
 			OnChangeNativeOption();
 
-			Broadcaster.EnableListener(EventTag.ChangeNativeOption,OnChangeNativeOption);
+			// EventMgr.In.EnableListener(EventTag.ChangeNativeOption,OnChangeNativeOption);
 
 #if UNITY_IOS && !UNITY_EDITOR
 			VibrationInitialize();
 #elif UNITY_ANDROID && !UNITY_EDITOR
-			m_Vibration = new AndroidJavaObject("com.shf.vibrator.Vibration");
+			m_vibration = new AndroidJavaObject("com.shf.vibrator.Vibration");
 
 			using var pluginClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-			m_Activity = pluginClass.GetStatic<AndroidJavaObject>("currentActivity");
+			m_activity = pluginClass.GetStatic<AndroidJavaObject>("currentActivity");
 #endif
 		}
 
-		protected override void Release(bool _disposing)
+		protected override void Release(bool disposing)
 		{
-			if(m_Disposed)
+			if(m_disposed)
 			{
 				return;
 			}
 
-			if(_disposing)
+			if(disposing)
 			{
-				Broadcaster.DisableListener(EventTag.ChangeNativeOption,OnChangeNativeOption);
+				// EventMgr.In.DisableListener(EventTag.ChangeNativeOption,OnChangeNativeOption);
 			}
 
-			m_Disposed = true;
+			m_disposed = true;
 
-			base.Release(_disposing);
+			base.Release(disposing);
 		}
 
 		private void OnChangeNativeOption()
 		{
 			var option = GameDataMgr.In.Access<GameData.NativeOption>();
 
-			m_UseVibration = option.UseVibration;
+			m_useVibration = option.UseVibration;
 		}
 
 		/// <param name="_amplitude">0.0 ~ 10.0</param>
-		public void Play(float _amplitude,float _millisecond)
+		public void Play(float amplitude,float millisecond)
 		{
-			if(_amplitude <= 0.0f || _millisecond <= 0.0f)
+			if(amplitude <= 0.0f || millisecond <= 0.0f)
 			{
 				return;
 			}
 
-			var amplitude = Mathf.Clamp(_amplitude,0.0f,10.0f);
+			var newAmplitude = Mathf.Clamp(amplitude,0.0f,10.0f);
 
-			if(!m_UseVibration)
+			if(!m_useVibration)
 			{
 				return;
 			}
 
 #if UNITY_IOS && !UNITY_EDITOR
-			PlayVibration(_millisecond,amplitude/10.0f,1.0f,true);
+			PlayVibration(millisecond,newAmplitude/10.0f,1.0f,true);
 #elif UNITY_ANDROID && !UNITY_EDITOR
-			m_Vibration.Call("AmplitudeVibrate",m_Activity,Convert.ToInt64(_millisecond*1000L),Mathf.RoundToInt(amplitude*25.5f));
+			m_vibration.Call("AmplitudeVibrate",m_activity,Convert.ToInt64(millisecond*1000L),Mathf.RoundToInt(newAmplitude*25.5f));
 #endif
 		}
 	}

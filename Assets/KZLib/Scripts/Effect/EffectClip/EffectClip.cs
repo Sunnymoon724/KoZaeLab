@@ -11,43 +11,43 @@ public abstract class EffectClip : BaseComponent
 	public record EffectParam(Action<bool> OnComplete = null);
 
 	[SerializeField,HideInInspector]
-	private float m_CurrentTime = 0.0f;
+	private float m_currentTime = 0.0f;
 
 	[SerializeField,HideInInspector]
-	private float m_Duration = 0.0f;
+	private float m_duration = 0.0f;
 	[SerializeField,HideInInspector]
-	private bool m_IsLoop = false;
+	private bool m_isLoop = false;
 
 	[VerticalGroup("Time",Order = 0),ShowInInspector,KZRichText]
-	public string CurrentTime => $"{m_CurrentTime:F3}s";
+	public string CurrentTime => $"{m_currentTime:F3}s";
 
 	[FoldoutGroup("General",Order = 1)]
 	[VerticalGroup("General/0",Order = 0),ShowInInspector,EnableIf(nameof(IsEnableDuration))]
-	protected virtual float Duration { get => m_Duration; set => m_Duration = value; }
+	protected virtual float Duration { get => m_duration; set => m_duration = value; }
 
 	protected virtual bool IsEnableDuration => true;
 
 	[VerticalGroup("General/0",Order = 0),ShowInInspector,ShowIf(nameof(IsShowUseLoop))]
-	protected virtual bool IsLoop { get => m_IsLoop; set => m_IsLoop = value; }
+	protected virtual bool IsLoop { get => m_isLoop; set => m_isLoop = value; }
 
 	protected virtual bool IsShowUseLoop => true;
 
 	[VerticalGroup("General/1",Order = 1),SerializeField,ShowIf(nameof(IsShowIgnoreTimeScale))]
-	protected bool m_IgnoreTimeScale = false;
+	protected bool m_ignoreTimeScale = false;
 
 	protected virtual bool IsShowIgnoreTimeScale => true;
 
-	private bool IsPlayable => m_Duration != 0.0f;
+	private bool IsPlayable => m_duration != 0.0f;
 
-	public float Progress => IsPlayable && Duration > 0.0f ? m_CurrentTime/Duration : 0.0f;
+	public float Progress => IsPlayable && Duration > 0.0f ? m_currentTime/Duration : 0.0f;
 
-	private Action<bool> m_OnComplete = null;
+	private Action<bool> m_onComplete = null;
 
-    protected CancellationTokenSource m_TokenSource = null;
+	protected CancellationTokenSource m_tokenSource = null;
 
 	protected override void OnEnable()
 	{
-        base.OnEnable();
+		base.OnEnable();
 
 		PlayEffectAsync().Forget();
 	}
@@ -56,22 +56,22 @@ public abstract class EffectClip : BaseComponent
 	{
 		base.OnDisable();
 
-		CommonUtility.KillTokenSource(ref m_TokenSource);
+		CommonUtility.KillTokenSource(ref m_tokenSource);
 	}
 
-	public virtual void SetEffect(EffectParam _param)
+	public virtual void SetEffect(EffectParam effectParam)
 	{
-		if(_param != null)
+		if(effectParam != null)
 		{
-			m_OnComplete = _param.OnComplete;
+			m_onComplete = effectParam.OnComplete;
 		}
 	}
 
 	protected async UniTask PlayEffectAsync()
 	{
-		CommonUtility.RecycleTokenSource(ref m_TokenSource);
+		CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
-		m_CurrentTime = 0.0f;
+		m_currentTime = 0.0f;
 
 		if(!IsPlayable)
 		{
@@ -86,37 +86,33 @@ public abstract class EffectClip : BaseComponent
 
 		await CommonUtility.LoopUniTaskAsync(async ()=>
 		{
-			m_CurrentTime = 0.0f;
+			m_currentTime = 0.0f;
 
 			await PlayTaskAsync();
 
-			m_CurrentTime = Duration;
-		},count,m_TokenSource.Token);
+			m_currentTime = Duration;
+		},count,m_tokenSource.Token);
 
 		EndEffect(true);
 
-		CommonUtility.KillTokenSource(ref m_TokenSource);
+		CommonUtility.KillTokenSource(ref m_tokenSource);
 	}
 
 	protected abstract UniTask PlayTaskAsync();
 
-	protected void SetTime(float _time)
+	protected virtual void SetTime(float time)
 	{
-		m_CurrentTime = _time;
-
-		PlayProgress(_time/Duration);
+		m_currentTime = time;
 	}
 
-	protected virtual void PlayProgress(float _progress) { }
-
-	protected virtual void EndEffect(bool _result)
+	protected virtual void EndEffect(bool showResult)
 	{
-		m_OnComplete?.Invoke(_result);
+		m_onComplete?.Invoke(showResult);
 
 		// fail -> destroy
-		if(!_result)
+		if(!showResult)
 		{
-			CommonUtility.DestroyObject(gameObject);
+			gameObject.DestroyObject();
 
 			return;
 		}
@@ -127,8 +123,8 @@ public abstract class EffectClip : BaseComponent
 		}
 	}
 
-	public void ForceEndEffect(bool _destroy = false)
+	public void ForceEndEffect(bool isDestroy = false)
 	{
-		EndEffect(!_destroy);
+		EndEffect(!isDestroy);
 	}
 }

@@ -12,10 +12,10 @@ namespace KZLib.KZSample
 		}
 
 		[VerticalGroup("0",Order = 0),SerializeField]
-		private ScrollRectUI m_VerticalScrollRect = null;
+		private ReuseScrollRectUI m_VerticalScrollRect = null;
 
 		[VerticalGroup("0",Order = 0),SerializeField]
-		private ScrollRectUI m_HorizontalScrollRect = null;
+		private ReuseScrollRectUI m_HorizontalScrollRect = null;
 
 		[SerializeField,HideInInspector]
 		private int m_CellCount = 10;
@@ -52,12 +52,12 @@ namespace KZLib.KZSample
 		{
 			if(m_VerticalScrollRect.gameObject.activeInHierarchy)
 			{
-				m_VerticalScrollRect.MoveToTop(m_Order,m_Duration);
+				m_VerticalScrollRect.ScrollToTop(m_Order,m_Duration);
 			}
 
 			if(m_HorizontalScrollRect.gameObject.activeInHierarchy)
 			{
-				m_HorizontalScrollRect.MoveToTop(m_Order,m_Duration);
+				m_HorizontalScrollRect.ScrollToTop(m_Order,m_Duration);
 			}
 		}
 
@@ -66,12 +66,12 @@ namespace KZLib.KZSample
 		{
 			if(m_VerticalScrollRect.gameObject.activeInHierarchy)
 			{
-				m_VerticalScrollRect.MoveToCenter(m_Order,m_Duration);
+				m_VerticalScrollRect.ScrollToCenter(m_Order,m_Duration);
 			}
 
 			if(m_HorizontalScrollRect.gameObject.activeInHierarchy)
 			{
-				m_HorizontalScrollRect.MoveToCenter(m_Order,m_Duration);
+				m_HorizontalScrollRect.ScrollToCenter(m_Order,m_Duration);
 			}
 		}
 
@@ -80,12 +80,12 @@ namespace KZLib.KZSample
 		{
 			if(m_VerticalScrollRect.gameObject.activeInHierarchy)
 			{
-				m_VerticalScrollRect.MoveToBottom(m_Order,m_Duration);
+				m_VerticalScrollRect.ScrollToBottom(m_Order,m_Duration);
 			}
 
 			if(m_HorizontalScrollRect.gameObject.activeInHierarchy)
 			{
-				m_HorizontalScrollRect.MoveToBottom(m_Order,m_Duration);
+				m_HorizontalScrollRect.ScrollToBottom(m_Order,m_Duration);
 			}
 		}
 

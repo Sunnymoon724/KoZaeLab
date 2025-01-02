@@ -2,108 +2,106 @@ using UnityEngine;
 
 public static class MaterialExtension
 {
-	public static Material SetAlpha(this Material _material,float _alpha)
+	public static Material SetAlpha(this Material material,float alpha)
 	{
-		if(!_material)
+		if(!IsValid(material))
 		{
-			LogTag.System.E("Material is null");
-
 			return null;
 		}
 
-		_material.color = _material.color.MaskAlpha(_alpha);
+		material.color = material.color.MaskAlpha(alpha);
 
-		return _material;
+		return material;
 	}
 
-	public static Material Color(this Material _material,Color _color)
+	public static Material Color(this Material material,Color color)
 	{
-		if(!_material)
+		if(!IsValid(material))
 		{
-			LogTag.System.E("Material is null");
-
 			return null;
 		}
 
-		_material.color = _color;
+		material.color = color;
 
-		return _material;
+		return material;
 	}
 
-	public static Material Color(this Material _material,int _nameId,Color _color)
+	public static Material Color(this Material material,int nameId,Color color)
 	{
-		if(!_material)
+		if(!IsValid(material))
 		{
-			LogTag.System.E("Material is null");
-
 			return null;
 		}
 
-		_material.SetColor(_nameId,_color);
+		material.SetColor(nameId,color);
 
-		return _material;
+		return material;
 	}
 
-	public static Material Color(this Material _material,string _name,Color _color)
+	public static Material Color(this Material material,string name,Color color)
 	{
-		if(!_material)
+		if(!IsValid(material))
 		{
-			LogTag.System.E("Material is null");
-
 			return null;
 		}
 
-		_material.SetColor(_name,_color);
+		material.SetColor(name,color);
 
-		return _material;
+		return material;
 	}
 
-	public static Material Float(this Material _material,int _nameId,float _value)
+	public static Material Float(this Material material,int nameId,float _value)
 	{
-		if(!_material)
+		if(!IsValid(material))
 		{
-			LogTag.System.E("Material is null");
-
 			return null;
 		}
 
-		_material.SetFloat(_nameId,_value);
+		material.SetFloat(nameId,_value);
 
-		return _material;
+		return material;
 	}
 
-	public static Material Float(this Material _material,string _name,float _value)
+	public static Material Float(this Material material,string name,float _value)
 	{
-		if(!_material)
+		if(!IsValid(material))
 		{
-			LogTag.System.E("Material is null");
-
 			return null;
 		}
 
-		_material.SetFloat(_name,_value);
+		material.SetFloat(name,_value);
 
-		return _material;
+		return material;
 	}
 
-	public static Material Keyword(this Material _material,string _keyword,bool _enable)
+	public static Material Keyword(this Material material,string keyword,bool enable)
 	{
-		if(!_material)
+		if(!IsValid(material))
 		{
-			LogTag.System.E("Material is null");
-
 			return null;
 		}
 
-		if(_enable)
+		if(enable)
 		{
-			_material.EnableKeyword(_keyword);
+			material.EnableKeyword(keyword);
 		}
 		else
 		{
-			_material.DisableKeyword(_keyword);
+			material.DisableKeyword(keyword);
 		}
 
-		return _material;
+		return material;
+	}
+
+	private static bool IsValid(Material material)
+	{
+		if(!material)
+		{
+			LogTag.System.E("Material is null");
+
+			return false;
+		}
+
+		return true;
 	}
 }

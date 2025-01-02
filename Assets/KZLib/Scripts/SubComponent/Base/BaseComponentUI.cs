@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(RectTransform))]
 public abstract class BaseComponentUI : BaseComponent
 {
-	protected RectTransform m_RectTransform = null;
+	protected RectTransform m_rectTransform = null;
 
 	public RectTransform UIRectTransform
 	{
@@ -12,7 +12,7 @@ public abstract class BaseComponentUI : BaseComponent
 		{
 			InitializeRectTransform();
 
-			return m_RectTransform;
+			return m_rectTransform;
 		}
 	}
 
@@ -25,19 +25,19 @@ public abstract class BaseComponentUI : BaseComponent
 
 	private void InitializeRectTransform()
 	{
-		if(!m_RectTransform)
+		if(!m_rectTransform)
 		{
-			m_RectTransform = GetComponent<RectTransform>();
+			m_rectTransform = GetComponent<RectTransform>();
 		}
 	}
 
 	protected class GameObjectUIPool<TComponent> : GameObjectPool<TComponent> where TComponent : Component
 	{
-		public GameObjectUIPool(TComponent _pivot,Transform _storage) : base(_pivot,_storage,1) { }
+		public GameObjectUIPool(TComponent pivot,Transform storage) : base(pivot,storage,1) { }
 
-		protected override void SetChild(Transform _parent,Transform _child)
+		protected override void SetChild(Transform parent,Transform child)
 		{
-			_parent.SetUIChild(_child);
+			parent.SetUIChild(child);
 		}
 	}
 }

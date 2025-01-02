@@ -1,27 +1,26 @@
 ﻿#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEditorInternal;
 
 public static partial class CommonUtility
 {
 	#region Tag & Layer
-	public static void AddTag(string _tag)
+	public static void AddTag(string newTag)
 	{
 		foreach(var tag in InternalEditorUtility.tags)
 		{
-			if(tag.IsEqual(_tag))
+			if(tag.IsEqual(newTag))
 			{
 				return;
 			}
 		}
 
-		InternalEditorUtility.AddTag(_tag);
+		InternalEditorUtility.AddTag(newTag);
 	}
 
-	private static SerializedObject GetTagManagerObject()
+	private static SerializedObject FindTagManagerObject()
 	{
 		var assetArray = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset");
 
@@ -33,9 +32,9 @@ public static partial class CommonUtility
 		return new SerializedObject(assetArray[0]);
 	}
 
-	public static void AddLayer(string _layerName)
+	public static void AddLayer(string layerName)
 	{
-		var serialized = GetTagManagerObject();
+		var serialized = FindTagManagerObject();
 
 		if(serialized == null)
 		{
@@ -43,8 +42,8 @@ public static partial class CommonUtility
 		}
 
 		var layerProperty = serialized.FindProperty("layers");
-		int layerCount = layerProperty.arraySize;
-		int index = -1;
+		var layerCount = layerProperty.arraySize;
+		var index = -1;
 		
 		for(var i=8;i<layerCount;i++)
 		{
@@ -54,7 +53,7 @@ public static partial class CommonUtility
 			{
 				index = i;
 			}			
-			else if(value.IsEqual(_layerName))
+			else if(value.IsEqual(layerName))
 			{
 				index = -1;
 
@@ -65,62 +64,69 @@ public static partial class CommonUtility
 		if(index != -1)
 		{
 			var property = layerProperty.GetArrayElementAtIndex(index);
-			property.stringValue = _layerName;
+			property.stringValue = layerName;
 			serialized.ApplyModifiedProperties();
 		}
 	}
 	#endregion Tag & Layer
 
 	#region Player Settings
-	public static void AddDefineSymbol(string _symbol,BuildTargetGroup _target)
+	public static void AddDefineSymbol(string defineSymbol,BuildTargetGroup buildTargetGroup)
 	{
-		var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(_target);
+		var symbolText = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTargetGroup);
 
-		if(symbols.Contains(_symbol))
+		if(symbolText.Contains(defineSymbol))
 		{
 			return;
 		}
 
-		PlayerSettings.SetScriptingDefineSymbolsForGroup(_target,$"{symbols};{_symbol}");
+		PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTargetGroup,$"{symbolText};{defineSymbol}");
 	}
 
-	public static void RemoveDefineSymbol(string _symbol,BuildTargetGroup _target)
+	public static void RemoveDefineSymbol(string defineSymbol,BuildTargetGroup buildTargetGroup)
 	{
-		var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(_target);
+		var symbolText = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTargetGroup);
 
-		if(!symbols.Contains(_symbol))
+		if(!symbolText.Contains(defineSymbol))
 		{
 			return;
 		}
 
-		PlayerSettings.SetScriptingDefineSymbolsForGroup(_target,symbols.Replace(_symbol,"").Replace(";;",";"));
+		PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTargetGroup,symbolText.Replace(defineSymbol,"").Replace(";;",";"));
 	}
 
-	public static void ChangeDefineSymbol(string[] _oldSymbolArray,string[] _newSymbolArray)
+	public static void ChangeDefineSymbol(string[] oldDefineSymbolArray,string[] newDefineSymbolArray)
 	{
 		foreach(var target in GetBuildTargetGroup())
 		{
-			var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(target);
+			var defineSymbolText = PlayerSettings.GetScriptingDefineSymbolsForGroup(target);
 
-			if(symbols.IsEmpty())
+			if(defineSymbolText.IsEmpty())
 			{
 				continue;
 			}
 
-			var symbolList = symbols.Split(';').ToList();
+			var defineSymbolHashSet = new HashSet<string>(defineSymbolText.Split(';'));
 
-			symbolList.RemoveRange(_oldSymbolArray);
-			symbolList.AddRange(_newSymbolArray);
+			foreach(var oldDefineSymbol in oldDefineSymbolArray)
+			{
+				defineSymbolHashSet.Remove(oldDefineSymbol);
+			}
 
-			PlayerSettings.SetScriptingDefineSymbolsForGroup(target,string.Join(";",symbolList));
+			foreach(var newDefineSymbol in newDefineSymbolArray)
+			{
+				defineSymbolHashSet.Add(newDefineSymbol);
+			}
+
+			PlayerSettings.SetScriptingDefineSymbolsForGroup(target,string.Join(";",defineSymbolHashSet));
 		}
 	}
 
-	public static void ChangePackageName(string _packageName)
+	public static void ChangePackageName(string packageName)
 	{
 		foreach(var target in GetBuildTargetGroup())
 		{
-			PlayerSettings.SetApplicationIdentifier(target,_packageName);
+			PlayerSettings.SetApplicationIdentifier(target,packageName);
 		}
 	}
 
@@ -131,41 +137,36 @@ public static partial class CommonUtility
 	#endregion Player Settings
 
 	#region DisplayDialog
-	public static void DisplayError(Exception _exception)
+	public static void DisplayError(Exception exception)
 	{
-		DisplayDialogWindow("Error",_exception.Message,"Ok");
+		EditorUtility.DisplayDialog("Error",exception.Message,"Ok","");
 
-		throw _exception;
+		throw exception;
 	}
 
-	public static void DisplayInfo(string _message)
+	public static void DisplayInfo(string message)
 	{
-		DisplayDialogWindow("Info",_message,"Ok");
+		EditorUtility.DisplayDialog("Info",message,"Ok","");
 	}
 
-	public static bool DisplayCheckBeforeExecute(string _name)
+	public static bool DisplayCheckBeforeExecute(string name)
 	{
-		return DisplayCheck($"Execute {_name}",$"Execute {_name}?");
+		return DisplayCheck($"Execute {name}",$"Execute {name}?");
 	}
 
-	public static bool DisplayCheck(string _title,string _message)
+	public static bool DisplayCheck(string title,string message)
 	{
-		return DisplayDialogWindow(_title,_message,"Yes","No");
+		return EditorUtility.DisplayDialog(title,message,"Yes","No");
 	}
 
-	private static bool DisplayDialogWindow(string _title,string _message,string _ok,string _cancel = "")
+	public static bool DisplayCancelableProgressBar(string title,string info,int current,int total)
 	{
-		return EditorUtility.DisplayDialog(_title,_message,_ok,_cancel);
+		return DisplayCancelableProgressBar(title,info,current/(float)total);
 	}
 
-	public static bool DisplayCancelableProgressBar(string _title,string _message,int _current,int _total)
+	public static bool DisplayCancelableProgressBar(string title,string info,float progress)
 	{
-		return DisplayCancelableProgressBar(_title,_message,_current/(float)_total);
-	}
-
-	public static bool DisplayCancelableProgressBar(string _title,string _message,float _progress)
-	{
-		return EditorUtility.DisplayCancelableProgressBar(_title,_message,_progress);
+		return EditorUtility.DisplayCancelableProgressBar(title,info,progress);
 	}
 
 	public static void ClearProgressBar()

@@ -7,10 +7,10 @@ public class DrawLineRenderer : BaseLineRenderer
 	protected override bool UseGizmos => true;
 
 #if UNITY_EDITOR
-	private bool m_StartGizmo = false;
+	private bool m_startGizmo = false;
 #endif
 
-	private CancellationTokenSource m_TokenSource = null;
+	private CancellationTokenSource m_tokenSource = null;
 
 	protected override void OnDisable()
 	{
@@ -28,57 +28,57 @@ public class DrawLineRenderer : BaseLineRenderer
 
 	private void KillRenderer()
 	{
-		m_LineRenderer.positionCount = 0;
+		m_lineRenderer.positionCount = 0;
 
-		CommonUtility.KillTokenSource(ref m_TokenSource);
+		CommonUtility.KillTokenSource(ref m_tokenSource);
 	}
 
-	public async UniTask DrawLineAsync(Vector3[] _pointArray,float _speed,bool _ignoreTimescale)
+	public async UniTask DrawLineAsync(Vector3[] pointArray,float speed,bool ignoreTimescale)
 	{
-		CommonUtility.RecycleTokenSource(ref m_TokenSource);
+		CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
-		m_LineRenderer.positionCount = 1;
-		m_LineRenderer.SetPosition(0,_pointArray[0]);
+		m_lineRenderer.positionCount = 1;
+		m_lineRenderer.SetPosition(0,pointArray[0]);
 
-		var duration = CommonUtility.GetTotalDistance(_pointArray)/_speed;
+		var duration = CommonUtility.GetTotalDistance(pointArray)/speed;
 
 #if UNITY_EDITOR
-		m_StartGizmo = true;
+		m_startGizmo = true;
 #endif
 
-		await CommonUtility.ExecuteOverTimeAsync(0.0f,_pointArray.Length-1,duration,(progress)=>
+		await CommonUtility.ExecuteOverTimeAsync(0.0f,pointArray.Length-1,duration,(progress)=>
 		{
 			var prev = Mathf.FloorToInt(progress);
 			var next = Mathf.CeilToInt(progress);
 			var time = progress-prev;
 
-			if(m_LineRenderer.positionCount <= prev)
+			if(m_lineRenderer.positionCount <= prev)
 			{
-				var start = m_LineRenderer.positionCount;
-				m_LineRenderer.positionCount = prev+1;
+				var start = m_lineRenderer.positionCount;
+				m_lineRenderer.positionCount = prev+1;
 
-				for(var i=start;i<m_LineRenderer.positionCount;i++)
+				for(var i=start;i<m_lineRenderer.positionCount;i++)
 				{
-					m_LineRenderer.SetPosition(i,_pointArray[i]);
+					m_lineRenderer.SetPosition(i,pointArray[i]);
 				}
 			}
 			else
 			{
-				var position = Vector3.Lerp(_pointArray[prev],_pointArray[next],time);
+				var position = Vector3.Lerp(pointArray[prev],pointArray[next],time);
 
-				m_LineRenderer.SetPosition(prev,position);
+				m_lineRenderer.SetPosition(prev,position);
 			}
-		},_ignoreTimescale,null,m_TokenSource.Token);
+		},ignoreTimescale,null,m_tokenSource.Token);
 
 #if UNITY_EDITOR
-		m_StartGizmo = false;
+		m_startGizmo = false;
 #endif
 	}
 
 #if UNITY_EDITOR
 	protected override void DrawGizmo()
 	{
-		if(!m_StartGizmo || m_LineRenderer.positionCount < 2)
+		if(!m_startGizmo || m_lineRenderer.positionCount < 2)
 		{
 			return;
 		}
@@ -87,7 +87,7 @@ public class DrawLineRenderer : BaseLineRenderer
 
 		Gizmos.color = Color.blue;
 
-		Gizmos.DrawSphere(m_LineRenderer.GetPosition(m_LineRenderer.positionCount-1),0.05f);
+		Gizmos.DrawSphere(m_lineRenderer.GetPosition(m_lineRenderer.positionCount-1),0.05f);
 
 		Gizmos.color = cached;
 	}

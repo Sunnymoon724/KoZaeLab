@@ -15,7 +15,7 @@ namespace KZLib.KZAttribute
 	[Conditional("UNITY_EDITOR")]
 	public class KZVideoPathAttribute : KZResourcePathAttribute
 	{
-		public KZVideoPathAttribute(bool _changePathButton = false) : base(_changePathButton,true) { }
+		public KZVideoPathAttribute(bool changePathButton = false) : base(changePathButton,true) { }
 	}
 
 #if UNITY_EDITOR

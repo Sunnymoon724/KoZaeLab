@@ -2,111 +2,123 @@ using UnityEngine;
 
 public static partial class TransformExtension
 {
-	public static void ResetTransform(this Transform _transform,Transform _parent = null)
+	public static void ResetTransform(this Transform transform,Transform parent = null)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
+			return;
+		}
+
+		if(parent)
+		{
+			transform.SetParent(parent,true);
+		}
+
+		transform.SetLocalPositionAndRotation(Vector3.zero,Quaternion.identity);
+		transform.localScale = Vector3.one;
+	}
+
+	public static bool IsFront(this Transform transform,Vector3 target)
+	{
+		if(!IsValid(transform))
+		{
+			return false;
+		}
+
+		return Vector3.Dot(transform.forward,target-transform.position) >= 0.0f;
+	}
+
+	public static bool IsRight(this Transform transform,Vector3 target)
+	{
+		if(!IsValid(transform))
+		{
+			return false;
+		}
+
+		return Vector3.Cross(transform.forward,target-transform.position).y >= 0.0f;
+	}
+
+	public static void LookAtSlowly(this Transform transform,Transform target,float speed = 1.0f,bool isHoldX = false,bool isHoldY = false,bool isHoldZ = false)
+	{
+		if(!IsValid(transform))
+		{
+			return;
+		}
+
+		if(!target)
+		{
+			LogTag.System.E("Target is null.");
 
 			return;
 		}
 
-		if(_parent)
-		{
-			_transform.SetParent(_parent,true);
-		}
+		var direction = target.position-transform.position;
 
-		_transform.SetLocalPositionAndRotation(Vector3.zero,Quaternion.identity);
-		_transform.localScale = Vector3.one;
-	}
-
-	public static bool IsFront(this Transform _transform,Vector3 _target)
-	{
-		if(!_transform)
-		{
-			LogTag.System.E("Transform is null.");
-
-			return false;
-		}
-
-		return Vector3.Dot(_transform.forward,_target-_transform.position) >= 0.0f;
-	}
-
-	public static bool IsRight(this Transform _transform,Vector3 _target)
-	{
-		if(!_transform)
-		{
-			LogTag.System.E("Transform is null.");
-
-			return false;
-		}
-
-		return Vector3.Cross(_transform.forward,_target-_transform.position).y >= 0.0f;
-	}
-
-	public static void LookAtSlowly(this Transform _transform,Transform _target,float _speed = 1.0f,bool _holdX = false,bool _holdY = false,bool _holdZ = false)
-	{
-		if(!_transform || !_target)
-		{
-			LogTag.System.E($"Transform or Target is null. {_transform} or {_target}");
-
-			return;
-		}
-
-		var direction = _target.position-_transform.position;
-
-		direction.x = _holdX ? 0.0f : direction.x;
-		direction.y = _holdY ? 0.0f : direction.y;
-		direction.z = _holdZ ? 0.0f : direction.z;
+		direction.x = isHoldX ? 0.0f : direction.x;
+		direction.y = isHoldY ? 0.0f : direction.y;
+		direction.z = isHoldZ ? 0.0f : direction.z;
 
 		var rotation = Quaternion.LookRotation(direction);
 
-		_transform.rotation = Quaternion.Slerp(_transform.rotation,rotation,Time.deltaTime*_speed);
+		transform.rotation = Quaternion.Slerp(transform.rotation,rotation,Time.deltaTime*speed);
 	}
 
-	public static bool IsInside(this Transform _transform,Collider _collider)
+	public static bool IsInside(this Transform transform,Collider collider)
 	{
-		if(!_transform || !_collider)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E($"Transform or Collider is null. {_transform} or {_collider}");
+			return false;
+		}
+
+		if(!collider)
+		{
+			LogTag.System.E("Collider is null.");
 
 			return false;
 		}
 
-		return _transform.position.IsInside(_collider);
+		return transform.position.IsInside(collider);
 	}
 
-	public static bool IsNearlyFacingTowards(this Transform _transform,Vector3 _position,float _cos = 0.95f,bool isSamePlane = false)
+	public static bool IsNearlyFacingTowards(this Transform transform,Vector3 targetPosition,float cosineThreshold = 0.95f,bool ignoreHeight = false)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return false;
 		}
 
-		var position = _transform.position;
+		var currentPosition = transform.position;
 
-		if(isSamePlane)
+		if(ignoreHeight)
 		{
-			_position = new Vector3(_position.x,position.y,_position.z);
+			targetPosition = new Vector3(targetPosition.x,currentPosition.y,targetPosition.z);
 		}
 
-		var direction = _position - position;
+		var directionToTarget = targetPosition - currentPosition;
 
-		return Vector3.Dot(_transform.forward,direction.normalized) >= _cos;
+		return Vector3.Dot(transform.forward,directionToTarget.normalized) >= cosineThreshold;
 	}
 
-	public static void LookAt2D(this Transform _transform,Vector3 _target)
+	public static void LookAt2D(this Transform transform,Vector3 target)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.rotation = Quaternion.LookRotation(Vector3.forward,-(_target-_transform.position));
-		_transform.Rotate(Vector3.forward,-90.0f);
+		transform.rotation = Quaternion.LookRotation(Vector3.forward,-(target-transform.position));
+		transform.Rotate(Vector3.forward,-90.0f);
+	}
+
+	private static bool IsValid(Transform transform)
+	{
+		if(!transform)
+		{
+			LogTag.System.E("Transform is null");
+
+			return false;
+		}
+
+		return true;
 	}
 }

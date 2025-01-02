@@ -6,93 +6,62 @@ using UnityEngine;
 public static partial class TransformExtension
 {
 	/// <summary>
-	/// Get current transform to root ( AAA/BBB )
+	/// AAA/BBB
 	/// </summary>
-	public static string GetHierarchy(this Transform _origin)
+	public static string FindHierarchy(this Transform origin)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
-			return null;
+			return string.Empty;
 		}
 
-		var builder = new StringBuilder(_origin.name);
+		var stringBuilder = new StringBuilder();
+		var nameStack = new Stack<string>();
 
-		while(_origin.parent)
+		while(origin)
 		{
-			builder.Insert(0,'/');
-			builder.Insert(0,_origin.parent.name);
-
-			_origin = _origin.parent;
+			nameStack.Push(origin.name);
+			origin = origin.parent;
 		}
 
-		return builder.ToString();
+		while(nameStack.Count > 0)
+		{
+			stringBuilder.Append("/").Append(nameStack.Pop());
+		}
+
+		return stringBuilder.ToString();
 	}
 
-	/// <summary>
-	/// Get current transform to root ( 0/1/2/3 )
-	/// </summary>
-	public static string GetHierarchyInOrder(this Transform _origin)
+	public static Transform FindFromRoot(this Transform origin,string name)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return null;
 		}
 
-		var builder = new StringBuilder();
-
-		for(var current = _origin;current != null;current = current.parent)
-		{
-			builder.Insert(0,current.GetSiblingIndex());
-
-			if(current.parent)
-			{
-				builder.Insert(0,'/');
-			}
-		}
-
-		return builder.ToString();
+		return origin.root.Find(name);
 	}
 
-	public static Transform FindFromRoot(this Transform _origin,string _name)
+	public static Transform FindSibling(this Transform origin,string name)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return null;
 		}
 
-		return _origin.root.Find(_name);
+		return origin.parent ? origin.parent.Find(name) : null;
 	}
 
-	public static Transform FindSibling(this Transform _origin,string _name)
+	public static Transform FindInParentHierarchy(this Transform origin,string name)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return null;
 		}
 
-		return _origin.parent ? _origin.parent.Find(_name) : null;
-	}
-
-	public static Transform FindInParentHierarchy(this Transform _origin,string _name)
-	{
-		if(!_origin)
+		for(var current = origin.parent;current != null;current = current.parent)
 		{
-			LogTag.System.E("Transform is null.");
-
-			return null;
-		}
-
-		for(var current = _origin.parent;current != null;current = current.parent)
-		{
-			if(current.name.IsEqual(_name))
+			if(current.name.IsEqual(name))
 			{
 				return current;
 			}
@@ -101,194 +70,182 @@ public static partial class TransformExtension
 		return null;
 	}
 
-	public static Transform GetParent(this Transform _origin)
+	public static Transform GetParent(this Transform origin)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return null;
 		}
 
-		return _origin ? _origin.parent : null;
+		return origin ? origin.parent : null;
 	}
 
-	public static Transform AddChild(this Transform _origin,string _name)
+	public static Transform AddChild(this Transform origin,string name)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return null;
 		}
 
-		var child = new GameObject(_name);
+		var child = new GameObject(name);
 
-		_origin.SetChild(child.transform);
+		origin.SetChild(child.transform);
 
 		return child.transform;
 	}
 
-	public static Transform[] AddChildren(this Transform _origin,string[] _nameArray)
+	public static Transform[] AddChildren(this Transform origin,string[] nameArray)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return null;
 		}
 
-		var dataArray = new Transform[_nameArray.Length];
+		var dataArray = new Transform[nameArray.Length];
 
-		for(var i=0;i<_nameArray.Length;i++)
+		for(var i=0;i<nameArray.Length;i++)
 		{
-			dataArray[i] = AddChild(_origin,_nameArray[i]);
+			dataArray[i] = AddChild(origin,nameArray[i]);
 		}
 
 		return dataArray;
 	}
 
-	public static Transform[] AddChildren(this Transform _origin,string _name,int _count)
+	public static Transform[] AddChildren(this Transform origin,string name,int count)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return null;
 		}
 
-		var _nameArray = new string[_count];
+		var nameArray = new string[count];
 
-		for(var i=0;i<_count;i++)
+		for(var i=0;i<count;i++)
 		{
-			_nameArray[i] = $"{_name}_{i}";
+			nameArray[i] = $"{name}_{i}";
 		}
 
-		return AddChildren(_origin,_nameArray);
+		return AddChildren(origin,nameArray);
 	}
 
-	public static void SetChild(this Transform _origin,Transform _child,bool _sameLayer = true)
+	public static void SetChild(this Transform origin,Transform child,bool isSameLayer = true)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		SetChildInside(_origin,_child,true,_sameLayer);
+		_SetChild(origin,child,true,isSameLayer);
 	}
 
-	public static void SetUIChild(this Transform _origin,Transform _child,bool _sameLayer = true)
+	public static void SetUIChild(this Transform origin,Transform child,bool isSameLayer = true)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		SetChildInside(_origin,_child,false,_sameLayer);
+		_SetChild(origin,child,false,isSameLayer);
 	}
 
-	private static void SetChildInside(Transform _origin,Transform _child,bool _stays,bool _sameLayer)
+	private static void _SetChild(Transform origin,Transform child,bool worldPositionStays,bool isSameLayer)
 	{
-		_child.SetParent(_origin,_stays);
-
-		if(_sameLayer)
+		if(!IsValid(origin))
 		{
-			_child.gameObject.layer = _origin.gameObject.layer;
+			return;
+		}
+
+		child.SetParent(origin,worldPositionStays);
+
+		if(isSameLayer)
+		{
+			child.gameObject.layer = origin.gameObject.layer;
 		}
 	}
 
-	private static Transform AddChildInside(Transform _origin,GameObject _prefab,bool _stays,bool _sameLayer)
+	private static Transform AddChildInside(Transform origin,GameObject prefab,bool worldPositionStays,bool isSameLayer)
 	{
-		var child = CommonUtility.CopyObject(_prefab);
+		if(!IsValid(origin))
+		{
+			return null;
+		}
 
-		SetChildInside(_origin,child.transform,_stays,_sameLayer);
+		var child = prefab.CopyObject() as GameObject;
+
+		_SetChild(origin,child.transform,worldPositionStays,isSameLayer);
 
 		return child.transform;
 	}
 
-	public static Transform AddChild(this Transform _origin,GameObject _prefab,bool _sameLayer = true)
+	public static Transform AddChild(this Transform origin,GameObject prefab,bool isSameLayer = true)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return null;
 		}
 
-		return AddChildInside(_origin,_prefab,true,_sameLayer);
+		return AddChildInside(origin,prefab,true,isSameLayer);
 	}
 
-	public static Transform[] AddChildren(this Transform _origin,GameObject _prefab,int _count,bool _sameLayer = true)
+	public static Transform[] AddChildren(this Transform origin,GameObject prefab,int count,bool isSameLayer = true)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return null;
 		}
 
-		var dataArray = new Transform[_count];
+		var dataArray = new Transform[count];
 
-		for(var i=0;i<_count;i++)
+		for(var i=0;i<count;i++)
 		{
-			dataArray[i] = AddChild(_origin,_prefab,_sameLayer);
+			dataArray[i] = AddChild(origin,prefab,isSameLayer);
 		}
 
 		return dataArray;
 	}
 
-	public static Transform AddUIChild(this Transform _origin,GameObject _prefab,bool _sameLayer = true)
+	public static Transform AddUIChild(this Transform origin,GameObject prefab,bool isSameLayer = true)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return null;
 		}
 
-		return AddChildInside(_origin,_prefab,false,_sameLayer);
+		return AddChildInside(origin,prefab,false,isSameLayer);
 	}
 
-	public static Transform[] AddUIChildren(this Transform _origin,GameObject _prefab,int _count,bool _sameLayer = true)
+	public static Transform[] AddUIChildren(this Transform origin,GameObject prefab,int count,bool isSameLayer = true)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return null;
 		}
 
-		var dataArray = new Transform[_count];
+		var dataArray = new Transform[count];
 
-		for(var i=0;i<_count;i++)
+		for(var i=0;i<count;i++)
 		{
-			dataArray[i] = AddUIChild(_origin,_prefab,_sameLayer);
+			dataArray[i] = AddUIChild(origin,prefab,isSameLayer);
 		}
 
 		return dataArray;
 	}
 
-	public static Transform FindInChild(this Transform _origin,string _name)
+	public static Transform FindChild(this Transform origin,string name)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return null;
 		}
 
 		var queue = new Queue<Transform>();
-		queue.Enqueue(_origin);
+		queue.Enqueue(origin);
 
 		while(queue.Count > 0)
 		{
 			var current = queue.Dequeue();
 
-			if(current.name.IsEqual(_name))
+			if(current.name.IsEqual(name))
 			{
 				return current;
 			}
@@ -302,25 +259,23 @@ public static partial class TransformExtension
 		return null;
 	}
 
-	public static void FindAllChildren(this Transform _origin,string _text,ref List<Transform> _resultList)
+	public static IEnumerable<Transform> FindChildGroup(this Transform origin,string name = null)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
-			return;
+			yield break;
 		}
 
 		var queue = new Queue<Transform>();
-		queue.Enqueue(_origin);
+		queue.Enqueue(origin);
 
 		while(queue.Count > 0)
 		{
 			var current = queue.Dequeue();
 
-			if(current.name.IsEqual(_text))
+			if(name.IsEmpty() || current.name.IsEqual(name))
 			{
-				_resultList.Add(current);
+				yield return current;
 			}
 
 			for(var i=0;i<current.childCount;i++)
@@ -330,132 +285,73 @@ public static partial class TransformExtension
 		}
 	}
 
-	public static Transform GetChild(this Transform _origin,string _name)
+	public static Transform GetChild(this Transform origin,string name)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return null;
 		}
 
-		return _origin.Find(_name);
+		return origin.Find(name);
 	}
 
-	/// <summary>
-	/// Get All Children In Hierarchy
-	/// </summary>
-	public static void GetAllChildrenInHierarchy(this Transform _origin,ref List<Transform> _resultList)
+	public static Transform DestroyChildren(this Transform origin,bool isActiveOnly = false,params Transform[] exceptionArray)
 	{
-		if(!_origin)
+		if(!IsValid(origin))
 		{
-			LogTag.System.E("Transform is null.");
-
-			return;
-		}
-
-		var queue = new Queue<Transform>();
-		queue.Enqueue(_origin);
-
-		while(queue.Count > 0)
-		{
-			var current = queue.Dequeue();
-
-			_resultList.Add(current);
-
-			for(var i=0;i<current.childCount;i++)
-			{
-				queue.Enqueue(current.GetChild(i));
-			}
-		}
-	}
-
-	public static Transform DestroyChildren(this Transform _origin,bool _activeOnly = false,params Transform[] _exceptionArray)
-	{
-		if(!_origin)
-		{
-			LogTag.System.E("Transform is null.");
-
 			return null;
 		}
 
-		var count = _origin.childCount;
+		var count = origin.childCount;
 
 		if(count == 0)
 		{
-			return _origin;
+			return origin;
 		}
+
+		var exceptionSet = new HashSet<Transform>(exceptionArray);
 
 		for(var i=count-1;i>=0;i--)
 		{
-			var child = _origin.GetChild(i);
+			var child = origin.GetChild(i);
 
-			if(_activeOnly && !child.gameObject.activeSelf)
+			if(isActiveOnly && !child.gameObject.activeSelf)
 			{
 				continue;
 			}
 
-			var isException = false;
-
-			foreach(var exception in _exceptionArray)
-			{
-				if(child == exception)
-				{
-					isException = true;
-
-					break;
-				}
-			}
-
-			if(isException)
+			if(exceptionSet.Contains(child))
 			{
 				continue;
 			}
 
 			child.SetParent(null);
-			CommonUtility.DestroyObject(child.gameObject);
+			child.gameObject.DestroyObject();
 		}
 
-		return _origin;
+		return origin;
 	}
 
-	public static void TraverseChildren(this Transform _origin,Action<Transform> _onAction)
+	public static void TraverseChildren(this Transform origin,Action<Transform> onAction)
 	{
-		if(!_origin)
-		{
-			LogTag.System.E("Transform is null.");
-
-			return;
-		}
-
-		if(!_origin)
+		if(!IsValid(origin))
 		{
 			return;
 		}
 
-		var stack = new Stack<Transform>();
-		var current = _origin;
+		var queue = new Queue<Transform>();
+		queue.Enqueue(origin);
 
-		do
+		while(queue.Count > 0)
 		{
-			_onAction?.Invoke(current);
+			var current = queue.Dequeue();
 
-			var count = current.childCount;
+			onAction?.Invoke(current);
 
-			for(var i=count-1;i>=0;i--)
+			for(var i=0;i<current.childCount;i++)
 			{
-				stack.Push(current.GetChild(i));
-			}
-
-			if(stack.Count > 0)
-			{
-				current = stack.Pop();
-			}
-			else
-			{
-				break;
+				queue.Enqueue(current.GetChild(i));
 			}
 		}
-		while(true);
 	}
 }

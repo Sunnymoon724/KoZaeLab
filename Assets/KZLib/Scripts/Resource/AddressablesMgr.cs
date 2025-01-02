@@ -5,38 +5,39 @@ using Cysharp.Threading.Tasks;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceLocations;
+using KZLib.KZUtility;
 using Object = UnityEngine.Object;
 
 namespace KZLib
 {
 	public class AddressablesMgr : Singleton<AddressablesMgr>
 	{
-		private bool m_Disposed = false;
+		private bool m_disposed = false;
 
 		private record AssetData(Object Asset,string Label);
 
-		private readonly Dictionary<string,AssetData> m_AssetDataDict = new();
+		private readonly Dictionary<string,AssetData> m_assetDataDict = new();
 
-		protected override void Release(bool _disposing)
+		protected override void Release(bool disposing)
 		{
-			if(m_Disposed)
+			if(m_disposed)
 			{
 				return;
 			}
 
-			if(_disposing)
+			if(disposing)
 			{
-				m_AssetDataDict.Clear();
+				m_assetDataDict.Clear();
 			}
 
-			m_Disposed = true;
+			m_disposed = true;
 
-			base.Release(_disposing);
+			base.Release(disposing);
 		}
 
-		public async UniTask<long> GetDownloadAssetSizeAsync(string _label)
+		public async UniTask<long> GetDownloadAssetSizeAsync(string label)
 		{
-			var handle = Addressables.GetDownloadSizeAsync(_label);
+			var handle = Addressables.GetDownloadSizeAsync(label);
 
 			await handle;
 
@@ -47,15 +48,15 @@ namespace KZLib
 			return size;
 		}
 
-		public async UniTask<bool> DownloadAssetAsync(string _label,Action<float,long,long> _onProgress = null)
+		public async UniTask<bool> DownloadAssetAsync(string label,Action<float,long,long> onUpdateProgress = null)
 		{
-			var handle = Addressables.DownloadDependenciesAsync(_label);
+			var handle = Addressables.DownloadDependenciesAsync(label);
 
 			while(!handle.IsDone)
 			{
 				var status = handle.GetDownloadStatus();
 
-				_onProgress?.Invoke(status.Percent,status.DownloadedBytes,status.TotalBytes);
+				onUpdateProgress?.Invoke(status.Percent,status.DownloadedBytes,status.TotalBytes);
 
 				await UniTask.Yield();
 			}
@@ -85,27 +86,27 @@ namespace KZLib
 			}
 		}
 
-		public TObject GetObject<TObject>(string _path) where TObject : Object
+		public TObject GetObject<TObject>(string path) where TObject : Object
 		{
-			if(!m_AssetDataDict.ContainsKey(_path))
+			if(!m_assetDataDict.ContainsKey(path))
 			{
-				LogTag.System.E($"Asset is not exist. [{_path}]");
+				LogTag.System.E($"Asset is not exist. [{path}]");
 
 				return null;
 			}
 
-			var data = m_AssetDataDict[_path];
+			var data = m_assetDataDict[path];
 
 			return data.Asset as TObject;
 		}
 
-		public TObject[] GetObjectArray<TObject>(string _path) where TObject : Object
+		public TObject[] GetObjectArray<TObject>(string path) where TObject : Object
 		{
-			var dataGroup = m_AssetDataDict.Where(x=>x.Key.Contains(_path));
+			var dataGroup = m_assetDataDict.Where(x=>x.Key.Contains(path));
 
 			if(dataGroup.IsNullOrEmpty())
 			{
-				LogTag.System.E($"Asset is not exist. [{_path}]");
+				LogTag.System.E($"Asset is not exist. [{path}]");
 
 				return null;
 			}
@@ -113,9 +114,9 @@ namespace KZLib
 			return dataGroup.Select(x => x.Value.Asset as TObject).Where(y => y != null).ToArray();
 		}
 
-		public async UniTask LoadResourceAsync(string[] _labelArray,Action<float,float> _onProgress)
+		public async UniTask LoadResourceAsync(string[] labelArray,Action<float,float> onUpdateProgress)
 		{
-			if(_labelArray.IsNullOrEmpty())
+			if(labelArray.IsNullOrEmpty())
 			{
 				LogTag.System.E($"LabelArray is null or empty.");
 
@@ -124,7 +125,7 @@ namespace KZLib
 
 			var dataList = new List<(IResourceLocation,string)>();
 
-			foreach(var label in _labelArray)
+			foreach(var label in labelArray)
 			{
 				var handle = Addressables.LoadResourceLocationsAsync(label);
 
@@ -147,7 +148,7 @@ namespace KZLib
 				var data = dataList[i];
 				var key = data.Item1.InternalId;
 
-				if(m_AssetDataDict.ContainsKey(key))
+				if(m_assetDataDict.ContainsKey(key))
 				{
 					continue;
 				}
@@ -161,18 +162,18 @@ namespace KZLib
 					throw handle.OperationException;
 				}
 
-				m_AssetDataDict.Add(key,new AssetData(handle.Result,data.Item2));
+				m_assetDataDict.Add(key,new AssetData(handle.Result,data.Item2));
 
-				_onProgress?.Invoke(i,totalCount);
+				onUpdateProgress?.Invoke(i,totalCount);
 			}
 		}
 
-		public void ReleaseResources(params string[] _labelArray)
+		public void ReleaseResources(params string[] labelArray)
 		{
-			foreach(var key in m_AssetDataDict.Where(x => _labelArray.Contains(x.Value.Label)).Select(y => y.Key))
+			foreach(var key in m_assetDataDict.Where(x => labelArray.Contains(x.Value.Label)).Select(y => y.Key))
 			{
-				Addressables.Release(m_AssetDataDict[key].Asset);
-				m_AssetDataDict.Remove(key);
+				Addressables.Release(m_assetDataDict[key].Asset);
+				m_assetDataDict.Remove(key);
 			}
 		}
 	}

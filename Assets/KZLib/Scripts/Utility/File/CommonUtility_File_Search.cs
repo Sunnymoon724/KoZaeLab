@@ -5,45 +5,50 @@ public static partial class CommonUtility
 	/// <summary>
 	/// .meta is not included
 	/// </summary>
-	/// <param name="_folderPath">The absolute folder path.</param>
-	public static IEnumerable<string> GetAllFilePathInFolder(string _folderPath,bool _includeSubFolders = false)
+	/// <param name="folderPath">The absolute folder path.</param>
+	public static IEnumerable<string> FindFilePathGroup(string folderPath,bool includeSubFolder = false)
 	{
-		if(!IsFolderExist(_folderPath,true))
+		if(!IsFolderExist(folderPath,true))
 		{
 			yield break;
 		}
 
-		if(_includeSubFolders)
+		var folderQueue = new Queue<string>();
+		folderQueue.Enqueue(folderPath);
+
+		while(folderQueue.Count > 0)
 		{
-			foreach(var folderPath in GetFolderPathArray(_folderPath))
+			var currentFolderPath = folderQueue.Dequeue();
+
+			foreach(var filePath in GetFilePathArray(folderPath))
 			{
-				foreach(var filePath in GetAllFilePathInFolder(folderPath,true))
+				if(filePath.EndsWith(".meta"))
 				{
-					yield return filePath;
+					continue;
+				}
+
+				yield return filePath;
+			}
+
+			if(includeSubFolder)
+			{
+				foreach(var subFolderPath in GetFolderPathArray(currentFolderPath))
+				{
+					folderQueue.Enqueue(subFolderPath);
 				}
 			}
 		}
-
-		foreach(var filePath in GetFilePathArray(_folderPath))
-		{
-			if(filePath.EndsWith(".meta"))
-			{
-				continue;
-			}
-
-			yield return filePath;
-		}
 	}
 
-	/// <param name="_folderPath">The absolute folder path.</param>
-	public static string SearchFileInFolder(string _folderPath,string _fileName)
+	/// <param name="folderPath">The absolute folder path.</param>
+	public static string SearchFileInFolder(string folderPath,string _fileName)
 	{
-		if(!IsFolderExist(_folderPath,true))
+		if(!IsFolderExist(folderPath,true))
 		{
 			return null;
 		}
 
-		foreach(var filePath in GetFilePathArray(_folderPath))
+		foreach(var filePath in GetFilePathArray(folderPath))
 		{
 			var fileName = GetFileName(filePath);
 
@@ -53,9 +58,9 @@ public static partial class CommonUtility
 			}
 		}
 
-		foreach(var folderPath in GetFolderPathArray(_folderPath))
+		foreach(var subFolderPath in GetFolderPathArray(folderPath))
 		{
-			var result = SearchFileInFolder(folderPath,_fileName);
+			var result = SearchFileInFolder(subFolderPath,_fileName);
 
 			if(result != null)
 			{
@@ -66,22 +71,22 @@ public static partial class CommonUtility
 		return null;
 	}
 
-	/// <param name="_folderPath">The absolute folder path.</param>
-	public static IEnumerable<string> SearchExtensionInFolder(string _folderPath,string _extension)
+	/// <param name="folderPath">The absolute folder path.</param>
+	public static IEnumerable<string> SearchExtensionInFolder(string folderPath,string _extension)
 	{
-		if(!IsFolderExist(_folderPath,true))
+		if(!IsFolderExist(folderPath,true))
 		{
 			yield break;
 		}
 
-		foreach(var filePath in GetFilePathArray(_folderPath,_extension))
+		foreach(var filePath in GetFilePathArray(folderPath,_extension))
 		{
 			yield return filePath;
 		}
 
-		foreach(var folderPath in GetFolderPathArray(_folderPath))
+		foreach(var subFolderPath in GetFolderPathArray(folderPath))
 		{
-			foreach(var filePath in SearchExtensionInFolder(folderPath,_extension))
+			foreach(var filePath in SearchExtensionInFolder(subFolderPath,_extension))
 			{
 				yield return filePath;
 			}

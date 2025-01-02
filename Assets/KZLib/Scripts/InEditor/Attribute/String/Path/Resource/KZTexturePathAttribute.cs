@@ -16,7 +16,7 @@ namespace KZLib.KZAttribute
 	[Conditional("UNITY_EDITOR")]
 	public class KZTexturePathAttribute : KZResourcePathAttribute
 	{
-		public KZTexturePathAttribute(bool _changePathButton = false,bool _newLine = false) : base(_changePathButton,_newLine) { }
+		public KZTexturePathAttribute(bool changePathButton = false,bool newLine = false) : base(changePathButton,newLine) { }
 	}
 
 #if UNITY_EDITOR
@@ -28,11 +28,16 @@ namespace KZLib.KZAttribute
 
 		protected override void OnOpenResource()
 		{
-			var viewer = EditorWindow.GetWindow<TextureWindow>("Viewer");
+			var texture2D = GetResource<Texture2D>();
 
-			var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(CommonUtility.GetAssetsPath(ValueEntry.SmartValue));
+			if(!texture2D)
+			{
+				return;
+			}
 
-			viewer.SetTexture(sprite.texture);
+			var viewer = EditorWindow.GetWindow<TextureWindow>("Texture Window");
+
+			viewer.SetResource(texture2D);
 			viewer.Show();
 		}
 	}

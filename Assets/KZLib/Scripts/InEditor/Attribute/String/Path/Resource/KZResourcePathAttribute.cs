@@ -3,6 +3,8 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using System.Diagnostics;
 
+using Object = UnityEngine.Object;
+
 #if UNITY_EDITOR
 
 using UnityEditor;
@@ -16,7 +18,7 @@ namespace KZLib.KZAttribute
 	[Conditional("UNITY_EDITOR")]
 	public abstract class KZResourcePathAttribute : KZPathAttribute
 	{
-		protected KZResourcePathAttribute(bool _changePathBtn,bool _isIncludeAssets) : base(true,_changePathBtn,_isIncludeAssets) { }
+		protected KZResourcePathAttribute(bool changePathBtn,bool isIncludeAssets) : base(true,changePathBtn,isIncludeAssets) { }
 	}
 
 #if UNITY_EDITOR
@@ -32,11 +34,11 @@ namespace KZLib.KZAttribute
 			return CommonUtility.GetFilePathInPanel("Change new path.",ResourceKind);
 		}
 
-		protected override Rect OnClickToOpen(Rect _rect,bool _isValid)
+		protected override Rect OnClickToOpen(Rect rect,bool isValid)
 		{
-			var rect = DrawParentFolderOpenButton(_rect,_isValid);
+			var newRect = DrawParentFolderOpenButton(rect,isValid);
 
-			return DrawButton(rect,IconType,_isValid,OnOpenResource);
+			return DrawButton(newRect,IconType,isValid,OnOpenResource);
 		}
 
 		protected override bool IsValidPath()
@@ -44,61 +46,82 @@ namespace KZLib.KZAttribute
 			return CommonUtility.IsFileExist(CommonUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets));
 		}
 
-		protected class ResourceViewer<UObject> : OdinEditorWindow where UObject : UnityEngine.Object
+		protected UResource GetResource<UResource>() where UResource : Object
 		{
-			private bool m_Changed = false;
-			private Editor m_Editor = null;
-			protected string m_ObjectPath = null;
-			private UObject m_ViewerObject = null;
+			var assetsPath = CommonUtility.GetAssetsPath(ValueEntry.SmartValue);
+
+			if(!CommonUtility.IsStartWithAssetsHeader(assetsPath))
+			{
+				CommonUtility.DisplayError(new Exception($"{ValueEntry.SmartValue} is not in the Assets folder."));
+
+				return null;
+			}
+
+			var resource = AssetDatabase.LoadAssetAtPath<UResource>(assetsPath);
+
+			if(!resource)
+			{
+				CommonUtility.DisplayError(new Exception($"{assetsPath} is not a resource."));
+
+				return null;
+			}
+
+			return resource;
+		}
+
+		protected class ResourceViewer<UObject> : OdinEditorWindow where UObject : Object
+		{
+			private bool m_changed = false;
+			private Editor m_editor = null;
+			protected string m_objectPath = null;
+			private UObject m_viewerObject = null;
 
 			protected UObject ViewerObject
 			{
-				get => m_ViewerObject;
+				get => m_viewerObject;
 				set
 				{
-					m_ViewerObject = value;
-					m_Changed = false;
+					m_viewerObject = value;
+					m_changed = false;
 				}
 			}
 
-			public virtual void Initialize(object _param)
+			public virtual void Initialize(object pathParam)
 			{
-				m_ObjectPath = _param as string;
+				m_objectPath = pathParam as string;
 
-				if(m_ObjectPath.IsEmpty())
+				if(m_objectPath.IsEmpty())
 				{
 					return;
 				}
 
-				ViewerObject = AssetDatabase.LoadAssetAtPath<UObject>(CommonUtility.GetAssetsPath(m_ObjectPath));
+				ViewerObject = AssetDatabase.LoadAssetAtPath<UObject>(CommonUtility.GetAssetsPath(m_objectPath));
 			}
 
 			[OnInspectorGUI]
-#pragma warning disable IDE0051
-            private void OnInspector()
+            protected void OnInspector()
             {
-				if(!m_Changed)
+				if(!m_changed)
 				{
-					m_Editor = Editor.CreateEditor(ViewerObject);
+					m_editor = Editor.CreateEditor(ViewerObject);
 
-					m_Changed = true;
+					m_changed = true;
 				}
 
 				ShowEditor();
 			}
-#pragma warning restore IDE0051
 
 			protected override void OnDestroy()
 			{
-				if(m_Editor)
+				if(m_editor)
 				{
-					DestroyImmediate(m_Editor);
+					DestroyImmediate(m_editor);
 				}
 			}
 
 			protected virtual void ShowEditor()
 			{
-				m_Editor.OnInteractivePreviewGUI(GUILayoutUtility.GetRect(200,200),new GUIStyle());
+				m_editor.OnInteractivePreviewGUI(GUILayoutUtility.GetRect(200,200),new GUIStyle());
 			}
 		}
 	}

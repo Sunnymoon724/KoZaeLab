@@ -3,30 +3,30 @@ using System.IO;
 
 public static partial class CommonUtility
 {
-	/// <param name="_filePath">The absolute file path.</param>
-	public static string ReadFileToText(string _filePath)
+	/// <param name="filePath">The absolute file path.</param>
+	public static string ReadFileToText(string filePath)
 	{
-		if(!IsFileExist(_filePath,true))
+		if(!IsFileExist(filePath,true))
 		{
 			return null;
 		}
 
-		return ReadFile(_filePath,File.ReadAllText);
+		return ReadFile(filePath,File.ReadAllText);
 	}
 
-	/// <param name="_filePath">The absolute file path.</param>
-	public static byte[] ReadFileToBytes(string _filePath)
+	/// <param name="filePath">The absolute file path.</param>
+	public static byte[] ReadFileToBytes(string filePath)
 	{
-		if(!IsFileExist(_filePath,true))
+		if(!IsFileExist(filePath,true))
 		{
 			return null;
 		}
 
-		return ReadFile(_filePath,File.ReadAllBytes);
+		return ReadFile(filePath,File.ReadAllBytes);
 	}
 
-	private static TRead ReadFile<TRead>(string _filePath,Func<string,TRead> _onRead)
+	private static TRead ReadFile<TRead>(string filePath,Func<string,TRead> _onRead)
 	{
-		return _onRead(_filePath);
+		return _onRead(filePath);
 	}
 }

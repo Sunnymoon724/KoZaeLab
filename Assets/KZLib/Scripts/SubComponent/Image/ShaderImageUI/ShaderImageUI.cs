@@ -4,24 +4,24 @@ using UnityEngine;
 public class ShaderImageUI : BaseImageUI
 {
 	[SerializeField,HideInInspector]
-	protected Shader m_Shader = null;
+	protected Shader m_shader = null;
 
 	[ShowInInspector,LabelText("Shader")]
 	protected Shader Shader
 	{
-		get => m_Shader;
+		get => m_shader;
 		set
 		{
-			if(m_Shader == value)
+			if(m_shader == value)
 			{
 				return;
 			}
 
-			m_Shader = value;
+			m_shader = value;
 
-			if(m_Image)
+			if(m_image)
 			{
-				m_Image.material = m_Shader != null ? new Material(m_Shader) : null;
+				m_image.material = m_shader != null ? new Material(m_shader) : null;
 			}
 		}
 	}
@@ -30,9 +30,9 @@ public class ShaderImageUI : BaseImageUI
 	{
 		base.Initialize();
 
-		if(m_Image && !m_Image.material && Shader)
+		if(m_image && !m_image.material && Shader)
 		{
-			m_Image.material = new Material(Shader);
+			m_image.material = new Material(Shader);
 		}
 	}
 
@@ -40,11 +40,11 @@ public class ShaderImageUI : BaseImageUI
 	{
 		base.Release();
 
-		if(m_Image && m_Image.material)
+		if(m_image && m_image.material)
 		{
-			CommonUtility.DestroyObject(m_Image.material);
+			m_image.material.DestroyObject();
 
-			m_Image.material = null;
+			m_image.material = null;
 		}
 	}
 }

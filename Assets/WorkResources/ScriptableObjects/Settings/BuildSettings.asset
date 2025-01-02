@@ -12,21 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8313b98916a794b558b79c18251633ce, type: 3}
   m_Name: BuildSettings
   m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
-  m_Initialize: 1
+  m_initialize: 1
   m_BuildPlatform: 32
   m_OpenFolderAfterAppBuild: 0
   m_UploadAfterAppBuild: 0
   m_UploadType: 1
-  m_GoogleDriveFolderId: 
   m_BundleLoadPath: http://localhost
   m_IsOpenFolderAfterBundleBuild: 0
   m_IsUploadAfterBundleBuild: 0

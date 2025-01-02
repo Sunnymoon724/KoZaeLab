@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.ShortcutManagement;
 using UnityEngine;
 
-namespace KZEditor
+namespace KZLib.KZEditor
 {
 #pragma warning disable IDE0051
 	public class KZShortCut

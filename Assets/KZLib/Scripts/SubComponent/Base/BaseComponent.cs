@@ -30,6 +30,18 @@ public abstract class BaseComponent : SerializedMonoBehaviour
 
 	protected virtual void Reset() { }
 
+	protected bool IsValid(Object value,string objectText)
+	{
+		if(!value)
+		{
+			LogTag.System.E($"{objectText} is null");
+
+			return false;
+		}
+
+		return true;
+	}
+
 #if UNITY_EDITOR
 	private void OnDrawGizmos()
 	{
@@ -46,12 +58,12 @@ public abstract class BaseComponent : SerializedMonoBehaviour
 		DrawGizmoText(transform.position);
 	}
 
-	protected void DrawGizmoText(Vector3 _position)
+	protected void DrawGizmoText(Vector3 position)
 	{
 		var style = new GUIStyle();
 		style.normal.textColor = Color.white;
 
-		Handles.Label(_position,GizmosText,style);
+		Handles.Label(position,GizmosText,style);
 	}
 
 	protected Vector3 CubeSize => transform.lossyScale*10.0f;

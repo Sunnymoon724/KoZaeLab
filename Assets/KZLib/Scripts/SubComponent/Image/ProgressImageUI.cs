@@ -8,46 +8,46 @@ using System;
 public class ProgressImageUI : BaseImageUI
 {
 	[SerializeField,HideInInspector]
-	private float m_CurrentValue = 1.0f;
+	private float m_currentValue = 1.0f;
 
-	[LabelText("Min Value"),SerializeField,KZMaxClamp(nameof(m_MaxValue))]
-	private float m_MinValue = 0.0f;
+	[LabelText("Min Value"),SerializeField,KZMaxClamp(nameof(m_maxValue))]
+	private float m_minValue = 0.0f;
 
-	[LabelText("Max Value"),SerializeField,KZMinClamp(nameof(m_MinValue))]
-	private float m_MaxValue = 1.0f;
+	[LabelText("Max Value"),SerializeField,KZMinClamp(nameof(m_minValue))]
+	private float m_maxValue = 1.0f;
 
-	[BoxGroup("Value",Order = 2),ShowInInspector,LabelText("Current Value"),PropertyRange(nameof(m_MinValue),nameof(m_MaxValue))]
+	[BoxGroup("Value",Order = 2),ShowInInspector,LabelText("Current Value"),PropertyRange(nameof(m_minValue),nameof(m_maxValue))]
 	public float CurrentValue
 	{
-		get => m_CurrentValue;
+		get => m_currentValue;
 		private set
 		{
-			if(m_CurrentValue == value)
+			if(m_currentValue == value)
 			{
 				return;
 			}
 
-			m_CurrentValue = Mathf.Clamp(value,m_MinValue,m_MaxValue);
+			m_currentValue = Mathf.Clamp(value,m_minValue,m_maxValue);
 
-			if(m_Image)
+			if(m_image)
 			{
-				m_Image.fillAmount = CurrentProgress;
+				m_image.fillAmount = CurrentProgress;
 			}
 
-			if(m_UseGradient)
+			if(m_useGradient)
 			{
-				m_Image.color = m_GradientColor.Evaluate(CurrentProgress);
+				m_image.color = m_gradientColor.Evaluate(CurrentProgress);
 			}
 		}
 	}
 
 	[BoxGroup("Option",Order = 1)]
 	[HorizontalGroup("Option/0"),LabelText("Use Gradient"),SerializeField,ToggleLeft]
-	private bool m_UseGradient = false;
-	[HorizontalGroup("Option/0"),HideLabel,SerializeField,ShowIf(nameof(m_UseGradient))]
-	private Gradient m_GradientColor = null;
+	private bool m_useGradient = false;
+	[HorizontalGroup("Option/0"),HideLabel,SerializeField,ShowIf(nameof(m_useGradient))]
+	private Gradient m_gradientColor = null;
 
-	public float CurrentProgress => (CurrentValue-m_MinValue)/(m_MaxValue-m_MinValue);
+	public float CurrentProgress => (CurrentValue-m_minValue)/(m_maxValue-m_minValue);
 
 	private Tween m_Tween = null;
 
@@ -55,7 +55,7 @@ public class ProgressImageUI : BaseImageUI
 	{
 		base.Initialize();
 
-		SetValue(m_MinValue);
+		SetValue(m_minValue);
 	}
 
 	protected override void Release()
@@ -72,12 +72,12 @@ public class ProgressImageUI : BaseImageUI
 		CommonUtility.KillTween(m_Tween);
 	}
 
-    public void SetRange(float _min,float _max)
+    public void SetRange(float minValue,float maxValue)
 	{
-		m_MinValue = Mathf.Min(_min,_max);
-		m_MaxValue = Mathf.Max(_min,_max);
+		m_minValue = Mathf.Min(minValue,maxValue);
+		m_maxValue = Mathf.Max(minValue,maxValue);
 
-		CurrentValue = m_MinValue;
+		CurrentValue = m_minValue;
 	}
 
 	public void SetValue(float _value)
@@ -85,13 +85,13 @@ public class ProgressImageUI : BaseImageUI
 		CurrentValue = _value;
 	}
 
-	public void SetValueDuration(float _value,float _duration,Action _onComplete = null)
+	public void SetValueDuration(float value,float duration,Action onComplete = null)
 	{
 		CommonUtility.KillTween(m_Tween);
 
-		var amount = _value/m_MaxValue;
+		var amount = value/m_maxValue;
 
-		m_Tween = CommonUtility.SetTweenProgress(CurrentValue,_value,_duration,null,_onComplete);
+		m_Tween = CommonUtility.SetTweenProgress(CurrentValue,value,duration,null,onComplete);
 
 		m_Tween.Play();
 	}
@@ -100,13 +100,13 @@ public class ProgressImageUI : BaseImageUI
 	{
 		base.Reset();
 
-		m_Image.type = Image.Type.Filled;
-		m_Image.fillMethod = Image.FillMethod.Horizontal;
-		m_Image.fillOrigin = 0;
-		m_Image.fillAmount = 0.0f;
+		m_image.type = Image.Type.Filled;
+		m_image.fillMethod = Image.FillMethod.Horizontal;
+		m_image.fillOrigin = 0;
+		m_image.fillAmount = 0.0f;
 
-		m_MinValue = 0.0f;
-		m_MaxValue = 1.0f;
+		m_minValue = 0.0f;
+		m_maxValue = 1.0f;
 
 		CurrentValue = 0.0f;
 	}

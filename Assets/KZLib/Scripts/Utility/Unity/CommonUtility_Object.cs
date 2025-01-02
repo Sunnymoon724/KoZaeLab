@@ -1,7 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using UnityEngine;
 
 #if UNITY_EDITOR
 
@@ -13,80 +10,15 @@ using Object = UnityEngine.Object;
 
 public static partial class CommonUtility
 {
-	public static TObject CopyObject<TObject>(TObject _object,Transform _parent = null) where TObject : Object
-	{
-		if(!_object)
-		{
-			LogTag.System.E("Object is null");
-
-			return null;
-		}
-
-		var data = Object.Instantiate(_object,_parent);
-		data.name = _object.name;
-
-		return data;
-	}
-
-	public static void DestroyObject(Object _object)
-	{
-		if(!_object)
-		{
-			return;
-		}
-
-		if(Application.isPlaying)
-		{
-			Object.Destroy(_object);
-		}
-		else
-		{
-			Object.DestroyImmediate(_object);
-		}
-	}
-
-	public static byte[] GetBytesFromObject(Object _object)
-	{
-		if(!_object)
-		{
-			LogTag.System.E("Object is null");
-
-			return null;
-		}
-
-		using var stream = new MemoryStream();
-		var binary = new BinaryFormatter();
-
-		binary.Serialize(stream, _object);
-
-		return stream.ToArray();
-	}
-
 #if UNITY_EDITOR
-	public static bool IsExistAsset(string _filter = null,string[] _searchInFolders = null)
+	public static bool IsExistAsset(string filter = null,string[] searchInFolderArray = null)
 	{
-		var guidArray = AssetDatabase.FindAssets(_filter,_searchInFolders);
-
-		return guidArray.Length > 0;
+		return FindAssetArray(filter,searchInFolderArray).Length > 0;
 	}
 
-	public static IEnumerable<(string,TObject)> LoadAssetDataGroup<TObject>(string _filter = null,string[] _searchInFolders = null) where TObject : Object
+	public static IEnumerable<string> FindAssetPathGroup(string filter = null,string[] searchInFolderArray = null)
 	{
-		foreach(var guid in AssetDatabase.FindAssets(_filter,_searchInFolders))
-		{
-			var path = AssetDatabase.GUIDToAssetPath(guid);
-			var asset = AssetDatabase.LoadAssetAtPath<TObject>(AssetDatabase.GUIDToAssetPath(guid));
-
-			if(!path.IsEmpty() && asset != null)
-			{
-				yield return (path,asset);
-			}
-		}
-	}
-
-	public static IEnumerable<string> GetAssetPathGroup(string _filter = null,string[] _searchInFolders = null)
-	{
-		foreach(var guid in AssetDatabase.FindAssets(_filter,_searchInFolders))
+		foreach(var guid in FindAssetArray(filter,searchInFolderArray))
 		{
 			var path = AssetDatabase.GUIDToAssetPath(guid);
 
@@ -97,9 +29,9 @@ public static partial class CommonUtility
 		}
 	}
 
-	public static TObject LoadAsset<TObject>(string _filter = null,string[] _searchInFolders = null) where TObject : Object
+	public static TObject FindAsset<TObject>(string filter = null,string[] searchInFolderArray = null) where TObject : Object
 	{
-		var guidArray = AssetDatabase.FindAssets(_filter,_searchInFolders);
+		var guidArray = FindAssetArray(filter,searchInFolderArray);
 
 		if(guidArray.Length == 0)
 		{
@@ -114,22 +46,9 @@ public static partial class CommonUtility
 		return AssetDatabase.LoadAssetAtPath<TObject>(AssetDatabase.GUIDToAssetPath(guidArray[0]));
 	}
 
-	public static IEnumerable<TObject> LoadAssetGroup<TObject>(string _filter = null,string[] _searchInFolders = null) where TObject : Object
+	public static IEnumerable<TObject> FindAssetGroupInFolder<TObject>(string folderPath) where TObject : Object
 	{
-		foreach(var guid in AssetDatabase.FindAssets(_filter,_searchInFolders))
-		{
-			var asset = AssetDatabase.LoadAssetAtPath<TObject>(AssetDatabase.GUIDToAssetPath(guid));
-
-			if(asset != null)
-			{
-				yield return asset;
-			}
-		}
-	}
-
-	public static IEnumerable<TObject> LoadAssetGroupInFolder<TObject>(string _folderPath) where TObject : Object
-	{
-		foreach(var path in GetAllFilePathInFolder(GetAbsolutePath(_folderPath,true)))
+		foreach(var path in FindFilePathGroup(GetAbsolutePath(folderPath,true)))
 		{
 			var asset = AssetDatabase.LoadAssetAtPath<TObject>(GetAssetsPath(path));
 
@@ -140,32 +59,37 @@ public static partial class CommonUtility
 		}
 	}
 
-	public static void SaveAsset(string _dataPath,Object _asset)
+	private static string[] FindAssetArray(string filter,string[] searchInFolderArray)
 	{
-		if(_dataPath.IsEmpty() || !_asset)
+		return AssetDatabase.FindAssets(filter,searchInFolderArray);
+	}
+
+	public static void SaveAsset(string dataPath,Object asset)
+	{
+		if(dataPath.IsEmpty() || !asset)
 		{
-			LogTag.System.E($"Path or asset is null {_dataPath} or {_asset}");
+			LogTag.System.E($"Path or asset is null {dataPath} or {asset}");
 
 			return;
 		}
 
-		var folderPath = GetParentAbsolutePath(_dataPath,true);
-		var assetPath = GetAssetsPath(_dataPath);
+		var folderPath = GetParentAbsolutePath(dataPath,true);
+		var assetPath = GetAssetsPath(dataPath);
 
 		CreateFolder(folderPath);
 
-		if(IsFileExist(_dataPath))
+		if(IsFileExist(dataPath))
 		{
 			AssetDatabase.DeleteAsset(assetPath);
 		}
 
-		AssetDatabase.CreateAsset(_asset,assetPath);
+		AssetDatabase.CreateAsset(asset,assetPath);
 
-		EditorUtility.SetDirty(_asset);
+		EditorUtility.SetDirty(asset);
 		AssetDatabase.SaveAssets();
 		AssetDatabase.Refresh();
 
-		LogTag.System.I($"{_asset.name} is saved in {_dataPath}.");
+		LogTag.System.I($"{asset.name} is saved in {dataPath}.");
 	}
 #endif
 }

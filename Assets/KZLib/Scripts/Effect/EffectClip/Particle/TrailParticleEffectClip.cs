@@ -19,18 +19,18 @@ public class TrailParticleEffectClip : ParticleEffectClip
 	{
 		base.Reset();
 
-		if(!m_MainParticle)
+		if(!m_mainParticle)
 		{
 			return;
 		}
 
-		var mainModule = m_MainParticle.main;
+		var mainModule = m_mainParticle.main;
 
 		mainModule.loop = true;
 	}
 
 	protected async override UniTask PlayTaskAsync()
 	{
-		await CommonUtility.WaitForConditionAsync(()=>false,SetTime,m_IgnoreTimeScale,m_TokenSource.Token);
+		await CommonUtility.WaitForConditionAsync(()=>false,SetTime,m_ignoreTimeScale,m_tokenSource.Token);
 	}
 }

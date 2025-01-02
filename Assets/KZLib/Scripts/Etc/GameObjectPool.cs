@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace KZLib
@@ -8,59 +9,55 @@ namespace KZLib
 	/// </summary>
 	public class GameObjectPool<TComponent> where TComponent : Component
 	{
-		private readonly TComponent m_Pivot = null;
-		private readonly Queue<TComponent> m_PoolQueue = null;
-		private readonly Transform m_Storage = null;
+		private readonly TComponent m_pivot = null;
+		private readonly Queue<TComponent> m_poolQueue = null;
+		private readonly Transform m_storage = null;
 
-		public GameObjectPool(TComponent _pivot,Transform _storage,int _capacity)
+		public GameObjectPool(TComponent pivot,Transform storage,int capacity)
 		{
-			if(!_pivot)
+			if(!pivot)
 			{
-				LogTag.System.E("Pivot is null.");
-
-				return;
+				throw new NullReferenceException("Pivot is null.");
 			}
 
-			if(!_storage)
+			if(!storage)
 			{
-				LogTag.System.E("Storage is null.");
-
-				return;
+				throw new NullReferenceException("Storage is null.");
 			}
 
-			m_Pivot = _pivot;
-			m_PoolQueue = new(_capacity);
+			m_pivot = pivot;
+			m_poolQueue = new(capacity);
 
-			m_Storage = _storage;
+			m_storage = storage;
 		}
 
-		protected virtual void SetChild(Transform _parent,Transform _child)
+		protected virtual void SetChild(Transform parent,Transform child)
 		{
-			_parent.SetChild(_child);
+			parent.SetChild(child);
 		}
 
-		public void Put(TComponent _data)
+		public void Put(TComponent item)
 		{
-			SetChild(m_Storage,_data.transform);
+			SetChild(m_storage,item.transform);
 
-			_data.name = m_Pivot.name;
-			_data.gameObject.SetActiveSelf(false);
+			item.name = m_pivot.name;
+			item.gameObject.SetActiveIfDifferent(false);
 
-			m_PoolQueue.Enqueue(_data);
+			m_poolQueue.Enqueue(item);
 		}
 
-		public TComponent Get(Transform _parent = null)
+		public TComponent GetOrCreate(Transform parent = null)
 		{
-			var data = m_PoolQueue.Count > 0 ? m_PoolQueue.Dequeue() : CommonUtility.CopyObject(m_Pivot);
+			var item = m_poolQueue.Count > 0 ? m_poolQueue.Dequeue() : m_pivot.CopyObject() as TComponent;
 
-			if(_parent)
+			if(parent)
 			{
-				SetChild(_parent,data.transform);
+				SetChild(parent,item.transform);
 			}
 
-			data.gameObject.SetActiveSelf(true);
+			item.gameObject.SetActiveIfDifferent(true);
 
-			return data;
+			return item;
 		}
 	}
 }

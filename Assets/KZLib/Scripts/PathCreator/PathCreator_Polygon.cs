@@ -14,66 +14,66 @@ namespace KZLib.KZDevelop
 	public partial class PathCreator : BaseComponent
 	{
 		[SerializeField,HideInInspector]
-		private bool m_Reverse = false;
+		private bool m_reverse = false;
 		[SerializeField,HideInInspector]
-		private int m_SideCount = 3;
+		private int m_sideCount = 3;
 		[SerializeField,HideInInspector]
-		private float m_Rotation = 0.0f;
+		private float m_rotation = 0.0f;
 
 		[SerializeField,HideInInspector]
-		private Vector3 m_CenterPosition = Vector3.zero;
-		public Vector3 CenterPosition => m_CenterPosition;
+		private Vector3 m_centerPosition = Vector3.zero;
+		public Vector3 CenterPosition => m_centerPosition;
 
 		[VerticalGroup("5",Order = 5),SerializeField,PropertyRange(0.0f,1.0f),ListDrawerSettings(DraggableItems = false,HideAddButton = true,HideRemoveButton = true,OnTitleBarGUI = nameof(OnRefreshDistance)),LabelText("Vertex Distance"),HideIf(nameof(IsCurveMode))]
-		private List<float> m_VertexDistanceList = new();
+		private List<float> m_vertexDistanceList = new();
 
 		private void GetShapePointArray()
 		{
-			m_PointArray = new Vector3[m_SideCount];
-			var degrees = (IsReverse ? -1 : +1)*Global.FULL_ANGLE/m_SideCount;
+			m_pointArray = new Vector3[m_sideCount];
+			var degrees = (IsReverse ? -1 : +1)*Global.FULL_ANGLE/m_sideCount;
 
-			for(var i=0;i<m_SideCount;i++)
+			for(var i=0;i<m_sideCount;i++)
 			{
 				var radian = Mathf.Deg2Rad*(i*degrees+Rotation);
-				var distance = Resolution*m_VertexDistanceList[i];
+				var distance = Resolution*m_vertexDistanceList[i];
 				var x = Mathf.Cos(radian)*distance;
 				var y = Mathf.Sin(radian)*distance;
 
-				m_PointArray[i] = m_CenterPosition+new Vector3(x,y,0.0f);
+				m_pointArray[i] = m_centerPosition+new Vector3(x,y,0.0f);
 			}
 
-			m_HandleList.Clear();
-			m_HandleList.Add(m_CenterPosition);
-			m_HandleList.AddRange(m_PointArray);
+			m_handleList.Clear();
+			m_handleList.Add(m_centerPosition);
+			m_handleList.AddRange(m_pointArray);
 
-			m_Closed = true;
+			m_closed = true;
 		}
 
-		public void SetPolygon(Vector3[] _handleArray,float _resolution)
+		public void SetPolygon(Vector3[] handleArray,float resolution)
 		{
-			m_DrawMode = PathDrawMode.Polygon;
+			m_drawMode = PathDrawMode.Polygon;
 
-			m_Closed = true;
-			m_Resolution = _resolution;
+			m_closed = true;
+			m_resolution = resolution;
 
-			m_CenterPosition = _handleArray[0];
-			m_SideCount = _handleArray.Length-1;
+			m_centerPosition = handleArray[0];
+			m_sideCount = handleArray.Length-1;
 
-			var direction = _handleArray[1]-m_CenterPosition;
+			var direction = handleArray[1]-m_centerPosition;
 
-			m_Rotation = Mathf.Atan2(direction.y,direction.x)*Mathf.Rad2Deg;
-			m_Reverse = Vector3.Cross(_handleArray[2],_handleArray[1]).z > 0.0f;
+			m_rotation = Mathf.Atan2(direction.y,direction.x)*Mathf.Rad2Deg;
+			m_reverse = Vector3.Cross(handleArray[2],handleArray[1]).z > 0.0f;
 
-			m_VertexDistanceList.Clear();
+			m_vertexDistanceList.Clear();
 
-			for(var i=1;i<_handleArray.Length;i++)
+			for(var i=1;i<handleArray.Length;i++)
 			{
-				var distance = (Vector3.Distance(_handleArray[i],m_CenterPosition)/m_Resolution).ToLimit(5);
+				var distance = (Vector3.Distance(handleArray[i],m_centerPosition)/m_resolution).ToLimit(5);
 
-				m_VertexDistanceList.Add(Mathf.Clamp01(distance));
+				m_vertexDistanceList.Add(Mathf.Clamp01(distance));
 			}
 
-			m_HandleList.Clear();
+			m_handleList.Clear();
 
 			SetDirty();
 		}
@@ -91,27 +91,27 @@ namespace KZLib.KZDevelop
 		[VerticalGroup("1",Order = 1),ShowInInspector,PropertyRange(3,360),LabelText("Side Count"),HideIf(nameof(IsCurveMode))]
 		public int SideCount
 		{
-			get => m_SideCount;
+			get => m_sideCount;
 			private set
 			{
-				if(m_SideCount == value)
+				if(m_sideCount == value)
 				{
 					return;
 				}
 
-				m_SideCount = value;
+				m_sideCount = value;
 
-				if(m_VertexDistanceList.Count < m_SideCount)
+				if(m_vertexDistanceList.Count < m_sideCount)
 				{
-					for(var i=m_VertexDistanceList.Count;i<m_SideCount;i++)
+					for(var i=m_vertexDistanceList.Count;i<m_sideCount;i++)
 					{
-						m_VertexDistanceList.Add(1.0f);
+						m_vertexDistanceList.Add(1.0f);
 					}
 				}
 				else
 				{
-					var difference = m_VertexDistanceList.Count-m_SideCount;
-					m_VertexDistanceList.RemoveRange(m_SideCount,difference);
+					var difference = m_vertexDistanceList.Count-m_sideCount;
+					m_vertexDistanceList.RemoveRange(m_sideCount,difference);
 				}
 
 				SetDirty();
@@ -121,15 +121,15 @@ namespace KZLib.KZDevelop
 		[VerticalGroup("1",Order = 1),ShowInInspector,PropertyRange(-180.0f,+180.0f),LabelText("Rotation"),HideIf(nameof(IsCurveMode))]
 		public float Rotation
 		{
-			get => m_Rotation;
+			get => m_rotation;
 			private set
 			{
-				if(m_Rotation == value)
+				if(m_rotation == value)
 				{
 					return;
 				}
 
-				m_Rotation = value;
+				m_rotation = value;
 
 				SetDirty();
 			}
@@ -138,15 +138,15 @@ namespace KZLib.KZDevelop
 		[VerticalGroup("1",Order = 1),ShowInInspector,LabelText("Is Reverse"),HideIf(nameof(IsCurveMode))]
 		public bool IsReverse
 		{
-			get => m_Reverse;
+			get => m_reverse;
 			private set
 			{
-				if(m_Reverse == value)
+				if(m_reverse == value)
 				{
 					return;
 				}
 
-				m_Reverse = value;
+				m_reverse = value;
 
 				SetDirty();
 			}
@@ -155,47 +155,47 @@ namespace KZLib.KZDevelop
 #if UNITY_EDITOR
 		private void ResetShape()
 		{
-			var handle = m_HandleList.Count > 0 ? m_HandleList[0] : Vector3.zero;
+			var handle = m_handleList.Count > 0 ? m_handleList[0] : Vector3.zero;
 			var position = ConvertPosition(handle);
 
-			m_HandleList.Clear();
+			m_handleList.Clear();
 
 			var camera = SceneView.lastActiveSceneView.camera;
 			var pivot = (camera == null ? 1.0f : camera.orthographicSize)*0.5f;
 
-			m_SideCount = 3;
-			m_Resolution = pivot;
-			m_Rotation = 0.0f;
-			m_Reverse = false;
+			m_sideCount = 3;
+			m_resolution = pivot;
+			m_rotation = 0.0f;
+			m_reverse = false;
 
-			m_VertexDistanceList.Clear();
+			m_vertexDistanceList.Clear();
 
-			m_CenterPosition = position;
+			m_centerPosition = position;
 
-			for(var i=0;i<m_SideCount;i++)
+			for(var i=0;i<m_sideCount;i++)
 			{
-				m_VertexDistanceList.Add(1.0f);
+				m_vertexDistanceList.Add(1.0f);
 			}
 		}
 
-		public void MovePolygon(int _index,Vector3 _position)
+		public void MovePolygon(int index,Vector3 position)
 		{
-			var position = ConvertPosition(_position);
+			var convertPosition = ConvertPosition(position);
 
-			if(_index == 0)
+			if(index == 0)
 			{
-				m_CenterPosition = position;
+				m_centerPosition = convertPosition;
 			}
 			else
 			{
-				var divide = m_VertexDistanceList[_index-1];
+				var divide = m_vertexDistanceList[index-1];
 
 				if(divide.ApproximatelyZero())
 				{
 					return;
 				}
 
-				Resolution = Vector3.Distance(m_CenterPosition,position)/m_VertexDistanceList[_index-1];
+				Resolution = Vector3.Distance(m_centerPosition,convertPosition)/m_vertexDistanceList[index-1];
 			}
 
 			SetDirty();

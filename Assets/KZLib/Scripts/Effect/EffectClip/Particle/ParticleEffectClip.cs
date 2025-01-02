@@ -10,47 +10,47 @@ public class ParticleEffectClip : EffectClip
 	public record ParticleEffectParam(Color? StartColor = null,Action<bool> OnComplete = null) : EffectParam(OnComplete);
 
 	[VerticalGroup("General/2",Order = 2),SerializeField]
-	protected ParticleSystem m_MainParticle = null;
+	protected ParticleSystem m_mainParticle = null;
 	[VerticalGroup("General/2",Order = 2),SerializeField]
-	protected List<ParticleSystem> m_SubParticleList = null;
+	protected List<ParticleSystem> m_subParticleList = null;
 
 	protected override void Reset()
 	{
 		base.Reset();
 
-		if(!m_MainParticle)
+		if(!m_mainParticle)
 		{
-			m_MainParticle = GetComponent<ParticleSystem>();
+			m_mainParticle = GetComponent<ParticleSystem>();
 		}
 
-		if(!m_MainParticle)
+		if(!m_mainParticle)
 		{
 			return;
 		}
 
-		var mainModule = m_MainParticle.main;
+		var mainModule = m_mainParticle.main;
 
 		Duration = mainModule.duration;
 		IsLoop = mainModule.loop;
-		m_IgnoreTimeScale = mainModule.useUnscaledTime;
+		m_ignoreTimeScale = mainModule.useUnscaledTime;
 
 		mainModule.playOnAwake = true;
 	}
 
-	public override void SetEffect(EffectParam _param)
+	public override void SetEffect(EffectParam effectParam)
 	{
-		base.SetEffect(_param);
+		base.SetEffect(effectParam);
 
-		if(_param is not ParticleEffectParam param)
+		if(effectParam is not ParticleEffectParam param)
 		{
 			return;
 		}
 
 		if(param.StartColor.HasValue)
 		{
-			SetColor(m_MainParticle.main,param.StartColor.Value);
+			SetColor(m_mainParticle.main,param.StartColor.Value);
 
-			foreach(var particle in m_SubParticleList)
+			foreach(var particle in m_subParticleList)
 			{
 				SetColor(particle.main,param.StartColor.Value);
 			}
@@ -59,11 +59,11 @@ public class ParticleEffectClip : EffectClip
 
 	protected async override UniTask PlayTaskAsync()
 	{
-		await CommonUtility.WaitForConditionAsync(()=>!m_MainParticle.isPlaying,SetTime,m_IgnoreTimeScale,m_TokenSource.Token);
+		await CommonUtility.WaitForConditionAsync(()=>!m_mainParticle.isPlaying,SetTime,m_ignoreTimeScale,m_tokenSource.Token);
 	}
 
-	private void SetColor(ParticleSystem.MainModule _module,Color _color)
+	private void SetColor(ParticleSystem.MainModule mainModule,Color color)
 	{
-		_module.startColor = new ParticleSystem.MinMaxGradient(_color);
+		mainModule.startColor = new ParticleSystem.MinMaxGradient(color);
 	}
 }

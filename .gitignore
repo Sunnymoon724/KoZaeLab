@@ -89,7 +89,3 @@ crashlytics-build.properties
 *.db
 **/[Aa]ssets/[Pp]lugins
 **/NetworkSettings.asset
-
-### Visual Studio Code To DLL ###
-**/bin/
-**/obj/

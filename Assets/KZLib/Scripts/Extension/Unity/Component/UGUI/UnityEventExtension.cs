@@ -5,132 +5,140 @@ public static class UnityEventExtension
 	/// <summary>
 	/// Add One Kind Listener
 	/// </summary>
-	public static void AddAction(this UnityEvent _Event,UnityAction _onAction,bool _overlap = false)
+	public static void AddAction(this UnityEvent unityEvent,UnityAction onAction,bool isOverlap = false)
 	{
-		if(_Event == null || _onAction == null)
+		if(!IsValid(unityEvent))
 		{
-			LogTag.System.E($"Event or action is null. [{_Event} or {_onAction}]");
-
 			return;
 		}
 
-		if(!_overlap)
+		if(!isOverlap)
 		{
-			_Event.RemoveListener(_onAction);
+			unityEvent.RemoveListener(onAction);
 		}
 
-		_Event.AddListener(_onAction);
+		unityEvent.AddListener(onAction);
 	}
 
 	/// <summary>
 	/// Set One Listener
 	/// </summary>
-	public static void SetAction(this UnityEvent _Event,UnityAction _onAction)
+	public static void SetAction(this UnityEvent unityEvent,UnityAction onAction)
 	{
-		if(_Event == null || _onAction == null)
+		if(!IsValid(unityEvent))
 		{
-			LogTag.System.E($"Event or action is null. [{_Event} or {_onAction}]");
-
 			return;
 		}
 
-		_Event.RemoveAllListeners();
-		_Event.AddListener(_onAction);
+		unityEvent.RemoveAllListeners();
+		unityEvent.AddListener(onAction);
 	}
 
 	/// <summary>
 	/// Remove Listener
 	/// </summary>
-	public static void RemoveAction(this UnityEvent _Event,UnityAction _onAction)
+	public static void RemoveAction(this UnityEvent unityEvent,UnityAction onAction)
 	{
-		if(_Event == null || _onAction == null)
+		if(!IsValid(unityEvent))
 		{
-			LogTag.System.E($"Event or action is null. [{_Event} or {_onAction}]");
-
 			return;
 		}
 
-		_Event.RemoveListener(_onAction);
+		unityEvent.RemoveListener(onAction);
 	}
 
 	/// <summary>
 	/// Clear Listener
 	/// </summary>
-	public static void ClearAction(this UnityEvent _Event)
+	public static void ClearAction(this UnityEvent unityEvent)
 	{
-		if(_Event == null)
+		if(!IsValid(unityEvent))
 		{
-			LogTag.System.E("Event is null.");
-
 			return;
 		}
 
-		_Event.RemoveAllListeners();
+		unityEvent.RemoveAllListeners();
 	}
 
 	/// <summary>
 	/// Add One Kind Listener
 	/// </summary>
-	public static void AddAction<TData>(this UnityEvent<TData> _Event,UnityAction<TData> _onAction,bool _overlap = false)
+	public static void AddAction<TData>(this UnityEvent<TData> unityEvent,UnityAction<TData> onAction,bool isOverlap = false)
 	{
-		if(_Event == null || _onAction == null)
+		if(!IsValid(unityEvent))
 		{
-			LogTag.System.E($"Event or action is null. [{_Event} or {_onAction}]");
-
 			return;
 		}
 
-		if(!_overlap)
+		if(!isOverlap)
 		{
-			_Event.RemoveListener(_onAction);
+			unityEvent.RemoveListener(onAction);
 		}
 
-		_Event.AddListener(_onAction);
+		unityEvent.AddListener(onAction);
 	}
 
 	/// <summary>
 	/// Set One Listener
 	/// </summary>
-	public static void SetAction<TData>(this UnityEvent<TData> _Event,UnityAction<TData> _onAction)
+	public static void SetAction<TData>(this UnityEvent<TData> unityEvent,UnityAction<TData> onAction)
 	{
-		if(_Event == null || _onAction == null)
+		if(!IsValid(unityEvent))
 		{
-			LogTag.System.E($"Event or action is null. [{_Event} or {_onAction}]");
-
 			return;
 		}
 
-		_Event.RemoveAllListeners();
-		_Event.AddListener(_onAction);
+		unityEvent.RemoveAllListeners();
+		unityEvent.AddListener(onAction);
 	}
 
 	/// <summary>
 	/// Remove Listener
 	/// </summary>
-	public static void RemoveAction<TData>(this UnityEvent<TData> _Event,UnityAction<TData> _onAction)
+	public static void RemoveAction<TValue>(this UnityEvent<TValue> unityEvent,UnityAction<TValue> onAction)
 	{
-		if(_Event == null || _onAction == null)
+		if(!IsValid(unityEvent))
 		{
-			LogTag.System.E($"Event or action is null. [{_Event} or {_onAction}]");
-
 			return;
 		}
 
-		_Event.RemoveListener(_onAction);
+		unityEvent.RemoveListener(onAction);
 	}
 
 	/// <summary>
 	/// Clear Listener
 	/// </summary>
-	public static void ClearAction<TData>(this UnityEvent<TData> _Event)
+	public static void ClearAction<TValue>(this UnityEvent<TValue> unityEvent)
 	{
-		if(_Event == null)
+		if(!IsValid(unityEvent))
 		{
-			LogTag.System.E("Event is null.");
-
 			return;
 		}
 
-		_Event.RemoveAllListeners();
+		unityEvent.RemoveAllListeners();
+	}
+
+	private static bool IsValid(UnityEvent unityEvent)
+	{
+		if(unityEvent == null)
+		{
+			LogTag.System.E("UnityEvent is null");
+
+			return false;
+		}
+
+		return true;
+	}
+
+	private static bool IsValid<TValue>(UnityEvent<TValue> unityEvent)
+	{
+		if(unityEvent == null)
+		{
+			LogTag.System.E("UnityEvent is null");
+
+			return false;
+		}
+
+		return true;
 	}
 }

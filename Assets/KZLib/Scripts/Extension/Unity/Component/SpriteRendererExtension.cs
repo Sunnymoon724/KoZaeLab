@@ -2,31 +2,41 @@ using UnityEngine;
 
 public static class SpriteRendererExtension
 {
-	public static void SetSafeSpriteRenderer(this SpriteRenderer _renderer,Sprite _sprite,Color? _color = null)
+	public static void SetSafeSpriteRenderer(this SpriteRenderer spriteRenderer,Sprite sprite,Color? color = null)
 	{
-		if(!_renderer)
-		{
-			LogTag.System.E("Renderer is null");
-
-			return;
-		}
-
-		if(!_sprite)
-		{
-			_renderer.gameObject.SetActiveSelf(false);
-
-			return;
-		}
-
-		_renderer.gameObject.SetActiveSelf(true);
-
-		_renderer.sprite = _sprite;
-
-		if(!_color.HasValue)
+		if(!IsValid(spriteRenderer))
 		{
 			return;
 		}
 
-		_renderer.color = _color.Value;
+		if(!sprite)
+		{
+			spriteRenderer.gameObject.SetActiveIfDifferent(false);
+
+			return;
+		}
+
+		spriteRenderer.gameObject.SetActiveIfDifferent(true);
+
+		spriteRenderer.sprite = sprite;
+
+		if(!color.HasValue)
+		{
+			return;
+		}
+
+		spriteRenderer.color = color.Value;
+	}
+
+	private static bool IsValid(SpriteRenderer spriteRenderer)
+	{
+		if(!spriteRenderer)
+		{
+			LogTag.System.E("SpriteRenderer is null");
+
+			return false;
+		}
+
+		return true;
 	}
 }

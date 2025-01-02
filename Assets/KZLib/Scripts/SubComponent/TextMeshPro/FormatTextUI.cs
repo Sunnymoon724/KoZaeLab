@@ -6,11 +6,11 @@ namespace HudPanel
 	public class FormatTextUI : BaseTextUI
 	{
 		[SerializeField,LabelText("Format Text")]
-		private string m_FormatText = null;
+		private string m_formatText = null;
 
-		public void SetFormatText(params object[] _argumentArray)
+		public void SetFormatText(params object[] argumentArray)
 		{
-			m_TextMesh.SetSafeTextMeshPro(_argumentArray == null ? null : string.Format(m_FormatText,_argumentArray));
+			m_textMesh.SetSafeTextMeshPro(argumentArray == null ? null : string.Format(m_formatText,argumentArray));
 		}
 	}
 }

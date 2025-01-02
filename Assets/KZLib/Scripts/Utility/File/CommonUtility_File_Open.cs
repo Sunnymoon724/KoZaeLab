@@ -4,30 +4,30 @@ using UnityEditorInternal;
 
 public static partial class CommonUtility
 {
-	/// <param name="_path">The absolute path of the file or folder.</param>
-	public static void Open(string _path)
+	/// <param name="path">The absolute path of the file or folder.</param>
+	public static void Open(string path)
 	{
-		if(!IsPathExist(_path,true))
+		if(!IsPathExist(path,true))
 		{
 			return;
 		}
 
-		EditorUtility.OpenWithDefaultApp(_path);
+		EditorUtility.OpenWithDefaultApp(path);
 	}
 
-	/// <param name="_path">The absolute path of the file.</param>
-	public static void OpenTextFile(string _filePath,int _line,bool _isCreate = false)
+	/// <param name="filePath">The absolute path of the file.</param>
+	public static void OpenTextFile(string filePath,int line,bool isCreate = false)
 	{
-		var result = IsFileExist(_filePath,!_isCreate);
+		var result = IsFileExist(filePath,!isCreate);
 
 		if(!result)
 		{
 			return;
 		}
 
-		CreateFile(_filePath);
+		CreateFile(filePath);
 
-		InternalEditorUtility.OpenFileAtLineExternal(_filePath,_line);
+		InternalEditorUtility.OpenFileAtLineExternal(filePath,line);
 	}
 }
 #endif

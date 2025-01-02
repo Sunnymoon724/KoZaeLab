@@ -15,7 +15,7 @@ namespace KZLib.KZAttribute
 	[Conditional("UNITY_EDITOR")]
 	public class KZPrefabPathAttribute : KZResourcePathAttribute
 	{
-		public KZPrefabPathAttribute(bool _changePathButton = false,bool _newLine = false) : base(_changePathButton,_newLine) { }
+		public KZPrefabPathAttribute(bool changePathButton = false,bool newLine = false) : base(changePathButton,newLine) { }
 	}
 
 #if UNITY_EDITOR

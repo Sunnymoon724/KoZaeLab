@@ -16,41 +16,43 @@ namespace KZLib.KZAttribute
 	{
 		public string TextFormat { get; }
 
-		public KZRichTextAttribute(string _textFormat = null)
+		public KZRichTextAttribute(string textFormat = null)
 		{
-			TextFormat = _textFormat;
+			TextFormat = textFormat;
 		}
 	}
 
 #if UNITY_EDITOR
 	public abstract class KZRichTextAttributeDrawer<TValue> : KZAttributeDrawer<KZRichTextAttribute,TValue>
 	{
-		protected string m_TextFormat;
+		protected string m_textFormat = null;
 
 		protected override void Initialize()
 		{
 			base.Initialize();
 
-			m_TextFormat = Attribute.TextFormat.IsEmpty() ? DefaultFormat : Attribute.TextFormat;
+			m_textFormat = Attribute.TextFormat.IsEmpty() ? DefaultFormat : Attribute.TextFormat;
 		}
 
-		protected override void DoDrawPropertyLayout(GUIContent _label)
+		protected override void _DrawPropertyLayout(GUIContent label)
 		{
-			var rect = DrawPrefixLabel(_label);
+			var rect = DrawPrefixLabel(label);
 
-			var style = new GUIStyle(GUI.skin.label);
-			style.richText = true;
+			var style = new GUIStyle(GUI.skin.label)
+			{
+				richText = true
+			};
 
-			EditorGUI.LabelField(rect,Label,style);
+			EditorGUI.LabelField(rect,LabelText,style);
 		}
 
 		protected virtual string DefaultFormat => "{0}";
-		protected virtual string Label => string.Format(m_TextFormat,ValueEntry.SmartValue);
+		protected virtual string LabelText => string.Format(m_textFormat,ValueEntry.SmartValue);
 	}
 
 	public class KZRichTextStringAttributeDrawer : KZRichTextAttributeDrawer<string>
 	{
-		protected override string Label
+		protected override string LabelText
 		{
 			get
 			{
@@ -61,7 +63,7 @@ namespace KZLib.KZAttribute
 					text = text.Replace(Environment.NewLine,"\\n");
 				}
 
-				return string.Format(m_TextFormat,text);
+				return string.Format(m_textFormat,text);
 			}
 		}
 	}
@@ -76,35 +78,42 @@ namespace KZLib.KZAttribute
 	{
 		protected override string DefaultFormat => "x : {0:F3} / y : {1:F3}";
 
-		protected override string Label => string.Format(m_TextFormat,ValueEntry.SmartValue.x,ValueEntry.SmartValue.y);
+		protected override string LabelText => string.Format(m_textFormat,ValueEntry.SmartValue.x,ValueEntry.SmartValue.y);
 	}
 
 	public class KZRichTextVector3AttributeDrawer : KZRichTextAttributeDrawer<Vector3>
 	{
 		protected override string DefaultFormat => "x : {0:F3} / y : {1:F3} / z : {2:F3}";
 
-		protected override string Label => string.Format(m_TextFormat,ValueEntry.SmartValue.x,ValueEntry.SmartValue.y,ValueEntry.SmartValue.z);
+		protected override string LabelText => string.Format(m_textFormat,ValueEntry.SmartValue.x,ValueEntry.SmartValue.y,ValueEntry.SmartValue.z);
 	}
 
 	public class KZRichTextVector4IntAttributeDrawer : KZRichTextAttributeDrawer<Vector4>
 	{
 		protected override string DefaultFormat => "x : {0:F3} / y : {1:F3} / z : {2:F3} / w : {3:F3}";
 
-		protected override string Label => string.Format(m_TextFormat,ValueEntry.SmartValue.x,ValueEntry.SmartValue.y,ValueEntry.SmartValue.z,ValueEntry.SmartValue.w);
+		protected override string LabelText => string.Format(m_textFormat,ValueEntry.SmartValue.x,ValueEntry.SmartValue.y,ValueEntry.SmartValue.z,ValueEntry.SmartValue.w);
 	}
 
 	public class KZRichTextVector2IntAttributeDrawer : KZRichTextAttributeDrawer<Vector2Int>
 	{
 		protected override string DefaultFormat => "x : {0} / y : {1}";
 
-		protected override string Label => string.Format(m_TextFormat,ValueEntry.SmartValue.x,ValueEntry.SmartValue.y);
+		protected override string LabelText => string.Format(m_textFormat,ValueEntry.SmartValue.x,ValueEntry.SmartValue.y);
 	}
 
 	public class KZRichTextVector3IntAttributeDrawer : KZRichTextAttributeDrawer<Vector3Int>
 	{
 		protected override string DefaultFormat => "x : {0} / y : {1} / z : {2}";
 
-		protected override string Label => string.Format(m_TextFormat,ValueEntry.SmartValue.x,ValueEntry.SmartValue.y,ValueEntry.SmartValue.z);
+		protected override string LabelText => string.Format(m_textFormat,ValueEntry.SmartValue.x,ValueEntry.SmartValue.y,ValueEntry.SmartValue.z);
+	}
+
+	public class KZRichTextQuaternionIntAttributeDrawer : KZRichTextAttributeDrawer<Quaternion>
+	{
+		protected override string DefaultFormat => "x : {0:F3} / y : {1:F3} / z : {2:F3} / w : {3:F3}";
+
+		protected override string LabelText => string.Format(m_textFormat,ValueEntry.SmartValue.x,ValueEntry.SmartValue.y,ValueEntry.SmartValue.z,ValueEntry.SmartValue.w);
 	}
 #endif
 }

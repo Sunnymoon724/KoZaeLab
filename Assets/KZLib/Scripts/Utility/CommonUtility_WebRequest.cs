@@ -48,7 +48,7 @@ public static partial class CommonUtility
 	#endregion Discord
 
 	#region Trello
-	public static async UniTask<List<string>> GetBoard_TrelloAsync()
+	public static async UniTask<List<string>> FindBoard_TrelloAsync()
 	{
 		var coreKey = NetworkSettings.In.TrelloCoreKey;
 
@@ -87,7 +87,7 @@ public static partial class CommonUtility
 		return dataList;
 	}
 
-	public static async UniTask<List<string>> GetList_TrelloAsync(string _boardId)
+	public static async UniTask<List<string>> FindList_TrelloAsync(string _boardId)
 	{
 		var coreKey = NetworkSettings.In.TrelloCoreKey;
 
@@ -127,7 +127,7 @@ public static partial class CommonUtility
 	}
 
 
-	public static async UniTask<List<string>> GetCard_TrelloAsync(string _listId)
+	public static async UniTask<List<string>> FindCard_TrelloAsync(string _listId)
 	{
 		var coreKey = NetworkSettings.In.TrelloCoreKey;
 
@@ -246,7 +246,7 @@ public static partial class CommonUtility
 			return;
 		}
 
-		var dataList = await GetList_TrelloAsync(boardId);
+		var dataList = await FindList_TrelloAsync(boardId);
 
 		if(dataList.IsNullOrEmpty())
 		{
@@ -301,7 +301,7 @@ public static partial class CommonUtility
 		}
 	}
 
-	public static async UniTask<string> GetSheet_GoogleSheetAsync(string _fileName,int _sheetOrder)
+	public static async UniTask<string> FindSheet_GoogleSheetAsync(string _fileName,int _sheetOrder)
 	{
 		var fileId = NetworkSettings.In.GetGoogleSheetFileId(_fileName);
 
@@ -340,7 +340,7 @@ public static partial class CommonUtility
 		}
 	}
 
-	public static async UniTask<List<string>> GetEntry_GoogleDriveAsync(string _folderName)
+	public static async UniTask<List<string>> FindEntry_GoogleDriveAsync(string _folderName)
 	{
 		var folderId = NetworkSettings.In.GetGoogleDriveFolderId(_folderName);
 

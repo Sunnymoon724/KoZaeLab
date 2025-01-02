@@ -14,31 +14,31 @@ using UnityEditor.Animations;
 public class AnimatorEffectClip : EffectClip
 {
 	[SerializeField,HideInInspector]
-	private string m_AnimationName = null;
+	private string m_animationName = null;
 
 	public record AnimatorEffectParam(string Name,Action<bool> OnComplete = null) : EffectParam(OnComplete);
 
 	protected override bool IsEnableDuration => false;
 
 	[VerticalGroup("General/2",Order = 2),SerializeField]
-	private Animator m_Animator = null;
+	private Animator m_animator = null;
 
 	[VerticalGroup("General/3",Order = 3),ShowInInspector,ValueDropdown(nameof(AnimatorNameList))]
 	private string AnimationName
 	{
-		get => m_AnimationName;
+		get => m_animationName;
 		set
 		{
 			if(value.IsEmpty())
 			{
-				m_AnimationName = null;
+				m_animationName = null;
 
 				return;
 			}
 
-			m_AnimationName = value;
+			m_animationName = value;
 
-			Duration = m_Animator.GetAnimationClipLength(value);
+			Duration = m_animator.FindAnimationClipLength(value);
 		}
 	}
 
@@ -46,14 +46,14 @@ public class AnimatorEffectClip : EffectClip
 	{
 		base.Reset();
 
-		if(!m_Animator)
+		if(!m_animator)
 		{
-			m_Animator = GetComponent<Animator>();
+			m_animator = GetComponent<Animator>();
 		}
 
 		AnimationName = null;
 
-		m_IgnoreTimeScale = m_Animator.updateMode == AnimatorUpdateMode.UnscaledTime;
+		m_ignoreTimeScale = m_animator.updateMode == AnimatorUpdateMode.UnscaledTime;
 	}
 
 	public override void SetEffect(EffectParam _param)
@@ -75,11 +75,11 @@ public class AnimatorEffectClip : EffectClip
 			return;
 		}
 
-		m_Animator.Play(AnimationName);
+		m_animator.Play(AnimationName);
 
 		await UniTask.Yield();
 
-		await CommonUtility.WaitForConditionAsync(()=>m_Animator.IsAnimationFinish(AnimationName),SetTime,m_IgnoreTimeScale,m_TokenSource.Token);
+		await CommonUtility.WaitForConditionAsync(()=>m_animator.IsAnimationFinish(AnimationName),SetTime,m_ignoreTimeScale,m_tokenSource.Token);
 	}
 
 	private List<string> AnimatorNameList
@@ -88,13 +88,13 @@ public class AnimatorEffectClip : EffectClip
 		{
 			var nameList = new List<string>();
 
-			if(!m_Animator)
+			if(!m_animator)
 			{
 				return nameList;
 			}
 
 #if UNITY_EDITOR
-			var controller = m_Animator.runtimeAnimatorController as AnimatorController;
+			var controller = m_animator.runtimeAnimatorController as AnimatorController;
 
 			foreach(var layer in controller.layers)
 			{

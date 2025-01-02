@@ -183,17 +183,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba37b1f99cc635e4ea14761b2e269068, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
-  m_MainCamera: {fileID: 8897636881497786752}
-  m_LockRotateX: 0
+  m_mainCamera: {fileID: 8897636881497786752}
+  m_lockRotateX: 0
 --- !u!82 &8643535638848041472
 AudioSource:
   m_ObjectHideFlags: 0

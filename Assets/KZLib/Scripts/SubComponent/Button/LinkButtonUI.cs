@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class LinkButtonUI : BaseButtonUI
 {
-	[SerializeField,LabelText("Link URL")]
-	private string m_LinkURL = null;
+	[SerializeField,LabelText("URL Link")]
+	private string m_linkPath = null;
 
 	protected override void Initialize()
 	{
-		if(m_LinkURL.IsEmpty())
+		if(m_linkPath.IsEmpty())
 		{
 			LogTag.System.I("Link is empty");
 
@@ -20,6 +20,6 @@ public class LinkButtonUI : BaseButtonUI
 
 	protected override void OnClickedButton()
 	{
-		Application.OpenURL(m_LinkURL);
+		Application.OpenURL(m_linkPath);
 	}
 }

@@ -4,456 +4,398 @@ using UnityEngine;
 public static partial class TransformExtension
 {
 	#region Set Position
-	public static void SetPositionXY(this Transform _transform,Vector2 _point)
+	public static void SetPositionXY(this Transform transform,Vector2 point)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.position = _transform.position.SetXY(_point);
+		transform.position = transform.position.SetXY(point);
 	}
 
-	public static void SetPositionXZ(this Transform _transform,Vector2 _point)
+	public static void SetPositionXZ(this Transform transform,Vector2 point)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.position = _transform.position.SetXZ(_point);
+		transform.position = transform.position.SetXZ(point);
 	}
 
-	public static void SetPositionYZ(this Transform _transform,Vector2 _point)
+	public static void SetPositionYZ(this Transform transform,Vector2 point)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.position = _transform.position.SetYZ(_point);
+		transform.position = transform.position.SetYZ(point);
 	}
 
-	public static void SetPositionX(this Transform _transform,float _x)
+	public static void SetPositionX(this Transform transform,float x)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.position = _transform.position.SetX(_x);
+		transform.position = transform.position.SetX(x);
 	}
 	
-	public static void SetPositionY(this Transform _transform,float _y)
+	public static void SetPositionY(this Transform transform,float y)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.position = _transform.position.SetY(_y);
+		transform.position = transform.position.SetY(y);
 	}
 
-	public static void SetPositionZ(this Transform _transform,float _z)
+	public static void SetPositionZ(this Transform transform,float z)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.position = _transform.position.SetZ(_z);
+		transform.position = transform.position.SetZ(z);
 	}
 	#endregion Set Position
 
 	#region Set Local Position
-	public static void SetLocalPositionXY(this Transform _transform,Vector2 _point)
+	public static void SetLocalPositionXY(this Transform transform,Vector2 point)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localPosition = _transform.localPosition.SetXY(_point);
+		transform.localPosition = transform.localPosition.SetXY(point);
 	}
 
-	public static void SetLocalPositionXZ(this Transform _transform,Vector2 _point)
+	public static void SetLocalPositionXZ(this Transform transform,Vector2 point)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localPosition = _transform.localPosition.SetXZ(_point);
+		transform.localPosition = transform.localPosition.SetXZ(point);
 	}
 
-	public static void SetLocalPositionYZ(this Transform _transform,Vector2 _point)
+	public static void SetLocalPositionYZ(this Transform transform,Vector2 point)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localPosition = _transform.localPosition.SetYZ(_point);
+		transform.localPosition = transform.localPosition.SetYZ(point);
 	}
 
-	public static void SetLocalPositionX(this Transform _transform,float _x)
+	public static void SetLocalPositionX(this Transform transform,float x)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localPosition = _transform.localPosition.SetX(_x);
+		transform.localPosition = transform.localPosition.SetX(x);
 	}
 	
-	public static void SetLocalPositionY(this Transform _transform,float _y)
+	public static void SetLocalPositionY(this Transform transform,float y)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localPosition = _transform.localPosition.SetY(_y);
+		transform.localPosition = transform.localPosition.SetY(y);
 	}
 
-	public static void SetLocalPositionZ(this Transform _transform,float _z)
+	public static void SetLocalPositionZ(this Transform transform,float z)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localPosition = _transform.localPosition.SetZ(_z);
+		transform.localPosition = transform.localPosition.SetZ(z);
 	}
 	#endregion Set Local Position
 
-	public static Vector2 ScreenPosition(this Transform _transform)
+	public static Vector2 ScreenPosition(this Transform transform)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
-			return default;
+			return Vector2.zero;
 		}
 
-		return ScreenPosition(_transform,CameraMgr.HasInstance ? CameraMgr.In.CurrentCamera : Camera.main);
+		return ScreenPosition(transform,CameraMgr.HasInstance ? CameraMgr.In.CurrentCamera : Camera.main);
 	}
 	
-	public static Vector2 ScreenPosition(this Transform _transform,Camera _camera)
+	public static Vector2 ScreenPosition(this Transform transform,Camera camera)
 	{
-		if(!_transform || !_camera)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E($"Transform or Camera is null. {_transform} or {_camera}");
+			return Vector2.zero;
+		}
+
+		if(!camera)
+		{
+			LogTag.System.E("Camera is null.");
 
 			return default;
 		}
 
-		return RectTransformUtility.WorldToScreenPoint(_camera,_transform.position);
+		return RectTransformUtility.WorldToScreenPoint(camera,transform.position);
 	}
 
-	public static Vector3 ViewportPosition(this Transform _transform)
+	public static Vector3 ViewportPosition(this Transform transform)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
-			return default;
+			return Vector3.zero;
 		}
 
-		return ViewportPosition(_transform,CameraMgr.HasInstance ? CameraMgr.In.CurrentCamera : Camera.main);
+		return ViewportPosition(transform,CameraMgr.HasInstance ? CameraMgr.In.CurrentCamera : Camera.main);
 	}
 	
-	public static Vector3 ViewportPosition(this Transform _transform,Camera _camera)
+	public static Vector3 ViewportPosition(this Transform transform,Camera _camera)
 	{
-		if(!_transform || !_camera)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E($"Transform or Camera is null. {_transform} or {_camera}");
-
-			return default;
+			return Vector3.zero;
 		}
 
-		return RectTransformUtility.WorldToScreenPoint(_camera,_transform.position);
+		if(!_camera)
+		{
+			LogTag.System.E("Camera is null.");
+
+			return Vector3.zero;
+		}
+
+		return RectTransformUtility.WorldToScreenPoint(_camera,transform.position);
 	}
 
 	#region Set Rotation
-	public static void SetRotationXY(this Transform _transform,Vector2 _angle)
+	public static void SetRotationXY(this Transform transform,Vector2 _angle)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.rotation = Quaternion.Euler(_transform.rotation.eulerAngles.SetXY(_angle));
+		transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.SetXY(_angle));
 	}
 
-	public static void SetRotationXZ(this Transform _transform,Vector2 _angle)
+	public static void SetRotationXZ(this Transform transform,Vector2 _angle)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.rotation = Quaternion.Euler(_transform.rotation.eulerAngles.SetXZ(_angle));
+		transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.SetXZ(_angle));
 	}
 
-	public static void SetRotationYZ(this Transform _transform,Vector2 _angle)
+	public static void SetRotationYZ(this Transform transform,Vector2 _angle)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.rotation = Quaternion.Euler(_transform.rotation.eulerAngles.SetYZ(_angle));
+		transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.SetYZ(_angle));
 	}
 
-	public static void SetRotationX(this Transform _transform,float _x)
+	public static void SetRotationX(this Transform transform,float x)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.rotation = Quaternion.Euler(_transform.rotation.eulerAngles.SetX(_x));
+		transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.SetX(x));
 	}
 	
-	public static void SetRotationY(this Transform _transform,float _y)
+	public static void SetRotationY(this Transform transform,float y)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.rotation = Quaternion.Euler(_transform.rotation.eulerAngles.SetY(_y));
+		transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.SetY(y));
 	}
 
-	public static void SetRotationZ(this Transform _transform,float _z)
+	public static void SetRotationZ(this Transform transform,float z)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.rotation = Quaternion.Euler(_transform.rotation.eulerAngles.SetZ(_z));
+		transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.SetZ(z));
 	}
 	#endregion Set Rotation
 
 	#region Set Local Rotation
-	public static void SetLocalRotationXY(this Transform _transform,Vector2 _angle)
+	public static void SetLocalRotationXY(this Transform transform,Vector2 _angle)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localRotation = Quaternion.Euler(_transform.localRotation.eulerAngles.SetXY(_angle));
+		transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.SetXY(_angle));
 	}
 
-	public static void SetLocalRotationXZ(this Transform _transform,Vector2 _angle)
+	public static void SetLocalRotationXZ(this Transform transform,Vector2 _angle)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localRotation = Quaternion.Euler(_transform.localRotation.eulerAngles.SetXZ(_angle));
+		transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.SetXZ(_angle));
 	}
 
-	public static void SetLocalRotationYZ(this Transform _transform,Vector2 _angle)
+	public static void SetLocalRotationYZ(this Transform transform,Vector2 _angle)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localRotation = Quaternion.Euler(_transform.localRotation.eulerAngles.SetYZ(_angle));
+		transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.SetYZ(_angle));
 	}
 
-	public static void SetLocalRotationX(this Transform _transform,float _x)
+	public static void SetLocalRotationX(this Transform transform,float x)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localRotation = Quaternion.Euler(_transform.localRotation.eulerAngles.SetX(_x));
+		transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.SetX(x));
 	}
 	
-	public static void SetLocalRotationY(this Transform _transform,float _y)
+	public static void SetLocalRotationY(this Transform transform,float y)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localRotation = Quaternion.Euler(_transform.localRotation.eulerAngles.SetY(_y));
+		transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.SetY(y));
 	}
 
-	public static void SetLocalRotationZ(this Transform _transform,float _z)
+	public static void SetLocalRotationZ(this Transform transform,float z)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localRotation = Quaternion.Euler(_transform.localRotation.eulerAngles.SetZ(_z));
+		transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.SetZ(z));
 	}
 	#endregion Set Local Rotation
 
-	public static void RotateAroundTarget(this Transform _transform,Vector3 _target,Vector3 _axis,float _speed,bool _look)
+	public static void RotateAroundTarget(this Transform transform,Vector3 _target,Vector3 _axis,float _speed,bool _look)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
 		var delta = Quaternion.AngleAxis(_speed,_look ? Vector3.up : _axis);
-        var offset = delta*(_transform.position-_target);
+        var offset = delta*(transform.position-_target);
 
-        _transform.position = _target+offset;
+        transform.position = _target+offset;
 
         if(_look)
         {
-            _transform.rotation = Quaternion.LookRotation(-offset,_axis);
+            transform.rotation = Quaternion.LookRotation(-offset,_axis);
         }
 	}
 
 	#region Set Local Scale
-	public static void SetLocalScaleXY(this Transform _transform,Vector2 _size)
+	public static void SetLocalScaleXY(this Transform transform,Vector2 _size)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localScale = _transform.localScale.SetXY(_size);
+		transform.localScale = transform.localScale.SetXY(_size);
 	}
 
-	public static void SetLocalScaleXZ(this Transform _transform,Vector2 _size)
+	public static void SetLocalScaleXZ(this Transform transform,Vector2 _size)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localScale = _transform.localScale.SetXZ(_size);
+		transform.localScale = transform.localScale.SetXZ(_size);
 	}
 
-	public static void SetLocalScaleYZ(this Transform _transform,Vector2 _size)
+	public static void SetLocalScaleYZ(this Transform transform,Vector2 _size)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localScale = _transform.localScale.SetYZ(_size);
+		transform.localScale = transform.localScale.SetYZ(_size);
 	}
 
-	public static void SetLocalScaleX(this Transform _transform,float _x)
+	public static void SetLocalScaleX(this Transform transform,float x)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localScale = _transform.localScale.SetX(_x);
+		transform.localScale = transform.localScale.SetX(x);
 	}
 
-	public static void SetLocalScaleY(this Transform _transform,float _y)
+	public static void SetLocalScaleY(this Transform transform,float y)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localScale = _transform.localScale.SetY(_y);
+		transform.localScale = transform.localScale.SetY(y);
 	}
 
-	public static void SetLocalScaleZ(this Transform _transform,float _z)
+	public static void SetLocalScaleZ(this Transform transform,float z)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localScale = _transform.localScale.SetZ(_z);
+		transform.localScale = transform.localScale.SetZ(z);
 	}
 	#endregion Set Local Scale
 
-	public static void SetLossyScale(this Transform _transform,Vector3 _scale)
+	public static void SetLossyScale(this Transform transform,Vector3 _scale)
 	{
-		if(!_transform)
+		if(!IsValid(transform))
 		{
-			LogTag.System.E("Transform is null.");
-
 			return;
 		}
 
-		_transform.localScale = Vector3.one;
+		transform.localScale = Vector3.one;
 
-		var lossyScale = _transform.lossyScale;
+		var lossyScale = transform.lossyScale;
 
-		_transform.localScale = new Vector3(_scale.x/lossyScale.x,_scale.y/lossyScale.y,_scale.z/lossyScale.z);
+		transform.localScale = new Vector3(_scale.x/lossyScale.x,_scale.y/lossyScale.y,_scale.z/lossyScale.z);
 	}
 }

@@ -4,14 +4,14 @@ using UnityEngine;
 
 public static partial class CommonUtility
 {
-	public static string GetFilePathInPanel(string _header,string _kind = "*")
+	public static string GetFilePathInPanel(string title,string kind = "*")
 	{
-		return EditorUtility.OpenFilePanel(_header,Application.dataPath,_kind);
+		return EditorUtility.OpenFilePanel(title,Application.dataPath,kind);
 	}
 
-	public static string GetFolderPathInPanel(string _header)
+	public static string GetFolderPathInPanel(string title)
 	{
-		return EditorUtility.OpenFolderPanel(_header,Application.dataPath,string.Empty);
+		return EditorUtility.OpenFolderPanel(title,Application.dataPath,string.Empty);
 	}
 
 	public static string GetTSVFile()
@@ -38,9 +38,9 @@ public static partial class CommonUtility
 		return GetFile("Find text file.","*.*");
 	}
 
-	private static string GetFile(string _header,string _kind)
+	private static string GetFile(string title,string kind)
 	{
-		var filePath = GetFilePathInPanel(_header,_kind);
+		var filePath = GetFilePathInPanel(title,kind);
 
 		return filePath.IsEmpty() ? null : ReadFileToText(filePath);
 	}

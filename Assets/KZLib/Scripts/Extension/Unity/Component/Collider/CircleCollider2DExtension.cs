@@ -2,47 +2,53 @@ using UnityEngine;
 
 public static class CircleCollider2DExtension
 {
-	public static Bounds GetLocalBounds(this CircleCollider2D _collider)
+	public static Bounds CalculateLocalBounds(this CircleCollider2D circleCollider2D)
 	{
-		if(!_collider)
+		if(!IsValid(circleCollider2D))
 		{
-			LogTag.System.E("Collider is null.");
-
 			return default;
 		}
 
-		var diameter = _collider.radius*2.0f;
+		var diameter = circleCollider2D.radius*2.0f;
 
-		return new Bounds(_collider.offset,new Vector3(diameter,diameter));
+		return new Bounds(circleCollider2D.offset,new Vector3(diameter,diameter));
 	}
 
-	public static float GetRadius(this CircleCollider2D _collider,out Vector2 _localCenter)
+	public static float CalculateRadius(this CircleCollider2D circleCollider2D,out Vector2 localCenter)
 	{
-		if(!_collider)
+		if(!IsValid(circleCollider2D))
 		{
-			LogTag.System.E("Collider is null.");
+			localCenter = Vector2.zero;
 
-			_localCenter = default;
-
-			return Global.INVALID_NUMBER;
+			return -1.0f;
 		}
 
-		_localCenter = _collider.offset;
+		localCenter = circleCollider2D.offset;
 		
-		return _collider.radius;
+		return circleCollider2D.radius;
 	}
 
-	public static bool ApplyScale(this CircleCollider2D _collider,Vector3 _scale)
+	public static bool ApplyScale(this CircleCollider2D circleCollider2D,Vector3 scale)
 	{
-		if(!_collider)
+		if(!IsValid(circleCollider2D))
 		{
-			LogTag.System.E("Collider is null.");
-
 			return false;
 		}
 
-		_scale = _scale.Abs();
-		_collider.radius *= Mathf.Max(_scale.x,_scale.y);
+		scale = scale.Abs();
+		circleCollider2D.radius *= Mathf.Max(scale.x,scale.y);
+
+		return true;
+	}
+
+	private static bool IsValid(CircleCollider2D circleCollider2D)
+	{
+		if(!circleCollider2D)
+		{
+			LogTag.System.E("CircleCollider2D is null");
+
+			return false;
+		}
 
 		return true;
 	}

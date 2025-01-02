@@ -4,24 +4,24 @@ using System.IO;
 
 public static partial class CommonUtility
 {
-	/// <param name="_startPath">The absolute path of the folder.</param>
-	public static void DeleteEmptyDirectory(string _startPath,Action _onComplete = null)
+	/// <param name="startPath">The absolute path of the folder.</param>
+	public static void DeleteEmptyDirectory(string startPath,Action onComplete = null)
 	{
-		if(!IsFolderExist(_startPath,true))
+		if(!IsFolderExist(startPath,true))
 		{
 			return;
 		}
 
-		DeleteEmptyDirectoryInner(_startPath);
+		_DeleteEmptyDirectory(startPath);
 
-		_onComplete?.Invoke();
+		onComplete?.Invoke();
 	}
 
-	private static void DeleteEmptyDirectoryInner(string _startPath)
+	private static void _DeleteEmptyDirectory(string startPath)
 	{
-		foreach(var folderPath in GetFolderPathArray(_startPath))
+		foreach(var folderPath in GetFolderPathArray(startPath))
 		{
-			DeleteEmptyDirectoryInner(folderPath);
+			_DeleteEmptyDirectory(folderPath);
 
 			var innerFolderPathArray = GetFolderPathArray(folderPath);
 
@@ -46,26 +46,26 @@ public static partial class CommonUtility
 		}
 	}
 
-	/// <param name="_filePath">The absolute path of the file.</param>
-	public static void DeleteFile(string _filePath,Action _onComplete = null)
+	/// <param name="filePath">The absolute path of the file.</param>
+	public static void DeleteFile(string filePath,Action onComplete = null)
 	{
-		if(!IsFileExist(_filePath,true))
+		if(!IsFileExist(filePath,true))
 		{
 			return;
 		}
 
-		File.Delete(_filePath);
+		File.Delete(filePath);
 
-		if(_filePath.Contains(".meta"))
+		if(filePath.Contains(".meta"))
 		{
 			return;
 		}
 
-		var meta = $"{_filePath}.meta";
+		var meta = $"{filePath}.meta";
 
 		DeleteFile(meta);
 
-		_onComplete?.Invoke();
+		onComplete?.Invoke();
 	}
 }
 #endif

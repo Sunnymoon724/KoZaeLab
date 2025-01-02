@@ -2,28 +2,28 @@
 
 public class ShiftGraphImageUI : GraphImageUI
 {
-	public void UpdateGraph(float _data)
+	public void UpdateGraph(float value)
 	{
 		if(IsValidate)
 		{
 			return;
 		}
 
-		var dataArray = new float[m_GraphArray.Length];
-		var maxValue = _data;
+		var valueArray = new float[m_graphArray.Length];
+		var maxValue = value;
 
-		for(var i=0;i<dataArray.Length-1;i++)
+		for(var i=0;i<valueArray.Length-1;i++)
 		{
-			dataArray[i] = m_GraphArray[i+1];
+			valueArray[i] = m_graphArray[i+1];
 
-			maxValue = Mathf.Max(maxValue,dataArray[i]);
+			maxValue = Mathf.Max(maxValue,valueArray[i]);
 		}
 
-		dataArray[^1] = _data;
+		valueArray[^1] = value;
 
-		for(var i=0;i<m_GraphArray.Length;i++)
+		for(var i=0;i<m_graphArray.Length;i++)
 		{
-			m_GraphArray[i] = dataArray[i]/maxValue;
+			m_graphArray[i] = valueArray[i]/maxValue;
 		}
 
 		SetGraphArray();
@@ -33,6 +33,6 @@ public class ShiftGraphImageUI : GraphImageUI
 	{
 		base.Reset();
 
-		m_GraphLength = 150;
+		m_graphLength = 150;
 	}
 }

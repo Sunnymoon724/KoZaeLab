@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using System;
+using UnityEngine.Events;
 
 #if UNITY_EDITOR
 
@@ -16,43 +17,46 @@ namespace KZLib.KZDevelop
 	public partial class PathCreator : BaseComponent
 	{
 		[VerticalGroup("0",Order = 0),SerializeField,LabelText("Space Type")]
-		private SpaceType m_PathSpaceType = SpaceType.xyz;
-		public SpaceType PathSpaceType => m_PathSpaceType;
+		private SpaceType m_pathSpaceType = SpaceType.xyz;
+		public SpaceType PathSpaceType => m_pathSpaceType;
 
 		[SerializeField,HideInInspector]
-		private PathDrawMode m_DrawMode = PathDrawMode.Curve;
+		private PathDrawMode m_drawMode = PathDrawMode.Curve;
 
 		public bool IsCurveMode => DrawMode == PathDrawMode.Curve;
 		public bool IsPolygonMode => DrawMode == PathDrawMode.Polygon;
 
 		[SerializeField,HideInInspector]
-		private float m_Resolution = 50.0f;
+		private float m_resolution = 50.0f;
+
+		[SerializeField,HideInInspector]
+		private bool m_closed = false;
 
 		private string ResolutionLabel => IsCurveMode ? "Curve Resolution" : "Vertex Distance";
 		private float MinResolution => IsCurveMode ? 1.0f : 0.0f;
 
 		[VerticalGroup("5",Order = 5),SerializeField,LabelText("Handle List"),DisplayAsString,ListDrawerSettings(DraggableItems = false,HideAddButton = true,HideRemoveButton = true)]
-		private List<Vector3> m_HandleList = new();
-		public Vector3[] HandleArray => m_HandleList.ToArray();
+		private List<Vector3> m_handleList = new();
+		public Vector3[] HandleArray => m_handleList.ToArray();
 
 		[SerializeField,HideInInspector]
-		private Vector3[] m_PointArray = null;
+		private Vector3[] m_pointArray = null;
 
 		[VerticalGroup("3",Order = 3),SerializeField,LabelText("Path Length"),DisplayAsString]
-		private float m_PathLength = 0.0f;
-		public float PathLength => m_PathLength;
+		private float m_pathLength = 0.0f;
+		public float PathLength => m_pathLength;
 
 		[VerticalGroup("3",Order = 3),SerializeField,LabelText("Line Renderer")]
-		private LineRenderer m_LineRenderer = null;
+		private LineRenderer m_lineRenderer = null;
 
 		[NonSerialized]
-		private bool m_Dirty = false;
+		private bool m_dirty = false;
 
 		public Vector3[] PointArray
 		{
 			get
 			{
-				if(m_PointArray == null || m_Dirty)
+				if(m_pointArray == null || m_dirty)
 				{
 					if(IsCurveMode)
 					{
@@ -63,49 +67,49 @@ namespace KZLib.KZDevelop
 						GetShapePointArray();
 					}
 
-					onChangedPath?.Invoke();
+					OnPathChanged?.Invoke();
 
-					m_PathLength = CommonUtility.GetTotalDistance(m_PointArray);
+					m_pathLength = CommonUtility.GetTotalDistance(m_pointArray);
 
-					if(m_LineRenderer)
+					if(m_lineRenderer)
 					{
-						m_LineRenderer.loop = IsClosed;
-						m_LineRenderer.positionCount = m_PointArray.Length;
-						m_LineRenderer.SetPositions(m_PointArray);
+						m_lineRenderer.loop = IsClosed;
+						m_lineRenderer.positionCount = m_pointArray.Length;
+						m_lineRenderer.SetPositions(m_pointArray);
 					}
 
-					m_Dirty = false;
+					m_dirty = false;
 				}
 
-				return m_PointArray;
+				return m_pointArray;
 			}
 		}
 
-		public NewAction onChangedPath = new();
+		public event UnityAction OnPathChanged;
 
 		public void SetDirty()
 		{
-			m_Dirty = true;
+			m_dirty = true;
 		}
 
-		public void SetLineRendererData(Vector2 _width)
+		public void SetLineRendererData(Vector2 width)
 		{
-			m_LineRenderer.startWidth = _width.x;
-			m_LineRenderer.endWidth = _width.y;
+			m_lineRenderer.startWidth = width.x;
+			m_lineRenderer.endWidth = width.y;
 		}
 
 		[VerticalGroup("0",Order = 0),ShowInInspector,LabelText("Current DrawMode")]
 		public PathDrawMode DrawMode
 		{
-			get => m_DrawMode;
+			get => m_drawMode;
 			private set
 			{
-				if(m_DrawMode == value)
+				if(m_drawMode == value)
 				{
 					return;
 				}
 
-				m_DrawMode = value;
+				m_drawMode = value;
 
 				Reset();
 			}
@@ -114,15 +118,15 @@ namespace KZLib.KZDevelop
 		[VerticalGroup("2",Order = 2),ShowInInspector,LabelText(nameof(ResolutionLabel)),MinValue("$MinResolution")]
 		public float Resolution
 		{
-			get => m_Resolution;
+			get => m_resolution;
 			private set
 			{
-				if(m_Resolution == value)
+				if(m_resolution == value)
 				{
 					return;
 				}
 
-				m_Resolution = value;
+				m_resolution = value;
 
 				SetDirty();
 			}
@@ -143,7 +147,7 @@ namespace KZLib.KZDevelop
 
 			var is2D = EditorSettings.defaultBehaviorMode == EditorBehaviorMode.Mode2D;
 
-			m_PathSpaceType = is2D ? SpaceType.xy : SpaceType.xyz;
+			m_pathSpaceType = is2D ? SpaceType.xy : SpaceType.xyz;
 
 			if(IsCurveMode)
 			{
@@ -157,16 +161,16 @@ namespace KZLib.KZDevelop
 			SetDirty();
 		}
 
-		private Vector3 ConvertPosition(Vector3 _position)
+		private Vector3 ConvertPosition(Vector3 position)
 		{
-			return PathSpaceType == SpaceType.xy ? _position.SetZ() : PathSpaceType == SpaceType.xz ? _position.SetY() : _position;
+			return PathSpaceType == SpaceType.xy ? position.SetZ() : PathSpaceType == SpaceType.xz ? position.SetY() : position;
 		}
 
 		private void OnDrawGizmos()
 		{
 			var selected = Selection.activeGameObject;
 
-			if(selected == gameObject || m_HandleList.Count <= 0)
+			if(selected == gameObject || m_handleList.Count <= 0)
 			{
 				return;
 			}

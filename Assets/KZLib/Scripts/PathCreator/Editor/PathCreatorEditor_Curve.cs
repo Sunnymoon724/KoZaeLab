@@ -3,92 +3,92 @@ using UnityEditor;
 using UnityEngine;
 using Sirenix.OdinInspector.Editor;
 
-namespace KZLib.KZEditor
+namespace KZLib.KZDevelop
 {
 	public partial class PathCreatorEditor : OdinEditor
 	{
-		private void SetCurvePathInput(Event _event)
+		private void SetCurvePathInput(Event currentEvent)
 		{
-			var handleArray = m_Creator.HandleArray;
-			var handleIndex = (m_MouseOverHandleIndex == Global.INVALID_INDEX) ? 0 : m_MouseOverHandleIndex;
+			var handleArray = m_pathCreator.HandleArray;
+			var handleIndex = (m_mouseOverHandleIndex == Global.INVALID_INDEX) ? 0 : m_mouseOverHandleIndex;
 
-			m_MouseOverHandleIndex = Global.INVALID_INDEX;
+			m_mouseOverHandleIndex = Global.INVALID_INDEX;
 
 			for(var i=0;i<handleArray.Length;i++)
 			{
 				var index = (handleIndex+i)%handleArray.Length;
-				var radius = GetHandleDiameter(m_AnchorSize,handleArray[index])/2.0f;
-				var position = handleArray[index].TransformPoint(m_Creator.transform,m_Creator.PathSpaceType);
+				var radius = GetHandleDiameter(m_anchorSize,handleArray[index])/2.0f;
+				var position = handleArray[index].TransformPoint(m_pathCreator.transform,m_pathCreator.PathSpaceType);
 	
 				if(HandleUtility.DistanceToCircle(position,radius) == 0.0f)
 				{
-					m_MouseOverHandleIndex = index;
+					m_mouseOverHandleIndex = index;
 					break;
 				}
 			}
 
 			HandleUtility.Repaint();
 
-			if(_event.button == 0)
+			if(currentEvent.button == 0)
 			{
-				switch(_event.type)
+				switch(currentEvent.type)
 				{
 					case EventType.MouseDown:
 					{
 						//? Add
-						if(_event.shift)
+						if(currentEvent.shift)
 						{
 							var distance = (Camera.current.transform.position-handleArray[^1]).magnitude;
-							var newPosition = GetMousePosition(m_Creator,distance);
+							var newPosition = GetMousePosition(distance);
 
-							Undo.RecordObject(m_Creator,"Add Anchor");
+							Undo.RecordObject(m_pathCreator,"Add Anchor");
 
-							if(m_SelectedHandleIndex == -1)
+							if(m_selectedHandleIndex == -1)
 							{
-								m_Creator.AddAnchor(newPosition);
+								m_pathCreator.AddAnchor(newPosition);
 							}
 							else
 							{
-								m_Creator.InsertAnchor(m_SelectedHandleIndex,newPosition);
+								m_pathCreator.InsertAnchor(m_selectedHandleIndex,newPosition);
 							}
 						}
 						//? Delete
-						else if(m_MouseOverHandleIndex != Global.INVALID_INDEX && (_event.control || _event.command))
+						else if(m_mouseOverHandleIndex != Global.INVALID_INDEX && (currentEvent.control || currentEvent.command))
 						{
-							Undo.RecordObject(m_Creator,"Delete Anchor");
+							Undo.RecordObject(m_pathCreator,"Delete Anchor");
 
-							m_Creator.RemoveAnchor(m_MouseOverHandleIndex);
+							m_pathCreator.RemoveAnchor(m_mouseOverHandleIndex);
 
-							if(m_MouseOverHandleIndex == m_SelectedHandleIndex)
+							if(m_mouseOverHandleIndex == m_selectedHandleIndex)
 							{
-								m_SelectedHandleIndex = Global.INVALID_INDEX;
+								m_selectedHandleIndex = Global.INVALID_INDEX;
 							}
 
-							m_MouseOverHandleIndex = Global.INVALID_INDEX;
+							m_mouseOverHandleIndex = Global.INVALID_INDEX;
 						}
 						//? Select
 						else
 						{
-							m_SelectedHandleIndex = m_MouseOverHandleIndex;
+							m_selectedHandleIndex = m_mouseOverHandleIndex;
 
-							if(m_MouseOverHandleIndex != Global.INVALID_INDEX)
+							if(m_mouseOverHandleIndex != Global.INVALID_INDEX)
 							{
-								m_DragHandleIndex = m_SelectedHandleIndex;
+								m_dragHandleIndex = m_selectedHandleIndex;
 							}
 						}
 					}
 					break;
 
-					case EventType.MouseDrag when m_DragHandleIndex != Global.INVALID_INDEX:
+					case EventType.MouseDrag when m_dragHandleIndex != Global.INVALID_INDEX:
 					{
-						var currentPosition = handleArray[m_DragHandleIndex];
-						var newPosition = GetMousePosition(m_Creator);
+						var currentPosition = handleArray[m_dragHandleIndex];
+						var newPosition = GetMousePosition();
 
 						if(currentPosition != newPosition)
 						{
-							Undo.RecordObject(m_Creator,"Move Handle");
+							Undo.RecordObject(m_pathCreator,"Move Handle");
 
-							m_Creator.MoveCurve(m_DragHandleIndex,newPosition,_event.capsLock);
+							m_pathCreator.MoveCurve(m_dragHandleIndex,newPosition,currentEvent.capsLock);
 
 							Repaint();
 						}
@@ -96,28 +96,28 @@ namespace KZLib.KZEditor
 					break;
 					case EventType.MouseUp:
 					{
-						m_DragHandleIndex = Global.INVALID_INDEX;
+						m_dragHandleIndex = Global.INVALID_INDEX;
 					}
 					break;
 				}
 			}
 		}
 
-		private void DrawLineInCurve(Vector3[] _handleArray)
+		private void DrawLineInCurve(Vector3[] handleArray)
 		{
 			var cachedColor = Handles.color;
 
-			Handles.color = m_GuideLineColor;
-			var length = m_Creator.IsClosed ? _handleArray.Length/3 : (_handleArray.Length-1)/3;
+			Handles.color = m_guideLineColor;
+			var length = m_pathCreator.IsClosed ? handleArray.Length/3 : (handleArray.Length-1)/3;
 
 			for(var i=0;i<length;i++)
 			{
-				Handles.DrawDottedLine(_handleArray[i*3+0],_handleArray[i*3+1],5.0f);
-				Handles.DrawDottedLine(_handleArray[i*3+2],_handleArray[CommonUtility.LoopClamp(i*3+3,_handleArray.Length)],5.0f);
+				Handles.DrawDottedLine(handleArray[i*3+0],handleArray[i*3+1],5.0f);
+				Handles.DrawDottedLine(handleArray[i*3+2],handleArray[CommonUtility.LoopClamp(i*3+3,handleArray.Length)],5.0f);
 			}
 
-			Handles.color = m_NormalLineColor;
-			var pointArray = m_Creator.PointArray;
+			Handles.color = m_normalLineColor;
+			var pointArray = m_pathCreator.PointArray;
 
 			for(var i=0;i<pointArray.Length-1;i++)
 			{

@@ -22,32 +22,32 @@ namespace KZLib.KZAttribute
 
 		public bool IsIncludeAssets { get; }
 
-		protected KZPathAttribute(bool _addOpenBtn,bool _changePathBtn,bool _isIncludeAssets) : base()
+		protected KZPathAttribute(bool addOpenBtn,bool changePathBtn,bool isIncludeAssets) : base()
 		{
-			AddOpenButton = _addOpenBtn;
-			AddChangeButton = _changePathBtn;
+			AddOpenButton = addOpenBtn;
+			AddChangeButton = changePathBtn;
 
-			IsIncludeAssets = _isIncludeAssets;
+			IsIncludeAssets = isIncludeAssets;
 		}
 	}
 
 #if UNITY_EDITOR
 	public abstract class KZPathAttributeDrawer<TAttribute> : KZAttributeDrawer<TAttribute,string> where TAttribute : KZPathAttribute
 	{
-		private const int BUTTON_WIDTH = 30;
+		private const int c_button_width = 30;
 
-		protected readonly List<Func<Rect,bool,Rect>> m_OnClickedList = new();
+		protected readonly List<Func<Rect,bool,Rect>> m_onClickedList = new();
 
 		protected override void Initialize()
 		{
 			if(Attribute.AddChangeButton)
 			{
-				m_OnClickedList.Add(OnClickToChangePath);
+				m_onClickedList.Add(OnClickToChangePath);
 			}
 
 			if(Attribute.AddOpenButton)
 			{
-				m_OnClickedList.Add(OnClickToOpen);
+				m_onClickedList.Add(OnClickToOpen);
 			}
 		}
 
@@ -55,9 +55,9 @@ namespace KZLib.KZAttribute
 
 		protected abstract bool IsValidPath();
 
-		private Rect OnClickToChangePath(Rect _rect,bool _)
+		private Rect OnClickToChangePath(Rect rect,bool _)
 		{
-			return DrawButton(_rect,SdfIconType.ArrowRepeat,true,()=>
+			return DrawButton(rect,SdfIconType.ArrowRepeat,true,()=>
 			{
 				var dataPath = GetNewPath();
 
@@ -84,15 +84,15 @@ namespace KZLib.KZAttribute
 			});
 		}
 
-		protected abstract Rect OnClickToOpen(Rect _rect,bool _isValid);
+		protected abstract Rect OnClickToOpen(Rect rect,bool isValid);
 
-		protected override void DoDrawPropertyLayout(GUIContent _label)
+		protected override void _DrawPropertyLayout(GUIContent label)
 		{
 			var isValid = IsValidPath();
-			var rect = DrawPrefixLabel(_label);
+			var rect = DrawPrefixLabel(label);
 
 			//? Add other buttons
-			foreach(var onClicked in m_OnClickedList)
+			foreach(var onClicked in m_onClickedList)
 			{
 				rect = onClicked(rect,isValid);
 			}
@@ -100,26 +100,26 @@ namespace KZLib.KZAttribute
 			EditorGUI.LabelField(rect,ValueEntry.SmartValue,GetValidateStyle(isValid,Global.WRONG_HEX_COLOR));
 		}
 
-		protected Rect DrawButton(Rect _rect,SdfIconType _icon,bool _active,Action _onClicked)
+		protected Rect DrawButton(Rect rect,SdfIconType iconType,bool active,Action onClicked)
 		{
 			var cached = GUI.enabled;
-			GUI.enabled = _active;
+			GUI.enabled = active;
 
-			var rect = new Rect(_rect.xMax-BUTTON_WIDTH,_rect.y,BUTTON_WIDTH,_rect.height);
+			var newRect = new Rect(rect.xMax-c_button_width,rect.y,c_button_width,rect.height);
 
-			if(SirenixEditorGUI.SDFIconButton(rect,_icon,new GUIStyle(GUI.skin.button)))
+			if(SirenixEditorGUI.SDFIconButton(newRect,iconType,new GUIStyle(GUI.skin.button)))
 			{
-				_onClicked?.Invoke();
+				onClicked?.Invoke();
 			}
 
 			GUI.enabled = cached;
 
-			return new Rect(_rect.x,_rect.y,_rect.width-BUTTON_WIDTH,_rect.height);
+			return new Rect(rect.x,rect.y,rect.width-c_button_width,rect.height);
 		}
 
-		protected Rect DrawParentFolderOpenButton(Rect _rect,bool _isValid)
+		protected Rect DrawParentFolderOpenButton(Rect rect,bool isValid)
 		{
-			return DrawButton(_rect,SdfIconType.Folder2,_isValid,()=>
+			return DrawButton(rect,SdfIconType.Folder2,isValid,()=>
 			{
 				CommonUtility.Open(CommonUtility.GetParentPath(CommonUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets)));
 			});

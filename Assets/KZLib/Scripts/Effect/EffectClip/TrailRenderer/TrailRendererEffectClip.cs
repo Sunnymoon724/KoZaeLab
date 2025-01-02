@@ -9,7 +9,7 @@ public class TrailRendererEffectClip : EffectClip
 	public record TrailRendererEffectParam(Gradient TrailColor = null,Action<bool> OnComplete = null) : EffectParam(OnComplete);
 
 	[FoldoutGroup("General",Order = -5),LabelText("Trail Renderer"),SerializeField]
-	private TrailRenderer m_TrailRenderer = null;
+	private TrailRenderer m_trailRenderer = null;
 
 	protected override float Duration => -1.0f;
 	protected override bool IsLoop => false;
@@ -24,29 +24,29 @@ public class TrailRendererEffectClip : EffectClip
 	{
 		base.Reset();
 
-		if(!m_TrailRenderer)
+		if(!m_trailRenderer)
 		{
-			m_TrailRenderer = GetComponent<TrailRenderer>();
+			m_trailRenderer = GetComponent<TrailRenderer>();
 		}
 	}
 
-	public override void SetEffect(EffectParam _param)
+	public override void SetEffect(EffectParam effectParam)
 	{
-		base.SetEffect(_param);
+		base.SetEffect(effectParam);
 
-		if(_param is not TrailRendererEffectParam param)
+		if(effectParam is not TrailRendererEffectParam param)
 		{
 			return;
 		}
 
 		if(param.TrailColor != null)
 		{
-			m_TrailRenderer.colorGradient = param.TrailColor;
+			m_trailRenderer.colorGradient = param.TrailColor;
 		}
 	}
 
 	protected async override UniTask PlayTaskAsync()
 	{
-		await CommonUtility.WaitForConditionAsync(()=>false,SetTime,m_IgnoreTimeScale,m_TokenSource.Token);
+		await CommonUtility.WaitForConditionAsync(()=>false,SetTime,m_ignoreTimeScale,m_tokenSource.Token);
 	}
 }

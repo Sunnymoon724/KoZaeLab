@@ -4,8 +4,8 @@ using UnityEngine.UI;
 
 namespace KZLib.KZSample
 {
-	public class MainTestMgr : KZMainMgr<MainTestMgr>
-	{
+	// public class MainTestMgr : KZMainMgr<MainTestMgr>
+	// {
 		
-	}
+	// }
 }

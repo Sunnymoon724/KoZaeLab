@@ -8,13 +8,13 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace KZLib.KZEditor
+namespace KZLib
 {
 	public class HierarchyCustom : EditorCustom
 	{
-		private const float HEAD_SPACE = 37.0f;
+		private const float c_head_space = 37.0f;
 
-		private const string HIERARCHY_DATA = "[Custom] HierarchyData";
+		private const string c_hierarchy_data = "[Custom] HierarchyData";
 
 		[Serializable]
 		private class HierarchyData
@@ -31,7 +31,7 @@ namespace KZLib.KZEditor
 		}
 
 		private static HierarchyData s_Hierarchy = null;
-		private static HierarchyData Hierarchy => s_Hierarchy ??= LoadData<HierarchyData>(HIERARCHY_DATA);
+		private static HierarchyData Hierarchy => s_Hierarchy ??= LoadData<HierarchyData>(c_hierarchy_data);
 
 		[InitializeOnLoadMethod]
 		private static void Initialize()
@@ -41,11 +41,11 @@ namespace KZLib.KZEditor
 			SetHierarchy();
 		}
 
-		protected override void DoResetCustom()
+		protected override void _ResetCustom()
 		{
 			if(CommonUtility.DisplayCheck("Hierarchy Custom Reset","Hierarchy Custom Reset?"))
 			{
-				EditorPrefs.DeleteKey(HIERARCHY_DATA);
+				EditorPrefs.DeleteKey(c_hierarchy_data);
 				s_Hierarchy = null;
 
 				CommonUtility.DisplayInfo("Hierarchy Custom Reset Complete");
@@ -158,11 +158,11 @@ namespace KZLib.KZEditor
 			}
 		}
 
-		private static readonly Dictionary<int,InstanceData> s_InstanceDataDict = new();
+		private static readonly Dictionary<int,InstanceData> s_instanceDataDict = new();
 
 		private static void SaveHierarchy()
 		{
-			SaveData(HIERARCHY_DATA,Hierarchy);
+			SaveData(c_hierarchy_data,Hierarchy);
 
 			SetHierarchy();
 		}
@@ -186,23 +186,23 @@ namespace KZLib.KZEditor
 			EditorApplication.RepaintHierarchyWindow();
 		}
 
-		private static void OnDrawHierarchy(int _instanceId,Rect _rect)
+		private static void OnDrawHierarchy(int instanceId,Rect rect)
 		{
-			if(!UseHierarchy || !s_InstanceDataDict.TryGetValue(_instanceId,out var data))
+			if(!UseHierarchy || !s_instanceDataDict.TryGetValue(instanceId,out var data))
 			{
 				return;
 			}
 
 			if(UseCategoryLine && data.IsCategory)
 			{
-				DrawCategory(data,_rect,_instanceId);
+				DrawCategory(data,rect,instanceId);
 			}
 			else if(UseIcon)
 			{
-				DrawIcon(_rect,_instanceId);
+				DrawIcon(rect,instanceId);
 			}
 
-			DrawBranchTree(data,_rect,data.IsCategory);
+			DrawBranchTree(data,rect,data.IsCategory);
 		}
 		private static void OnUpdateHierarchy()
 		{
@@ -211,7 +211,7 @@ namespace KZLib.KZEditor
 				return;
 			}
 
-			s_InstanceDataDict.Clear();
+			s_instanceDataDict.Clear();
 
 			var prefab = PrefabStageUtility.GetCurrentPrefabStage();
 
@@ -243,40 +243,40 @@ namespace KZLib.KZEditor
 			}
 		}
 
-		private static void CheckGameObject(GameObject _object,int _treeLevel,int _treeGroup,bool _isLastChild)
+		private static void CheckGameObject(GameObject gameObject,int treeLevel,int treeGroup,bool isLastChild)
 		{
-			var instanceId = _object.GetInstanceID();
+			var instanceId = gameObject.GetInstanceID();
 
-			if(s_InstanceDataDict.ContainsKey(instanceId))
+			if(s_instanceDataDict.ContainsKey(instanceId))
 			{
 				return;
 			}
 
-			var childCount = _object.transform.childCount;
+			var childCount = gameObject.transform.childCount;
 
-			s_InstanceDataDict.Add(instanceId,new InstanceData(_treeLevel,_treeGroup,childCount > 0,_isLastChild,_object.CompareTag(Global.CATEGORY_TAG)));
+			s_instanceDataDict.Add(instanceId,new InstanceData(treeLevel,treeGroup,childCount > 0,isLastChild,gameObject.CompareTag(Global.CATEGORY_TAG)));
 
 			for(var i=0;i<childCount;i++)
 			{
-				CheckGameObject(_object.transform.GetChild(i).gameObject,_treeLevel+1,_treeGroup,i == childCount-1);
+				CheckGameObject(gameObject.transform.GetChild(i).gameObject,treeLevel+1,treeGroup,i == childCount-1);
 			}
 		}
 
 		#region Draw Branch Tree
-		private static void DrawBranchTree(InstanceData _data,Rect _rect,bool _isCategory)
+		private static void DrawBranchTree(InstanceData instanceData,Rect rect,bool isCategory)
 		{
-			if(!UseBranchTree || _data.TreeLevel < 0 || _rect.x < 60 || _isCategory)
+			if(!UseBranchTree || instanceData.TreeLevel < 0 || rect.x < 60 || isCategory)
 			{
 				return;
 			}
 
-			if(_data.IsLast)
+			if(instanceData.IsLast)
 			{
-				DrawHalfVerticalAndHorizontalLine(_rect,_data.TreeLevel,_data.HasChild);
+				DrawHalfVerticalAndHorizontalLine(rect,instanceData.TreeLevel,instanceData.HasChild);
 			}
 			else
 			{
-				DrawVerticalAndHorizontalLine(_rect,_data.TreeLevel,_data.HasChild);
+				DrawVerticalAndHorizontalLine(rect,instanceData.TreeLevel,instanceData.HasChild);
 			}
 		}
 
@@ -285,32 +285,32 @@ namespace KZLib.KZEditor
 		/// |----
 		/// |
 		/// </summary>
-		private static void DrawVerticalAndHorizontalLine(Rect _rect,int _treeLevel,bool _hasChild)
+		private static void DrawVerticalAndHorizontalLine(Rect rect,int treeLevel,bool hasChild)
 		{
-			DrawHalfVerticalLine(_rect,true,_treeLevel);
-			DrawHorizontalLine(_rect,_treeLevel,_hasChild);
-			DrawHalfVerticalLine(_rect,false,_treeLevel);
+			DrawHalfVerticalLine(rect,true,treeLevel);
+			DrawHorizontalLine(rect,treeLevel,hasChild);
+			DrawHalfVerticalLine(rect,false,treeLevel);
 		}
 
 		/// <summary>
 		/// |
 		/// |----
 		/// </summary>
-		private static void DrawHalfVerticalAndHorizontalLine(Rect _rect,int _treeLevel,bool _hasChild)
+		private static void DrawHalfVerticalAndHorizontalLine(Rect rect,int treeLevel,bool hasChild)
 		{
-			DrawHalfVerticalLine(_rect,true,_treeLevel);
-			DrawHorizontalLine(_rect,_treeLevel,_hasChild);
+			DrawHalfVerticalLine(rect,true,treeLevel);
+			DrawHorizontalLine(rect,treeLevel,hasChild);
 		}
 
 		/// <summary>
 		/// |
 		/// </summary>
 		//! Half-Vertical
-		private static void DrawHalfVerticalLine(Rect _rect,bool isUpper,int _treeLevel)
+		private static void DrawHalfVerticalLine(Rect rect,bool isUpper,int treeLevel)
 		{
-			var height = _rect.height/2.0f;
-			var x = GetTreeStartX(_rect,_treeLevel);
-			var y = isUpper ? _rect.y : (_rect.y+height);
+			var height = rect.height/2.0f;
+			var x = GetTreeStartX(rect,treeLevel);
+			var y = isUpper ? rect.y : (rect.y+height);
 
 			EditorGUI.DrawRect(new Rect(x,y,2.0f,height),BranchTreeColor);
 		}
@@ -319,32 +319,32 @@ namespace KZLib.KZEditor
 		/// ----
 		/// </summary>
 		//! Horizontal
-		private static void DrawHorizontalLine(Rect _rect,int _treeLevel,bool _hasChild)
+		private static void DrawHorizontalLine(Rect rect,int treeLevel,bool hasChild)
 		{
-			var x = GetTreeStartX(_rect,_treeLevel);
-			var y = _rect.y + _rect.height/2.0f;
-			var width = _rect.height + (_hasChild ? -5.0f :  2.0f);
+			var x = GetTreeStartX(rect,treeLevel);
+			var y = rect.y + rect.height/2.0f;
+			var width = rect.height + (hasChild ? -5.0f :  2.0f);
 
 			EditorGUI.DrawRect(new Rect(x,y,width,2.0f),BranchTreeColor);
 		}
 
-		private static float GetTreeStartX(Rect _rect,int _treeLevel)
+		private static float GetTreeStartX(Rect rect,int treeLevel)
 		{
-			return HEAD_SPACE+(_rect.height-2.0f)*_treeLevel;
+			return c_head_space+(rect.height-2.0f)*treeLevel;
 		}
 		#endregion Draw Branch Tree
 
 		#region Draw Category
-		private static void DrawCategory(InstanceData _data,Rect _rect,int _instanceId)
+		private static void DrawCategory(InstanceData instanceData,Rect rect,int instanceId)
 		{
-			var rect = new Rect(HEAD_SPACE,_rect.y,_rect.width+25.0f+_data.TreeLevel*14.0f,_rect.height);
-			var current = EditorUtility.InstanceIDToObject(_instanceId) as GameObject;
+			var newRect = new Rect(c_head_space,rect.y,rect.width+25.0f+instanceData.TreeLevel*14.0f,rect.height);
+			var current = EditorUtility.InstanceIDToObject(instanceId) as GameObject;
 			var color = Selection.activeGameObject == current ? CategoryColor.InvertColor() : CategoryColor;
 
 			var text = current == null ? "" : current.name;
 
-			EditorGUI.DrawRect(rect,color);
-			EditorGUI.LabelField(rect,text,new GUIStyle()
+			EditorGUI.DrawRect(newRect,color);
+			EditorGUI.LabelField(newRect,text,new GUIStyle()
 			{
 				fontStyle = FontStyle.Bold,
 				alignment = TextAnchor.MiddleCenter,
@@ -354,9 +354,9 @@ namespace KZLib.KZEditor
 		#endregion Draw Category
 
 		#region Draw Icon
-		private static void DrawIcon(Rect _rect,int _instanceId)
+		private static void DrawIcon(Rect rect,int instanceId)
 		{
-			var current = EditorUtility.InstanceIDToObject(_instanceId) as GameObject;
+			var current = EditorUtility.InstanceIDToObject(instanceId) as GameObject;
 
 			if(current == null)
 			{
@@ -377,16 +377,16 @@ namespace KZLib.KZEditor
 				GUI.color = cached.MaskAlpha(0.5f);
 			}
 
-			var rect = new Rect(_rect.x+7,_rect.y+7,10,10);
+			var newRect = new Rect(rect.x+7,rect.y+7,10,10);
 
-			EditorGUI.LabelField(rect,content);
+			EditorGUI.LabelField(newRect,content);
 
 			GUI.color = cached;
 		}
 
-		private static GUIContent GetContent(GameObject _object)
+		private static GUIContent GetContent(GameObject gameObject)
 		{
-			var componentArray = _object.GetComponents<Component>();
+			var componentArray = gameObject.GetComponents<Component>();
 
 			if(componentArray == null || componentArray.Length < 2)
 			{

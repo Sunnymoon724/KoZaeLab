@@ -6,43 +6,29 @@ using UnityEngine.UI;
 public abstract class BaseButtonUI : BaseComponentUI
 {
 	[SerializeField,LabelText("Button")]
-	protected Button m_Button = null;
+	protected Button m_button = null;
 
 	protected override void OnEnable()
 	{
 		base.OnEnable();
 
-		if(!m_Button)
-		{
-			LogTag.System.I("Button is null");
-
-			return;
-		}
-
-		m_Button.onClick.AddAction(OnClickedButton);
+		m_button.onClick.AddAction(OnClickedButton);
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
 
-		if(!m_Button)
-		{
-			LogTag.System.I("Button is null");
-
-			return;
-		}
-
-		m_Button.onClick.RemoveAction(OnClickedButton);
+		m_button.onClick.RemoveAction(OnClickedButton);
 	}
 
 	protected override void Reset()
 	{
 		base.Reset();
 
-		if(!m_Button)
+		if(!m_button)
 		{
-			m_Button = GetComponent<Button>();
+			m_button = GetComponent<Button>();
 		}
 	}
 

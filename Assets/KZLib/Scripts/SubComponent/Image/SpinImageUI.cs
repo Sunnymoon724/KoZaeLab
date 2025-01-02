@@ -1,36 +1,36 @@
-using KZLib;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 public class SpinImageUI : BaseImageUI,IDragHandler
 {
-	[SerializeField] private Transform m_Target = null;
-	[SerializeField] private float m_Speed = 1.0f;
-	[SerializeField] private bool m_LockVertical = false;
+	[SerializeField] private Transform m_target = null;
+	[SerializeField] private float m_speed = 1.0f;
+	[SerializeField] private bool m_lockVertical = false;
 
-	public NewAction onDragHandler = new();
+	public event UnityAction OnImageSpin;
 
-	public void SetTarget(Transform _target)
+	public void SetTarget(Transform target)
 	{
-		m_Target = _target;
+		m_target = target;
 	}
 
-	void IDragHandler.OnDrag(PointerEventData _data)
+	void IDragHandler.OnDrag(PointerEventData eventData)
 	{
-		if(!m_Target)
+		if(!m_target)
 		{
 			return;
 		}
 
-		var delta = _data.delta;
+		var delta = eventData.delta;
 
-		if(m_LockVertical)
+		if(m_lockVertical)
 		{
 			delta.y = 0.0f;
 		}
 
-		m_Target.localRotation = Quaternion.Euler(0.0f,-0.5f*delta.x*m_Speed,-0.5f*delta.y*m_Speed)*m_Target.localRotation;
+		m_target.localRotation = Quaternion.Euler(0.0f,-0.5f*delta.x*m_speed,-0.5f*delta.y*m_speed)*m_target.localRotation;
 
-		onDragHandler?.Invoke();
+		OnImageSpin?.Invoke();
 	}
 }

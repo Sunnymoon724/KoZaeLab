@@ -8,21 +8,21 @@ using UnityEngine;
 
 public static partial class CommonUtility
 {
-	private const int WAV_HEADER_SIZE = 44;
+	private const int c_wav_header_size = 44;
 
 	/// <summary>
 	/// Create folder. (path is file ? create parent folder. : create folder)
 	/// </summary>
-	/// <param name="_path">The absolute path of the file or folder.</param>
-	public static void CreateFolder(string _path)
+	/// <param name="path">The absolute path of the file or folder.</param>
+	public static void CreateFolder(string path)
 	{
-		if(!IsPathExist(_path,true))
+		if(!IsPathExist(path,true))
 		{
 			return;
 		}
 
 		// Path is file ? Get parent path. : Get path
-		var fullPath = IsFilePath(_path) ? GetParentPath(_path) : _path;
+		var fullPath = IsFilePath(path) ? GetParentPath(path) : path;
 
 		if(!IsFolderExist(fullPath))
 		{
@@ -30,88 +30,88 @@ public static partial class CommonUtility
 		}
 	}
 
-	/// <param name="_filePath">The absolute path of the file.</param>
-	public static void CreateFile(string _filePath)
+	/// <param name="filePath">The absolute path of the file.</param>
+	public static void CreateFile(string filePath)
 	{
-		if(!IsPathExist(_filePath,true))
+		if(!IsPathExist(filePath,true))
 		{
 			return;
 		}
 
-		if(!IsFileExist(_filePath))
+		if(!IsFileExist(filePath))
 		{
-			File.Create(_filePath).Close();
+			File.Create(filePath).Close();
 		}
 	}
 
-	/// <param name="_filePath">The absolute path of the file.</param>
-	public static void WriteByteToFile(string _filePath,byte[] _bytes)
+	/// <param name="filePath">The absolute path of the file.</param>
+	public static void WriteByteToFile(string filePath,byte[] _bytes)
 	{
-		if(!IsPathExist(_filePath,true))
+		if(!IsPathExist(filePath,true))
 		{
 			return;
 		}
 
-		CreateFolder(_filePath);
+		CreateFolder(filePath);
 
-		File.WriteAllBytes(_filePath,_bytes);
+		File.WriteAllBytes(filePath,_bytes);
 	}
 
-	/// <param name="_filePath">The absolute path of the file.</param>
-	public static void WriteTextToFile(string _filePath,string _text)
+	/// <param name="filePath">The absolute path of the file.</param>
+	public static void WriteTextToFile(string filePath,string _text)
 	{
-		if(!IsPathExist(_filePath,true))
+		if(!IsPathExist(filePath,true))
 		{
 			return;
 		}
 
-		CreateFolder(_filePath);
+		CreateFolder(filePath);
 
-		File.WriteAllText(_filePath,_text);
+		File.WriteAllText(filePath,_text);
 	}
 
-	/// <param name="_filePath">The absolute path of the file.</param>
-	public static void WriteJsonToFile<TObject>(string _filePath,TObject _object)
+	/// <param name="filePath">The absolute path of the file.</param>
+	public static void WriteJsonToFile<TObject>(string filePath,TObject _object)
 	{
-		if(!IsPathExist(_filePath,true))
+		if(!IsPathExist(filePath,true))
 		{
 			return;
 		}
 
-		WriteTextToFile(_filePath,JsonConvert.SerializeObject(_object));
+		WriteTextToFile(filePath,JsonConvert.SerializeObject(_object));
 	}
 
-	/// <param name="_filePath">The absolute path of the file.</param>
-	public static void WriteTextureToFile(string _filePath,Texture2D _texture)
+	/// <param name="filePath">The absolute path of the file.</param>
+	public static void WriteTextureToFile(string filePath,Texture2D _texture)
 	{
-		if(!IsPathExist(_filePath,true))
+		if(!IsPathExist(filePath,true))
 		{
 			return;
 		}
 
-		WriteByteToFile(_filePath,_texture.EncodeToPNG());
+		WriteByteToFile(filePath,_texture.EncodeToPNG());
 	}
 
-	/// <param name="_filePath">The absolute path of the file.</param>
-	public static void WriteAudioClipToWav(string _filePath,AudioClip _clip)
+	/// <param name="filePath">The absolute path of the file.</param>
+	public static void WriteAudioClipToWav(string filePath,AudioClip _clip)
 	{
-		if(!IsPathExist(_filePath,true))
+		if(!IsPathExist(filePath,true))
 		{
 			return;
 		}
 
-		using var stream = CreateEmpty(_filePath,WAV_HEADER_SIZE);
+		using var stream = CreateEmpty(filePath,c_wav_header_size);
 
 		ConvertAndWrite(stream,_clip);
 		WriteHeader(stream,_clip);
 	}
 
-	private static FileStream CreateEmpty(string _filePath,int _size)
+	private static FileStream CreateEmpty(string filePath,int size)
 	{
-		var stream = new FileStream(_filePath,FileMode.Create);
+		var stream = new FileStream(filePath,FileMode.Create);
 		var empty = new byte();
 
-		for(var i=0;i<_size;i++)
+		for(var i=0;i<size;i++)
 		{
 			stream.WriteByte(empty);
 		}
@@ -119,11 +119,11 @@ public static partial class CommonUtility
 		return stream;
 	}
 
-	private static void ConvertAndWrite(FileStream _stream,AudioClip _clip)
+	private static void ConvertAndWrite(FileStream fileStream,AudioClip audioClip)
 	{
-		var sampleArray = new float[_clip.samples];
+		var sampleArray = new float[audioClip.samples];
 
-		_clip.GetData(sampleArray,0);
+		audioClip.GetData(sampleArray,0);
 
 		var shortArray = new short[sampleArray.Length];
 		var byteArray = new byte[sampleArray.Length*2];
@@ -136,43 +136,43 @@ public static partial class CommonUtility
 			dataArray.CopyTo(byteArray,i*2);
 		}
 
-		_stream.Write(byteArray,0,byteArray.Length);
+		fileStream.Write(byteArray,0,byteArray.Length);
 	}
 
-	private static void WriteHeader(FileStream _stream,AudioClip clip)
+	private static void WriteHeader(FileStream fileStream,AudioClip audioClip)
 	{
-		_stream.Seek(0,SeekOrigin.Begin);
+		fileStream.Seek(0,SeekOrigin.Begin);
 
-		_stream.Write(Encoding.UTF8.GetBytes("RIFF"),0,4);
-		_stream.Write(BitConverter.GetBytes(_stream.Length-8),0,4);
+		fileStream.Write(Encoding.UTF8.GetBytes("RIFF"),0,4);
+		fileStream.Write(BitConverter.GetBytes(fileStream.Length-8),0,4);
 
-		_stream.Write(Encoding.UTF8.GetBytes("WAVE"),0,4);
+		fileStream.Write(Encoding.UTF8.GetBytes("WAVE"),0,4);
 
-		_stream.Write(Encoding.UTF8.GetBytes("fmt "),0,4);
-		_stream.Write(BitConverter.GetBytes(16),0,4);
-		_stream.Write(BitConverter.GetBytes(1),0,2);
-		_stream.Write(BitConverter.GetBytes(clip.channels),0,2);
-		_stream.Write(BitConverter.GetBytes(clip.frequency),0,4);
-		_stream.Write(BitConverter.GetBytes(clip.frequency*clip.channels*2),0,4);
-		_stream.Write(BitConverter.GetBytes((ushort)(clip.channels*2)),0,2);
-		_stream.Write(BitConverter.GetBytes(16),0,2);
+		fileStream.Write(Encoding.UTF8.GetBytes("fmt "),0,4);
+		fileStream.Write(BitConverter.GetBytes(16),0,4);
+		fileStream.Write(BitConverter.GetBytes(1),0,2);
+		fileStream.Write(BitConverter.GetBytes(audioClip.channels),0,2);
+		fileStream.Write(BitConverter.GetBytes(audioClip.frequency),0,4);
+		fileStream.Write(BitConverter.GetBytes(audioClip.frequency*audioClip.channels*2),0,4);
+		fileStream.Write(BitConverter.GetBytes((ushort)(audioClip.channels*2)),0,2);
+		fileStream.Write(BitConverter.GetBytes(16),0,2);
 
-		_stream.Write(Encoding.UTF8.GetBytes("data"),0,4);
-		_stream.Write(BitConverter.GetBytes(clip.samples*clip.channels*2),0,4);
+		fileStream.Write(Encoding.UTF8.GetBytes("data"),0,4);
+		fileStream.Write(BitConverter.GetBytes(audioClip.samples*audioClip.channels*2),0,4);
 	}
 
-	/// <param name="_folderPath">The absolute path of the folder.</param>
-	public static void AddOrUpdateTemplateText(string _folderPath,string _templateName,string _scriptName,string _newData,Func<string,string> _onUpdate)
+	/// <param name="folderPath">The absolute path of the folder.</param>
+	public static void AddOrUpdateTemplateText(string folderPath,string templateName,string scriptName,string newData,Func<string,string> onUpdate)
 	{
-		var absolutePath = GetAbsolutePath(PathCombine(_folderPath,_scriptName),true);
-		var templateText = IsFolderExist(absolutePath) ? ReadFileToText(absolutePath) : GetTemplateText(_templateName);
+		var absolutePath = GetAbsolutePath(PathCombine(folderPath,scriptName),true);
+		var templateText = IsFolderExist(absolutePath) ? ReadFileToText(absolutePath) : GetTemplateText(templateName);
 
-		if(templateText.IsEmpty() || templateText.Contains(_newData))
+		if(templateText.IsEmpty() || templateText.Contains(newData))
 		{
 			return;
 		}
 
-		templateText = _onUpdate(templateText);
+		templateText = onUpdate(templateText);
 
 		WriteTextToFile(absolutePath,templateText);
 
@@ -180,50 +180,50 @@ public static partial class CommonUtility
 	}
 
 	/// <param name="_filePath">The absolute path of the file.</param>
-	public static string GetTemplateText(string _filePath)
+	public static string GetTemplateText(string filePath)
 	{
-		if(!IsPathExist(_filePath,true))
+		if(!IsPathExist(filePath,true))
 		{
 			return null;
 		}
 
-		return ReadFileToText(GetTemplateFileAbsolutePath(_filePath));
+		return ReadFileToText(FindTemplateFileAbsolutePath(filePath));
 	}
 
-	/// <param name="_sourcePath">The absolute path of the file.</param>
+	/// <param name="sourcePath">The absolute path of the file.</param>
 	/// <param name="_destinationPath">The absolute path of the folder.</param>
-	public static void CopyFile(string _sourcePath,string _destinationPath,bool _isOverride)
+	public static void CopyFile(string sourceFilePath,string destinationFolderPath,bool isOverride)
 	{
-		if(!IsFileExist(_sourcePath,true))
+		if(!IsFileExist(sourceFilePath,true))
 		{
 			return;
 		}
 
-		var fileName = GetFileName(_sourcePath);
-		var destinationPath = PathCombine(_destinationPath,fileName);
+		var fileName = GetFileName(sourceFilePath);
+		var destinationFilePath = PathCombine(destinationFolderPath,fileName);
 
-		if(IsFileExist(destinationPath) && !_isOverride)
+		if(IsFileExist(destinationFilePath) && !isOverride)
 		{
 			return;
 		}
 
-		WriteByteToFile(destinationPath,ReadFileToBytes(_sourcePath));
+		WriteByteToFile(destinationFilePath,ReadFileToBytes(sourceFilePath));
 	}
 
-	/// <param name="_sourcePath">The absolute path of the folder.</param>
+	/// <param name="sourcePath">The absolute path of the folder.</param>
 	/// <param name="_destinationPath">The absolute path of the folder.</param>
-	public static void CopyFolder(string _sourcePath,string _destinationPath,bool _isOverride)
+	public static void CopyFolder(string sourceFolderPath,string destinationFolderPath,bool isOverride)
 	{
-		if(!IsFolderExist(_sourcePath,true))
+		if(!IsFolderExist(sourceFolderPath,true))
 		{
 			return;
 		}
 
-		CreateFolder(_destinationPath);
+		CreateFolder(destinationFolderPath);
 
-		foreach(var filePath in GetFilePathArray(_sourcePath,"*.*"))
+		foreach(var filePath in GetFilePathArray(sourceFolderPath,"*.*"))
 		{
-			CopyFile(filePath,_destinationPath,_isOverride);
+			CopyFile(filePath,destinationFolderPath,isOverride);
 		}
 	}
 }

@@ -1,84 +1,87 @@
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public static partial class CommonUtility
 {
 	#region Parabola
-	public static Vector3 Parabola(Vector3 _start,Vector3 _velocity,float _time,float? _gravity = null)
+	public static Vector3 Parabola(Vector3 start,Vector3 velocity,float time,float? gravity = null)
 	{
 		var result = Vector3.zero;
-		var gravity = GetGravity(_gravity);
+		var realGravity = GetGravity(gravity);
 
-		result.x = _start.x + _velocity.x*_time;
-		result.y = _start.y + (_velocity.y*_time)-(0.5f*gravity*_time*_time);
-		result.z = _start.z + _velocity.z*_time;
+		result.x = start.x + velocity.x*time;
+		result.y = start.y + (velocity.y*time)-(0.5f*realGravity*time*time);
+		result.z = start.z + velocity.z*time;
 
 		return result;
 	}
 	#endregion Parabola
 
-	public static Vector3 GetTrajectoryVelocity(Transform _projectile,Transform _target,float _angle,float? _gravity = null)
+	public static Vector3 CalculateLaunchVelocity(Transform projectile,Transform target,float launchAngle,float? gravity = null)
 	{
-		var startXZ = _projectile.position.SetY();
-		var endXZ = _target.position.SetY();
+		var startPosition = projectile.position.SetY(0);
+		var targetPosition = target.position.SetY(0);
 
-		_projectile.LookAt(endXZ);
+		projectile.LookAt(targetPosition);
 
-		var range = Vector3.Distance(startXZ,endXZ);
-		var gravity = GetGravity(_gravity);
-		var angle = Mathf.Tan(_angle*Mathf.Deg2Rad);
-		var height = _target.position.y-_projectile.position.y;
+		var horizontalDistance = Vector3.Distance(startPosition,targetPosition);
+		var effectiveGravity = GetGravity(gravity);
+		var launchAngleTan = Mathf.Tan(launchAngle*Mathf.Deg2Rad);
+		var heightDifference = target.position.y-projectile.position.y;
+		var velocity = Mathf.Sqrt(effectiveGravity*horizontalDistance*horizontalDistance/(2.0f*(heightDifference-horizontalDistance*launchAngleTan)));
 
-		var velocity = Mathf.Sqrt(gravity*range*range/(2.0f*(height-range*angle)));
-
-		return _projectile.TransformDirection(new Vector3(0.0f,angle*velocity,velocity));
+		return projectile.TransformDirection(new Vector3(0.0f,launchAngleTan*velocity,velocity));
 	}
 
-	private static float GetGravity(float? _gravity = null)
+	private static float GetGravity(float? gravity = null)
 	{
-		return _gravity ?? Physics.gravity.y;
+		return gravity ?? Physics.gravity.y;
 	}
 
 	#region Bezier Curve
-	public static bool IsValidCubicBezier(int _count,bool _isClosed)
+	public static bool IsValidCubicBezier(int _count,bool isClosed)
 	{
-		return _count >= (_isClosed ? 6 : 4);
+		return _count >= (isClosed ? 6 : 4);
 	}
 
-    public static Vector3[] GetCubicBezierCurve(Vector3[] _pointArray,bool _isClosed,float _resolution)
+	public static Vector3[] CalculateCubicBezierCurve(Vector3[] pointArray,bool isClosed,float resolution)
 	{
-		var length = _pointArray.Length;
+		var length = pointArray.Length;
 
-		if(!IsValidCubicBezier(length,_isClosed))
+		if(!IsValidCubicBezier(length,isClosed))
 		{
 			return null;
 		}
 
-        var pointList = new List<Vector3>();
-		var count = _isClosed ? length/3 : (length-1)/3;
+		var count = isClosed ? length/3 : (length-1)/3;
+		var index = 0;
+		var resultArray = new Vector3[count*(Mathf.FloorToInt(1.0f*resolution)+1)];
 
 		for(var i=0;i<count;i++)
 		{
-			pointList.AddRange(GetCubicBezierCurve(_pointArray[i*3+0],_pointArray[i*3+1],_pointArray[i*3+2],_pointArray[LoopClamp(i*3+3,length)],_resolution));
+			var segmentPointArray = CalculateCubicBezierCurve(pointArray[i*3+0],pointArray[i*3+1],pointArray[i*3+2],pointArray[LoopClamp(i*3+3,length)],resolution);
+			
+			Array.Copy(segmentPointArray,0,resultArray,index,segmentPointArray.Length);
+			index += segmentPointArray.Length;
 		}
 
-		return pointList.ToArray();
+		return resultArray;
 	}
 
-	public static Vector3[] GetCubicBezierCurve(Vector3 _point0,Vector3 _point1,Vector3 _point2,Vector3 _point3,float _resolution)
+	public static Vector3[] CalculateCubicBezierCurve(Vector3 point0,Vector3 point1,Vector3 point2,Vector3 point3,float resolution)
 	{
-		var pointList = new List<Vector3>();
-		var count = Mathf.FloorToInt(1.0f*_resolution);
+		var count = Mathf.FloorToInt(1.0f*resolution);
+		var pointArray = new Vector3[count+1];
 
 		for(var i=0;i<=count;i++)
 		{
-			var time = i/_resolution;
+			var time = i/resolution;
 			var data = 1.0f-time;
 
-			pointList.Add((data*data*data*_point0) + (3*data*data*time*_point1) + (3*data*time*time*_point2) + (time*time*time*_point3));
+			pointArray[i] = (data*data*data*point0) + (3*data*data*time*point1) + (3*data*time*time*point2) + (time*time*time*point3);
 		}
 
-		return pointList.ToArray();
+		return pointArray;
 	}
 	#endregion Bezier
 }

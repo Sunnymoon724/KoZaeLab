@@ -10,211 +10,179 @@ using UnityEditor.Animations;
 
 public static class AnimatorExtension
 {
-	public static bool IsState(this Animator _animator,string _animName,int _layerIdx = 0)
+	public static bool IsState(this Animator animator,string animationName,int layerIndex = 0)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
 			return false;
 		}
 
-		return IsState(_animator,Animator.StringToHash(_animName),_layerIdx);
+		return IsState(animator,Animator.StringToHash(animationName),layerIndex);
 	}
 
-	public static bool IsState(this Animator _animator,int _animHashName,int _layerIdx = 0)
+	public static bool IsState(this Animator animator,int animationHashName,int layerIndex = 0)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
 			return false;
 		}
 
-		return _animator.GetCurrentAnimatorStateInfo(_layerIdx).shortNameHash ==_animHashName;
+		return animator.GetCurrentAnimatorStateInfo(layerIndex).shortNameHash == animationHashName;
 	}
 
 	/// <summary>
 	/// Set the anim to a specific frame ( speed 0 to freeze ).
 	/// </summary>
-	public static void SetAnimationStopAtFrame(this Animator _animator,string _animName,float _normalizedTime,int _layerIdx = 0,float _speed = 1.0f)
+	public static void SetAnimationStopAtFrame(this Animator animator,string animationName,float normalizedTime,int layerIndex = 0,float _speed = 1.0f)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
 			return;
 		}
 
-		SetAnimationStopAtFrame(_animator,Animator.StringToHash(_animName),_normalizedTime,_layerIdx,_speed);
+		SetAnimationStopAtFrame(animator,Animator.StringToHash(animationName),normalizedTime,layerIndex,_speed);
 	}
 
 	/// <summary>
 	/// Set the anim to a specific frame ( speed 0 to freeze ).
 	/// </summary>
-	public static void SetAnimationStopAtFrame(this Animator _animator,int _animHashName,float _normalizedTime,int _layerIdx = 0,float _speed = 1.0f)
+	public static void SetAnimationStopAtFrame(this Animator animator,int animationHashName,float normalizedTime,int layerIndex = 0,float _speed = 1.0f)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
 			return;
 		}
 
-		_animator.speed = _speed;
-		_animator.Play(_animHashName,_layerIdx,_normalizedTime);
+		animator.speed = _speed;
+		animator.Play(animationHashName,layerIndex,normalizedTime);
 	}
 
-	public static AnimatorStateInfo GetCurrentState(this Animator _animator,int _layerIdx = 0)
+	public static AnimatorStateInfo GetCurrentState(this Animator animator,int layerIndex = 0)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
 			return default;
 		}
 
-		return _animator.GetNextAnimatorStateInfo(_layerIdx).shortNameHash == 0 ? _animator.GetCurrentAnimatorStateInfo(_layerIdx) : _animator.GetNextAnimatorStateInfo(_layerIdx);
+		return animator.GetNextAnimatorStateInfo(layerIndex).shortNameHash == 0 ? animator.GetCurrentAnimatorStateInfo(layerIndex) : animator.GetNextAnimatorStateInfo(layerIndex);
 	}
 
-	public static async UniTask PlayAndWaitAsync(this Animator _animator,string _animName,int _layerIdx = 0,CancellationToken _token = default)
+	public static async UniTask PlayAndWaitAsync(this Animator animator,string animationName,int layerIndex = 0,CancellationToken cancellationToken = default)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
 			return;
 		}
 
-		await PlayAndWaitAsync(_animator,Animator.StringToHash(_animName),_layerIdx,_token);
+		await PlayAndWaitAsync(animator,Animator.StringToHash(animationName),layerIndex,cancellationToken);
 	}
 
-	public static async UniTask PlayAndWaitAsync(this Animator _animator,int _animHashName,int _layerIdx = 0,CancellationToken _token = default)
+	public static async UniTask PlayAndWaitAsync(this Animator animator,int animationHashName,int layerIndex = 0,CancellationToken cancellationToken = default)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
 			return;
 		}
 
-		_animator.Play(_animHashName,_layerIdx);
+		animator.Play(animationHashName,layerIndex);
 
-		await WaitForAnimationFinishAsync(_animator,_animHashName,_layerIdx,_token);
+		await WaitForAnimationFinishAsync(animator,animationHashName,layerIndex,cancellationToken);
 	}
 
-	public static async UniTask WaitForAnimationFinishAsync(this Animator _animator,string _animName,int _layerIdx = 0,CancellationToken _token = default)
+	public static async UniTask WaitForAnimationFinishAsync(this Animator animator,string animationName,int layerIndex = 0,CancellationToken cancellationToken = default)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
 			return;
 		}
 
-		await WaitForAnimationFinishAsync(_animator,Animator.StringToHash(_animName),_layerIdx,_token);
+		await WaitForAnimationFinishAsync(animator,Animator.StringToHash(animationName),layerIndex,cancellationToken);
 	}
 
-	public static async UniTask WaitForAnimationFinishAsync(this Animator _animator,int _animHashName,int _layerIdx = 0,CancellationToken _token = default)
+	public static async UniTask WaitForAnimationFinishAsync(this Animator animator,int animationHashName,int layerIndex = 0,CancellationToken cancellationToken = default)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
 			return;
 		}
 
-		await UniTask.WaitUntil(()=>IsAnimationFinish(_animator,_animHashName,_layerIdx),cancellationToken : _token);
+		await UniTask.WaitUntil(()=>IsAnimationFinish(animator,animationHashName,layerIndex),cancellationToken : cancellationToken);
 	}
 
-	public static bool IsAnimationFinish(this Animator _animator,string _animName,int _layerIdx = 0)
+	public static bool IsAnimationFinish(this Animator animator,string animationName,int layerIndex = 0)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
 			return false;
 		}
 
-		return IsAnimationFinish(_animator,Animator.StringToHash(_animName),_layerIdx);
+		return IsAnimationFinish(animator,Animator.StringToHash(animationName),layerIndex);
 	}
 
-	public static bool IsAnimationFinish(this Animator _animator,int _animHashName,int _layerIdx = 0)
+	public static bool IsAnimationFinish(this Animator animator,int animationHashName,int layerIndex = 0)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
 			return false;
 		}
 
-		return _animator.GetCurrentAnimatorStateInfo(_layerIdx).shortNameHash == _animHashName && _animator.GetCurrentAnimatorStateInfo(_layerIdx).normalizedTime >= 1.0f;
+		return animator.GetCurrentAnimatorStateInfo(layerIndex).shortNameHash == animationHashName && animator.GetCurrentAnimatorStateInfo(layerIndex).normalizedTime >= 1.0f;
 	}
 
-	public static async UniTask WaitForAnimationStartAsync(this Animator _animator,string _animName,int _layerIdx = 0,CancellationToken _token = default)
+	public static async UniTask WaitForAnimationStartAsync(this Animator animator,string animationName,int layerIndex = 0,CancellationToken cancellationToken = default)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
 			return;
 		}
 
-		await WaitForAnimationStartAsync(_animator,Animator.StringToHash(_animName),_layerIdx,_token);
+		await WaitForAnimationStartAsync(animator,Animator.StringToHash(animationName),layerIndex,cancellationToken);
 	}
 
-	public static async UniTask WaitForAnimationStartAsync(this Animator _animator,int _animHashName,int _layerIdx = 0,CancellationToken _token = default)
+	public static async UniTask WaitForAnimationStartAsync(this Animator animator,int animationHashName,int layerIndex = 0,CancellationToken cancellationToken = default)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
 			return;
 		}
 
-		await UniTask.WaitUntil(()=>IsAnimationStart(_animator,_animHashName,_layerIdx),cancellationToken : _token);
+		await UniTask.WaitUntil(()=>IsAnimationStart(animator,animationHashName,layerIndex),cancellationToken : cancellationToken);
 	}
 
-	public static bool IsAnimationStart(this Animator _animator,string _animName,int _layerIdx = 0)
+	public static bool IsAnimationStart(this Animator animator,string animationName,int layerIndex = 0)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
 			return false;
 		}
 
-		return IsAnimationStart(_animator,Animator.StringToHash(_animName),_layerIdx);
+		return IsAnimationStart(animator,Animator.StringToHash(animationName),layerIndex);
 	}
 
-	public static bool IsAnimationStart(this Animator _animator,int _animHashName,int _layerIdx = 0)
+	public static bool IsAnimationStart(this Animator animator,int animationHashName,int layerIndex = 0)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
 			return false;
 		}
 
-		return _animator.GetCurrentAnimatorStateInfo(_layerIdx).shortNameHash == _animHashName && _animator.GetCurrentAnimatorStateInfo(_layerIdx).normalizedTime <= 0.0f;
+		return animator.GetCurrentAnimatorStateInfo(layerIndex).shortNameHash == animationHashName && animator.GetCurrentAnimatorStateInfo(layerIndex).normalizedTime <= 0.0f;
 	}
 
-	public static float GetAnimationClipLength(this Animator _animator,string _animName)
+	public static float FindAnimationClipLength(this Animator animator,string clipName)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
-			return Global.INVALID_NUMBER;
+			return -1.0f;
 		}
 
-		var controller = _animator.runtimeAnimatorController;
+		var controller = animator.runtimeAnimatorController;
 
 		if(controller != null)
 		{
 			foreach(var clip in controller.animationClips)
 			{
-				if(_animName.IsEqual(clip.name))
+				if(clipName.IsEqual(clip.name))
 				{
 					return clip.length;
 				}
@@ -225,29 +193,39 @@ public static class AnimatorExtension
 	}
 
 #if UNITY_EDITOR
-	public static AnimatorController GetAnimatorController(this Animator _animator,out bool _isOverride)
+	public static AnimatorController GetAnimatorController(this Animator animator,out bool isOverride)
 	{
-		if(!_animator)
+		if(!IsValid(animator))
 		{
-			LogTag.System.E("Animator is null");
-
-			_isOverride = false;
+			isOverride = false;
 
 			return null;
 		}
 
-		if(_animator.runtimeAnimatorController is AnimatorController controller)
+		if(animator.runtimeAnimatorController is AnimatorController controller)
 		{
-			_isOverride = false;
+			isOverride = false;
 
 			return controller;
 		}
 
-		_isOverride = true;
+		isOverride = true;
 
-		var controller2 = _animator.runtimeAnimatorController as AnimatorOverrideController;
+		var controller2 = animator.runtimeAnimatorController as AnimatorOverrideController;
 
 		return controller2.runtimeAnimatorController as AnimatorController;
 	}
 #endif
+
+	private static bool IsValid(Animator animator)
+	{
+		if(!animator)
+		{
+			LogTag.System.E("Animator is null");
+
+			return false;
+		}
+
+		return true;
+	}
 }

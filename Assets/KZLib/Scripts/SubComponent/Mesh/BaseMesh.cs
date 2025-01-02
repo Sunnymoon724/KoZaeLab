@@ -4,43 +4,43 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter)),RequireComponent(typeof(MeshRenderer))]
 public abstract class BaseMesh : BaseComponent
 {
-	protected const long MAX_INDEX_COUNT = 65535L;
+	protected const long c_max_index_count = 65535L;
 
 	[SerializeField,LabelText("Mesh Filter")]
-	protected MeshFilter m_MeshFilter = null;
+	protected MeshFilter m_meshFilter = null;
 	[SerializeField,LabelText("Mesh Renderer")]
-	protected MeshRenderer m_MeshRenderer = null;
+	protected MeshRenderer m_meshRenderer = null;
 
-	private MaterialPropertyBlock m_PropertyBlock = null;
+	private MaterialPropertyBlock m_propertyBlock = null;
 
-	protected MaterialPropertyBlock PropertyBlock => m_PropertyBlock ??= new();
+	protected MaterialPropertyBlock PropertyBlock => m_propertyBlock ??= new();
 
 	protected override void Reset()
 	{
 		base.Reset();
 
-		if(!m_MeshFilter)
+		if(!m_meshFilter)
 		{
-			m_MeshFilter = GetComponent<MeshFilter>();
+			m_meshFilter = GetComponent<MeshFilter>();
 		}
 
-		if(!m_MeshRenderer)
+		if(!m_meshRenderer)
 		{
-			m_MeshRenderer = GetComponent<MeshRenderer>();
+			m_meshRenderer = GetComponent<MeshRenderer>();
 		}
 	}
 
 	public void SetColor(Color _color)
 	{
 		PropertyBlock.SetColor("_Color",_color);
-		m_MeshRenderer.SetPropertyBlock(PropertyBlock);
+		m_meshRenderer.SetPropertyBlock(PropertyBlock);
 	}
 
-	protected long GetMeshIndexCount(params MeshFilter[] _filterArray)
+	protected long CalculateMeshIndexCount(params MeshFilter[] filterArray)
 	{
 		var count = 0L;
 
-		foreach(var filter in _filterArray)
+		foreach(var filter in filterArray)
 		{
 			if(filter == null || filter.sharedMesh == null)
 			{
@@ -56,11 +56,11 @@ public abstract class BaseMesh : BaseComponent
 		return count;
 	}
 
-	protected long GetMeshIndexCount(params Mesh[] _meshArray)
+	protected long CalculateMeshIndexCount(params Mesh[] meshArray)
 	{
 		var count = 0L;
 
-		foreach(var mesh in _meshArray)
+		foreach(var mesh in meshArray)
 		{
 			if(mesh == null)
 			{
@@ -76,8 +76,8 @@ public abstract class BaseMesh : BaseComponent
 		return count;
 	}
 
-	protected bool IsValidMeshIndexCount(long _count)
+	protected bool IsValidMeshIndexCount(long count)
 	{
-		return _count < MAX_INDEX_COUNT;
+		return count < c_max_index_count;
 	}
 }

@@ -16,7 +16,7 @@ namespace KZLib.KZAttribute
 	[Conditional("UNITY_EDITOR")]
 	public class KZScriptableObjectPathAttribute : KZResourcePathAttribute
 	{
-		public KZScriptableObjectPathAttribute(bool _changePathButton = false,bool _newLine = false) : base(_changePathButton,_newLine) { }
+		public KZScriptableObjectPathAttribute(bool changePathButton = false,bool newLine = false) : base(changePathButton,newLine) { }
 	}
 
 #if UNITY_EDITOR
@@ -29,11 +29,16 @@ namespace KZLib.KZAttribute
 
 		protected override void OnOpenResource()
 		{
-			var viewer = EditorWindow.GetWindow<ScriptableObjectWindow>("Viewer");
+			var scriptableObject = GetResource<ScriptableObject>();
 
-			var data = AssetDatabase.LoadAssetAtPath<ScriptableObject>(CommonUtility.GetAssetsPath(ValueEntry.SmartValue));
+			if(!scriptableObject)
+			{
+				return;
+			}
 
-			viewer.SetScriptableObject(data);
+			var viewer = EditorWindow.GetWindow<ScriptableObjectWindow>("ScriptableObject Window");
+
+			viewer.SetResource(scriptableObject);
 			viewer.Show();
 		}
 	}

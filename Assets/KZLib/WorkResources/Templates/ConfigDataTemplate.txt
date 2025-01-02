@@ -1,0 +1,10 @@
+﻿using System.Collections.Generic;
+using UnityEngine;
+
+namespace KZLib.Data
+{
+	public partial class $ClassNameConfig : IConfigData
+	{
+		$PropertyFields
+	}
+}

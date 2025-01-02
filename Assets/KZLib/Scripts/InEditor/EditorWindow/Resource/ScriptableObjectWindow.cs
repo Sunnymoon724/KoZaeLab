@@ -1,28 +1,25 @@
 #if UNITY_EDITOR
-using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 
 namespace KZLib.KZWindow
 {
-	public class ScriptableObjectWindow : OdinEditorWindow
+	public class ScriptableObjectWindow : ResourceWindow<ScriptableObject>
 	{
-		[SerializeField]
-		private ScriptableObject m_Asset = null;
+		private Editor m_editor = null;
 
-		private Editor m_Editor = null;
-
-		public void SetScriptableObject(ScriptableObject _asset)
+		public override void SetResource(ScriptableObject scriptableObject)
 		{
-			m_Asset = _asset;
-			m_Editor = Editor.CreateEditor(m_Asset);
+			base.SetResource(scriptableObject);
+
+			m_editor = Editor.CreateEditor(m_resource);
 		}
 
-		protected override void OnImGUI()
+		protected override void _OnImGUI()
 		{
-			if(m_Editor != null)
+			if(m_editor != null)
 			{
-				m_Editor.OnInspectorGUI();
+				m_editor.OnInspectorGUI();
 			}
 		}
 	}

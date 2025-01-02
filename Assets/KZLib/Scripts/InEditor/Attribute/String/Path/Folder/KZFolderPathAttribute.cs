@@ -20,9 +20,9 @@ namespace KZLib.KZAttribute
 			return CommonUtility.GetFolderPathInPanel("Change new path.");
 		}
 
-		protected override Rect OnClickToOpen(Rect _rect,bool _isValid)
+		protected override Rect OnClickToOpen(Rect rect,bool isValid)
 		{
-			return DrawButton(_rect,SdfIconType.Folder2,_isValid,()=>
+			return DrawButton(rect,SdfIconType.Folder2,isValid,()=>
 			{
 				CommonUtility.Open(CommonUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets));
 			});
@@ -32,6 +32,6 @@ namespace KZLib.KZAttribute
 		{
 			return CommonUtility.IsFolderExist(ValueEntry.SmartValue);
 		}
-    }
+	}
 #endif
 }

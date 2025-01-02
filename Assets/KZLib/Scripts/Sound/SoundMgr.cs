@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using KZLib.KZUtility;
 
 namespace KZLib
 {
@@ -7,48 +8,48 @@ namespace KZLib
 	/// </summary>
 	public class SoundMgr : Singleton<SoundMgr>
 	{
-		private bool m_Disposed = false;
+		private bool m_disposed = false;
 
 		//? BGM
-		private AudioSource m_BGMSource = null;
-		public AudioSource BGMSource => m_BGMSource;
+		private AudioSource m_bgmSource = null;
+		public AudioSource BGMSource => m_bgmSource;
 
 		//? UI
-		private AudioSource m_UISource = null;
+		private AudioSource m_uiSource = null;
 
 		protected override void Initialize()
 		{
 			//? Use CameraMgr or Camera main
-			m_BGMSource = CameraMgr.HasInstance ? CameraMgr.In.gameObject.GetComponentInChildren<AudioSource>() : Camera.main.gameObject.GetOrAddComponent<AudioSource>();
+			m_bgmSource = CameraMgr.HasInstance ? CameraMgr.In.gameObject.GetComponentInChildren<AudioSource>() : Camera.main.gameObject.GetOrAddComponent<AudioSource>();
 
 			if(UIMgr.HasInstance)
 			{
-				m_UISource = UIMgr.In.gameObject.GetComponentInChildren<AudioSource>();
+				m_uiSource = UIMgr.In.gameObject.GetComponentInChildren<AudioSource>();
 			}
 
-			Broadcaster.EnableListener(EventTag.ChangeSoundOption,OnChangeSoundOption);
+			EventMgr.In.EnableListener(EventTag.ChangeSoundOption,OnChangeSoundOption);
 
 			OnChangeSoundOption();
 		}
 
-		protected override void Release(bool _disposing)
+		protected override void Release(bool disposing)
 		{
-			if(m_Disposed)
+			if(m_disposed)
 			{
 				return;
 			}
 
-			if(_disposing)
+			if(disposing)
 			{
-				m_BGMSource = null;
-				m_UISource = null;
+				m_bgmSource = null;
+				m_uiSource = null;
 
-				Broadcaster.DisableListener(EventTag.ChangeSoundOption,OnChangeSoundOption);
+				EventMgr.In.DisableListener(EventTag.ChangeSoundOption,OnChangeSoundOption);
 			}
 
-			m_Disposed = true;
+			m_disposed = true;
 
-			base.Release(_disposing);
+			base.Release(disposing);
 		}
 
 		private void OnChangeSoundOption()
@@ -59,51 +60,51 @@ namespace KZLib
 			var music = option.MusicVolume;
 			var effect = option.EffectVolume;
 
-			m_BGMSource.volume = master.volume*music.volume;
-			m_BGMSource.mute = master.mute || music.mute;
+			m_bgmSource.volume = master.level*music.level;
+			m_bgmSource.mute = master.mute || music.mute;
 
-			m_UISource.volume = master.volume*effect.volume;
-			m_UISource.mute= master.mute || effect.mute;
+			m_uiSource.volume = master.level*effect.level;
+			m_uiSource.mute= master.mute || effect.mute;
 		}
 
 		#region UI
-		public void PlayUIShot(string _path,float _volume = 1.0f)
+		public void PlayUIShot(string audioPath,float volume = 1.0f)
 		{
-			if(_path.IsEmpty())
+			if(audioPath.IsEmpty())
 			{
 				LogTag.System.I("Audio path is empty");
 
 				return;
 			}
 
-			PlayUIShot(ResMgr.In.GetAudioClip(_path),_volume);
+			PlayUIShot(ResMgr.In.GetAudioClip(audioPath),volume);
 		}
 
-		public void PlayUIShot(AudioClip _clip,float _volume = 1.0f)
+		public void PlayUIShot(AudioClip audioClip,float volume = 1.0f)
 		{
-			if(!_clip)
+			if(!audioClip)
 			{
 				LogTag.System.I("Audio clip is null");
 
 				return;
 			}
 
-			m_UISource.PlayOneShot(_clip,_volume);
+			m_uiSource.PlayOneShot(audioClip,volume);
 		}
 		#endregion UI
 
 		#region BGM
-		public void ReplayBGM(float? _time = null)
+		public void ReplayBGM(float? startTime = null)
 		{
-			if(_time != null)
+			if(startTime != null)
 			{
-				m_BGMSource.time = _time.Value;
+				m_bgmSource.time = startTime.Value;
 			}
 
-			m_BGMSource.Play();
+			m_bgmSource.Play();
 		}
 
-		public void PlayBGM(string _path,float _time = 0.0f)
+		public void PlayBGM(string _path,float startTime = 0.0f)
 		{
 			if(_path.IsEmpty())
 			{
@@ -112,47 +113,47 @@ namespace KZLib
 				return;
 			}
 
-			PlayBGM(ResMgr.In.GetAudioClip(_path),_time);
+			PlayBGM(ResMgr.In.GetAudioClip(_path),startTime);
 		}
 
-		public void PlayBGM(AudioClip _clip,float _time = 0.0f)
+		public void PlayBGM(AudioClip audioClip,float startTime = 0.0f)
 		{
-			if(!_clip)
+			if(!audioClip)
 			{
 				LogTag.System.I("Audio clip is null");
 
 				return;
 			}
 
-			if(m_BGMSource.clip != null && m_BGMSource.clip.name.IsEqual(_clip.name))
+			if(m_bgmSource.clip != null && m_bgmSource.clip.name.IsEqual(audioClip.name))
 			{
 				return;
 			}
 
-			m_BGMSource.clip = _clip;
-			m_BGMSource.loop = true;
-			m_BGMSource.time = _time;
+			m_bgmSource.clip = audioClip;
+			m_bgmSource.loop = true;
+			m_bgmSource.time = startTime;
 
-			m_BGMSource.Play();
+			m_bgmSource.Play();
 		}
 
 		public void PauseBGM()
 		{
-			m_BGMSource.Pause();
+			m_bgmSource.Pause();
 		}
 
 		public bool IsPlayingBGM()
 		{
-			return m_BGMSource.isPlaying;
+			return m_bgmSource.isPlaying;
 		}
 
-		public void StopBGM(bool _clear)
+		public void StopBGM(bool clearClip)
 		{
-			m_BGMSource.Stop();
+			m_bgmSource.Stop();
 
-			if(_clear)
+			if(clearClip)
 			{
-				m_BGMSource.clip = null;
+				m_bgmSource.clip = null;
 			}
 		}
 		#endregion BGM

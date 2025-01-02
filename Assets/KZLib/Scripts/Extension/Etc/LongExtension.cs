@@ -1,74 +1,74 @@
 
 public static class LongExtension
 {
-	public static long Sign(this long _long)
+	public static long Sign(this long number)
 	{
-		return _long < 0L ? -1L : _long > 0L ? 1L : 0L;
+		return number < 0L ? -1L : number > 0L ? 1L : 0L;
 	}
 
-	public static string ToStringComma(this long _long)
+	public static string ToStringComma(this long number)
 	{
-		return $"{_long:n0}";
+		return $"{number:n0}";
 	}
 
-	public static string ToStringSign(this long _long)
+	public static string ToStringSign(this long number)
 	{
-		return $"{_long:+#;-#;0}";
+		return $"{number:+#;-#;0}";
 	}
 
-	public static double ToSeconds(this long _milliSeconds)
+	public static double ToSeconds(this long milliSecond)
 	{
-		return _milliSeconds/1000.0d;
+		return milliSecond/1000.0d;
 	}
 
-	public static bool HasFlag(this long _pivot,long _target)
+	public static bool HasFlag(this long pivot,long target)
 	{
-		return (_pivot & _target) != 0;
+		return (pivot & target) != 0;
 	}
 
-	public static long AddFlag(this long _pivot,long _target)
+	public static long AddFlag(this long pivot,long target)
 	{
-		return _pivot |= _target;
+		return pivot |= target;
 	}
 
-	public static long RemoveFlag(this long _pivot,long _target)
+	public static long RemoveFlag(this long pivot,long target)
 	{
-		return _pivot &= ~_target;
+		return pivot &= ~target;
 	}
 
-	public static long ChangeFlag(this long _pivot,long _add,long _remove)
+	public static long ChangeFlag(this long pivot,long add,long remove)
 	{
-		return _pivot.AddFlag(_add).RemoveFlag(_remove);
+		return pivot.AddFlag(add).RemoveFlag(remove);
 	}
 
-	public static string ByteToString(this long _byte)
+	public static string ByteToString(this long value)
 	{
-		_byte.ByteToString(out var _size, out var _unit);
+		value.ByteToString(out var size, out var unit);
 
-		return $"{_size:N2} {_unit}";
+		return $"{size:N2} {unit}";
 	}
 
-	public static void ByteToString(this long _byte,out double _size,out string _unit)
+	public static void ByteToString(this long value,out double size,out string unit)
 	{
 		var index = 0;
-		_size = _byte;
+		size = value;
 
-		while(_size >= 1024.0d)
+		while(size >= 1024.0d)
 		{
-			_size /= 1024.0d;
+			size /= 1024.0d;
 			index++;
 		}
 
-		_unit = Global.BYTE_UNIT_ARRAY[index];
+		unit = Global.BYTE_UNIT_ARRAY[index];
 	}
 
-	public static long ByteScaleUpUnit(this long _byte)
+	public static long ByteScaleUpUnit(this long value)
 	{
-		return _byte/1024L;
+		return value/1024L;
 	}
 
-	public static double ByteScaleUpUnitToDouble(this long _byte)
+	public static double ByteScaleUpUnitToDouble(this long value)
 	{
-		return _byte/1024.0d;
+		return value/1024.0d;
 	}
 }

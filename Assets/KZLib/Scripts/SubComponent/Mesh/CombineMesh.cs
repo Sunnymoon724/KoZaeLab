@@ -4,27 +4,27 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter)),RequireComponent(typeof(MeshRenderer))]
 public class CombineMesh : BaseMesh
 {
-	public void CombineMeshFilter(MeshFilter[] _filterArray)
+	public void CombineMeshFilter(MeshFilter[] filterArray)
 	{
-		if(_filterArray == null || _filterArray.Length == 0)
+		if(filterArray == null || filterArray.Length == 0)
 		{
 			return;
 		}
 
 		InitializeMesh();
 
-		var count = GetMeshIndexCount(_filterArray);
+		var count = CalculateMeshIndexCount(filterArray);
 
 		if(!IsValidMeshIndexCount(count))
 		{
-			LogTag.System.W($"The number of indices in the batched mesh is high. Object: {m_MeshFilter.gameObject.name} : Index Count: {count}");
+			LogTag.System.W($"The number of indices in the batched mesh is high. Object: {m_meshFilter.gameObject.name} : Index Count: {count}");
 
 			return;
 		}
 
 		var instanceList = new List<CombineInstance>();
 
-		foreach(var filter in _filterArray)
+		foreach(var filter in filterArray)
 		{
 			if(filter == null || filter.sharedMesh == null)
 			{
@@ -50,11 +50,11 @@ public class CombineMesh : BaseMesh
 
 		InitializeMesh();
 
-		var count = GetMeshIndexCount(_meshArray);
+		var count = CalculateMeshIndexCount(_meshArray);
 
 		if(!IsValidMeshIndexCount(count))
 		{
-			LogTag.System.W($"The number of indices in the batched mesh is high. Object: {m_MeshFilter.gameObject.name} : Index Count: {count}");
+			LogTag.System.W($"The number of indices in the batched mesh is high. Object: {m_meshFilter.gameObject.name} : Index Count: {count}");
 
 
 			return;
@@ -77,38 +77,38 @@ public class CombineMesh : BaseMesh
 		SetMesh(instanceList.ToArray());
 	}
 
-	public bool AppendMesh(params MeshFilter[] _filterArray)
+	public bool AppendMesh(params MeshFilter[] filterArray)
 	{
-		if(_filterArray == null)
+		if(filterArray == null)
 		{
 			return true;
 		}
 
-		if(m_MeshFilter.sharedMesh == null)
+		if(m_meshFilter.sharedMesh == null)
 		{
-			if(_filterArray.Length == 1)
+			if(filterArray.Length == 1)
 			{
-				m_MeshFilter.sharedMesh = _filterArray[0].sharedMesh;
-				m_MeshFilter.sharedMesh.name = m_MeshFilter.gameObject.name;
+				m_meshFilter.sharedMesh = filterArray[0].sharedMesh;
+				m_meshFilter.sharedMesh.name = m_meshFilter.gameObject.name;
 
-				_filterArray[0].gameObject.SetActive(false);
+				filterArray[0].gameObject.SetActive(false);
 
 				return true;
 			}
 
-			m_MeshFilter.sharedMesh = new Mesh { name = m_MeshFilter.gameObject.name };
+			m_meshFilter.sharedMesh = new Mesh { name = m_meshFilter.gameObject.name };
 		}
 
-		var count = GetMeshIndexCount(m_MeshFilter)+GetMeshIndexCount(_filterArray);
+		var count = CalculateMeshIndexCount(m_meshFilter)+CalculateMeshIndexCount(filterArray);
 
 		if(!IsValidMeshIndexCount(count))
 		{
 			return false;
 		}
 
-		var instanceList = new List<CombineInstance> { new() { mesh = m_MeshFilter.sharedMesh, transform = Matrix4x4.identity, } };
+		var instanceList = new List<CombineInstance> { new() { mesh = m_meshFilter.sharedMesh, transform = Matrix4x4.identity, } };
 
-		foreach(var filter in _filterArray)
+		foreach(var filter in filterArray)
 		{
 			if(filter == null || filter.sharedMesh == null)
 			{
@@ -127,36 +127,36 @@ public class CombineMesh : BaseMesh
 		return true;
 	}
 
-	public bool AppendMesh(params Mesh[] _meshArray)
+	public bool AppendMesh(params Mesh[] meshArray)
 	{
-		if(_meshArray == null)
+		if(meshArray == null)
 		{
 			return true;
 		}
 
-		if(m_MeshFilter.sharedMesh == null)
+		if(m_meshFilter.sharedMesh == null)
 		{
-			if(_meshArray.Length == 1)
+			if(meshArray.Length == 1)
 			{
-				m_MeshFilter.sharedMesh = _meshArray[0];
-				m_MeshFilter.sharedMesh.name = m_MeshFilter.gameObject.name;
+				m_meshFilter.sharedMesh = meshArray[0];
+				m_meshFilter.sharedMesh.name = m_meshFilter.gameObject.name;
 
 				return true;
 			}
 
-			m_MeshFilter.sharedMesh = new Mesh { name = m_MeshFilter.gameObject.name };
+			m_meshFilter.sharedMesh = new Mesh { name = m_meshFilter.gameObject.name };
 		}
 
-		var count = GetMeshIndexCount(m_MeshFilter)+GetMeshIndexCount(_meshArray);
+		var count = CalculateMeshIndexCount(m_meshFilter)+CalculateMeshIndexCount(meshArray);
 
 		if(!IsValidMeshIndexCount(count))
 		{
 			return false;
 		}
 
-		var instanceList = new List<CombineInstance> { new() { mesh = m_MeshFilter.sharedMesh, transform = Matrix4x4.identity, } };
+		var instanceList = new List<CombineInstance> { new() { mesh = m_meshFilter.sharedMesh, transform = Matrix4x4.identity, } };
 
-		foreach(var mesh in _meshArray)
+		foreach(var mesh in meshArray)
 		{
 			if(mesh == null)
 			{
@@ -173,25 +173,25 @@ public class CombineMesh : BaseMesh
 
 	private void InitializeMesh()
 	{
-		if(m_MeshFilter.sharedMesh == null)
+		if(m_meshFilter.sharedMesh == null)
 		{
-			m_MeshFilter.sharedMesh = new Mesh { name = m_MeshFilter.gameObject.name };
+			m_meshFilter.sharedMesh = new Mesh { name = m_meshFilter.gameObject.name };
 		}
 		else
 		{
-			m_MeshFilter.sharedMesh.Clear();
+			m_meshFilter.sharedMesh.Clear();
 		}
 	}
 
-	private void SetMesh(CombineInstance[] _instanceArray)
+	private void SetMesh(CombineInstance[] instanceArray)
 	{
 		var combined = new Mesh();
 
-		combined.CombineMeshes(_instanceArray,true);
+		combined.CombineMeshes(instanceArray,true);
 
 		combined.RecalculateBounds();
 		combined.RecalculateNormals();
 
-		m_MeshFilter.sharedMesh = combined;
+		m_meshFilter.sharedMesh = combined;
 	}
 }

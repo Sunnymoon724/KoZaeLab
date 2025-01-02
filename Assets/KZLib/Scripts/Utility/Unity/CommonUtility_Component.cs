@@ -2,55 +2,53 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
+#if UNITY_EDITOR
+
+using UnityEditor;
+
+#endif
+
 public static partial class CommonUtility
 {
-	public static void SetCanvasCullTransparentMeshOff(GameObject _panel)
+	public static TComponent CopyComponent<TComponent>(TComponent component,GameObject gameObject) where TComponent : Component
 	{
-		var canvas = _panel.GetComponent<CanvasRenderer>();
+		var componentType = component.GetType();
+		var componentObject = gameObject.AddComponent(componentType);
 
-		if(canvas)
+		foreach(var field in componentType.GetFields())
 		{
-			canvas.cullTransparentMesh = false;
-		}
-	}
-
-	public static TComponent CopyComponent<TComponent>(TComponent _source,GameObject _destination) where TComponent : Component
-	{
-		var type = _source.GetType();
-		var data = _destination.AddComponent(type);
-
-		foreach(var field in type.GetFields())
-		{
-			field.SetValue(data,field.GetValue(_source));
+			field.SetValue(componentObject,field.GetValue(component));
 		}
 
-		return data as TComponent;
+		return componentObject as TComponent;
 	}
 
 #if UNITY_EDITOR
-	public static IEnumerable<TComponent> GetComponentGroupInInUnity<TComponent>() where TComponent : Component
+	public static IEnumerable<TComponent> FindComponentGroupInInUnity<TComponent>() where TComponent : Component
 	{
-		foreach(var component in GetComponentGroupInActiveScene<TComponent>())
+		foreach(var component in FindComponentGroupInActiveScene<TComponent>())
 		{
 			yield return component;
 		}
 
-		foreach(var prefab in LoadAssetGroup<GameObject>("t:prefab"))
+		foreach(var assetPath in FindAssetPathGroup("t:prefab"))
 		{
-			foreach(var component in prefab.GetComponentsInChildren<TComponent>(true))
+			var asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+
+			foreach(var component in asset.GetComponentsInChildren<TComponent>(true))
 			{
 				yield return component;
 			}
 		}
 	}
 
-	public static IEnumerable<TComponent> GetComponentGroupInActiveScene<TComponent>() where TComponent : Component
+	public static IEnumerable<TComponent> FindComponentGroupInActiveScene<TComponent>() where TComponent : Component
 	{
-		var scene = SceneManager.GetActiveScene();
+		var activeScene = SceneManager.GetActiveScene();
 
-		foreach(var root in scene.GetRootGameObjects())
+		foreach(var rootGameObject in activeScene.GetRootGameObjects())
 		{
-			foreach(var component in root.GetComponentsInChildren<TComponent>(true))
+			foreach(var component in rootGameObject.GetComponentsInChildren<TComponent>(true))
 			{
 				yield return component;
 			}

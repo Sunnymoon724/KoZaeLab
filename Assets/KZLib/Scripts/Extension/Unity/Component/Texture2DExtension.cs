@@ -2,128 +2,114 @@ using UnityEngine;
 
 public static class Texture2DExtension
 {
-	public static void ToSolidColor(this Texture2D _texture,Color _color)
+	public static void ToSolidColor(this Texture2D texture2D,Color color)
 	{
-		if(!_texture)
+		if(!IsValid(texture2D))
 		{
-			LogTag.System.E("Texture2D is null");
-
 			return;
 		}
 
-		_texture.ToSolidColor((Color32) _color);
+		texture2D.ToSolidColor((Color32) color);
 	}
 
-	public static void ToSolidColor(this Texture2D _texture,Color32 _color32)
+	public static void ToSolidColor(this Texture2D texture2D,Color32 color32)
 	{
-		if(!_texture)
+		if(!IsValid(texture2D))
 		{
-			LogTag.System.E("Texture2D is null");
-
 			return;
 		}
 
-		var pixelArray = _texture.GetPixels32();
+		var pixelArray = texture2D.GetPixels32();
 
 		for(var i=0;i<pixelArray.Length;i++)
 		{
-			pixelArray[i] = pixelArray[i].a == 0 ? Color.clear : _color32;
+			pixelArray[i] = pixelArray[i].a == 0 ? Color.clear : color32;
 		}
 
-		_texture.SetPixels32(pixelArray);
-		_texture.Apply();
+		texture2D.SetPixels32(pixelArray);
+		texture2D.Apply();
 	}
 
-	public static void ScaleTexture(this Texture2D _texture,Vector2Int _size)
+	public static void ScaleTexture(this Texture2D texture2D,Vector2Int scaleSize)
 	{
-		if(!_texture)
+		if(!IsValid(texture2D))
 		{
-			LogTag.System.E("Texture2D is null");
-
 			return;
 		}
 
-		var scale = new Vector2(1.0f/_size.x,1.0f/_size.y);
+		var scale = new Vector2(1.0f/scaleSize.x,1.0f/scaleSize.y);
 
-		var pixelArray = _texture.GetPixels32();
+		var pixelArray = texture2D.GetPixels32();
 
 		for(var i=0;i<pixelArray.Length;i++)
 		{
-			pixelArray[i] = _texture.GetPixelBilinear(scale.x*(i%_size.x),scale.y*(i/_size.y));
+			pixelArray[i] = texture2D.GetPixelBilinear(scale.x*(i%scaleSize.x),scale.y*(i/scaleSize.y));
 		}
 
-		_texture.SetPixels32(pixelArray);
-		_texture.Apply();
+		texture2D.SetPixels32(pixelArray);
+		texture2D.Apply();
 	}
 
-	public static Texture2D CopyTexture(this Texture2D _texture)
+	public static Texture2D CopyTexture(this Texture2D texture2D)
 	{
-		if(!_texture)
+		if(!IsValid(texture2D))
 		{
-			LogTag.System.E("Texture2D is null");
-
 			return null;
 		}
 
-		var texture = new Texture2D(_texture.width,_texture.height,_texture.format,false);
+		var texture = new Texture2D(texture2D.width,texture2D.height,texture2D.format,false);
 
-		texture.SetPixels32(_texture.GetPixels32());
+		texture.SetPixels32(texture2D.GetPixels32());
 		texture.Apply();
 
 		return texture;
 	}
 
-	public static Sprite CreateSprite(this Texture2D _texture)
+	public static Sprite CreateSprite(this Texture2D texture2D)
 	{
-		if(!_texture)
+		if(!IsValid(texture2D))
 		{
-			LogTag.System.E("Texture2D is null");
-
 			return null;
 		}
 
-		return Sprite.Create(_texture,new Rect(0.0f,0.0f,_texture.width,_texture.height),new Vector2(0.5f,0.5f));
+		return Sprite.Create(texture2D,new Rect(0.0f,0.0f,texture2D.width,texture2D.height),new Vector2(0.5f,0.5f));
 	}
 
-	public static Sprite CreateTiledSprite(this Texture2D _texture,float _border = 0.0f,float _pixelsPerUnit = 100.0f)
+	public static Sprite CreateTiledSprite(this Texture2D texture2D,float border = 0.0f,float pixelsPerUnit = 100.0f)
 	{
-		if(!_texture)
+		if(!IsValid(texture2D))
 		{
-			LogTag.System.E("Texture2D is null");
-
 			return null;
 		}
 
-		_texture.wrapMode = TextureWrapMode.Repeat;
+		texture2D.wrapMode = TextureWrapMode.Repeat;
 
-		return Sprite.Create(_texture,new Rect(0.0f,0.0f,_texture.width,_texture.height),Vector2.zero,_pixelsPerUnit,0,SpriteMeshType.Tight,new Vector4(_border,_border,_border,_border));
+		return Sprite.Create(texture2D,new Rect(0.0f,0.0f,texture2D.width,texture2D.height),Vector2.zero,pixelsPerUnit,0,SpriteMeshType.Tight,new Vector4(border,border,border,border));
 	}
 
-	public static Texture2D[,] SplitTexture(this Texture2D _texture,Vector2Int _count)
+	public static Texture2D[,] SplitTexture(this Texture2D texture2D,Vector2Int splitCount)
 	{
-		if(!_texture)
+		if(!IsValid(texture2D))
 		{
-			LogTag.System.E("Texture2D is null");
+			return null;
+		}
+
+		if(splitCount.x <= 0 || splitCount.y <= 0 )
+		{
+			LogTag.System.E($"Count is below zero {splitCount.x} or {splitCount.y}");
 
 			return null;
 		}
 
-		if(_count.x <= 0 || _count.y <= 0 )
-		{
-			LogTag.System.E($"Count is below zero {_count.x} or {_count.y}");
+		var width = texture2D.width/splitCount.x;
+        var height = texture2D.height/splitCount.y;
+		var totalColorArray = texture2D.GetPixels32();
 
-			return null;
-		}
+        var resultArray = new Texture2D[splitCount.x,splitCount.y];
 
-		var width = _texture.width/_count.x;
-        var height = _texture.height/_count.y;
-		var totalColorArray = _texture.GetPixels32();
-
-        var resultArray = new Texture2D[_count.x,_count.y];
-
-        for(var i=0;i<_count.x;i++)
+        for(var i=0;i<splitCount.x;i++)
         {
-            for(var j=0;j<_count.y;j++)
+            for(var j=0;j<splitCount.y;j++)
             {
 				resultArray[i,j] = new Texture2D(width,height);
 
@@ -134,7 +120,7 @@ public static class Texture2DExtension
                 {
                     for(var l=j*height;l<(j+1)*height;i++)
                     {
-                        pixelArray[index] = totalColorArray[l*_texture.width+k];
+                        pixelArray[index] = totalColorArray[l*texture2D.width+k];
                         index++;
                     }
                 }
@@ -147,25 +133,23 @@ public static class Texture2DExtension
 		return resultArray;
 	}
 
-	public static Texture2D CropTexture(this Texture2D _texture,RectInt _size)
+	public static Texture2D CropTexture(this Texture2D texture2D,RectInt cropSize)
 	{
-		if(!_texture)
+		if(!IsValid(texture2D))
 		{
-			LogTag.System.E("Texture2D is null");
+			return null;
+		}
+
+		if(cropSize.x <= 0 || cropSize.y <= 0 )
+		{
+			LogTag.System.E($"Size is below zero {cropSize.x} or {cropSize.y}");
 
 			return null;
 		}
 
-		if(_size.x <= 0 || _size.y <= 0 )
-		{
-			LogTag.System.E($"Size is below zero {_size.x} or {_size.y}");
-
-			return null;
-		}
-
-		var width = _texture.width-_size.width;
-		var height = _texture.height-_size.height;
-		var colorArray = _texture.GetPixels(_size.xMin,_size.yMax,width,height);
+		var width = texture2D.width-cropSize.width;
+		var height = texture2D.height-cropSize.height;
+		var colorArray = texture2D.GetPixels(cropSize.xMin,cropSize.yMax,width,height);
 		var pixelArray = new Color32[width*height];
 
 		for(var i=0;i<pixelArray.Length;i++)
@@ -173,7 +157,7 @@ public static class Texture2DExtension
 			pixelArray[i] = colorArray[i];
 		}
 
-		var result = new Texture2D(width,height,_texture.format,false);
+		var result = new Texture2D(width,height,texture2D.format,false);
 
 		result.SetPixels32(pixelArray);
 		result.Apply();
@@ -181,26 +165,24 @@ public static class Texture2DExtension
 		return result;
 	}
 
-	public static void RotateTexture(this Texture2D _texture,float _angle)
+	public static void RotateTexture(this Texture2D texture2D,float rotateAngle)
 	{
-		if(!_texture)
+		if(!IsValid(texture2D))
 		{
-			LogTag.System.E("Texture2D is null");
-
 			return;
 		}
 
-		var angle = _angle.ToWrapAngle();
+		var angle = rotateAngle.ToWrapAngle();
 
 		if(angle.ApproximatelyZero())
 		{
 			return;
 		}
 
-		var width = _texture.width;
-		var height = _texture.height;
+		var width = texture2D.width;
+		var height = texture2D.height;
 
-		var originColorArray = _texture.GetPixels32();
+		var originColorArray = texture2D.GetPixels32();
 		var rotateColorArray = new Color32[width*height];
 
 		var dxX = RotateX(angle,1.0f,0.0f);
@@ -221,15 +203,15 @@ public static class Texture2DExtension
 				x += dxX;
 				y += dxY;
 
-				rotateColorArray[j*width+i] = originColorArray[Mathf.FloorToInt(y*_texture.width)+i];
+				rotateColorArray[j*width+i] = originColorArray[Mathf.FloorToInt(y*texture2D.width)+i];
 			}
 
 			rotX += dyX;
 			rotY += dyY;
 		}
 
-		_texture.SetPixels32(rotateColorArray);
-		_texture.Apply();
+		texture2D.SetPixels32(rotateColorArray);
+		texture2D.Apply();
 	}
 
 	private static float RotateX(float _angle,float _x,float _y)
@@ -240,5 +222,17 @@ public static class Texture2DExtension
 	private static float RotateY(float _angle,float _x,float _y)
 	{
 		return _x*Mathf.Sin(_angle/180.0f*Mathf.PI)+_y*Mathf.Cos(_angle/180.0f*Mathf.PI);
+	}
+
+	private static bool IsValid(Texture2D texture2D)
+	{
+		if(!texture2D)
+		{
+			LogTag.System.E("Texture2D is null");
+
+			return false;
+		}
+
+		return true;
 	}
 }

@@ -5,38 +5,38 @@ using UnityEngine;
 public abstract class BaseLineRenderer : BaseComponent
 {
 	[SerializeField,LabelText("Line Renderer")]
-	protected LineRenderer m_LineRenderer = null;
+	protected LineRenderer m_lineRenderer = null;
 
-	private MaterialPropertyBlock m_PropertyBlock = null;
+	private MaterialPropertyBlock m_propertyBlock = null;
 
-	protected MaterialPropertyBlock PropertyBlock => m_PropertyBlock ??= new();
+	protected MaterialPropertyBlock PropertyBlock => m_propertyBlock ??= new();
 
-	public void SetLineRenderer(Vector2? _width = null,Color? _color = null)
+	public void SetLineRenderer(Vector2? width = null,Color? color = null)
 	{
-		if(_width.HasValue)
+		if(width.HasValue)
 		{
-			m_LineRenderer.startWidth = _width.Value.x;
-			m_LineRenderer.endWidth = _width.Value.y;
+			m_lineRenderer.startWidth = width.Value.x;
+			m_lineRenderer.endWidth = width.Value.y;
 		}
 
-		if(_color.HasValue)
+		if(color.HasValue)
 		{
-			PropertyBlock.SetColor("_Color",_color.Value);
-			m_LineRenderer.SetPropertyBlock(PropertyBlock);
+			PropertyBlock.SetColor("_Color",color.Value);
+			m_lineRenderer.SetPropertyBlock(PropertyBlock);
 		}
 	}
 
-	public void SetPointArray(Vector3[] _pointArray)
+	public void SetPointArray(Vector3[] pointArray)
 	{
-		m_LineRenderer.positionCount = _pointArray.Length;
-		m_LineRenderer.SetPositions(_pointArray);
+		m_lineRenderer.positionCount = pointArray.Length;
+		m_lineRenderer.SetPositions(pointArray);
 	}
 
 	public Mesh BakeMesh()
 	{
 		var mesh = new Mesh();
 
-		m_LineRenderer.BakeMesh(mesh,true);
+		m_lineRenderer.BakeMesh(mesh,true);
 
 		return mesh;
 	}
@@ -45,9 +45,9 @@ public abstract class BaseLineRenderer : BaseComponent
 	{
 		base.Reset();
 
-		if(!m_LineRenderer)
+		if(!m_lineRenderer)
 		{
-			m_LineRenderer = GetComponent<LineRenderer>();
+			m_lineRenderer = GetComponent<LineRenderer>();
 		}
 	}
 }

@@ -15,101 +15,101 @@ namespace KZLib.KZAttribute
 #if UNITY_EDITOR
 	public abstract class KZAttributeDrawer<TAttribute,TValue> : OdinAttributeDrawer<TAttribute,TValue> where TAttribute : Attribute
 	{
-		protected string m_ErrorMessage = null;
+		protected string m_errorMessage = null;
 
-		protected abstract void DoDrawPropertyLayout(GUIContent _label);
+		protected abstract void _DrawPropertyLayout(GUIContent label);
 
-		protected override void DrawPropertyLayout(GUIContent _label)
+		protected override void DrawPropertyLayout(GUIContent label)
 		{
 			var cashed = GUI.enabled;
-			var isValid = m_ErrorMessage.IsEmpty();
+			var isValid = m_errorMessage.IsEmpty();
 
 			GUI.enabled = isValid;
 
 			if(isValid)
 			{
 				//? No Error
-				DoDrawPropertyLayout(_label);
+				_DrawPropertyLayout(label);
 			}
 			else
 			{
 				//? Include Error
-				SirenixEditorGUI.ErrorMessageBox(m_ErrorMessage);
+				SirenixEditorGUI.ErrorMessageBox(m_errorMessage);
 
-				CallNextDrawer(_label);
+				CallNextDrawer(label);
 			}
 
 			GUI.enabled = cashed;
 		}
 
-		protected Rect DrawPrefixLabel(GUIContent _label,float? _height = null)
+		protected Rect DrawPrefixLabel(GUIContent label,float? height = null)
 		{
-			var rect = _height.HasValue ? EditorGUILayout.GetControlRect(true,_height.Value) : EditorGUILayout.GetControlRect();
+			var rect = height.HasValue ? EditorGUILayout.GetControlRect(true,height.Value) : EditorGUILayout.GetControlRect();
 
-			if(_label == null)
+			if(label == null)
 			{
 				return rect;
 			}
 
-			EditorGUI.PrefixLabel(rect,_label);
+			EditorGUI.PrefixLabel(rect,label);
 
 			return rect.HorizontalPadding(EditorGUIUtility.labelWidth,0.0f);
 		}
 
-		protected TMember GetValue<TMember>(string _memberName)
+		protected TMember FindValue<TMember>(string memberName)
 		{
-			return CommonUtility.GetValueInObject<TMember>(_memberName,Property.ParentValues[0]);
+			return CommonUtility.FindValueInObject<TMember>(memberName,Property.ParentValues[0]);
 		}
 
-		protected GUIStyle GetValidateStyle(bool _isValid,string _wrongHexColor = null)
+		protected GUIStyle GetValidateStyle(bool isValid,string wrongHexColor = null)
 		{
 			var style = new GUIStyle(GUI.skin.label);
 
-			style.normal.textColor = _isValid ? style.normal.textColor : _wrongHexColor?.ToColor() ?? style.normal.textColor;
+			style.normal.textColor = isValid ? style.normal.textColor : wrongHexColor?.ToColor() ?? style.normal.textColor;
 
 			return style;
 		}
 
-		protected void DrawColor(Rect _rect,Color _color)
+		protected void DrawColor(Rect rect,Color color)
 		{
-			var height = _rect.height;
+			var height = rect.height;
 
-			SirenixEditorGUI.DrawSolidRect(_rect.VerticalPadding(0.0f,height*0.3f),_color.MaskAlpha(1.0f));
-			SirenixEditorGUI.DrawSolidRect(_rect.VerticalPadding(height*0.7f,0.0f),Color.white);
-			SirenixEditorGUI.DrawSolidRect(_rect.VerticalPadding(height*0.7f,0.0f),new Color(0.0f,0.0f,0.0f,_color.a));
+			SirenixEditorGUI.DrawSolidRect(rect.VerticalPadding(0.0f,height*0.3f),color.MaskAlpha(1.0f));
+			SirenixEditorGUI.DrawSolidRect(rect.VerticalPadding(height*0.7f,0.0f),Color.white);
+			SirenixEditorGUI.DrawSolidRect(rect.VerticalPadding(height*0.7f,0.0f),new Color(0.0f,0.0f,0.0f,color.a));
 		}
 
-		protected Rect[] GetRectArray(Rect _rect,int _count,float _space = 0.0f)
+		protected Rect[] GetRectArray(Rect rect,int count,float space = 0.0f)
 		{
-			var rectArray = new Rect[_count];
-			var totalWidth = _rect.width-(_count-1)*_space;
-			var width = totalWidth/_count;
+			var rectArray = new Rect[count];
+			var totalWidth = rect.width-(count-1)*space;
+			var width = totalWidth/count;
 
-			rectArray[0] = new Rect(_rect.x,_rect.y,width,_rect.height);
+			rectArray[0] = new Rect(rect.x,rect.y,width,rect.height);
 
-			for(var i=1;i<_count;i++)
+			for(var i=1;i<count;i++)
 			{
-				rectArray[i] = new Rect(_rect.x+(_space+width)*i,_rect.y,width,_rect.height);
+				rectArray[i] = new Rect(rect.x+(space+width)*i,rect.y,width,rect.height);
 			}
 
 			return rectArray;
 		}
 
-		protected string GetLabelText(GUIContent _label)
+		protected string GetLabelText(GUIContent label)
 		{
-			return _label == null ? string.Empty : _label.text;
+			return label == null ? string.Empty : label.text;
 		}
 
-		protected object ConvertToValue(object _value)
+		protected object ConvertToValue(object value)
 		{
-			if(_value == null)
+			if(value == null)
 			{
 				return default;
 			}
 
 			var type = typeof(TValue);
 
-			return (TValue) Convert.ChangeType(_value,type);
+			return (TValue) Convert.ChangeType(value,type);
 		}
 	}
 #endif

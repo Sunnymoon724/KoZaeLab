@@ -3,66 +3,67 @@ using TMPro;
 
 public static class TextMeshProExtension
 {
-	public static void SetSafeTextMeshPro(this TMP_Text _textMesh,string _text,Color? _color = null)
+	public static void SetSafeTextMeshPro(this TMP_Text textMesh,string text,Color? color = null)
 	{
-		if(!_textMesh)
+		if(!IsValid(textMesh,text))
 		{
-			LogTag.System.E("TextMeshPro is null");
-
 			return;
 		}
 
-		if(_text.IsEmpty())
-		{
-			_textMesh.gameObject.SetActiveSelf(false);
-
-			return;
-		}
-
-		_textMesh.gameObject.SetActiveSelf(true);
-
-		SetSafeTextMeshProInner(_textMesh,_text,_color);
+		_SetSafeTextMeshPro(textMesh,text,color);
 	}
 
-	public static void SetLocalizeText(this TMP_Text _textMesh,string _text)
+	public static void SetLocalizeText(this TMP_Text textMesh,string text)
 	{
-		if(!_textMesh)
+		if(!IsValid(textMesh,text))
 		{
-			LogTag.System.E("TextMeshPro is null");
-
 			return;
 		}
 
-		if(_text.IsEmpty())
+		var localizeTextUI = textMesh.GetComponent<LocalizeTextUI>();
+
+		if(localizeTextUI)
 		{
-			_textMesh.gameObject.SetActiveSelf(false);
-
-			return;
-		}
-
-		_textMesh.gameObject.SetActiveSelf(true);
-
-		var localize = _textMesh.GetComponent<LocalizeTextUI>();
-
-		if(localize)
-		{
-			localize.SetLocalizeKey(_text);
+			localizeTextUI.SetLocalizeKey(text);
 		}
 		else
 		{
-			SetSafeTextMeshProInner(_textMesh,_text,null);
+			_SetSafeTextMeshPro(textMesh,text,null);
 		}
 	}
 
-	private static void SetSafeTextMeshProInner(TMP_Text _textMesh,string _text,Color? _color)
+	private static void _SetSafeTextMeshPro(TMP_Text textMesh,string text,Color? color)
 	{
-		_textMesh.text = _text;
+		textMesh.text = text;
 
-		if(!_color.HasValue)
+		if(!color.HasValue)
 		{
 			return;
 		}
 
-		_textMesh.color = _color.Value;
+		textMesh.color = color.Value;
+	}
+
+	private static bool IsValid(TMP_Text textMesh,string text)
+	{
+		if(!textMesh)
+		{
+			LogTag.System.E("TextMeshPro is null");
+
+			textMesh.gameObject.SetActiveIfDifferent(false);
+
+			return false;
+		}
+
+		if(!text.IsEmpty())
+		{
+			textMesh.gameObject.SetActiveIfDifferent(false);
+
+			return false;
+		}
+
+		textMesh.gameObject.SetActiveIfDifferent(true);
+
+		return true;
 	}
 }

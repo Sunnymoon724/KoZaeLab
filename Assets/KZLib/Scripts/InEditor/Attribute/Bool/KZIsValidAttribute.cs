@@ -19,20 +19,20 @@ namespace KZLib.KZAttribute
 
 		public string WrongHexColor { get; }
 
-		public KZIsValidAttribute(string _correctText = "O",string _wrongText = "X",string _wrongHexColor = null)
+		public KZIsValidAttribute(string correctText = "O",string wrongText = "X",string wrongHexColor = null)
 		{
-			CorrectText = _correctText;
-			WrongText = _wrongText;
-			WrongHexColor = _wrongHexColor;
+			CorrectText = correctText;
+			WrongText = wrongText;
+			WrongHexColor = wrongHexColor;
 		}
 	}
 
 #if UNITY_EDITOR
 	public class KZIsValidAttributeDrawer : KZAttributeDrawer<KZIsValidAttribute,bool>
 	{
-		protected override void DoDrawPropertyLayout(GUIContent _label)
+		protected override void _DrawPropertyLayout(GUIContent label)
 		{
-			var rect = DrawPrefixLabel(_label);
+			var rect = DrawPrefixLabel(label);
 
 			var text = ValueEntry.SmartValue ? Attribute.CorrectText : Attribute.WrongText;
 			var style = GetValidateStyle(ValueEntry.SmartValue,Attribute.WrongHexColor);
