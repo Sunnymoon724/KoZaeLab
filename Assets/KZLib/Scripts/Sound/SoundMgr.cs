@@ -142,6 +142,11 @@ namespace KZLib
 			m_bgmSource.Pause();
 		}
 
+		public void ResumeBGM()
+		{
+			m_bgmSource.Play();
+		}
+
 		public bool IsPlayingBGM()
 		{
 			return m_bgmSource.isPlaying;

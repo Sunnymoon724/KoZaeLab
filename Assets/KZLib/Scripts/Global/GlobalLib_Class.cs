@@ -6,4 +6,4 @@ namespace System.Runtime.CompilerServices
 	internal class IsExternalInit { }
 }
 
-public record MessageData(string Head,string Body);
+public record MessageData(string Header,string Body);

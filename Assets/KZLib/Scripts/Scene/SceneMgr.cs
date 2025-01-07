@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using KZLib.KZUtility;
+using TransitionPanel;
 
 #if UNITY_EDITOR
 

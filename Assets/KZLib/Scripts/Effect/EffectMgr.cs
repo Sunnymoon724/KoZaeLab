@@ -100,20 +100,11 @@ namespace KZLib
 			return effectClip;
 		}
 
-		public EffectClip PlayUIEffect(string name,Vector3 position,SortingLayerBase parentSortingLayer,EffectClip.EffectParam effectParam = null)
+		public EffectClip PlayUIEffect(string name,Vector3 position,RectTransform parent = null,EffectClip.EffectParam effectParam = null)
 		{
 			var effectClip = PlayEffect(name,position,null,effectParam);
 
-			parentSortingLayer.transform.SetUIChild(effectClip.transform);
-
-			var sortingLayer = effectClip.GetComponent<SortingLayerBase>();
-
-			if(!sortingLayer)
-			{
-				throw new NullReferenceException($"SortingLayerBase is not exist in {name}");
-			}
-
-			sortingLayer.SetSortingLayerOrder(parentSortingLayer.SortingLayerOrder+1);
+			parent.SetUIChild(effectClip.transform);
 
 			return effectClip;
 		}

@@ -55,7 +55,7 @@ public static class TextMeshProExtension
 			return false;
 		}
 
-		if(!text.IsEmpty())
+		if(text.IsEmpty())
 		{
 			textMesh.gameObject.SetActiveIfDifferent(false);
 

@@ -11,15 +11,15 @@ namespace KZLib.KZMenu
 {
 	public static partial class AssetsMenuItem
 	{
-		private const int PIVOT_ORDER = 2000;
+		private const int c_pivot_order = 2000;
 
 		private enum MenuType
 		{
-			Total				= PIVOT_ORDER+0*Global.MENU_LINE,
-			Prefab				= PIVOT_ORDER+1*Global.MENU_LINE,
-			Script				= PIVOT_ORDER+2*Global.MENU_LINE,
-			Texture				= PIVOT_ORDER+3*Global.MENU_LINE,
-			ScriptableObject	= PIVOT_ORDER+4*Global.MENU_LINE,
+			Total				= c_pivot_order+0*Global.MENU_LINE,
+			Prefab				= c_pivot_order+1*Global.MENU_LINE,
+			Script				= c_pivot_order+2*Global.MENU_LINE,
+			Texture				= c_pivot_order+3*Global.MENU_LINE,
+			ScriptableObject	= c_pivot_order+4*Global.MENU_LINE,
 		}
 
 		private static Dictionary<string,List<string>> s_assetsPathDict = null;

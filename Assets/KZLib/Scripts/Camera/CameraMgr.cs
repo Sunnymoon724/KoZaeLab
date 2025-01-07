@@ -119,13 +119,13 @@ namespace KZLib
 
 			transform.rotation = Quaternion.Euler(rotation);
 
-			// TODO _duration 부분 수정하기
+			// TODO duration 부분 수정하기
 		}
 
 		private void OnChangeFarClipPlane()
 		{
 			var option = GameDataMgr.In.Access<GameData.GraphicOption>();
-			var flag = option.IsIncludeGraphicQualityOption(GraphicQualityType.CameraFarHalf);
+			var flag = option.IsIncludeGraphicQuality(GraphicQualityType.CameraFarHalf);
 
 			m_farFactor = flag ? 0.5f : 1.0f;
 		}

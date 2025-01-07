@@ -10,28 +10,27 @@ public class GraphicToggleUI : BaseToggleUI
 	protected class GraphicChild : ToggleChild
 	{
 		[Flags] 
-		private enum ModeCategory { None = 0, Color = 1<<0, Material = 1<<1, All = -1 }
+		private enum GraphicType { None = 0, Color = 1<<0, Material = 1<<1, All = -1 }
 
-		[BoxGroup("0",ShowLabel = false,Order = 0),SerializeField,LabelText("Graphic")]
+		[HorizontalGroup("0",Order = 0),SerializeField]
 		private Graphic m_graphic = null;
 
-		[VerticalGroup("0/2",Order = 10),SerializeField,LabelText("Graphic Mode")]
-		private ModeCategory m_modeCategory = ModeCategory.None;
+		[HorizontalGroup("5",Order = 5),SerializeField]
+		private GraphicType m_graphicType = GraphicType.None;
 
-		[PropertySpace(10)]
-		[VerticalGroup("0/2",Order = 10),SerializeField,LabelText("Enable Color"),ShowIf(nameof(IsColor))]
+		[HorizontalGroup("6",Order = 6),SerializeField,ShowIf(nameof(IsColor))]
 		private Color m_enableColor = Color.white;
-		[VerticalGroup("0/2",Order = 10),SerializeField,LabelText("Disable Color"),ShowIf(nameof(IsColor))]
+		[HorizontalGroup("7",Order = 7),SerializeField,ShowIf(nameof(IsColor))]
 		private Color m_disableColor = Color.gray;
 
-		[PropertySpace(10)]
-		[VerticalGroup("0/2",Order = 10),SerializeField,LabelText("Enable Material"),ShowIf(nameof(IsMaterial))]
+		[PropertySpace(5)]
+		[HorizontalGroup("8",Order = 8),SerializeField,ShowIf(nameof(IsMaterial))]
 		private Material m_enableMaterial = null;
-		[VerticalGroup("0/2",Order = 10),SerializeField,LabelText("Disable Material"),ShowIf(nameof(IsMaterial))]
+		[HorizontalGroup("9",Order = 9),SerializeField,ShowIf(nameof(IsMaterial))]
 		private Material m_disableMaterial = null;
 
-		private bool IsColor => m_modeCategory.HasFlag(ModeCategory.Color);
-		private bool IsMaterial => m_modeCategory.HasFlag(ModeCategory.Material);
+		private bool IsColor => m_graphicType.HasFlag(GraphicType.Color);
+		private bool IsMaterial => m_graphicType.HasFlag(GraphicType.Material);
 
 		protected override void Set()
 		{
@@ -48,7 +47,7 @@ public class GraphicToggleUI : BaseToggleUI
 		
 	}
 
-	[VerticalGroup("1",Order = 1),SerializeField,LabelText("Child List"),ListDrawerSettings(DraggableItems = false)]
+	[VerticalGroup("1",Order = 1),SerializeField,ListDrawerSettings(DraggableItems = false)]
 	private List<GraphicChild> m_childList = new();
 
 	protected override IEnumerable<ToggleChild> ToggleChildGroup => m_childList;

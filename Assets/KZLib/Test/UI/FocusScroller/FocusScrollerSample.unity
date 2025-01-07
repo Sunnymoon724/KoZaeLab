@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -189,8 +188,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -269,7 +268,7 @@ GameObject:
   - component: {fileID: 234818354}
   - component: {fileID: 234818355}
   m_Layer: 5
-  m_Name: FocusSlot
+  m_Name: Slot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -316,14 +315,14 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  m_Image: {fileID: 0}
-  m_NameText: {fileID: 186973079}
-  m_DescriptionText: {fileID: 0}
-  m_Button: {fileID: 0}
-  m_CurrentLocation: 0.5
-  m_Slot: {fileID: 0}
-  m_Center: 0
-  m_Animator: {fileID: 234818355}
+  m_image: {fileID: 1978028155}
+  m_nameText: {fileID: 186973079}
+  m_descriptionText: {fileID: 0}
+  m_button: {fileID: 0}
+  m_currentLocation: 0.5
+  m_focusUI: {fileID: 1978028154}
+  m_center: 1
+  m_animator: {fileID: 234818355}
 --- !u!95 &234818355
 Animator:
   serializedVersion: 5
@@ -409,37 +408,6 @@ LightingSettings:
   m_PVRTiledBaking: 0
   m_NumRaysToShootPerTexel: -1
   m_RespectSceneVisibilityWhenBakingGI: 0
---- !u!1 &681972649
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 681972650}
-  m_Layer: 0
-  m_Name: ----------------------------
-  m_TagString: Category
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &681972650
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 681972649}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &917752014
 GameObject:
   m_ObjectHideFlags: 0
@@ -529,6 +497,7 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
+  m_ScrollDeltaPerTick: 6
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -660,12 +629,12 @@ MonoBehaviour:
   m_RequiresColorTexture: 0
   m_Version: 2
   m_TaaSettings:
-    quality: 3
-    frameInfluence: 0.1
-    jitterScale: 1
-    mipBias: 0
-    varianceClampScale: 0.9
-    contrastAdaptiveSharpening: 0
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
 --- !u!1 &1432992692
 GameObject:
   m_ObjectHideFlags: 0
@@ -719,9 +688,9 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  m_Scroller: {fileID: 1630477743}
-  m_CellCount: 5
-  m_CenterIndex: 0
+  m_focusScroller: {fileID: 1630477743}
+  m_cellCount: 3
+  m_centerIndex: 0
 --- !u!1 &1533726422
 GameObject:
   m_ObjectHideFlags: 0
@@ -825,7 +794,7 @@ GameObject:
   - component: {fileID: 1630477741}
   - component: {fileID: 1630477743}
   m_Layer: 5
-  m_Name: Scroller
+  m_Name: FocusScroller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -910,30 +879,30 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  m_Viewport: {fileID: 1533726423}
-  m_Slot: {fileID: 234818354}
-  m_CircularMode: 1
-  m_OrderMode: 0
-  m_SlotCount: 3
-  m_Vertical: 0
-  m_UseDrag: 1
-  m_UseButton: 0
+  m_viewport: {fileID: 1533726423}
+  m_slotUI: {fileID: 234818354}
+  m_circularMode: 1
+  m_orderMode: 0
+  m_slotSpace: 0.2
+  m_vertical: 0
+  m_useDrag: 1
+  m_useButton: 0
   m_ButtonClickDuration: 0.35
   m_PrevButton: {fileID: 0}
   m_NextButton: {fileID: 0}
   m_UseFade: 0
   m_FadeInDuration: 0.3
-  m_GraphicList: []
-  m_FocusIndex: -1
+  m_graphicList: []
+  m_focusIndex: -1
   m_CurrentLocation: 0
-  m_Elasticity: 0.1
-  m_Sensitivity: 6.666667
-  m_DecelerationRate: 0.03
+  m_elasticity: 0.1
+  m_sensitivity: 1
+  m_decelerationRate: 0.03
   m_Inertia: 1
-  m_MagnetMode: 1
-  m_MagnetVelocity: 0.5
-  m_MagnetDuration: 0.4
-  m_MagnetEasing: 11
+  m_magnetMode: 0
+  m_magnetVelocity: 0.5
+  m_magnetDuration: 0.3
+  m_magnetEasing: 15
 --- !u!1 &1978028153
 GameObject:
   m_ObjectHideFlags: 0
@@ -946,7 +915,7 @@ GameObject:
   - component: {fileID: 1978028156}
   - component: {fileID: 1978028155}
   m_Layer: 5
-  m_Name: Slot
+  m_Name: Focus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -985,7 +954,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.028301895, g: 0.028301895, b: 0.028301895, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1120,4 +1089,3 @@ SceneRoots:
   - {fileID: 2050582174}
   - {fileID: 917752017}
   - {fileID: 1432992694}
-  - {fileID: 681972650}

@@ -42,21 +42,28 @@ public static partial class CommonUtility
 
 	public static void LockInput()
 	{
-		SetInput(true);
+		_SetInput(true);
 	}
 
 	public static void UnLockInput()
 	{
-		SetInput(false);
+		_SetInput(false);
 	}
 	
-	private static void SetInput(bool isLock)
+	private static void _SetInput(bool isLock)
 	{
 		// TODO Check Input
 
 		if(UIMgr.HasInstance)
 		{
-			UIMgr.In.BlockInput(isLock);
+			if(isLock)
+			{
+				UIMgr.In.BlockInput();
+			}
+			else
+			{
+				UIMgr.In.AllowInput();
+			}
 		}
 	}
 
@@ -142,12 +149,15 @@ public static partial class CommonUtility
 		//? Release Singleton
 		ReleaseSingleton<MetaDataMgr>();
 		ReleaseSingleton<GameDataMgr>();
-		ReleaseSingleton<SaveDataMgr>();
+		ReleaseSingleton<LocalDataMgr>();
 		ReleaseSingleton<ResMgr>();
 		ReleaseSingleton<LogMgr>();
 		ReleaseSingleton<AddressablesMgr>();
 		ReleaseSingleton<SoundMgr>();
 		ReleaseSingleton<ShaderMgr>();
+
+		ReleaseSingleton<EventMgr>();
+		ReleaseSingleton<TimerMgr>();
 
 		ClearCacheData();
 		StringExtension.ClearCacheData();

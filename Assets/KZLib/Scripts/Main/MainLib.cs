@@ -1,0 +1,309 @@
+using System;
+using DG.Tweening;
+using Sirenix.OdinInspector;
+using UnityEngine;
+using System.Text;
+using Newtonsoft.Json;
+using KZLib.KZAttribute;
+
+#if UNITY_EDITOR
+
+using UnityEditor;
+
+#endif
+
+namespace KZLib
+{
+	public abstract class MainLib : SerializedMonoBehaviour
+	{
+		[SerializeField,HideInInspector]
+		private string m_gameVersion = null;
+
+		[ShowInInspector,KZRichText]
+		public string GameVersion { get => m_gameVersion; private set => m_gameVersion = value; }
+
+		[SerializeField,HideInInspector]
+		private SystemLanguage? m_gameLanguage = null;
+
+		[ShowInInspector,InlineButton(nameof(OnChangeDefaultLanguage),Label = "",Icon = SdfIconType.Reply)]
+		public SystemLanguage GameLanguage
+		{
+			get
+			{
+				if(!m_gameLanguage.HasValue)
+				{
+					// var option = GameDataMgr.In.Access<GameData.LanguageOption>();
+
+					// m_gameLanguage = option.GameLanguage;
+
+					m_gameLanguage = SystemLanguage.English;
+				}
+
+				return m_gameLanguage.Value;
+			}
+
+			set
+			{
+				if(m_gameLanguage == value)
+				{
+					return;
+				}
+
+				m_gameLanguage = value;
+
+				var option = GameDataMgr.In.Access<GameData.LanguageOption>();
+
+				option.GameLanguage = m_gameLanguage.Value;
+			}
+		}
+
+		private void OnChangeDefaultLanguage()
+		{
+			GameLanguage = SystemLanguage.English;
+		}
+
+		[SerializeField,HideInInspector]
+		private bool m_isPlaying = false;
+
+		[ShowInInspector,KZRichText]
+		public bool IsPlaying => m_isPlaying;
+
+		[SerializeField,HideInInspector]
+		private int m_safeWidth = 0;
+
+		[SerializeField,HideInInspector]
+		private Vector2Int m_screenResolution = Vector2Int.zero;
+
+		[ShowInInspector,KZRichText("width : {0}, height : {1}")]
+		public Vector2Int ScreenResolution { get => m_screenResolution; private set => m_screenResolution = value; }
+
+#if UNITY_EDITOR
+		private const string c_main_data = "[Main] MainData";
+
+		private class MainData
+		{
+			public PlayType GamePlayType { get; set; } = PlayType.Normal;
+		}
+#endif
+
+		private enum PlayType { Test, Normal, }
+
+		private PlayType? m_gamePlayType = null;
+
+		[ShowInInspector,LabelText("Current PlayType")]
+		private PlayType GamePlayType
+		{
+			get
+			{
+				if(!m_gamePlayType.HasValue)
+				{
+#if UNITY_EDITOR
+					var data = LoadData();
+
+					m_gamePlayType = data.GamePlayType;
+#else
+					m_gamePlayType = PlayType.Normal;
+#endif
+				}
+
+				return m_gamePlayType.Value;
+			}
+			set
+			{
+#if UNITY_EDITOR
+				if(m_gamePlayType == value)
+				{
+					return;
+				}
+
+				var data = LoadData();
+
+				m_gamePlayType = data.GamePlayType = value;
+
+				SaveData(data);
+#endif
+			}
+		}
+
+		private bool IsTestMode => GamePlayType == PlayType.Test;
+
+		protected virtual void Awake()
+		{
+			m_isPlaying = true;
+
+			var builder = new StringBuilder();
+
+			builder.AppendLine("Initialize Main");
+
+			GameVersion = SetGameVersion();
+
+			builder.AppendLine($"Current Version {GameVersion}");
+
+			//? 에디터가 아니면 Normal Play
+#if !UNITY_EDITOR
+			GamePlayType = PlayType.Normal;
+#endif
+			builder.AppendLine($"Current PlayType {GamePlayType}");
+
+			LogTag.System.I(builder.ToString());
+		}
+
+		protected virtual string SetGameVersion()
+		{
+			return "0.1";
+		}
+
+		private async void Start()
+		{
+			if(!GameSettings.In.IsLiveMode && GameSettings.In.UseHeadUpDisplay)
+			{
+				UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
+			}
+
+			if(m_safeWidth <= 0)
+			{
+				m_safeWidth = (int) Screen.safeArea.width;
+			}
+
+			DOTween.Init(false,false,LogBehaviour.ErrorsOnly);
+			DOTween.SetTweensCapacity(1000,100);
+
+			var builder = new StringBuilder();
+
+			InitializeResolution(builder);
+			InitializeFrame(builder);
+			InitializeRenderSetting(builder);
+			InitializeObject(builder);
+
+			LogTag.System.I(builder.ToString());
+
+			// TODO 메타 데이터 로드 위치 변경하기 (선택창으로 시작할때 로드 or 원할때 로드)
+			await MetaDataMgr.In.LoadAllAsync();
+
+			if(IsTestMode)
+			{
+#if UNITY_EDITOR
+				InitializeTestMode();
+#else
+				throw new Exception("This cannot be tested outside of the editor mode.");
+#endif
+			}
+			else
+			{
+				InitializeNormalMode();
+			}
+		}
+
+#if UNITY_EDITOR
+		private void SaveData(MainData mainData)
+		{
+			EditorPrefs.SetString(c_main_data,JsonConvert.SerializeObject(mainData));
+		}
+
+		private MainData LoadData()
+		{
+			var text = EditorPrefs.GetString(c_main_data,"");
+
+			return text.IsEmpty() ? new MainData() : JsonConvert.DeserializeObject<MainData>(text);
+		}
+
+		protected virtual void InitializeTestMode() { }
+#endif
+		protected virtual void InitializeNormalMode() { }
+
+		protected virtual void InitializeResolution(StringBuilder stringBuilder)
+		{
+			//? 모바일에서 화면잠김을 방지하기 위한 값.
+			Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
+#if UNITY_EDITOR || UNITY_STANDALONE
+			ScreenResolution = new Vector2Int(Screen.width,Screen.height);
+#else
+			ScreenResolution = new Vector2Int(Screen.currentResolution.width,Screen.currentResolution.height);
+#endif
+
+			stringBuilder.AppendFormat($"Current Screen Resolution {ScreenResolution.x}x{ScreenResolution.y}\n");
+		}
+
+		protected virtual void InitializeFrame(StringBuilder stringBuilder)
+		{
+#if UNITY_ANDROID || UNITY_IOS
+			QualitySettings.vSyncCount	= 0;
+			Application.targetFrameRate = Global.FRAME_RATE_30;
+#elif UNITY_STANDALONE
+			QualitySettings.vSyncCount = 1;
+			Application.targetFrameRate = Global.FRAME_RATE_60;
+#endif
+
+			stringBuilder.AppendFormat($"Current FPS {Application.targetFrameRate}\n");
+		}
+
+		protected virtual void InitializeRenderSetting(StringBuilder stringBuilder)
+		{
+
+		}
+
+		protected virtual void InitializeObject(StringBuilder stringBuilder)
+		{
+
+		}
+
+		protected virtual void OnDestroy()
+		{
+			m_isPlaying = false;
+
+			CommonUtility.ReleaseManager();
+		}
+
+		protected virtual void Update()
+		{
+			CheckResolution();
+
+#if UNITY_EDITOR
+			if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C) && GameSettings.In.UseHeadUpDisplay)
+			{
+				if(UIMgr.In.IsOpened(UITag.HudPanelUI))
+				{
+					UIMgr.In.Close(UITag.HudPanelUI);
+				}
+				else
+				{
+					UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
+				}
+			}
+
+			//? Create Exception
+			if(Input.GetKeyDown(KeyCode.F4))
+			{
+				throw new Exception("Force Exception");
+			}
+#endif
+		}
+
+		private void CheckResolution()
+		{
+			//? [Screen.width/height] is EDITOR or STANDALONE. / [Screen.currentResolution] is MOBILE.
+#if UNITY_EDITOR || UNITY_STANDALONE
+			if(Screen.width != ScreenResolution.x || Screen.height != ScreenResolution.y)
+			{
+				ScreenResolution = new(Screen.width,Screen.height);
+
+				if(UIMgr.HasInstance)
+				{
+					UIMgr.In.ChangeScreenSize(ScreenResolution);
+				}
+			}
+#else
+			if(Screen.currentResolution.width != ScreenResolution.x || Screen.currentResolution.height != ScreenResolution.y)
+			{
+				ScreenResolution = new(Screen.width,Screen.height);
+
+				if(UIMgr.HasInstance)
+				{
+					UIMgr.In.ChangeScreenSize(ScreenResolution);
+				}
+			}
+#endif
+		}
+	}
+}

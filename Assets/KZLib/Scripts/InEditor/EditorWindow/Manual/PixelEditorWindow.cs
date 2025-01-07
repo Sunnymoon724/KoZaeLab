@@ -19,9 +19,9 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Button/0"),Button("Convert Image",ButtonSizes.Large),EnableIf(nameof(IsExist))]
 		protected void OnConvertImage()
 		{
-			var texture2d = new Texture2D(1,1);
+			var texture2D = new Texture2D(1,1);
 
-			if(!texture2d.LoadImage(CommonUtility.ReadFileToBytes(m_spritePath)))
+			if(!texture2D.LoadImage(CommonUtility.ReadFileToBytes(m_spritePath)))
 			{
 				CommonUtility.DisplayError(new Exception("Fail to load image."));
 
@@ -29,7 +29,7 @@ namespace KZLib.KZWindow
 			}
 
 			var afterColor = m_afterColor;
-			var pixelArray = texture2d.GetPixels32();
+			var pixelArray = texture2D.GetPixels32();
 			var changed = false;
 
 			for(var i=0;i<pixelArray.Length;i++)
@@ -51,9 +51,9 @@ namespace KZLib.KZWindow
 
 			if(changed)
 			{
-				texture2d.SetPixels32(pixelArray);
+				texture2D.SetPixels32(pixelArray);
 
-				CommonUtility.WriteTextureToFile(string.Concat(CommonUtility.GetPathWithoutExtension(m_spritePath),"_Convert.png"),texture2d);
+				CommonUtility.WriteTextureToFile(string.Concat(CommonUtility.GetPathWithoutExtension(m_spritePath),"_Convert.png"),texture2D);
 
 				CommonUtility.DisplayInfo("Image change completed");
 			}

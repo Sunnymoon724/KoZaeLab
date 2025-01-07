@@ -12,32 +12,32 @@ namespace KZLib.KZMenu
 {
 	public class KZMenuItem
 	{
-		private const int PIVOT = 5;
+		private const int c_pivot_order = 5;
 
 		private enum MenuType
 		{
-			Option				= 0 << PIVOT,
+			Option				= 0 << c_pivot_order,
 
 			Option_Delete		= Option+0*Global.MENU_LINE,
 			Option_Find			= Option+1*Global.MENU_LINE,
 			Option_Add			= Option+2*Global.MENU_LINE,
 			Option_Check		= Option+3*Global.MENU_LINE,
 
-			Build				= 1 << PIVOT,
+			Build				= 1 << c_pivot_order,
 
 			Build_Quick			= Build+0*Global.MENU_LINE,
 
-			Generator			= 2 << PIVOT,
+			Generator			= 2 << c_pivot_order,
 
 			Generator_Data		= Generator+0*Global.MENU_LINE,
 
-			Window				= 3 << PIVOT,
+			Window				= 3 << c_pivot_order,
 
 			Window_Settings		= Window+0*Global.MENU_LINE,
 			Window_Data			= Window+1*Global.MENU_LINE,
 			Window_Manual		= Window+2*Global.MENU_LINE,
 
-			Scene				= 4 << PIVOT,
+			Scene				= 4 << c_pivot_order,
 
 			Scene_Quick			= Scene+0*Global.MENU_LINE,
 			Scene_Core			= Scene+1*Global.MENU_LINE,
@@ -278,10 +278,10 @@ namespace KZLib.KZMenu
 			EditorWindow.GetWindow<SettingsWindow>().Show();
 		}
 
-		[MenuItem("KZMenu/Window/Open Save Data Window",false,(int) MenuType.Window_Data)]
-		private static void OnOpenSaveDataWindow()
+		[MenuItem("KZMenu/Window/Open Local Data Window",false,(int) MenuType.Window_Data)]
+		private static void OnOpenLocalDataWindow()
 		{
-			EditorWindow.GetWindow<SaveDataWindow>().Show();
+			EditorWindow.GetWindow<LocalDataWindow>().Show();
 		}
 
 		[MenuItem("KZMenu/Window/Open Manual Window",false,(int) MenuType.Window_Manual)]
@@ -305,11 +305,11 @@ namespace KZLib.KZMenu
 			return pathGroup.IsNullOrEmpty() ? string.Empty : pathGroup.First();
 		}
 
-		private static void OnOpenScene(string _title,string _sceneName)
+		private static void OnOpenScene(string title,string sceneName)
 		{
-			if(CommonUtility.DisplayCheck($"Open {_title} scene",$"Open {_title} scene?"))
+			if(CommonUtility.DisplayCheck($"Open {title} scene",$"Open {title} scene?"))
 			{
-				var scenePath = GetScenePath(_sceneName);
+				var scenePath = GetScenePath(sceneName);
 
 				if(scenePath.IsEmpty())
 				{

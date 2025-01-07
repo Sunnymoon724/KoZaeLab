@@ -3,18 +3,21 @@ using UnityEngine;
 
 public class SampleFocusSlotUI : FocusSlotUI
 {
-	[FoldoutGroup("Animator",Order = 5),SerializeField]
-	private Animator m_Animator = null;
+	protected override bool UseImage => false;
+	protected override bool UseButton => false;
 
-	public override void UpdateLocation(float _location)
+	[BoxGroup("Animator",Order = 10),SerializeField]
+	private Animator m_animator = null;
+
+	public override void UpdateLocation(float location)
 	{
-		base.UpdateLocation(_location);
+		base.UpdateLocation(location);
 
-		if(m_Animator.isActiveAndEnabled)
+		if(m_animator.isActiveAndEnabled)
 		{
-			m_Animator.Play("Scroll",0,_location);
+			m_animator.Play("Scroll",0,location);
 		}
 
-		m_Animator.speed = 0.0f;
+		m_animator.speed = 0.0f;
 	}
 }

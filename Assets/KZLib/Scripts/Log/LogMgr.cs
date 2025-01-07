@@ -87,7 +87,7 @@ namespace KZLib
 
 		private void HandleLogMessage(string condition,string stackTrace,LogType logType)
 		{
-			var head = $"<{GetLogTag(logType)}> {DateTime.Now:MM/dd HH:mm:ss}";
+			var header = $"<{GetLogTag(logType)}> {DateTime.Now:MM/dd HH:mm:ss}";
 			var body = string.Empty;
 
 			if(logType == LogType.Exception)
@@ -103,7 +103,7 @@ namespace KZLib
 				body = $"{condition}\n\n{stack}";
 			}
 
-			var message = new MessageData(head,body);
+			var message = new MessageData(header,body);
 
 			m_logDataQueue.Enqueue(message);
 			OnLogDisplay?.Invoke(message);

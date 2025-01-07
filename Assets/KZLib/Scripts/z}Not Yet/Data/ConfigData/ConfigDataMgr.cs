@@ -5,7 +5,7 @@ using KZLib.KZUtility;
 
 namespace KZLib
 {
-    public interface IConfigData
+	public interface IConfigData
 	{
 		string Name { get; }
 		string Type { get; }
@@ -18,7 +18,7 @@ namespace KZLib
 
 	public class ConfigDataMgr : DataSingleton<ConfigDataMgr>
 	{
-		private readonly Dictionary<string,IConfigData> m_ConfigDataDict = new();
+		private readonly Dictionary<string,IConfigData> m_configDataDict = new();
 
 		/// <summary>
 		/// If data is not exist, create new data.
@@ -27,14 +27,14 @@ namespace KZLib
 		{
 			var key = typeof(TData).Name;
 
-			if(!m_ConfigDataDict.TryGetValue(key,out var data))
+			if(!m_configDataDict.TryGetValue(key,out var data))
 			{
 				data = CreateData<TData>(key);
 
 				if(data != null)
 				{
 					data.Initialize();
-					m_ConfigDataDict.Add(key, data);
+					m_configDataDict.Add(key, data);
 				}
 				else
 				{
@@ -51,27 +51,27 @@ namespace KZLib
 		{
 			var key = typeof(TData).Name;
 
-			if(m_ConfigDataDict.TryGetValue(key,out var data))
+			if(m_configDataDict.TryGetValue(key,out var data))
 			{
 				data.Release();
-				m_ConfigDataDict.Remove(key);
+				m_configDataDict.Remove(key);
 			}
 		}
 
 		protected override void ClearAll()
 		{
-			foreach(var value in m_ConfigDataDict.Values)
+			foreach(var value in m_configDataDict.Values)
 			{
 				value.Release();
 			}
 
-			m_ConfigDataDict.Clear();
+			m_configDataDict.Clear();
 		}
 
-		private TData CreateData<TData>(string _name) where TData : class,IConfigData,new()
+		private TData CreateData<TData>(string name) where TData : class,IConfigData,new()
 		{
 			var yamlDeserializer = new DeserializerBuilder().Build();
-			var text = LoadConfigFile(_name);
+			var text = LoadConfigFile(name);
 
 			if(text.IsEmpty())
 			{
@@ -84,21 +84,21 @@ namespace KZLib
 			}
 			catch(Exception _ex)
 			{
-				LogTag.System.E($"Failed to deserialize {_name}.yaml [{_ex.Message}]");
+				LogTag.System.E($"Failed to deserialize {name}.yaml [{_ex.Message}]");
 
 				return null;
 			}
 		}
 
-		private string LoadConfigFile(string _name)
+		private string LoadConfigFile(string name)
 		{
 			var text = string.Empty;
 #if UNITY_EDITOR
-			text = ReadConfigFile(CommonUtility.PathCombine(GameSettings.In.CustomConfigDataFilePath,$"Custom{_name}.yaml"));
+			text = ReadConfigFile(CommonUtility.PathCombine(GameSettings.In.CustomConfigDataFilePath,$"Custom{name}.yaml"));
 #endif
 			if(text.IsEmpty())
 			{
-				text = ReadConfigFile(CommonUtility.PathCombine(GameSettings.In.ConfigDataFilePath,$"{_name}.yaml"));
+				text = ReadConfigFile(CommonUtility.PathCombine(GameSettings.In.ConfigDataFilePath,$"{name}.yaml"));
 
 				if(text.IsEmpty())
 				{
@@ -109,9 +109,9 @@ namespace KZLib
 			return text;
 		}
 
-		private string ReadConfigFile(string _filePath)
+		private string ReadConfigFile(string filePath)
 		{
-			return CommonUtility.IsFileExist(_filePath) ? CommonUtility.ReadFileToText(_filePath) : string.Empty;
+			return CommonUtility.IsFileExist(filePath) ? CommonUtility.ReadFileToText(filePath) : string.Empty;
 		}
 	}
 }

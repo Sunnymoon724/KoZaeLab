@@ -16,17 +16,17 @@ namespace KZLib
 		[SerializeField,HideInInspector]
 		private float m_progress = 0.0f;
 
-		[FoldoutGroup("General Option",Order = 5),SerializeField,LabelText("Auto Play")]
+		[BoxGroup("General Option",Order = 5),SerializeField]
 		protected bool m_autoPlay = false;
 
 		protected virtual bool IsDurationLock => false;
 
-		[FoldoutGroup("General Option",Order = 5),ShowInInspector,LabelText("Duration"),DisableIf(nameof(IsDurationLock))]
+		[BoxGroup("General Option",Order = 5),ShowInInspector,DisableIf(nameof(IsDurationLock))]
 		public float Duration { get => m_duration; protected set => m_duration = value; }
 
 		public bool IsPlayable => m_duration > 0.0f;
 
-		[BoxGroup("Progress",Order = 99,ShowLabel = false),ShowInInspector,PropertyRange(0.0f,1.0f),LabelText("Progress")]
+		[BoxGroup("Progress",Order = 99,ShowLabel = false),ShowInInspector,PropertyRange(0.0f,1.0f)]
 		public virtual float Progress
 		{
 			get => m_progress;
@@ -38,10 +38,10 @@ namespace KZLib
 			}
 		}
 
-		[FoldoutGroup("General Option",Order = 5),SerializeField,LabelText("Loop Count"),PropertyTooltip("-1 is infinite loop / 0 is not working")]
+		[BoxGroup("General Option",Order = 5),SerializeField,PropertyTooltip("-1 is infinite loop / 0 is not working")]
 		protected int m_loopCount = 1;
 
-		[FoldoutGroup("General Option",Order = 5),SerializeField,LabelText("Ignore TimeScale")]
+		[BoxGroup("General Option",Order = 5),SerializeField]
 		protected bool m_ignoreTimeScale = false;
 
 		private bool m_isReverse = false;

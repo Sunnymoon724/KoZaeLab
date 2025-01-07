@@ -1,0 +1,192 @@
+using System;
+using Sirenix.OdinInspector;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
+using KZLib.KZAttribute;
+using System.Linq;
+using UnityEngine.Events;
+
+namespace KZLib.Develop
+{
+	public partial class FocusScroller : BaseComponentUI,IPointerUpHandler,IPointerDownHandler,IBeginDragHandler,IEndDragHandler,IDragHandler,IScrollHandler
+	{
+		[BoxGroup("General",Order = 0)]
+		[VerticalGroup("General/0",Order = 0),SerializeField]
+		private RectTransform m_viewport = null;
+
+		[VerticalGroup("General/0",Order = 0),SerializeField]
+		private FocusSlotUI m_slotUI = null;
+
+		[VerticalGroup("General/0",Order = 0),SerializeField]
+		private bool m_circularMode = true;
+		[VerticalGroup("General/0",Order = 0),SerializeField]
+		private bool m_orderMode = false;
+		[VerticalGroup("General/0",Order = 0),SerializeField,Range(0.01f,0.5f)]
+		private float m_slotSpace = 0.1f;
+
+		[VerticalGroup("General/0",Order = 0),SerializeField]
+		private bool m_vertical = false;
+
+		[VerticalGroup("General/0",Order = 0),SerializeField]
+		private bool m_useDrag = true;
+
+		private readonly List<FocusSlotUI> m_slotUIList = new();
+		private readonly List<ICellData> m_cellDataList = new();
+
+		private readonly List<(float,Transform)> m_OrderList = new();
+
+		[BoxGroup("Viewer",ShowLabel = false,Order = 99),SerializeField,KZRichText]
+		private int m_focusIndex = -1;
+
+		private GameObjectUIPool<FocusSlotUI> m_objectPool = null;
+
+
+		[BoxGroup("Viewer",ShowLabel = false,Order = 99),SerializeField,KZRichText]
+		private float m_currentLocation = 0.0f;
+
+		private bool IsCircularMode => m_circularMode && m_cellDataList.Count != 1;
+
+		public event UnityAction<ICellData> OnFocusSet;
+
+		public ICellData FocusCellData => m_cellDataList.TryGetValueByIndex(m_focusIndex,out var data) ? data : null;
+
+		protected override void Initialize()
+		{
+			base.Initialize();
+
+			if(m_slotUI == null)
+			{
+				throw new NullReferenceException("No Slot.");
+			}
+
+			var slotUI = m_slotUI as SlotUI;
+
+			if(!m_viewport)
+			{
+				throw new NullReferenceException("No Viewport.");
+			}
+
+			slotUI.gameObject.SetActiveIfDifferent(false);
+			transform.SetUIChild(slotUI.transform);
+
+			m_viewport.pivot = new Vector2(0.0f,1.0f);
+			slotUI.UIRectTransform.pivot = new Vector2(0.5f,0.5f);
+
+			m_objectPool = new GameObjectUIPool<FocusSlotUI>(m_slotUI,m_viewport);
+
+			m_cellDataList.Clear();
+			m_slotUIList.Clear();
+		}
+
+		public void SetCellList(List<ICellData> cellDataList,int? index = null)
+		{
+			var focusIndex = index.HasValue ? Mathf.Clamp(index.Value,0,cellDataList.Count) : 0;
+
+			m_cellDataList.Clear();
+			m_cellDataList.AddRange(cellDataList);
+
+			UpdateLocation(focusIndex,true);
+			UpdateIndex(focusIndex);
+		}
+
+		public void UpdateIndex(int index)
+		{
+			m_focusIndex = CommonUtility.LoopClamp(index,m_cellDataList.Count);
+
+			OnFocusSet?.Invoke(m_cellDataList[m_focusIndex]);
+		}
+
+		private void UpdateLocation(float location,bool isForceRefresh)
+		{
+			m_currentLocation = location;
+
+			var newLocation = location-0.5f/m_slotSpace;
+			var firstIndex = Mathf.CeilToInt(newLocation);
+			var firstLocation = (Mathf.Ceil(newLocation)-newLocation)*m_slotSpace;
+
+			if(firstLocation+m_slotUIList.Count*m_slotSpace < 1.0f)
+			{
+				ResizePool(firstLocation);
+			}
+
+			UpdateSlotList(firstLocation,firstIndex,isForceRefresh);
+		}
+
+		private void ResizePool(float firstLocation)
+		{
+			var count = Mathf.CeilToInt((1.0f-firstLocation)/m_slotSpace)-m_slotUIList.Count;
+
+			for(var i=0;i<count;i++)
+			{
+				m_slotUIList.Add(m_objectPool.GetOrCreate(m_viewport));
+			}
+		}
+
+		private void UpdateSlotList(float firstLocation,int firstIndex,bool isForceRefresh)
+		{
+			var cellCount = m_cellDataList.Count;
+			var slotCount = m_slotUIList.Count;
+
+			m_OrderList.Clear();
+
+			for(var i=0;i<slotCount;i++)
+			{
+				var index = firstIndex+i;
+				var location = firstLocation+i*m_slotSpace;
+				var slot = m_slotUIList[CommonUtility.LoopClamp(index,slotCount)];
+
+				if(IsCircularMode)
+				{
+					index = CommonUtility.LoopClamp(index,cellCount);
+				}
+
+				if(index < 0 || index >= cellCount || location > 1.0f)
+				{
+					slot.gameObject.SetActiveIfDifferent(false);
+
+					continue;
+				}
+
+				if(isForceRefresh || !slot.gameObject.activeSelf)
+				{
+					slot.gameObject.SetActiveIfDifferent(true);
+					slot.name = $"Slot_{i}";
+					slot.SetCell(m_cellDataList[index]);
+				}
+
+				slot.UpdateLocation(location);
+
+				if(m_orderMode)
+				{
+					m_OrderList.Add((location,slot.transform));
+				}
+			}
+
+			if(m_orderMode)
+			{
+				foreach(var pair in m_OrderList.OrderByDescending(x=>Math.Abs(x.Item1-0.5f)))
+				{
+					pair.Item2.SetAsLastSibling();
+				}
+			}
+		}
+
+		protected override void Reset()
+		{
+			base.Reset();
+
+			if(!m_viewport)
+			{
+				var viewport = transform.Find("Viewport");
+
+				if(!viewport)
+				{
+					throw new NullReferenceException("No Viewport");
+				}
+
+				m_viewport = viewport.GetComponent<RectTransform>();
+			}
+		}
+	}
+}

@@ -1,7 +1,15 @@
 using System;
 
 public enum UILayerType { Panel, PopUp };
-public enum UIPriorityType { Backmost = -500, Normal = 0, Foremost = +500 };
+
+public enum UIPriorityType
+{
+	Backmost,		//
+	Back,			//
+	Middle,			// default UI
+	Fore, 			// fade UI
+	Foremost		// info UI
+}
 
 public enum SpaceType { xyz, xy, xz };
 

@@ -391,7 +391,7 @@ public static partial class CommonUtility
 
 		foreach(var data in _dataGroup)
 		{
-			builder.AppendFormat("**{0}**\n{1}\n\n",data.Head,data.Body);
+			builder.AppendFormat("**{0}**\n{1}\n\n",data.Header,data.Body);
 		}
 
 		var listName = _dataGroup.Last().Body.Replace("\n","");

@@ -6,18 +6,18 @@ using UnityEngine.UI;
 [RequireComponent(typeof(ToggleGroup))]
 public class ManagedToggleGroupUI : BaseComponentUI
 {
-	[SerializeField,LabelText("Toggle Group")]
+	[SerializeField]
 	protected ToggleGroup m_toggleGroup = null;
 
-	[SerializeField,LabelText("Start Index")]
+	[SerializeField]
 	private int m_startIndex = Global.INVALID_INDEX;
 
-	[SerializeField,LabelText("Toggle List"),ListDrawerSettings(DraggableItems = false,ShowFoldout = false,HideAddButton = true,CustomRemoveIndexFunction = nameof(OnRemoveToggleByIndex)),OnValueChanged(nameof(OnChangeList))]
+	[SerializeField,ListDrawerSettings(DraggableItems = false,ShowFoldout = false,HideAddButton = true,CustomRemoveIndexFunction = nameof(OnRemoveToggleByIndex)),OnValueChanged(nameof(OnChangeList))]
 	private List<BaseToggleUI> m_toggleUIList = new();
 
 	[PropertySpace(5)]
 
-	[ShowInInspector,LabelText("Selected Toggle"),ReadOnly]
+	[ShowInInspector,ReadOnly]
 	private Toggle SelectedToggle => m_toggleGroup == null ? null : m_toggleGroup.GetFirstActiveToggle();
 
 	protected override void Initialize()

@@ -73,7 +73,7 @@ namespace KZLib.KZNetwork
 
 			foreach(var message in _messageGroup)
 			{
-				var head = message.Head;
+				var header = message.Header;
 				var body = message.Body;
 				var index = 0;
 
@@ -81,14 +81,14 @@ namespace KZLib.KZNetwork
 				{
 					var text = body.Substring(index,Mathf.Min(body.Length-index,maxSize));
 
-					dataQueue.Enqueue(new MessageData(head,text));
-					logCount += head.Length+text.Length;
+					dataQueue.Enqueue(new MessageData(header,text));
+					logCount += header.Length+text.Length;
 
 					while(logCount >= EMBED_MAX_TEXT_SIZE)
 					{
 						var data = dataQueue.Dequeue();
 
-						logCount -= data.Head.Length+data.Body.Length;
+						logCount -= data.Header.Length+data.Body.Length;
 					}
 
 					index += body.Length;
@@ -101,7 +101,7 @@ namespace KZLib.KZNetwork
 
 			foreach(var data in dataQueue)
 			{
-				fieldList.Add(new {name = data.Head,value = data.Body});
+				fieldList.Add(new {name = data.Header,value = data.Body});
 
 				if(fieldList.Count == FIELDS_MAX_COUNT)
 				{
