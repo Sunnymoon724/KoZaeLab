@@ -54,13 +54,13 @@ namespace GameData
 			var type = Type.GetType($"GameData.Account+{key.Replace(" ", "")}");
 			var defaultData = Activator.CreateInstance(type) as IAccountData;
 
-			if(LocalDataMgr.In.HasKey(c_table_name,key))
+			if(LocalStorageMgr.In.HasKey(c_table_name,key))
 			{
-				return LocalDataMgr.In.GetObject(c_table_name,key,defaultData);
+				return LocalStorageMgr.In.GetObject(c_table_name,key,defaultData);
 			}
 			else
 			{
-				LocalDataMgr.In.SetObject(c_table_name,key,defaultData);
+				LocalStorageMgr.In.SetObject(c_table_name,key,defaultData);
 
 				return defaultData;
 			}
@@ -87,7 +87,7 @@ namespace GameData
 		{
 			if(m_AccountDataDict.TryGetValue(key,out var data))
 			{
-				LocalDataMgr.In.SetObject(c_table_name,key,data);
+				LocalStorageMgr.In.SetObject(c_table_name,key,data);
 			}
 		}
 

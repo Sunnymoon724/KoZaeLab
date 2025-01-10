@@ -69,7 +69,7 @@ namespace KZLib
 
 			var position = m_target ? m_target.position : Vector3.zero;
 
-			CurrentCamera.transform.SetPositionAndRotation(position +cameraData.Position,Quaternion.Euler(cameraData.Rotation));
+			CurrentCamera.transform.SetPositionAndRotation(position+cameraData.Position,Quaternion.Euler(cameraData.Rotation));
 
 			SetSubCameraDict();
 		}

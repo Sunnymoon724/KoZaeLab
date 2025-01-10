@@ -147,9 +147,9 @@ public static partial class CommonUtility
 		ReleaseSingletonMB<CameraMgr>();
 
 		//? Release Singleton
-		ReleaseSingleton<MetaDataMgr>();
+		ReleaseSingleton<ProtoMgr>();
 		ReleaseSingleton<GameDataMgr>();
-		ReleaseSingleton<LocalDataMgr>();
+		ReleaseSingleton<LocalStorageMgr>();
 		ReleaseSingleton<ResMgr>();
 		ReleaseSingleton<LogMgr>();
 		ReleaseSingleton<AddressablesMgr>();

@@ -1,7 +1,9 @@
 #if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using KZLib.KZTool;
 using KZLib.KZWindow;
 using KZLib.Window;
 using UnityEditor;
@@ -34,8 +36,8 @@ namespace KZLib.KZMenu
 			Window				= 3 << c_pivot_order,
 
 			Window_Settings		= Window+0*Global.MENU_LINE,
-			Window_Data			= Window+1*Global.MENU_LINE,
-			Window_Manual		= Window+2*Global.MENU_LINE,
+			Window_Manual		= Window+1*Global.MENU_LINE,
+			Window_Etc			= Window+2*Global.MENU_LINE,
 
 			Scene				= 4 << c_pivot_order,
 
@@ -252,22 +254,16 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Generator/Generate Proto",false,(int) MenuType.Generator_Data)]
 		private static void OnGenerateProto()
 		{
-			
+			//? 프로토 생성?
 		}
 
 		[MenuItem("KZMenu/Generator/Generate Config",false,(int) MenuType.Generator_Data)]
 		private static void OnGenerateConfig()
 		{
-			// var generator = new ConfigGenerator("Assets/KZLib/WorkResources/Templates/ConfigDataTemplate.txt");
+			var templateFilePath = CommonUtility.FindTemplateText("ConfigTemplate.txt");
+			var generator = new ConfigGenerator();
 
-			// try
-			// {
-			// 	generator.GenerateAll("","");
-			// }
-			// catch(Exception _ex)
-			// {
-			// 	LogTag.System.E(_ex);
-			// }
+			generator.GenerateConfig("","",templateFilePath);
 		}
 		#endregion Generator
 
@@ -278,16 +274,22 @@ namespace KZLib.KZMenu
 			EditorWindow.GetWindow<SettingsWindow>().Show();
 		}
 
-		[MenuItem("KZMenu/Window/Open Local Data Window",false,(int) MenuType.Window_Data)]
-		private static void OnOpenLocalDataWindow()
-		{
-			EditorWindow.GetWindow<LocalDataWindow>().Show();
-		}
-
 		[MenuItem("KZMenu/Window/Open Manual Window",false,(int) MenuType.Window_Manual)]
 		private static void OnOpenManualWindow()
 		{
 			EditorWindow.GetWindow<ManualWindow>().Show();
+		}
+
+		[MenuItem("KZMenu/Window/Open Local Storage Window",false,(int) MenuType.Window_Etc)]
+		private static void OnOpenLocalStorageWindow()
+		{
+			EditorWindow.GetWindow<LocalStorageWindow>().Show();
+		}
+
+		[MenuItem("KZMenu/Window/Open Proto Window",false,(int) MenuType.Window_Etc)]
+		private static void OnOpenProtoWindow()
+		{
+			EditorWindow.GetWindow<ProtoWindow>().Show();
 		}
 		#endregion Window
 

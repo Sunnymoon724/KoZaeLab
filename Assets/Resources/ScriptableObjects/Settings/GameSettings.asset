@@ -23,7 +23,7 @@ MonoBehaviour:
   m_GraphicQualityPreset: 4
   m_SettingPath: Scripts/InEditor/SettingsWindow
   m_MetaDataScriptPath: Scripts/Data/MetaData
-  m_MetaDataFilePath: Resources/Texts/MetaData
+  m_MetaDataFilePath: Resources/Texts/Proto
   m_LanguageFilePath: Resources/Texts/Languages
   m_ConfigDataFilePath: Resources/Texts/ConfigData
   m_CustomConfigDataFilePath: Documents/Custom/ConfigData

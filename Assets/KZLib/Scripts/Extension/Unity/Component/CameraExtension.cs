@@ -173,7 +173,7 @@ public static class CameraExtension
 		{
 			LogTag.System.E("Target is null");
 
-			distance = Global.INVALID_NUMBER;
+			distance = 0.0f;
 
 			return false;
 		}

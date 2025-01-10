@@ -165,7 +165,7 @@ public static partial class CommonUtility
 	public static void AddOrUpdateTemplateText(string folderPath,string templateName,string scriptName,string newData,Func<string,string> onUpdate)
 	{
 		var absolutePath = GetAbsolutePath(PathCombine(folderPath,scriptName),true);
-		var templateText = IsFolderExist(absolutePath) ? ReadFileToText(absolutePath) : GetTemplateText(templateName);
+		var templateText = IsFolderExist(absolutePath) ? ReadFileToText(absolutePath) : FindTemplateText(templateName);
 
 		if(templateText.IsEmpty() || templateText.Contains(newData))
 		{
@@ -180,7 +180,7 @@ public static partial class CommonUtility
 	}
 
 	/// <param name="_filePath">The absolute path of the file.</param>
-	public static string GetTemplateText(string filePath)
+	public static string FindTemplateText(string filePath)
 	{
 		if(!IsPathExist(filePath,true))
 		{

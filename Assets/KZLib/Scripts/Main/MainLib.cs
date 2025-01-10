@@ -5,6 +5,8 @@ using UnityEngine;
 using System.Text;
 using Newtonsoft.Json;
 using KZLib.KZAttribute;
+using Cysharp.Threading.Tasks;
+using System.Threading;
 
 #if UNITY_EDITOR
 
@@ -127,6 +129,8 @@ namespace KZLib
 
 		private bool IsTestMode => GamePlayType == PlayType.Test;
 
+		protected CancellationTokenSource m_tokenSource = null;
+
 		protected virtual void Awake()
 		{
 			m_isPlaying = true;
@@ -177,20 +181,19 @@ namespace KZLib
 
 			LogTag.System.I(builder.ToString());
 
-			// TODO 메타 데이터 로드 위치 변경하기 (선택창으로 시작할때 로드 or 원할때 로드)
-			await MetaDataMgr.In.LoadAllAsync();
+			CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
 			if(IsTestMode)
 			{
 #if UNITY_EDITOR
-				InitializeTestMode();
+				await StartTestMode(m_tokenSource.Token);
 #else
 				throw new Exception("This cannot be tested outside of the editor mode.");
 #endif
 			}
 			else
 			{
-				InitializeNormalMode();
+				await StartNormalMode(m_tokenSource.Token);
 			}
 		}
 
@@ -207,9 +210,9 @@ namespace KZLib
 			return text.IsEmpty() ? new MainData() : JsonConvert.DeserializeObject<MainData>(text);
 		}
 
-		protected virtual void InitializeTestMode() { }
+		protected async virtual UniTask StartTestMode(CancellationToken token) { await ProtoMgr.In.TryLoadAllAsync(token); }
 #endif
-		protected virtual void InitializeNormalMode() { }
+		protected async virtual UniTask StartNormalMode(CancellationToken token) { await ProtoMgr.In.TryLoadAllAsync(token); }
 
 		protected virtual void InitializeResolution(StringBuilder stringBuilder)
 		{

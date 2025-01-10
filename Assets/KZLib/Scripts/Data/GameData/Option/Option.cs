@@ -19,9 +19,9 @@ namespace GameData
 		{
 			var defaultData = Activator.CreateInstance<TData>();
 
-			if(LocalDataMgr.In.HasKey(c_table_name,OptionKey))
+			if(LocalStorageMgr.In.HasKey(c_table_name,OptionKey))
 			{
-				return LocalDataMgr.In.GetObject(c_table_name,OptionKey,defaultData);
+				return LocalStorageMgr.In.GetObject(c_table_name,OptionKey,defaultData);
 			}
 			else
 			{
@@ -35,7 +35,7 @@ namespace GameData
 
 		protected void SaveOptionData(IOptionData optionData,bool isNotify)
 		{
-			LocalDataMgr.In.SetObject(c_table_name,OptionKey,optionData);
+			LocalStorageMgr.In.SetObject(c_table_name,OptionKey,optionData);
 
 			if(isNotify)
 			{

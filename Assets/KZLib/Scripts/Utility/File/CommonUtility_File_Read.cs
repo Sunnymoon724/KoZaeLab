@@ -25,8 +25,8 @@ public static partial class CommonUtility
 		return ReadFile(filePath,File.ReadAllBytes);
 	}
 
-	private static TRead ReadFile<TRead>(string filePath,Func<string,TRead> _onRead)
+	private static TRead ReadFile<TRead>(string filePath,Func<string,TRead> onRead)
 	{
-		return _onRead(filePath);
+		return onRead(filePath);
 	}
 }
