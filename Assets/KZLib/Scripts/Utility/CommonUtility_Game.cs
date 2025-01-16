@@ -2,6 +2,8 @@ using System;
 using KZLib;
 using UnityEngine;
 using KZLib.KZUtility;
+using System.IO;
+
 
 #if UNITY_EDITOR
 
@@ -16,11 +18,6 @@ public static partial class CommonUtility
 		Resources.UnloadUnusedAssets();
 
 		GC.Collect();
-	}
-
-	public static bool CheckVersion(string version)
-	{
-		return GameSettings.In.GameVersion.CompareTo(version) >= 0;
 	}
 
 	// public static string CheckMetaData(IMetaData _metaData,int _metaId)
@@ -159,6 +156,8 @@ public static partial class CommonUtility
 		ReleaseSingleton<EventMgr>();
 		ReleaseSingleton<TimerMgr>();
 
+		ReleaseSingleton<RouteMgr>();
+
 		ClearCacheData();
 		StringExtension.ClearCacheData();
 		ColorExtension.ClearCacheData();
@@ -183,17 +182,16 @@ public static partial class CommonUtility
 #if UNITY_EDITOR
 	public static string FindTemplateFilePath(string fileName)
 	{
-		var projectPath = GetProjectPath();
-		var packagePath = $"Packages/com.bsheepstudio.kzlib/WorkResources/Templates/{fileName}";
+		var packagePath = Path.Combine("Packages","com.bsheepstudio.kzlib","WorkResources","Templates",$"{fileName}");
 
-		if(IsFileExist(PathCombine(projectPath,packagePath)))
+		if(File.Exists(Path.Combine(Global.PROJECT_PATH,packagePath)))
 		{
 			return packagePath;
 		}
 
-		var assetPath = $"Assets/KZLib/WorkResources/Templates/{fileName}";
+		var assetPath = Path.Combine("Assets","KZLib","WorkResources","Templates",$"{fileName}");
 
-		if(IsFileExist(GetAbsolutePath(assetPath,true)))
+		if(File.Exists(Path.GetFullPath(assetPath)))
 		{
 			return assetPath;
 		}
@@ -212,7 +210,7 @@ public static partial class CommonUtility
 	{
 		var templateFilePath = FindTemplateFilePath(fileName);
 
-		return IsStartWithAssetsHeader(templateFilePath) ? GetAbsolutePath(templateFilePath,true) : PathCombine(GetProjectPath(),templateFilePath);
+		return templateFilePath.StartsWith(Global.ASSETS_HEADER) ? Path.GetFullPath(templateFilePath) : Path.Combine(Global.PROJECT_PATH,templateFilePath);
 	}
 #endif
 }

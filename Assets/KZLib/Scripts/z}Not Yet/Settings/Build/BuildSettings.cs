@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using KZLib;
 using UnityEditor;
 using KZLib.KZUtility;
+using System.IO;
 
 public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 {
@@ -16,7 +17,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 
 	private string GetFullPath(string _type)
 	{
-		return CommonUtility.PathCombine(CommonUtility.GetProjectPath(),"Builds",_type,CurrentBuildTargetToString);
+		return Path.Combine(Global.PROJECT_PATH,"Builds",_type,CurrentBuildTargetToString);
 	}
 
 	private BuildTarget CurrentBuildTarget => EditorUserBuildSettings.activeBuildTarget;

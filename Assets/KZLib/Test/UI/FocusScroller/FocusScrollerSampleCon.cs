@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using KZLib.Develop;
+using KZLib.KZDevelop;
 using Sirenix.OdinInspector;
 using UnityEngine;
 

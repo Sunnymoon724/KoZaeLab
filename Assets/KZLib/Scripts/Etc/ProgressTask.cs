@@ -46,9 +46,9 @@ namespace KZLib
 
 		private bool m_isReverse = false;
 
-		public event UnityAction<float> OnProgressUpdate;
-		public event UnityAction OnProgressStart;
-		public event UnityAction OnProgressComplete;
+		public event UnityAction<float> OnProgressUpdate = null;
+		public event UnityAction OnProgressStart = null;
+		public event UnityAction OnProgressComplete = null;
 
 		protected CancellationTokenSource m_tokenSource = null;
 

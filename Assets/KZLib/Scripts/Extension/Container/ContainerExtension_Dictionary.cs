@@ -45,6 +45,19 @@ public static partial class ContainerExtension
 		return dictionary.Values.IsEquals(valueCollection);
 	}
 
+	public static void AddRange<TKey,TValue>(this IDictionary<TKey,TValue> dictionary1,IDictionary<TKey,TValue> dictionary2)
+	{
+		if(!IsValid(dictionary1) || !IsValid(dictionary2))
+		{
+			return;
+		}
+
+		foreach(var pair in dictionary2)
+		{
+			dictionary1.Add(pair.Key,pair.Value);
+		}
+	}
+
 	public static void AddRange<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,ICollection<TValue> valueCollection,Func<TValue,TKey> onFunc,Action onAction = null)
 	{
 		if(!IsValid(dictionary))

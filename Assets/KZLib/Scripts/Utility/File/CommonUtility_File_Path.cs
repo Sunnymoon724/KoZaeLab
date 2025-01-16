@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Text.RegularExpressions;
-using UnityEngine;
 
 public static partial class CommonUtility
 {
@@ -34,7 +33,7 @@ public static partial class CommonUtility
 		}
 		else
 		{
-			return NormalizePath(Path.GetFullPath(path,GetProjectParentPath()));
+			return NormalizePath(Path.GetFullPath(path,Global.PROJECT_PARENT_PATH));
 		}
 	}
 
@@ -82,16 +81,6 @@ public static partial class CommonUtility
 	public static string GetParentAbsolutePath(string path,bool isIncludeAssets)
 	{
 		return IsPathExist(path,true) ? GetAbsolutePath(GetParentPath(path),isIncludeAssets) : null;
-	}
-
-	public static string GetProjectPath()
-	{
-		return NormalizePath(Path.GetFullPath(Path.Join(Application.dataPath,"..")));
-	}
-
-	public static string GetProjectParentPath()
-	{
-		return NormalizePath(Path.GetFullPath(Path.Join(Application.dataPath,"../..")));
 	}
 
 	/// <summary>

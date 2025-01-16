@@ -1,0 +1,11 @@
+# resources folder
+defaultRes : Assets/Resources
+
+# addressable folder
+gameRes : Assets/GameResources
+
+# for indirect references
+workRes : Assets/WorkResources
+
+# config folder
+config : Texts/Configs

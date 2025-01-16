@@ -6,9 +6,9 @@ public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDr
 {
 	private Canvas m_canvas = null;
 
-	public event UnityAction OnDragStart;
-	public event UnityAction OnDragUpdate;
-	public event UnityAction OnDragEnd;
+	public event UnityAction OnDragStart = null;
+	public event UnityAction OnDragUpdate = null;
+	public event UnityAction OnDragEnd = null;
 
 	protected override void Initialize()
 	{

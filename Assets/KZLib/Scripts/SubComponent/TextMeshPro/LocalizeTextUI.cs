@@ -23,7 +23,7 @@ public class LocalizeTextUI : BaseTextUI
 #if UNITY_EDITOR
 			m_localizeTextList.Clear();
 
-			m_localizeTextList.AddRange(GameDataMgr.In.Access<GameData.LanguageOption>().GetLanguageGroup(m_localizeKey));
+			m_localizeTextList.AddRange(LocalizationMgr.In.GetLanguageGroup(m_localizeKey));
 #endif
 		}
 	}
@@ -44,7 +44,7 @@ public class LocalizeTextUI : BaseTextUI
 
 		if(!m_localizeKey.IsEmpty())
 		{
-			OnSetLocalizeText();
+			OnChangeLocalization();
 		}
 	}
 
@@ -52,17 +52,17 @@ public class LocalizeTextUI : BaseTextUI
 	{
 		base.OnEnable();
 
-		EventMgr.In.EnableListener(EventTag.ChangeLanguageOption,OnSetLocalizeText);
+		LocalizationMgr.In.OnLocalizationChange += OnChangeLocalization;
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
 
-		EventMgr.In.DisableListener(EventTag.ChangeLanguageOption,OnSetLocalizeText);
+		LocalizationMgr.In.OnLocalizationChange -= OnChangeLocalization;
 	}
 
-	private void OnSetLocalizeText()
+	private void OnChangeLocalization()
 	{
 		var localize = m_localizeKey.ToLocalize();
 
@@ -78,6 +78,6 @@ public class LocalizeTextUI : BaseTextUI
 		
 		m_localizeKey = key;
 
-		OnSetLocalizeText();
+		OnChangeLocalization();
 	}
 }

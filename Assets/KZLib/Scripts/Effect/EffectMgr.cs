@@ -25,7 +25,7 @@ namespace KZLib
 
 		protected override void Initialize()
 		{
-			m_effectPath = GameSettings.In.FXPrefabPath;
+			m_effectPath = ConfigMgr.In.Access<ConfigData.GameConfig>().FXPrefabPath;
 		}
 
 		private async UniTaskVoid CheckExpiredEffectAsync()

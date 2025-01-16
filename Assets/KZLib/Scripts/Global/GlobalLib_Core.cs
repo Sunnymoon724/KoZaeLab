@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
 
 public partial struct Global
 {
@@ -31,12 +32,17 @@ public partial struct Global
 	public const string DISABLE_HEX_COLOR = "#808080FF";
 	public const string WRONG_HEX_COLOR = "#FFC300FF";
 
-	public const float FRAME_UPDATE_PERIOD = 0.25f;
-
 	public const string CATEGORY_TAG = "Category";
 	public const string CATEGORY_LINE = "----------------------------";
 
 	public const string ASSETS_HEADER = "Assets";
 
 	public const int MENU_LINE = 20;
+
+	public readonly static string PROJECT_PATH = Directory.GetCurrentDirectory();
+	public readonly static string PROJECT_PARENT_PATH = Path.GetFullPath(Path.Combine(PROJECT_PATH,".."));
+	public readonly static string CONFIG_FOLDER_PATH = Path.Combine(PROJECT_PARENT_PATH,"Documents","Configs");
+	public readonly static string CUSTOM_CONFIG_FOLDER_PATH = Path.Combine(CONFIG_FOLDER_PATH,"Customs");
+
+	public readonly static string[] EXCEL_EXTENSION_ARRAY = new string[] { ".xls", ".xlsx", ".xlsm" };
 }

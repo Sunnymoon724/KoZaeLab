@@ -39,9 +39,11 @@ namespace KZLib
 
 		protected override void Initialize()
 		{
-			OnChangeNativeOption();
+			var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-			// EventMgr.In.EnableListener(EventTag.ChangeNativeOption,OnChangeNativeOption);
+			optionConfig.OnUseVibrationChange += OnChangeUseVibration;
+
+			OnChangeUseVibration(optionConfig.UseVibration);
 
 #if UNITY_IOS && !UNITY_EDITOR
 			VibrationInitialize();
@@ -62,7 +64,9 @@ namespace KZLib
 
 			if(disposing)
 			{
-				// EventMgr.In.DisableListener(EventTag.ChangeNativeOption,OnChangeNativeOption);
+				var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+
+				optionConfig.OnUseVibrationChange -= OnChangeUseVibration;
 			}
 
 			m_disposed = true;
@@ -70,11 +74,9 @@ namespace KZLib
 			base.Release(disposing);
 		}
 
-		private void OnChangeNativeOption()
+		private void OnChangeUseVibration(bool useVibration)
 		{
-			var option = GameDataMgr.In.Access<GameData.NativeOption>();
-
-			m_useVibration = option.UseVibration;
+			m_useVibration = useVibration;
 		}
 
 		/// <param name="_amplitude">0.0 ~ 10.0</param>

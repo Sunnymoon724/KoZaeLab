@@ -113,7 +113,7 @@ namespace KZLib
 				{
 					var cacheData = cacheDataArray[i].CopyObject() as TObject;
 
-					if(GameSettings.In.IsServerResource)
+					if(m_useServerResource)
 					{
 						(cacheData as GameObject).ReAssignShader();
 					}
@@ -144,7 +144,7 @@ namespace KZLib
 
 			var assetPath = CommonUtility.GetAssetsPath(folderPath);
 
-			if(GameSettings.In.IsServerResource)
+			if(m_useServerResource)
 			{
 				return AddressablesMgr.In.GetObjectArray<TObject>(assetPath);
 			}

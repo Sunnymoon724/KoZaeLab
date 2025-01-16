@@ -8,7 +8,7 @@ public class SpinImageUI : BaseImageUI,IDragHandler
 	[SerializeField] private float m_speed = 1.0f;
 	[SerializeField] private bool m_lockVertical = false;
 
-	public event UnityAction OnImageSpin;
+	public event UnityAction OnImageSpin = null;
 
 	public void SetTarget(Transform target)
 	{

@@ -19,4 +19,19 @@ public static partial class CommonUtility
 	{
 		return (long) (GetFileSizeByte(filePath)/(double)MEGA_BYTE);
 	}
+
+	public static bool IsExcelFile(string filePath)
+	{
+		var fileExtension = Path.GetExtension(filePath).ToLower();
+
+		foreach(var excelExtension in Global.EXCEL_EXTENSION_ARRAY)
+		{
+			if(string.Equals(fileExtension,excelExtension))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

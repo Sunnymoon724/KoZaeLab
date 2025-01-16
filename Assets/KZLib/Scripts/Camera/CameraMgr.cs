@@ -39,16 +39,20 @@ namespace KZLib
 
 			SetCameraBackgroundColor(Color.black);
 
-			EventMgr.In.EnableListener(EventTag.ChangeGraphicOption,OnChangeFarClipPlane);
+			var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-			OnChangeFarClipPlane();
+			optionConfig.OnGraphicQualityChange += OnChangeFarClipPlane;
+
+			OnChangeFarClipPlane(optionConfig.GraphicQuality);
 		}
 
 		protected override void Release()
 		{
 			base.Release();
 
-			EventMgr.In.DisableListener(EventTag.ChangeGraphicOption,OnChangeFarClipPlane);
+			var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+
+			optionConfig.OnGraphicQualityChange -= OnChangeFarClipPlane;
 		}
 
 		public void SetCameraData(CameraData cameraData)
@@ -122,10 +126,9 @@ namespace KZLib
 			// TODO duration 부분 수정하기
 		}
 
-		private void OnChangeFarClipPlane()
+		private void OnChangeFarClipPlane(long graphicQuality)
 		{
-			var option = GameDataMgr.In.Access<GameData.GraphicOption>();
-			var flag = option.IsIncludeGraphicQuality(GraphicQualityType.CameraFarHalf);
+			var flag = graphicQuality.HasFlag(GraphicQualityType.CameraFarHalf.QualityOption);
 
 			m_farFactor = flag ? 0.5f : 1.0f;
 		}

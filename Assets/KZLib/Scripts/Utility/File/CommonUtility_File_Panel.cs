@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,21 +17,24 @@ public static partial class CommonUtility
 
 	public static string GetTSVFile()
 	{
-		return GetFile("Find tsv file","tsv");
+		return GetFile("Find tsv file","*.tsv");
 	}
 
 	public static string GetExcelFilePath()
 	{
-#if UNITY_EDITOR_WIN
-		return GetFilePathInPanel("Find excel file","excel files;*.xls;*.xlsx;*.xlsm");
-#else // for UNITY_EDITOR_OSX
-		return GetFilePathInPanel("Find excel file","*.xlsx;*.xlsm");
-#endif
+		var filterArray = new List<string>();
+
+		foreach(var extension in Global.EXCEL_EXTENSION_ARRAY)
+		{
+			filterArray.Add($"*{extension}");
+		}
+
+		return GetFilePathInPanel("Find excel file",string.Join(';',filterArray));
 	}
 
 	public static string GetJsonFile()
 	{
-		return GetFile("Find json file","json");
+		return GetFile("Find json file","*.json");
 	}
 
 	public static string GetTestFile()

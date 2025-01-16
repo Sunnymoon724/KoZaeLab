@@ -43,9 +43,15 @@ namespace KZLib
 
 		private readonly Dictionary<string,List<CacheData>> m_cacheDataDict = new();
 
+		private bool m_useServerResource = false;
+
 		protected override void Initialize()
 		{
 			m_tokenSource = new();
+
+			var gameConfig = ConfigMgr.In.Access<ConfigData.GameConfig>();
+
+			m_useServerResource = !gameConfig.IsLocalResource;
 
 			LoopProcessAsync().Forget();
 		}

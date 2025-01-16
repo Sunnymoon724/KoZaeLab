@@ -34,11 +34,9 @@ namespace KZLib
 			{
 				if(!m_gameLanguage.HasValue)
 				{
-					// var option = GameDataMgr.In.Access<GameData.LanguageOption>();
+					var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-					// m_gameLanguage = option.GameLanguage;
-
-					m_gameLanguage = SystemLanguage.English;
+					m_gameLanguage = optionConfig.Language;
 				}
 
 				return m_gameLanguage.Value;
@@ -53,9 +51,9 @@ namespace KZLib
 
 				m_gameLanguage = value;
 
-				var option = GameDataMgr.In.Access<GameData.LanguageOption>();
+				var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-				option.GameLanguage = m_gameLanguage.Value;
+				optionConfig.SetLanguage(m_gameLanguage.Value);
 			}
 		}
 
@@ -159,7 +157,7 @@ namespace KZLib
 
 		private async void Start()
 		{
-			if(!GameSettings.In.IsLiveMode && GameSettings.In.UseHeadUpDisplay)
+			if(GameSettings.In.UseHeadUpDisplay)
 			{
 				UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
 			}

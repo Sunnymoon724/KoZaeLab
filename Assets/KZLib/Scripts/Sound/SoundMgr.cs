@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using KZLib.KZUtility;
+using KZLib.KZData;
 
 namespace KZLib
 {
@@ -27,9 +28,11 @@ namespace KZLib
 				m_uiSource = UIMgr.In.gameObject.GetComponentInChildren<AudioSource>();
 			}
 
-			EventMgr.In.EnableListener(EventTag.ChangeSoundOption,OnChangeSoundOption);
+			var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-			OnChangeSoundOption();
+			optionConfig.OnSoundVolumeChange += OnChangeSoundOption;
+
+			OnChangeSoundOption(optionConfig.MasterVolume,optionConfig.MusicVolume,optionConfig.EffectVolume);
 		}
 
 		protected override void Release(bool disposing)
@@ -44,7 +47,9 @@ namespace KZLib
 				m_bgmSource = null;
 				m_uiSource = null;
 
-				EventMgr.In.DisableListener(EventTag.ChangeSoundOption,OnChangeSoundOption);
+				var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+
+				optionConfig.OnSoundVolumeChange -= OnChangeSoundOption;
 			}
 
 			m_disposed = true;
@@ -52,19 +57,13 @@ namespace KZLib
 			base.Release(disposing);
 		}
 
-		private void OnChangeSoundOption()
+		private void OnChangeSoundOption(SoundVolume masterVolume,SoundVolume musicVolume,SoundVolume effectVolume)
 		{
-			var option = GameDataMgr.In.Access<GameData.SoundOption>();
+			m_bgmSource.volume = masterVolume.level*musicVolume.level;
+			m_bgmSource.mute = masterVolume.mute || musicVolume.mute;
 
-			var master = option.MasterVolume;
-			var music = option.MusicVolume;
-			var effect = option.EffectVolume;
-
-			m_bgmSource.volume = master.level*music.level;
-			m_bgmSource.mute = master.mute || music.mute;
-
-			m_uiSource.volume = master.level*effect.level;
-			m_uiSource.mute= master.mute || effect.mute;
+			m_uiSource.volume = masterVolume.level*effectVolume.level;
+			m_uiSource.mute= masterVolume.mute || effectVolume.mute;
 		}
 
 		#region UI

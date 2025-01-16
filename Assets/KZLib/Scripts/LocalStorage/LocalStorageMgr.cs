@@ -3,6 +3,7 @@ using Mono.Data.Sqlite;
 using KZLib.KZUtility;
 using Newtonsoft.Json;
 using System;
+using System.IO;
 
 namespace KZLib
 {
@@ -417,13 +418,13 @@ namespace KZLib
 			get
 			{
 #if UNITY_EDITOR
-			return $"data source={CommonUtility.GetProjectParentPath()}/{c_database_name}";
+				return $"data source={Path.Combine(Global.PROJECT_PATH,c_database_name)}";
 #elif !UNITY_EDITOR && UNITY_ANDROID
-			return $"URI=file:{UnityEngine.Application.persistentDataPath}/{c_database_name}";
+				return $"URI=file:{Path.Combine(UnityEngine.Application.persistentDataPath,c_database_name)}";
 #elif !UNITY_EDITOR && UNITY_STANDALONE
-			return $"URI=file:{UnityEngine.Application.dataPath}/{c_database_name}";
+				return $"URI=file:{Path.Combine(UnityEngine.Application.dataPath,c_database_name)}";
 #else
-			return $"data source={UnityEngine.Application.persistentDataPath}/{c_database_name}";
+				return $"data source={Path.Combine(UnityEngine.Application.persistentDataPath,c_database_name)}";
 #endif
 			}
 		}

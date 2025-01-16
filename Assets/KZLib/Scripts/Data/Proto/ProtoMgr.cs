@@ -35,12 +35,9 @@ namespace KZLib
 			}
 
 			var start = DateTime.Now;
-			var textAssetArray = ResMgr.In.GetTextAssetArray(GameSettings.In.MetaDataFilePath);
 
-			if(textAssetArray.IsNullOrEmpty())
+			if(!TryGetTextAsset(out var textAssetArray))
 			{
-				LogTag.System.E("Load failed, textAsset is null.");
-
 				return false;
 			}
 
@@ -251,12 +248,8 @@ namespace KZLib
 				return;
 			}
 
-			var textAssetArray = ResMgr.In.GetTextAssetArray(GameSettings.In.MetaDataFilePath);
-
-			if(textAssetArray.IsNullOrEmpty())
+			if(!TryGetTextAsset(out var textAssetArray))
 			{
-				LogTag.System.W("Load failed, textAsset is null.");
-
 				return;
 			}
 
@@ -280,5 +273,18 @@ namespace KZLib
 			m_isLoaded = true;
 		}
 #endif
+		private bool TryGetTextAsset(out TextAsset[] textAssetArray)
+		{
+			textAssetArray = ResMgr.In.GetTextAssetArray(ConfigMgr.In.Access<ConfigData.GameConfig>().ProtoFolderPath);
+
+			if(textAssetArray.IsNullOrEmpty())
+			{
+				LogTag.System.E("Load failed, textAsset is null.");
+
+				return false;
+			}
+
+			return true;
+		}
 	}
 }

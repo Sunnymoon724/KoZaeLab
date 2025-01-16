@@ -9,6 +9,7 @@ using KZLib.KZAttribute;
 using Cysharp.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using KZLib;
 
 public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 {
@@ -119,7 +120,7 @@ public partial class BuildSettings : OuterBaseSettings<BuildSettings>
 		LogTag.Build.I("Start App Build");
 
 		var sceneArray = EditorBuildSettings.scenes.Where(x=>x.enabled).Select(y=>y.path).ToArray();
-		var appName = $"{Application.productName} [{GameSettings.In.GameMode.First()}_{GameVersion}]";
+		var appName = $"{Application.productName} [{GameVersion}]";
 
 		foreach(var name in Enum.GetNames(typeof(BuildTarget)))
 		{

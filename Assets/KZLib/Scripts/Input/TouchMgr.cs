@@ -32,15 +32,15 @@ namespace KZLib
 #if UNITY_EDITOR || UNITY_STANDALONE
 			if(Input.GetMouseButtonDown(0))
 			{
-				ProcessInputEvent(EventTag.TouchDownPoint,Input.mousePosition,-1);
+				ProcessInputEvent("TouchDownPoint",Input.mousePosition,-1);
 			}
 			else if(Input.GetMouseButton(0))
 			{
-				ProcessInputEvent(EventTag.TouchHoldingPoint,Input.mousePosition,-1);
+				ProcessInputEvent("TouchHoldingPoint",Input.mousePosition,-1);
 			}
 			else if(Input.GetMouseButtonUp(0))
 			{
-				ProcessInputEvent(EventTag.TouchUpPoint,Input.mousePosition,-1);
+				ProcessInputEvent("TouchUpPoint",Input.mousePosition,-1);
 			}
 #elif UNITY_IOS || UNITY_ANDROID
 			if(Input.touchCount > 0)
@@ -70,13 +70,13 @@ namespace KZLib
 #endif
 		}
 
-		private void ProcessInputEvent(EventTag eventTag,Vector2 point,int pointerId)
+		private void ProcessInputEvent(string eventName,Vector2 point,int pointerId)
 		{
 			if(EventSystem.current != null && !EventSystem.current.IsPointerOverGameObject(pointerId))
 			{
 				var worldPoint = CameraMgr.In.CurrentCamera.ScreenToWorldPoint(point).ToVector2();
 
-				EventMgr.In.SendEvent(eventTag,worldPoint);
+				EventMgr.In.SendEvent(eventName,worldPoint);
 			}
 
 			PlayTouchEffect(point);

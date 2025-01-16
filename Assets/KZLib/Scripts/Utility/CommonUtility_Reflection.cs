@@ -112,9 +112,9 @@ public static partial class CommonUtility
 		}
 	}
 
-	public static bool IsDefined<TAttribute>(ICustomAttributeProvider _info,bool _inherit = false) where TAttribute : Attribute
+	public static bool IsDefined<TAttribute>(ICustomAttributeProvider attributeProvider,bool inherit = false) where TAttribute : Attribute
 	{
-		return _info.IsDefined(typeof(TAttribute),_inherit);
+		return attributeProvider.IsDefined(typeof(TAttribute),inherit);
 	}
 
 	public static TAttribute FindAttribute<TAttribute>(ICustomAttributeProvider attributeProvider,bool inherit = false) where TAttribute : Attribute
