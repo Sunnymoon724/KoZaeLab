@@ -275,7 +275,9 @@ namespace KZLib
 #endif
 		private bool TryGetTextAsset(out TextAsset[] textAssetArray)
 		{
-			textAssetArray = ResMgr.In.GetTextAssetArray(ConfigMgr.In.Access<ConfigData.GameConfig>().ProtoFolderPath);
+			var gameConfig = ConfigMgr.In.Access<ConfigData.GameConfig>();
+
+			textAssetArray = ResMgr.In.GetTextAssetArray(gameConfig.ProtoFolderPath);
 
 			if(textAssetArray.IsNullOrEmpty())
 			{

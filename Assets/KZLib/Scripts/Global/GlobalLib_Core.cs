@@ -45,4 +45,9 @@ public partial struct Global
 	public readonly static string CUSTOM_CONFIG_FOLDER_PATH = Path.Combine(CONFIG_FOLDER_PATH,"Customs");
 
 	public readonly static string[] EXCEL_EXTENSION_ARRAY = new string[] { ".xls", ".xlsx", ".xlsm" };
+
+	public const string GLOBAL_TEXTURE_MIPMAP_LIMIT = "GlobalTextureMipmapLimit";
+	public const string ANISOTROPIC_FILTERING = "AnisotropicFiltering";
+	public const string VERTICAL_SYNC_COUNT = "VerticalSyncCount";
+	public const string DISABLE_CAMERA_FAR_HALF = "DisableCameraFarHalf";
 }

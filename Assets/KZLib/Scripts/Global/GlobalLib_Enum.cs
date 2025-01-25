@@ -13,7 +13,7 @@ public enum UIPriorityType
 
 public enum SpaceType { xyz, xy, xz };
 
-public enum GraphicsQualityPresetType { QualityLowest, QualityLow, QualityMiddle, QualityHigh, QualityHighest, }
+public enum GraphicQualityPresetType { QualityLowest, QualityLow, QualityMiddle, QualityHigh, QualityHighest, }
 
 [Flags]
 public enum BuildPlatformType

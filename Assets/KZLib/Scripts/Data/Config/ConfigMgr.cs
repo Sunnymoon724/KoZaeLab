@@ -5,6 +5,7 @@ using KZLib.KZUtility;
 using KZLib.KZData;
 using System.IO;
 using ConfigData;
+using ExcelDataReader.Log;
 
 namespace KZLib
 {
@@ -12,17 +13,13 @@ namespace KZLib
 	{
 		private readonly Dictionary<string,IConfig> m_configDict = new();
 
-		private readonly static Type[] s_default_config_array = new Type[] { typeof(GameConfig) };
+		private readonly static Type[] s_default_config_array = new Type[] { typeof(GameConfig),typeof(OptionConfig),typeof(NetworkConfig) };
 
 		protected override void Initialize()
 		{
 			base.Initialize();
 
-			//? add default config
-			foreach(var type in s_default_config_array)
-			{
-				_Access(type);
-			}
+			_Access(typeof(GameConfig));
 		}
 
 		/// <summary>
@@ -76,7 +73,13 @@ namespace KZLib
 
 		private IConfig Create(string name,Type type)
 		{
-			var deserializer = new DeserializerBuilder().Build();
+			if(type == typeof(OptionConfig))
+			{
+				//? OptionConfig -> only use playerPrefs
+				return new OptionConfig();
+			}
+
+			var deserializer = new DeserializerBuilder().IncludeNonPublicProperties().Build();
 			var text = LoadConfigFile(name);
 
 			try
@@ -93,11 +96,13 @@ namespace KZLib
 
 		private string LoadConfigFile(string name)
 		{
+			var fileName = $"{name.Replace("Config","")}.yaml";
+
 			var text = string.Empty;
 
 			//? check custom. [only editor]
 #if UNITY_EDITOR
-			text = ReadConfigFile(Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,$"Custom{name}Config.yaml"));
+			text = ReadConfigFile(Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,$"Custom{fileName}"));
 #endif
 
 			if(!text.IsEmpty())
@@ -115,7 +120,7 @@ namespace KZLib
 			}
 
 			//? check resource folder.
-			var configRoute = RouteMgr.In.GetOrCreateRoute($"defaultRes:config:{name}.yaml");
+			var configRoute = RouteManager.In.GetOrCreateRoute($"defaultRes:config:{fileName}");
 
 			text = ReadConfigFile(configRoute.AbsolutePath);
 

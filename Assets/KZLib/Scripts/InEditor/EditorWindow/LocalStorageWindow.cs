@@ -148,7 +148,7 @@ namespace KZLib.KZWindow
 		}
 
 		[VerticalGroup("2",Order = 2),Button("Delete Table",ButtonHeight = 30),ShowIf(nameof(IsSelectedTable))]
-		private void OnDeleteTable()
+		protected void OnDeleteTable()
 		{
 			LocalStorageMgr.In.DeleteTable(TableName);
 

@@ -9,9 +9,9 @@ namespace KZLib.KZWindow
 		{
 			var menuTree = new OdinMenuTree
 			{
-				{ "Easing Graph",CreateInstance<EasingGraphWindow>() },
-				{ "Mesh Finder",CreateInstance<MeshFinderWindow>() },
-				{ "Pixel Editor",CreateInstance<PixelEditorWindow>() },
+				{ "Easing Graph", CreateInstance<EasingGraphWindow>() },
+				{ "Mesh Finder", CreateInstance<MeshFinderWindow>() },
+				{ "Pixel Editor", CreateInstance<PixelEditorWindow>() },
 			};
 
 			menuTree.Config.DrawSearchToolbar = true;

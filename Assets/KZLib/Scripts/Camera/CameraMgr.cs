@@ -4,6 +4,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using KZLib.KZUtility;
 using System;
+using KZLib.KZDevelop;
 
 namespace KZLib
 {
@@ -128,9 +129,7 @@ namespace KZLib
 
 		private void OnChangeFarClipPlane(long graphicQuality)
 		{
-			var flag = graphicQuality.HasFlag(GraphicQualityType.CameraFarHalf.QualityOption);
-
-			m_farFactor = flag ? 0.5f : 1.0f;
+			m_farFactor = float.Parse(GraphicQualityOption.In.FindValue(graphicQuality,Global.DISABLE_CAMERA_FAR_HALF));
 		}
 
 		public void AddSubCamera(Camera camera,bool dependency = true)

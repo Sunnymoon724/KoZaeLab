@@ -3,33 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Cysharp.Threading.Tasks;
+using KZLib;
 using KZLib.KZNetwork;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 public static partial class CommonUtility
 {
-	private const string BUG_REPORT = "Bug Report";
-
-	
-	[Flags]
-	private enum PostType
-	{
-		None = 0,
-		Discord = 1 << 0,
-		Trello = 1 << 1,
-		GoogleSheet = 1 << 2,
-		All = -1,
-	}
+	private const string c_bug_report = "Bug Report";
 
 	#region Discord
-	public static void PostWebHook_Discord(string _title,IEnumerable<MessageData> _dataGroup,byte[] _file = null)
+	public static void PostWebHook_Discord(string content,IEnumerable<MessageData> messageGroup,byte[] file = null)
 	{
-		PostWebHook_DiscordAsync(_title,_dataGroup,_file).Forget();
+		PostWebHook_DiscordAsync(content,messageGroup,file).Forget();
 	}
 
-	public static async UniTask PostWebHook_DiscordAsync(string _title,IEnumerable<MessageData> _dataGroup,byte[] _file = null)
+	public static void PostWebHook_Discord(string link,string content,IEnumerable<MessageData> messageGroup,byte[] file = null)
 	{
-		var link = NetworkSettings.In.GetDiscordLink(_title);
+		PostWebHook_DiscordAsync(link,content,messageGroup,file).Forget();
+	}
+
+	public static async UniTask PostWebHook_DiscordAsync(string content,IEnumerable<MessageData> messageGroup,byte[] file = null)
+	{
+		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var link = networkConfig.GetDiscordLink(content);
 
 		if(link.IsEmpty())
 		{
@@ -38,313 +35,482 @@ public static partial class CommonUtility
 			return;
 		}
 
-		var request = DiscordPostWebHookWebRequest.Create(link,_title,_dataGroup,_file);
+		await PostWebHook_DiscordAsync(link,content,messageGroup,file);
+	}
 
-		if(request != null)
+	public static async UniTask PostWebHook_DiscordAsync(string link,string content,IEnumerable<MessageData> messageGroup,byte[] file = null)
+	{
+		var request = DiscordPostWebHookWebRequest.Create(link,content,messageGroup,file);
+
+		if(request == null)
 		{
-			await request.SendAsync();
+			LogTag.System.E("Discord post webHook request is null");
+
+			return;
 		}
+
+		await request.SendAsync();
 	}
 	#endregion Discord
 
 	#region Trello
+	public static void FindBoard_Trello(Action<List<string>> onAction)
+	{
+		FindBoard_TrelloAsync().ContinueWith(onAction);
+	}
+
+	public static void FindBoard_Trello(string coreKey,Action<List<string>> onAction)
+	{
+		FindBoard_TrelloAsync(coreKey).ContinueWith(onAction);
+	}
+
 	public static async UniTask<List<string>> FindBoard_TrelloAsync()
 	{
-		var coreKey = NetworkSettings.In.TrelloCoreKey;
+		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var coreKey = networkConfig.TrelloCoreKey;
 
 		if(coreKey.IsEmpty())
 		{
+			LogTag.System.E("Trello core key is empty");
+
 			return null;
 		}
 
-		var request = TrelloGetBoardsWebRequest.Create(coreKey);
+		return await FindBoard_TrelloAsync(coreKey);
+	}
+
+	public static async UniTask<List<string>> FindBoard_TrelloAsync(string coreKey)
+	{
+		var request = TrelloGetBoardWebRequest.Create(coreKey);
 
 		if(request == null)
 		{
+			LogTag.System.E("Trello get board request is null");
+
 			return null;
 		}
 
-		var data = await request.SendAsync();
-
-		if(!data.Result)
-		{
-			return null;
-		}
-
-		var trello = JObject.Parse(data.Text);
-		var dataList = new List<string>();
-
-		foreach(var board in trello["boards"])
-		{
-			if((bool) board["closed"])
-			{
-				continue;
-			}
-
-			dataList.Add(board.ToString());
-		}
-
-		return dataList;
+		return _ConvertTrelloData(await request.SendAsync(),"boards");
 	}
 
-	public static async UniTask<List<string>> FindList_TrelloAsync(string _boardId)
+	public static void FindList_Trello(string boardId,Action<List<string>> onAction)
 	{
-		var coreKey = NetworkSettings.In.TrelloCoreKey;
+		FindList_TrelloAsync(boardId).ContinueWith(onAction);
+	}
+
+	public static void FindList_Trello(string coreKey,string boardId,Action<List<string>> onAction)
+	{
+		FindList_TrelloAsync(coreKey,boardId).ContinueWith(onAction);
+	}
+
+	public static async UniTask<List<string>> FindList_TrelloAsync(string boardId)
+	{
+		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var coreKey = networkConfig.TrelloCoreKey;
 
 		if(coreKey.IsEmpty())
 		{
+			LogTag.System.E("Trello core key is empty");
+
 			return null;
 		}
 
-		var request = TrelloGetListsWebRequest.Create(coreKey,_boardId);
+		return await FindList_TrelloAsync(coreKey,boardId);
+	}
+
+	public static async UniTask<List<string>> FindList_TrelloAsync(string coreKey,string boardId)
+	{
+		if(boardId.IsEmpty())
+		{
+			LogTag.System.E("Trello board id is empty");
+
+			return null;
+		}
+
+		var request = TrelloGetListWebRequest.Create(coreKey,boardId);
 
 		if(request == null)
 		{
+			LogTag.System.E("Trello get list request is null");
+
 			return null;
 		}
 
-		var data = await request.SendAsync();
-
-		if(!data.Result)
-		{
-			return null;
-		}
-
-		var trello = JObject.Parse(data.Text);
-		var dataList = new List<string>();
-
-		foreach(var list in trello["lists"])
-		{
-			if((bool) list["closed"])
-			{
-				continue;
-			}
-
-			dataList.Add(list.ToString());
-		}
-
-		return dataList;
+		return _ConvertTrelloData(await request.SendAsync(),"lists");
 	}
 
-
-	public static async UniTask<List<string>> FindCard_TrelloAsync(string _listId)
+	public static void FindCard_Trello(string listId,Action<List<string>> onAction)
 	{
-		var coreKey = NetworkSettings.In.TrelloCoreKey;
+		FindCard_TrelloAsync(listId).ContinueWith(onAction);
+	}
+
+	public static void FindCard_Trello(string coreKey,string listId,Action<List<string>> onAction)
+	{
+		FindCard_TrelloAsync(coreKey,listId).ContinueWith(onAction);
+	}
+
+	public static async UniTask<List<string>> FindCard_TrelloAsync(string listId)
+	{
+		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var coreKey = networkConfig.TrelloCoreKey;
 
 		if(coreKey.IsEmpty())
 		{
+			LogTag.System.E("Trello core key is empty");
+
 			return null;
 		}
 
-		var request = TrelloGetCardsWebRequest.Create(coreKey,_listId);
+		return await FindCard_TrelloAsync(coreKey,listId);
+	}
+
+	public static async UniTask<List<string>> FindCard_TrelloAsync(string coreKey,string listId)
+	{
+		if(listId.IsEmpty())
+		{
+			LogTag.System.E("Trello list id is empty");
+
+			return null;
+		}
+
+		var request = TrelloGetCardWebRequest.Create(coreKey,listId);
 
 		if(request == null)
 		{
+			LogTag.System.E("Trello get card request is null");
+
 			return null;
 		}
 
-		var data = await request.SendAsync();
+		return _ConvertTrelloData(await request.SendAsync(),"cards");
+	}
 
-		if(!data.Result)
+	private static List<string> _ConvertTrelloData(RequestData requestData,string key)
+	{
+		if(requestData.Result)
 		{
-			return null;
-		}
-
-		var trello = JObject.Parse(data.Text);
-		var dataList = new List<string>();
-
-		foreach(var card in trello["cards"])
-		{
-			if((bool) card["closed"])
+			try
 			{
-				continue;
+				var trello = JObject.Parse(requestData.Text);
+				var dataList = new List<string>();
+
+				foreach(var token in trello[key])
+				{
+					if((bool) token["closed"])
+					{
+						continue;
+					}
+
+					dataList.Add(token.ToString());
+				}
+
+				return dataList;
 			}
-
-			dataList.Add(card.ToString());
+			catch(Exception exception)
+			{
+				LogTag.System.E($"Convert is failed - {exception}");
+			}
+		}
+		else
+		{
+			LogTag.System.E("Result is failed");
 		}
 
-		return dataList;
+		return null;
 	}
 
-	public static void PostList_Trello(string _boardId,string _name)
+	public static void PostList_Trello(string boardId,string name)
 	{
-		PostList_TrelloAsync(_boardId,_name).Forget();
+		PostList_TrelloAsync(boardId,name).Forget();
 	}
 
-	public static async UniTask PostList_TrelloAsync(string _boardId,string _name)
+	public static void PostList_Trello(string coreKey,string boardId,string name)
 	{
-		var coreKey = NetworkSettings.In.TrelloCoreKey;
+		PostList_TrelloAsync(coreKey,boardId,name).Forget();
+	}
+
+	public static async UniTask PostList_TrelloAsync(string boardId,string name)
+	{
+		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var coreKey = networkConfig.TrelloCoreKey;
 
 		if(coreKey.IsEmpty())
 		{
+			LogTag.System.E("Trello core key is empty");
+
 			return;
 		}
 
-		var request = TrelloPostListWebRequest.Create(coreKey,_boardId,_name);
+		await PostList_TrelloAsync(coreKey,boardId,name);
+	}
 
-		if(request != null)
+	public static async UniTask PostList_TrelloAsync(string coreKey,string boardId,string name)
+	{
+		var request = TrelloPostListWebRequest.Create(coreKey,boardId,name);
+
+		if(request == null)
 		{
-			await request.SendAsync();
+			LogTag.System.E("Trello post list request is null");
+
+			return;
 		}
+
+		await request.SendAsync();
 	}
 
-	public static void PostCard_Trello(string _listId,string _name,string _description,byte[] _file = null)
+	public static void PostCard_Trello(string listId,string name,string description,byte[] file = null)
 	{
-		PostCard_TrelloAsync(_listId,_name,_description,_file).Forget();
+		PostCard_TrelloAsync(listId,name,description,file).Forget();
 	}
 
-	public static async UniTask PostCard_TrelloAsync(string _listId,string _name,string _description,byte[] _file = null)
+	public static void PostCard_Trello(string coreKey,string listId,string name,string description,byte[] file = null)
 	{
-		var coreKey = NetworkSettings.In.TrelloCoreKey;
+		PostCard_TrelloAsync(coreKey,listId,name,description,file).Forget();
+	}
+
+	public static async UniTask PostCard_TrelloAsync(string listId,string name,string description,byte[] file = null)
+	{
+		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var coreKey = networkConfig.TrelloCoreKey;
 
 		if(coreKey.IsEmpty())
 		{
+			LogTag.System.E("Trello core key is empty");
+
 			return;
 		}
 
-		var request1 = TrelloPostCardWebRequest.Create(coreKey,_listId,_name,_description);
+		await PostCard_TrelloAsync(coreKey,listId,name,description,file);
+	}
 
-		if(request1 == null)
+	public static async UniTask PostCard_TrelloAsync(string coreKey,string listId,string name,string description,byte[] file = null)
+	{
+		var cardRequest = TrelloPostCardWebRequest.Create(coreKey,listId,name,description);
+
+		if(cardRequest == null)
+		{
+			LogTag.System.E("Post card request is null");
+
+			return;
+		}
+
+		var requestData = await cardRequest.SendAsync();
+
+		if(file == null)
 		{
 			return;
 		}
 
-		var data = await request1.SendAsync();
-
-		if(_file == null)
-		{
-			return;
-		}
-
-		var cardId = JObject.Parse(data.Text)["id"].ToString();
+		var cardId = JObject.Parse(requestData.Text)["id"].ToString();
 
 		if(cardId.IsEmpty())
 		{
+			LogTag.System.E("Card id is empty");
+
 			return;
 		}
 
-		var request2 = TrelloPostAttachmentCardWebRequest.Create(coreKey,cardId,_file);
+		var fileRequest = TrelloPostAttachmentCardWebRequest.Create(coreKey,cardId,file);
 
-		if(request2 != null)
+		if(fileRequest == null)
 		{
-			await request2.SendAsync();
+			LogTag.System.E("Post attachment card request is null");
+
+			return;
 		}
+
+		await fileRequest.SendAsync();
 	}
 
-	public static void PostListInCard_Trello(string _boardName,string _listName,string _cardName,string _cardDescription,byte[] _file = null)
+	public static void PostListInCard_Trello(string boardName,string listName,string cardName,string cardDescription,byte[] file = null)
 	{
-		PostListInCard_TrelloAsync(_boardName,_listName,_cardName,_cardDescription,_file).Forget();
+		PostListInCard_TrelloAsync(boardName,listName,cardName,cardDescription,file).Forget();
 	}
 
-	public static async UniTask PostListInCard_TrelloAsync(string _boardName,string _listName,string _cardName,string _cardDescription,byte[] _file = null)
+	public static void PostListInCard_Trello(string coreKey,string boardName,string listName,string cardName,string cardDescription,byte[] file = null)
 	{
-		var boardId = NetworkSettings.In.GetTrelloBoardId(_boardName);
-		var coreKey = NetworkSettings.In.TrelloCoreKey;
+		PostListInCard_TrelloAsync(coreKey,boardName,listName,cardName,cardDescription,file).Forget();
+	}
 
-		if(boardId.IsEmpty() || coreKey.IsEmpty())
+	public static async UniTask PostListInCard_TrelloAsync(string boardName,string listName,string cardName,string cardDescription,byte[] file = null)
+	{
+		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var coreKey = networkConfig.TrelloCoreKey;
+
+		if(coreKey.IsEmpty())
 		{
+			LogTag.System.E("Trello core key is empty");
+
 			return;
 		}
 
-		var dataList = await FindList_TrelloAsync(boardId);
+		await PostListInCard_TrelloAsync(coreKey,boardName,listName,cardName,cardDescription,file);
+	}
 
-		if(dataList.IsNullOrEmpty())
+	public static async UniTask PostListInCard_TrelloAsync(string coreKey,string boardName,string listName,string cardName,string cardDescription,byte[] file = null)
+	{
+		var boardDataList = await FindBoard_TrelloAsync(coreKey);
+
+		if(boardDataList.IsNullOrEmpty())
 		{
+			LogTag.System.E("Trello board is empty");
+
 			return;
 		}
 
-		var listId = string.Empty;
+		var boardId = _FindId(boardDataList,boardName);
 
-		foreach(var data in dataList)
+		if(boardId.IsEmpty())
 		{
-			var list = JObject.Parse(data);
+			LogTag.System.E("Trello board id is null");
 
-			var name = list["name"].ToString();
-
-			if(name.IsEqual(_listName))
-			{
-				listId = list["id"].ToString();
-
-				break;
-			}
+			return;
 		}
+
+		var listDataList = await FindList_TrelloAsync(boardId);
+
+		if(listDataList.IsNullOrEmpty())
+		{
+			LogTag.System.E("Trello list is empty");
+
+			return;
+		}
+
+		var listId = _FindId(listDataList,listName);
 
 		if(listId.IsEmpty())
 		{
-			await PostList_TrelloAsync(boardId,_listName);
+			await PostList_TrelloAsync(boardId,listName);
 		}
 
-		await PostCard_TrelloAsync(listId,_cardName,_cardDescription,_file);
+		await PostCard_TrelloAsync(listId,cardName,cardDescription,file);
+	}
+
+	private static string _FindId(List<string> dataList,string name)
+	{
+		try
+		{
+			foreach(var data in dataList)
+			{
+				var jObject = JObject.Parse(data);
+
+				var dataName = jObject["name"].ToString();
+
+				if(name.IsEqual(dataName))
+				{
+					return jObject["id"].ToString();
+				}
+			}
+		}
+		catch(Exception exception)
+		{
+			LogTag.System.E($"Convert is failed - {exception}");
+		}
+
+		return null;
 	}
 	#endregion Trello
 
 	#region GoogleSheet
-	public static void PostAddRow_GoogleSheet(string _fileName,int _sheetOrder,string _text)
+	public static void PostAddRow_GoogleSheet(string sheetName,int sheetOrder,string text)
 	{
-		PostAddRow_GoogleSheetAsync(_fileName,_sheetOrder,_text).Forget();
+		PostAddRow_GoogleSheetAsync(sheetName,sheetOrder,text).Forget();
 	}
 
-	public static async UniTask PostAddRow_GoogleSheetAsync(string _fileName,int _sheetOrder,string _text)
+	public static async UniTask PostAddRow_GoogleSheetAsync(string sheetName,int sheetOrder,string content)
 	{
-		var fileId = NetworkSettings.In.GetGoogleSheetFileId(_fileName);
-
-		if(fileId.IsEmpty())
+		if(!TryGetSheetId(sheetName,out var sheetId))
 		{
 			return;
 		}
 
-		var request = GoogleSheetPostAddRowWebRequest.Create(fileId,_sheetOrder,_text);
+		var request = GoogleSheetPostAddRowWebRequest.Create(sheetId,sheetOrder,content);
 
-		if(request != null)
+		if(request == null)
 		{
-			await request.SendAsync();
+			LogTag.System.E("GoogleSheet post addRow request is null");
+
+			return;
 		}
+
+		await request.SendAsync();
 	}
 
-	public static async UniTask<string> FindSheet_GoogleSheetAsync(string _fileName,int _sheetOrder)
+	public static void FindSheet_GoogleSheet(string sheetName,int sheetOrder,Action<string> onAction)
 	{
-		var fileId = NetworkSettings.In.GetGoogleSheetFileId(_fileName);
+		FindSheet_GoogleSheetAsync(sheetName,sheetOrder).ContinueWith(onAction);
+	}
 
-		if(fileId.IsEmpty())
+	public static async UniTask<string> FindSheet_GoogleSheetAsync(string sheetName,int sheetOrder)
+	{
+		if(!TryGetSheetId(sheetName,out var sheetId))
 		{
 			return null;
 		}
 
-		var request = GoogleSheetGetSheetWebRequest.Create(fileId,_sheetOrder);
-		var data = await request.SendAsync();
+		var request = GoogleSheetGetSheetWebRequest.Create(sheetId,sheetOrder);
 
-		return data.Result ? data.Text : string.Empty;
+		if(request == null)
+		{
+			LogTag.System.E("GoogleSheet get sheet request is null");
+
+			return null;
+		}
+
+		var requestData = await request.SendAsync();
+
+		return requestData.Result ? requestData.Text : string.Empty;
+	}
+
+	private static bool TryGetSheetId(string sheetName,out string sheetId)
+	{
+		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		sheetId = networkConfig.GetGoogleSheetFileId(sheetName);
+
+		var isEmpty = sheetId.IsEmpty();
+
+		if(isEmpty)
+		{
+			LogTag.System.E("Sheet id is empty");
+		}
+
+		return !isEmpty;
 	}
 	#endregion GoogleSheet
 
 	#region GoogleDrive
-	public static void PostFile_GoogleDrive(string _folderName,string _fileName,byte[] _file,string _mimeType)
+	public static void PostFile_GoogleDrive(string folderName,string fileName,byte[] file,string mimeType)
 	{
-		PostFile_GoogleDriveAsync(_folderName,_fileName,_file,_mimeType).Forget();
+		PostFile_GoogleDriveAsync(folderName,fileName,file,mimeType).Forget();
 	}
 
-	public static async UniTask PostFile_GoogleDriveAsync(string _folderName,string _fileName,byte[] _file,string _mimeType)
+	public static async UniTask PostFile_GoogleDriveAsync(string folderName,string fileName,byte[] file,string mimeType)
 	{
-		var folderId = NetworkSettings.In.GetGoogleDriveFolderId(_folderName);
-
-		if(folderId.IsEmpty())
+		if(!TryGetFolderId(folderName,out var folderId))
 		{
 			return;
 		}
 
-		var request = GoogleDrivePostFileWebRequest.Create(folderId,_fileName,_file,_mimeType);
+		var request = GoogleDrivePostFileWebRequest.Create(folderId,fileName,file,mimeType);
 
-		if(request != null)
+		if(request == null)
 		{
-			await request.SendAsync();
+			LogTag.System.E("GoogleDrive post file request is null");
+
+			return;
 		}
+
+		await request.SendAsync();
 	}
 
-	public static async UniTask<List<string>> FindEntry_GoogleDriveAsync(string _folderName)
+	public static void FindEntry_GoogleDrive(string folderName,Action<List<string>> onAction)
 	{
-		var folderId = NetworkSettings.In.GetGoogleDriveFolderId(_folderName);
+		FindEntry_GoogleDriveAsync(folderName).ContinueWith(onAction);
+	}
 
-		if(folderId.IsEmpty())
+	public static async UniTask<List<string>> FindEntry_GoogleDriveAsync(string folderName)
+	{
+		if(!TryGetFolderId(folderName,out var folderId))
 		{
 			return null;
 		}
@@ -353,50 +519,85 @@ public static partial class CommonUtility
 
 		if(request == null)
 		{
+			LogTag.System.E("GoogleDrive get entry request is null");
+
 			return null;
 		}
 
-		var data = await request.SendAsync();
+		var requestData = await request.SendAsync();
 
-		if(!data.Result)
+		if(requestData.Result)
 		{
-			return null;
+			try
+			{
+				var jArray = JArray.Parse(requestData.Text);
+				var dataList = new List<string>();
+
+				foreach(var token in jArray)
+				{
+					dataList.Add(token.ToString());
+				}
+
+				return dataList;
+			}
+			catch(Exception exception)
+			{
+				LogTag.System.E($"Convert is failed - {exception}");
+			}
+		}
+		else
+		{
+			LogTag.System.E("Result is failed");
 		}
 
-		var drive = JArray.Parse(data.Text);
-		var dataList = new List<string>();
+		return null;
+	}
 
-		foreach(var info in drive)
+	private static bool TryGetFolderId(string folderName,out string folderId)
+	{
+		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		folderId = networkConfig.GetGoogleDriveFolderId(folderName);
+
+		var isEmpty = folderId.IsEmpty();
+
+		if(isEmpty)
 		{
-			dataList.Add(info.ToString());
+			LogTag.System.E("Folder id is empty");
 		}
 
-		return dataList;
+		return !isEmpty;
 	}
 	#endregion GoogleDrive
 
-	public static void PostBugReportWebRequest(IEnumerable<MessageData> _dataGroup,byte[] _file)
+	public static void PostBugReportWebRequest(IEnumerable<MessageData> messageGroup,byte[] file)
 	{
-		PostBugReportWebRequestAsync(_dataGroup,_file).Forget();
+		PostBugReportWebRequestAsync(messageGroup,file).Forget();
 	}
 
-	public static async UniTask PostBugReportWebRequestAsync(IEnumerable<MessageData> _dataGroup,byte[] _file)
+	public static async UniTask PostBugReportWebRequestAsync(IEnumerable<MessageData> messageGroup,byte[] file)
 	{
-		var taskList = new List<UniTask>
-		{
-			PostWebHook_DiscordAsync(BUG_REPORT,_dataGroup,_file),
-		};
+		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var postHashSet = new HashSet<string>(networkConfig.BugReportPostList);
+		var taskList = new List<UniTask>();
 
-		var builder = new StringBuilder();
-
-		foreach(var data in _dataGroup)
+		if(postHashSet.Contains("Discord"))
 		{
-			builder.AppendFormat("**{0}**\n{1}\n\n",data.Header,data.Body);
+			taskList.Add(PostWebHook_DiscordAsync(c_bug_report,messageGroup,file));
 		}
 
-		var listName = _dataGroup.Last().Body.Replace("\n","");
+		var stringBuilder = new StringBuilder();
 
-		taskList.Add(PostListInCard_TrelloAsync(BUG_REPORT,listName,GameSettings.In.PresetNameOrDeviceId,builder.ToString(),_file));
+		if(postHashSet.Contains("Trello"))
+		{
+			foreach(var message in messageGroup)
+			{
+				stringBuilder.AppendFormat("**{0}**\n{1}\n\n",message.Header,message.Body);
+			}
+
+			var listName = messageGroup.Last().Body.Replace("\n","");
+
+			taskList.Add(PostListInCard_TrelloAsync(c_bug_report,listName,SystemInfo.deviceUniqueIdentifier,stringBuilder.ToString(),file));
+		}
 
 		await UniTask.WhenAll(taskList);
 	}

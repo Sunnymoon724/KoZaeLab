@@ -1,3 +1,4 @@
+using System;
 using KZLib.KZData;
 using KZLib.KZUtility;
 using MessagePack;
@@ -30,33 +31,20 @@ public class Test : MonoBehaviour
 	[Button("AddT")]
     private void AddTest()
     {
-        // OptionConfig 객체를 JSON으로 직렬화하여 저장
-        var config = new OptionConfig("Resources/Text/Proto");
+        // var test1 = 0L;
+        // var test2 = test1.AddFlag(GraphicsQualityOption.GLOBAL_TEXTURE_MIPMAP_LIMIT);  //1
+        // var test3 = test2.AddFlag(GraphicsQualityOption.ANISOTROPIC_FILTERING);  //1
+        // var test4 = test3.AddFlag(GraphicsQualityOption.VERTICAL_SYNC_COUNT); //0
+        // var test5 = test4.AddFlag(GraphicsQualityOption.CAMERA_FAR_HALF);
 
-        var json = JsonConvert.SerializeObject(config, Formatting.Indented, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore, });
+        // LogTag.Network.I(Convert.ToString(test1,2));
+        // LogTag.Network.I(Convert.ToString(test2,2));
+        // LogTag.Network.I(Convert.ToString(test3,2));
+        // LogTag.Network.I(Convert.ToString(test4,2));
+        // LogTag.Network.I(Convert.ToString(test5,2));
 
-        LogTag.Build.I(json);
+        // Convert.ToString(value, 2);
 
-        var configJson = JsonConvert.DeserializeObject<OptionConfig>(json);
 
-        LogTag.Build.I(configJson.ProtoFolderPath);
-        LogTag.Build.I(configJson.ProtoPos);
-        LogTag.Build.I(configJson.ProtoColor);
-        LogTag.Build.I(configJson.ProtoVolume);
-
-        var yamlSerializer = new SerializerBuilder().WithTypeConverter(new YamlConverter()).Build();
-
-        var yaml = yamlSerializer.Serialize(config);
-
-        LogTag.Network.I(yaml);
-
-        var yamlDeserializer = new DeserializerBuilder().WithTypeConverter(new YamlConverter()).Build();
-
-        var configYaml = yamlDeserializer.Deserialize<OptionConfig>(yaml);
-
-        LogTag.Network.I(configYaml.ProtoFolderPath);
-        LogTag.Network.I(configYaml.ProtoPos);
-        LogTag.Network.I(configYaml.ProtoColor);
-        LogTag.Network.I(configYaml.ProtoVolume);
     }
 }

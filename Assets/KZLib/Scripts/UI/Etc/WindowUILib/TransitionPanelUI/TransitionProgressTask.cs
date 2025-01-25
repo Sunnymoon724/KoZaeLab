@@ -1,4 +1,4 @@
-using KZLib;
+using KZLib.KZDevelop;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;

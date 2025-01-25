@@ -1,4 +1,4 @@
-using KZLib.KZUtility;
+using KZLib.KZData;
 
 public class UITag : CustomTag
 {

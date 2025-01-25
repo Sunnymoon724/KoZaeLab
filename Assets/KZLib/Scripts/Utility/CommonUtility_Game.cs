@@ -153,10 +153,8 @@ public static partial class CommonUtility
 		ReleaseSingleton<SoundMgr>();
 		ReleaseSingleton<ShaderMgr>();
 
-		ReleaseSingleton<EventMgr>();
-		ReleaseSingleton<TimerMgr>();
-
-		ReleaseSingleton<RouteMgr>();
+		ReleaseSingleton<EventManager>();
+		ReleaseSingleton<RouteManager>();
 
 		ClearCacheData();
 		StringExtension.ClearCacheData();
