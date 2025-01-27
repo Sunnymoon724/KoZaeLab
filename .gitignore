@@ -88,4 +88,3 @@ crashlytics-build.properties
 **~$*
 *.db
 **/[Aa]ssets/[Pp]lugins
-**/NetworkSettings.asset
