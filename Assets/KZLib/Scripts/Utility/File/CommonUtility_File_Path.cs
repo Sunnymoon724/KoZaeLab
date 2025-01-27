@@ -4,14 +4,6 @@ using System.Text.RegularExpressions;
 public static partial class CommonUtility
 {
 	/// <summary>
-	/// Combine all path
-	/// </summary>
-	public static string PathCombine(params string[] pathArray)
-	{
-		return NormalizePath(Path.Combine(pathArray));
-	}
-
-	/// <summary>
 	/// It is based on the Assets folder.
 	/// </summary>
 	public static string GetAbsolutePath(string path,bool isIncludeAssets)
@@ -39,7 +31,7 @@ public static partial class CommonUtility
 
 	public static string NormalizePath(string path)
 	{
-		return path.Replace("\\","/");
+		return path.Replace('/',Path.DirectorySeparatorChar).Replace('\\',Path.DirectorySeparatorChar);
 	}
 
 	/// <summary>
@@ -103,7 +95,7 @@ public static partial class CommonUtility
 			return null;
 		}
 
-		return PathCombine(Global.ASSETS_HEADER,GetLocalPath(path));
+		return Path.Combine(Global.ASSETS_HEADER,GetLocalPath(path));
 	}
 
 	public static bool IsIncludeAssetsHeader(string path)
@@ -269,7 +261,7 @@ public static partial class CommonUtility
 
 		while(IsFileExist(newPath))
 		{
-			newPath = PathCombine(directory,$"{name} ({count}){extension}");
+			newPath = Path.Combine(directory,$"{name} ({count}){extension}");
 			count++;
 		}
 
