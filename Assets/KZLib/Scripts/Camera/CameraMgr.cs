@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using MetaData;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using KZLib.KZUtility;
 using System;
 using KZLib.KZDevelop;
+using KZLib.KZData;
 
 namespace KZLib
 {
@@ -56,25 +56,25 @@ namespace KZLib
 			optionConfig.OnGraphicQualityChange -= OnChangeFarClipPlane;
 		}
 
-		public void SetCameraData(CameraData cameraData)
+		public void SetCameraProto(CameraProto proto)
 		{
-			if(!cameraData.IsExist)
+			if(proto == null)
 			{
-				LogTag.System.E("Camera data is not exist.");
+				LogTag.System.E("Camera proto is not exist.");
 
 				return;
 			}
 
-			CurrentCamera.nearClipPlane = cameraData.NearClipPlane;
-			CurrentCamera.farClipPlane = m_farFactor*cameraData.FarClipPlane;
+			CurrentCamera.nearClipPlane = proto.NearClipPlane;
+			CurrentCamera.farClipPlane = m_farFactor*proto.FarClipPlane;
 
-			CurrentCamera.orthographic = cameraData.Orthographic;
-			CurrentCamera.orthographicSize = cameraData.FieldOfView;
-			CurrentCamera.fieldOfView = cameraData.FieldOfView;
+			CurrentCamera.orthographic = proto.Orthographic;
+			CurrentCamera.orthographicSize = proto.FieldOfView;
+			CurrentCamera.fieldOfView = proto.FieldOfView;
 
 			var position = m_target ? m_target.position : Vector3.zero;
 
-			CurrentCamera.transform.SetPositionAndRotation(position+cameraData.Position,Quaternion.Euler(cameraData.Rotation));
+			CurrentCamera.transform.SetPositionAndRotation(position+proto.Position,Quaternion.Euler(proto.Rotation));
 
 			SetSubCameraDict();
 		}

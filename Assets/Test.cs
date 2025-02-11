@@ -1,50 +1,50 @@
-using System;
-using KZLib.KZData;
-using KZLib.KZUtility;
-using MessagePack;
-using MessagePack.Resolvers;
-using Newtonsoft.Json;
 using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
-using YamlDotNet.Serialization;
 
-public class OptionConfig
-{
-    public string ProtoFolderPath { get; private set; }
-    public Vector3Int ProtoPos { get; private set; }
-    public Color ProtoColor { get; private set; }
-    public SoundVolume ProtoVolume { get; private set; }
-
-    public OptionConfig() { }
-
-    public OptionConfig(string tt)
-    {
-        ProtoFolderPath = "Resources/Text/Proto";
-        ProtoPos = new Vector3Int(1,2,3);
-        ProtoColor = Color.green;
-        ProtoVolume = new SoundVolume(0.7f,true);
-    }
-}
-
+[ExecuteInEditMode]
 public class Test : MonoBehaviour
 {
-	[Button("AddT")]
-    private void AddTest()
+    public Animator m_animator;
+    private bool isPlaying = false;
+    private double lastTime;
+
+    void OnEnable()
     {
-        // var test1 = 0L;
-        // var test2 = test1.AddFlag(GraphicsQualityOption.GLOBAL_TEXTURE_MIPMAP_LIMIT);  //1
-        // var test3 = test2.AddFlag(GraphicsQualityOption.ANISOTROPIC_FILTERING);  //1
-        // var test4 = test3.AddFlag(GraphicsQualityOption.VERTICAL_SYNC_COUNT); //0
-        // var test5 = test4.AddFlag(GraphicsQualityOption.CAMERA_FAR_HALF);
+        lastTime = EditorApplication.timeSinceStartup;
+        EditorApplication.update += EditorUpdate;
+    }
 
-        // LogTag.Network.I(Convert.ToString(test1,2));
-        // LogTag.Network.I(Convert.ToString(test2,2));
-        // LogTag.Network.I(Convert.ToString(test3,2));
-        // LogTag.Network.I(Convert.ToString(test4,2));
-        // LogTag.Network.I(Convert.ToString(test5,2));
+    void OnDisable()
+    {
+        EditorApplication.update -= EditorUpdate;
+    }
 
-        // Convert.ToString(value, 2);
+    void EditorUpdate()
+    {
+        if (!isPlaying || m_animator == null) return;
 
+        double currentTime = EditorApplication.timeSinceStartup;
+        float deltaTime = (float)(currentTime - lastTime);
+        lastTime = currentTime;
 
+        m_animator.Update(deltaTime);
+        SceneView.RepaintAll(); // 씬 뷰 강제 갱신
+    }
+
+    [Button("Play Animation in Edit Mode")]
+    void PlayAnimation()
+    {
+        if (m_animator == null) return;
+
+        m_animator.Play("Test", 0, 0); // 0초부터 재생
+        lastTime = EditorApplication.timeSinceStartup;
+        isPlaying = true;
+    }
+
+    [Button("Stop Animation in Edit Mode")]
+    void StopAnimation()
+    {
+        isPlaying = false;
     }
 }
