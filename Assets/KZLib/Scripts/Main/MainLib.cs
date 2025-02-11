@@ -28,7 +28,7 @@ namespace KZLib
 			{
 				if(!m_gameLanguage.HasValue)
 				{
-					var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+					var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
 					m_gameLanguage = optionConfig.Language;
 				}
@@ -45,7 +45,7 @@ namespace KZLib
 
 				m_gameLanguage = value;
 
-				var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+				var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
 				optionConfig.SetLanguage(m_gameLanguage.Value);
 			}
@@ -143,7 +143,7 @@ namespace KZLib
 		private async void Start()
 		{
 			
-			var gameConfig = ConfigMgr.In.Access<ConfigData.GameConfig>();
+			var gameConfig = ConfigManager.In.Access<ConfigData.GameConfig>();
 
 #if UNITY_EDITOR
 			if(gameConfig.UseHeadUpDisplay)
@@ -203,9 +203,9 @@ namespace KZLib
 			return text.IsEmpty() ? new MainData() : JsonConvert.DeserializeObject<MainData>(text);
 		}
 
-		protected async virtual UniTask StartTestMode(CancellationToken token) { await ProtoMgr.In.TryLoadAllAsync(token); }
+		protected async virtual UniTask StartTestMode(CancellationToken token) { await ProtoManager.In.TryLoadAllAsync(token); }
 #endif
-		protected async virtual UniTask StartNormalMode(CancellationToken token) { await ProtoMgr.In.TryLoadAllAsync(token); }
+		protected async virtual UniTask StartNormalMode(CancellationToken token) { await ProtoManager.In.TryLoadAllAsync(token); }
 
 		protected virtual void InitializeResolution(StringBuilder stringBuilder)
 		{

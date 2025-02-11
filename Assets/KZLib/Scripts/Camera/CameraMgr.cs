@@ -40,7 +40,7 @@ namespace KZLib
 
 			SetCameraBackgroundColor(Color.black);
 
-			var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+			var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
 			optionConfig.OnGraphicQualityChange += OnChangeFarClipPlane;
 
@@ -51,7 +51,7 @@ namespace KZLib
 		{
 			base.Release();
 
-			var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+			var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
 			optionConfig.OnGraphicQualityChange -= OnChangeFarClipPlane;
 		}

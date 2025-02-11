@@ -37,7 +37,7 @@ namespace KZLib.KZMenu
 				{
 					var fileName = Path.GetFileName(configFilePath);
 
-					if(ConfigMgr.IsDefaultConfig(fileName))
+					if(ConfigManager.IsDefaultConfig(fileName))
 					{
 						var errorText = $"{fileName} is default config. -> generate failed";
 
@@ -89,7 +89,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Config/Game/Generate Custom GameConfig Yaml File",false,(int) MenuType.Config_Generate)]
 		private static void OnGenerateCustomGameConfigYamlFile()
 		{
-			_GenerateCustomConfigYamlFile("Game.yaml",ConfigMgr.In.Access<GameConfig>());
+			_GenerateCustomConfigYamlFile("Game.yaml",ConfigManager.In.Access<GameConfig>());
 		}
 
 		[MenuItem("KZMenu/Config/Game/Generate Custom GameConfig Yaml File",true,(int) MenuType.Config_Generate)]
@@ -115,7 +115,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Config/Network/Generate Custom NetworkConfig Yaml File",false,(int) MenuType.Config_Generate)]
 		private static void OnGenerateCustomNetworkConfigYamlFile()
 		{
-			_GenerateCustomConfigYamlFile("Network.yaml",ConfigMgr.In.Access<NetworkConfig>());
+			_GenerateCustomConfigYamlFile("Network.yaml",ConfigManager.In.Access<NetworkConfig>());
 		}
 
 		[MenuItem("KZMenu/Config/Network/Generate Custom NetworkConfig Yaml File",true,(int) MenuType.Config_Generate)]

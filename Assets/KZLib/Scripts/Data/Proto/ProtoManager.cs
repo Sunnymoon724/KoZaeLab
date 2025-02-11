@@ -10,7 +10,7 @@ using KZLib.KZData;
 
 namespace KZLib
 {
-	public class ProtoMgr : DataSingleton<ProtoMgr>
+	public class ProtoManager : DataSingleton<ProtoManager>
 	{
 		private const double c_frame_time = 1.0/30.0d; // 30 fps (0.0333s)
 		private const int c_delay_time = 1; // 1ms
@@ -129,6 +129,11 @@ namespace KZLib
 			}
 
 			return proto;
+		}
+
+		public IEnumerable<IProto> GetProtoGroup<TProto>()
+		{
+			return GetProtoGroup(typeof(IProto));
 		}
 
 		public IEnumerable<IProto> GetProtoGroup(Type protoType)
@@ -275,7 +280,7 @@ namespace KZLib
 #endif
 		private bool TryGetTextAsset(out TextAsset[] textAssetArray)
 		{
-			var gameConfig = ConfigMgr.In.Access<ConfigData.GameConfig>();
+			var gameConfig = ConfigManager.In.Access<ConfigData.GameConfig>();
 
 			textAssetArray = ResMgr.In.GetTextAssetArray(gameConfig.ProtoFolderPath);
 

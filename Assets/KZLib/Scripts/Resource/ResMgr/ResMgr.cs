@@ -49,7 +49,7 @@ namespace KZLib
 		{
 			m_tokenSource = new();
 
-			var gameConfig = ConfigMgr.In.Access<ConfigData.GameConfig>();
+			var gameConfig = ConfigManager.In.Access<ConfigData.GameConfig>();
 
 			m_useServerResource = !gameConfig.IsLocalResource;
 

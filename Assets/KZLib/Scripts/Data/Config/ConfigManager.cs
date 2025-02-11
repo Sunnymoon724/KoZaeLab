@@ -5,11 +5,10 @@ using KZLib.KZUtility;
 using KZLib.KZData;
 using System.IO;
 using ConfigData;
-using ExcelDataReader.Log;
 
 namespace KZLib
 {
-	public class ConfigMgr : DataSingleton<ConfigMgr>
+	public class ConfigManager : DataSingleton<ConfigManager>
 	{
 		private readonly Dictionary<string,IConfig> m_configDict = new();
 

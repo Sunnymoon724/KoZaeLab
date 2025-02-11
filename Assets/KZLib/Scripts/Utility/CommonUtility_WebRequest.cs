@@ -25,7 +25,7 @@ public static partial class CommonUtility
 
 	public static async UniTask PostWebHook_DiscordAsync(string content,IEnumerable<MessageData> messageGroup,byte[] file = null)
 	{
-		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var networkConfig = ConfigManager.In.Access<ConfigData.NetworkConfig>();
 		var link = networkConfig.GetDiscordLink(content);
 
 		if(link.IsEmpty())
@@ -66,7 +66,7 @@ public static partial class CommonUtility
 
 	public static async UniTask<List<string>> FindBoard_TrelloAsync()
 	{
-		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var networkConfig = ConfigManager.In.Access<ConfigData.NetworkConfig>();
 		var coreKey = networkConfig.TrelloCoreKey;
 
 		if(coreKey.IsEmpty())
@@ -105,7 +105,7 @@ public static partial class CommonUtility
 
 	public static async UniTask<List<string>> FindList_TrelloAsync(string boardId)
 	{
-		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var networkConfig = ConfigManager.In.Access<ConfigData.NetworkConfig>();
 		var coreKey = networkConfig.TrelloCoreKey;
 
 		if(coreKey.IsEmpty())
@@ -151,7 +151,7 @@ public static partial class CommonUtility
 
 	public static async UniTask<List<string>> FindCard_TrelloAsync(string listId)
 	{
-		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var networkConfig = ConfigManager.In.Access<ConfigData.NetworkConfig>();
 		var coreKey = networkConfig.TrelloCoreKey;
 
 		if(coreKey.IsEmpty())
@@ -231,7 +231,7 @@ public static partial class CommonUtility
 
 	public static async UniTask PostList_TrelloAsync(string boardId,string name)
 	{
-		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var networkConfig = ConfigManager.In.Access<ConfigData.NetworkConfig>();
 		var coreKey = networkConfig.TrelloCoreKey;
 
 		if(coreKey.IsEmpty())
@@ -270,7 +270,7 @@ public static partial class CommonUtility
 
 	public static async UniTask PostCard_TrelloAsync(string listId,string name,string description,byte[] file = null)
 	{
-		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var networkConfig = ConfigManager.In.Access<ConfigData.NetworkConfig>();
 		var coreKey = networkConfig.TrelloCoreKey;
 
 		if(coreKey.IsEmpty())
@@ -334,7 +334,7 @@ public static partial class CommonUtility
 
 	public static async UniTask PostListInCard_TrelloAsync(string boardName,string listName,string cardName,string cardDescription,byte[] file = null)
 	{
-		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var networkConfig = ConfigManager.In.Access<ConfigData.NetworkConfig>();
 		var coreKey = networkConfig.TrelloCoreKey;
 
 		if(coreKey.IsEmpty())
@@ -464,7 +464,7 @@ public static partial class CommonUtility
 
 	private static bool TryGetSheetId(string sheetName,out string sheetId)
 	{
-		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var networkConfig = ConfigManager.In.Access<ConfigData.NetworkConfig>();
 		sheetId = networkConfig.GetGoogleSheetFileId(sheetName);
 
 		var isEmpty = sheetId.IsEmpty();
@@ -555,7 +555,7 @@ public static partial class CommonUtility
 
 	private static bool TryGetFolderId(string folderName,out string folderId)
 	{
-		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var networkConfig = ConfigManager.In.Access<ConfigData.NetworkConfig>();
 		folderId = networkConfig.GetGoogleDriveFolderId(folderName);
 
 		var isEmpty = folderId.IsEmpty();
@@ -576,7 +576,7 @@ public static partial class CommonUtility
 
 	public static async UniTask PostBugReportWebRequestAsync(IEnumerable<MessageData> messageGroup,byte[] file)
 	{
-		var networkConfig = ConfigMgr.In.Access<ConfigData.NetworkConfig>();
+		var networkConfig = ConfigManager.In.Access<ConfigData.NetworkConfig>();
 		var postHashSet = new HashSet<string>(networkConfig.BugReportPostList);
 		var taskList = new List<UniTask>();
 
