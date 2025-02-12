@@ -1,62 +1,50 @@
-using KZLib.KZData;
-using KZLib.KZUtility;
-using MessagePack;
-using MessagePack.Resolvers;
-using Newtonsoft.Json;
 using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
-using YamlDotNet.Serialization;
 
-public class OptionConfig
-{
-    public string ProtoFolderPath { get; private set; }
-    public Vector3Int ProtoPos { get; private set; }
-    public Color ProtoColor { get; private set; }
-    public SoundVolume ProtoVolume { get; private set; }
-
-    public OptionConfig() { }
-
-    public OptionConfig(string tt)
-    {
-        ProtoFolderPath = "Resources/Text/Proto";
-        ProtoPos = new Vector3Int(1,2,3);
-        ProtoColor = Color.green;
-        ProtoVolume = new SoundVolume(0.7f,true);
-    }
-}
-
+[ExecuteInEditMode]
 public class Test : MonoBehaviour
 {
-	[Button("AddT")]
-    private void AddTest()
+    public Animator m_animator;
+    private bool isPlaying = false;
+    private double lastTime;
+
+    void OnEnable()
     {
-        // OptionConfig 객체를 JSON으로 직렬화하여 저장
-        var config = new OptionConfig("Resources/Text/Proto");
+        lastTime = EditorApplication.timeSinceStartup;
+        EditorApplication.update += EditorUpdate;
+    }
 
-        var json = JsonConvert.SerializeObject(config, Formatting.Indented, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore, });
+    void OnDisable()
+    {
+        EditorApplication.update -= EditorUpdate;
+    }
 
-        LogTag.Build.I(json);
+    void EditorUpdate()
+    {
+        if (!isPlaying || m_animator == null) return;
 
-        var configJson = JsonConvert.DeserializeObject<OptionConfig>(json);
+        double currentTime = EditorApplication.timeSinceStartup;
+        float deltaTime = (float)(currentTime - lastTime);
+        lastTime = currentTime;
 
-        LogTag.Build.I(configJson.ProtoFolderPath);
-        LogTag.Build.I(configJson.ProtoPos);
-        LogTag.Build.I(configJson.ProtoColor);
-        LogTag.Build.I(configJson.ProtoVolume);
+        m_animator.Update(deltaTime);
+        SceneView.RepaintAll(); // 씬 뷰 강제 갱신
+    }
 
-        var yamlSerializer = new SerializerBuilder().WithTypeConverter(new YamlConverter()).Build();
+    [Button("Play Animation in Edit Mode")]
+    void PlayAnimation()
+    {
+        if (m_animator == null) return;
 
-        var yaml = yamlSerializer.Serialize(config);
+        m_animator.Play("Test", 0, 0); // 0초부터 재생
+        lastTime = EditorApplication.timeSinceStartup;
+        isPlaying = true;
+    }
 
-        LogTag.Network.I(yaml);
-
-        var yamlDeserializer = new DeserializerBuilder().WithTypeConverter(new YamlConverter()).Build();
-
-        var configYaml = yamlDeserializer.Deserialize<OptionConfig>(yaml);
-
-        LogTag.Network.I(configYaml.ProtoFolderPath);
-        LogTag.Network.I(configYaml.ProtoPos);
-        LogTag.Network.I(configYaml.ProtoColor);
-        LogTag.Network.I(configYaml.ProtoVolume);
+    [Button("Stop Animation in Edit Mode")]
+    void StopAnimation()
+    {
+        isPlaying = false;
     }
 }

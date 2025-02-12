@@ -37,7 +37,7 @@ namespace KZLib
 
 			ChangeScreenSize(new(Screen.width,Screen.height));
 
-			m_uiPrefabPath = ConfigMgr.In.Access<ConfigData.GameConfig>().UIPrefabPath;
+			m_uiPrefabPath = ConfigManager.In.Access<ConfigData.GameConfig>().UIPrefabPath;
 		}
 
 		protected override void Release()

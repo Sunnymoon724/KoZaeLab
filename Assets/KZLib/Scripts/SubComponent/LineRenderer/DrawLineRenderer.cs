@@ -46,7 +46,7 @@ public class DrawLineRenderer : BaseLineRenderer
 		m_startGizmo = true;
 #endif
 
-		await CommonUtility.ExecuteOverTimeAsync(0.0f,pointArray.Length-1,duration,(progress)=>
+		await CommonUtility.ExecuteProgressAsync(0.0f,pointArray.Length-1,duration,(progress)=>
 		{
 			var prev = Mathf.FloorToInt(progress);
 			var next = Mathf.CeilToInt(progress);

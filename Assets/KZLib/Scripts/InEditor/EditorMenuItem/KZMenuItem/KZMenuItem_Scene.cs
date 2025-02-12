@@ -13,6 +13,12 @@ namespace KZLib.KZMenu
 			OnOpenScene("Main","MainScene");
 		}
 
+		[MenuItem("KZMenu/Scene/Open Motion Editor Scene",false,(int) MenuType.Scene_Core)]
+		private static void OnOpenMotionEditorScene()
+		{
+			OnOpenScene("MotionEditor","MotionEditorScene");
+		}
+
 		private static string GetScenePath(string sceneName)
 		{
 			var pathGroup = CommonUtility.FindAssetPathGroup($"t:Scene {sceneName}");

@@ -12,5 +12,7 @@ namespace ConfigData
 
 		public bool IsLocalResource { get; private set; } = true;
 		public bool IsLocalSave { get; private set; } = true;
+
+		public bool UseHeadUpDisplay { get; private set; } = true;
 	}
 }

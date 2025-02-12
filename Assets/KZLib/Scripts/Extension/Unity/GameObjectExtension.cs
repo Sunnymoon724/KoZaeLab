@@ -139,7 +139,7 @@ public static class GameObjectExtension
 			return false;
 		}
 
-		return gameObject.GetComponent<TComponent>() is not null;
+		return gameObject.GetComponent<TComponent>();
 	}
 
 	public static void ReAssignShader(this GameObject gameObject)

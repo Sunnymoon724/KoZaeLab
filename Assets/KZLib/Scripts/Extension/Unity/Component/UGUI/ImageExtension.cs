@@ -43,7 +43,7 @@ public static class ImageExtension
 
 	public static async UniTask FadeImageAsync(this Image image,float duration,Color prevColor,Color nextColor)
 	{
-		await CommonUtility.ExecuteOverTimeAsync(0.0f,1.0f,duration,(progress)=>
+		await CommonUtility.ExecuteProgressAsync(0.0f,1.0f,duration,(progress)=>
 		{
 			image.color = Color.Lerp(prevColor,nextColor,progress);
 		});

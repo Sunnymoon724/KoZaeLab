@@ -129,7 +129,7 @@ public static partial class CommonUtility
 		onTimeUpdate?.Invoke(elapsedTime);
 	}
 
-	public static async UniTask ExecuteOverTimeAsync(float start,float finish,float duration,Action<float> onProgress,bool ignoreTimescale = false,AnimationCurve _curve = null,CancellationToken token = default)
+	public static async UniTask ExecuteProgressAsync(float start,float finish,float duration,Action<float> onProgress,bool ignoreTimescale = false,AnimationCurve _curve = null,CancellationToken token = default)
 	{
 		if(duration == 0.0f)
 		{
@@ -161,6 +161,32 @@ public static partial class CommonUtility
 		}
 
 		onProgress?.Invoke(finish);
+	}
+
+	public static async UniTask ExecutePeriodAsync(float duration,float period,Action<float> onUpdate,Action onComplete,bool ignoreTimescale = false,CancellationToken token = default)
+	{
+		if(duration == 0.0f)
+		{
+			return;
+		}
+
+		var elapsedTime = 0.0f;
+
+		while(duration < 0.0f || elapsedTime < duration)
+		{
+			if(token.IsCancellationRequested)
+			{
+				return;
+			}
+
+			onUpdate?.Invoke(elapsedTime);
+
+			await UniTask.WaitForSeconds(period,ignoreTimescale);
+
+			elapsedTime += period;
+		}
+
+		onComplete?.Invoke();
 	}
 
 	private static float GetDeltaTime(bool ignoreTimescale)

@@ -28,7 +28,7 @@ namespace KZLib
 				m_uiSource = UIMgr.In.gameObject.GetComponentInChildren<AudioSource>();
 			}
 
-			var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+			var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
 			optionConfig.OnSoundVolumeChange += OnChangeSoundOption;
 
@@ -47,7 +47,7 @@ namespace KZLib
 				m_bgmSource = null;
 				m_uiSource = null;
 
-				var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+				var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
 				optionConfig.OnSoundVolumeChange -= OnChangeSoundOption;
 			}

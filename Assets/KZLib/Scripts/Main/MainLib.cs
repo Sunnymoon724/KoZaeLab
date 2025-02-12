@@ -19,12 +19,6 @@ namespace KZLib
 	public abstract class MainLib : SerializedMonoBehaviour
 	{
 		[SerializeField,HideInInspector]
-		private string m_gameVersion = null;
-
-		[ShowInInspector,KZRichText]
-		public string GameVersion { get => m_gameVersion; private set => m_gameVersion = value; }
-
-		[SerializeField,HideInInspector]
 		private SystemLanguage? m_gameLanguage = null;
 
 		[ShowInInspector,InlineButton(nameof(OnChangeDefaultLanguage),Label = "",Icon = SdfIconType.Reply)]
@@ -34,7 +28,7 @@ namespace KZLib
 			{
 				if(!m_gameLanguage.HasValue)
 				{
-					var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+					var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
 					m_gameLanguage = optionConfig.Language;
 				}
@@ -51,7 +45,7 @@ namespace KZLib
 
 				m_gameLanguage = value;
 
-				var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+				var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
 				optionConfig.SetLanguage(m_gameLanguage.Value);
 			}
@@ -133,34 +127,35 @@ namespace KZLib
 		{
 			m_isPlaying = true;
 
-			var builder = new StringBuilder();
+			var stringBuilder = new StringBuilder();
 
-			builder.AppendLine("Initialize Main");
-
-			GameVersion = SetGameVersion();
-
-			builder.AppendLine($"Current Version {GameVersion}");
+			stringBuilder.AppendLine("Initialize Main");
 
 			//? 에디터가 아니면 Normal Play
 #if !UNITY_EDITOR
 			GamePlayType = PlayType.Normal;
 #endif
-			builder.AppendLine($"Current PlayType {GamePlayType}");
+			stringBuilder.AppendLine($"Current PlayType {GamePlayType}");
 
-			LogTag.System.I(builder.ToString());
-		}
-
-		protected virtual string SetGameVersion()
-		{
-			return "0.1";
+			LogTag.System.I(stringBuilder.ToString());
 		}
 
 		private async void Start()
 		{
-			if(GameSettings.In.UseHeadUpDisplay)
+			
+			var gameConfig = ConfigManager.In.Access<ConfigData.GameConfig>();
+
+#if UNITY_EDITOR
+			if(gameConfig.UseHeadUpDisplay)
 			{
 				UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
 			}
+#else
+			if(Debug.isDebugBuild && gameConfig.UseHeadUpDisplay)
+			{
+				UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
+			}
+#endif
 
 			if(m_safeWidth <= 0)
 			{
@@ -170,14 +165,14 @@ namespace KZLib
 			DOTween.Init(false,false,LogBehaviour.ErrorsOnly);
 			DOTween.SetTweensCapacity(1000,100);
 
-			var builder = new StringBuilder();
+			var stringBuilder = new StringBuilder();
 
-			InitializeResolution(builder);
-			InitializeFrame(builder);
-			InitializeRenderSetting(builder);
-			InitializeObject(builder);
+			InitializeResolution(stringBuilder);
+			InitializeFrame(stringBuilder);
+			InitializeRenderSetting(stringBuilder);
+			InitializeObject(stringBuilder);
 
-			LogTag.System.I(builder.ToString());
+			LogTag.System.I(stringBuilder.ToString());
 
 			CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
@@ -208,9 +203,9 @@ namespace KZLib
 			return text.IsEmpty() ? new MainData() : JsonConvert.DeserializeObject<MainData>(text);
 		}
 
-		protected async virtual UniTask StartTestMode(CancellationToken token) { await ProtoMgr.In.TryLoadAllAsync(token); }
+		protected async virtual UniTask StartTestMode(CancellationToken token) { await ProtoManager.In.TryLoadAllAsync(token); }
 #endif
-		protected async virtual UniTask StartNormalMode(CancellationToken token) { await ProtoMgr.In.TryLoadAllAsync(token); }
+		protected async virtual UniTask StartNormalMode(CancellationToken token) { await ProtoManager.In.TryLoadAllAsync(token); }
 
 		protected virtual void InitializeResolution(StringBuilder stringBuilder)
 		{
@@ -261,7 +256,7 @@ namespace KZLib
 			CheckResolution();
 
 #if UNITY_EDITOR
-			if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C) && GameSettings.In.UseHeadUpDisplay)
+			if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C))
 			{
 				if(UIMgr.In.IsOpened(UITag.HudPanelUI))
 				{

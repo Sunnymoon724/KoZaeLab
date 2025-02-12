@@ -1,5 +1,6 @@
 using System;
 using KZLib.KZData;
+using KZLib.KZDevelop;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -17,8 +18,7 @@ namespace ConfigData
 
 		public ScreenResolution Resolution { get; private set; } = new(Global.BASE_WIDTH,Global.BASE_HEIGHT,true);
 		public int FrameRate { get; private set; } = Global.FRAME_RATE_60;
-		public long GraphicQuality { get; private set; } = GraphicQualityPresetSettings.In.GetPresetQuality(GraphicsQualityPresetType.QualityHighest);
-
+		public long GraphicQuality { get; private set; } = GraphicQualityOption.In.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityHighest);
 
 		public bool UseVibration { get; private set; } = true;
 
@@ -40,25 +40,23 @@ namespace ConfigData
 
 		public OptionConfig()
 		{
-			if(!TryLoadPlayerPrefsAll())
+			if(!TryReload())
 			{
 				return;
 			}
 		}
 
-		public bool Reload()
+		public bool TryReload()
 		{
-			if(!TryLoadPlayerPrefsAll())
+			if(!TryLoadPlayerPrefs())
 			{
 				return false;
 			}
-			
-			// TODO 이후 작업
 
 			return true;
 		}
 
-		public bool TryLoadPlayerPrefsAll()
+		public bool TryLoadPlayerPrefs()
 		{
 			foreach(var propertyInfo in typeof(OptionConfig).GetProperties())
 			{
@@ -104,7 +102,7 @@ namespace ConfigData
 				case TypeCode.Object when propertyType == typeof(ScreenResolution):
 					return TryParseScreenResolutionValue(propertyName,text,out value);
 				default:
-					LogTag.System.E($"No handling for type ({propertyType}), name ({propertyName})");
+					LogTag.System.E($"Not supported propertyType ({propertyType}), name ({propertyName})");
 
 					return false;
 			}
@@ -298,18 +296,14 @@ namespace ConfigData
 			OnFrameRateChange?.Invoke(newFrameRate);
 		}
 
-		public void AddGraphicQuality(GraphicQualityType qualityType)
+		public void AddGraphicQuality(long quality)
 		{
-			var quality = GraphicQuality.AddFlag(qualityType.QualityOption);
-
-			_SetGraphicQuality(quality);
+			_SetGraphicQuality(GraphicQuality.AddFlag(quality));
 		}
 
-		public void RemoveGraphicQuality(GraphicQualityType qualityType)
+		public void RemoveGraphicQuality(long quality)
 		{
-			var quality = GraphicQuality.RemoveFlag(qualityType.QualityOption);
-
-			_SetGraphicQuality(quality);
+			_SetGraphicQuality(GraphicQuality.RemoveFlag(quality));
 		}
 
 		private void _SetGraphicQuality(long quality)
@@ -326,16 +320,11 @@ namespace ConfigData
 			OnGraphicQualityChange?.Invoke(quality);
 		}
 
-		public bool IsIncludeGraphicQuality(GraphicQualityType qualityType)
-		{
-			return GraphicQuality.HasFlag(qualityType.QualityOption);
-		}
-
 		private void CheckGraphicQuality()
 		{
-			QualitySettings.globalTextureMipmapLimit = IsIncludeGraphicQuality(GraphicQualityType.GlobalTextureMipmapLimit) ? 0 : 1;
-			QualitySettings.anisotropicFiltering = IsIncludeGraphicQuality(GraphicQualityType.AnisotropicFiltering) ? AnisotropicFiltering.ForceEnable : AnisotropicFiltering.Disable;
-			QualitySettings.vSyncCount = IsIncludeGraphicQuality(GraphicQualityType.VerticalSync) ? 1 : 0;
+			QualitySettings.globalTextureMipmapLimit = int.Parse(GraphicQualityOption.In.FindValue(GraphicQuality,Global.GLOBAL_TEXTURE_MIPMAP_LIMIT));
+			QualitySettings.anisotropicFiltering = (AnisotropicFiltering) Enum.Parse(typeof(AnisotropicFiltering),GraphicQualityOption.In.FindValue(GraphicQuality,Global.ANISOTROPIC_FILTERING));
+			QualitySettings.vSyncCount = int.Parse(GraphicQualityOption.In.FindValue(GraphicQuality,Global.VERTICAL_SYNC_COUNT));
 		}
 		#endregion Graphic
 

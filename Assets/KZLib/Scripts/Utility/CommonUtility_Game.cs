@@ -144,7 +144,7 @@ public static partial class CommonUtility
 		ReleaseSingletonMB<CameraMgr>();
 
 		//? Release Singleton
-		ReleaseSingleton<ProtoMgr>();
+		ReleaseSingleton<ProtoManager>();
 		ReleaseSingleton<GameDataMgr>();
 		ReleaseSingleton<LocalStorageMgr>();
 		ReleaseSingleton<ResMgr>();
@@ -153,10 +153,8 @@ public static partial class CommonUtility
 		ReleaseSingleton<SoundMgr>();
 		ReleaseSingleton<ShaderMgr>();
 
-		ReleaseSingleton<EventMgr>();
-		ReleaseSingleton<TimerMgr>();
-
-		ReleaseSingleton<RouteMgr>();
+		ReleaseSingleton<EventManager>();
+		ReleaseSingleton<RouteManager>();
 
 		ClearCacheData();
 		StringExtension.ClearCacheData();

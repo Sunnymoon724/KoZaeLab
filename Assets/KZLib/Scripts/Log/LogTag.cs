@@ -1,11 +1,11 @@
-﻿using UnityEngine;
-using KZLib;
-using KZLib.KZUtility;
+﻿using KZLib;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Collections.Generic;
 
 using Debug = UnityEngine.Debug;
+using KZLib.KZData;
+
 
 #if UNITY_EDITOR
 

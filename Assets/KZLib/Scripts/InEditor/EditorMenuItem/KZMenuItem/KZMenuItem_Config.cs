@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Text;
 using ConfigData;
+using KZLib.KZData;
 using KZLib.KZTool;
 using KZLib.KZUtility;
 using UnityEditor;
@@ -11,11 +12,11 @@ namespace KZLib.KZMenu
 {
 	public partial class KZMenuItem
 	{
-		[MenuItem("KZMenu/Config/Generate All Config",false,(int) MenuType.Config_Generate)]
+		[MenuItem("KZMenu/Config/Generate All Config",false,(int) MenuType.Config_All)]
 		private static void OnGenerateAllConfig()
 		{
 			var templateFilePath = CommonUtility.FindTemplateText("ConfigTemplate.txt");
-			var outputRoute = RouteMgr.In.GetOrCreateRoute("defaultRes:config");
+			var outputRoute = RouteManager.In.GetOrCreateRoute("defaultRes:config");
 
 			var stringBuilder = new StringBuilder();
 
@@ -36,7 +37,7 @@ namespace KZLib.KZMenu
 				{
 					var fileName = Path.GetFileName(configFilePath);
 
-					if(ConfigMgr.IsDefaultConfig(fileName))
+					if(ConfigManager.IsDefaultConfig(fileName))
 					{
 						var errorText = $"{fileName} is default config. -> generate failed";
 
@@ -72,63 +73,108 @@ namespace KZLib.KZMenu
 		// 	CommonUtility.DisplayInfo(result);
 		// }
 
-		[MenuItem("KZMenu/Config/Generate GameConfig Yaml File",false,(int) MenuType.Config_Generate)]
+		#region Game Config
+		[MenuItem("KZMenu/Config/Game/Generate GameConfig Yaml File",false,(int) MenuType.Config_Generate)]
 		private static void OnGenerateGameConfigYamlFile()
 		{
-			var yamlRoute = RouteMgr.In.GetOrCreateRoute("defaultRes:config");
+			_GenerateConfigYamlFile("Game.yaml",new GameConfig(),"defaultRes:config");
+		}
+
+		[MenuItem("KZMenu/Config/Game/Generate GameConfig Yaml File",true,(int) MenuType.Config_Generate)]
+		private static bool IsExistGameConfigYamlFile()
+		{
+			return _IsExistConfigYamlFile("Game.yaml");
+		}
+
+		[MenuItem("KZMenu/Config/Game/Generate Custom GameConfig Yaml File",false,(int) MenuType.Config_Generate)]
+		private static void OnGenerateCustomGameConfigYamlFile()
+		{
+			_GenerateCustomConfigYamlFile("Game.yaml",ConfigManager.In.Access<GameConfig>());
+		}
+
+		[MenuItem("KZMenu/Config/Game/Generate Custom GameConfig Yaml File",true,(int) MenuType.Config_Generate)]
+		private static bool IsExistCustomGameConfigYamlFile()
+		{
+			return _IsExistCustomGameConfigYamlFile("Game.yaml");
+		}
+		#endregion Game Config
+
+		#region Network Config
+		[MenuItem("KZMenu/Config/Network/Generate NetworkConfig Yaml File",false,(int) MenuType.Config_Generate)]
+		private static void OnGenerateNetworkConfigYamlFile()
+		{
+			_GenerateConfigYamlFile("Network.yaml",new NetworkConfig(),"defaultRes:config");
+		}
+
+		[MenuItem("KZMenu/Config/Network/Generate NetworkConfig Yaml File",true,(int) MenuType.Config_Generate)]
+		private static bool IsExistNetworkConfigYamlFile()
+		{
+			return _IsExistConfigYamlFile("Network.yaml");
+		}
+
+		[MenuItem("KZMenu/Config/Network/Generate Custom NetworkConfig Yaml File",false,(int) MenuType.Config_Generate)]
+		private static void OnGenerateCustomNetworkConfigYamlFile()
+		{
+			_GenerateCustomConfigYamlFile("Network.yaml",ConfigManager.In.Access<NetworkConfig>());
+		}
+
+		[MenuItem("KZMenu/Config/Network/Generate Custom NetworkConfig Yaml File",true,(int) MenuType.Config_Generate)]
+		private static bool IsExistCustomNetworkConfigYamlFile()
+		{
+			return _IsExistCustomGameConfigYamlFile("Network.yaml");
+		}
+		#endregion Network Config
+
+		#region Default
+		private static void _GenerateConfigYamlFile(string fileName,IConfig config,string routePath)
+		{
+			var yamlRoute = RouteManager.In.GetOrCreateRoute(routePath);
 
 			if(!Directory.Exists(yamlRoute.AbsolutePath))
 			{
 				Directory.CreateDirectory(yamlRoute.AbsolutePath);
 			}
 
-			var gameFilePath = Path.Combine(yamlRoute.AbsolutePath,"Game.yaml");
-			var gameConfig = new GameConfig();
+			var filePath = Path.Combine(yamlRoute.AbsolutePath,fileName);
 
-			ConfigGenerator.GenerateConfigYamlFile(gameConfig,gameFilePath,out var result);
+			ConfigGenerator.GenerateConfigYamlFile(config,filePath,out var result);
 
 			CommonUtility.DisplayInfo(result);
 
 			AssetDatabase.Refresh();
 		}
 
-		[MenuItem("KZMenu/Config/Generate GameConfig Yaml File",true,(int) MenuType.Config_Generate)]
-		private static bool IsExistGameConfigYamlFile()
+		private static bool _IsExistConfigYamlFile(string fileName)
 		{
-			var yamlRoute = RouteMgr.In.GetOrCreateRoute("defaultRes:config");
-			var gamePath = Path.Combine(yamlRoute.AbsolutePath,"Game.yaml");
+			var yamlRoute = RouteManager.In.GetOrCreateRoute("defaultRes:config");
 
-			return !File.Exists(gamePath);
+			return !File.Exists(Path.Combine(yamlRoute.AbsolutePath,fileName));
 		}
 
-		[MenuItem("KZMenu/Config/Generate Custom GameConfig Yaml File",false,(int) MenuType.Config_Generate)]
-		private static void OnGenerateCustomGameConfigYamlFile()
+		private static void _GenerateCustomConfigYamlFile(string fileName,IConfig config)
 		{
 			if(!Directory.Exists(Global.CUSTOM_CONFIG_FOLDER_PATH))
 			{
 				Directory.CreateDirectory(Global.CUSTOM_CONFIG_FOLDER_PATH);
 			}
 
-			var customFilePath = Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,"CustomGame.yaml");
-			var gameConfig = ConfigMgr.In.Access<GameConfig>();
+			var customFilePath = Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,$"Custom{fileName}");
 
-			ConfigGenerator.GenerateConfigYamlFile(gameConfig,customFilePath,out var result);
+			ConfigGenerator.GenerateConfigYamlFile(config,customFilePath,out var result);
 
 			CommonUtility.DisplayInfo(result);
 		}
 
-		[MenuItem("KZMenu/Config/Generate GameConfig Yaml File",true,(int) MenuType.Config_Generate)]
-		private static bool IsExistCustomGameConfigYamlFile()
+		private static bool _IsExistCustomGameConfigYamlFile(string fileName)
 		{
-			var customFilePath = Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,"CustomGame.yaml");
-
-			return !File.Exists(customFilePath);
+			return !File.Exists(Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,$"Custom{fileName}"));
 		}
+		#endregion Default
 
 		[MenuItem("KZMenu/Config/Open Default Config Folder",false,(int) MenuType.Config_Open)]
 		private static void OnOpenDefaultConfigFolder()
 		{
-			var configFolderRoute = RouteMgr.In.GetOrCreateRoute("defaultRes:config");
+			var configFolderRoute = RouteManager.In.GetOrCreateRoute("defaultRes:config");
 
 			CommonUtility.Open(configFolderRoute.AbsolutePath);
 		}
@@ -136,7 +182,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Config/Open Default Config Folder",true,(int) MenuType.Config_Open)]
 		private static bool IsExistDefaultConfigFolder()
 		{
-			var configFolderRoute = RouteMgr.In.GetOrCreateRoute("defaultRes:config");
+			var configFolderRoute = RouteManager.In.GetOrCreateRoute("defaultRes:config");
 
 			return Directory.Exists(configFolderRoute.AbsolutePath);
 		}

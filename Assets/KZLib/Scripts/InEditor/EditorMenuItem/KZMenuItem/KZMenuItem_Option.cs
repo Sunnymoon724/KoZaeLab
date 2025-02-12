@@ -132,50 +132,6 @@ namespace KZLib.KZMenu
 			}
 		}
 
-		[MenuItem("KZMenu/Option/AddOn/Add Build Settings",false,(int) MenuType.Option_Add)]
-		private static void OnAddBuildSettings()
-		{
-			if(AddSettings("Build Settings",BuildSettings.IsExist))
-			{
-				BuildSettings.CreateSettings();
-			}
-		}
-
-		[MenuItem("KZMenu/Option/AddOn/Add Build Settings",true)]
-		private static bool IsExistBuildSettings()
-		{
-			return !BuildSettings.IsExist;
-		}
-
-		[MenuItem("KZMenu/Option/AddOn/Add Network Settings",false,(int) MenuType.Option_Add)]
-		private static void OnAddNetworkSettings()
-		{
-			if(AddSettings("Network Settings",NetworkSettings.IsExist))
-			{
-				NetworkSettings.CreateSettings();
-			}
-		}
-
-		[MenuItem("KZMenu/Option/AddOn/Add Network Settings",true)]
-		private static bool IsExistNetworkSettings()
-		{
-			return !NetworkSettings.IsExist;
-		}
-
-		private static bool AddSettings(string _name,bool _isExist)
-		{
-			if(_isExist)
-			{
-				CommonUtility.DisplayInfo($"{_name} is already exist.\n");
-
-				return false;
-			}
-			else
-			{
-				return CommonUtility.DisplayCheck($"Add {_name}",$"Add {_name}?");
-			}
-		}
-
 		[MenuItem("KZMenu/Option/Check Internet",false,(int) MenuType.Option_Check)]
 		private static void OnCheckInternet()
 		{

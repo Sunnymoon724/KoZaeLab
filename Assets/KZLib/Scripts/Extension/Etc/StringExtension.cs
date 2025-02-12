@@ -559,7 +559,7 @@ public static class StringExtension
 	/// <summary>
 	/// Extract Digits
 	/// </summary>
-	public static string ExtractOnlyDigits(this string text)
+	public static string ExtractOnlyDigit(this string text)
 	{
 		return text.IsEmpty() ? null : Regex.Replace(text,@"\D",string.Empty);
 	}
@@ -572,9 +572,9 @@ public static class StringExtension
 		return text.IsEmpty() ? null : Regex.Replace(text,@"[^0-9a-zA-Z_]+",string.Empty);
 	}
 
-	public static int ExtractOnlyDigitsToInt(this string text,int defaultNumber)
+	public static int ExtractOnlyDigitToInt(this string text,int defaultNumber)
 	{
-		return ExtractOnlyDigits(text).ToInt(defaultNumber);
+		return ExtractOnlyDigit(text).ToInt(defaultNumber);
 	}
 	#endregion Extract
 

@@ -1,9 +1,10 @@
 using System.Collections.Generic;
-using MetaData;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using KZLib.KZUtility;
 using System;
+using KZLib.KZDevelop;
+using KZLib.KZData;
 
 namespace KZLib
 {
@@ -39,7 +40,7 @@ namespace KZLib
 
 			SetCameraBackgroundColor(Color.black);
 
-			var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+			var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
 			optionConfig.OnGraphicQualityChange += OnChangeFarClipPlane;
 
@@ -50,30 +51,30 @@ namespace KZLib
 		{
 			base.Release();
 
-			var optionConfig = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+			var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
 			optionConfig.OnGraphicQualityChange -= OnChangeFarClipPlane;
 		}
 
-		public void SetCameraData(CameraData cameraData)
+		public void SetCameraProto(CameraProto proto)
 		{
-			if(!cameraData.IsExist)
+			if(proto == null)
 			{
-				LogTag.System.E("Camera data is not exist.");
+				LogTag.System.E("Camera proto is not exist.");
 
 				return;
 			}
 
-			CurrentCamera.nearClipPlane = cameraData.NearClipPlane;
-			CurrentCamera.farClipPlane = m_farFactor*cameraData.FarClipPlane;
+			CurrentCamera.nearClipPlane = proto.NearClipPlane;
+			CurrentCamera.farClipPlane = m_farFactor*proto.FarClipPlane;
 
-			CurrentCamera.orthographic = cameraData.Orthographic;
-			CurrentCamera.orthographicSize = cameraData.FieldOfView;
-			CurrentCamera.fieldOfView = cameraData.FieldOfView;
+			CurrentCamera.orthographic = proto.Orthographic;
+			CurrentCamera.orthographicSize = proto.FieldOfView;
+			CurrentCamera.fieldOfView = proto.FieldOfView;
 
 			var position = m_target ? m_target.position : Vector3.zero;
 
-			CurrentCamera.transform.SetPositionAndRotation(position+cameraData.Position,Quaternion.Euler(cameraData.Rotation));
+			CurrentCamera.transform.SetPositionAndRotation(position+proto.Position,Quaternion.Euler(proto.Rotation));
 
 			SetSubCameraDict();
 		}
@@ -128,9 +129,7 @@ namespace KZLib
 
 		private void OnChangeFarClipPlane(long graphicQuality)
 		{
-			var flag = graphicQuality.HasFlag(GraphicQualityType.CameraFarHalf.QualityOption);
-
-			m_farFactor = flag ? 0.5f : 1.0f;
+			m_farFactor = float.Parse(GraphicQualityOption.In.FindValue(graphicQuality,Global.DISABLE_CAMERA_FAR_HALF));
 		}
 
 		public void AddSubCamera(Camera camera,bool dependency = true)
