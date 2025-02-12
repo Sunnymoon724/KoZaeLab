@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace KZLib
 {
-	public partial class ResMgr : Singleton<ResMgr>
+	public partial class ResourceManager : Singleton<ResourceManager>
 	{
 		private record LoadingData(string DataPath,bool IsFilePath,Transform Parent);
 
@@ -29,19 +29,20 @@ namespace KZLib
 
 		private bool m_disposed = false;
 
-		private const string RESOURCES = "Resources";
-		private const float UPDATE_PERIOD = 0.1f;
+		private const string c_resource_text = "Resources";
+		private const float c_update_period = 0.1f;
 
-		private const float POOL_LOOP_TIME = 30.0f;   // 30s
-		private const double DEFAULT_DELETE_TIME = 60.0d;	// 60s
+		private const float c_pool_loop_time = 30.0f;   // 30s
+		private const double c_delete_time = 60.0d;	// 60s
 
 		private CancellationTokenSource m_tokenSource = null;
 
-		private float m_PoolTimer = 0.0f;
+		private float m_poolTimer = 0.0f;
 
 		private readonly Queue<LoadingData> m_loadingQueue = new();
 
 		private readonly Dictionary<string,List<CacheData>> m_cacheDataDict = new();
+		private readonly List<string> m_removeList = new();
 
 		private bool m_useServerResource = false;
 
@@ -80,17 +81,17 @@ namespace KZLib
 		{
 			while(true)
 			{
-				await UniTask.Delay(TimeSpan.FromSeconds(UPDATE_PERIOD),true,cancellationToken : m_tokenSource.Token);
+				await UniTask.Delay(TimeSpan.FromSeconds(c_update_period),true,cancellationToken : m_tokenSource.Token);
 
 				// Check ObjectPool 
 				{
-					m_PoolTimer += UPDATE_PERIOD;
+					m_poolTimer += c_update_period;
 
-					if(m_PoolTimer >= POOL_LOOP_TIME)
+					if(m_poolTimer >= c_pool_loop_time)
 					{
-						m_PoolTimer = 0.0f;
+						m_poolTimer = 0.0f;
 
-						var removeList = new List<string>();
+						m_removeList.Clear();
 
 						foreach(var pair in m_cacheDataDict)
 						{
@@ -98,11 +99,11 @@ namespace KZLib
 
 							if(pair.Value.Count == 0)
 							{
-								removeList.Add(pair.Key);
+								m_removeList.Add(pair.Key);
 							}
 						}
 
-						foreach(var remove in removeList)
+						foreach(var remove in m_removeList)
 						{
 							m_cacheDataDict.RemoveSafe(remove);
 						}
@@ -159,7 +160,7 @@ namespace KZLib
 				m_cacheDataDict.Add(path,dataList);
 			}
 
-			dataList.Add(new CacheData(cacheArray,DateTime.Now.AddSeconds(DEFAULT_DELETE_TIME).Ticks));
+			dataList.Add(new CacheData(cacheArray,DateTime.Now.AddSeconds(c_delete_time).Ticks));
 		}
 	}
 }

@@ -59,7 +59,7 @@ public abstract class RepositoryUI : BaseComponentUI
 
 		if(isRelease)
 		{
-			if(ResMgr.HasInstance)
+			if(ResourceManager.HasInstance)
 			{
 				windowUI.gameObject.DestroyObject();
 			}

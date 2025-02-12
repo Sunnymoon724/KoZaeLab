@@ -4,10 +4,11 @@ using System;
 using Object = UnityEngine.Object;
 using System.Linq;
 using KZLib.KZUtility;
+using System.IO;
 
 namespace KZLib
 {
-	public partial class ResMgr : Singleton<ResMgr>
+	public partial class ResourceManager : Singleton<ResourceManager>
 	{
 		public TComponent[] GetObjectArray<TComponent>(string folderPath,Transform parent = null,bool immediately = true) where TComponent : Component
 		{
@@ -130,16 +131,16 @@ namespace KZLib
 		private TObject[] LoadDataArray<TObject>(string folderPath) where TObject : Object
 		{
 #if UNITY_EDITOR
-			if(CommonUtility.IsFilePath(folderPath))
+			if(Path.HasExtension(folderPath))
 			{
 				LogTag.System.E($"Path is folder path.[path : {folderPath}]");
 
 				return null;
 			}
 #endif
-			if(folderPath.StartsWith(RESOURCES))
+			if(folderPath.StartsWith(c_resource_text))
 			{
-				return Resources.LoadAll<TObject>(CommonUtility.RemoveTextInPath(folderPath,RESOURCES));
+				return Resources.LoadAll<TObject>(CommonUtility.RemoveTextInPath(folderPath,c_resource_text));
 			}
 
 			var assetPath = CommonUtility.GetAssetsPath(folderPath);

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using KZLib.KZAttribute;
+using KZLib.KZDevelop;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,22 +12,25 @@ public class ReuseScrollRectUI : BaseComponentUI
 {
 	private enum ScrollToType { Top, Center, Bottom, }
 
-	[SerializeField,LabelText("Scroll Rect")]
+	[SerializeField]
 	private ScrollRect m_scrollRect = null;
 
-	[SerializeField,ReadOnly,LabelText("Is Vertical")]
+	[SerializeField,ReadOnly]
 	private bool m_isVertical = false;
 
-	[SerializeField,LabelText("Padding")]
+	[SerializeField]
 	private float m_padding = 0.0f;
 
-	[SerializeField,LabelText("Space")]
+	[SerializeField]
 	private float m_space = 0.0f;
 
-	[SerializeField,LabelText("Pivot")]
+	[SerializeField,KZMinClamp(1)]
+	private int m_poolCapacity = 1;
+
+	[SerializeField]
 	private SlotUI m_pivot = null;
 
-	[SerializeField,ReadOnly,LabelText("Slot Dictionary")]
+	[SerializeField,ReadOnly]
 	private Dictionary<int,SlotUI> m_slotDict = new();
 
 	private float m_slotSize = 0.0f;
@@ -80,7 +85,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 			m_scrollRect.content.anchorMax = new Vector2(0.0f,content.anchorMax.y);
 		}
 
-		m_slotUIPool = new GameObjectUIPool<SlotUI>(m_pivot,m_scrollRect.viewport);
+		m_slotUIPool = new GameObjectUIPool<SlotUI>(m_pivot,m_scrollRect.viewport,m_poolCapacity);
 
 		m_cellDataList.Clear();
 		m_slotDict.Clear();

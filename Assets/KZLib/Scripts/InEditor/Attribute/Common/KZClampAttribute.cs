@@ -14,21 +14,28 @@ namespace KZLib.KZAttribute
 	[Conditional("UNITY_EDITOR")]
 	public class KZClampAttribute : Attribute
 	{
-		public double MinValue { get; }
-		public double MaxValue { get; }
-		public string MinExpression { get; }
-		public string MaxExpression { get; }
+		public string MinText { get; }
+		public string MaxText { get; }
 
-		public KZClampAttribute(double minValue,double maxValue) : this(minValue,null,maxValue,null) { }
-		public KZClampAttribute(string minExpression,string maxExpression) : this(double.MinValue,minExpression,double.MaxValue,maxExpression) { }
+		public KZClampAttribute(int minValue,int maxValue)				: this(minValue.ToString(),maxValue.ToString()) { }
+		public KZClampAttribute(long minValue,long maxValue)			: this(minValue.ToString(),maxValue.ToString()) { }
+		public KZClampAttribute(float minValue,float maxValue)			: this(minValue.ToString(),maxValue.ToString()) { }
+		public KZClampAttribute(double minValue,double maxValue)		: this(minValue.ToString(),maxValue.ToString()) { }
 
-		protected KZClampAttribute(double minValue,string minExpression,double maxValue,string maxExpression)
+		public KZClampAttribute(int minValue,string maxExpression)		: this(minValue.ToString(),maxExpression) 		{ }
+		public KZClampAttribute(long minValue,string maxExpression)		: this(minValue.ToString(),maxExpression) 		{ }
+		public KZClampAttribute(float minValue,string maxExpression)	: this(minValue.ToString(),maxExpression) 		{ }
+		public KZClampAttribute(double minValue,string maxExpression)	: this(minValue.ToString(),maxExpression) 		{ }
+
+		public KZClampAttribute(string minExpression,int maxValue)		: this(minExpression,maxValue.ToString()) 		{ }
+		public KZClampAttribute(string minExpression,long maxValue)		: this(minExpression,maxValue.ToString()) 		{ }
+		public KZClampAttribute(string minExpression,float maxValue)	: this(minExpression,maxValue.ToString()) 		{ }
+		public KZClampAttribute(string minExpression,double maxValue)	: this(minExpression,maxValue.ToString()) 		{ }
+
+		protected KZClampAttribute(string minText,string maxText)
 		{
-			MinValue = minValue;
-			MinExpression = minExpression;
-
-			MaxValue = maxValue;
-			MaxExpression = maxExpression;
+			MinText = minText;
+			MaxText = maxText;
 		}
 	}
 
@@ -36,16 +43,22 @@ namespace KZLib.KZAttribute
 	[Conditional("UNITY_EDITOR")]
 	public class KZMaxClampAttribute : KZClampAttribute
 	{
-		public KZMaxClampAttribute(double maxValue) : base(double.MinValue,null,maxValue,null) { }
-		public KZMaxClampAttribute(string maxExpression) : base(double.MinValue,null,double.MaxValue,maxExpression) { }
+		public KZMaxClampAttribute(int maxValue)			: base(int.MinValue.ToString(),maxValue.ToString())		{ }
+		public KZMaxClampAttribute(long maxValue)			: base(long.MinValue.ToString(),maxValue.ToString())	{ }
+		public KZMaxClampAttribute(float maxValue)			: base(float.MinValue.ToString(),maxValue.ToString())	{ }
+		public KZMaxClampAttribute(double maxValue)			: base(double.MinValue.ToString(),maxValue.ToString())	{ }
+		public KZMaxClampAttribute(string maxExpression)	: base(double.MinValue.ToString(),maxExpression)		{ }
 	}
 
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property,AllowMultiple = false,Inherited = true)]
 	[Conditional("UNITY_EDITOR")]
 	public class KZMinClampAttribute : KZClampAttribute
 	{
-		public KZMinClampAttribute(double minValue) : base(minValue,null,double.MaxValue,null) { }
-		public KZMinClampAttribute(string minExpression) : base(double.MinValue,minExpression,double.MaxValue,null) { }
+		public KZMinClampAttribute(int minValue)			: base(minValue.ToString(),int.MaxValue.ToString())		{ }
+		public KZMinClampAttribute(long minValue)			: base(minValue.ToString(),long.MaxValue.ToString())	{ }
+		public KZMinClampAttribute(float minValue)			: base(minValue.ToString(),float.MaxValue.ToString())	{ }
+		public KZMinClampAttribute(double minValue)			: base(minValue.ToString(),double.MaxValue.ToString())	{ }
+		public KZMinClampAttribute(string minExpression)	: base(minExpression,double.MaxValue.ToString())		{ }
 	}
 
 #if UNITY_EDITOR
@@ -58,8 +71,8 @@ namespace KZLib.KZAttribute
 		{
 			base.Initialize();
 
-			m_minValue = Attribute.MinExpression.IsEmpty() ? (TValue) ConvertToValue(Attribute.MinValue) : FindValue<TValue>(Attribute.MinExpression);
-			m_maxValue = Attribute.MaxExpression.IsEmpty() ? (TValue) ConvertToValue(Attribute.MaxValue) : FindValue<TValue>(Attribute.MaxExpression);
+			m_minValue = TryConvertTo(Attribute.MinText,out var minValue) ? minValue : FindValue<TValue>(Attribute.MinText);
+			m_maxValue = TryConvertTo(Attribute.MaxText,out var maxValue) ? maxValue : FindValue<TValue>(Attribute.MaxText);
 		}
 
 		protected override void _DrawPropertyLayout(GUIContent label)
@@ -71,6 +84,7 @@ namespace KZLib.KZAttribute
 		}
 
 		protected abstract TValue DrawField(Rect rect,string label);
+		protected abstract bool TryConvertTo(string text,out TValue result);
 	}
 
 	public abstract class KZBaseClampIntAttributeDrawer<TAttribute> : KZBaseClampAttributeDrawer<TAttribute,int> where TAttribute : KZClampAttribute
@@ -78,6 +92,11 @@ namespace KZLib.KZAttribute
 		protected override int DrawField(Rect rect,string label)
 		{
 			return EditorGUI.IntField(rect,label,ValueEntry.SmartValue);
+		}
+
+		protected override bool TryConvertTo(string text,out int result)
+		{
+			return int.TryParse(text,out result);
 		}
 	}
 
@@ -87,6 +106,11 @@ namespace KZLib.KZAttribute
 		{
 			return EditorGUI.LongField(rect,label,ValueEntry.SmartValue);
 		}
+
+		protected override bool TryConvertTo(string text,out long result)
+		{
+			return long.TryParse(text,out result);
+		}
 	}
 
 	public abstract class KZBaseClampFloatAttributeDrawer<TAttribute> : KZBaseClampAttributeDrawer<TAttribute,float> where TAttribute : KZClampAttribute
@@ -95,6 +119,11 @@ namespace KZLib.KZAttribute
 		{
 			return EditorGUI.FloatField(rect,label,ValueEntry.SmartValue);
 		}
+
+		protected override bool TryConvertTo(string text,out float result)
+		{
+			return float.TryParse(text,out result);
+		}
 	}
 
 	public abstract class KZBaseClampDoubleAttributeDrawer<TAttribute> : KZBaseClampAttributeDrawer<TAttribute,double> where TAttribute : KZClampAttribute
@@ -102,6 +131,11 @@ namespace KZLib.KZAttribute
 		protected override double DrawField(Rect rect,string label)
 		{
 			return EditorGUI.DoubleField(rect,label,ValueEntry.SmartValue);
+		}
+
+		protected override bool TryConvertTo(string text,out double result)
+		{
+			return double.TryParse(text,out result);
 		}
 	}
 

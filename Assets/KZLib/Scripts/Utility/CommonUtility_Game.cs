@@ -147,7 +147,7 @@ public static partial class CommonUtility
 		ReleaseSingleton<ProtoManager>();
 		ReleaseSingleton<GameDataMgr>();
 		ReleaseSingleton<LocalStorageMgr>();
-		ReleaseSingleton<ResMgr>();
+		ReleaseSingleton<ResourceManager>();
 		ReleaseSingleton<LogMgr>();
 		ReleaseSingleton<AddressablesMgr>();
 		ReleaseSingleton<SoundMgr>();

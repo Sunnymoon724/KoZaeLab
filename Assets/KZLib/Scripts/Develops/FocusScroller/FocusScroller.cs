@@ -31,16 +31,18 @@ namespace KZLib.KZDevelop
 		[VerticalGroup("General/0",Order = 0),SerializeField]
 		private bool m_useDrag = true;
 
+		[VerticalGroup("General/0",Order = 0),SerializeField,KZMinClamp(1)]
+		private int m_poolCapacity = 1;
+
 		private readonly List<FocusSlotUI> m_slotUIList = new();
 		private readonly List<ICellData> m_cellDataList = new();
 
-		private readonly List<(float,Transform)> m_OrderList = new();
+		private readonly List<(float,Transform)> m_orderList = new();
 
 		[BoxGroup("Viewer",ShowLabel = false,Order = 99),SerializeField,KZRichText]
 		private int m_focusIndex = -1;
 
-		private GameObjectUIPool<FocusSlotUI> m_objectPool = null;
-
+		private GameObjectUIPool<FocusSlotUI> m_slotUIPool = null;
 
 		[BoxGroup("Viewer",ShowLabel = false,Order = 99),SerializeField,KZRichText]
 		private float m_currentLocation = 0.0f;
@@ -55,16 +57,20 @@ namespace KZLib.KZDevelop
 		{
 			base.Initialize();
 
-			if(m_slotUI == null)
+			if(!m_slotUI)
 			{
-				throw new NullReferenceException("No Slot.");
+				LogTag.System.E("Slot is null");
+
+				return;
 			}
 
 			var slotUI = m_slotUI as SlotUI;
 
 			if(!m_viewport)
 			{
-				throw new NullReferenceException("No Viewport.");
+				LogTag.System.E("Viewport is null");
+
+				return;
 			}
 
 			slotUI.gameObject.SetActiveIfDifferent(false);
@@ -73,7 +79,7 @@ namespace KZLib.KZDevelop
 			m_viewport.pivot = new Vector2(0.0f,1.0f);
 			slotUI.UIRectTransform.pivot = new Vector2(0.5f,0.5f);
 
-			m_objectPool = new GameObjectUIPool<FocusSlotUI>(m_slotUI,m_viewport);
+			m_slotUIPool = new GameObjectUIPool<FocusSlotUI>(m_slotUI,m_viewport,m_poolCapacity);
 
 			m_cellDataList.Clear();
 			m_slotUIList.Clear();
@@ -119,7 +125,7 @@ namespace KZLib.KZDevelop
 
 			for(var i=0;i<count;i++)
 			{
-				m_slotUIList.Add(m_objectPool.GetOrCreate(m_viewport));
+				m_slotUIList.Add(m_slotUIPool.GetOrCreate(m_viewport));
 			}
 		}
 
@@ -128,7 +134,7 @@ namespace KZLib.KZDevelop
 			var cellCount = m_cellDataList.Count;
 			var slotCount = m_slotUIList.Count;
 
-			m_OrderList.Clear();
+			m_orderList.Clear();
 
 			for(var i=0;i<slotCount;i++)
 			{
@@ -159,13 +165,13 @@ namespace KZLib.KZDevelop
 
 				if(m_orderMode)
 				{
-					m_OrderList.Add((location,slot.transform));
+					m_orderList.Add((location,slot.transform));
 				}
 			}
 
 			if(m_orderMode)
 			{
-				foreach(var pair in m_OrderList.OrderByDescending(x=>Math.Abs(x.Item1-0.5f)))
+				foreach(var pair in m_orderList.OrderByDescending(x=>Math.Abs(x.Item1-0.5f)))
 				{
 					pair.Item2.SetAsLastSibling();
 				}

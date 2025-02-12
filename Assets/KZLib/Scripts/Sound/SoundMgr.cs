@@ -76,7 +76,7 @@ namespace KZLib
 				return;
 			}
 
-			PlayUIShot(ResMgr.In.GetAudioClip(audioPath),volume);
+			PlayUIShot(ResourceManager.In.GetAudioClip(audioPath),volume);
 		}
 
 		public void PlayUIShot(AudioClip audioClip,float volume = 1.0f)
@@ -112,7 +112,7 @@ namespace KZLib
 				return;
 			}
 
-			PlayBGM(ResMgr.In.GetAudioClip(_path),startTime);
+			PlayBGM(ResourceManager.In.GetAudioClip(_path),startTime);
 		}
 
 		public void PlayBGM(AudioClip audioClip,float startTime = 0.0f)
