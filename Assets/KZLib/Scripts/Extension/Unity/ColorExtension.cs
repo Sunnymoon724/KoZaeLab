@@ -71,5 +71,17 @@ public static class ColorExtension
 		return max > 0.5f ? Color.white : Color.black;
 	}
 
+	/// <summary>
+	/// Creates a gradient between two colors
+	/// </summary>
+	public static Gradient Gradient(Color color1,Color color2)
+	{
+		var gradient = new Gradient();
+
+		gradient.SetKeys(new[] { new GradientColorKey(color1,0.0f), new GradientColorKey(color2,1.0f) },new[] { new GradientAlphaKey(color1.a,0.0f), new GradientAlphaKey(color1.a,1.0f) });
+
+		return gradient;
+	}
+
 	public static void ClearCacheData() => s_colorDict.Clear();
 }

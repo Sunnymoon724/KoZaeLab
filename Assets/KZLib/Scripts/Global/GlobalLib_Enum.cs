@@ -16,6 +16,22 @@ public enum SpaceType { xyz, xy, xz };
 public enum GraphicsQualityPresetType { QualityLowest, QualityLow, QualityMiddle, QualityHigh, QualityHighest, }
 
 [Flags]
+public enum DirectionType
+{
+	None		= 0,
+	Left		= 1 << 0,
+	Right		= 1 << 1,
+	Down		= 1 << 2,
+	Up			= 1 << 3,
+	Back		= 1 << 4,
+	Forward		= 1 << 5,
+	XAxis		= Left | Right,
+	YAxis		= Down | Up,
+	ZAxis		= Back | Forward,
+	All			= -1,
+}
+
+[Flags]
 public enum BuildPlatformType
 {
 	None = 0,
