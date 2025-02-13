@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace KZLib.KZDevelop
@@ -10,7 +9,7 @@ namespace KZLib.KZDevelop
 	public class GameObjectPool<TComponent> where TComponent : Component
 	{
 		private readonly TComponent m_pivot = null;
-		private readonly CircularQueue<TComponent> m_poolQueue = null;
+		private readonly Queue<TComponent> m_poolQueue = null;
 		private readonly Transform m_storage = null;
 
 		public GameObjectPool(TComponent pivot,Transform storage,int capacity)
@@ -59,7 +58,7 @@ namespace KZLib.KZDevelop
 
 		public TComponent GetOrCreate(Transform parent = null)
 		{
-			var item = m_poolQueue.IsEmpty ? m_poolQueue.Dequeue() : m_pivot.CopyObject() as TComponent;
+			var item = m_poolQueue.Count < 1 ? m_poolQueue.Dequeue() : m_pivot.CopyObject() as TComponent;
 
 			if(parent)
 			{
