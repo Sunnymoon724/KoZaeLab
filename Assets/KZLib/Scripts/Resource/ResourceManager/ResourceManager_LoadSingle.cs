@@ -2,6 +2,7 @@
 using UnityEngine.Video;
 using Object = UnityEngine.Object;
 using KZLib.KZUtility;
+using System.IO;
 
 #if UNITY_EDITOR
 
@@ -11,7 +12,7 @@ using UnityEditor;
 
 namespace KZLib
 {
-	public partial class ResMgr : Singleton<ResMgr>
+	public partial class ResourceManager : Singleton<ResourceManager>
 	{
 		public TComponent GetObject<TComponent>(string filePath,Transform parent = null,bool immediately = true) where TComponent : Component
 		{
@@ -132,16 +133,16 @@ namespace KZLib
 		private TObject LoadData<TObject>(string filePath) where TObject : Object
 		{
 #if UNITY_EDITOR
-			if(!CommonUtility.IsFilePath(filePath))
+			if(!Path.HasExtension(filePath))
 			{
 				LogTag.System.E($"Path is folder path.[path : {filePath}]");
 
 				return null;
 			}
 #endif
-			if(filePath.StartsWith(RESOURCES))
+			if(filePath.StartsWith(c_resource_text))
 			{
-				var resourcePath = CommonUtility.RemoveTextInPath(filePath,RESOURCES);
+				var resourcePath = CommonUtility.RemoveTextInPath(filePath,c_resource_text);
 
 				return Resources.Load<TObject>(resourcePath[..resourcePath.LastIndexOf('.')]);
 			}

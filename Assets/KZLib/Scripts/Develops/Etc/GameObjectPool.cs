@@ -10,25 +10,36 @@ namespace KZLib.KZDevelop
 	public class GameObjectPool<TComponent> where TComponent : Component
 	{
 		private readonly TComponent m_pivot = null;
-		private readonly Queue<TComponent> m_poolQueue = null;
+		private readonly CircularQueue<TComponent> m_poolQueue = null;
 		private readonly Transform m_storage = null;
 
 		public GameObjectPool(TComponent pivot,Transform storage,int capacity)
 		{
 			if(!pivot)
 			{
-				throw new NullReferenceException("Pivot is null.");
+				LogTag.System.E("Pivot is null");
+
+				return;
 			}
 
 			if(!storage)
 			{
-				throw new NullReferenceException("Storage is null.");
+				LogTag.System.E("Storage is null");
+
+				return;
 			}
 
 			m_pivot = pivot;
 			m_poolQueue = new(capacity);
 
 			m_storage = storage;
+
+			for(var i=0;i<capacity;i++)
+			{
+				var item = m_pivot.CopyObject() as TComponent;
+
+				Put(item);
+			}
 		}
 
 		protected virtual void SetChild(Transform parent,Transform child)
@@ -48,7 +59,7 @@ namespace KZLib.KZDevelop
 
 		public TComponent GetOrCreate(Transform parent = null)
 		{
-			var item = m_poolQueue.Count > 0 ? m_poolQueue.Dequeue() : m_pivot.CopyObject() as TComponent;
+			var item = m_poolQueue.IsEmpty ? m_poolQueue.Dequeue() : m_pivot.CopyObject() as TComponent;
 
 			if(parent)
 			{
@@ -58,6 +69,16 @@ namespace KZLib.KZDevelop
 			item.gameObject.SetActiveIfDifferent(true);
 
 			return item;
+		}
+	}
+
+	public class GameObjectUIPool<TComponent> : GameObjectPool<TComponent> where TComponent : Component
+	{
+		public GameObjectUIPool(TComponent pivot,Transform storage,int capacity) : base(pivot,storage,capacity) { }
+
+		protected override void SetChild(Transform parent,Transform child)
+		{
+			parent.SetUIChild(child);
 		}
 	}
 }

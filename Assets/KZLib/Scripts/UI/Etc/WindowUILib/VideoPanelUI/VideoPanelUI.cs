@@ -73,7 +73,7 @@ public class VideoPanelUI : WindowUI2D
 		{
 			m_videoPlayer.source = VideoSource.VideoClip;
 
-			var videoClip = ResMgr.In.GetVideoClip(videoData.VideoPath);
+			var videoClip = ResourceManager.In.GetVideoClip(videoData.VideoPath);
 
 			if(!videoClip)
 			{

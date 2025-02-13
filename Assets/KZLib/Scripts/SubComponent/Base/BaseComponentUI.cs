@@ -1,4 +1,3 @@
-using KZLib.KZDevelop;
 using UnityEngine;
 
 [RequireComponent(typeof(RectTransform))]
@@ -28,16 +27,6 @@ public abstract class BaseComponentUI : BaseComponent
 		if(!m_rectTransform)
 		{
 			m_rectTransform = GetComponent<RectTransform>();
-		}
-	}
-
-	protected class GameObjectUIPool<TComponent> : GameObjectPool<TComponent> where TComponent : Component
-	{
-		public GameObjectUIPool(TComponent pivot,Transform storage) : base(pivot,storage,1) { }
-
-		protected override void SetChild(Transform parent,Transform child)
-		{
-			parent.SetUIChild(child);
 		}
 	}
 }

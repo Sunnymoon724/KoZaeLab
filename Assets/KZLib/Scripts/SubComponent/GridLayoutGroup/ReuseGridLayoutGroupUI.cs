@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using KZLib.KZAttribute;
+using KZLib.KZDevelop;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,20 +8,23 @@ using UnityEngine.UI;
 [RequireComponent(typeof(GridLayoutGroup))]
 public class ReuseGridLayoutGroupUI : BaseComponentUI
 {
-	[VerticalGroup("General",Order = 0),SerializeField]
+	[SerializeField]
 	private Transform m_storage = null;
-	[VerticalGroup("General",Order = 0),SerializeField]
+	[SerializeField]
 	private SlotUI m_pivot = null;
 
-	[VerticalGroup("General",Order = 0),SerializeField]
+	[SerializeField]
 	private GridLayoutGroup m_gridLayoutGroup = null;
 
-	[VerticalGroup("General",Order = 0),SerializeField,ReadOnly]
+	[SerializeField,KZMinClamp(1)]
+	private int m_poolCapacity = 1;
+
+	[SerializeField,ReadOnly]
 	private List<SlotUI> m_slotList = new();
 
 	private readonly List<ICellData> m_cellDataList = new();
 
-	private GameObjectUIPool<SlotUI> m_slotPool = null;
+	private GameObjectUIPool<SlotUI> m_slotUIPool = null;
 
 	protected override void Initialize()
 	{
@@ -42,7 +47,7 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 		m_pivot.gameObject.SetActiveIfDifferent(false);
 		m_storage.SetUIChild(m_pivot.transform);
 
-		m_slotPool = new GameObjectUIPool<SlotUI>(m_pivot,m_storage);
+		m_slotUIPool = new GameObjectUIPool<SlotUI>(m_pivot,m_storage,m_poolCapacity);
 
 		m_cellDataList.Clear();
 		m_slotList.Clear();
@@ -75,7 +80,7 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 
 	private SlotUI GetOrCreateSlot()
 	{
-		var slot = m_slotPool.GetOrCreate(m_gridLayoutGroup.transform);
+		var slot = m_slotUIPool.GetOrCreate(m_gridLayoutGroup.transform);
 
 		slot.gameObject.SetActive(true);
 
@@ -86,7 +91,7 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 	{
 		for(var i=count;i<m_slotList.Count;i++)
 		{
-			m_slotPool.Put(m_slotList[i]);
+			m_slotUIPool.Put(m_slotList[i]);
 		}
 
 		m_slotList.RemoveRange(count,m_slotList.Count-count);
