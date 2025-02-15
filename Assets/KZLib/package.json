@@ -1,6 +1,6 @@
 {
   "name": "com.bsheepstudio.kzlib",
-  "displayName": "KZ Lib",
+  "displayName": "KoZaeLibrary",
   "author": { "name": "Ko KoZae", "url": "https://github.com/Sunnymoon724" },
   "description": "Ko Zae Library \nIt is using 'UniTask'.",
   "version": "1.0.0",
