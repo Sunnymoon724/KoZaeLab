@@ -128,7 +128,7 @@ namespace KZLib
 				return text;
 			}
 
-			LogTag.System.E("yaml file is not exist. generate config first.");
+			LogTag.System.E($"{name} yaml file is not exist. generate config first.");
 
 			return null;
 		}
