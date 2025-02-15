@@ -197,7 +197,7 @@ namespace KZLib.KZMenu
 		private static void OnCreateScriptableObject()
 		{
 			var selection = Selection.activeObject;
-			var dataPath = CommonUtility.NormalizePath($"Resources/ScriptableObjects/{selection.name}.asset");
+			var dataPath = CommonUtility.NormalizePath($"Resources/ScriptableObject/{selection.name}.asset");
 
 			if(!CommonUtility.DisplayCheck("Create scriptableObject",$"Create scriptableObject? \n Name : {selection.name} \n Path : {dataPath}"))
 			{
