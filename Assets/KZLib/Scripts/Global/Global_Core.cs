@@ -22,18 +22,12 @@ public partial struct Global
 	public const float INVALID_TIME = Mathf.Infinity;
 	public const float INVALID_DURATION = Mathf.Infinity;
 
-
-	public const string DEFAULT_BUNDLE = "default";
-	public const string RESOURCE_BUNDLE = "resource";
-	public const string COMMON_BUNDLE = "common";
-
 	public const float FADE_TIME = 1.0f;
 
 	public const string DISABLE_HEX_COLOR = "#808080FF";
 	public const string WRONG_HEX_COLOR = "#FFC300FF";
 
 	public const string CATEGORY_TAG = "Category";
-	public const string CATEGORY_LINE = "----------------------------";
 
 	public const string ASSETS_HEADER = "Assets";
 
@@ -41,8 +35,8 @@ public partial struct Global
 
 	public readonly static string PROJECT_PATH = Directory.GetCurrentDirectory();
 	public readonly static string PROJECT_PARENT_PATH = Path.GetFullPath(Path.Combine(PROJECT_PATH,".."));
-	public readonly static string CONFIG_FOLDER_PATH = Path.Combine(PROJECT_PARENT_PATH,"Documents","Configs");
-	public readonly static string CUSTOM_CONFIG_FOLDER_PATH = Path.Combine(CONFIG_FOLDER_PATH,"Customs");
+	public readonly static string CONFIG_FOLDER_PATH = Path.Combine(PROJECT_PARENT_PATH,"Documents","Config");
+	public readonly static string CUSTOM_CONFIG_FOLDER_PATH = Path.Combine(CONFIG_FOLDER_PATH,"Custom");
 
 	public readonly static string[] EXCEL_EXTENSION_ARRAY = new string[] { ".xls", ".xlsx", ".xlsm" };
 

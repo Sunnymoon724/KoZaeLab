@@ -203,36 +203,34 @@ public static partial class CommonUtility
 		return result;
 	}
 
-	public static string RemoveTextInPath(string path,string text)
+	public static string RemoveHeaderInPath(string path,string header)
 	{
 		if(!IsPathExist(path,true))
 		{
 			return path;
 		}
 
-		if(text.IsEmpty())
+		if(header.IsEmpty())
 		{
 			return path;
 		}
 
-		var normalizePath = NormalizePath(path);
-		var textPath = NormalizePath(text);
+		var normalizedPath = NormalizePath(path);
+		var normalizedHeader = NormalizePath(header);
 
-		var index = normalizePath.IndexOf(textPath);
-
-		if(index == Global.INVALID_INDEX)
+		if(!normalizedPath.StartsWith(normalizedHeader))
 		{
 			return path;
 		}
 
-		int startIndex = index+textPath.Length;
+		var headerLength = normalizedHeader.Length;
 
-		if(startIndex < normalizePath.Length && (normalizePath[startIndex] == '/'))
+		if(path.Length > headerLength && (path[headerLength] == Path.DirectorySeparatorChar))
 		{
-			startIndex++;
+			headerLength++;
 		}
 
-		return normalizePath[startIndex..];
+		return path[headerLength..];
 	}
 
 	public static string RemoveAssetsHeader(string path)
@@ -242,7 +240,7 @@ public static partial class CommonUtility
 			return null;
 		}
 
-		return RemoveTextInPath(path,Global.ASSETS_HEADER);
+		return RemoveHeaderInPath(path,Global.ASSETS_HEADER);
 	}
 
 	private static string GetUniquePath(string path)

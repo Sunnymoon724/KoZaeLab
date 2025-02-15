@@ -140,7 +140,7 @@ namespace KZLib
 #endif
 			if(folderPath.StartsWith(c_resource_text))
 			{
-				return Resources.LoadAll<TObject>(CommonUtility.RemoveTextInPath(folderPath,c_resource_text));
+				return Resources.LoadAll<TObject>(CommonUtility.RemoveHeaderInPath(folderPath,c_resource_text));
 			}
 
 			var assetPath = CommonUtility.GetAssetsPath(folderPath);
