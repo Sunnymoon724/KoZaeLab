@@ -133,7 +133,7 @@ namespace KZLib
 
 		public IEnumerable<IProto> GetProtoGroup<TProto>()
 		{
-			return GetProtoGroup(typeof(IProto));
+			return GetProtoGroup(typeof(TProto));
 		}
 
 		public IEnumerable<IProto> GetProtoGroup(Type protoType)
