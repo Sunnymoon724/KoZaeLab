@@ -225,7 +225,7 @@ public static partial class CommonUtility
 
 		var headerLength = normalizedHeader.Length;
 
-		if(path.Length > headerLength && (path[headerLength] == Path.DirectorySeparatorChar))
+		if(path.Length > headerLength && (normalizedPath[headerLength] == Path.DirectorySeparatorChar))
 		{
 			headerLength++;
 		}
