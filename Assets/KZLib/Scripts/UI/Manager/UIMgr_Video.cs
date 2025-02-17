@@ -32,7 +32,7 @@ namespace KZLib
 				return;
 			}
 
-			SoundMgr.In.PauseBGM();
+			SoundManager.In.PauseBGMSound();
 
 			var videoPanel = Open<VideoPanelUI>(UITag.VideoPanelUI);
 
@@ -53,7 +53,7 @@ namespace KZLib
 
 			Close(videoPanel);
 
-			SoundMgr.In.ResumeBGM();
+			SoundManager.In.ResumeBGMSound();
 		}
 
 		private async UniTask _PrepareVideoAsync(VideoPanelUI videoPanel,VideoData videoData)

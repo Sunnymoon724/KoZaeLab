@@ -1,4 +1,4 @@
-﻿using KZLib;
+using KZLib;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Collections.Generic;
@@ -19,12 +19,17 @@ using System.Text.RegularExpressions;
 
 public class LogTag : CustomTag
 {
+	public static readonly LogTag None	=	new(nameof(None));
+
 	public static readonly LogTag System	=	new(nameof(System));
 
 	public static readonly LogTag Build		=	new(nameof(Build));
 
 	public static readonly LogTag Security	=	new(nameof(Security));
+
 	public static readonly LogTag Network	=	new(nameof(Network));
+	public static readonly LogTag Server	=	new(nameof(Server));
+	public static readonly LogTag Client	=	new(nameof(Client));
 
 	public static readonly LogTag UI		=	new(nameof(UI));
 	public static readonly LogTag FX		=	new(nameof(FX));

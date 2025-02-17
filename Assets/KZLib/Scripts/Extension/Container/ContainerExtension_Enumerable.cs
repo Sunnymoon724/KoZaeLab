@@ -322,17 +322,15 @@ public static partial class ContainerExtension
 		{
 			return list[index];
 		}
-		else
+
+		using var enumerator = enumerable.GetEnumerator();
+
+		for(var i=0;i<=index;i++)
 		{
-			using var enumerator = enumerable.GetEnumerator();
-
-			for(var i=0;i<=index;i++)
-			{
-				enumerator.MoveNext();
-			}
-
-			return enumerator.Current;
+			enumerator.MoveNext();
 		}
+
+		return enumerator.Current;
 	}
 
 	private static bool IsValid<TValue>(IEnumerable<TValue> enumerable)

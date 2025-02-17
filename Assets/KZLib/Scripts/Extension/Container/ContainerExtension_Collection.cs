@@ -40,7 +40,6 @@ public static partial class ContainerExtension
 		return 0 <= index && index < collection.Count;
 	}
 
-
 	public static TValue Middle<TValue>(this ICollection<TValue> collection)
 	{
 		if(!IsValid(collection))
@@ -133,18 +132,16 @@ public static partial class ContainerExtension
 			return false;
 		}
 
-		if(collection.ContainsIndex(index))
-		{
-			value = collection.GetValue(index);
-
-			return true;
-		}
-		else
+		if(!collection.ContainsIndex(index))
 		{
 			value = default;
 
 			return false;
 		}
+
+		value = collection.GetValue(index);
+
+		return true;
 	}
 
 	public static void Initialize<TValue>(this ICollection<TValue> collection,TValue value)

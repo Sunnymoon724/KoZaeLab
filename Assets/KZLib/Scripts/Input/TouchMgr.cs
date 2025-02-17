@@ -74,7 +74,7 @@ namespace KZLib
 		{
 			if(EventSystem.current != null && !EventSystem.current.IsPointerOverGameObject(pointerId))
 			{
-				var worldPoint = CameraMgr.In.CurrentCamera.ScreenToWorldPoint(point).ToVector2();
+				var worldPoint = CameraManager.In.CurrentCamera.ScreenToWorldPoint(point).ToVector2();
 
 				EventManager.In.SendEvent(eventName,worldPoint);
 			}

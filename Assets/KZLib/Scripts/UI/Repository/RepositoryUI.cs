@@ -24,9 +24,9 @@ public abstract class RepositoryUI : BaseComponentUI
 	{
 		base.Initialize();
 
-		if(CanvasCamera != null && CameraMgr.HasInstance)
+		if(CanvasCamera != null && CameraManager.HasInstance)
 		{
-			CameraMgr.In.AddSubCamera(CanvasCamera,false);
+			CameraManager.In.AddSubCamera(CanvasCamera,false);
 		}
 	}
 

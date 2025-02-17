@@ -8,7 +8,7 @@ using KZLib.KZData;
 
 namespace KZLib
 {
-	public class CameraMgr : LoadSingletonMB<CameraMgr>
+	public class CameraManager : LoadSingletonMB<CameraManager>
 	{
 		[SerializeField,LabelText("Main Camera")]
 		private Camera m_mainCamera = null;
@@ -76,7 +76,7 @@ namespace KZLib
 
 			CurrentCamera.transform.SetPositionAndRotation(position+proto.Position,Quaternion.Euler(proto.Rotation));
 
-			SetSubCameraDict();
+			OnSyncSubCamera();
 		}
 
 		public void SetCamera(Camera overrideCamera)
@@ -156,7 +156,13 @@ namespace KZLib
 			camera.clearFlags = CameraClearFlags.Color;
 		}
 
-		private void SetSubCameraDict()
+		private void SetCameraBackgroundColor(Color color)
+		{
+			m_mainCamera.backgroundColor = color;
+		}
+
+		[Button("Sync Sub Cameras")]
+		private void OnSyncSubCamera()
 		{
 			var main = CurrentCamera;
 
@@ -169,18 +175,13 @@ namespace KZLib
 
 				var camera = pair.Key;
 
-				camera.nearClipPlane = main.nearClipPlane;
-				camera.farClipPlane = main.farClipPlane;
+				camera.nearClipPlane	= main.nearClipPlane;
+				camera.farClipPlane		= main.farClipPlane;
 
-				camera.orthographic = main.orthographic;
+				camera.orthographic		= main.orthographic;
 				camera.orthographicSize = main.orthographicSize;
-				camera.fieldOfView = main.fieldOfView;
+				camera.fieldOfView		= main.fieldOfView;
 			}
-		}
-
-		private void SetCameraBackgroundColor(Color color)
-		{
-			m_mainCamera.backgroundColor = color;
 		}
 	}
 }

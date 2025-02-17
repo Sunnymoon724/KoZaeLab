@@ -141,7 +141,7 @@ public static partial class CommonUtility
 		//? Release SingletonMB
 		ReleaseSingletonMB<SceneMgr>();
 		ReleaseSingletonMB<UIMgr>();
-		ReleaseSingletonMB<CameraMgr>();
+		ReleaseSingletonMB<CameraManager>();
 
 		//? Release Singleton
 		ReleaseSingleton<ProtoManager>();
@@ -150,7 +150,7 @@ public static partial class CommonUtility
 		ReleaseSingleton<ResourceManager>();
 		ReleaseSingleton<LogMgr>();
 		ReleaseSingleton<AddressablesMgr>();
-		ReleaseSingleton<SoundMgr>();
+		ReleaseSingleton<SoundManager>();
 		ReleaseSingleton<ShaderMgr>();
 
 		ReleaseSingleton<EventManager>();

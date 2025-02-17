@@ -1,6 +1,8 @@
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using System.Threading;
+using System;
+
 
 #if UNITY_EDITOR
 
@@ -46,14 +48,14 @@ public static class AnimatorExtension
 	/// <summary>
 	/// Set the anim to a specific frame ( speed 0 to freeze ).
 	/// </summary>
-	public static void SetAnimationStopAtFrame(this Animator animator,int animationHashName,float normalizedTime,int layerIndex = 0,float _speed = 1.0f)
+	public static void SetAnimationStopAtFrame(this Animator animator,int animationHashName,float normalizedTime,int layerIndex = 0,float speed = 1.0f)
 	{
 		if(!IsValid(animator))
 		{
 			return;
 		}
 
-		animator.speed = _speed;
+		animator.speed = speed;
 		animator.Play(animationHashName,layerIndex,normalizedTime);
 	}
 
@@ -65,6 +67,32 @@ public static class AnimatorExtension
 		}
 
 		return animator.GetNextAnimatorStateInfo(layerIndex).shortNameHash == 0 ? animator.GetCurrentAnimatorStateInfo(layerIndex) : animator.GetNextAnimatorStateInfo(layerIndex);
+	}
+
+	public static async UniTask PlayActionInAnimationAsync(this Animator animator,string animationName,int layerIndex,float exitTime,Action onChange,Action onPlay,Action onComplete)
+	{
+		await PlayActionInAnimationAsync(animator,Animator.StringToHash(animationName),layerIndex,exitTime,onChange,onPlay,onComplete);
+	}
+
+	public static async UniTask PlayActionInAnimationAsync(this Animator animator,int animationHashName,int layerIndex,float exitTime,Action onChange,Action onPlay,Action onComplete)
+	{
+		var stateInfo = animator.GetCurrentAnimatorStateInfo(layerIndex);
+
+		while(animator.GetCurrentAnimatorStateInfo(layerIndex).shortNameHash != animationHashName)
+		{
+			onChange?.Invoke();
+
+			await UniTask.Yield();
+		}
+
+		while(animator.GetCurrentAnimatorStateInfo(layerIndex).normalizedTime < exitTime)
+		{
+			onPlay?.Invoke();
+
+			await UniTask.Yield();
+		}
+
+		onComplete?.Invoke();
 	}
 
 	public static async UniTask PlayAndWaitAsync(this Animator animator,string animationName,int layerIndex = 0,CancellationToken cancellationToken = default)

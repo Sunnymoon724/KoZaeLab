@@ -15,6 +15,18 @@ public static partial class ContainerExtension
 		return key != null && dictionary.ContainsKey(key) && dictionary.Remove(key);
 	}
 
+	public static bool RemoveOut<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,TKey key,out TValue value)
+	{
+		if(!IsValid(dictionary))
+		{
+			value = default;
+
+			return false;
+		}
+
+		return dictionary.TryGetValue(key,out value);
+	}
+
 	public static bool RemoveSafeValueInCollection<TKey,TValue>(this IDictionary<TKey,ICollection<TValue>> dictionary,TKey key,TValue value)
 	{
 		if(!IsValid(dictionary))

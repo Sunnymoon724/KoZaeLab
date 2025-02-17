@@ -34,7 +34,7 @@ public abstract class WindowUI2D : WindowUI
 	public override bool Is3D => false;
 
 #if UNITY_ANDROID || UNITY_IOS
-	private Rect m_SafeArea = new(0.0f,0.0f,0.0f,0.0f);
+	private Rect m_safeArea = new(0.0f,0.0f,0.0f,0.0f);
 #endif
 
 	protected override void Initialize()
@@ -94,12 +94,12 @@ public abstract class WindowUI2D : WindowUI
 
 		var safeArea = Screen.safeArea;
 
-		if(safeArea == m_SafeArea)
+		if(safeArea == m_safeArea)
 		{
 			return;
 		}
 
-		m_SafeArea = safeArea;
+		m_safeArea = safeArea;
 
 		if(Screen.width <= 0 || Screen.height <= 0)
 		{

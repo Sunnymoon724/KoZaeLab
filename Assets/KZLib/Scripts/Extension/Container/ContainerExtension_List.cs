@@ -3,6 +3,27 @@ using System.Collections.Generic;
 
 public static partial class ContainerExtension
 {
+	public static bool TryGetValueByIndex<TValue>(this IList<TValue> list,int index,out TValue value)
+	{
+		if(!IsValid(list))
+		{
+			value = default;
+
+			return default;
+		}
+
+		if(!ContainsIndex(list,index))
+		{
+			value = default;
+
+			return false;
+		}
+
+		value = list[index];
+
+		return true;
+	}
+
 	public static TValue FindNext<TValue>(this IList<TValue> list,TValue value,int count)
 	{
 		if(!IsValid(list))
