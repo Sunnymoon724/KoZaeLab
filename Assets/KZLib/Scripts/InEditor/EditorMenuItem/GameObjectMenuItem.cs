@@ -148,7 +148,7 @@ namespace KZLib.KZMenu
 			Undo.IncrementCurrentGroup();
 
 			var group = Undo.GetCurrentGroup();
-			var line = new GameObject("----------------------------") { tag = Global.CATEGORY_TAG };
+			var line = new GameObject("----------------------------") { tag = "Category" };
 
 			Undo.RegisterCreatedObjectUndo(line,"Create CategoryLine");
 

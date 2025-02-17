@@ -54,7 +54,7 @@ namespace KZLib.Tet
 
 		private static void InitializeHierarchy()
 		{
-			CommonUtility.AddTag(Global.CATEGORY_TAG);
+			CommonUtility.AddTag("Category");
 
 			SetHierarchy();
 		}
@@ -205,7 +205,7 @@ namespace KZLib.Tet
 
 			var childCount = gameObject.transform.childCount;
 
-			s_hierarchyDataDict.Add(instanceId,new HierarchyData(treeLevel,treeGroup,childCount > 0,isLastChild,gameObject.CompareTag(Global.CATEGORY_TAG)));
+			s_hierarchyDataDict.Add(instanceId,new HierarchyData(treeLevel,treeGroup,childCount > 0,isLastChild,gameObject.CompareTag("Category")));
 
 			for(var i=0;i<childCount;i++)
 			{

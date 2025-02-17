@@ -131,9 +131,9 @@ namespace KZLib
 			return proto;
 		}
 
-		public IEnumerable<IProto> GetProtoGroup<TProto>()
+		public IEnumerable<TProto> GetProtoGroup<TProto>()
 		{
-			return GetProtoGroup(typeof(TProto));
+			return GetProtoGroup(typeof(TProto)) as IEnumerable<TProto>;
 		}
 
 		public IEnumerable<IProto> GetProtoGroup(Type protoType)

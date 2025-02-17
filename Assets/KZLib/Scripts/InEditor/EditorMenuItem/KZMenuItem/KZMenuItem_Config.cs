@@ -12,7 +12,7 @@ namespace KZLib.KZMenu
 {
 	public partial class KZMenuItem
 	{
-		[MenuItem("KZMenu/Config/Generate All Config",false,(int) MenuType.Config_All)]
+		[MenuItem("KZMenu/Config/Generate All Config",false,(int) MenuType.Config_GenerateAll)]
 		private static void OnGenerateAllConfig()
 		{
 			var templateFilePath = CommonUtility.FindTemplateText("ConfigTemplate.txt");
@@ -125,7 +125,7 @@ namespace KZLib.KZMenu
 		}
 		#endregion Network Config
 
-		#region Default
+		#region Common
 		private static void _GenerateConfigYamlFile(string fileName,IConfig config,string routePath)
 		{
 			var yamlRoute = RouteManager.In.GetOrCreateRoute(routePath);
@@ -169,7 +169,7 @@ namespace KZLib.KZMenu
 		{
 			return !File.Exists(Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,$"Custom{fileName}"));
 		}
-		#endregion Default
+		#endregion Common
 
 		[MenuItem("KZMenu/Config/Open Default Config Folder",false,(int) MenuType.Config_Open)]
 		private static void OnOpenDefaultConfigFolder()
