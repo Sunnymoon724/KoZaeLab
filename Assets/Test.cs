@@ -1,50 +1,18 @@
+using System.Collections;
+using System.Collections.Generic;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
 
-[ExecuteInEditMode]
 public class Test : MonoBehaviour
 {
-    public Animator m_animator;
-    private bool isPlaying = false;
-    private double lastTime;
-
-    void OnEnable()
+    [Button("Test")]
+    void Text()
     {
-        lastTime = EditorApplication.timeSinceStartup;
-        EditorApplication.update += EditorUpdate;
-    }
+        var folderPath = "Resources/Text/Proto";
 
-    void OnDisable()
-    {
-        EditorApplication.update -= EditorUpdate;
-    }
+        var data = Resources.LoadAll<TextAsset>(CommonUtility.RemoveHeaderInPath(folderPath,"Resources"));
 
-    void EditorUpdate()
-    {
-        if (!isPlaying || m_animator == null) return;
-
-        double currentTime = EditorApplication.timeSinceStartup;
-        float deltaTime = (float)(currentTime - lastTime);
-        lastTime = currentTime;
-
-        m_animator.Update(deltaTime);
-        SceneView.RepaintAll(); // 씬 뷰 강제 갱신
-    }
-
-    [Button("Play Animation in Edit Mode")]
-    void PlayAnimation()
-    {
-        if (m_animator == null) return;
-
-        m_animator.Play("Test", 0, 0); // 0초부터 재생
-        lastTime = EditorApplication.timeSinceStartup;
-        isPlaying = true;
-    }
-
-    [Button("Stop Animation in Edit Mode")]
-    void StopAnimation()
-    {
-        isPlaying = false;
+        LogTag.Build.I(CommonUtility.RemoveHeaderInPath(folderPath,"Resources"));
+        LogTag.Build.I(data.Length);
     }
 }
