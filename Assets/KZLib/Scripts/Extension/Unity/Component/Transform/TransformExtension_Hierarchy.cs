@@ -231,7 +231,7 @@ public static partial class TransformExtension
 		return dataArray;
 	}
 
-	public static Transform FindChild(this Transform origin,string name)
+	public static Transform FindChildRecursive(this Transform origin,string name)
 	{
 		if(!IsValid(origin))
 		{
@@ -283,16 +283,6 @@ public static partial class TransformExtension
 				queue.Enqueue(current.GetChild(i));
 			}
 		}
-	}
-
-	public static Transform GetChild(this Transform origin,string name)
-	{
-		if(!IsValid(origin))
-		{
-			return null;
-		}
-
-		return origin.Find(name);
 	}
 
 	public static Transform DestroyChildren(this Transform origin,bool isActiveOnly = false,params Transform[] exceptionArray)
