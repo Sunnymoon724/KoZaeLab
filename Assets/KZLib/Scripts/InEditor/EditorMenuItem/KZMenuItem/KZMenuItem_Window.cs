@@ -14,12 +14,6 @@ namespace KZLib.KZMenu
 			EditorWindow.GetWindow<ManualWindow>().Show();
 		}
 
-		[MenuItem("KZMenu/Window/Open Proto Window",false,(int) MenuType.Window_Proto)]
-		private static void OnOpenProtoWindow()
-		{
-			EditorWindow.GetWindow<ProtoWindow>().Show();
-		}
-
 		[MenuItem("KZMenu/Window/Open Editor Custom Window",false,(int) MenuType.Window_Etc)]
 		private static void OnOpenEditorCustomWindow()
 		{
