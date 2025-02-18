@@ -65,7 +65,7 @@ namespace KZLib
 			}
 		}
 
-		protected override void ClearAll()
+		protected override void Clear()
 		{
 			m_configDict.Clear();
 		}

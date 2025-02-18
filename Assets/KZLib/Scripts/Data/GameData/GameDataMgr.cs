@@ -44,7 +44,7 @@ namespace KZLib
 			}
 		}
 
-		protected override void ClearAll()
+		protected override void Clear()
 		{
 			foreach(var value in m_gameDataDict.Values)
 			{

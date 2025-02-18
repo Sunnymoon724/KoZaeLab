@@ -203,9 +203,9 @@ namespace KZLib
 			return text.IsEmpty() ? new MainData() : JsonConvert.DeserializeObject<MainData>(text);
 		}
 
-		protected async virtual UniTask StartTestMode(CancellationToken token) { await ProtoManager.In.TryLoadAllAsync(token); }
+		protected async virtual UniTask StartTestMode(CancellationToken token) { await ProtoManager.In.TryLoadAsync(token); }
 #endif
-		protected async virtual UniTask StartNormalMode(CancellationToken token) { await ProtoManager.In.TryLoadAllAsync(token); }
+		protected async virtual UniTask StartNormalMode(CancellationToken token) { await ProtoManager.In.TryLoadAsync(token); }
 
 		protected virtual void InitializeResolution(StringBuilder stringBuilder)
 		{

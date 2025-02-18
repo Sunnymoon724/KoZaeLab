@@ -20,14 +20,14 @@ namespace KZLib
 		// Type / MetaId / Data
 		private readonly Dictionary<Type,Dictionary<int,IProto>> m_protoDict = new();
 
-		protected override void ClearAll()
+		protected override void Clear()
 		{
 			m_protoDict.Clear();
 
 			m_isLoaded = false;
 		}
 
-		public async UniTask<bool> TryLoadAllAsync(CancellationToken token)
+		public async UniTask<bool> TryLoadAsync(CancellationToken token)
 		{
 			if(m_isLoaded)
 			{
@@ -241,12 +241,12 @@ namespace KZLib
 #if UNITY_EDITOR
 		public void Reload()
 		{
-			ClearAll();
+			Clear();
 
-			Load_Editor();
+			LoadInEditor();
 		}
 
-		public void Load_Editor()
+		public void LoadInEditor()
 		{
 			if(m_isLoaded)
 			{
