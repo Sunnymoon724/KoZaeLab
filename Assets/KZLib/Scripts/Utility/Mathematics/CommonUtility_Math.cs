@@ -93,6 +93,11 @@ public static partial class CommonUtility
 	/// </summary>
 	public static float[] MiddleAlignment(int length)
 	{
+		if(length == 1)
+		{
+			return new float[1] { 0.0f };
+		}
+
 		var pivotArray = new float[length];
 		var pivot = length/2.0f;
 
@@ -122,7 +127,7 @@ public static partial class CommonUtility
 		return pivotArray;
 	}
 
-	public static void SetAlignmentGameObjectList(List<GameObject> objectList,int? countX,int? countY,float gapX,float gapY)
+	public static void SetAlignmentGameObjectList(List<GameObject> objectList,int countX,int countZ,float gapX,float gapZ,float positionY = 0.0f)
 	{
 		if(objectList.IsNullOrEmpty())
 		{
@@ -131,15 +136,25 @@ public static partial class CommonUtility
 			return;
 		}
 
-		var widthArray  = countX.HasValue ? MiddleAlignment(countX.Value) : null;
-		var heightArray = countY.HasValue ? MiddleAlignment(Mathf.CeilToInt(objectList.Count/(float) countY.Value)) : null;
+		if(countX < 1 || countZ < 1)
+		{
+			LogTag.System.E($"{(countX < 1 ? "countX" : "countZ")} can not be less than 1");
+
+			return;
+		}
+
+
+		var xArray  = MiddleAlignment(countX);
+
+		var zSize = Mathf.Max(1,Mathf.CeilToInt(objectList.Count/(float)countZ));
+		var zArray = MiddleAlignment(zSize);
 
 		for(var i=0;i<objectList.Count;i++)
 		{
-			var width	= countX.HasValue	? widthArray[i%countX.Value]*gapX	: objectList[i].transform.position.x;
-			var height	= countY.HasValue	? heightArray[i/countY.Value]*gapY	: objectList[i].transform.position.z;
+			var positionX = xArray[i%countX]*gapX;
+			var positionZ = zArray[i%zSize]*gapZ;
 
-			objectList[i].transform.position = new Vector3(width,0.0f,height);
+			objectList[i].transform.position = new Vector3(positionX,positionY,positionZ);
 		}
 	}
 	#endregion Alignment
