@@ -3,7 +3,6 @@ using Cysharp.Threading.Tasks;
 using System.Threading;
 using System;
 
-
 #if UNITY_EDITOR
 
 using UnityEditor.Animations;
@@ -35,14 +34,14 @@ public static class AnimatorExtension
 	/// <summary>
 	/// Set the anim to a specific frame ( speed 0 to freeze ).
 	/// </summary>
-	public static void SetAnimationStopAtFrame(this Animator animator,string animationName,float normalizedTime,int layerIndex = 0,float _speed = 1.0f)
+	public static void SetAnimationStopAtFrame(this Animator animator,string animationName,float normalizedTime,int layerIndex = 0,float speed = 1.0f)
 	{
 		if(!IsValid(animator))
 		{
 			return;
 		}
 
-		SetAnimationStopAtFrame(animator,Animator.StringToHash(animationName),normalizedTime,layerIndex,_speed);
+		SetAnimationStopAtFrame(animator,Animator.StringToHash(animationName),normalizedTime,layerIndex,speed);
 	}
 
 	/// <summary>
@@ -154,7 +153,9 @@ public static class AnimatorExtension
 			return false;
 		}
 
-		return animator.GetCurrentAnimatorStateInfo(layerIndex).shortNameHash == animationHashName && animator.GetCurrentAnimatorStateInfo(layerIndex).normalizedTime >= 1.0f;
+		var stateInfo = animator.GetCurrentAnimatorStateInfo(layerIndex);
+
+		return stateInfo.shortNameHash == animationHashName && stateInfo.normalizedTime >= 0.99f;
 	}
 
 	public static async UniTask WaitForAnimationStartAsync(this Animator animator,string animationName,int layerIndex = 0,CancellationToken cancellationToken = default)
@@ -194,7 +195,9 @@ public static class AnimatorExtension
 			return false;
 		}
 
-		return animator.GetCurrentAnimatorStateInfo(layerIndex).shortNameHash == animationHashName && animator.GetCurrentAnimatorStateInfo(layerIndex).normalizedTime <= 0.0f;
+		var stateInfo = animator.GetCurrentAnimatorStateInfo(layerIndex);
+
+		return stateInfo.shortNameHash == animationHashName && stateInfo.normalizedTime <= 0.0f;
 	}
 
 	public static float FindAnimationClipLength(this Animator animator,string clipName)
