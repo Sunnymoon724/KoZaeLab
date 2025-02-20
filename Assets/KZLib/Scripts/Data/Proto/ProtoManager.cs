@@ -131,9 +131,12 @@ namespace KZLib
 			return proto;
 		}
 
-		public IEnumerable<TProto> GetProtoGroup<TProto>()
+		public IEnumerable<TProto> GetProtoGroup<TProto>() where TProto : class,IProto
 		{
-			return GetProtoGroup(typeof(TProto)) as IEnumerable<TProto>;
+			foreach(var proto in GetProtoGroup(typeof(TProto)))
+			{
+				yield return proto as TProto;
+			}
 		}
 
 		public IEnumerable<IProto> GetProtoGroup(Type protoType)
@@ -149,9 +152,9 @@ namespace KZLib
 
 		public IEnumerable<Type> GetProtoTypeGroup()
 		{
-			foreach(var type in m_protoDict.Keys)
+			foreach(var protoType in m_protoDict.Keys)
 			{
-				yield return type;
+				yield return protoType;
 			}
 		}
 
