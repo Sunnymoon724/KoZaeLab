@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ExcelDataReader.Log;
 using UnityEngine;
 
 public static partial class CommonUtility
@@ -93,23 +94,30 @@ public static partial class CommonUtility
 	/// </summary>
 	public static float[] MiddleAlignment(int length)
 	{
+		if(length <= 0)
+		{
+			LogTag.System.E($"{length} can not be less than 1");
+
+			return null;
+		}
+
 		if(length == 1)
 		{
 			return new float[1] { 0.0f };
 		}
 
 		var pivotArray = new float[length];
-		var pivot = length/2.0f;
+		var pivot = length/2;
 
 		//? odd
 		if(length%2 == 1)
 		{
-			pivotArray[(int)pivot] = 0.0f;
+			pivotArray[pivot] = 0.0f;
 
-			for(var i=0;i<length/2;i++)
+			for(var i=0;i<pivot;i++)
 			{
-				pivotArray[(int)pivot-(i+1)] = -(i+1);
-				pivotArray[(int)pivot+(i+1)] = +(i+1);
+				pivotArray[pivot-i-1] = -(i+1);
+				pivotArray[pivot+i+1] = +(i+1);
 			}
 		}
 		//? even
@@ -117,10 +125,10 @@ public static partial class CommonUtility
 		{
 			var divide = 0.5f;
 
-			for(var i=0;i<length/2;i++)
+			for(var i=0;i<pivot;i++)
 			{
-				pivotArray[(int)pivot-(i+1)] = -(2*i+1)*divide;
-				pivotArray[(int)pivot+(i+0)] = +(2*i+1)*divide;
+				pivotArray[pivot-i-1] = -(i+1)*divide;
+				pivotArray[pivot+i+0] = +(i+1)*divide;
 			}
 		}
 
@@ -154,7 +162,7 @@ public static partial class CommonUtility
 			var positionX = xArray[i%countX]*gapX;
 			var positionZ = zArray[i%zSize]*gapZ;
 
-			objectList[i].transform.position = new Vector3(positionX,positionY,positionZ);
+			objectList[i].transform.localPosition = new Vector3(positionX,positionY,positionZ);
 		}
 	}
 	#endregion Alignment
