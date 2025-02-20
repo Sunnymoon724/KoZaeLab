@@ -127,8 +127,8 @@ public static partial class CommonUtility
 
 			for(var i=0;i<pivot;i++)
 			{
-				pivotArray[pivot-i-1] = -(i+1)*divide;
-				pivotArray[pivot+i+0] = +(i+1)*divide;
+				pivotArray[pivot-i-1] = -(i+1)*(divide/pivot);
+				pivotArray[pivot+i+0] = +(i+1)*(divide/pivot);
 			}
 		}
 
