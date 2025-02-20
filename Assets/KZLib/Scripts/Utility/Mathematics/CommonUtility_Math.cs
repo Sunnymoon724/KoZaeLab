@@ -5,28 +5,27 @@ using UnityEngine;
 public static partial class CommonUtility
 {
 	#region Distance
-	public static float GetTotalDistance(IEnumerable<Vector3> _posGroup)
+	public static float GetTotalDistance(IEnumerable<Vector3> positionGroup)
 	{
-		var distance = 0.0f;
-		var prevPos = Vector3.zero;
-		var isFirst = true;
+		using var enumerator = positionGroup.GetEnumerator();
 
-		foreach(var pos in _posGroup)
+		if(!enumerator.MoveNext())
 		{
-			if(!isFirst)
-			{
-				distance += Vector3.Distance(prevPos,pos);
-			}
-			else
-			{
-				isFirst = false;
-			}
+			return 0.0f;
+		}
 
-			prevPos = pos;
+		var distance = 0.0f;
+		var prevPosition = enumerator.Current;
+
+		while(enumerator.MoveNext())
+		{
+			distance += Vector3.Distance(prevPosition,enumerator.Current);
+			prevPosition = enumerator.Current;
 		}
 
 		return distance;
 	}
+
 	#endregion Distance
 
 	#region Clamp
@@ -95,15 +94,17 @@ public static partial class CommonUtility
 	public static float[] MiddleAlignment(int length)
 	{
 		var pivotArray = new float[length];
-		var pivot = pivotArray.Length/2.0f;
+		var pivot = length/2.0f;
 
 		//? odd
 		if(length%2 == 1)
 		{
-			for(var i=0;i<(int)pivot;i++)
+			pivotArray[(int)pivot] = 0.0f;
+
+			for(var i=0;i<length/2;i++)
 			{
-				pivotArray[(int) Mathf.Floor(pivot)-(i+1)]=-(i+1);
-				pivotArray[(int) Mathf.Ceil(pivot)+(i+0)]=+(i+1);
+				pivotArray[(int)pivot-(i+1)] = -(i+1);
+				pivotArray[(int)pivot+(i+1)] = +(i+1);
 			}
 		}
 		//? even
@@ -111,17 +112,17 @@ public static partial class CommonUtility
 		{
 			var divide = 0.5f;
 
-			for(var i=0;i<(int) pivot;i++)
+			for(var i=0;i<length/2;i++)
 			{
-				pivotArray[(int) Mathf.Floor(pivot)-(i+1)]=-(2*i+1)*divide;
-				pivotArray[(int) Mathf.Ceil(pivot)+(i+0)]=+(2*i+1)*divide;
+				pivotArray[(int)pivot-(i+1)] = -(2*i+1)*divide;
+				pivotArray[(int)pivot+(i+0)] = +(2*i+1)*divide;
 			}
 		}
 
 		return pivotArray;
 	}
 
-	public static void SetAlignmentGameObjectList(List<GameObject> objectList,int xMax,int hMax,float xGap,float yGap)
+	public static void SetAlignmentGameObjectList(List<GameObject> objectList,int? countX,int? countY,float gapX,float gapY)
 	{
 		if(objectList.IsNullOrEmpty())
 		{
@@ -130,15 +131,13 @@ public static partial class CommonUtility
 			return;
 		}
 
-		var widthAble   = xMax != -1;
-		var heightAble  = xMax != -1;
-		var widthArray  = widthAble ? MiddleAlignment(xMax) : null;
-		var heightArray = heightAble ? MiddleAlignment(Mathf.CeilToInt(objectList.Count/(float) hMax)) : null;
+		var widthArray  = countX.HasValue ? MiddleAlignment(countX.Value) : null;
+		var heightArray = countY.HasValue ? MiddleAlignment(Mathf.CeilToInt(objectList.Count/(float) countY.Value)) : null;
 
 		for(var i=0;i<objectList.Count;i++)
 		{
-			var width   = widthAble     ? widthArray[i%xMax]*xGap     : objectList[i].transform.position.x;
-			var height  = heightAble    ? heightArray[i/hMax]*yGap    : objectList[i].transform.position.z;
+			var width	= countX.HasValue	? widthArray[i%countX.Value]*gapX	: objectList[i].transform.position.x;
+			var height	= countY.HasValue	? heightArray[i/countY.Value]*gapY	: objectList[i].transform.position.z;
 
 			objectList[i].transform.position = new Vector3(width,0.0f,height);
 		}
