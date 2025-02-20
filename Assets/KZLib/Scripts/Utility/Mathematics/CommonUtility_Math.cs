@@ -106,33 +106,15 @@ public static partial class CommonUtility
 			return new float[1] { 0.0f };
 		}
 
-		var pivotArray = new float[length];
-		var pivot = length/2;
+		var resultArray = new float[length];
+        var offset = (length-1)/2.0f;
 
-		//? odd
-		if(length%2 == 1)
-		{
-			pivotArray[pivot] = 0.0f;
+        for(var i=0;i<length;i++)
+        {
+            resultArray[i] = i-offset;
+        }
 
-			for(var i=0;i<pivot;i++)
-			{
-				pivotArray[pivot-i-1] = -(i+1);
-				pivotArray[pivot+i+1] = +(i+1);
-			}
-		}
-		//? even
-		else
-		{
-			var divide = 0.5f;
-
-			for(var i=0;i<pivot;i++)
-			{
-				pivotArray[pivot-i-1] = -(i+1)*(divide/pivot);
-				pivotArray[pivot+i+0] = +(i+1)*(divide/pivot);
-			}
-		}
-
-		return pivotArray;
+        return resultArray;
 	}
 
 	public static void SetAlignmentGameObjectList(List<GameObject> objectList,int countX,int countZ,float gapX,float gapZ,float positionY = 0.0f)
