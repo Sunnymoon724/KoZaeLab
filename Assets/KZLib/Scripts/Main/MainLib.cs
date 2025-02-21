@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 using KZLib.KZAttribute;
 using Cysharp.Threading.Tasks;
 using System.Threading;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 
 #if UNITY_EDITOR
 
@@ -301,5 +304,28 @@ namespace KZLib
 			}
 #endif
 		}
+
+
+#if UNITY_EDITOR
+		private static readonly List<string> s_sceneNameArray = new();
+
+		protected static IEnumerable SceneNameArray
+		{
+			get
+			{
+				if(s_sceneNameArray.IsNullOrEmpty())
+				{
+					var sceneArray = EditorBuildSettings.scenes;
+
+					foreach(var scene in sceneArray)
+					{
+						s_sceneNameArray.Add(Path.GetFileNameWithoutExtension(scene.path));
+					}
+				}
+
+				return s_sceneNameArray;
+			}
+		}
+#endif
 	}
 }
