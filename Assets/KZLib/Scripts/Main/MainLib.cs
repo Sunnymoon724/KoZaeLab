@@ -316,7 +316,14 @@ namespace KZLib
 				{
 					foreach(var scene in EditorBuildSettings.scenes)
 					{
-						s_sceneNameArray.Add(Path.GetFileNameWithoutExtension(scene.path));
+						var sceneName = Path.GetFileNameWithoutExtension(scene.path);
+
+						if(sceneName == "MainScene")
+						{
+							continue;
+						}
+
+						s_sceneNameArray.Add(sceneName);
 					}
 				}
 
