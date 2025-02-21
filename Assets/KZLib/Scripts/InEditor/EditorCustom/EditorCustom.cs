@@ -92,7 +92,7 @@ namespace KZLib.Tet
 
 			propertyInfo.SetValue(s_customData,value);
 
-			SaveCustomData(key);
+			SaveCustomData();
 		}
 
 		public static TValue GetCustomData<TValue>(string key)
@@ -118,17 +118,17 @@ namespace KZLib.Tet
 			return propertyInfo != null;
 		}
 
-		private static void SaveCustomData(string key)
+		private static void SaveCustomData()
 		{
 			try
 			{
-				EditorPrefs.SetString(key,JsonConvert.SerializeObject(s_customData));
+				EditorPrefs.SetString(c_editor_text,JsonConvert.SerializeObject(s_customData));
 
 				SetHierarchy();
 			}
 			catch(Exception exception)
 			{
-				LogTag.System.E($"Set editorPrefs failed. [{key}/{s_customData} - {exception.Message}]");
+				LogTag.System.E($"Set editorPrefs failed. [{c_editor_text}/{s_customData} - {exception.Message}]");
 			}
 		}
 

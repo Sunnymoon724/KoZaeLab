@@ -121,12 +121,13 @@ namespace KZLib.KZMenu
 
 			if(!canvas)
 			{
+				var uiName = "UI";
 				var panel = new GameObject("Canvas");
 
 				panel.AddComponent<Canvas>();
 				panel.AddComponent<CanvasScaler>();
 				panel.AddComponent<GraphicRaycaster>();
-				panel.layer = "UI".FindLayerByName(true);
+				panel.layer = uiName.FindLayerByName(true);
 
 				canvas = panel.GetComponent<Canvas>();
 				canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -148,9 +149,9 @@ namespace KZLib.KZMenu
 			Undo.IncrementCurrentGroup();
 
 			var group = Undo.GetCurrentGroup();
-			var line = new GameObject("----------------------------") { tag = "Category" };
+			var line = new GameObject("     ") { tag = "Category" };
 
-			Undo.RegisterCreatedObjectUndo(line,"Create CategoryLine");
+			Undo.RegisterCreatedObjectUndo(line,"Create Category Line");
 
 			var selected = Selection.activeGameObject;
 
