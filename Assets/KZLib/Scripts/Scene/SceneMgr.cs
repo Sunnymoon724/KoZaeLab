@@ -6,6 +6,7 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using KZLib.KZUtility;
 using TransitionPanel;
+using System.Reflection;
 
 #if UNITY_EDITOR
 
@@ -166,6 +167,8 @@ namespace KZLib
 			onUpdateProgress?.Invoke(0.0f);
 
 			LogTag.System.I($"{sceneName} create start.");
+
+			LogTag.Test.I(Assembly.GetExecutingAssembly());
 
 			var sceneType = Type.GetType(sceneName) ?? throw new NullReferenceException($"{sceneName} is not exists.");
 			var sceneBiding = (SceneBinding) Activator.CreateInstance(sceneType) ?? throw new NullReferenceException($"{sceneName} create failed.");
