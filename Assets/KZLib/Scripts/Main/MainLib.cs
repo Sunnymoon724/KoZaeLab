@@ -119,7 +119,7 @@ namespace KZLib
 			}
 		}
 
-		private bool IsTestMode => GamePlayType == PlayType.Test;
+		protected bool IsTestMode => GamePlayType == PlayType.Test;
 
 		protected CancellationTokenSource m_tokenSource = null;
 
