@@ -4,7 +4,7 @@ using KZLib.KZUtility;
 
 namespace KZLib
 {
-	public partial class UIMgr : LoadSingletonMB<UIMgr>
+	public partial class UIManager : LoadSingletonMB<UIManager>
 	{
 		private static readonly UITag[] s_library_ui_array = new UITag[] { UITag.TransitionPanelUI, UITag.HudPanelUI, UITag.VideoPanelUI };
 

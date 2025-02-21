@@ -29,7 +29,7 @@ MonoBehaviour:
     m_disableValue: 0
   - m_name: DisableCameraFarHalf
     m_flag: 8
-    m_enableValue: 1.0f
-    m_disableValue: 0.5f
+    m_enableValue: 1.0
+    m_disableValue: 0.5
   m_highPresetList: []
   m_highestPresetList: []

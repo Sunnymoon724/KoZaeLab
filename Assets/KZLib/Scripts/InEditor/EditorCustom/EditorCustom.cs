@@ -13,11 +13,11 @@ namespace KZLib.Tet
 	[Serializable]
 	public static class EditorCustom
 	{
-		private const float c_head_space = 37.0f;
-		private const float c_icon_space = 7.0f;
-		private const int c_icon_size = 10;
+		private const float c_headSpace = 37.0f;
+		private const float c_iconSpace = 7.0f;
+		private const int c_iconSize = 10;
 
-		private const string c_editor_text = "[Editor] CustomData";
+		private const string c_editorText = "[Editor] CustomData";
 
 		[Serializable]
 		private class CustomData
@@ -78,7 +78,7 @@ namespace KZLib.Tet
 
 		private static TData LoadData<TData>() where TData : new()
 		{
-			var text = EditorPrefs.GetString(c_editor_text,"");
+			var text = EditorPrefs.GetString(c_editorText,"");
 
 			return text.IsEmpty() ? new TData() : JsonConvert.DeserializeObject<TData>(text);
 		}
@@ -122,13 +122,13 @@ namespace KZLib.Tet
 		{
 			try
 			{
-				EditorPrefs.SetString(c_editor_text,JsonConvert.SerializeObject(s_customData));
+				EditorPrefs.SetString(c_editorText,JsonConvert.SerializeObject(s_customData));
 
 				SetHierarchy();
 			}
 			catch(Exception exception)
 			{
-				LogTag.System.E($"Set editorPrefs failed. [{c_editor_text}/{s_customData} - {exception.Message}]");
+				LogTag.System.E($"Set editorPrefs failed. [{c_editorText}/{s_customData} - {exception.Message}]");
 			}
 		}
 
@@ -281,14 +281,14 @@ namespace KZLib.Tet
 
 		private static float GetTreeStartX(Rect rect,int treeLevel)
 		{
-			return c_head_space+(rect.height-2.0f)*treeLevel;
+			return c_headSpace+(rect.height-2.0f)*treeLevel;
 		}
 		#endregion Draw Branch Tree
 
 		#region Draw Category
 		private static void DrawCategory(HierarchyData hierarchyData,Rect rect,int instanceId)
 		{
-			var categoryRect = new Rect(c_head_space,rect.y,rect.width+25.0f+hierarchyData.TreeLevel*14.0f,rect.height);
+			var categoryRect = new Rect(c_headSpace,rect.y,rect.width+25.0f+hierarchyData.TreeLevel*14.0f,rect.height);
 			var currentObject = EditorUtility.InstanceIDToObject(instanceId) as GameObject;
 			var categoryColor = Selection.activeGameObject == currentObject ? s_customData.CategoryColor.InvertColor() : s_customData.CategoryColor;
 
@@ -328,7 +328,7 @@ namespace KZLib.Tet
 				GUI.color = cachedColor.MaskAlpha(0.5f);
 			}
 
-			var iconRect = new Rect(rect.x+c_icon_space,rect.y+c_icon_space,c_icon_size,c_icon_size);
+			var iconRect = new Rect(rect.x+c_iconSpace,rect.y+c_iconSpace,c_iconSize,c_iconSize);
 
 			EditorGUI.LabelField(iconRect,content);
 
@@ -370,7 +370,7 @@ namespace KZLib.Tet
 		{
 			if(CommonUtility.DisplayCheck("Hierarchy Custom Reset","Hierarchy Custom Reset?"))
 			{
-				EditorPrefs.DeleteKey(c_editor_text);
+				EditorPrefs.DeleteKey(c_editorText);
 
 				s_customData = null;
 

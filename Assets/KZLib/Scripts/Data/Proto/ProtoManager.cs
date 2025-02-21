@@ -12,8 +12,8 @@ namespace KZLib
 {
 	public class ProtoManager : DataSingleton<ProtoManager>
 	{
-		private const double c_frame_time = 1.0/30.0d; // 30 fps (0.0333s)
-		private const int c_delay_time = 1; // 1ms
+		private const double c_frameTime = 1.0/30.0d; // 30 fps (0.0333s)
+		private const int c_delayTime = 1; // 1ms
 
 		private bool m_isLoaded = false;
 
@@ -66,11 +66,11 @@ namespace KZLib
 
 				accumulatedTime += stopwatch.Elapsed.TotalSeconds;
 
-				if(accumulatedTime >= c_frame_time)
+				if(accumulatedTime >= c_frameTime)
 				{
 					accumulatedTime = 0.0d;
 
-					await UniTask.Delay(c_delay_time,cancellationToken : token);
+					await UniTask.Delay(c_delayTime,cancellationToken : token);
 				}
 			}
 

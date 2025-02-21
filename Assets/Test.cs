@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -8,11 +9,16 @@ public class Test : MonoBehaviour
     [Button("Test")]
     void Text()
     {
-        var folderPath = "Resources/Text/Proto";
+        var assembly = Assembly.GetAssembly(typeof(MonoBehaviour));
 
-        var data = Resources.LoadAll<TextAsset>(CommonUtility.RemoveHeaderInPath(folderPath,"Resources"));
+        LogTag.Build.I($"{assembly.FullName}");
 
-        LogTag.Build.I(CommonUtility.RemoveHeaderInPath(folderPath,"Resources"));
-        LogTag.Build.I(data.Length);
+        var assembly2 = Assembly.GetExecutingAssembly();
+
+        LogTag.Build.I($"{assembly2.FullName}");
+
+        var assembly3 =  Assembly.Load("Assembly-CSharp");
+
+        LogTag.Build.I($"{assembly3.FullName}");
     }
 }

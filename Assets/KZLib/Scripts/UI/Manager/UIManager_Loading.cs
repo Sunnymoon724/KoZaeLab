@@ -5,7 +5,7 @@ using TransitionPanel;
 
 namespace KZLib
 {
-	public partial class UIMgr : LoadSingletonMB<UIMgr>
+	public partial class UIManager : LoadSingletonMB<UIManager>
 	{
 		public async UniTask PlayLoadingAsync(Func<UniTask> onPlayTask)
 		{

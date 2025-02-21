@@ -5,7 +5,7 @@ using VideoPanel;
 
 namespace KZLib
 {
-	public partial class UIMgr : LoadSingletonMB<UIMgr>
+	public partial class UIManager : LoadSingletonMB<UIManager>
 	{
 		/// <summary>
 		/// fade out -> prepare video -> fade in -> play video

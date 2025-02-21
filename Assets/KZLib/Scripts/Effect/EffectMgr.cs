@@ -10,7 +10,7 @@ namespace KZLib
 {
 	public class EffectMgr : AutoSingletonMB<EffectMgr>
 	{
-		private const float c_pool_interval = 30.0f;	// 30s
+		private const float c_poolInterval = 30.0f;	// 30s
 
 		private readonly Dictionary<string,List<PoolData>> m_poolDataDict = new();
 
@@ -32,7 +32,7 @@ namespace KZLib
 		{
 			while(!m_tokenSource.Token.IsCancellationRequested)
 			{
-				await UniTask.Delay(TimeSpan.FromSeconds(c_pool_interval),true);
+				await UniTask.Delay(TimeSpan.FromSeconds(c_poolInterval),true);
 
 				foreach(var key in new List<string>(m_poolDataDict.Keys))
 				{
@@ -183,13 +183,13 @@ namespace KZLib
 
 		private record PoolData
 		{
-			private const float c_delete_time = 60.0f;	// 60s
+			private const float c_deleteTime = 60.0f;	// 60s
 			public readonly EffectClip m_effectClip = null;
 			private readonly long m_duration = 0L;
 
 			public PoolData(EffectClip effectClip)
 			{
-				m_duration = DateTime.Now.AddSeconds(c_delete_time).Ticks;
+				m_duration = DateTime.Now.AddSeconds(c_deleteTime).Ticks;
 				m_effectClip = effectClip;
 			}
 

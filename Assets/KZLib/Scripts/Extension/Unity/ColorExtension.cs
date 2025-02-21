@@ -5,7 +5,7 @@ public static class ColorExtension
 {
 	private static readonly Dictionary<Color,string> s_colorDict = new();
 
-	private const float c_brightness_default = 0.0625f;
+	private const float c_defaultBrightness = 0.0625f;
 
 	/// <summary>
 	/// Color to hexCode
@@ -56,8 +56,8 @@ public static class ColorExtension
 		return result;
 	}
 
-	public static Color Lighter(this Color color,float value = c_brightness_default) => color.Brightness(+value);
-	public static Color Darker(this Color color,float value = c_brightness_default) => color.Brightness(-value);
+	public static Color Lighter(this Color color,float value = c_defaultBrightness) => color.Brightness(+value);
+	public static Color Darker(this Color color,float value = c_defaultBrightness) => color.Brightness(-value);
 
 	public static Color Brightness(this Color color,float value) => new(color.r+value,color.g+value,color.b+value,color.a);
 

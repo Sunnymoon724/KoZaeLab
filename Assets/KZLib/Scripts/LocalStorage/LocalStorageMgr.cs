@@ -12,7 +12,7 @@ namespace KZLib
 	/// </summary>
 	public class LocalStorageMgr : Singleton<LocalStorageMgr>
 	{
-		private const string c_database_name = "KZLibDB.db";
+		private const string c_databaseName = "KZLibDB.db";
 
 		// Key (tableName) Value[ Key (key) Value (data) ]
 		private readonly Dictionary<string,Dictionary<string,string>> m_cacheDataDict = new();
@@ -418,13 +418,13 @@ namespace KZLib
 			get
 			{
 #if UNITY_EDITOR
-				return $"data source={Path.Combine(Global.PROJECT_PATH,c_database_name)}";
+				return $"data source={Path.Combine(Global.PROJECT_PATH,c_databaseName)}";
 #elif !UNITY_EDITOR && UNITY_ANDROID
-				return $"URI=file:{Path.Combine(UnityEngine.Application.persistentDataPath,c_database_name)}";
+				return $"URI=file:{Path.Combine(UnityEngine.Application.persistentDataPath,c_databaseName)}";
 #elif !UNITY_EDITOR && UNITY_STANDALONE
-				return $"URI=file:{Path.Combine(UnityEngine.Application.dataPath,c_database_name)}";
+				return $"URI=file:{Path.Combine(UnityEngine.Application.dataPath,c_databaseName)}";
 #else
-				return $"data source={Path.Combine(UnityEngine.Application.persistentDataPath,c_database_name)}";
+				return $"data source={Path.Combine(UnityEngine.Application.persistentDataPath,c_databaseName)}";
 #endif
 			}
 		}

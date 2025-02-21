@@ -6,7 +6,7 @@ using KZLib.KZUtility;
 
 namespace KZLib
 {
-	public partial class UIMgr : LoadSingletonMB<UIMgr>
+	public partial class UIManager : LoadSingletonMB<UIManager>
 	{
 		//? Canvas List
 		private readonly List<RepositoryUI> m_repositoryList = new();

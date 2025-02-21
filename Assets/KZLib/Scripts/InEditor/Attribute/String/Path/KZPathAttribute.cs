@@ -34,7 +34,7 @@ namespace KZLib.KZAttribute
 #if UNITY_EDITOR
 	public abstract class KZPathAttributeDrawer<TAttribute> : KZAttributeDrawer<TAttribute,string> where TAttribute : KZPathAttribute
 	{
-		private const int c_button_width = 30;
+		private const int c_buttonWidth = 30;
 
 		protected readonly List<Func<Rect,bool,Rect>> m_onClickedList = new();
 
@@ -105,7 +105,7 @@ namespace KZLib.KZAttribute
 			var cached = GUI.enabled;
 			GUI.enabled = active;
 
-			var newRect = new Rect(rect.xMax-c_button_width,rect.y,c_button_width,rect.height);
+			var newRect = new Rect(rect.xMax-c_buttonWidth,rect.y,c_buttonWidth,rect.height);
 
 			if(SirenixEditorGUI.SDFIconButton(newRect,iconType,new GUIStyle(GUI.skin.button)))
 			{
@@ -114,7 +114,7 @@ namespace KZLib.KZAttribute
 
 			GUI.enabled = cached;
 
-			return new Rect(rect.x,rect.y,rect.width-c_button_width,rect.height);
+			return new Rect(rect.x,rect.y,rect.width-c_buttonWidth,rect.height);
 		}
 
 		protected Rect DrawParentFolderOpenButton(Rect rect,bool isValid)

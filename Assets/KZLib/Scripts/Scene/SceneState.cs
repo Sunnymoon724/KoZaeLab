@@ -7,7 +7,7 @@ namespace KZLib
 	/// <summary>
 	/// Unity Scene + Initialize asset 
 	/// </summary>
-	public interface ISceneBinding<TParam>
+	public interface ISceneState<TParam>
 	{
 		UniTask InitializeAsync(Action<float> onUpdateProgress,TParam param);
 		UniTask ReleaseAsync(string previousSceneName,Action<float> onUpdateProgress);
@@ -17,45 +17,45 @@ namespace KZLib
 		UniTask PlayAsync();
 	}
 
-	public abstract class SceneBinding : ISceneBinding<SceneBinding.BindingParam>
+	public abstract class SceneState : ISceneState<SceneState.StateParam>
 	{
-		public record BindingParam();
+		public record StateParam();
 
-		private const string MAIN_SCENE = "MainScene";
+		private const string c_mainScene = "MainScene";
 
-		public abstract string SceneName { get; }
+		public string SceneName => GetType().Name;
 
-		public async UniTask InitializeAsync(Action<float> onUpdateProgress,BindingParam bindingParam)
+		public async UniTask InitializeAsync(Action<float> onUpdateProgress,StateParam param)
 		{
 			onUpdateProgress?.Invoke(0.0f);
 
-			var handle = SceneManager.LoadSceneAsync(SceneName,LoadSceneMode.Additive);
-			handle.allowSceneActivation = false;
+			var operation = SceneManager.LoadSceneAsync(SceneName,LoadSceneMode.Additive);
+			operation.allowSceneActivation = false;
 
-			while(handle.progress < 0.9f)
+			while(operation.progress < 0.9f)
 			{
-				onUpdateProgress?.Invoke(handle.progress*0.5f);
+				onUpdateProgress?.Invoke(operation.progress*0.5f);
 
 				await UniTask.Yield();
 			}
 
-			handle.allowSceneActivation = true;
+			operation.allowSceneActivation = true;
 
-			await handle;
+			await operation;
 
 			SceneManager.SetActiveScene(SceneManager.GetSceneByName(SceneName));
 
 			await InitializeInnerAsync(progress =>
 			{
 				onUpdateProgress?.Invoke(0.5f+progress*0.5f);
-			},bindingParam);
+			},param);
 
 			onUpdateProgress?.Invoke(1.0f);
 		}
 
 		public async UniTask ReleaseAsync(string previousSceneName,Action<float> onUpdateProgress)
 		{
-			var scene = SceneManager.GetSceneByName(previousSceneName.IsEmpty() ? MAIN_SCENE : previousSceneName);
+			var scene = SceneManager.GetSceneByName(previousSceneName.IsEmpty() ? c_mainScene : previousSceneName);
 
 			if(!scene.IsValid())
 			{
@@ -73,11 +73,11 @@ namespace KZLib
 				onUpdateProgress?.Invoke(progress*0.5f);
 			});
 
-			var handle = SceneManager.UnloadSceneAsync(SceneName);
+			var operation = SceneManager.UnloadSceneAsync(SceneName);
 
-			while(!handle.isDone)
+			while(!operation.isDone)
 			{
-				onUpdateProgress?.Invoke(0.5f+handle.progress*0.5f);
+				onUpdateProgress?.Invoke(0.5f+operation.progress*0.5f);
 
 				await UniTask.Yield();
 			}
@@ -85,7 +85,7 @@ namespace KZLib
 			onUpdateProgress?.Invoke(1.0f);
 		}
 
-		protected async virtual UniTask InitializeInnerAsync(Action<float> onUpdateProgress,BindingParam bindingParam) { await UniTask.Yield(); }
+		protected async virtual UniTask InitializeInnerAsync(Action<float> onUpdateProgress,StateParam param) { await UniTask.Yield(); }
 		protected async virtual UniTask ReleaseInnerAsync(Action<float> onUpdateProgress) { await UniTask.Yield(); }
 
 		public async virtual UniTask PlayAsync() { await UniTask.Yield(); }

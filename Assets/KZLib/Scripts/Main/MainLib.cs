@@ -151,12 +151,12 @@ namespace KZLib
 #if UNITY_EDITOR
 			if(gameConfig.UseHeadUpDisplay)
 			{
-				UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
+				UIManager.In.Open<HudPanelUI>(UITag.HudPanelUI);
 			}
 #else
 			if(Debug.isDebugBuild && gameConfig.UseHeadUpDisplay)
 			{
-				UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
+				UIManager.In.Open<HudPanelUI>(UITag.HudPanelUI);
 			}
 #endif
 
@@ -261,13 +261,13 @@ namespace KZLib
 #if UNITY_EDITOR
 			if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C))
 			{
-				if(UIMgr.In.IsOpened(UITag.HudPanelUI))
+				if(UIManager.In.IsOpened(UITag.HudPanelUI))
 				{
-					UIMgr.In.Close(UITag.HudPanelUI);
+					UIManager.In.Close(UITag.HudPanelUI);
 				}
 				else
 				{
-					UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
+					UIManager.In.Open<HudPanelUI>(UITag.HudPanelUI);
 				}
 			}
 
@@ -287,9 +287,9 @@ namespace KZLib
 			{
 				ScreenResolution = new(Screen.width,Screen.height);
 
-				if(UIMgr.HasInstance)
+				if(UIManager.HasInstance)
 				{
-					UIMgr.In.ChangeScreenSize(ScreenResolution);
+					UIManager.In.ChangeScreenSize(ScreenResolution);
 				}
 			}
 #else
@@ -297,9 +297,9 @@ namespace KZLib
 			{
 				ScreenResolution = new(Screen.width,Screen.height);
 
-				if(UIMgr.HasInstance)
+				if(UIManager.HasInstance)
 				{
-					UIMgr.In.ChangeScreenSize(ScreenResolution);
+					UIManager.In.ChangeScreenSize(ScreenResolution);
 				}
 			}
 #endif

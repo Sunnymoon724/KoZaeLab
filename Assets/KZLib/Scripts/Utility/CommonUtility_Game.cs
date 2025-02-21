@@ -4,7 +4,6 @@ using UnityEngine;
 using KZLib.KZUtility;
 using System.IO;
 
-
 #if UNITY_EDITOR
 
 using UnityEditor;
@@ -20,23 +19,6 @@ public static partial class CommonUtility
 		GC.Collect();
 	}
 
-	// public static string CheckMetaData(IMetaData _metaData,int _metaId)
-	// {
-	// 	if(_metaData == null || !_metaData.IsExist)
-	// 	{
-	// 		//? Not exist
-	// 		return $"<color={Global.WRONG_HEX_COLOR}>{_metaId}</color>";
-	// 	}
-
-	// 	if(!CheckVersion(_metaData.Version))
-	// 	{
-	// 		//? Version error
-	// 		return $"<color={Global.DISABLE_HEX_COLOR}>{_metaId}</color>";
-	// 	}
-
-	// 	return $"{_metaId}";
-	// }
-
 	public static void LockInput()
 	{
 		_SetInput(true);
@@ -51,15 +33,15 @@ public static partial class CommonUtility
 	{
 		// TODO Check Input
 
-		if(UIMgr.HasInstance)
+		if(UIManager.HasInstance)
 		{
 			if(isLock)
 			{
-				UIMgr.In.BlockInput();
+				UIManager.In.BlockInput();
 			}
 			else
 			{
-				UIMgr.In.AllowInput();
+				UIManager.In.AllowInput();
 			}
 		}
 	}
@@ -139,8 +121,8 @@ public static partial class CommonUtility
 	public static void ReleaseManager()
 	{
 		//? Release SingletonMB
-		ReleaseSingletonMB<SceneMgr>();
-		ReleaseSingletonMB<UIMgr>();
+		ReleaseSingletonMB<SceneStateManager>();
+		ReleaseSingletonMB<UIManager>();
 		ReleaseSingletonMB<CameraManager>();
 
 		//? Release Singleton

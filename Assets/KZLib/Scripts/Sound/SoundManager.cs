@@ -23,9 +23,9 @@ namespace KZLib
 			//? Use CameraManager or Camera main
 			m_bgmSource = CameraManager.HasInstance ? CameraManager.In.gameObject.GetComponentInChildren<AudioSource>() : Camera.main.gameObject.GetOrAddComponent<AudioSource>();
 
-			if(UIMgr.HasInstance)
+			if(UIManager.HasInstance)
 			{
-				m_uiSource = UIMgr.In.gameObject.GetComponentInChildren<AudioSource>();
+				m_uiSource = UIManager.In.gameObject.GetComponentInChildren<AudioSource>();
 			}
 
 			var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();

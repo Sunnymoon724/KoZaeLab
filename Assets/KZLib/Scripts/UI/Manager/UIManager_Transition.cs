@@ -5,7 +5,7 @@ using TransitionPanel;
 
 namespace KZLib
 {
-	public partial class UIMgr : LoadSingletonMB<UIMgr>
+	public partial class UIManager : LoadSingletonMB<UIManager>
 	{
 		public void PlayTransitionOutIn(TransitionData transitionData,Func<UniTask> onPlayTask)
 		{

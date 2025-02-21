@@ -87,7 +87,7 @@ public class VideoPanelUI : WindowUI2D
 
 		if(videoData.IsExistSubtitle)
 		{
-			var subtitlePanel = UIMgr.In.Open<SubtitlePanelUI>(UITag.SubtitlePanelUI,new SubtitlePanelUI.SubtitleParam(videoData.SubtitlePath));
+			var subtitlePanel = UIManager.In.Open<SubtitlePanelUI>(UITag.SubtitlePanelUI,new SubtitlePanelUI.SubtitleParam(videoData.SubtitlePath));
 
 			AddLink(subtitlePanel);
 
@@ -97,7 +97,7 @@ public class VideoPanelUI : WindowUI2D
 
 		if(videoData.CanSkip)
 		{
-			var skipPanel = UIMgr.In.Open<SkipPanelUI>(UITag.SkipPanelUI,new SkipPanelUI.SkipParam(Stop));
+			var skipPanel = UIManager.In.Open<SkipPanelUI>(UITag.SkipPanelUI,new SkipPanelUI.SkipParam(Stop));
 
 			AddLink(skipPanel);
 		}

@@ -6,7 +6,6 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using KZLib.KZUtility;
 using TransitionPanel;
-using System.Reflection;
 
 #if UNITY_EDITOR
 
@@ -16,14 +15,14 @@ using UnityEditor;
 
 namespace KZLib
 {
-	public class SceneMgr : AutoSingletonMB<SceneMgr>
+	public class SceneStateManager : AutoSingletonMB<SceneStateManager>
 	{
-		private const float c_unload_min_time = 300.0f;
+		private const float c_unloadMinTime = 300.0f;
 
-		private bool m_sceneChanging = false;
-		public bool IsSceneChanging => m_sceneChanging;
+		private bool m_isSceneChanging = false;
+		public bool IsSceneChanging => m_isSceneChanging;
 
-		[HorizontalGroup("Name",Order = 0),ShowInInspector,KZRichText,LabelText("Current Scene Name")]
+		[HorizontalGroup("Name",Order = 0),ShowInInspector,KZRichText]
 		protected string CurrentSceneName
 		{
 			get
@@ -34,8 +33,8 @@ namespace KZLib
 			}
 		}
 
-		[HorizontalGroup("Stack",Order = 1),SerializeField,DisplayAsString,LabelText("Scene Stack"),ListDrawerSettings(ShowFoldout = false,IsReadOnly = true)]
-		private Stack<SceneBinding> m_sceneStack = new();
+		[HorizontalGroup("Stack",Order = 1),SerializeField,DisplayAsString,ListDrawerSettings(ShowFoldout = false,IsReadOnly = true)]
+		private Stack<SceneState> m_sceneStateStack = new();
 
 		private float m_lastUnloadTime = 0.0f;
 
@@ -51,7 +50,7 @@ namespace KZLib
 			CommonUtility.ClearUnloadedAssetMemory();
 		}
 
-		public void ReloadScene(TransitionData transitionData,bool isLoading,SceneBinding.BindingParam bindingParam = null)
+		public void ReloadScene(TransitionData transitionData,bool isLoading,SceneState.StateParam param = null)
 		{
 			var current = CurrentScene;
 
@@ -60,31 +59,31 @@ namespace KZLib
 				return;
 			}
 
-			ChangeScene(current.SceneName,transitionData,isLoading,bindingParam);
+			ChangeScene(current.SceneName,transitionData,isLoading,param);
 		}
 
-		public void ChangeScene(string sceneName,TransitionData transitionData,bool isLoading,SceneBinding.BindingParam bindingParam = null)
+		public void ChangeScene(string sceneName,TransitionData transitionData,bool isLoading,SceneState.StateParam param = null)
 		{
-			ChangeSceneAsync(sceneName,transitionData,isLoading,bindingParam).Forget();
+			ChangeSceneAsync(sceneName,transitionData,isLoading,param).Forget();
 		}
 
-		public async UniTask ChangeSceneAsync(string sceneName,TransitionData transitionData,bool isLoading,SceneBinding.BindingParam bindingParam = null)
+		public async UniTask ChangeSceneAsync(string sceneName,TransitionData transitionData,bool isLoading,SceneState.StateParam param = null)
 		{
-			await PlaySceneAsync(transitionData,isLoading,RemoveSceneAsync,async (progress)=> { await AddSceneAsync(sceneName,progress,bindingParam); });
+			await PlaySceneAsync(transitionData,isLoading,RemoveSceneAsync,async (progress)=> { await AddSceneAsync(sceneName,progress,param); });
 
 			var current = CurrentScene;
 
 			await current.PlayAsync();
 		}
 
-		public void AddScene(string sceneName,TransitionData transitionData,bool isLoading,SceneBinding.BindingParam bindingParam = null)
+		public void AddScene(string sceneName,TransitionData transitionData,bool isLoading,SceneState.StateParam param = null)
 		{
-			AddSceneAsync(sceneName,transitionData,isLoading,bindingParam).Forget();
+			AddSceneAsync(sceneName,transitionData,isLoading,param).Forget();
 		}
 
-		public async UniTask AddSceneAsync(string sceneName,TransitionData transitionData,bool isLoading,SceneBinding.BindingParam bindingParam = null)
+		public async UniTask AddSceneAsync(string sceneName,TransitionData transitionData,bool isLoading,SceneState.StateParam param = null)
 		{
-			await PlaySceneAsync(transitionData,isLoading,async (progress)=> { await AddSceneAsync(sceneName,progress,bindingParam); });
+			await PlaySceneAsync(transitionData,isLoading,async (progress)=> { await AddSceneAsync(sceneName,progress,param); });
 
 			var current = CurrentScene;
 
@@ -103,24 +102,24 @@ namespace KZLib
 
 		private async UniTask PlaySceneAsync(TransitionData transitionData,bool isLoading,params Func<Action<float>,UniTask>[] onTaskArray)
 		{
-			if(m_sceneChanging)
+			if(m_isSceneChanging)
 			{
 				return;
 			}
 
-			m_sceneChanging = true;
+			m_isSceneChanging = true;
 
 			CommonUtility.LockInput();
 
 			// darker
-			await UIMgr.In.PlayTransitionOutAsync(transitionData,false);
+			await UIManager.In.PlayTransitionOutAsync(transitionData,false);
 
 			if(isLoading)
 			{
-				var panel = UIMgr.In.Open<LoadingPanelUI>(UITag.LoadingPanelUI);
+				var panel = UIManager.In.Open<LoadingPanelUI>(UITag.LoadingPanelUI);
 
 				// brighter
-				await UIMgr.In.PlayTransitionInAsync(transitionData,false);
+				await UIManager.In.PlayTransitionInAsync(transitionData,false);
 
 				var count = (float) onTaskArray.Length;
 				var percent = 0.0f;
@@ -136,9 +135,9 @@ namespace KZLib
 				}
 
 				// darker
-				await UIMgr.In.PlayTransitionOutAsync(transitionData,false);
+				await UIManager.In.PlayTransitionOutAsync(transitionData,false);
 
-				UIMgr.In.Close(UITag.LoadingPanelUI);
+				UIManager.In.Close(UITag.LoadingPanelUI);
 			}
 			else
 			{
@@ -148,14 +147,14 @@ namespace KZLib
 				}
 			}
 
-			await UIMgr.In.PlayTransitionInAsync(transitionData,true);
+			await UIManager.In.PlayTransitionInAsync(transitionData,true);
 
 			CommonUtility.UnLockInput();
 
-			m_sceneChanging = false;
+			m_isSceneChanging = false;
 		}
 
-		private async UniTask AddSceneAsync(string sceneName,Action<float> onUpdateProgress,SceneBinding.BindingParam bindingParam)
+		private async UniTask AddSceneAsync(string sceneName,Action<float> onUpdateProgress,SceneState.StateParam param)
 		{
 			if(sceneName.IsEmpty())
 			{
@@ -168,17 +167,15 @@ namespace KZLib
 
 			LogTag.System.I($"{sceneName} create start.");
 
-			LogTag.Test.I(Assembly.GetExecutingAssembly());
+			var sceneType = Type.GetType($"{sceneName}, Assembly-CSharp") ?? throw new NullReferenceException($"{sceneName} is not exists.");
+			var sceneState = (SceneState) Activator.CreateInstance(sceneType) ?? throw new NullReferenceException($"{sceneName} create failed.");
 
-			var sceneType = Type.GetType(sceneName) ?? throw new NullReferenceException($"{sceneName} is not exists.");
-			var sceneBiding = (SceneBinding) Activator.CreateInstance(sceneType) ?? throw new NullReferenceException($"{sceneName} create failed.");
+			m_sceneStateStack.Push(sceneState);
 
-			m_sceneStack.Push(sceneBiding);
-
-			await sceneBiding.InitializeAsync((progress)=>
+			await sceneState.InitializeAsync((progress)=>
 			{
 				onUpdateProgress?.Invoke(progress*0.99f);
-			},bindingParam);
+			},param);
 
 			LogTag.System.I($"{sceneName} create end.");
 
@@ -200,7 +197,7 @@ namespace KZLib
 
 			LogTag.System.I($"{sceneName} remove start.");
 
-			m_sceneStack.Pop();
+			m_sceneStateStack.Pop();
 
 			var previous = CurrentScene;
 
@@ -215,22 +212,23 @@ namespace KZLib
 #endif
 			LogTag.System.I($"{sceneName} remove end.");
 
-			CommonUtility.ClearUnloadedAssetMemory();
+			OnLowMemory();
 
 			onUpdateProgress?.Invoke(1.0f);
 		}
 
-		private SceneBinding CurrentScene => m_sceneStack.IsNullOrEmpty() ? null : m_sceneStack.Peek();
+		private SceneState CurrentScene => m_sceneStateStack.Count > 0 ? m_sceneStateStack.Peek() : null;
 
 		private void OnLowMemory()
 		{
-			if(Time.unscaledTime-m_lastUnloadTime < c_unload_min_time)
+			if(Time.unscaledTime-m_lastUnloadTime < c_unloadMinTime)
 			{
 				return;
 			}
 
 			m_lastUnloadTime = Time.unscaledTime;
-			Resources.UnloadUnusedAssets();
+
+			CommonUtility.ClearUnloadedAssetMemory();
 		}
 	}
 }
