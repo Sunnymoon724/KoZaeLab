@@ -305,7 +305,6 @@ namespace KZLib
 #endif
 		}
 
-
 #if UNITY_EDITOR
 		private static readonly List<string> s_sceneNameArray = new();
 
@@ -315,9 +314,7 @@ namespace KZLib
 			{
 				if(s_sceneNameArray.IsNullOrEmpty())
 				{
-					var sceneArray = EditorBuildSettings.scenes;
-
-					foreach(var scene in sceneArray)
+					foreach(var scene in EditorBuildSettings.scenes)
 					{
 						s_sceneNameArray.Add(Path.GetFileNameWithoutExtension(scene.path));
 					}

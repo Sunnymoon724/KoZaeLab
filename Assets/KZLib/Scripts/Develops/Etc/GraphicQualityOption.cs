@@ -17,30 +17,80 @@ namespace KZLib.KZDevelop
 {
 	public class GraphicQualityOption : SingletonSO<GraphicQualityOption>
 	{
-		#region Option Data
-		private class OptionData
+		#region Option Handler
+		private class OptionHandler
 		{
-			[SerializeField]
 			private string m_optionName = null;
-			[SerializeField]
 			private string m_enableValue = null;
-			[SerializeField]
 			private string m_disableValue = null;
 
-			private readonly Action<string,string,string> m_onAddOption = null;
+			[HorizontalGroup("0",Order = 0),ShowInInspector]
+			private string OptionName
+			{
+				get => m_optionName;
+				set
+				{
+					ErrorText = string.Empty;
+					m_optionName = value;
+				}
+			}
 
-			public OptionData(Action<string,string,string> onAddOption)
+			[HorizontalGroup("1",Order = 1),ShowInInspector]
+			private string EnableValue
+			{
+				get => m_enableValue;
+				set
+				{
+					ErrorText = string.Empty;
+					m_enableValue = value;
+				}
+			}
+			
+			[HorizontalGroup("2",Order = 2),ShowInInspector]
+			private string DisableValue
+			{
+				get => m_disableValue;
+				set
+				{
+					ErrorText = string.Empty;
+					m_disableValue = value;
+				}
+			}
+
+			[HorizontalGroup("4",Order = 4),ShowInInspector,KZRichText,HideLabel]
+			protected string ErrorText { get; private set; }
+
+			private readonly Func<string,string,string,bool> m_onAddOption = null;
+			private OdinEditorWindow m_optionWindow = null;
+
+			private bool IsValidAddOption => !OptionName.IsEmpty() && !EnableValue.IsEmpty() && !DisableValue.IsEmpty();
+
+			public OptionHandler(Func<string,string,string,bool> onAddOption)
 			{
 				m_onAddOption = onAddOption;
 			}
 
-			[Button("Add",ButtonSizes.Large)]
+			[HorizontalGroup("5",Order = 5),Button("Add",ButtonSizes.Large),EnableIf(nameof(IsValidAddOption))]
 			protected void OnAddOption()
 			{
-				m_onAddOption?.Invoke(m_optionName,m_enableValue,m_disableValue);
+				var result = m_onAddOption.Invoke(OptionName,EnableValue,DisableValue);
+
+				if(result)
+				{
+					m_optionWindow.Close();
+				}
+				else
+				{
+					ErrorText = "<color=red>already exist.</color>";
+				}
+			}
+
+			public void SetWindow(OdinEditorWindow window)
+			{
+				m_optionWindow = window;
 			}
 		}
-		#endregion Option Data
+		#endregion Option Window
 		
 		#region Graphic Quality Data
 		[Serializable]
@@ -70,7 +120,7 @@ namespace KZLib.KZDevelop
 			public int Order => (int) Mathf.Log(m_flag,2);
 
 			[ShowInInspector,HideLabel,KZRichText]
-			protected string FlagName => $"{Order} : {m_name}";
+			protected string FlagName => $"{Order} : {m_name} [{m_enableValue}/{m_disableValue}]";
 
 			public string Name => m_name;
 
@@ -81,26 +131,31 @@ namespace KZLib.KZDevelop
 		}
 		#endregion Graphic Quality Data
 
-	#if UNITY_EDITOR
+#if UNITY_EDITOR
 		[HorizontalGroup("Button",Order = 0),Button("Add Option",ButtonSizes.Large)]
 		protected void OnAddOption()
 		{
-			var window = OdinEditorWindow.InspectObject(new OptionData(AddOption));
-			window.position = GUIHelper.GetEditorWindowRect().AlignCenter(250,100);
+			var handler = new OptionHandler(TryAddOption);
+			var window = OdinEditorWindow.InspectObject(handler);
+
+			window.position = GUIHelper.GetEditorWindowRect().AlignCenter(250,150);
+
+			handler.SetWindow(window);
 		}
 
-		private void AddOption(string name,string enableValue,string disableValue)
+		private bool TryAddOption(string optionName,string enableValue,string disableValue)
 		{
-			if(!TryGetOptionFlag(name,out var flag))
+			if(!TryGetOptionFlag(optionName,out var flag))
 			{
-				return;
+				return false;
 			}
 
-			PresetDict[GraphicQualityPresetType.QualityLowest].Add(new GraphicQualityData(name,flag,enableValue,disableValue));
+			PresetDict[GraphicQualityPresetType.QualityLowest].Add(new GraphicQualityData(optionName,flag,enableValue,disableValue));
 
 			OnChangedPreset();
+
+			return true;
 		}
-	#endif
 
 		private bool TryGetOptionFlag(string name,out long flag)
 		{
@@ -132,8 +187,6 @@ namespace KZLib.KZDevelop
 
 			var order = 0;
 
-			flag = 0L;
-
 			while(orderHashSet.Contains(order))
 			{
 				order++;
@@ -143,6 +196,7 @@ namespace KZLib.KZDevelop
 
 			return true;
 		}
+#endif
 
 		[HorizontalGroup("Preset",Order = 1)]
 		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(OnChangedPreset))]
@@ -175,9 +229,6 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		[SerializeField,HideInInspector]
-		private Dictionary<GraphicQualityPresetType,long> m_graphicQualityDict = null;
-
 		private void OnChangedPreset()
 		{
 			var graphicsQuality = 0L;
@@ -190,31 +241,31 @@ namespace KZLib.KZDevelop
 				}
 
 				presetPair.Value.Sort((x,y)=>x.Flag.CompareTo(y.Flag));
-
-				m_graphicQualityDict[presetPair.Key] = graphicsQuality;
 			}
 		}
 
-		public long GetGraphicQualityInPreset(GraphicQualityPresetType presetType) => m_graphicQualityDict[presetType];
+		public long GetGraphicQualityInPreset(GraphicQualityPresetType presetType)
+		{
+			var graphicsQuality = 0L;
+			var presetList = PresetDict[presetType];
 
-	#if UNITY_EDITOR
+			for(var i=0;i<presetList.Count;i++)
+			{
+				graphicsQuality = graphicsQuality.AddFlag(presetList[i].Flag);
+			}
+
+			return graphicsQuality;
+		}
+
+#if UNITY_EDITOR
 		protected override void OnCreate()
 		{
-			m_graphicQualityDict = new Dictionary<GraphicQualityPresetType,long>
-			{
-				{ GraphicQualityPresetType.QualityLowest,	0L },
-				{ GraphicQualityPresetType.QualityLow,		0L },
-				{ GraphicQualityPresetType.QualityMiddle,	0L },
-				{ GraphicQualityPresetType.QualityHigh,		0L },
-				{ GraphicQualityPresetType.QualityHighest,	0L },
-			};
-
-			AddOption(Global.GLOBAL_TEXTURE_MIPMAP_LIMIT,"0","1");
-			AddOption(Global.ANISOTROPIC_FILTERING,"Enable","Disable");
-			AddOption(Global.VERTICAL_SYNC_COUNT,"1","0");
-			AddOption(Global.DISABLE_CAMERA_FAR_HALF,"1.0f","0.5f");
+			TryAddOption(Global.GLOBAL_TEXTURE_MIPMAP_LIMIT,"0","1");
+			TryAddOption(Global.ANISOTROPIC_FILTERING,"Enable","Disable");
+			TryAddOption(Global.VERTICAL_SYNC_COUNT,"1","0");
+			TryAddOption(Global.DISABLE_CAMERA_FAR_HALF,"1.0","0.5");
 		}
-	#endif
+#endif
 
 		public string FindValue(long graphicQuality,string optionName)
 		{
