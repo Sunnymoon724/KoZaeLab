@@ -8,8 +8,10 @@ using ConfigData;
 
 namespace KZLib
 {
-	public class ConfigManager : DataSingleton<ConfigManager>
+	public class ConfigManager : Singleton<ConfigManager>
 	{
+		private bool m_disposed = false;
+
 		private readonly Dictionary<string,IConfig> m_configDict = new();
 
 		private readonly static Type[] s_defaultConfigArray = new Type[] { typeof(GameConfig),typeof(OptionConfig),typeof(NetworkConfig) };
@@ -19,6 +21,23 @@ namespace KZLib
 			base.Initialize();
 
 			_Access(typeof(GameConfig));
+		}
+
+		protected override void Release(bool disposing)
+		{
+			if(m_disposed)
+			{
+				return;
+			}
+
+			if(disposing)
+			{
+				m_configDict.Clear();
+			}
+
+			m_disposed = true;
+
+			base.Release(disposing);
 		}
 
 		/// <summary>
@@ -63,11 +82,6 @@ namespace KZLib
 			{
 				m_configDict.Remove(key);
 			}
-		}
-
-		protected override void Clear()
-		{
-			m_configDict.Clear();
 		}
 
 		private IConfig Create(string name,Type type)

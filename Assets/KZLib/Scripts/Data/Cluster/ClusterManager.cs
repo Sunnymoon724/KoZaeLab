@@ -5,14 +5,28 @@ using KZLib.KZData;
 
 namespace KZLib
 {
-	public class ClusterManager : DataSingleton<ClusterManager>
+	public class ClusterManager : Singleton<ClusterManager>
 	{
-		// Type / Cluster
-		private readonly Dictionary<Type,ICluster> m_clusterDict = new();
+		private bool m_disposed = false;
 
-		protected override void Clear()
+		//? Type / Cluster
+		private readonly Dictionary<string,ICluster> m_clusterDict = new();
+
+		protected override void Release(bool disposing)
 		{
-			m_clusterDict.Clear();
+			if(m_disposed)
+			{
+				return;
+			}
+
+			if(disposing)
+			{
+				m_clusterDict.Clear();
+			}
+
+			m_disposed = true;
+
+			base.Release(disposing);
 		}
 
 		public TCluster GetOrCreateCluster<TCluster>(IClusterParam param) where TCluster : class,ICluster
@@ -22,11 +36,27 @@ namespace KZLib
 
 		public ICluster GetOrCreateCluster(Type clusterType,IClusterParam param)
 		{
-			if(!m_clusterDict.TryGetValue(clusterType,out var cluster))
+			var clusterKey = param.Key;
+
+			if(clusterKey.IsEmpty())
+			{
+				LogTag.System.E($"Cluster key must not be null or empty [{param}]");
+
+				return null;
+			}
+
+			if(!m_clusterDict.TryGetValue(clusterKey,out var cluster))
 			{
 				cluster = Activator.CreateInstance(clusterType,param) as ICluster;
 
-				m_clusterDict.Add(clusterType,cluster);
+				if(cluster == null)
+				{
+					LogTag.System.E($"Failed to create cluster of type {clusterType}");
+
+					return null;
+				}
+
+				m_clusterDict.Add(clusterKey,cluster);
 			}
 
 			return cluster;

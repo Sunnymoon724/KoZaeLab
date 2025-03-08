@@ -9,7 +9,7 @@ namespace KZLib
 		void Release();
 	}
 
-	public class GameDataMgr : DataSingleton<GameDataMgr>
+	public class GameDataMgr : Singleton<GameDataMgr>
 	{
 		private readonly Dictionary<string,IGameData> m_gameDataDict = new();
 
@@ -44,7 +44,7 @@ namespace KZLib
 			}
 		}
 
-		protected override void Clear()
+		protected void Clear()
 		{
 			foreach(var value in m_gameDataDict.Values)
 			{

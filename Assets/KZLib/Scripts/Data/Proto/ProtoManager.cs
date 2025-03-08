@@ -10,17 +10,36 @@ using KZLib.KZData;
 
 namespace KZLib
 {
-	public class ProtoManager : DataSingleton<ProtoManager>
+	public class ProtoManager : Singleton<ProtoManager>
 	{
+		private bool m_disposed = false;
+
 		private const double c_frameTime = 1.0/30.0d; // 30 fps (0.0333s)
 		private const int c_delayTime = 1; // 1ms
 
 		private bool m_isLoaded = false;
 
-		// Type / Num / Proto
+		//? Type / Num / Proto
 		private readonly Dictionary<Type,Dictionary<int,IProto>> m_protoDict = new();
 
-		protected override void Clear()
+		protected override void Release(bool disposing)
+		{
+			if(m_disposed)
+			{
+				return;
+			}
+
+			if(disposing)
+			{
+				ClearProto();
+			}
+
+			m_disposed = true;
+
+			base.Release(disposing);
+		}
+
+		private void ClearProto()
 		{
 			m_protoDict.Clear();
 
@@ -244,7 +263,7 @@ namespace KZLib
 #if UNITY_EDITOR
 		public void Reload()
 		{
-			Clear();
+			ClearProto();
 
 			LoadInEditor();
 		}
