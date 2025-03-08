@@ -31,9 +31,9 @@ namespace KZLib
 			{
 				if(!m_gameLanguage.HasValue)
 				{
-					var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
+					var optionCfg = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
-					m_gameLanguage = optionConfig.Language;
+					m_gameLanguage = optionCfg.Language;
 				}
 
 				return m_gameLanguage.Value;
@@ -48,9 +48,9 @@ namespace KZLib
 
 				m_gameLanguage = value;
 
-				var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
+				var optionCfg = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
-				optionConfig.SetLanguage(m_gameLanguage.Value);
+				optionCfg.SetLanguage(m_gameLanguage.Value);
 			}
 		}
 
@@ -146,15 +146,15 @@ namespace KZLib
 		private async void Start()
 		{
 			
-			var gameConfig = ConfigManager.In.Access<ConfigData.GameConfig>();
+			var gameCfg = ConfigManager.In.Access<ConfigData.GameConfig>();
 
 #if UNITY_EDITOR
-			if(gameConfig.UseHeadUpDisplay)
+			if(gameCfg.UseHeadUpDisplay)
 			{
 				UIManager.In.Open<HudPanelUI>(UITag.HudPanelUI);
 			}
 #else
-			if(Debug.isDebugBuild && gameConfig.UseHeadUpDisplay)
+			if(Debug.isDebugBuild && gameCfg.UseHeadUpDisplay)
 			{
 				UIManager.In.Open<HudPanelUI>(UITag.HudPanelUI);
 			}

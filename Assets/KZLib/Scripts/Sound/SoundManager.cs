@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using KZLib.KZUtility;
 using KZLib.KZData;
+using System;
+using DG.Tweening;
 
 namespace KZLib
 {
@@ -18,6 +20,8 @@ namespace KZLib
 
 		private SoundVolume m_effectVolume = SoundVolume.zero;
 
+		private WeakReference<ConfigData.OptionConfig> m_optionRef = null;
+
 		protected override void Initialize()
 		{
 			//? Use CameraManager or Camera main
@@ -28,11 +32,13 @@ namespace KZLib
 				m_uiSource = UIManager.In.gameObject.GetComponentInChildren<AudioSource>();
 			}
 
-			var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
+			var optionCfg = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
-			optionConfig.OnSoundVolumeChange += OnChangeSoundOption;
+			optionCfg.OnSoundVolumeChange += OnChangeSoundOption;
 
-			OnChangeSoundOption(optionConfig.MasterVolume,optionConfig.MusicVolume,optionConfig.EffectVolume);
+			m_optionRef = new WeakReference<ConfigData.OptionConfig>(optionCfg);
+
+			OnChangeSoundOption(optionCfg.MasterVolume,optionCfg.MusicVolume,optionCfg.EffectVolume);
 		}
 
 		protected override void Release(bool disposing)
@@ -44,12 +50,15 @@ namespace KZLib
 
 			if(disposing)
 			{
+				if(m_optionRef.TryGetTarget(out var optionCfg))
+				{
+					optionCfg.OnSoundVolumeChange -= OnChangeSoundOption;
+				}
+
+				m_optionRef = null;
+
 				m_bgmSource = null;
 				m_uiSource = null;
-
-				var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
-
-				optionConfig.OnSoundVolumeChange -= OnChangeSoundOption;
 			}
 
 			m_disposed = true;
@@ -181,6 +190,13 @@ namespace KZLib
 			m_bgmSource.Play();
 
 			return true;
+		}
+
+		public Tween PlayBGMInFade(float volume,float duration)
+		{
+			var bgmVolume = Mathf.Clamp01(volume);
+
+			return DOTween.To(() => m_bgmSource.volume,x => m_bgmSource.volume = x,bgmVolume,duration);
 		}
 
 		public void ReplayBGMSound(float? startTime = null)

@@ -13,7 +13,7 @@ public class ActiveToggleUI : BaseToggleUI
 
 		protected override void Set()
 		{
-			m_gameObject.SetActiveIfDifferent(IsOnNow);
+			m_gameObject.EnsureActive(IsOnNow);
 		}
 	}
 

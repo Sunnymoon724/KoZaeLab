@@ -11,6 +11,7 @@ using UnityEngine;
 
 using UnityEngine;
 using KZLib.KZUtility;
+using System;
 
 namespace KZLib
 {
@@ -37,13 +38,17 @@ namespace KZLib
 		private AndroidJavaObject m_activity = null;
 #endif
 
+		private WeakReference<ConfigData.OptionConfig> m_optionRef = null;
+
 		protected override void Initialize()
 		{
-			var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
+			var optionCfg = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
-			optionConfig.OnUseVibrationChange += OnChangeUseVibration;
+			optionCfg.OnUseVibrationChange += OnChangeUseVibration;
 
-			OnChangeUseVibration(optionConfig.UseVibration);
+			m_optionRef = new WeakReference<ConfigData.OptionConfig>(optionCfg);
+
+			OnChangeUseVibration(optionCfg.UseVibration);
 
 #if UNITY_IOS && !UNITY_EDITOR
 			VibrationInitialize();
@@ -64,9 +69,12 @@ namespace KZLib
 
 			if(disposing)
 			{
-				var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
+				if(m_optionRef.TryGetTarget(out var optionCfg))
+				{
+					optionCfg.OnUseVibrationChange -= OnChangeUseVibration;
+				}
 
-				optionConfig.OnUseVibrationChange -= OnChangeUseVibration;
+				m_optionRef = null;
 			}
 
 			m_disposed = true;

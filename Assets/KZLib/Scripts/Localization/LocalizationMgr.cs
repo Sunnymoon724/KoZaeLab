@@ -3,6 +3,7 @@ using UnityEngine;
 using KZLib.KZUtility;
 using Newtonsoft.Json;
 using UnityEngine.Events;
+using System;
 
 namespace KZLib
 {
@@ -15,6 +16,8 @@ namespace KZLib
 		private readonly Dictionary<SystemLanguage,Dictionary<string,string>> m_languageTextDict = new();
 
 		public event UnityAction OnLocalizationChange = null;
+
+		private WeakReference<ConfigData.OptionConfig> m_optionRef = null;
 
 		protected override void Initialize()
 		{
@@ -33,11 +36,13 @@ namespace KZLib
 				m_languageTextDict.Add(textAsset.name.ToEnum<SystemLanguage>(),languageDict);
 			}
 
-			var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
+			var optionCfg = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
-			optionConfig.OnLanguageChange += OnChangeLanguage;
+			optionCfg.OnLanguageChange += OnChangeLanguage;
 
-			OnChangeLanguage(optionConfig.Language);
+			m_optionRef = new WeakReference<ConfigData.OptionConfig>(optionCfg);
+
+			OnChangeLanguage(optionCfg.Language);
 		}
 
 		protected override void Release(bool disposing)
@@ -49,11 +54,14 @@ namespace KZLib
 
 			if(disposing)
 			{
+				if(m_optionRef.TryGetTarget(out var optionCfg))
+				{
+					optionCfg.OnLanguageChange -= OnChangeLanguage;
+				}
+
+				m_optionRef = null;
+
 				m_languageTextDict.Clear();
-
-				var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
-
-				optionConfig.OnLanguageChange -= OnChangeLanguage;
 			}
 
 			m_disposed = true;

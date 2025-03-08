@@ -15,8 +15,8 @@ public abstract class WindowUI2D : WindowUI
 	public override bool IsPooling => m_pooling;
 
 	[VerticalGroup("UI/General",Order = 0),SerializeField]
-	private UILayerType m_LayerType = UILayerType.Panel;
-	public override UILayerType LayerType => m_LayerType;
+	private UILayerType m_layerType = UILayerType.Panel;
+	public override UILayerType LayerType => m_layerType;
 
 	[VerticalGroup("UI/General",Order = 0),SerializeField,ShowIf(nameof(IsPopup))]
 	private Transform m_popUpTransform = null;

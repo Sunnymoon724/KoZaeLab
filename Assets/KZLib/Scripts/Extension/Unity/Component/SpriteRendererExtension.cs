@@ -11,12 +11,12 @@ public static class SpriteRendererExtension
 
 		if(!sprite)
 		{
-			spriteRenderer.gameObject.SetActiveIfDifferent(false);
+			spriteRenderer.gameObject.EnsureActive(false);
 
 			return;
 		}
 
-		spriteRenderer.gameObject.SetActiveIfDifferent(true);
+		spriteRenderer.gameObject.EnsureActive(true);
 
 		spriteRenderer.sprite = sprite;
 

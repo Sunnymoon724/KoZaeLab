@@ -29,9 +29,9 @@ namespace GameData
 		{
 			m_AccountDataDict = new();
 
-			var gameConfig = ConfigManager.In.Access<ConfigData.GameConfig>();
+			var gameCfg = ConfigManager.In.Access<ConfigData.GameConfig>();
 
-			if(gameConfig.IsLocalSave)
+			if(gameCfg.IsLocalSave)
 			{
 				await LoadLocalDataAsync();
 			}
@@ -75,9 +75,9 @@ namespace GameData
 
 		private void OnUpdateData(string _key)
 		{
-			var gameConfig = ConfigManager.In.Access<ConfigData.GameConfig>();
+			var gameCfg = ConfigManager.In.Access<ConfigData.GameConfig>();
 
-			if(gameConfig.IsLocalSave)
+			if(gameCfg.IsLocalSave)
 			{
 				UpdateLocalData(_key);
 			}

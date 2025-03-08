@@ -32,7 +32,7 @@ namespace KZLib.KZDevelop
 
 			m_width = m_pivot.bounds.size.x*m_pivot.transform.lossyScale.x;
 
-			m_pivot.gameObject.SetActiveIfDifferent(false);
+			m_pivot.gameObject.EnsureActive(false);
 
 			m_backgroundList = new List<Transform>(m_count);
 
@@ -41,7 +41,7 @@ namespace KZLib.KZDevelop
 				var prefab = m_pivot.gameObject.CopyObject(transform) as GameObject;
 
 				prefab.transform.SetLocalPositionXY(m_startPoint+new Vector2(i*m_width,0.0f));
-				prefab.SetActiveIfDifferent(true);
+				prefab.EnsureActive(true);
 
 				m_backgroundList.Add(prefab.transform);
 			}

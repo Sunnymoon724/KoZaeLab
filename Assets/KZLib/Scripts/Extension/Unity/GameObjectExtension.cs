@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using KZLib;
 using UnityEngine;
 
@@ -21,7 +20,7 @@ public static class GameObjectExtension
 	/// <summary>
 	/// gameObject.activeSelf != active => SetActive()
 	/// </summary>
-	public static void SetActiveIfDifferent(this GameObject gameObject,bool value)
+	public static void EnsureActive(this GameObject gameObject,bool value)
 	{
 		if(!IsValid(gameObject))
 		{
@@ -59,10 +58,10 @@ public static class GameObjectExtension
 
 		if(includeSelf)
 		{
-			gameObject.SetActiveIfDifferent(value);
+			gameObject.EnsureActive(value);
 		}
 
-		gameObject.transform.TraverseChildren((child)=> { child.gameObject.SetActiveIfDifferent(value); });
+		gameObject.transform.TraverseChildren((child)=> { child.gameObject.EnsureActive(value); });
 	}
 
 	public static void SetAllLayer(this GameObject gameObject,int layer)

@@ -51,7 +51,7 @@ namespace KZLib.KZDevelop
 			SetChild(m_storage,item.transform);
 
 			item.name = m_pivot.name;
-			item.gameObject.SetActiveIfDifferent(false);
+			item.gameObject.EnsureActive(false);
 
 			m_poolQueue.Enqueue(item);
 		}
@@ -65,7 +65,7 @@ namespace KZLib.KZDevelop
 				SetChild(parent,item.transform);
 			}
 
-			item.gameObject.SetActiveIfDifferent(true);
+			item.gameObject.EnsureActive(true);
 
 			return item;
 		}

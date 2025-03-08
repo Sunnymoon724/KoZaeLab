@@ -67,8 +67,8 @@ public class SkipPanelUI : WindowUI2D
 
 	private void SetButtonsState(bool isSkipActive,bool isTriggerActive)
 	{
-		m_skipButton.gameObject.SetActiveIfDifferent(isSkipActive);
-		m_triggerButton.gameObject.SetActiveIfDifferent(isTriggerActive);
+		m_skipButton.gameObject.EnsureActive(isSkipActive);
+		m_triggerButton.gameObject.EnsureActive(isTriggerActive);
 	}
 
 	private void ShowSkipButton(float delayTime)

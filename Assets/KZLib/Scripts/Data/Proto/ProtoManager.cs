@@ -17,7 +17,7 @@ namespace KZLib
 
 		private bool m_isLoaded = false;
 
-		// Type / MetaId / Data
+		// Type / Num / Proto
 		private readonly Dictionary<Type,Dictionary<int,IProto>> m_protoDict = new();
 
 		protected override void Clear()
@@ -102,7 +102,7 @@ namespace KZLib
 
 		public TProto GetProto<TProto>(int num) where TProto : class,IProto
 		{
-			return (TProto) GetProto(num,typeof(TProto));
+			return GetProto(num,typeof(TProto)) as TProto;
 		}
 
 		public IProto GetProto(int num,Type protoType)
@@ -283,9 +283,9 @@ namespace KZLib
 #endif
 		private bool TryGetTextAsset(out TextAsset[] textAssetArray)
 		{
-			var gameConfig = ConfigManager.In.Access<ConfigData.GameConfig>();
+			var gameCfg = ConfigManager.In.Access<ConfigData.GameConfig>();
 
-			textAssetArray = ResourceManager.In.GetTextAssetArray(gameConfig.ProtoFolderPath);
+			textAssetArray = ResourceManager.In.GetTextAssetArray(gameCfg.ProtoFolderPath);
 
 			if(textAssetArray.IsNullOrEmpty())
 			{

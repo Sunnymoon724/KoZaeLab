@@ -91,7 +91,7 @@ namespace KZLib
 			}
 
 			effectClip.transform.position = position;
-			effectClip.gameObject.SetActiveIfDifferent(true);
+			effectClip.gameObject.EnsureActive(true);
 
 			effectClip.SetEffect(effectParam);
 
@@ -155,7 +155,7 @@ namespace KZLib
 		private void PutEffectClip(EffectClip effectClip)
 		{
 			effectClip.transform.ResetTransform(transform);
-			effectClip.gameObject.SetActiveIfDifferent(false);
+			effectClip.gameObject.EnsureActive(false);
 
 			m_poolDataDict.AddOrCreate(effectClip.name,new PoolData(effectClip));
 

@@ -51,6 +51,7 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 	public abstract bool Is3D { get; }
 
+
 	protected Sequence m_openSequence = null;
 	protected Sequence m_closeSequence = null;
 
@@ -70,14 +71,14 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 	{
 		LogTag.UI.I($"{Tag} is opened");
 
-		gameObject.SetActiveIfDifferent(true);
+		gameObject.EnsureActive(true);
 	}
 
 	public virtual void Close()
 	{
 		BlockInput();
 
-		gameObject.SetActiveIfDifferent(false);
+		gameObject.EnsureActive(false);
 
 		LogTag.UI.I($"{Tag} is closed");
 	}

@@ -23,6 +23,8 @@ namespace KZLib
 
 		private readonly Dictionary<Camera,bool> m_subCameraDict = new();
 
+		private WeakReference<ConfigData.OptionConfig> m_optionRef = null;
+
 		private float m_farFactor = 1.0f;
 
 		protected override void Initialize()
@@ -40,41 +42,46 @@ namespace KZLib
 
 			SetCameraBackgroundColor(Color.black);
 
-			var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
+			var optionCfg = ConfigManager.In.Access<ConfigData.OptionConfig>();
 
-			optionConfig.OnGraphicQualityChange += OnChangeFarClipPlane;
+			optionCfg.OnGraphicQualityChange += OnChangeFarClipPlane;
 
-			OnChangeFarClipPlane(optionConfig.GraphicQuality);
+			m_optionRef = new WeakReference<ConfigData.OptionConfig>(optionCfg);
+
+			OnChangeFarClipPlane(optionCfg.GraphicQuality);
 		}
 
 		protected override void Release()
 		{
 			base.Release();
 
-			var optionConfig = ConfigManager.In.Access<ConfigData.OptionConfig>();
+			if(m_optionRef.TryGetTarget(out var optionCfg))
+			{
+				optionCfg.OnGraphicQualityChange -= OnChangeFarClipPlane;
+			}
 
-			optionConfig.OnGraphicQualityChange -= OnChangeFarClipPlane;
+			m_optionRef = null;
 		}
 
-		public void SetCameraProto(CameraProto proto)
+		public void SetCameraProto(CameraProto cameraPrt)
 		{
-			if(proto == null)
+			if(cameraPrt == null)
 			{
 				LogTag.System.E("Camera proto is not exist.");
 
 				return;
 			}
 
-			CurrentCamera.nearClipPlane = proto.NearClipPlane;
-			CurrentCamera.farClipPlane = m_farFactor*proto.FarClipPlane;
+			CurrentCamera.nearClipPlane = cameraPrt.NearClipPlane;
+			CurrentCamera.farClipPlane = m_farFactor*cameraPrt.FarClipPlane;
 
-			CurrentCamera.orthographic = proto.Orthographic;
-			CurrentCamera.orthographicSize = proto.FieldOfView;
-			CurrentCamera.fieldOfView = proto.FieldOfView;
+			CurrentCamera.orthographic = cameraPrt.Orthographic;
+			CurrentCamera.orthographicSize = cameraPrt.FieldOfView;
+			CurrentCamera.fieldOfView = cameraPrt.FieldOfView;
 
 			var position = m_target ? m_target.position : Vector3.zero;
 
-			CurrentCamera.transform.SetPositionAndRotation(position+proto.Position,Quaternion.Euler(proto.Rotation));
+			CurrentCamera.transform.SetPositionAndRotation(position+cameraPrt.Position,Quaternion.Euler(cameraPrt.Rotation));
 
 			OnSyncSubCamera();
 		}
@@ -87,10 +94,10 @@ namespace KZLib
 
 			if(m_overrideCamera != null)
 			{
-				m_overrideCamera.gameObject.SetActiveIfDifferent(onCamera);
+				m_overrideCamera.gameObject.EnsureActive(onCamera);
 			}
 
-			m_mainCamera.gameObject.SetActiveIfDifferent(!onCamera);
+			m_mainCamera.gameObject.EnsureActive(!onCamera);
 		}
 
 		public void SetEnableCamera(bool enable)

@@ -45,16 +45,16 @@ namespace KZLib
 				return;
 			}
 
-			var motionProto = ProtoManager.In.GetProto<MotionProto>(motionNum);
+			var motionPrt = ProtoManager.In.GetProto<MotionProto>(motionNum);
 
 			m_motionEventDict.Clear();
 
-			foreach(var motionEvent in motionProto.EventArray)
+			foreach(var motionEvent in motionPrt.EventArray)
 			{
 				m_motionEventDict.Add(motionEvent.Order,motionEvent);
 			}
 
-			PlayAnimation(motionProto.StateName,0.0f);
+			PlayAnimation(motionPrt.StateName,0.0f);
 		}
 
 		protected void OnPlayEffect(int order)

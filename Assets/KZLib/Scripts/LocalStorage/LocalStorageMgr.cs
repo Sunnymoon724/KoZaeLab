@@ -86,10 +86,9 @@ namespace KZLib
 				return false;
 			}
 
-			var password = CommonUtility.GenerateAESKeyByPassword(tableName);
-			var encryptKey = CommonUtility.EncryptAES(key,password);
+			var publicKey = GeneratePublicKey(tableName);
 
-			return dataDict.ContainsKey(encryptKey);
+			return dataDict.ContainsKey(CryptoUtility.AES.Encrypt(key,publicKey));
 		}
 
 		public IEnumerable<string> GetTableNameGroup()
@@ -191,15 +190,14 @@ namespace KZLib
 				return null;
 			}
 
-			var password = CommonUtility.GenerateAESKeyByPassword(tableName);
-			var encryptKey = CommonUtility.EncryptAES(key,password);
+			var publicKey = GeneratePublicKey(tableName);
 
-			if(!dataDict.TryGetValue(encryptKey,out var value))
+			if(!dataDict.TryGetValue(CryptoUtility.AES.Encrypt(key,publicKey),out var value))
 			{
 				return null;
 			}
 
-			return CommonUtility.DecryptAES(value,password);
+			return CryptoUtility.AES.Decrypt(value,publicKey);
 		}
 
 		public bool TryGetData(string tableName,string key,out string _result)
@@ -261,9 +259,10 @@ namespace KZLib
 				return;
 			}
 
-			var password = CommonUtility.GenerateAESKeyByPassword(tableName);
-			var encryptKey = CommonUtility.EncryptAES(key,password);
-			var encryptValue = CommonUtility.EncryptAES(value,password);
+			var publicKey = GeneratePublicKey(tableName);
+
+			var encryptKey = CryptoUtility.AES.Encrypt(key,publicKey);
+			var encryptValue = CryptoUtility.AES.Encrypt(value,publicKey);
 
 			var code = CommonUtility.Base64Encode(encryptValue);
 
@@ -288,8 +287,8 @@ namespace KZLib
 				return;
 			}
 
-			var password = CommonUtility.GenerateAESKeyByPassword(tableName);
-			var encryptKey = CommonUtility.EncryptAES(key,password);
+			var publicKey = GeneratePublicKey(tableName);
+			var encryptKey = CryptoUtility.AES.Encrypt(key,publicKey);
 
 			if(m_cacheDataDict.TryGetValue(tableName, out var dataDict) && dataDict.Remove(encryptKey))
 			{
@@ -411,6 +410,18 @@ namespace KZLib
 			dataReader = command.ExecuteReader();
 
 			return dataReader.HasRows;
+		}
+
+		private string GenerateKey(string tableName,string key)
+		{
+			var password = GeneratePublicKey(tableName);
+
+			return CryptoUtility.AES.Encrypt(key,password);
+		}
+
+		private byte[] GeneratePublicKey(string text)
+		{
+			return CryptoUtility.AES.GenerateKeyByPassword(text);
 		}
 
 		private string DataBasePath

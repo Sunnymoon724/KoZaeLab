@@ -44,7 +44,7 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 			return;
 		}
 
-		m_pivot.gameObject.SetActiveIfDifferent(false);
+		m_pivot.gameObject.EnsureActive(false);
 		m_storage.SetUIChild(m_pivot.transform);
 
 		m_slotUIPool = new GameObjectUIPool<SlotUI>(m_pivot,m_storage,m_poolCapacity);

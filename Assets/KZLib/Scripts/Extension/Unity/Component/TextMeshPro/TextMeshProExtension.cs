@@ -50,19 +50,19 @@ public static class TextMeshProExtension
 		{
 			LogTag.System.E("TextMeshPro is null");
 
-			textMesh.gameObject.SetActiveIfDifferent(false);
+			textMesh.gameObject.EnsureActive(false);
 
 			return false;
 		}
 
 		if(text.IsEmpty())
 		{
-			textMesh.gameObject.SetActiveIfDifferent(false);
+			textMesh.gameObject.EnsureActive(false);
 
 			return false;
 		}
 
-		textMesh.gameObject.SetActiveIfDifferent(true);
+		textMesh.gameObject.EnsureActive(true);
 
 		return true;
 	}

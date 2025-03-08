@@ -73,7 +73,7 @@ namespace KZLib.KZDevelop
 				return;
 			}
 
-			slotUI.gameObject.SetActiveIfDifferent(false);
+			slotUI.gameObject.EnsureActive(false);
 			transform.SetUIChild(slotUI.transform);
 
 			m_viewport.pivot = new Vector2(0.0f,1.0f);
@@ -149,14 +149,14 @@ namespace KZLib.KZDevelop
 
 				if(index < 0 || index >= cellCount || location > 1.0f)
 				{
-					slot.gameObject.SetActiveIfDifferent(false);
+					slot.gameObject.EnsureActive(false);
 
 					continue;
 				}
 
 				if(isForceRefresh || !slot.gameObject.activeSelf)
 				{
-					slot.gameObject.SetActiveIfDifferent(true);
+					slot.gameObject.EnsureActive(true);
 					slot.name = $"Slot_{i}";
 					slot.SetCell(m_cellDataList[index]);
 				}

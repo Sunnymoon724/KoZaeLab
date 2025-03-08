@@ -176,9 +176,16 @@ public static class StringExtension
 		return Enum.IsDefined(typeof(TEnum),text);
 	}
 
-	public static TEnum ToEnum<TEnum>(this string text,TEnum defaultEnum = default) where TEnum : struct
+	public static TEnum ToEnum<TEnum>(this string text) where TEnum : struct
 	{
-		return !text.IsEmpty() && Enum.TryParse(text,true,out TEnum data) ? data : defaultEnum;
+		if(!text.IsEmpty() && Enum.TryParse(text,true,out TEnum value))
+		{
+			return value;
+		}
+
+		LogTag.System.W($"Failed to convert {text} into Enum");
+
+		return default;
 	}
 	#endregion Convert Enum
 
@@ -205,6 +212,8 @@ public static class StringExtension
 			return color;
 		}
 
+		LogTag.System.W($"Failed to convert {hexCode} into color");
+
 		return Color.clear;
 	}
 
@@ -225,55 +234,119 @@ public static class StringExtension
 	}
 	#endregion Convert Color
 
+	#region Convert Bool
+	public static bool ToBool(this string text)
+	{
+		if(!text.IsEmpty() && bool.TryParse(text,out var value))
+		{
+			return value;
+		}
+
+		LogTag.System.W($"Failed to convert {text} into bool");
+
+		return false;
+	}
+	#endregion Convert Bool
+
 	#region Convert Number
-	public static BigInteger ToBigInteger(this string text,BigInteger defaultNumber = default)
+	public static BigInteger ToBigInteger(this string text)
 	{
-		if(text.IsEmpty())
+		if(!text.IsEmpty() && BigInteger.TryParse(text,out var value))
 		{
-			return defaultNumber;
+			return value;
 		}
 
-		return BigInteger.TryParse(text,out var number) ? number : defaultNumber;
+		LogTag.System.W($"Failed to convert {text} into BigInteger");
+
+		return default;
 	}
 
-	public static int ToInt(this string text,int defaultNumber = 0)
+	public static int ToInt(this string text)
 	{
-		if(text.IsEmpty())
+		if(!text.IsEmpty())
 		{
-			return defaultNumber;
+			if(text.StartsWith("0x",StringComparison.OrdinalIgnoreCase))
+			{
+				return text.ToHexInt();
+			}
+
+			if(int.TryParse(text,out var value))
+			{
+				return value;
+			}
 		}
 
-		if(text.StartsWith("0x",StringComparison.OrdinalIgnoreCase))
+		LogTag.System.W($"Failed to convert {text} into int");
+
+		return default;
+	}
+
+	public static float ToFloat(this string text)
+	{
+		if(!text.IsEmpty() && float.TryParse(text,out var value))
 		{
-			return text.ToHexInt(defaultNumber);
+			return value;
 		}
 
-		return int.TryParse(text,out var number) ? number : defaultNumber;
+		LogTag.System.W($"Failed to convert {text} into float");
+
+		return default;
 	}
 
-	public static float ToFloat(this string text,float defaultNumber = 0.0f)
+	public static double ToDouble(this string text)
 	{
-		return float.TryParse(text,out var number) ? number : defaultNumber;
+		if(!text.IsEmpty() && double.TryParse(text,out var value))
+		{
+			return value;
+		}
+
+		LogTag.System.W($"Failed to convert {text} into double");
+
+		return default;
 	}
 
-	public static double ToDouble(this string text,double defaultNumber = 0.0d)
+	public static byte ToByte(this string text)
 	{
-		return double.TryParse(text,out var number) ? number : defaultNumber;
+		if(!text.IsEmpty())
+		{
+			if(text.StartsWith("0x",StringComparison.OrdinalIgnoreCase))
+			{
+				return Convert.ToByte(text,16);
+			}
+
+			if(byte.TryParse(text,out var value))
+			{
+				return value;
+			}
+		}
+
+		LogTag.System.W($"Failed to convert {text} into byte");
+
+		return default;
 	}
 
-	public static byte ToByte(this string text,byte defaultNumber = 0x00)
+	public static int ToHexInt(this string hexText)
 	{
-		return text.StartsWith("0x",StringComparison.OrdinalIgnoreCase) ? Convert.ToByte(text,16) : byte.TryParse(text,out var number) ? number : defaultNumber;
+		if(!hexText.IsEmpty() && int.TryParse(hexText,NumberStyles.HexNumber,CultureInfo.CurrentCulture,out var value))
+		{
+			return value;
+		}
+
+		LogTag.System.W($"Failed to convert {hexText} into int");
+
+		return default;
 	}
 
-	public static int ToHexInt(this string hexText,int defaultNumber = 0)
+	public static float ToHexFloat(string hexText)
 	{
-		return int.TryParse(hexText,NumberStyles.HexNumber,CultureInfo.CurrentCulture,out var number) ? number : defaultNumber;
-	}
+		if(!hexText.IsEmpty() && uint.TryParse(hexText,NumberStyles.AllowHexSpecifier,CultureInfo.CurrentCulture,out var value))
+		{
+			return BitConverter.ToSingle(BitConverter.GetBytes(value),0);
+		}
 
-	public static float ToHexFloat(string hexText,float defaultNumber = 0.0f)
-	{
-		return uint.TryParse(hexText,NumberStyles.AllowHexSpecifier,CultureInfo.CurrentCulture,out var number) ? BitConverter.ToSingle(BitConverter.GetBytes(number),0) : defaultNumber;
+		LogTag.System.W($"Failed to convert {hexText} into float");
+
+		return default;
 	}
 
 	private static float GetNumberInArray(string[] textArray,int index)
@@ -285,24 +358,33 @@ public static class StringExtension
 	#region Convert DateTime
 	public static DateTime ToDateTime(this string text,CultureInfo cultureInfo = null, DateTimeStyles dateTimeStyles = DateTimeStyles.AdjustToUniversal)
 	{
-		return DateTime.ParseExact(text,"yyyy-MM-dd HH:mm",cultureInfo ?? CultureInfo.CreateSpecificCulture("ko-KR"),dateTimeStyles);
+		if(!text.IsEmpty() && DateTime.TryParseExact(text,"yyyy-MM-dd HH:mm",cultureInfo ?? CultureInfo.CreateSpecificCulture("ko-KR"),dateTimeStyles,out var value))
+		{
+			return value;
+		}
+
+		LogTag.System.W($"Failed to convert {text} into DateTime");
+
+		return default;
 	}
 	#endregion Convert DateTime
 
 	#region Convert Vector
 	public static Vector2 ToVector2(this string text)
 	{
-		return text.ToVector2(Vector2.zero);
-	}
+		if(!text.IsEmpty() && text.TryToVector2(out var value))
+		{
+			return value;
+		}
 
-	public static Vector2 ToVector2(this string text,Vector2 defaultVector)
-	{
-		return text.TryToVector2(out var vector) ? vector : defaultVector;
+		LogTag.System.W($"Failed to convert {text} into Vector2");
+
+		return default;
 	}
 
 	public static bool TryToVector2(this string text,out Vector2 vector)
 	{
-		vector = Vector2.zero;
+		vector = default;
 
 		var vectorArray = ConvertVectorArray(text);		
 
@@ -318,17 +400,19 @@ public static class StringExtension
 
 	public static Vector3 ToVector3(this string text)
 	{
-		return text.ToVector3(Vector3.zero);
-	}
+		if(!text.IsEmpty() && text.TryToVector3(out var value))
+		{
+			return value;
+		}
 
-	public static Vector3 ToVector3(this string text,Vector3 defaultVector)
-	{
-		return text.TryToVector3(out var vector) ? vector : defaultVector;
+		LogTag.System.W($"Failed to convert {text} into Vector3");
+
+		return default;
 	}
 
 	public static bool TryToVector3(this string text,out Vector3 vector)
 	{
-		vector = Vector3.zero;
+		vector = default;
 
 		var vectorArray = ConvertVectorArray(text);
 
@@ -572,9 +656,9 @@ public static class StringExtension
 		return text.IsEmpty() ? null : Regex.Replace(text,@"[^0-9a-zA-Z_]+",string.Empty);
 	}
 
-	public static int ExtractOnlyDigitToInt(this string text,int defaultNumber)
+	public static int ExtractOnlyDigitToInt(this string text)
 	{
-		return ExtractOnlyDigit(text).ToInt(defaultNumber);
+		return ExtractOnlyDigit(text).ToInt();
 	}
 	#endregion Extract
 

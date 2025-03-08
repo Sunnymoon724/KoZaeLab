@@ -74,7 +74,7 @@ namespace KZLib
 				{
 					var data = m_registerDict[uiTag] as MonoBehaviour;
 
-					data.gameObject.SetActiveIfDifferent(false);
+					data.gameObject.EnsureActive(false);
 				}
 			}
 

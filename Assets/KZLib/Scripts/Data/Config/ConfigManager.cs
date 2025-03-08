@@ -12,7 +12,7 @@ namespace KZLib
 	{
 		private readonly Dictionary<string,IConfig> m_configDict = new();
 
-		private readonly static Type[] s_default_config_array = new Type[] { typeof(GameConfig),typeof(OptionConfig),typeof(NetworkConfig) };
+		private readonly static Type[] s_defaultConfigArray = new Type[] { typeof(GameConfig),typeof(OptionConfig),typeof(NetworkConfig) };
 
 		protected override void Initialize()
 		{
@@ -140,7 +140,7 @@ namespace KZLib
 
 		public static bool IsDefaultConfig(string filePath)
 		{
-			foreach(var type in s_default_config_array)
+			foreach(var type in s_defaultConfigArray)
 			{
 				var name = type.Name.Replace("Config","");
 

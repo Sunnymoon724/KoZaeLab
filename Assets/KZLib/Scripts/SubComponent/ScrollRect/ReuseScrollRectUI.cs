@@ -58,7 +58,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 		m_isVertical = m_scrollRect.vertical;
 
-		m_pivot.gameObject.SetActiveIfDifferent(false);
+		m_pivot.gameObject.EnsureActive(false);
 		m_scrollRect.viewport.transform.SetUIChild(m_pivot.transform);
 
 		var content = m_scrollRect.content;
@@ -257,7 +257,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 				var data = m_slotUIPool.GetOrCreate(m_scrollRect.content);
 
 				data.gameObject.name = $"Slot_{i}";
-				data.gameObject.SetActiveIfDifferent(true);
+				data.gameObject.EnsureActive(true);
 
 				m_slotDict.Add(i,data);
 

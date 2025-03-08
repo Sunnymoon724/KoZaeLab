@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using KZLib.KZAttribute;
+using KZLib.KZUtility;
 
 namespace KZLib.KZWindow
 {
@@ -32,7 +33,7 @@ namespace KZLib.KZWindow
 						return;
 					}
 
-					LocalStorageMgr.In.SetObject(m_tableName,CommonUtility.EncryptAES(m_key,m_password),CommonUtility.EncryptAES(value,m_password));
+					LocalStorageMgr.In.SetObject(m_tableName,CryptoUtility.AES.Encrypt(m_key,m_password),CryptoUtility.AES.Encrypt(value,m_password));
 
 					LogTag.Editor.I($"{m_value} -> {value} in {m_key} in {m_tableName}.");
 
@@ -53,7 +54,7 @@ namespace KZLib.KZWindow
 				m_key = key;
 				m_value = value;
 
-				m_password = CommonUtility.GenerateAESKeyByPassword(m_tableName);
+				m_password = CryptoUtility.AES.GenerateKeyByPassword(m_tableName);
 			}
 		}
 		#endregion Local Data
@@ -87,11 +88,11 @@ namespace KZLib.KZWindow
 					return;
 				}
 
-				var password = CommonUtility.GenerateAESKeyByPassword(value);
+				var password = CryptoUtility.AES.GenerateKeyByPassword(value);
 
 				foreach(var pair in dataDict)
 				{
-					m_localDataList.Add(new LocalData(TableName,CommonUtility.DecryptAES(pair.Key,password),CommonUtility.DecryptAES(pair.Value,password)));
+					m_localDataList.Add(new LocalData(TableName,CryptoUtility.AES.Decrypt(pair.Key,password),CryptoUtility.AES.Decrypt(pair.Value,password)));
 				}
 			}
 		}

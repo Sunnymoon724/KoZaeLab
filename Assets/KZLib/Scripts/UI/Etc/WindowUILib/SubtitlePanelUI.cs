@@ -100,7 +100,7 @@ public class SubtitlePanelUI : WindowUI2D
 
 			if(m_subtitleList.IsNullOrEmpty())
 			{
-				gameObject.SetActiveIfDifferent(false);
+				gameObject.EnsureActive(false);
 
 				return;
 			}

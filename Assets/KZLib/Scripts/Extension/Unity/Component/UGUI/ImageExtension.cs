@@ -23,12 +23,12 @@ public static class ImageExtension
 
 		if(!sprite)
 		{
-			image.gameObject.SetActiveIfDifferent(false);
+			image.gameObject.EnsureActive(false);
 
 			return;
 		}
 
-		image.gameObject.SetActiveIfDifferent(true);
+		image.gameObject.EnsureActive(true);
 
 		image.sprite = sprite;
 		image.material = material;
