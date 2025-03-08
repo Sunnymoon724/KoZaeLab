@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEditorInternal;
 
 public static partial class CommonUtility
@@ -174,5 +175,23 @@ public static partial class CommonUtility
 		EditorUtility.ClearProgressBar();
 	}
 	#endregion DisplayDialog
+
+	public static void OpenSceneInEditor(string sceneName)
+	{
+		if(!DisplayCheck($"Open {sceneName}",$"Do you want to open the {sceneName}?"))
+		{
+			return;
+		}
+
+		var guidArray = AssetDatabase.FindAssets($"t:Scene {sceneName}");
+		var scenePath = guidArray.Length < 1 ? string.Empty : AssetDatabase.GUIDToAssetPath(guidArray[0]);
+
+		if(scenePath.IsEmpty())
+		{
+			return;
+		}
+
+		EditorSceneManager.OpenScene(scenePath);
+	}
 }
 #endif
