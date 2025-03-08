@@ -15,12 +15,12 @@ namespace KZLib
 			m_clusterDict.Clear();
 		}
 
-		public TCluster GetOrCreateCluster<TCluster>(object param) where TCluster : class,ICluster
+		public TCluster GetOrCreateCluster<TCluster>(IClusterParam param) where TCluster : class,ICluster
 		{
 			return GetOrCreateCluster(typeof(TCluster),param) as TCluster;
 		}
 
-		public ICluster GetOrCreateCluster(Type clusterType,object param)
+		public ICluster GetOrCreateCluster(Type clusterType,IClusterParam param)
 		{
 			if(!m_clusterDict.TryGetValue(clusterType,out var cluster))
 			{
