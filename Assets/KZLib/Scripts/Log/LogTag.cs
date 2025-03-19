@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using Debug = UnityEngine.Debug;
 using KZLib.KZData;
 
-
 #if UNITY_EDITOR
 
 using UnityEditor.Callbacks;
@@ -17,6 +16,9 @@ using System.Text.RegularExpressions;
 
 #endif
 
+/// <summary>
+/// LogType은 이미 존재하므로 그냥 LogTag로
+/// </summary>
 public class LogTag : CustomTag
 {
 	public static readonly LogTag None	=	new(nameof(None));
@@ -24,8 +26,6 @@ public class LogTag : CustomTag
 	public static readonly LogTag System	=	new(nameof(System));
 
 	public static readonly LogTag Build		=	new(nameof(Build));
-
-	public static readonly LogTag Security	=	new(nameof(Security));
 
 	public static readonly LogTag Network	=	new(nameof(Network));
 	public static readonly LogTag Server	=	new(nameof(Server));

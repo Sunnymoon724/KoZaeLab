@@ -9,11 +9,11 @@ public class TransitionPanelUI : WindowUI2D
 
 	public override UITag Tag => UITag.TransitionPanelUI;
 
-	public async UniTask PlayTransitionAsync(TransitionData transitionData,bool isAutoHide,bool isReverse)
+	public async UniTask PlayTransitionAsync(TransitionInfo info,bool isAutoHide,bool isReverse)
 	{
 		Show();
 
-		await m_progressTask.PlayProgressAsync(new TransitionProgressTask.TransitionProgressParam(transitionData,isReverse));
+		await m_progressTask.PlayProgressAsync(new TransitionProgressTask.TransitionProgressParam(info,isReverse));
 
 		if(isAutoHide)
 		{

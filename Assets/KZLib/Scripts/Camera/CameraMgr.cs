@@ -8,7 +8,7 @@ using KZLib.KZData;
 
 namespace KZLib
 {
-	public class CameraManager : LoadSingletonMB<CameraManager>
+	public class CameraMgr : LoadSingletonMB<CameraMgr>
 	{
 		[SerializeField,LabelText("Main Camera")]
 		private Camera m_mainCamera = null;
@@ -33,7 +33,9 @@ namespace KZLib
 
 			if(!m_mainCamera)
 			{
-				throw new NullReferenceException("Main camera is missing.");
+				LogTag.System.E("Main camera is missing.");
+
+				return;
 			}
 
 			var camera = m_mainCamera.GetComponent<Camera>();
@@ -42,7 +44,7 @@ namespace KZLib
 
 			SetCameraBackgroundColor(Color.black);
 
-			var optionCfg = ConfigManager.In.Access<ConfigData.OptionConfig>();
+			var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
 			optionCfg.OnGraphicQualityChange += OnChangeFarClipPlane;
 

@@ -45,7 +45,7 @@ namespace KZLib
 				return;
 			}
 
-			var motionPrt = ProtoManager.In.GetProto<MotionProto>(motionNum);
+			var motionPrt = ProtoMgr.In.GetProto<MotionProto>(motionNum);
 
 			m_motionEventDict.Clear();
 

@@ -17,7 +17,7 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/GoogleDrive/1",Order = 1),Button("Get Entry List",ButtonSizes.Large),EnableIf(nameof(IsExistGoogleDrive))]
 		protected void OnFindEntry_GoogleDrive()
 		{
-			CommonUtility.FindEntry_GoogleDrive("Test",(dataList) =>
+			NetworkMgr.In.GetGoogleDriveEntry("Test",(dataList) =>
 			{
 				if(dataList.IsNullOrEmpty())
 				{
@@ -36,7 +36,7 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/GoogleDrive/1",Order = 1),Button("Post Image",ButtonSizes.Large),EnableIf(nameof(IsExistGoogleDrive))]
 		protected void OnPostImage_GoogleDrive()
 		{
-			CommonUtility.PostFile_GoogleDrive("Test","Ostrich.png",CommonUtility.FindTestImageData(),"image/png");
+			NetworkMgr.In.PostGoogleDriveFile("Test","Ostrich.png",CommonUtility.FindTestImageData(),"image/png");
 		}
 
 		[HorizontalGroup("Network/GoogleDrive/3",Order = 3),SerializeField,TableList(HideToolbar = true,AlwaysExpanded = true,IsReadOnly = true),EnableIf(nameof(IsExistGoogleDrive))]

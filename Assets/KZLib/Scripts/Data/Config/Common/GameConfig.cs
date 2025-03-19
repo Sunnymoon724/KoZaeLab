@@ -4,6 +4,7 @@ namespace ConfigData
 {
 	public class GameConfig : IConfig
 	{
+		public EnvironmentType CurrentEnvironment { get; private set; } = EnvironmentType.DEV;
 		public string ProtoFolderPath { get; private set; } = "Resources/Text/Proto";
 		public string LanguageFolderPath { get; private set; } = "Resources/Text/Language";
 		public string ConfigFolderPath { get; private set; } = "Resources/Text/Config";

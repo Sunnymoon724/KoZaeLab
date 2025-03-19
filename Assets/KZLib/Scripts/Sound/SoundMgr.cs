@@ -6,7 +6,7 @@ using DG.Tweening;
 
 namespace KZLib
 {
-	public class SoundManager : Singleton<SoundManager>
+	public class SoundMgr : Singleton<SoundMgr>
 	{
 		private bool m_disposed = false;
 
@@ -24,15 +24,15 @@ namespace KZLib
 
 		protected override void Initialize()
 		{
-			//? Use CameraManager or Camera main
-			m_bgmSource = CameraManager.HasInstance ? CameraManager.In.gameObject.GetComponentInChildren<AudioSource>() : Camera.main.gameObject.GetOrAddComponent<AudioSource>();
+			//? Use CameraMgr or Camera main
+			m_bgmSource = CameraMgr.HasInstance ? CameraMgr.In.gameObject.GetComponentInChildren<AudioSource>() : Camera.main.gameObject.GetOrAddComponent<AudioSource>();
 
-			if(UIManager.HasInstance)
+			if(UIMgr.HasInstance)
 			{
-				m_uiSource = UIManager.In.gameObject.GetComponentInChildren<AudioSource>();
+				m_uiSource = UIMgr.In.gameObject.GetComponentInChildren<AudioSource>();
 			}
 
-			var optionCfg = ConfigManager.In.Access<ConfigData.OptionConfig>();
+			var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
 			optionCfg.OnSoundVolumeChange += OnChangeSoundOption;
 
@@ -87,7 +87,7 @@ namespace KZLib
 				return false;
 			}
 
-			return TryPlayUISound(ResourceManager.In.GetAudioClip(audioPath),volume);
+			return TryPlayUISound(ResourceMgr.In.GetAudioClip(audioPath),volume);
 		}
 
 		public bool TryPlayUISound(AudioClip audioClip,float volume = 1.0f)
@@ -118,7 +118,7 @@ namespace KZLib
 				return false;
 			}
 
-			return TryPlaySFXSound(source,ResourceManager.In.GetAudioClip(audioPath),volume);
+			return TryPlaySFXSound(source,ResourceMgr.In.GetAudioClip(audioPath),volume);
 		}
 
 		public bool TryPlaySFXSound(AudioSource source,AudioClip audioClip,float volume = 1.0f)
@@ -164,7 +164,7 @@ namespace KZLib
 				return false;
 			}
 
-			return TryPlayBGMSound(ResourceManager.In.GetAudioClip(audioPath),startTime);
+			return TryPlayBGMSound(ResourceMgr.In.GetAudioClip(audioPath),startTime);
 		}
 
 		public bool TryPlayBGMSound(AudioClip audioClip,float startTime = 0.0f)

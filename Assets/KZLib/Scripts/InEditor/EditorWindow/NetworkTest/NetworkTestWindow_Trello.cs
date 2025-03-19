@@ -22,7 +22,7 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/Trello/2",Order = 2),Button("Get Board",ButtonSizes.Large),EnableIf(nameof(IsExistTrello))]
 		protected void OnFindBoard_Trello()
 		{
-			CommonUtility.FindBoard_Trello(TrelloCoreKey,(resultList) =>
+			NetworkMgr.In.GetTrelloBoard(TrelloCoreKey,(resultList) =>
 			{
 				ShowResult_Trello(resultList);
 			});
@@ -36,7 +36,7 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/Trello/4",Order = 4),Button("Get List",ButtonSizes.Large),EnableIf(nameof(HasTestId))]
 		protected void OnFindList_Trello()
 		{
-			CommonUtility.FindList_Trello(TrelloCoreKey,m_trelloTestId,(resultList) =>
+			NetworkMgr.In.GetTrelloList(TrelloCoreKey,m_trelloTestId,(resultList) =>
 			{
 				ShowResult_Trello(resultList);
 			});
@@ -45,7 +45,7 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/Trello/4",Order = 4),Button("Get Card",ButtonSizes.Large),EnableIf(nameof(HasTestId))]
 		protected void OnFindCard_Trello()
 		{
-			CommonUtility.FindCard_Trello(TrelloCoreKey,m_trelloTestId,(resultList) =>
+			NetworkMgr.In.GetTrelloCard(TrelloCoreKey,m_trelloTestId,(resultList) =>
 			{
 				ShowResult_Trello(resultList);
 			});
@@ -54,13 +54,13 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/Trello/5",Order = 5),Button("Post List",ButtonSizes.Large),EnableIf(nameof(HasTestId))]
 		protected void OnPostList_Trello()
 		{
-			CommonUtility.PostList_Trello(m_trelloTestId,"Test");
+			NetworkMgr.In.PostTrelloList(m_trelloTestId,"Test");
 		}
 
 		[HorizontalGroup("Network/Trello/5",Order = 5),Button("Post Card",ButtonSizes.Large),EnableIf(nameof(HasTestId))]
 		protected void OnPostCard_Trello()
 		{
-			CommonUtility.PostCard_Trello(m_trelloTestId,"Test","Description");
+			NetworkMgr.In.PostTrelloCard(m_trelloTestId,"Test","Description");
 		}
 
 		[HorizontalGroup("Network/Trello/6",Order = 6),SerializeField,TableList(HideToolbar = true,AlwaysExpanded = true),ShowIf(nameof(IsShowTrelloResultList)),EnableIf(nameof(IsExistTrello))]

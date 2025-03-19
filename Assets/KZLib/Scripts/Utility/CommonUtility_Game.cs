@@ -33,15 +33,15 @@ public static partial class CommonUtility
 	{
 		// TODO Check Input
 
-		if(UIManager.HasInstance)
+		if(UIMgr.HasInstance)
 		{
 			if(isLock)
 			{
-				UIManager.In.BlockInput();
+				UIMgr.In.BlockInput();
 			}
 			else
 			{
-				UIManager.In.AllowInput();
+				UIMgr.In.AllowInput();
 			}
 		}
 	}
@@ -121,24 +121,32 @@ public static partial class CommonUtility
 	public static void ReleaseManager()
 	{
 		//? Release SingletonMB
-		ReleaseSingletonMB<SceneStateManager>();
-		ReleaseSingletonMB<UIManager>();
-		ReleaseSingletonMB<CameraManager>();
+		ReleaseSingletonMB<SceneStateMgr>();
+		ReleaseSingletonMB<UIMgr>();
+		ReleaseSingletonMB<CameraMgr>();
+		ReleaseSingletonMB<TouchMgr>();
+		ReleaseSingletonMB<EffectMgr>();
 
 		//? Release Singleton
-		ReleaseSingleton<ProtoManager>();
+		ReleaseSingleton<ProtoMgr>();
+		ReleaseSingleton<ClusterMgr>();
+		ReleaseSingleton<ConfigMgr>();
+
 		ReleaseSingleton<GameDataMgr>();
 		ReleaseSingleton<LocalStorageMgr>();
-		ReleaseSingleton<ResourceManager>();
+		ReleaseSingleton<ResourceMgr>();
 		ReleaseSingleton<LogMgr>();
 		ReleaseSingleton<AddressablesMgr>();
-		ReleaseSingleton<SoundManager>();
+		ReleaseSingleton<SoundMgr>();
 		ReleaseSingleton<ShaderMgr>();
 
-		ReleaseSingleton<EventManager>();
-		ReleaseSingleton<RouteManager>();
+		ReleaseSingleton<InputMgr>();
+
+		ReleaseSingleton<EventMgr>();
+		ReleaseSingleton<RouteMgr>();
 
 		ClearCacheData();
+
 		StringExtension.ClearCacheData();
 		ColorExtension.ClearCacheData();
 	}

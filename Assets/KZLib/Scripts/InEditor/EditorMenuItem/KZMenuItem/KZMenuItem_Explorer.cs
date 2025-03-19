@@ -9,7 +9,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Explorer/Open Route File",false,(int) MenuType.Explorer_Open)]
 		private static void OnOpenRouteFile()
 		{
-			var filePath = RouteManager.In.FindRouteFilePath();
+			var filePath = RouteMgr.In.FindRouteFilePath();
 
 			CommonUtility.Open(filePath);
 		}

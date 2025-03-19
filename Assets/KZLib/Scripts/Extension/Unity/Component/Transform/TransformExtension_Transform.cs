@@ -134,7 +134,7 @@ public static partial class TransformExtension
 			return Vector2.zero;
 		}
 
-		return ScreenPosition(transform,CameraManager.HasInstance ? CameraManager.In.CurrentCamera : Camera.main);
+		return ScreenPosition(transform,CameraMgr.HasInstance ? CameraMgr.In.CurrentCamera : Camera.main);
 	}
 	
 	public static Vector2 ScreenPosition(this Transform transform,Camera camera)
@@ -161,7 +161,7 @@ public static partial class TransformExtension
 			return Vector3.zero;
 		}
 
-		return ViewportPosition(transform,CameraManager.HasInstance ? CameraManager.In.CurrentCamera : Camera.main);
+		return ViewportPosition(transform,CameraMgr.HasInstance ? CameraMgr.In.CurrentCamera : Camera.main);
 	}
 	
 	public static Vector3 ViewportPosition(this Transform transform,Camera _camera)

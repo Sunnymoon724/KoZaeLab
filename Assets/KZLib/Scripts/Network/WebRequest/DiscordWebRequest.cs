@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace KZLib.KZNetwork
+namespace KZLib
 {
 	//? https://discohook.org/ -> webhook test link
 
@@ -22,13 +22,12 @@ namespace KZLib.KZNetwork
 		// WebHookData -> string content,string username,EmbedData[] embeds
 		// EmbedData -> int color,FieldData[] fields
 		// FieldData -> string name,string value
-		protected DiscordWebRequest(string uri,string method) : base(uri,method) { }
+		protected DiscordWebRequest(string name,string uri,string method) : base(name,uri,method) { }
 	}
 
-	#region Post
-	public class DiscordPostWebRequest : DiscordWebRequest
+	public class PostDiscordWebRequest : DiscordWebRequest
 	{
-		protected DiscordPostWebRequest(string uri,string content,object[] embedArray,byte[] file) : base(uri,UnityWebRequest.kHttpVerbPOST)
+		protected PostDiscordWebRequest(string name,string uri,string content,object[] embedArray,byte[] file) : base(name,uri,UnityWebRequest.kHttpVerbPOST)
 		{
 			var webHookText = JsonConvert.SerializeObject(new
 			{
@@ -52,9 +51,11 @@ namespace KZLib.KZNetwork
 		}
 	}
 
-	public class DiscordPostWebHookWebRequest : DiscordPostWebRequest
+	public class PostDiscordWebHookWebRequest : PostDiscordWebRequest
 	{
-		public static DiscordPostWebHookWebRequest Create(string uri,string content,IEnumerable<MessageData> messageGroup = null,byte[] file = null)
+		private const string c_post_discord_webHook = "Post DiscordWebHook";
+
+		public static PostDiscordWebHookWebRequest Create(string uri,string content,IEnumerable<MessageData> messageGroup = null,byte[] file = null)
 		{
 			if(uri.IsEmpty())
 			{
@@ -63,7 +64,7 @@ namespace KZLib.KZNetwork
 
 			if(messageGroup.IsNullOrEmpty())
 			{
-				return new DiscordPostWebHookWebRequest(uri,content,null,file);
+				return new PostDiscordWebHookWebRequest(c_post_discord_webHook,uri,content,null,file);
 			}
 
 			//? Fields max count = 1024 -> device message
@@ -116,10 +117,9 @@ namespace KZLib.KZNetwork
 				embedQueue.Enqueue(new { color = 10926864,fields = fieldList.ToArray() });
 			}
 
-			return new DiscordPostWebHookWebRequest(uri,content,embedQueue.ToArray(),file);
+			return new PostDiscordWebHookWebRequest(c_post_discord_webHook,uri,content,embedQueue.ToArray(),file);
 		}
 
-		private DiscordPostWebHookWebRequest(string uri,string content,object[] embedArray,byte[] file) : base(uri,content,embedArray,file) { }
+		private PostDiscordWebHookWebRequest(string name,string uri,string content,object[] embedArray,byte[] file) : base(name,uri,content,embedArray,file) { }
 	}
-	#endregion Post
 }

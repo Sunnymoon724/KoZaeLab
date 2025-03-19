@@ -62,7 +62,7 @@ public abstract class WindowUI2D : WindowUI
 	{
 		foreach(var baseUI in m_linkedHashSet)
 		{
-			UIManager.In.Close(baseUI.Tag);
+			UIMgr.In.Close(baseUI.Tag);
 		}
 
 		m_linkedHashSet.Clear();

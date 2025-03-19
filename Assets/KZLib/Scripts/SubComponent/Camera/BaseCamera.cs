@@ -11,9 +11,9 @@ public abstract class BaseCamera : BaseComponent
 	{
 		base.Initialize();
 
-		if(CameraManager.HasInstance)
+		if(CameraMgr.HasInstance)
 		{
-			CameraManager.In.AddSubCamera(m_camera);
+			CameraMgr.In.AddSubCamera(m_camera);
 		}
 	}
 
@@ -21,9 +21,9 @@ public abstract class BaseCamera : BaseComponent
 	{
 		base.Release();
 
-		if(CameraManager.HasInstance)
+		if(CameraMgr.HasInstance)
 		{
-			CameraManager.In.RemoveSubCamera(m_camera);
+			CameraMgr.In.RemoveSubCamera(m_camera);
 		}
 	}
 

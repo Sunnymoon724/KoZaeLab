@@ -5,7 +5,7 @@ using TransitionPanel;
 
 namespace KZLib
 {
-	public partial class UIManager : LoadSingletonMB<UIManager>
+	public partial class UIMgr : LoadSingletonMB<UIMgr>
 	{
 		public async UniTask PlayLoadingAsync(Func<UniTask> onPlayTask)
 		{
@@ -16,9 +16,9 @@ namespace KZLib
 			Close(loadingPanelUI);
 		}
 
-		public async UniTask PlayLoadingIncludeTransitionAsync(TransitionData transitionData,Func<UniTask> onPlayTask)
+		public async UniTask PlayLoadingIncludeTransitionAsync(TransitionInfo info,Func<UniTask> onPlayTask)
 		{
-			await PlayTransitionOutInAsync(transitionData,async ()=> { await PlayLoadingAsync(onPlayTask); });
+			await PlayTransitionOutInAsync(info,async ()=> { await PlayLoadingAsync(onPlayTask); });
 		}
 	}
 }

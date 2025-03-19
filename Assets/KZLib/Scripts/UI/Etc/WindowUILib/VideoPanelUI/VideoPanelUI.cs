@@ -73,7 +73,7 @@ public class VideoPanelUI : WindowUI2D
 		{
 			m_videoPlayer.source = VideoSource.VideoClip;
 
-			var videoClip = ResourceManager.In.GetVideoClip(videoData.VideoPath);
+			var videoClip = ResourceMgr.In.GetVideoClip(videoData.VideoPath);
 
 			if(!videoClip)
 			{
@@ -87,7 +87,7 @@ public class VideoPanelUI : WindowUI2D
 
 		if(videoData.IsExistSubtitle)
 		{
-			var subtitlePanel = UIManager.In.Open<SubtitlePanelUI>(UITag.SubtitlePanelUI,new SubtitlePanelUI.SubtitleParam(videoData.SubtitlePath));
+			var subtitlePanel = UIMgr.In.Open<SubtitlePanelUI>(UITag.SubtitlePanelUI,new SubtitlePanelUI.SubtitleParam(videoData.SubtitlePath));
 
 			AddLink(subtitlePanel);
 
@@ -97,7 +97,7 @@ public class VideoPanelUI : WindowUI2D
 
 		if(videoData.CanSkip)
 		{
-			var skipPanel = UIManager.In.Open<SkipPanelUI>(UITag.SkipPanelUI,new SkipPanelUI.SkipParam(Stop));
+			var skipPanel = UIMgr.In.Open<SkipPanelUI>(UITag.SkipPanelUI,new SkipPanelUI.SkipParam(Stop));
 
 			AddLink(skipPanel);
 		}

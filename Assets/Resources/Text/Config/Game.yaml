@@ -1,4 +1,5 @@
-﻿ProtoFolderPath: Resources/Text/Proto
+﻿CurrentEnvironment: DEV
+ProtoFolderPath: Resources/Text/Proto
 LanguageFolderPath: Resources/Text/Language
 ConfigFolderPath: Resources/Text/Config
 UIPrefabPath: Resources/Prefab/UI

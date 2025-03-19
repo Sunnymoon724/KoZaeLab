@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace KZLib
 {
-	public partial class ResourceManager : Singleton<ResourceManager>
+	public partial class ResourceMgr : Singleton<ResourceMgr>
 	{
 		private record LoadingData(string DataPath,bool IsFilePath,Transform Parent);
 
@@ -50,7 +50,7 @@ namespace KZLib
 		{
 			m_tokenSource = new();
 
-			var gameCfg = ConfigManager.In.Access<ConfigData.GameConfig>();
+			var gameCfg = ConfigMgr.In.Access<ConfigData.GameConfig>();
 
 			m_useServerResource = !gameCfg.IsLocalResource;
 

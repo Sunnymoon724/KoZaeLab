@@ -4,7 +4,7 @@ using YamlDotNet.Serialization;
 
 namespace ConfigData
 {
-	public class NetworkConfig : IConfig
+	public class ServiceConfig : IConfig
 	{
 		private Dictionary<string,string> DiscordLinkDict { get; set; } = new() { { "Bug Report", " " }, };
 		private Dictionary<string,string> GoogleSheetFileIdDict { get; set; } = new() { { " ", " " }, };
@@ -12,6 +12,9 @@ namespace ConfigData
 
 		private string TrelloApiKey { get; set; } = "";
 		private string TrelloToken { get; set; } = "";
+
+		public string GoogleSheetURL { get; private set; } = "";
+		public string GoogleDriveURL { get; private set; } = "";
 
 		public List<string> BugReportPostList { get; private set; } = new() { "Discord", "Trello" };
 
@@ -31,6 +34,6 @@ namespace ConfigData
 		}
 
 		[YamlIgnore]
-		public string TrelloCoreKey => TrelloApiKey.IsEmpty() || TrelloToken.IsEmpty() ? null : $"key={TrelloApiKey}&token={TrelloToken}";
+		public string TrelloKey => TrelloApiKey.IsEmpty() || TrelloToken.IsEmpty() ? null : $"key={TrelloApiKey}&token={TrelloToken}";
 	}
 }

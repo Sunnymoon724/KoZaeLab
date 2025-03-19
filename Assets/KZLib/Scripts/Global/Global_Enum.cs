@@ -45,3 +45,10 @@ public enum BuildPlatformType
 
 	All = -1,
 }
+
+public enum EnvironmentType
+{
+	DEV,	// 개발
+	QA,		// QA
+	LIVE,	// 라이브
+}

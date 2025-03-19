@@ -13,8 +13,6 @@ namespace KZLib
 		UniTask ReleaseAsync(string previousSceneName,Action<float> onUpdateProgress);
 
 		string SceneName { get; }
-
-		UniTask PlayAsync();
 	}
 
 	public abstract class SceneState : ISceneState<SceneState.StateParam>
@@ -87,7 +85,5 @@ namespace KZLib
 
 		protected async virtual UniTask InitializeInnerAsync(Action<float> onUpdateProgress,StateParam param) { await UniTask.Yield(); }
 		protected async virtual UniTask ReleaseInnerAsync(Action<float> onUpdateProgress) { await UniTask.Yield(); }
-
-		public async virtual UniTask PlayAsync() { await UniTask.Yield(); }
 	}
 }

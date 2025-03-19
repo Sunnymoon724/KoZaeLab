@@ -10,7 +10,7 @@ using KZLib.KZData;
 
 namespace KZLib
 {
-	public class ProtoManager : Singleton<ProtoManager>
+	public class ProtoMgr : Singleton<ProtoMgr>
 	{
 		private bool m_disposed = false;
 
@@ -302,9 +302,9 @@ namespace KZLib
 #endif
 		private bool TryGetTextAsset(out TextAsset[] textAssetArray)
 		{
-			var gameCfg = ConfigManager.In.Access<ConfigData.GameConfig>();
+			var gameCfg = ConfigMgr.In.Access<ConfigData.GameConfig>();
 
-			textAssetArray = ResourceManager.In.GetTextAssetArray(gameCfg.ProtoFolderPath);
+			textAssetArray = ResourceMgr.In.GetTextAssetArray(gameCfg.ProtoFolderPath);
 
 			if(textAssetArray.IsNullOrEmpty())
 			{

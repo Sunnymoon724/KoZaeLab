@@ -5,7 +5,7 @@ using VideoPanel;
 
 namespace KZLib
 {
-	public partial class UIManager : LoadSingletonMB<UIManager>
+	public partial class UIMgr : LoadSingletonMB<UIMgr>
 	{
 		/// <summary>
 		/// fade out -> prepare video -> fade in -> play video
@@ -32,7 +32,7 @@ namespace KZLib
 				return;
 			}
 
-			SoundManager.In.PauseBGMSound();
+			SoundMgr.In.PauseBGMSound();
 
 			var videoPanel = Open<VideoPanelUI>(UITag.VideoPanelUI);
 
@@ -40,11 +40,11 @@ namespace KZLib
 
 			if(includeLoading)
 			{
-				await PlayLoadingIncludeTransitionAsync(new TransitionData(),async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
+				await PlayLoadingIncludeTransitionAsync(new TransitionInfo(),async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
 			}
 			else
 			{
-				await PlayTransitionOutInAsync(new TransitionData(),async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
+				await PlayTransitionOutInAsync(new TransitionInfo(),async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
 			}
 
 			videoPanel.PlayVideo();
@@ -53,7 +53,7 @@ namespace KZLib
 
 			Close(videoPanel);
 
-			SoundManager.In.ResumeBGMSound();
+			SoundMgr.In.ResumeBGMSound();
 		}
 
 		private async UniTask _PrepareVideoAsync(VideoPanelUI videoPanel,VideoData videoData)

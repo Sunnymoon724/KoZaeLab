@@ -7,7 +7,7 @@ public class HudTestCon : MonoBehaviour
 {
 	private void Start()
 	{
-		UIManager.In.Open<HudPanelUI>(UITag.HudPanelUI);
+		UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
 
 		LoopTextAsync().Forget();
 	}

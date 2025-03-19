@@ -5,7 +5,7 @@ using KZLib.KZData;
 
 namespace KZLib
 {
-	public class ClusterManager : Singleton<ClusterManager>
+	public class ClusterMgr : Singleton<ClusterMgr>
 	{
 		private bool m_disposed = false;
 

@@ -29,7 +29,7 @@ namespace GameData
 		{
 			m_AccountDataDict = new();
 
-			var gameCfg = ConfigManager.In.Access<ConfigData.GameConfig>();
+			var gameCfg = ConfigMgr.In.Access<ConfigData.GameConfig>();
 
 			if(gameCfg.IsLocalSave)
 			{
@@ -75,7 +75,7 @@ namespace GameData
 
 		private void OnUpdateData(string _key)
 		{
-			var gameCfg = ConfigManager.In.Access<ConfigData.GameConfig>();
+			var gameCfg = ConfigMgr.In.Access<ConfigData.GameConfig>();
 
 			if(gameCfg.IsLocalSave)
 			{

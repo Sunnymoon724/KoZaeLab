@@ -122,7 +122,7 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 	protected virtual void SelfClose()
 	{
-		UIManager.In.Close(Tag);
+		UIMgr.In.Close(Tag);
 	}
 
 	protected void AddSequence(ref Sequence sequence,Tween tween)

@@ -7,7 +7,7 @@ namespace TransitionPanel
 {
 	public class TransitionProgressTask : ProgressTask
 	{
-		public record TransitionProgressParam(TransitionData Data,bool IsReverse = false) : ProgressParam(IsReverse);
+		public record TransitionProgressParam(TransitionInfo Info,bool IsReverse = false) : ProgressParam(IsReverse);
 
 		private enum TransitionType { None, Material };
 
@@ -68,11 +68,11 @@ namespace TransitionPanel
 				return;
 			}
 
-			Duration = param.Data.Duration;
+			Duration = param.Info.Duration;
 
-			m_image.color = param.Data.TransitionColor;
+			m_image.color = param.Info.Color;
 
-			CurrentType = param.Data.IsFade ? TransitionType.None : TransitionType.Material;
+			CurrentType = param.Info.IsFade ? TransitionType.None : TransitionType.Material;
 
 			if(!IsFade)
 			{
@@ -80,9 +80,9 @@ namespace TransitionPanel
 			}
 			else
 			{
-				CurrentMaterial.SetTexture("_MainTex",param.Data.TransitionTexture);
+				CurrentMaterial.SetTexture("_MainTex",param.Info.Texture);
 				CurrentMaterial.SetFloat("_Range",1.0f);
-				CurrentMaterial.SetFloat("_Cutout",param.Data.IsCutout ? 1.0f : 0.0f);
+				CurrentMaterial.SetFloat("_Cutout",param.Info.IsCutout ? 1.0f : 0.0f);
 			}
 		}
 

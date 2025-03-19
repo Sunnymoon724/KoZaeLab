@@ -8,7 +8,7 @@ using System.IO;
 
 namespace KZLib
 {
-	public partial class ResourceManager : Singleton<ResourceManager>
+	public partial class ResourceMgr : Singleton<ResourceMgr>
 	{
 		public TComponent[] GetObjectArray<TComponent>(string folderPath,Transform parent = null,bool immediately = true) where TComponent : Component
 		{

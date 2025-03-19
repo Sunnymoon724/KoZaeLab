@@ -12,7 +12,7 @@ using UnityEditor;
 
 namespace KZLib
 {
-	public partial class ResourceManager : Singleton<ResourceManager>
+	public partial class ResourceMgr : Singleton<ResourceMgr>
 	{
 		public TComponent GetObject<TComponent>(string filePath,Transform parent = null,bool immediately = true) where TComponent : Component
 		{

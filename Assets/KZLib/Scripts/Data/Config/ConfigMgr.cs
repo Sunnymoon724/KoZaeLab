@@ -8,13 +8,13 @@ using ConfigData;
 
 namespace KZLib
 {
-	public class ConfigManager : Singleton<ConfigManager>
+	public class ConfigMgr : Singleton<ConfigMgr>
 	{
 		private bool m_disposed = false;
 
 		private readonly Dictionary<string,IConfig> m_configDict = new();
 
-		private readonly static Type[] s_defaultConfigArray = new Type[] { typeof(GameConfig),typeof(OptionConfig),typeof(NetworkConfig) };
+		private readonly static Type[] s_defaultConfigArray = new Type[] { typeof(GameConfig),typeof(OptionConfig),typeof(ServiceConfig) };
 
 		protected override void Initialize()
 		{
@@ -133,7 +133,7 @@ namespace KZLib
 			}
 
 			//? check resource folder.
-			var configRoute = RouteManager.In.GetOrCreateRoute($"defaultRes:config:{fileName}");
+			var configRoute = RouteMgr.In.GetOrCreateRoute($"defaultRes:config:{fileName}");
 
 			text = ReadConfigFile(configRoute.AbsolutePath);
 

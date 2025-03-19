@@ -38,7 +38,7 @@ public class SkipPanelUI : WindowUI2D
 
 				if(m_clickSoundClip)
 				{
-					SoundManager.In.TryPlayUISound(m_clickSoundClip);
+					SoundMgr.In.TryPlayUISound(m_clickSoundClip);
 				}
 			});
 		}

@@ -24,15 +24,20 @@ public abstract class RepositoryUI : BaseComponentUI
 	{
 		base.Initialize();
 
-		if(CanvasCamera != null && CameraManager.HasInstance)
+		if(CanvasCamera != null && CameraMgr.HasInstance)
 		{
-			CameraManager.In.AddSubCamera(CanvasCamera,false);
+			CameraMgr.In.AddSubCamera(CanvasCamera,false);
 		}
 	}
 
 	protected override void Release()
 	{
 		base.Release();
+
+		if(CanvasCamera != null && CameraMgr.HasInstance)
+		{
+			CameraMgr.In.RemoveSubCamera(CanvasCamera);
+		}
 
 		RemoveAll(null,true);
 
@@ -59,7 +64,7 @@ public abstract class RepositoryUI : BaseComponentUI
 
 		if(isRelease)
 		{
-			if(ResourceManager.HasInstance)
+			if(ResourceMgr.HasInstance)
 			{
 				windowUI.gameObject.DestroyObject();
 			}

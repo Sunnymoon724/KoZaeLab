@@ -6,7 +6,7 @@ using KZLib.KZUtility;
 
 namespace KZLib
 {
-	public partial class UIManager : LoadSingletonMB<UIManager>
+	public partial class UIMgr : LoadSingletonMB<UIMgr>
 	{
 		//? Canvas List
 		private readonly List<RepositoryUI> m_repositoryList = new();
@@ -37,7 +37,7 @@ namespace KZLib
 
 			ChangeScreenSize(new(Screen.width,Screen.height));
 
-			m_uiPrefabPath = ConfigManager.In.Access<ConfigData.GameConfig>().UIPrefabPath;
+			m_uiPrefabPath = ConfigMgr.In.Access<ConfigData.GameConfig>().UIPrefabPath;
 		}
 
 		protected override void Release()
@@ -83,7 +83,7 @@ namespace KZLib
 
 		private WindowUI MakeUI(UITag uiTag)
 		{
-			var prefab = ResourceManager.In.GetObject(GetUIPath(uiTag));
+			var prefab = ResourceMgr.In.GetObject(GetUIPath(uiTag));
 
 			if(!prefab)
 			{

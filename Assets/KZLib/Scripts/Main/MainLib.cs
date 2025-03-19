@@ -31,7 +31,7 @@ namespace KZLib
 			{
 				if(!m_gameLanguage.HasValue)
 				{
-					var optionCfg = ConfigManager.In.Access<ConfigData.OptionConfig>();
+					var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
 					m_gameLanguage = optionCfg.Language;
 				}
@@ -48,7 +48,7 @@ namespace KZLib
 
 				m_gameLanguage = value;
 
-				var optionCfg = ConfigManager.In.Access<ConfigData.OptionConfig>();
+				var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
 				optionCfg.SetLanguage(m_gameLanguage.Value);
 			}
@@ -146,17 +146,17 @@ namespace KZLib
 		private async void Start()
 		{
 			
-			var gameCfg = ConfigManager.In.Access<ConfigData.GameConfig>();
+			var gameCfg = ConfigMgr.In.Access<ConfigData.GameConfig>();
 
 #if UNITY_EDITOR
 			if(gameCfg.UseHeadUpDisplay)
 			{
-				UIManager.In.Open<HudPanelUI>(UITag.HudPanelUI);
+				UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
 			}
 #else
 			if(Debug.isDebugBuild && gameCfg.UseHeadUpDisplay)
 			{
-				UIManager.In.Open<HudPanelUI>(UITag.HudPanelUI);
+				UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
 			}
 #endif
 
@@ -206,9 +206,9 @@ namespace KZLib
 			return text.IsEmpty() ? new MainData() : JsonConvert.DeserializeObject<MainData>(text);
 		}
 
-		protected async virtual UniTask StartTestMode(CancellationToken token) { await ProtoManager.In.TryLoadAsync(token); }
+		protected async virtual UniTask StartTestMode(CancellationToken token) { await ProtoMgr.In.TryLoadAsync(token); }
 #endif
-		protected async virtual UniTask StartNormalMode(CancellationToken token) { await ProtoManager.In.TryLoadAsync(token); }
+		protected async virtual UniTask StartNormalMode(CancellationToken token) { await ProtoMgr.In.TryLoadAsync(token); }
 
 		protected virtual void InitializeResolution(StringBuilder stringBuilder)
 		{
@@ -261,13 +261,13 @@ namespace KZLib
 #if UNITY_EDITOR
 			if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C))
 			{
-				if(UIManager.In.IsOpened(UITag.HudPanelUI))
+				if(UIMgr.In.IsOpened(UITag.HudPanelUI))
 				{
-					UIManager.In.Close(UITag.HudPanelUI);
+					UIMgr.In.Close(UITag.HudPanelUI);
 				}
 				else
 				{
-					UIManager.In.Open<HudPanelUI>(UITag.HudPanelUI);
+					UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
 				}
 			}
 
@@ -287,9 +287,9 @@ namespace KZLib
 			{
 				ScreenResolution = new(Screen.width,Screen.height);
 
-				if(UIManager.HasInstance)
+				if(UIMgr.HasInstance)
 				{
-					UIManager.In.ChangeScreenSize(ScreenResolution);
+					UIMgr.In.ChangeScreenSize(ScreenResolution);
 				}
 			}
 #else
@@ -297,9 +297,9 @@ namespace KZLib
 			{
 				ScreenResolution = new(Screen.width,Screen.height);
 
-				if(UIManager.HasInstance)
+				if(UIMgr.HasInstance)
 				{
-					UIManager.In.ChangeScreenSize(ScreenResolution);
+					UIMgr.In.ChangeScreenSize(ScreenResolution);
 				}
 			}
 #endif

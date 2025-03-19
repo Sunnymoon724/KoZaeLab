@@ -25,7 +25,7 @@ namespace KZLib
 
 		protected override void Initialize()
 		{
-			m_effectPath = ConfigManager.In.Access<ConfigData.GameConfig>().FXPrefabPath;
+			m_effectPath = ConfigMgr.In.Access<ConfigData.GameConfig>().FXPrefabPath;
 		}
 
 		private async UniTaskVoid CheckExpiredEffectAsync()
@@ -82,7 +82,7 @@ namespace KZLib
 			{
 				var effectPath = GetEffectPath(name);
 
-				effectClip = ResourceManager.In.GetObject<EffectClip>(effectPath,parent);
+				effectClip = ResourceMgr.In.GetObject<EffectClip>(effectPath,parent);
 
 				if(!effectClip)
 				{
