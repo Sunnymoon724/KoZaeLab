@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
+using KZLib.KZUtility;
+using System;
 
 namespace KZLib.KZMenu
 {
@@ -31,12 +33,21 @@ namespace KZLib.KZMenu
 				return;
 			}
 
-			CommonUtility.DeleteEmptyDirectory(Application.dataPath,()=>
+			try
 			{
-				AssetDatabase.Refresh();
+				FileUtility.DeleteEmptyDirectory(Application.dataPath,()=>
+				{
+					AssetDatabase.Refresh();
 
-				CommonUtility.DisplayInfo("Empty folder are deleted");
-			});
+					CommonUtility.DisplayInfo("Empty folder are deleted");
+				});
+			}
+			catch(Exception ex)
+			{
+				LogTag.Build.E(ex.Message);
+			}
+
+			
 		}
 
 		[MenuItem("KZMenu/Option/Unload Unused Assets Immediate",false,(int) MenuType.Option_Delete)]

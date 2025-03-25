@@ -4,6 +4,8 @@ using Sirenix.OdinInspector;
 using System.Diagnostics;
 
 using Object = UnityEngine.Object;
+using KZLib.KZUtility;
+
 
 #if UNITY_EDITOR
 
@@ -29,9 +31,9 @@ namespace KZLib.KZAttribute
 
 		protected abstract void OnOpenResource();
 
-		protected override string GetNewPath()
+		protected override string FindNewPath()
 		{
-			return CommonUtility.GetFilePathInPanel("Change new path.",ResourceKind);
+			return CommonUtility.FindFilePathInPanel("Change new path.",ResourceKind);
 		}
 
 		protected override Rect OnClickToOpen(Rect rect,bool isValid)
@@ -43,14 +45,14 @@ namespace KZLib.KZAttribute
 
 		protected override bool IsValidPath()
 		{
-			return CommonUtility.IsFileExist(CommonUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets));
+			return FileUtility.IsFileExist(AbsolutePath);
 		}
 
 		protected UResource GetResource<UResource>() where UResource : Object
 		{
-			var assetsPath = CommonUtility.GetAssetsPath(ValueEntry.SmartValue);
+			var assetsPath = FileUtility.GetAssetsPath(ValueEntry.SmartValue);
 
-			if(!CommonUtility.IsStartWithAssetsHeader(assetsPath))
+			if(!FileUtility.IsStartWithAssetsHeader(assetsPath))
 			{
 				CommonUtility.DisplayError(new Exception($"{ValueEntry.SmartValue} is not in the Assets folder."));
 
@@ -95,7 +97,7 @@ namespace KZLib.KZAttribute
 					return;
 				}
 
-				ViewerObject = AssetDatabase.LoadAssetAtPath<UObject>(CommonUtility.GetAssetsPath(m_objectPath));
+				ViewerObject = AssetDatabase.LoadAssetAtPath<UObject>(FileUtility.GetAssetsPath(m_objectPath));
 			}
 
 			[OnInspectorGUI]

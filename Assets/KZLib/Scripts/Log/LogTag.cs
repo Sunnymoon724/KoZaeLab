@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 using Debug = UnityEngine.Debug;
 using KZLib.KZData;
+using KZLib.KZUtility;
+
 
 #if UNITY_EDITOR
 
@@ -151,7 +153,7 @@ public static class LogExtension
 				return false;
 			}
 
-			InternalEditorUtility.OpenFileAtLineExternal(CommonUtility.GetAbsolutePath(pathArray[0],true),lineNumber);
+			InternalEditorUtility.OpenFileAtLineExternal(FileUtility.GetAbsolutePath(pathArray[0],true),lineNumber);
 
 			return true;
 		}

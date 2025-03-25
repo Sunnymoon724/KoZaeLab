@@ -3,6 +3,8 @@ using UnityEngine;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using KZLib.KZUtility;
+
 
 #if UNITY_EDITOR
 
@@ -38,6 +40,8 @@ namespace KZLib.KZAttribute
 
 		protected readonly List<Func<Rect,bool,Rect>> m_onClickedList = new();
 
+		protected string AbsolutePath => FileUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets);
+
 		protected override void Initialize()
 		{
 			if(Attribute.AddChangeButton)
@@ -51,7 +55,7 @@ namespace KZLib.KZAttribute
 			}
 		}
 
-		protected abstract string GetNewPath();
+		protected abstract string FindNewPath();
 
 		protected abstract bool IsValidPath();
 
@@ -59,7 +63,7 @@ namespace KZLib.KZAttribute
 		{
 			return DrawButton(rect,SdfIconType.ArrowRepeat,true,()=>
 			{
-				var dataPath = GetNewPath();
+				var dataPath = FindNewPath();
 
 				if(dataPath.IsEmpty())
 				{
@@ -69,12 +73,12 @@ namespace KZLib.KZAttribute
 				if(Attribute.IsIncludeAssets)
 				{
 					//? Path in assets folder
-					if(!CommonUtility.IsIncludeAssetsHeader(dataPath))
+					if(!FileUtility.IsIncludeAssetsHeader(dataPath))
 					{
 						CommonUtility.DisplayError(new NullReferenceException($"{dataPath} is not in assets folder."));
 					}
 
-					ValueEntry.SmartValue = CommonUtility.RemoveAssetsHeader(dataPath);
+					ValueEntry.SmartValue = FileUtility.RemoveAssetsHeader(dataPath);
 				}
 				else
 				{
@@ -121,7 +125,7 @@ namespace KZLib.KZAttribute
 		{
 			return DrawButton(rect,SdfIconType.Folder2,isValid,()=>
 			{
-				CommonUtility.Open(CommonUtility.GetParentPath(CommonUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets)));
+				CommonUtility.Open(FileUtility.GetParentPath(AbsolutePath));
 			});
 		}
 	}

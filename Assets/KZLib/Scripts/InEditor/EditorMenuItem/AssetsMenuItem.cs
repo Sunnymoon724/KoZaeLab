@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using KZLib.KZUtility;
 using KZLib.KZWindow;
 using UnityEditor;
 using UnityEngine;
@@ -98,7 +99,7 @@ namespace KZLib.KZMenu
 
 			var path = AssetDatabase.GetAssetPath(Selection.activeObject);
 
-			if(!CommonUtility.IsFilePath(path))
+			if(!FileUtility.IsFilePath(path))
 			{
 				LogTag.Editor.W("Selection is folder.");
 
@@ -123,13 +124,13 @@ namespace KZLib.KZMenu
 			{
 				var asset = AssetDatabase.GetAssetPath(selected);
 
-				textList.Add($"Finding assets using <b> {CommonUtility.GetOnlyName(asset)} </b>");
+				textList.Add($"Finding assets using <b> {FileUtility.GetOnlyName(asset)} </b>");
 
 				if(AssetsPathDict.TryGetValue(asset,out var dependantList))
 				{
 					foreach(var dependant in dependantList)
 					{
-						textList.Add($"<a href=\"{dependant}\">{CommonUtility.GetOnlyName(dependant)}</a> ");
+						textList.Add($"<a href=\"{dependant}\">{FileUtility.GetOnlyName(dependant)}</a> ");
 					}
 				}
 			}
@@ -163,7 +164,7 @@ namespace KZLib.KZMenu
 			{
 				var asset = AssetDatabase.GetAssetPath(selected);
 
-				textList.Add($"Finding assets with <b> {CommonUtility.GetOnlyName(asset)} </b>");
+				textList.Add($"Finding assets with <b> {FileUtility.GetOnlyName(asset)} </b>");
 
 				foreach(var dependant in AssetDatabase.GetDependencies(asset,false))
 				{
@@ -172,7 +173,7 @@ namespace KZLib.KZMenu
 						continue;
 					}
 
-					textList.Add($"<a href=\"{dependant}\">{CommonUtility.GetOnlyName(dependant)}</a> ");
+					textList.Add($"<a href=\"{dependant}\">{FileUtility.GetOnlyName(dependant)}</a> ");
 				}
 			}
 
@@ -198,14 +199,14 @@ namespace KZLib.KZMenu
 		private static void OnCreateScriptableObject()
 		{
 			var selection = Selection.activeObject;
-			var dataPath = CommonUtility.NormalizePath($"Resources/ScriptableObject/{selection.name}.asset");
+			var dataPath = FileUtility.NormalizePath($"Resources/ScriptableObject/{selection.name}.asset");
 
 			if(!CommonUtility.DisplayCheck("Create scriptableObject",$"Create scriptableObject? \n Name : {selection.name} \n Path : {dataPath}"))
 			{
 				return;
 			}
 
-			if(CommonUtility.IsFileExist(dataPath))
+			if(FileUtility.IsFileExist(dataPath))
 			{
 				CommonUtility.DisplayError(new NullReferenceException($"{dataPath} is exist."));
 

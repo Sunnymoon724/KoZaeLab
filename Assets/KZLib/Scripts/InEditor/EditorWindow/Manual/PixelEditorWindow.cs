@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using KZLib.KZAttribute;
+using KZLib.KZUtility;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEngine;
@@ -10,10 +11,10 @@ namespace KZLib.KZWindow
 	public class PixelEditorWindow : OdinEditorWindow
 	{
 		[BoxGroup("Button",ShowLabel = false,Order = 1)]
-		[HorizontalGroup("Button/0"),Button("Get Image",ButtonSizes.Large)]
-		protected void OnGetImage()
+		[HorizontalGroup("Button/0"),Button("Find Image",ButtonSizes.Large)]
+		protected void OnFindImage()
 		{
-			m_spritePath = CommonUtility.GetFilePathInPanel("Change new path.","png");
+			m_spritePath = CommonUtility.FindFilePathInPanel("Change new path.","png");
 		}
 
 		[HorizontalGroup("Button/0"),Button("Convert Image",ButtonSizes.Large),EnableIf(nameof(IsExist))]
@@ -21,7 +22,7 @@ namespace KZLib.KZWindow
 		{
 			var texture2D = new Texture2D(1,1);
 
-			if(!texture2D.LoadImage(CommonUtility.ReadFileToBytes(m_spritePath)))
+			if(!texture2D.LoadImage(FileUtility.ReadFileToBytes(m_spritePath)))
 			{
 				CommonUtility.DisplayError(new Exception("Fail to load image."));
 
@@ -53,7 +54,9 @@ namespace KZLib.KZWindow
 			{
 				texture2D.SetPixels32(pixelArray);
 
-				CommonUtility.WriteTextureToFile(string.Concat(CommonUtility.GetPathWithoutExtension(m_spritePath),"_Convert.png"),texture2D);
+				var convertPath = string.Concat(FileUtility.GetPathWithoutExtension(m_spritePath),"_Convert.png");
+
+				FileUtility.WriteByteToFile(convertPath,texture2D.EncodeToPNG());
 
 				CommonUtility.DisplayInfo("Image change completed");
 			}

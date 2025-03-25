@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using KZLib.KZUtility;
 
 #if UNITY_EDITOR
 
@@ -48,9 +49,9 @@ public static partial class CommonUtility
 
 	public static IEnumerable<TObject> FindAssetGroupInFolder<TObject>(string folderPath) where TObject : Object
 	{
-		foreach(var path in FindFilePathGroup(GetAbsolutePath(folderPath,true)))
+		foreach(var path in FileUtility.FindFilePathGroup(FileUtility.GetAbsolutePath(folderPath,true)))
 		{
-			var asset = AssetDatabase.LoadAssetAtPath<TObject>(GetAssetsPath(path));
+			var asset = AssetDatabase.LoadAssetAtPath<TObject>(FileUtility.GetAssetsPath(path));
 
 			if(asset != null)
 			{
@@ -73,12 +74,12 @@ public static partial class CommonUtility
 			return;
 		}
 
-		var folderPath = GetParentAbsolutePath(dataPath,true);
-		var assetPath = GetAssetsPath(dataPath);
+		var folderPath = FileUtility.GetParentAbsolutePath(dataPath,true);
+		var assetPath = FileUtility.GetAssetsPath(dataPath);
 
-		CreateFolder(folderPath);
+		FileUtility.CreateFolder(folderPath);
 
-		if(IsFileExist(dataPath))
+		if(FileUtility.IsFileExist(dataPath))
 		{
 			AssetDatabase.DeleteAsset(assetPath);
 		}

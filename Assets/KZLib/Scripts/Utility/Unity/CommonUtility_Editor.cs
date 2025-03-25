@@ -1,9 +1,11 @@
 ﻿#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using KZLib.KZUtility;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditorInternal;
+using UnityEngine;
 
 public static partial class CommonUtility
 {
@@ -175,6 +177,76 @@ public static partial class CommonUtility
 		EditorUtility.ClearProgressBar();
 	}
 	#endregion DisplayDialog
+
+	#region Open
+	public static void Open(string absolutePath)
+	{
+		if(!FileUtility.IsPathExist(absolutePath))
+		{
+			return;
+		}
+
+		EditorUtility.OpenWithDefaultApp(absolutePath);
+	}
+
+	public static void OpenTextFile(string absoluteFilePath,int line = 1)
+	{
+		if(!FileUtility.IsFileExist(absoluteFilePath))
+		{
+			return;
+		}
+
+		line = line <= 0 ? 1 : line;
+
+		InternalEditorUtility.OpenFileAtLineExternal(absoluteFilePath,line);
+	}
+	#endregion Open
+
+	#region Panel
+	public static string FindFilePathInPanel(string title,string kind = "*")
+	{
+		return EditorUtility.OpenFilePanel(title,Application.dataPath,kind);
+	}
+
+	public static string FindFolderPathInPanel(string title)
+	{
+		return EditorUtility.OpenFolderPanel(title,Application.dataPath,string.Empty);
+	}
+
+	public static string FindTsvFile()
+	{
+		return FindFile("Find tsv file","*.tsv");
+	}
+
+	public static string FindExcelFilePath()
+	{
+		var filterArray = new List<string>();
+
+		foreach(var extension in Global.EXCEL_EXTENSION_ARRAY)
+		{
+			filterArray.Add($"*{extension}");
+		}
+
+		return FindFilePathInPanel("Find excel file",string.Join(';',filterArray));
+	}
+
+	public static string FindJsonFile()
+	{
+		return FindFile("Find json file","*.json");
+	}
+
+	public static string FindTestFile()
+	{
+		return FindFile("Find test file.","*.*");
+	}
+
+	private static string FindFile(string title,string kind)
+	{
+		var filePath = FindFilePathInPanel(title,kind);
+
+		return filePath.IsEmpty() ? null : FileUtility.ReadFileToText(filePath);
+	}
+	#endregion Panel
 
 	public static void OpenSceneInEditor(string sceneName)
 	{

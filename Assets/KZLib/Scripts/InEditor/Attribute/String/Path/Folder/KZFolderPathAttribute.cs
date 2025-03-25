@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Diagnostics;
 using Sirenix.OdinInspector;
+using KZLib.KZUtility;
 
 namespace KZLib.KZAttribute
 {
@@ -15,22 +16,22 @@ namespace KZLib.KZAttribute
 #if UNITY_EDITOR
 	public class KZFolderPathAttributeDrawer : KZPathAttributeDrawer<KZFolderPathAttribute>
 	{
-		protected override string GetNewPath()
+		protected override string FindNewPath()
 		{
-			return CommonUtility.GetFolderPathInPanel("Change new path.");
+			return CommonUtility.FindFolderPathInPanel("Change new path.");
 		}
 
 		protected override Rect OnClickToOpen(Rect rect,bool isValid)
 		{
 			return DrawButton(rect,SdfIconType.Folder2,isValid,()=>
 			{
-				CommonUtility.Open(CommonUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets));
+				CommonUtility.Open(AbsolutePath);
 			});
 		}
 
 		protected override bool IsValidPath()
 		{
-			return CommonUtility.IsFolderExist(ValueEntry.SmartValue);
+			return FileUtility.IsFolderExist(ValueEntry.SmartValue);
 		}
 	}
 #endif

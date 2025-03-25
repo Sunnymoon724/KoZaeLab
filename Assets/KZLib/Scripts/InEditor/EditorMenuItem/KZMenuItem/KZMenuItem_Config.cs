@@ -22,7 +22,7 @@ namespace KZLib.KZMenu
 
 			foreach(var configFilePath in Directory.GetFiles(Global.CONFIG_FOLDER_PATH))
 			{
-				if(!CommonUtility.IsExcelFile(configFilePath))
+				if(!FileUtility.IsExcelFile(configFilePath))
 				{
 					var errorText = $"{configFilePath} is not exist. -> generate failed";
 

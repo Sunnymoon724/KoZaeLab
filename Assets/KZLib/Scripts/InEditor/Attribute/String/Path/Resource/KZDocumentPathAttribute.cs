@@ -20,7 +20,7 @@ namespace KZLib.KZAttribute
 
 		protected override void OnOpenResource()
 		{
-			CommonUtility.Open(CommonUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets));
+			CommonUtility.Open(AbsolutePath);
 		}
 	}
 #endif
