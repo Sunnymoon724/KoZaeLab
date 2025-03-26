@@ -304,7 +304,7 @@ namespace KZLib
 		{
 			var gameCfg = ConfigMgr.In.Access<ConfigData.GameConfig>();
 
-			textAssetArray = ResourceMgr.In.GetTextAssetArray(gameCfg.ProtoFolderPath);
+			textAssetArray = ResMgr.In.GetTextAssetArray(gameCfg.ProtoFolderPath);
 
 			if(textAssetArray.IsNullOrEmpty())
 			{

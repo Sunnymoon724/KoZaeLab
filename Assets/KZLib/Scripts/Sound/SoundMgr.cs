@@ -87,7 +87,7 @@ namespace KZLib
 				return false;
 			}
 
-			return TryPlayUISound(ResourceMgr.In.GetAudioClip(audioPath),volume);
+			return TryPlayUISound(ResMgr.In.GetAudioClip(audioPath),volume);
 		}
 
 		public bool TryPlayUISound(AudioClip audioClip,float volume = 1.0f)
@@ -118,7 +118,7 @@ namespace KZLib
 				return false;
 			}
 
-			return TryPlaySFXSound(source,ResourceMgr.In.GetAudioClip(audioPath),volume);
+			return TryPlaySFXSound(source,ResMgr.In.GetAudioClip(audioPath),volume);
 		}
 
 		public bool TryPlaySFXSound(AudioSource source,AudioClip audioClip,float volume = 1.0f)
@@ -164,7 +164,7 @@ namespace KZLib
 				return false;
 			}
 
-			return TryPlayBGMSound(ResourceMgr.In.GetAudioClip(audioPath),startTime);
+			return TryPlayBGMSound(ResMgr.In.GetAudioClip(audioPath),startTime);
 		}
 
 		public bool TryPlayBGMSound(AudioClip audioClip,float startTime = 0.0f)

@@ -82,7 +82,7 @@ namespace KZLib
 			{
 				var effectPath = GetEffectPath(name);
 
-				effectClip = ResourceMgr.In.GetObject<EffectClip>(effectPath,parent);
+				effectClip = ResMgr.In.GetObject<EffectClip>(effectPath,parent);
 
 				if(!effectClip)
 				{

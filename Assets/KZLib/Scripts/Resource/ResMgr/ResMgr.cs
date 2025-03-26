@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace KZLib
 {
-	public partial class ResourceMgr : Singleton<ResourceMgr>
+	public partial class ResMgr : Singleton<ResMgr>
 	{
 		private record LoadingData(string DataPath,bool IsFilePath,Transform Parent);
 

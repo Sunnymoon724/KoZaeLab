@@ -83,7 +83,7 @@ namespace KZLib
 
 		private WindowUI MakeUI(UITag uiTag)
 		{
-			var prefab = ResourceMgr.In.GetObject(GetUIPath(uiTag));
+			var prefab = ResMgr.In.GetObject(GetUIPath(uiTag));
 
 			if(!prefab)
 			{

@@ -15,7 +15,7 @@ public class AudioButtonUI : BaseButtonUI
 	{
 		if(m_pathMode)
 		{
-			m_audioClip = ResourceMgr.In.GetAudioClip(m_audioPath);
+			m_audioClip = ResMgr.In.GetAudioClip(m_audioPath);
 		}
 
 		base.Initialize();
@@ -37,7 +37,7 @@ public class AudioButtonUI : BaseButtonUI
 	{
 		m_audioPath = audioPath;
 
-		m_audioClip = ResourceMgr.In.GetAudioClip(m_audioPath);
+		m_audioClip = ResMgr.In.GetAudioClip(m_audioPath);
 
 		m_pathMode = true;
 	}
