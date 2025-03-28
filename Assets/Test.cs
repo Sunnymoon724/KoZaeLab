@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using KZLib.KZUtility;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -9,16 +10,22 @@ public class Test : MonoBehaviour
     [Button("Test")]
     void Text()
     {
-        var assembly = Assembly.GetAssembly(typeof(MonoBehaviour));
+        var code = CryptoUtility.SHA.ComputeHashToBytes(SystemInfo.deviceUniqueIdentifier);
 
-        LogTag.Build.I($"{assembly.FullName}");
+        var text = "textKey";
 
-        var assembly2 = Assembly.GetExecutingAssembly();
+        var encrypt = CryptoUtility.AES.EncryptToString(text,code);
 
-        LogTag.Build.I($"{assembly2.FullName}");
+        LogTag.Build.I($"{encrypt}");
 
-        var assembly3 =  Assembly.Load("Assembly-CSharp");
+        var decrypt1 = CryptoUtility.AES.DecryptFromString(encrypt,code);
 
-        LogTag.Build.I($"{assembly3.FullName}");
+        LogTag.Build.I($"{decrypt1}");
+
+        var decrypt2 = CryptoUtility.AES.DecryptFromString(text,code);
+
+        LogTag.Build.I($"{decrypt2}");
+
+        LogTag.Build.I($"End");
     }
 }

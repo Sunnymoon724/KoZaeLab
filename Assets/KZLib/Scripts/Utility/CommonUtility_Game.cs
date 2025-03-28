@@ -133,7 +133,7 @@ public static partial class CommonUtility
 		ReleaseSingleton<ConfigMgr>();
 
 		ReleaseSingleton<GameDataMgr>();
-		ReleaseSingleton<LocalStorageMgr>();
+		ReleaseSingleton<PlayerPrefsMgr>();
 		ReleaseSingleton<ResMgr>();
 		ReleaseSingleton<LogMgr>();
 		ReleaseSingleton<AddressablesMgr>();

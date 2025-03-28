@@ -9,8 +9,6 @@ namespace GameData
 	{
 		private interface IAccountData { }
 
-		private const string c_table_name = "Account_Table";
-
 		private readonly List<string> m_DataKeyList = new();
 
 		private Dictionary<string,IAccountData> m_AccountDataDict = null;
@@ -56,13 +54,13 @@ namespace GameData
 			var type = Type.GetType($"GameData.Account+{key.Replace(" ", "")}");
 			var defaultData = Activator.CreateInstance(type) as IAccountData;
 
-			if(LocalStorageMgr.In.HasKey(c_table_name,key))
+			if(PlayerPrefsMgr.In.TryGetObject<IAccountData>(key,out var data))
 			{
-				return LocalStorageMgr.In.GetObject(c_table_name,key,defaultData);
+				return data;
 			}
 			else
 			{
-				LocalStorageMgr.In.SetObject(c_table_name,key,defaultData);
+				PlayerPrefsMgr.In.SetObject(key,defaultData);
 
 				return defaultData;
 			}
@@ -91,7 +89,7 @@ namespace GameData
 		{
 			if(m_AccountDataDict.TryGetValue(key,out var data))
 			{
-				LocalStorageMgr.In.SetObject(c_table_name,key,data);
+				PlayerPrefsMgr.In.SetObject(key,data);
 			}
 		}
 

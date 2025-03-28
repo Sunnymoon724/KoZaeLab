@@ -4,7 +4,6 @@
     "references": [
         "UniTask",
         "Unity.TextMeshPro",
-        "UIEffect",
         "Unity.InputSystem",
         "Unity.Addressables",
         "Unity.Addressables.Editor",

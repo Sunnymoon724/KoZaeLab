@@ -5,11 +5,10 @@ using UnityEngine;
 
 namespace KZLib.KZEditor
 {
-#pragma warning disable IDE0051
 	public class KZShortCut
 	{
 		[Shortcut("Look Center",KeyCode.F,ShortcutModifiers.Alt)]
-		private static void OnOpenEffectTestScene()
+		protected static void OnLookCenter()
 		{
 			var view = SceneView.lastActiveSceneView;
 
@@ -19,6 +18,5 @@ namespace KZLib.KZEditor
 			}
 		}
 	}
-#pragma warning restore IDE0051
 }
 #endif

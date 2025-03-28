@@ -20,10 +20,10 @@ namespace KZLib.KZMenu
 			EditorWindow.GetWindow<EditorCustomWindow>().Show();
 		}
 
-		[MenuItem("KZMenu/Window/Open Local Storage Window",false,(int) MenuType.Window_Etc)]
-		private static void OnOpenLocalStorageWindow()
+		[MenuItem("KZMenu/Window/Open PlayerPrefs Window",false,(int) MenuType.Window_Etc)]
+		private static void OnOpenPlayerPrefsWindow()
 		{
-			EditorWindow.GetWindow<LocalStorageWindow>().Show();
+			EditorWindow.GetWindow<PlayerPrefsWindow>().Show();
 		}
 
 		[MenuItem("KZMenu/Window/Open Graphic Quality Option Window",false,(int) MenuType.Window_Etc)]
