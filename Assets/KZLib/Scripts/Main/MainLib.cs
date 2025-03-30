@@ -21,10 +21,12 @@ namespace KZLib
 {
 	public abstract class MainLib : SerializedMonoBehaviour
 	{
+		private const string c_titleScene = "TitleScene";
+
 		[SerializeField,HideInInspector]
 		private SystemLanguage? m_gameLanguage = null;
 
-		[ShowInInspector,InlineButton(nameof(OnChangeDefaultLanguage),Label = "",Icon = SdfIconType.Reply)]
+		[VerticalGroup("2",2),ShowInInspector,InlineButton(nameof(OnChangeDefaultLanguage),Label = "",Icon = SdfIconType.Reply)]
 		public SystemLanguage GameLanguage
 		{
 			get
@@ -62,7 +64,7 @@ namespace KZLib
 		[SerializeField,HideInInspector]
 		private bool m_isPlaying = false;
 
-		[ShowInInspector,KZRichText]
+		[VerticalGroup("20",20),ShowInInspector,KZRichText]
 		public bool IsPlaying => m_isPlaying;
 
 		[SerializeField,HideInInspector]
@@ -71,39 +73,28 @@ namespace KZLib
 		[SerializeField,HideInInspector]
 		private Vector2Int m_screenResolution = Vector2Int.zero;
 
-		[ShowInInspector,KZRichText("width : {0}, height : {1}")]
+		[VerticalGroup("30",30),ShowInInspector,KZRichText("width : {0}, height : {1}")]
 		public Vector2Int ScreenResolution { get => m_screenResolution; private set => m_screenResolution = value; }
-
-#if UNITY_EDITOR
-		private const string c_main_data = "[Main] MainData";
-
-		private class MainData
-		{
-			public PlayType GamePlayType { get; set; } = PlayType.Normal;
-		}
-#endif
 
 		private enum PlayType { Test, Normal, }
 
 		private PlayType? m_gamePlayType = null;
 
-		[ShowInInspector,LabelText("Current PlayType")]
+		[VerticalGroup("0",0),ShowInInspector]
 		private PlayType GamePlayType
 		{
 			get
 			{
+#if UNITY_EDITOR
 				if(!m_gamePlayType.HasValue)
 				{
-#if UNITY_EDITOR
-					var data = LoadData();
-
-					m_gamePlayType = data.GamePlayType;
-#else
-					m_gamePlayType = PlayType.Normal;
-#endif
+					m_gamePlayType = MainPreset.GamePlayType;
 				}
 
 				return m_gamePlayType.Value;
+#else
+				return PlayType.Normal;
+#endif
 			}
 			set
 			{
@@ -113,16 +104,49 @@ namespace KZLib
 					return;
 				}
 
-				var data = LoadData();
+				m_gamePlayType = MainPreset.GamePlayType = value;
 
-				m_gamePlayType = data.GamePlayType = value;
+				SavePresetData();
+#endif
+			}
+		}
 
-				SaveData(data);
+		[SerializeField,HideInInspector]
+		private string m_startSceneName = "";
+
+		[VerticalGroup("0",0),ShowInInspector,ValueDropdown(nameof(SceneNameList)),EnableIf(nameof(IsTestMode)),InfoBox("TitleScene is not include in SceneArray.",InfoMessageType.Warning,nameof(IsIncludeTitleName))]
+		private string StartSceneName
+		{
+			get
+			{
+#if UNITY_EDITOR
+				if(m_startSceneName.IsEmpty())
+				{
+					m_startSceneName = IsTestMode ? MainPreset.StartSceneName : c_titleScene;
+				}
+
+				return IsTestMode ? m_startSceneName : c_titleScene;
+#else
+				return c_titleScene;
+#endif
+			}
+			set
+			{
+#if UNITY_EDITOR
+				if(m_startSceneName == value)
+				{
+					return;
+				}
+
+				m_startSceneName = MainPreset.StartSceneName = value;
+
+				SavePresetData();
 #endif
 			}
 		}
 
 		protected bool IsTestMode => GamePlayType == PlayType.Test;
+		private bool IsIncludeTitleName => !SceneNameList.Contains(c_titleScene);
 
 		protected CancellationTokenSource m_tokenSource = null;
 
@@ -145,7 +169,6 @@ namespace KZLib
 
 		private async void Start()
 		{
-			
 			var gameCfg = ConfigMgr.In.Access<ConfigData.GameConfig>();
 
 #if UNITY_EDITOR
@@ -191,21 +214,44 @@ namespace KZLib
 			{
 				await StartNormalMode(m_tokenSource.Token);
 			}
+
+			// TODO 테스트일때 변수 넣을 수 있게 컨피그 파일 만들자
+			SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null);
 		}
 
 #if UNITY_EDITOR
-		private void SaveData(MainData mainData)
+		private const string c_mainPreset = "[Main] MainPreset";
+
+		private class PresetData
 		{
-			EditorPrefs.SetString(c_main_data,JsonConvert.SerializeObject(mainData));
+			public PlayType GamePlayType { get; set; } = PlayType.Normal;
+			public string StartSceneName { get; set; } = "TitleScene";
 		}
 
-		private MainData LoadData()
-		{
-			var text = EditorPrefs.GetString(c_main_data,"");
+		private PresetData m_mainPreset;
 
-			return text.IsEmpty() ? new MainData() : JsonConvert.DeserializeObject<MainData>(text);
+		private PresetData MainPreset
+		{
+			get
+			{
+				if(m_mainPreset == null)
+				{
+					var text = EditorPrefs.GetString(c_mainPreset,"");
+
+					m_mainPreset = text.IsEmpty() ? new PresetData() : JsonConvert.DeserializeObject<PresetData>(text);
+				}
+
+				return m_mainPreset;
+			}
 		}
 
+		private void SavePresetData()
+		{
+			EditorPrefs.SetString(c_mainPreset,JsonConvert.SerializeObject(MainPreset));
+		}
+#endif
+
+#if UNITY_EDITOR
 		protected async virtual UniTask StartTestMode(CancellationToken token) { await ProtoMgr.In.TryLoadAsync(token); }
 #endif
 		protected async virtual UniTask StartNormalMode(CancellationToken token) { await ProtoMgr.In.TryLoadAsync(token); }
@@ -306,13 +352,13 @@ namespace KZLib
 		}
 
 #if UNITY_EDITOR
-		private static readonly List<string> s_sceneNameArray = new();
+		private static readonly List<string> s_sceneNameList = new();
 
-		protected static IEnumerable SceneNameArray
+		private static List<string> SceneNameList
 		{
 			get
 			{
-				if(s_sceneNameArray.IsNullOrEmpty())
+				if(s_sceneNameList.IsNullOrEmpty())
 				{
 					foreach(var scene in EditorBuildSettings.scenes)
 					{
@@ -323,11 +369,11 @@ namespace KZLib
 							continue;
 						}
 
-						s_sceneNameArray.Add(sceneName);
+						s_sceneNameList.Add(sceneName);
 					}
 				}
 
-				return s_sceneNameArray;
+				return s_sceneNameList;
 			}
 		}
 #endif

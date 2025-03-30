@@ -19,8 +19,6 @@ namespace KZLib
 	{
 		public record StateParam();
 
-		private const string c_mainScene = "MainScene";
-
 		public string SceneName => GetType().Name;
 
 		public async UniTask InitializeAsync(Action<float> onUpdateProgress,StateParam param)
@@ -53,18 +51,21 @@ namespace KZLib
 
 		public async UniTask ReleaseAsync(string previousSceneName,Action<float> onUpdateProgress)
 		{
-			var scene = SceneManager.GetSceneByName(previousSceneName.IsEmpty() ? c_mainScene : previousSceneName);
-
-			if(!scene.IsValid())
+			if(!previousSceneName.IsEmpty())
 			{
-				LogTag.System.E($"{previousSceneName} is not in the scene.");
+				var previousScene = SceneManager.GetSceneByName(previousSceneName);
 
-				return;
+				if(!previousScene.IsValid())
+				{
+					LogTag.System.E($"{previousSceneName} is not in the scene.");
+
+					return;
+				}
+
+				SceneManager.SetActiveScene(previousScene);
 			}
 
 			onUpdateProgress?.Invoke(0.0f);
-
-			SceneManager.SetActiveScene(scene);
 
 			await ReleaseInnerAsync((progress)=>
 			{

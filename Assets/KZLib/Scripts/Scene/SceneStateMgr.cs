@@ -1,11 +1,11 @@
 using System;
-using System.Collections.Generic;
 using KZLib.KZAttribute;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using KZLib.KZUtility;
 using TransitionPanel;
+using System.Collections.Generic;
 
 #if UNITY_EDITOR
 
@@ -35,6 +35,8 @@ namespace KZLib
 
 		[HorizontalGroup("Stack",Order = 1),SerializeField,DisplayAsString,ListDrawerSettings(ShowFoldout = false,IsReadOnly = true)]
 		private Stack<SceneState> m_sceneStateStack = new();
+
+		private SceneState CurrentScene => m_sceneStateStack.Count > 0 ? m_sceneStateStack.Peek() : null;
 
 		private float m_lastUnloadTime = 0.0f;
 
@@ -99,7 +101,7 @@ namespace KZLib
 
 		private async UniTask _ChangeSceneAsync(string sceneName,TransitionInfo info,bool isLoading,SceneState.StateParam param = null)
 		{
-			await _PlaySceneAsync(info,isLoading,_DestroySceneAsync,async (progress)=> { await _CreateSceneAsync(sceneName,progress,param); });
+			await _PlaySceneAsync(info,isLoading,async (progress)=> { await _CreateSceneAsync(sceneName,progress,param); },async (progress)=> { await _DestroySceneAsync(false,progress); });
 		}
 
 		public void AddSceneWithLoading(string sceneName,TransitionInfo info,SceneState.StateParam param = null)
@@ -159,7 +161,7 @@ namespace KZLib
 
 		private async UniTask _RemoveSceneAsync(TransitionInfo info,bool isLoading)
 		{
-			await _PlaySceneAsync(info,isLoading,_DestroySceneAsync);
+			await _PlaySceneAsync(info,isLoading,async (progress)=> { await _DestroySceneAsync(true,progress); });
 		}
 
 		private async UniTask _PlaySceneAsync(TransitionInfo info,bool isLoading,params Func<Action<float>,UniTask>[] onPlayTaskArray)
@@ -257,7 +259,7 @@ namespace KZLib
 			onUpdateProgress?.Invoke(1.0f);
 		}
 
-		private async UniTask _DestroySceneAsync(Action<float> onUpdateProgress)
+		private async UniTask _DestroySceneAsync(bool activePreviousScene,Action<float> onUpdateProgress)
 		{
 			var current = CurrentScene;
 
@@ -268,16 +270,19 @@ namespace KZLib
 
 			onUpdateProgress?.Invoke(0.0f);
 
-			var sceneName = current.SceneName;
-
-			LogTag.System.I($"{sceneName} destroy start.");
+			LogTag.System.I($"{current.SceneName} destroy start.");
 
 			m_sceneStateStack.Pop();
 
-			var previous = CurrentScene;
+			var previousSceneName = string.Empty;
 
-			// Release current scene & Active on previous scene
-			await current.ReleaseAsync(previous?.SceneName,(progress)=>
+			if(activePreviousScene)
+			{
+				previousSceneName = CurrentScene.SceneName;
+			}
+
+			// Release current scene & Active on previous scene (if you want)
+			await current.ReleaseAsync(previousSceneName,(progress)=>
 			{
 				onUpdateProgress?.Invoke(progress*0.99f);
 			});
@@ -285,14 +290,12 @@ namespace KZLib
 #if UNITY_EDITOR
 			EditorUtility.UnloadUnusedAssetsImmediate(true);
 #endif
-			LogTag.System.I($"{sceneName} destroy end.");
+			LogTag.System.I($"{current.SceneName} destroy end.");
 
 			OnLowMemory();
 
 			onUpdateProgress?.Invoke(1.0f);
 		}
-
-		private SceneState CurrentScene => m_sceneStateStack.Count > 0 ? m_sceneStateStack.Peek() : null;
 
 		private void OnLowMemory()
 		{
