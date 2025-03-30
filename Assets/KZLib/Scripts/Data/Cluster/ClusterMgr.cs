@@ -29,7 +29,12 @@ namespace KZLib
 			base.Release(disposing);
 		}
 
-		public TCluster GetOrCreateCluster<TCluster>(IClusterParam param) where TCluster : class,ICluster,new()
+		public TCluster GetOrCreateCluster<TCluster>(IClusterParam param) where TCluster : class,ICluster
+		{
+			return GetOrCreateCluster(typeof(TCluster),param) as TCluster;
+		}
+
+		public ICluster GetOrCreateCluster(Type clusterType,IClusterParam param)
 		{
 			var clusterKey = param.Key;
 
@@ -42,11 +47,11 @@ namespace KZLib
 
 			if(!m_clusterDict.TryGetValue(clusterKey,out var cluster))
 			{
-				cluster = new TCluster();
+				cluster = Activator.CreateInstance(clusterType,param) as ICluster;
 
 				if(cluster == null)
 				{
-					LogTag.System.E($"Failed to create cluster of type {typeof(TCluster)}");
+					LogTag.System.E($"Failed to create cluster of type {clusterType}");
 
 					return null;
 				}
@@ -54,7 +59,7 @@ namespace KZLib
 				m_clusterDict.Add(clusterKey,cluster);
 			}
 
-			return cluster as TCluster;
+			return cluster;
 		}
 	}
 }
