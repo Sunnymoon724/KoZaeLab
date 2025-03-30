@@ -1,25 +1,17 @@
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using KZLib.KZUtility;
 using System;
 using KZLib.KZDevelop;
-using KZLib.KZData;
 
 namespace KZLib
 {
 	public class CameraMgr : LoadSingletonMB<CameraMgr>
 	{
-		[SerializeField,LabelText("Main Camera")]
+		[SerializeField]
 		private Camera m_mainCamera = null;
 		private Camera m_overrideCamera = null;
 		public Camera CurrentCamera => m_overrideCamera == null ? m_mainCamera : m_overrideCamera;
-
-		[ShowInInspector,ReadOnly,LabelText("Camera Target")]
-		private Transform m_target = null;
-
-		[SerializeField,LabelText("Lock X Rotate")]
-		private bool m_lockRotateX = false;
 
 		private readonly Dictionary<Camera,bool> m_subCameraDict = new();
 
@@ -30,19 +22,6 @@ namespace KZLib
 		protected override void Initialize()
 		{
 			base.Initialize();
-
-			if(!m_mainCamera)
-			{
-				LogTag.System.E("Main camera is missing.");
-
-				return;
-			}
-
-			var camera = m_mainCamera.GetComponent<Camera>();
-
-			camera.allowDynamicResolution = true;
-
-			SetCameraBackgroundColor(Color.black);
 
 			var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
@@ -65,30 +44,14 @@ namespace KZLib
 			m_optionRef = null;
 		}
 
-		public void SetCameraProto(CameraProto cameraPrt)
+		public void SetCamera(Camera newCamera)
 		{
-			if(cameraPrt == null)
-			{
-				LogTag.System.E("Camera proto is not exist.");
+			m_mainCamera = newCamera;
 
-				return;
-			}
-
-			CurrentCamera.nearClipPlane = cameraPrt.NearClipPlane;
-			CurrentCamera.farClipPlane = m_farFactor*cameraPrt.FarClipPlane;
-
-			CurrentCamera.orthographic = cameraPrt.Orthographic;
-			CurrentCamera.orthographicSize = cameraPrt.FieldOfView;
-			CurrentCamera.fieldOfView = cameraPrt.FieldOfView;
-
-			var position = m_target ? m_target.position : Vector3.zero;
-
-			CurrentCamera.transform.SetPositionAndRotation(position+cameraPrt.Position,Quaternion.Euler(cameraPrt.Rotation));
-
-			OnSyncSubCamera();
+			m_mainCamera.farClipPlane *= m_farFactor;
 		}
 
-		public void SetCamera(Camera overrideCamera)
+		public void SetOverrideCamera(Camera overrideCamera)
 		{
 			var onCamera = overrideCamera != null;
 
@@ -105,35 +68,6 @@ namespace KZLib
 		public void SetEnableCamera(bool enable)
 		{
 			m_mainCamera.enabled = enable;
-		}
-
-		public void SetTarget(Transform target)
-		{
-			m_target = target;
-		}
-
-		public void LookTarget(Transform target,float duration = 0.0f)
-		{
-			SetTarget(target);
-
-			if(target)
-			{
-				return;
-			}
-
-			var pivot = (target.position-transform.position).normalized;
-			var rotation = Quaternion.LookRotation(pivot).eulerAngles;
-
-			if(m_lockRotateX)
-			{
-				rotation.x = transform.rotation.eulerAngles.x;
-			}
-
-			rotation.z = transform.rotation.eulerAngles.z;
-
-			transform.rotation = Quaternion.Euler(rotation);
-
-			// TODO duration 부분 수정하기
 		}
 
 		private void OnChangeFarClipPlane(long graphicQuality)
@@ -163,34 +97,6 @@ namespace KZLib
 
 			camera.depth = -1;
 			camera.clearFlags = CameraClearFlags.Color;
-		}
-
-		private void SetCameraBackgroundColor(Color color)
-		{
-			m_mainCamera.backgroundColor = color;
-		}
-
-		[Button("Sync Sub Cameras")]
-		private void OnSyncSubCamera()
-		{
-			var main = CurrentCamera;
-
-			foreach(var pair in m_subCameraDict)
-			{
-				if(!pair.Value)
-				{
-					continue;
-				}
-
-				var camera = pair.Key;
-
-				camera.nearClipPlane	= main.nearClipPlane;
-				camera.farClipPlane		= main.farClipPlane;
-
-				camera.orthographic		= main.orthographic;
-				camera.orthographicSize = main.orthographicSize;
-				camera.fieldOfView		= main.fieldOfView;
-			}
 		}
 	}
 }

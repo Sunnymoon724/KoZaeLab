@@ -185,10 +185,10 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  m_gameVersion: 
   m_isPlaying: 0
   m_safeWidth: 0
   m_screenResolution: {x: 0, y: 0}
+  m_startSceneName: Test
 --- !u!1001 &1116826279
 PrefabInstance:
   m_ObjectHideFlags: 0
