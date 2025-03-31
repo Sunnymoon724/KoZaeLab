@@ -14,7 +14,7 @@ namespace KZLib
 
 		private readonly Dictionary<string,IConfig> m_configDict = new();
 
-		private readonly static Type[] s_defaultConfigArray = new Type[] { typeof(GameConfig),typeof(OptionConfig),typeof(ServiceConfig) };
+		private readonly static Type[] s_defaultConfigArray = new Type[] { typeof(GameConfig),typeof(OptionConfig),typeof(ServiceConfig),typeof(EditorConfig) };
 
 		protected override void Initialize()
 		{
@@ -59,7 +59,7 @@ namespace KZLib
 
 			if(!m_configDict.TryGetValue(key,out var config))
 			{
-				config = Create(key,type);
+				config = _Create(key,type);
 
 				if(config == null)
 				{
@@ -84,7 +84,7 @@ namespace KZLib
 			}
 		}
 
-		private IConfig Create(string name,Type type)
+		private IConfig _Create(string name,Type type)
 		{
 			if(type == typeof(OptionConfig))
 			{
@@ -110,12 +110,11 @@ namespace KZLib
 		private string LoadConfigFile(string name)
 		{
 			var fileName = $"{name.Replace("Config","")}.yaml";
-
 			var text = string.Empty;
 
 			//? check custom. [only editor]
 #if UNITY_EDITOR
-			text = ReadConfigFile(Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,$"Custom{fileName}"));
+			text = FileUtility.ReadFileToText(Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,$"Custom{fileName}"));
 #endif
 
 			if(!text.IsEmpty())
@@ -123,9 +122,7 @@ namespace KZLib
 				return text;
 			}
 
-			//? if use addressable ? check gameResource folder.
-
-			// TODO 어드레서블 체크 및 로드
+			text = _ReadConfigFileInAddressable(fileName);
 
 			if(!text.IsEmpty())
 			{
@@ -133,9 +130,7 @@ namespace KZLib
 			}
 
 			//? check resource folder.
-			var configRoute = RouteMgr.In.GetOrCreateRoute($"defaultRes:config:{fileName}");
-
-			text = ReadConfigFile(configRoute.AbsolutePath);
+			text = FileUtility.ReadFileToText(RouteMgr.In.GetOrCreateRoute($"defaultRes:config:{fileName}").AbsolutePath);
 
 			if(!text.IsEmpty())
 			{
@@ -147,9 +142,19 @@ namespace KZLib
 			return null;
 		}
 
-		private string ReadConfigFile(string filePath)
+		private string _ReadConfigFileInAddressable(string fileName)
 		{
-			return File.Exists(filePath) ? File.ReadAllText(filePath) : string.Empty;
+			if(fileName == "Scene.yaml")
+			{
+				// Scene is only editor
+				return string.Empty;
+			}
+
+			//? if use addressable ? check gameResource folder.
+
+			// TODO 어드레서블 체크 및 로드
+
+			return string.Empty;
 		}
 
 		public static bool IsDefaultConfig(string filePath)

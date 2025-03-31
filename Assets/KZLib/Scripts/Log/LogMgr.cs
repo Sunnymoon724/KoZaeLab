@@ -18,7 +18,7 @@ namespace KZLib
 	{
 		private bool m_disposed = false;
 
-		private static readonly Regex s_file_name_extractor = new(@"([^\\\/]+)(?=\.[^.\\\/]+$)",RegexOptions.Compiled);
+		private static readonly Regex s_fileNameExtractor = new(@"([^\\\/]+)(?=\.[^.\\\/]+$)",RegexOptions.Compiled);
 
 		private const int c_max_log_count = 100;
 
@@ -27,7 +27,7 @@ namespace KZLib
 		public IEnumerable<MessageData> LogDataGroup => m_logDataQueue;
 
 #if !UNITY_EDITOR
-		private const int c_cool_time_timer = 30; // 30s
+		private const int c_coolTimeTimer = 30; // 30s
 		private bool m_sendLock = false;
 #endif
 
@@ -72,7 +72,7 @@ namespace KZLib
 
 			if(!filePath.IsEmpty())
 			{
-				var match = s_file_name_extractor.Match(filePath);
+				var match = s_fileNameExtractor.Match(filePath);
 
 				if(match.Success)
 				{
@@ -87,7 +87,7 @@ namespace KZLib
 
 		private void HandleLogMessage(string condition,string stackTrace,LogType logType)
 		{
-			var header = $"<{GetLogTag(logType)}> {DateTime.Now:MM/dd HH:mm:ss}";
+			var header = $"<{_GetLogTag(logType)}> {DateTime.Now:MM/dd HH:mm:ss}";
 			var body = string.Empty;
 
 			if(logType == LogType.Exception)
@@ -111,12 +111,12 @@ namespace KZLib
 #if !UNITY_EDITOR
 			if(!m_sendLock && (logType == LogType.Exception))
 			{
-				SendBugAsync().Forget();
+				_SendBugAsync().Forget();
 			}
 #endif
 		}
 
-		private string GetLogTag(LogType logType)
+		private string _GetLogTag(LogType logType)
 		{
 			return logType switch
 			{
@@ -132,7 +132,7 @@ namespace KZLib
 		}
 
 #if !UNITY_EDITOR
-		private async UniTaskVoid SendBugAsync()
+		private async UniTaskVoid _SendBugAsync()
 		{
 			m_sendLock = true;
 
@@ -143,7 +143,7 @@ namespace KZLib
 			await CommonUtility.SendBugReportAsync(m_logDataQueue,texture.EncodeToPNG());
 
 			//? Send once and wait for 30 seconds -> If sent too frequently, it can cause a load.
-			await UniTask.Delay(TimeSpan.FromSeconds(c_cool_time_timer));
+			await UniTask.Delay(TimeSpan.FromSeconds(c_coolTimeTimer));
 
 			m_sendLock = false;
 		}

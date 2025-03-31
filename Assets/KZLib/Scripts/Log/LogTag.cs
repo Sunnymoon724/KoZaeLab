@@ -1,12 +1,10 @@
 using KZLib;
 using System.Runtime.CompilerServices;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 using Debug = UnityEngine.Debug;
 using KZLib.KZData;
 using KZLib.KZUtility;
-
 
 #if UNITY_EDITOR
 
@@ -23,7 +21,7 @@ using System.Text.RegularExpressions;
 /// </summary>
 public class LogTag : CustomTag
 {
-	public static readonly LogTag None	=	new(nameof(None));
+	public static readonly LogTag None		=	new(nameof(None));
 
 	public static readonly LogTag System	=	new(nameof(System));
 
@@ -51,77 +49,89 @@ public static class LogExtension
 	private static readonly HashSet<string> s_logHashSet = new();
 
 	#region I : Info Log
-	public static void I(this LogTag log,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void I(this LogTag logTag,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		var text = LogMgr.In.CreateLog(log,message,memberName,filePath,lineNum);
+		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
 #if UNITY_EDITOR
 		Debug.Log(text);
 #endif
 	}
 
-	public static void IOnce(this LogTag log,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void IOnce(this LogTag logTag,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		if(CheckLogAtOnce())
+		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
+
+		if(_CheckLogAtOnce(text))
 		{
-			log.I(message,memberName,filePath,lineNum);
+#if UNITY_EDITOR
+			Debug.Log(text);
+#endif
 		}
 	}
 	#endregion I : Info Log
 
 	#region W : Warning Log
-	public static void W(this LogTag log,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void W(this LogTag logTag,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		var text = LogMgr.In.CreateLog(log,message,memberName,filePath,lineNum);
+		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
 #if UNITY_EDITOR
 		Debug.LogWarning(text);
 #endif
 	}
 
-	public static void WOnce(this LogTag log,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void WOnce(this LogTag logTag,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		if(CheckLogAtOnce())
+		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
+
+		if(_CheckLogAtOnce(text))
 		{
-			log.W(message,memberName,filePath,lineNum);
+#if UNITY_EDITOR
+			Debug.LogWarning(text);
+#endif
 		}
 	}
 	#endregion W : Warning Log
 
 	#region E : Error Log
-	public static void E(this LogTag log,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void E(this LogTag logTag,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		var text = LogMgr.In.CreateLog(log,message,memberName,filePath,lineNum);
+		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
 #if UNITY_EDITOR
 		Debug.LogError(text);
 #endif
 	}
 
-	public static void EOnce(this LogTag log,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void EOnce(this LogTag logTag,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		if(CheckLogAtOnce())
+		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
+
+		if(_CheckLogAtOnce(text))
 		{
-			log.E(message,memberName,filePath,lineNum);
+#if UNITY_EDITOR
+			Debug.LogError(text);
+#endif
 		}
 	}
 	#endregion E : Error Log
 
 	#region A : Assert Log
-	public static void A(this LogTag log,bool condition,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void A(this LogTag logTag,bool condition,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
 		if(condition)
 		{
 			return;
 		}
 
-		var text = LogMgr.In.CreateLog(log,message,memberName,filePath,lineNum);
+		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
 #if UNITY_EDITOR
-		Debug.Assert(condition,message);
+		Debug.Assert(condition,text);
 #endif
 	}
 	#endregion A : Assert Log
 
 #if UNITY_EDITOR
 	[OnOpenAsset(0)]
-	private static bool OnOpenDebugLog(int instance,int _)
+	private static bool _OnOpenDebugLog(int instance,int _)
 	{
 		var objectName = EditorUtility.InstanceIDToObject(instance).name;
 
@@ -130,7 +140,7 @@ public static class LogExtension
 			return false;
 		}
 
-		var stackTrace = FindStackTrace();
+		var stackTrace = _FindStackTrace();
 
 		if(stackTrace.IsEmpty())
 		{
@@ -161,22 +171,19 @@ public static class LogExtension
 		return false;
 	}
 
-	private static bool CheckLogAtOnce()
+	private static bool _CheckLogAtOnce(string log)
 	{
-		var stackFrame = new StackFrame(2,true);
-		var logInfo = $"{stackFrame.GetFileName()}:{stackFrame.GetFileLineNumber()}";
-
-		if(s_logHashSet.Contains(logInfo))
+		if(s_logHashSet.Contains(log))
 		{
 			return false;
 		}
 
-		s_logHashSet.Add(logInfo);
+		s_logHashSet.Add(log);
 
 		return true;
 	}
 
-	private static string FindStackTrace()
+	private static string _FindStackTrace()
 	{
 		var assembly = Assembly.GetAssembly(typeof(EditorWindow));
 

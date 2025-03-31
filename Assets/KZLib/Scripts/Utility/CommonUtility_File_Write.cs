@@ -27,15 +27,14 @@ public static partial class CommonUtility
 		AssetDatabase.Refresh();
 	}
 
-	/// <param name="_filePath">The absolute path of the file.</param>
-	public static string FindTemplateText(string filePath)
+	public static string FindTemplateText(string absoluteFilePath)
 	{
-		if(!FileUtility.IsPathExist(filePath))
+		if(!FileUtility.IsPathExist(absoluteFilePath))
 		{
 			return null;
 		}
 
-		return FileUtility.ReadFileToText(FindTemplateFileAbsolutePath(filePath));
+		return FileUtility.ReadFileToText(FindTemplateFileAbsolutePath(absoluteFilePath));
 	}
 }
 #endif

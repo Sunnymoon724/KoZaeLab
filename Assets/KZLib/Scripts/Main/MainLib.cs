@@ -215,8 +215,9 @@ namespace KZLib
 				await StartNormalMode(m_tokenSource.Token);
 			}
 
-			// TODO 테스트일때 변수 넣을 수 있게 컨피그 파일 만들자
-			SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null);
+			var editorCfg = ConfigMgr.In.Access<ConfigData.EditorConfig>();
+
+			SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null,editorCfg.GetSceneParam(StartSceneName));
 		}
 
 #if UNITY_EDITOR
