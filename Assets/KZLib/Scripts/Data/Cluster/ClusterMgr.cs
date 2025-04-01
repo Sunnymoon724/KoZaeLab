@@ -36,7 +36,7 @@ namespace KZLib
 
 		public ICluster GetOrCreateCluster(Type type,object param)
 		{
-			var key = $"{type.Name}_{param}";
+			var key = CryptoUtility.SHA.ComputeHashToString(param.ToString());
 
 			if(!m_clusterDict.TryGetValue(key,out var cluster))
 			{
