@@ -11,8 +11,6 @@ public abstract class RepositoryUI : BaseComponentUI
 	[VerticalGroup("Canvas",Order = -25),SerializeField]
 	protected Canvas m_canvas = null;
 
-	public Camera CanvasCamera => m_canvas.worldCamera;
-
 	//? Current Opened Window List
 	[SerializeField,ListDrawerSettings(IsReadOnly = true)]
 	protected List<WindowUI> m_openedWindowList = new();
@@ -20,24 +18,9 @@ public abstract class RepositoryUI : BaseComponentUI
 	protected abstract bool IsValid(WindowUI windowUI);
 	public abstract void Add(WindowUI windowUI);
 
-	protected override void Initialize()
-	{
-		base.Initialize();
-
-		if(CanvasCamera != null && CameraMgr.HasInstance)
-		{
-			CameraMgr.In.AddSubCamera(CanvasCamera,false);
-		}
-	}
-
 	protected override void Release()
 	{
 		base.Release();
-
-		if(CanvasCamera != null && CameraMgr.HasInstance)
-		{
-			CameraMgr.In.RemoveSubCamera(CanvasCamera);
-		}
 
 		RemoveAll(null,true);
 
@@ -101,7 +84,7 @@ public abstract class RepositoryUI : BaseComponentUI
 		_SetVisibleGroup(true,includeTagGroup,excludeTagGroup);
 	}
 
-	public void _SetVisibleGroup(bool isHidden,IEnumerable<UITag> includeTagGroup = null,IEnumerable<UITag> excludeTagGroup = null)
+	private void _SetVisibleGroup(bool isHidden,IEnumerable<UITag> includeTagGroup = null,IEnumerable<UITag> excludeTagGroup = null)
 	{
 		var includeTagHashSet = new HashSet<UITag>(includeTagGroup ?? Enumerable.Empty<UITag>());
 		var excludeTagHashSet = new HashSet<UITag>(excludeTagGroup ?? Enumerable.Empty<UITag>())

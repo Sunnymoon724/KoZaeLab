@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.UI;
 using KZLib.KZUtility;
 
 namespace KZLib
@@ -35,8 +34,6 @@ namespace KZLib
 				m_repositoryList.Add(m_repository3D);
 			}
 
-			ChangeScreenSize(new(Screen.width,Screen.height));
-
 			m_uiPrefabPath = ConfigMgr.In.Access<ConfigData.GameConfig>().UIPrefabPath;
 		}
 
@@ -45,19 +42,12 @@ namespace KZLib
 			m_dontReleaseHashSet.Clear();
 		}
 
-		public void ChangeScreenSize(Vector2Int screenSize)
+		public void Set3DCamera(Camera camera)
 		{
-			if(!m_repository2D)
+			if(m_repository3D)
 			{
-				return;
+				m_repository3D.SetCamera(camera);
 			}
-
-			var scaler = m_repository2D.GetComponent<CanvasScaler>();
-
-			scaler.referenceResolution = new Vector2(screenSize.x,screenSize.y);
-
-			m_repository2D.CanvasCamera.aspect = screenSize.x/(float)screenSize.y;
-			m_repository2D.CanvasCamera.orthographicSize = screenSize.y/200.0f;
 		}
 
 		#region Register

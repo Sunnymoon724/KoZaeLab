@@ -19,7 +19,7 @@ namespace KZLib.KZMenu
 		private static void OnGenerateAllConfig()
 		{
 			var templateFilePath = CommonUtility.FindTemplateText("ConfigTemplate.txt");
-			var outputRoute = RouteMgr.In.GetOrCreateRoute("defaultRes:config");
+			var outputRoute = RouteMgr.In.GetOrCreateRoute("generatedScript");
 
 			var stringBuilder = new StringBuilder();
 
@@ -64,6 +64,8 @@ namespace KZLib.KZMenu
 			}
 
 			CommonUtility.DisplayInfo(stringBuilder.ToString());
+
+			AssetDatabase.Refresh();
 		}
 
 		// [MenuItem("KZMenu/Config/Generate GameConfig Template File",false,(int) MenuType.Data_Generate)]

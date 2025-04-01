@@ -49,6 +49,11 @@ namespace KZLib
 			m_mainCamera = newCamera;
 
 			m_mainCamera.farClipPlane *= m_farFactor;
+
+			if(UIMgr.HasInstance)
+			{
+				UIMgr.In.Set3DCamera(newCamera);
+			}
 		}
 
 		public void SetOverrideCamera(Camera overrideCamera)

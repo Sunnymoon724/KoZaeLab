@@ -303,8 +303,6 @@ namespace KZLib
 
 		protected virtual void Update()
 		{
-			CheckResolution();
-
 #if UNITY_EDITOR
 			if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C))
 			{
@@ -322,32 +320,6 @@ namespace KZLib
 			if(Input.GetKeyDown(KeyCode.F4))
 			{
 				throw new Exception("Force Exception");
-			}
-#endif
-		}
-
-		private void CheckResolution()
-		{
-			//? [Screen.width/height] is EDITOR or STANDALONE. / [Screen.currentResolution] is MOBILE.
-#if UNITY_EDITOR || UNITY_STANDALONE
-			if(Screen.width != ScreenResolution.x || Screen.height != ScreenResolution.y)
-			{
-				ScreenResolution = new(Screen.width,Screen.height);
-
-				if(UIMgr.HasInstance)
-				{
-					UIMgr.In.ChangeScreenSize(ScreenResolution);
-				}
-			}
-#else
-			if(Screen.currentResolution.width != ScreenResolution.x || Screen.currentResolution.height != ScreenResolution.y)
-			{
-				ScreenResolution = new(Screen.width,Screen.height);
-
-				if(UIMgr.HasInstance)
-				{
-					UIMgr.In.ChangeScreenSize(ScreenResolution);
-				}
 			}
 #endif
 		}
