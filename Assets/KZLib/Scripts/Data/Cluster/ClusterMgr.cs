@@ -29,34 +29,27 @@ namespace KZLib
 			base.Release(disposing);
 		}
 
-		public TCluster GetOrCreateCluster<TCluster>(IClusterParam param) where TCluster : class,ICluster
+		public TCluster GetOrCreateCluster<TCluster>(object param) where TCluster : class,ICluster
 		{
 			return GetOrCreateCluster(typeof(TCluster),param) as TCluster;
 		}
 
-		public ICluster GetOrCreateCluster(Type clusterType,IClusterParam param)
+		public ICluster GetOrCreateCluster(Type type,object param)
 		{
-			var clusterKey = param.Key;
+			var key = $"{type.Name}_{param}";
 
-			if(clusterKey.IsEmpty())
+			if(!m_clusterDict.TryGetValue(key,out var cluster))
 			{
-				LogTag.System.E($"Cluster key must not be null or empty [{param}]");
-
-				return null;
-			}
-
-			if(!m_clusterDict.TryGetValue(clusterKey,out var cluster))
-			{
-				cluster = Activator.CreateInstance(clusterType,param) as ICluster;
+				cluster = Activator.CreateInstance(type,param) as ICluster;
 
 				if(cluster == null)
 				{
-					LogTag.System.E($"Failed to create cluster of type {clusterType}");
+					LogTag.System.E($"Failed to create cluster of type {type}");
 
 					return null;
 				}
 
-				m_clusterDict.Add(clusterKey,cluster);
+				m_clusterDict.Add(key,cluster);
 			}
 
 			return cluster;

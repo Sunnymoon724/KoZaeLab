@@ -10,22 +10,27 @@ public class Test : MonoBehaviour
     [Button("Test")]
     void Text()
     {
-        var code = CryptoUtility.SHA.ComputeHashToBytes(SystemInfo.deviceUniqueIdentifier);
+        for(int i=0;i<100;i++)
+        {
+            LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(new SquadParam(5,2).ToString())}");
+        }
 
-        var text = "textKey";
+        
+        LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(new SquadParam(5,2).ToString())}");
+        LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(new SquadParam(5,25).ToString())}");
+        LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(new SquadParam(5,25).ToString())}");
+        LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(new SquadParam(5,25).ToString())}");
+    }
+}
 
-        var encrypt = CryptoUtility.AES.EncryptToString(text,code);
+public record SquadParam
+{
+    public int AAA { get; set; }
+    public int BBB { get; set; }
 
-        LogTag.Build.I($"{encrypt}");
-
-        var decrypt1 = CryptoUtility.AES.DecryptFromString(encrypt,code);
-
-        LogTag.Build.I($"{decrypt1}");
-
-        var decrypt2 = CryptoUtility.AES.DecryptFromString(text,code);
-
-        LogTag.Build.I($"{decrypt2}");
-
-        LogTag.Build.I($"End");
+    public SquadParam(int aaa,int bbb)
+    {
+        AAA = aaa;
+        BBB = bbb;
     }
 }
