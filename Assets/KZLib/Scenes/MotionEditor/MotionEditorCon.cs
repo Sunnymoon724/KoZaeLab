@@ -6,7 +6,7 @@ using UnityEditor.Animations;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class MotionEditorController : MonoBehaviour
+public class MotionEditorCon : MonoBehaviour
 {
 	private GameObject m_pivot = null;
 	private GameObject m_target = null;
@@ -38,7 +38,7 @@ public class MotionEditorController : MonoBehaviour
 				return;
 			}
 
-			if(!value.IsInComponent<MotionController>())
+			if(!value.IsInComponent<MotionCon>())
 			{
 				LogTag.System.W("Prefab must have motionController component");
 

@@ -102,9 +102,18 @@ namespace KZLib
 			return true;
 		}
 
-		public bool TryGetProto<TProto>(int num,out IProto proto) where TProto : class,IProto
+		public bool TryGetProto<TProto>(int num,out TProto proto) where TProto : class,IProto
 		{
-			return TryGetProto(num,typeof(TProto),out proto);
+			if(TryGetProto(num,typeof(TProto),out var result))
+			{
+				proto = result as TProto;
+
+				return true;
+			}
+
+			proto = default;
+
+			return false;
 		}
 
 		public bool TryGetProto(int num,Type protoType,out IProto proto)
