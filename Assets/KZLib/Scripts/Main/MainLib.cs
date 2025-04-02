@@ -217,14 +217,19 @@ namespace KZLib
 			}
 
 			var editorCfg = ConfigMgr.In.Access<ConfigData.EditorConfig>();
-			var param = editorCfg.GetSceneParam(StartSceneName);
+			var paramText = editorCfg.GetSceneParamText(StartSceneName);
 
-			if(param != null)
+			if(!paramText.IsEmpty())
 			{
-				LogTag.System.I($"{StartSceneName} - [{param}]");
+				LogTag.System.I($"{StartSceneName} - [{paramText}]");
 			}
 
-			SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null,param);
+			var paramName = StartSceneName.Replace("Scene","Param");
+			var paramType = Type.GetType($"{StartSceneName}.{paramName}, Assembly-CSharp");
+
+			var stateParam = JsonConvert.DeserializeObject(paramText,paramType) as SceneState.StateParam;
+
+			SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null,stateParam);
 		}
 
 #if UNITY_EDITOR
