@@ -10,6 +10,8 @@ namespace KZLib
 {
 	public class ConfigMgr : Singleton<ConfigMgr>
 	{
+		private const string c_editorYaml = "Editor.yaml";
+
 		private bool m_disposed = false;
 
 		private readonly Dictionary<string,IConfig> m_configDict = new();
@@ -129,8 +131,16 @@ namespace KZLib
 				return text;
 			}
 
+
 			//? check resource folder.
-			text = FileUtility.ReadFileToText(RouteMgr.In.GetOrCreateRoute($"defaultRes:config:{fileName}").AbsolutePath);
+#if UNITY_EDITOR
+
+			var routePath = fileName == c_editorYaml ? $"workRes:config:{fileName}" : $"defaultRes:config:{fileName}";
+#else
+			var routePath = $"defaultRes:config:{fileName}";
+#endif
+
+			text = FileUtility.ReadFileToText(RouteMgr.In.GetOrCreateRoute(routePath).AbsolutePath);
 
 			if(!text.IsEmpty())
 			{
@@ -144,9 +154,9 @@ namespace KZLib
 
 		private string _ReadConfigFileInAddressable(string fileName)
 		{
-			if(fileName == "Scene.yaml")
+			if(fileName == c_editorYaml)
 			{
-				// Scene is only editor
+				// Editor is only editor
 				return string.Empty;
 			}
 
