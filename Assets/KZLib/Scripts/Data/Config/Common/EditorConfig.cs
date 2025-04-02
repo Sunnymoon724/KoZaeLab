@@ -7,7 +7,7 @@ namespace ConfigData
 	{
 		private Dictionary<string,object> SceneParamDict { get; set; }
 
-		public object GetSceneParamText(string sceneName)
+		public object GetSceneParam(string sceneName)
 		{
 			if(!SceneParamDict.TryGetValue(sceneName,out var param))
 			{

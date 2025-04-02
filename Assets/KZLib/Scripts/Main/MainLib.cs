@@ -217,7 +217,7 @@ namespace KZLib
 			}
 
 			var editorCfg = ConfigMgr.In.Access<ConfigData.EditorConfig>();
-			var param = editorCfg.GetSceneParamText(StartSceneName);
+			var param = editorCfg.GetSceneParam(StartSceneName);
 
 			var paramName = StartSceneName.Replace("Scene","Param");
 			var paramType = Type.GetType($"{StartSceneName}+{paramName}, Assembly-CSharp");
