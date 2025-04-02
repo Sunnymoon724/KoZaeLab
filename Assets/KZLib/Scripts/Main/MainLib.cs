@@ -9,6 +9,8 @@ using Cysharp.Threading.Tasks;
 using System.Threading;
 using System.Collections.Generic;
 using System.IO;
+using ExcelDataReader.Log;
+
 
 #if UNITY_EDITOR
 
@@ -215,8 +217,14 @@ namespace KZLib
 			}
 
 			var editorCfg = ConfigMgr.In.Access<ConfigData.EditorConfig>();
+			var param = editorCfg.GetSceneParam(StartSceneName);
 
-			SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null,editorCfg.GetSceneParam(StartSceneName));
+			if(param != null)
+			{
+				LogTag.System.I($"{StartSceneName} - [{param}]");
+			}
+
+			SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null,param);
 		}
 
 #if UNITY_EDITOR
