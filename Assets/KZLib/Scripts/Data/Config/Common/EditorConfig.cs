@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using KZLib.KZData;
-using Newtonsoft.Json;
 
 namespace ConfigData
 {
@@ -8,14 +7,14 @@ namespace ConfigData
 	{
 		private Dictionary<string,object> SceneParamDict { get; set; }
 
-		public string GetSceneParamText(string sceneName)
+		public object GetSceneParamText(string sceneName)
 		{
 			if(!SceneParamDict.TryGetValue(sceneName,out var param))
 			{
 				return null;
 			}
 
-			return JsonConvert.SerializeObject(param, new JsonSerializerSettings { FloatFormatHandling = FloatFormatHandling.DefaultValue, });
+			return param;
 		}
 	}
 }
