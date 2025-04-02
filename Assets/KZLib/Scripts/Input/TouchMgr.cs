@@ -32,15 +32,15 @@ namespace KZLib
 #if UNITY_EDITOR || UNITY_STANDALONE
 			if(Input.GetMouseButtonDown(0))
 			{
-				ProcessInputEvent("TouchDownPoint",Input.mousePosition,-1);
+				_ProcessInputEvent("TouchDownPoint",Input.mousePosition,-1);
 			}
 			else if(Input.GetMouseButton(0))
 			{
-				ProcessInputEvent("TouchHoldingPoint",Input.mousePosition,-1);
+				_ProcessInputEvent("TouchHoldingPoint",Input.mousePosition,-1);
 			}
 			else if(Input.GetMouseButtonUp(0))
 			{
-				ProcessInputEvent("TouchUpPoint",Input.mousePosition,-1);
+				_ProcessInputEvent("TouchUpPoint",Input.mousePosition,-1);
 			}
 #elif UNITY_IOS || UNITY_ANDROID
 			if(Input.touchCount > 0)
@@ -51,18 +51,18 @@ namespace KZLib
 				{
 					case TouchPhase.Began:
 					{
-						ProcessInputEvent(EventTag.TouchDownPoint,touch.position,touch.fingerId);
+						_ProcessInputEvent(EventTag.TouchDownPoint,touch.position,touch.fingerId);
 						break;
 					}
 					case TouchPhase.Moved:
 					case TouchPhase.Stationary:
 					{
-						ProcessInputEvent(EventTag.TouchHoldingPoint,touch.position,touch.fingerId);
+						_ProcessInputEvent(EventTag.TouchHoldingPoint,touch.position,touch.fingerId);
 						break;
 					}
 					case TouchPhase.Ended:
 					{
-						ProcessInputEvent(EventTag.TouchUpPoint,touch.position,touch.fingerId);
+						_ProcessInputEvent(EventTag.TouchUpPoint,touch.position,touch.fingerId);
 						break;
 					}
 				}
@@ -70,7 +70,7 @@ namespace KZLib
 #endif
 		}
 
-		private void ProcessInputEvent(string eventName,Vector2 point,int pointerId)
+		private void _ProcessInputEvent(string eventName,Vector2 point,int pointerId)
 		{
 			if(EventSystem.current != null && !EventSystem.current.IsPointerOverGameObject(pointerId))
 			{
@@ -79,10 +79,10 @@ namespace KZLib
 				EventMgr.In.SendEvent(eventName,worldPoint);
 			}
 
-			PlayTouchEffect(point);
+			_PlayTouchEffect(point);
 		}
 
-		private void PlayTouchEffect(Vector2 point)
+		private void _PlayTouchEffect(Vector2 point)
 		{
 			if(m_useTouchEffect)
 			{

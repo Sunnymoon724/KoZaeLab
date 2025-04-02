@@ -35,7 +35,7 @@ namespace KZLib.KZSample
 
 				if(Application.isPlaying)
 				{
-					SetCellList();
+					_SetCellList();
 				}
 			}
 		}
@@ -93,10 +93,10 @@ namespace KZLib.KZSample
 
 		private void Start()
 		{
-			SetCellList();
+			_SetCellList();
 		}
 
-		private void SetCellList()
+		private void _SetCellList()
 		{
 			var count = CellCount;
 

@@ -20,7 +20,7 @@ public class AudioGraphImageUI : GraphImageUI
 				current += valueArray[i*iteration+j];
 			}
 
-			var normalized = DecibelNormalized(LinearToDecibel(current/iteration));
+			var normalized = _DecibelNormalized(_LinearToDecibel(current/iteration));
 
 			if((i+1)%3 == 0 && i>1)
 			{
@@ -39,12 +39,12 @@ public class AudioGraphImageUI : GraphImageUI
 		SetGraphArray();
 	}
 
-	private float LinearToDecibel(float value)
+	private float _LinearToDecibel(float value)
 	{
 		return Mathf.Clamp(Mathf.Log10(value)*20.0f,-160.0f,0.0f);
 	}
 
-	private float DecibelNormalized(float value)
+	private float _DecibelNormalized(float value)
 	{
 		return (value+160.0f)/160.0f;
 	}

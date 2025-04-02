@@ -12,7 +12,7 @@ namespace KZLib.KZDevelop
 {
 	public partial class PathCreator : BaseComponent
 	{
-		private void GetCurvePointArray()
+		private void _GetCurvePointArray()
 		{
 			m_pointArray = CommonUtility.CalculateCubicBezierCurve(HandleArray,IsClosed,m_resolution) ?? new Vector3[0];
 		}
@@ -31,7 +31,7 @@ namespace KZLib.KZDevelop
 		}
 
 
-		[VerticalGroup("1",Order = 1),ShowInInspector,LabelText("Is Closed"),ShowIf(nameof(IsCurveMode))]
+		[VerticalGroup("1",Order = 1),ShowInInspector,ShowIf(nameof(IsCurveMode))]
 		public bool IsClosed
 		{
 			get => m_closed;
@@ -59,14 +59,14 @@ namespace KZLib.KZDevelop
 		}
 
 #if UNITY_EDITOR
-		private void ResetCurve()
+		private void _ResetCurve()
 		{
 			var handle = m_handleList.Count > 0 ? m_handleList[0] : Vector3.zero;
 
 			m_resolution = 50.0f;
 			m_handleList.Clear();
 
-			var position = ConvertPosition(handle);
+			var position = _ConvertPosition(handle);
 
 			var sceneCamera = SceneView.lastActiveSceneView.camera;
 			var pivot = (sceneCamera == null ? 1.0f : sceneCamera.orthographicSize)*0.5f;
@@ -172,7 +172,7 @@ namespace KZLib.KZDevelop
 				return;
 			}
 
-			var convertPosition = ConvertPosition(position);
+			var convertPosition = _ConvertPosition(position);
 			var deltaMove = convertPosition-m_handleList[index];
 
 			m_handleList[index] = convertPosition;
@@ -213,7 +213,7 @@ namespace KZLib.KZDevelop
 			SetDirty();
 		}
 
-		private void DrawCurveGizmos()
+		private void _DrawCurveGizmos()
 		{
 			Gizmos.color = Color.green;
 

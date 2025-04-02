@@ -4,7 +4,7 @@ public static class CircleCollider2DExtension
 {
 	public static Bounds CalculateLocalBounds(this CircleCollider2D circleCollider2D)
 	{
-		if(!IsValid(circleCollider2D))
+		if(!_IsValid(circleCollider2D))
 		{
 			return default;
 		}
@@ -16,7 +16,7 @@ public static class CircleCollider2DExtension
 
 	public static float CalculateRadius(this CircleCollider2D circleCollider2D,out Vector2 localCenter)
 	{
-		if(!IsValid(circleCollider2D))
+		if(!_IsValid(circleCollider2D))
 		{
 			localCenter = Vector2.zero;
 
@@ -30,7 +30,7 @@ public static class CircleCollider2DExtension
 
 	public static bool ApplyScale(this CircleCollider2D circleCollider2D,Vector3 scale)
 	{
-		if(!IsValid(circleCollider2D))
+		if(!_IsValid(circleCollider2D))
 		{
 			return false;
 		}
@@ -41,7 +41,7 @@ public static class CircleCollider2DExtension
 		return true;
 	}
 
-	private static bool IsValid(CircleCollider2D circleCollider2D)
+	private static bool _IsValid(CircleCollider2D circleCollider2D)
 	{
 		if(!circleCollider2D)
 		{

@@ -44,7 +44,7 @@ namespace KZLib
 			}
 			else
 			{
-				await PlayTransitionOutInAsync(new TransitionInfo(),async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
+				await _PlayTransitionOutInAsync(new TransitionInfo(),async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
 			}
 
 			videoPanel.PlayVideo();

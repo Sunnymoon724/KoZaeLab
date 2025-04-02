@@ -135,7 +135,7 @@ namespace KZLib.KZDevelop
 		[HorizontalGroup("Button",Order = 0),Button("Add Option",ButtonSizes.Large)]
 		protected void OnAddOption()
 		{
-			var handler = new OptionHandler(TryAddOption);
+			var handler = new OptionHandler(_TryAddOption);
 			var window = OdinEditorWindow.InspectObject(handler);
 
 			window.position = GUIHelper.GetEditorWindowRect().AlignCenter(250,150);
@@ -143,21 +143,21 @@ namespace KZLib.KZDevelop
 			handler.SetWindow(window);
 		}
 
-		private bool TryAddOption(string optionName,string enableValue,string disableValue)
+		private bool _TryAddOption(string optionName,string enableValue,string disableValue)
 		{
-			if(!TryGetOptionFlag(optionName,out var flag))
+			if(!_TryGetOptionFlag(optionName,out var flag))
 			{
 				return false;
 			}
 
 			PresetDict[GraphicQualityPresetType.QualityLowest].Add(new GraphicQualityData(optionName,flag,enableValue,disableValue));
 
-			OnChangedPreset();
+			_OnChangedPreset();
 
 			return true;
 		}
 
-		private bool TryGetOptionFlag(string name,out long flag)
+		private bool _TryGetOptionFlag(string name,out long flag)
 		{
 			var nameHashSet = new HashSet<string>();
 			var orderHashSet = new HashSet<long>();
@@ -199,15 +199,15 @@ namespace KZLib.KZDevelop
 #endif
 
 		[HorizontalGroup("Preset",Order = 1)]
-		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(OnChangedPreset))]
+		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(_OnChangedPreset))]
 		private List<GraphicQualityData> m_lowestPresetList = new();
-		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(OnChangedPreset))]
+		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(_OnChangedPreset))]
 		private List<GraphicQualityData> m_lowPresetList = new();
-		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(OnChangedPreset))]
+		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(_OnChangedPreset))]
 		private List<GraphicQualityData> m_middlePresetList = new();
-		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(OnChangedPreset))]
+		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(_OnChangedPreset))]
 		private List<GraphicQualityData> m_highPresetList = new();
-		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(OnChangedPreset))]
+		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(_OnChangedPreset))]
 		private List<GraphicQualityData> m_highestPresetList = new();
 
 		private Dictionary<GraphicQualityPresetType,List<GraphicQualityData>> m_presetDict = null;
@@ -229,7 +229,7 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		private void OnChangedPreset()
+		private void _OnChangedPreset()
 		{
 			var graphicsQuality = 0L;
 
@@ -260,10 +260,10 @@ namespace KZLib.KZDevelop
 #if UNITY_EDITOR
 		protected override void OnCreate()
 		{
-			TryAddOption(Global.GLOBAL_TEXTURE_MIPMAP_LIMIT,"0","1");
-			TryAddOption(Global.ANISOTROPIC_FILTERING,"Enable","Disable");
-			TryAddOption(Global.VERTICAL_SYNC_COUNT,"1","0");
-			TryAddOption(Global.DISABLE_CAMERA_FAR_HALF,"1.0","0.5");
+			_TryAddOption(Global.GLOBAL_TEXTURE_MIPMAP_LIMIT,"0","1");
+			_TryAddOption(Global.ANISOTROPIC_FILTERING,"Enable","Disable");
+			_TryAddOption(Global.VERTICAL_SYNC_COUNT,"1","0");
+			_TryAddOption(Global.DISABLE_CAMERA_FAR_HALF,"1.0","0.5");
 		}
 #endif
 

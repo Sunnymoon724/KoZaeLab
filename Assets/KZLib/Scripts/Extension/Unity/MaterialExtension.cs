@@ -4,7 +4,7 @@ public static class MaterialExtension
 {
 	public static Material SetKeyword(this Material material,string keyword,bool enable)
 	{
-		if(!IsValid(material))
+		if(!_IsValid(material))
 		{
 			return null;
 		}
@@ -23,7 +23,7 @@ public static class MaterialExtension
 
 	public static void SetMaterialToRendererArray(this Material material,params Renderer[] rendererArray)
 	{
-		if(!IsValid(material))
+		if(!_IsValid(material))
 		{
 			return;
 		}
@@ -41,7 +41,7 @@ public static class MaterialExtension
 		}
 	}
 
-	private static bool IsValid(Material material)
+	private static bool _IsValid(Material material)
 	{
 		if(!material)
 		{

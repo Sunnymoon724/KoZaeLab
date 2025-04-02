@@ -9,25 +9,25 @@ namespace KZLib.KZMenu
 	{
 		#region Window
 		[MenuItem("KZMenu/Window/Open Manual Window",false,(int) MenuType.Window_Manual)]
-		private static void OnOpenManualWindow()
+		private static void _OnOpenManualWindow()
 		{
 			EditorWindow.GetWindow<ManualWindow>().Show();
 		}
 
 		[MenuItem("KZMenu/Window/Open Editor Custom Window",false,(int) MenuType.Window_Etc)]
-		private static void OnOpenEditorCustomWindow()
+		private static void _OnOpenEditorCustomWindow()
 		{
 			EditorWindow.GetWindow<EditorCustomWindow>().Show();
 		}
 
 		[MenuItem("KZMenu/Window/Open PlayerPrefs Window",false,(int) MenuType.Window_Etc)]
-		private static void OnOpenPlayerPrefsWindow()
+		private static void _OnOpenPlayerPrefsWindow()
 		{
 			EditorWindow.GetWindow<PlayerPrefsWindow>().Show();
 		}
 
 		[MenuItem("KZMenu/Window/Open Graphic Quality Option Window",false,(int) MenuType.Window_Etc)]
-		private static void OnOpenGraphicQualityOptionWindow()
+		private static void _OnOpenGraphicQualityOptionWindow()
 		{
 			var instance = GraphicQualityOption.In;
 
@@ -38,7 +38,7 @@ namespace KZLib.KZMenu
 		}
 
 		[MenuItem("KZMenu/Window/Open Network Test Window",false,(int) MenuType.Window_Etc)]
-		private static void OnOpenNetworkTestWindow()
+		private static void _OnOpenNetworkTestWindow()
 		{
 			EditorWindow.GetWindow<NetworkTestWindow>().Show();
 		}

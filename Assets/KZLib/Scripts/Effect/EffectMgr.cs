@@ -71,16 +71,16 @@ namespace KZLib
 		{
 			m_playingList.RemoveSafe(effectClip);
 
-			PutEffectClip(effectClip);
+			_PutEffectClip(effectClip);
 		}
 
 		public EffectClip PlayEffect(string name,Vector3 position,Transform parent = null,EffectClip.EffectParam effectParam = null)
 		{
-			var effectClip = GetEffectClip(name,parent);
+			var effectClip = _GetEffectClip(name,parent);
 
 			if(!effectClip)
 			{
-				var effectPath = GetEffectPath(name);
+				var effectPath = _GetEffectPath(name);
 
 				effectClip = ResMgr.In.GetObject<EffectClip>(effectPath,parent);
 
@@ -109,7 +109,7 @@ namespace KZLib
 			return effectClip;
 		}
 
-		private string GetEffectPath(string name)
+		private string _GetEffectPath(string name)
 		{
 			return $"{m_effectPath}/{name}.prefab";
 		}
@@ -152,7 +152,7 @@ namespace KZLib
 			m_poolDataDict.Clear();
 		}
 
-		private void PutEffectClip(EffectClip effectClip)
+		private void _PutEffectClip(EffectClip effectClip)
 		{
 			effectClip.transform.ResetTransform(transform);
 			effectClip.gameObject.EnsureActive(false);
@@ -167,7 +167,7 @@ namespace KZLib
 			}
 		}
 
-		private EffectClip GetEffectClip(string name,Transform parent)
+		private EffectClip _GetEffectClip(string name,Transform parent)
 		{
 			if(m_poolDataDict.TryGetValue(name, out var poolDataList) && poolDataList.Count > 0)
 			{

@@ -5,7 +5,7 @@ public static class MonoBehaviourExtension
 {
 	public static void StartRunInEditMode(this MonoBehaviour behaviour)
 	{
-		if(!IsValid(behaviour))
+		if(!_IsValid(behaviour))
 		{
 			return;
 		}
@@ -15,7 +15,7 @@ public static class MonoBehaviourExtension
 	
 	public static void StopRunInEditMode(this MonoBehaviour behaviour)
 	{
-		if(!IsValid(behaviour))
+		if(!_IsValid(behaviour))
 		{
 			return;
 		}
@@ -35,7 +35,7 @@ public static class MonoBehaviourExtension
 		}
 	}
 
-	private static bool IsValid(MonoBehaviour behaviour)
+	private static bool _IsValid(MonoBehaviour behaviour)
 	{
 		if(!behaviour)
 		{

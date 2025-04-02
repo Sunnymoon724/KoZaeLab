@@ -16,7 +16,7 @@ namespace KZLib.KZDevelop
 
 	public partial class PathCreator : BaseComponent
 	{
-		[VerticalGroup("0",Order = 0),SerializeField,LabelText("Space Type")]
+		[VerticalGroup("0",Order = 0),SerializeField]
 		private SpaceType m_pathSpaceType = SpaceType.xyz;
 		public SpaceType PathSpaceType => m_pathSpaceType;
 
@@ -35,18 +35,18 @@ namespace KZLib.KZDevelop
 		private string ResolutionLabel => IsCurveMode ? "Curve Resolution" : "Vertex Distance";
 		private float MinResolution => IsCurveMode ? 1.0f : 0.0f;
 
-		[VerticalGroup("5",Order = 5),SerializeField,LabelText("Handle List"),DisplayAsString,ListDrawerSettings(DraggableItems = false,HideAddButton = true,HideRemoveButton = true)]
+		[VerticalGroup("5",Order = 5),SerializeField,DisplayAsString,ListDrawerSettings(DraggableItems = false,HideAddButton = true,HideRemoveButton = true)]
 		private List<Vector3> m_handleList = new();
 		public Vector3[] HandleArray => m_handleList.ToArray();
 
 		[SerializeField,HideInInspector]
 		private Vector3[] m_pointArray = null;
 
-		[VerticalGroup("3",Order = 3),SerializeField,LabelText("Path Length"),DisplayAsString]
+		[VerticalGroup("3",Order = 3),SerializeField,DisplayAsString]
 		private float m_pathLength = 0.0f;
 		public float PathLength => m_pathLength;
 
-		[VerticalGroup("3",Order = 3),SerializeField,LabelText("Line Renderer")]
+		[VerticalGroup("3",Order = 3),SerializeField]
 		private LineRenderer m_lineRenderer = null;
 
 		[NonSerialized]
@@ -60,11 +60,11 @@ namespace KZLib.KZDevelop
 				{
 					if(IsCurveMode)
 					{
-						GetCurvePointArray();
+						_GetCurvePointArray();
 					}
 					else
 					{
-						GetShapePointArray();
+						_GetShapePointArray();
 					}
 
 					OnPathChanged?.Invoke();
@@ -151,17 +151,17 @@ namespace KZLib.KZDevelop
 
 			if(IsCurveMode)
 			{
-				ResetCurve();
+				_ResetCurve();
 			}
 			else
 			{
-				ResetShape();
+				_ResetShape();
 			}
 
 			SetDirty();
 		}
 
-		private Vector3 ConvertPosition(Vector3 position)
+		private Vector3 _ConvertPosition(Vector3 position)
 		{
 			return PathSpaceType == SpaceType.xy ? position.SetZ() : PathSpaceType == SpaceType.xz ? position.SetY() : position;
 		}
@@ -177,11 +177,11 @@ namespace KZLib.KZDevelop
 
 			if(IsCurveMode)
 			{
-				DrawCurveGizmos();
+				_DrawCurveGizmos();
 			}
 			else
 			{
-				DrawShapeGizmos();
+				_DrawShapeGizmos();
 			}
 		}
 #endif

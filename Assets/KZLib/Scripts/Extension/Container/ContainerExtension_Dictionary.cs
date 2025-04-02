@@ -7,7 +7,7 @@ public static partial class ContainerExtension
 {
 	public static bool RemoveSafe<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,TKey key)
 	{
-		if(!IsValid(dictionary))
+		if(!_IsValid(dictionary))
 		{
 			return false;
 		}
@@ -17,7 +17,7 @@ public static partial class ContainerExtension
 
 	public static bool RemoveOut<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,TKey key,out TValue value)
 	{
-		if(!IsValid(dictionary))
+		if(!_IsValid(dictionary))
 		{
 			value = default;
 
@@ -29,7 +29,7 @@ public static partial class ContainerExtension
 
 	public static bool RemoveSafeValueInCollection<TKey,TValue>(this IDictionary<TKey,ICollection<TValue>> dictionary,TKey key,TValue value)
 	{
-		if(!IsValid(dictionary))
+		if(!_IsValid(dictionary))
 		{
 			return false;
 		}
@@ -39,7 +39,7 @@ public static partial class ContainerExtension
 
 	public static bool IsKeysEquals<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,ICollection<TKey> keyCollection)
 	{
-		if(!IsValid(dictionary))
+		if(!_IsValid(dictionary))
 		{
 			return false;
 		}
@@ -49,7 +49,7 @@ public static partial class ContainerExtension
 
 	public static bool IsValuesEquals<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,ICollection<TValue> valueCollection)
 	{
-		if(!IsValid(dictionary))
+		if(!_IsValid(dictionary))
 		{
 			return false;
 		}
@@ -59,7 +59,7 @@ public static partial class ContainerExtension
 
 	public static void AddRange<TKey,TValue>(this IDictionary<TKey,TValue> dictionary1,IDictionary<TKey,TValue> dictionary2)
 	{
-		if(!IsValid(dictionary1) || !IsValid(dictionary2))
+		if(!_IsValid(dictionary1) || !_IsValid(dictionary2))
 		{
 			return;
 		}
@@ -72,7 +72,7 @@ public static partial class ContainerExtension
 
 	public static void AddRange<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,ICollection<TValue> valueCollection,Func<TValue,TKey> onFunc,Action onAction = null)
 	{
-		if(!IsValid(dictionary))
+		if(!_IsValid(dictionary))
 		{
 			return;
 		}
@@ -93,7 +93,7 @@ public static partial class ContainerExtension
 
 	public static void AddRange<TValue>(this IDictionary<string,TValue> dictionary,ICollection<TValue> valueCollection,Action onAction = null) where TValue : Object
 	{
-		if(!IsValid(dictionary))
+		if(!_IsValid(dictionary))
 		{
 			return;
 		}
@@ -103,7 +103,7 @@ public static partial class ContainerExtension
 
 	public static void AddOrCreate<TKey,TValue,TCollection>(this IDictionary<TKey,TCollection> dictionary,TKey key,TValue value) where TCollection : ICollection<TValue>,new()
 	{
-		if(!IsValid(dictionary))
+		if(!_IsValid(dictionary))
 		{
 			return;
 		}
@@ -134,7 +134,7 @@ public static partial class ContainerExtension
 
 	public static void SortEachList<TKey,TValue>(this IDictionary<TKey,IList<TValue>> dictionary,IComparer<TValue> comparer)
 	{
-		if(!IsValid(dictionary))
+		if(!_IsValid(dictionary))
 		{
 			return;
 		}
@@ -160,7 +160,7 @@ public static partial class ContainerExtension
 
 	public static void AddDictionary<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,params IDictionary<TKey,TValue>[] otherDictionaryArray)
 	{
-		if(!IsValid(dictionary))
+		if(!_IsValid(dictionary))
 		{
 			return;
 		}
@@ -184,7 +184,7 @@ public static partial class ContainerExtension
 
 	public static IEnumerable<(TKey,TValue)> FindAllPairGroup<TKey,TValue>(this IDictionary<TKey,ICollection<TValue>> dictionary,Func<TValue,bool> onFunc)
 	{
-		if(!IsValid(dictionary))
+		if(!_IsValid(dictionary))
 		{
 			yield break;
 		}
@@ -203,7 +203,7 @@ public static partial class ContainerExtension
 
 	public static IEnumerable<TValue> MergeToGroup<TKey,TEnumerable,TValue>(this IDictionary<TKey,TEnumerable> dictionary) where TEnumerable : IEnumerable<TValue>
 	{
-		if(!IsValid(dictionary))
+		if(!_IsValid(dictionary))
 		{
 			yield break;
 		}
@@ -224,7 +224,7 @@ public static partial class ContainerExtension
 
 	public static string ToString<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,string format)
 	{
-		if(!IsValid(dictionary))
+		if(!_IsValid(dictionary))
 		{
 			return null;
 		}

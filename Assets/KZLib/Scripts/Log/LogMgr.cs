@@ -35,7 +35,7 @@ namespace KZLib
 
 		protected override void Initialize()
 		{
-			Application.logMessageReceived += HandleLogMessage;
+			Application.logMessageReceived += _HandleLogMessage;
 		}
 
 		protected override void Release(bool disposing)
@@ -47,7 +47,7 @@ namespace KZLib
 
 			if(disposing)
 			{
-				Application.logMessageReceived -= HandleLogMessage;
+				Application.logMessageReceived -= _HandleLogMessage;
 
 				m_logDataQueue.Clear();
 			}
@@ -85,7 +85,7 @@ namespace KZLib
 			return builder.ToString();
 		}
 
-		private void HandleLogMessage(string condition,string stackTrace,LogType logType)
+		private void _HandleLogMessage(string condition,string stackTrace,LogType logType)
 		{
 			var header = $"<{_GetLogTag(logType)}> {DateTime.Now:MM/dd HH:mm:ss}";
 			var body = string.Empty;

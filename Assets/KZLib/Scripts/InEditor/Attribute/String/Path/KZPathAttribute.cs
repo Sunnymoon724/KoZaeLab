@@ -46,7 +46,7 @@ namespace KZLib.KZAttribute
 		{
 			if(Attribute.AddChangeButton)
 			{
-				m_onClickedList.Add(OnClickToChangePath);
+				m_onClickedList.Add(_OnClickToChangePath);
 			}
 
 			if(Attribute.AddOpenButton)
@@ -59,7 +59,7 @@ namespace KZLib.KZAttribute
 
 		protected abstract bool IsValidPath();
 
-		private Rect OnClickToChangePath(Rect rect,bool _)
+		private Rect _OnClickToChangePath(Rect rect,bool _)
 		{
 			return DrawButton(rect,SdfIconType.ArrowRepeat,true,()=>
 			{

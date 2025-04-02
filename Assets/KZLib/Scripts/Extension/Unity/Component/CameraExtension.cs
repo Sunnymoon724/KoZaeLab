@@ -4,7 +4,7 @@ public static class CameraExtension
 {
 	public static Bounds OrthographicBounds(this Camera camera)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			return default;
 		}
@@ -17,7 +17,7 @@ public static class CameraExtension
 
 	public static void ShowLayer(this Camera camera,int layerIndex)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			return;
 		}
@@ -27,7 +27,7 @@ public static class CameraExtension
 
 	public static void ShowLayer(this Camera camera,params string[] layerNameArray)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			return;
 		}
@@ -37,7 +37,7 @@ public static class CameraExtension
 
 	public static void HideLayer(this Camera camera,int layerIndex)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			return;
 		}
@@ -47,7 +47,7 @@ public static class CameraExtension
 
 	public static void HideLayer(this Camera camera,params string[] layerNameArray)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			return;
 		}
@@ -57,7 +57,7 @@ public static class CameraExtension
 
 	public static void ToggleLayerVisibility(this Camera camera,int layerIndex)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			return;
 		}
@@ -67,7 +67,7 @@ public static class CameraExtension
 
 	public static void ToggleLayerVisibility(this Camera camera,params string[] layerNameArray)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			return;
 		}
@@ -77,7 +77,7 @@ public static class CameraExtension
 
 	public static bool IsLayerShown(this Camera camera,int layerIndex)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			return default;
 		}
@@ -87,7 +87,7 @@ public static class CameraExtension
 
 	public static bool IsLayerShown(this Camera camera,params string[] layerNameArray)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			return default;
 		}
@@ -97,7 +97,7 @@ public static class CameraExtension
 
 	public static void SetLayerVisibility(this Camera camera,bool isShow,int layerIndex)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			return;
 		}
@@ -114,7 +114,7 @@ public static class CameraExtension
 
 	public static void SetLayerVisibility(this Camera camera,bool isShow,params string[] layerNameArray)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			return;
 		}
@@ -131,7 +131,7 @@ public static class CameraExtension
 
 	public static bool TryGetDistanceToPlane(this Camera camera,Plane plane,out float distance)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			distance = 0.0f;
 
@@ -148,7 +148,7 @@ public static class CameraExtension
 
 	public static bool TryGetDistanceToPositionPlane(this Camera camera,Vector3 position,out float distance)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			distance = 0.0f;
 
@@ -162,7 +162,7 @@ public static class CameraExtension
 
 	public static bool TryGetDistanceToObjectPlane(this Camera camera,Transform target,out float distance)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			distance = 0.0f;
 
@@ -183,7 +183,7 @@ public static class CameraExtension
 
 	public static bool TryGetScaleForConsistentSize(this Camera camera,Transform transform,Transform target,out float scale)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			scale = 0.0f;
 
@@ -211,7 +211,7 @@ public static class CameraExtension
 
 	public static bool TryCastPositionToTargetPlane(this Camera camera,Transform transform,Transform target,out Vector3 position)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			position = Vector3.zero;
 
@@ -232,7 +232,7 @@ public static class CameraExtension
 
 	public static bool TryCastPositionToTargetPlane(this Camera camera,Vector3 position1,Transform target,out Vector3 position2)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			position2 = Vector3.zero;
 
@@ -275,7 +275,7 @@ public static class CameraExtension
 	/// </summary>
 	public static void TransformCornersToScreen(this Camera camera,RectTransform transform,Vector3[] positionArray,float factor = 1.0f)
 	{
-		if(!IsValid(camera))
+		if(!_IsValid(camera))
 		{
 			return;
 		}
@@ -288,7 +288,7 @@ public static class CameraExtension
 		}
 	}
 
-	private static bool IsValid(Camera camera)
+	private static bool _IsValid(Camera camera)
 	{
 		if(!camera)
 		{

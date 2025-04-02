@@ -80,12 +80,12 @@ public abstract class WindowUI2D : WindowUI
 	protected virtual void Update()
 	{
 #if UNITY_ANDROID || UNITY_IOS
-		CheckSafeArea();
+		_CheckSafeArea();
 #endif
 	}
 
 #if UNITY_ANDROID || UNITY_IOS
-	private void CheckSafeArea()
+	private void _CheckSafeArea()
 	{
 		if(!m_adjustRect)
 		{

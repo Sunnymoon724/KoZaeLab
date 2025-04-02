@@ -4,7 +4,7 @@ public static partial class TransformExtension
 {
 	public static void ResetTransform(this Transform transform,Transform parent = null)
 	{
-		if(!IsValid(transform))
+		if(!_IsValid(transform))
 		{
 			return;
 		}
@@ -20,7 +20,7 @@ public static partial class TransformExtension
 
 	public static bool IsFront(this Transform transform,Vector3 target)
 	{
-		if(!IsValid(transform))
+		if(!_IsValid(transform))
 		{
 			return false;
 		}
@@ -30,7 +30,7 @@ public static partial class TransformExtension
 
 	public static bool IsRight(this Transform transform,Vector3 target)
 	{
-		if(!IsValid(transform))
+		if(!_IsValid(transform))
 		{
 			return false;
 		}
@@ -40,7 +40,7 @@ public static partial class TransformExtension
 
 	public static void LookAtSlowly(this Transform transform,Transform target,float speed = 1.0f,bool isHoldX = false,bool isHoldY = false,bool isHoldZ = false)
 	{
-		if(!IsValid(transform))
+		if(!_IsValid(transform))
 		{
 			return;
 		}
@@ -65,7 +65,7 @@ public static partial class TransformExtension
 
 	public static bool IsInside(this Transform transform,Collider collider)
 	{
-		if(!IsValid(transform))
+		if(!_IsValid(transform))
 		{
 			return false;
 		}
@@ -82,7 +82,7 @@ public static partial class TransformExtension
 
 	public static bool IsNearlyFacingTowards(this Transform transform,Vector3 targetPosition,float cosineThreshold = 0.95f,bool ignoreHeight = false)
 	{
-		if(!IsValid(transform))
+		if(!_IsValid(transform))
 		{
 			return false;
 		}
@@ -101,7 +101,7 @@ public static partial class TransformExtension
 
 	public static void LookAt2D(this Transform transform,Vector3 target)
 	{
-		if(!IsValid(transform))
+		if(!_IsValid(transform))
 		{
 			return;
 		}
@@ -110,7 +110,7 @@ public static partial class TransformExtension
 		transform.Rotate(Vector3.forward,-90.0f);
 	}
 
-	private static bool IsValid(Transform transform)
+	private static bool _IsValid(Transform transform)
 	{
 		if(!transform)
 		{

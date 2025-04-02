@@ -10,12 +10,12 @@ namespace HudPanel
 
 		public bool IsActive => gameObject.activeSelf;
 
-		private string GetFrameRate(int frameRate)
+		private string _GetFrameRate(int frameRate)
 		{
 			return frameRate > 0 ? $"{frameRate:000}" : "----";
 		}
 
-		private string GetFrameTime(float frameTime)
+		private string _GetFrameTime(float frameTime)
 		{
 			return frameTime > 0.0f ? $"{frameTime:00.00}" : "----";
 		}
@@ -25,7 +25,7 @@ namespace HudPanel
 			var frameRate = Mathf.RoundToInt(frameCount/deltaTime);
 			var frameTime = deltaTime/frameCount*1000.0f;
 
-			m_frameText.SetSafeTextMeshPro($"[{GetFrameRate(frameRate)}fps / {GetFrameTime(frameTime)}ms]");
+			m_frameText.SetSafeTextMeshPro($"[{_GetFrameRate(frameRate)}fps / {_GetFrameTime(frameTime)}ms]");
 		}
 	}
 }

@@ -5,7 +5,7 @@ public static partial class ContainerExtension
 {
 	public static bool TryGetValueByIndex<TValue>(this IList<TValue> list,int index,out TValue value)
 	{
-		if(!IsValid(list))
+		if(!_IsValid(list))
 		{
 			value = default;
 
@@ -26,7 +26,7 @@ public static partial class ContainerExtension
 
 	public static TValue FindNext<TValue>(this IList<TValue> list,TValue value,int count)
 	{
-		if(!IsValid(list))
+		if(!_IsValid(list))
 		{
 			return default;
 		}
@@ -45,7 +45,7 @@ public static partial class ContainerExtension
 
 	public static void Move<TValue>(this IList<TValue> list,TValue value,int newIndex)
 	{
-		if(!IsValid(list))
+		if(!_IsValid(list))
 		{
 			return;
 		}
@@ -69,7 +69,7 @@ public static partial class ContainerExtension
 
 	public static void Swap<TValue>(this IList<TValue> list,int index1,int index2)
 	{
-		if(!IsValid(list))
+		if(!_IsValid(list))
 		{
 			return;
 		}
@@ -91,7 +91,7 @@ public static partial class ContainerExtension
 
 	public static void Randomize<TValue>(this IList<TValue> list)
 	{
-		if(!IsValid(list))
+		if(!_IsValid(list))
 		{
 			return;
 		}
@@ -104,7 +104,7 @@ public static partial class ContainerExtension
 
 	public static TValue PopFront<TValue>(this IList<TValue> list)
 	{
-		if(!IsValid(list))
+		if(!_IsValid(list))
 		{
 			return default;
 		}
@@ -114,7 +114,7 @@ public static partial class ContainerExtension
 
 	public static TValue PopBack<TValue>(this IList<TValue> list)
 	{
-		if(!IsValid(list))
+		if(!_IsValid(list))
 		{
 			return default;
 		}
@@ -124,7 +124,7 @@ public static partial class ContainerExtension
 
 	public static TValue Pop<TValue>(this IList<TValue> list,Predicate<TValue> onPredicate)
 	{
-		if(!IsValid(list))
+		if(!_IsValid(list))
 		{
 			return default;
 		}
@@ -141,7 +141,7 @@ public static partial class ContainerExtension
 
 	public static TValue Pop<TValue>(this IList<TValue> list,TValue value)
 	{
-		if(!IsValid(list))
+		if(!_IsValid(list))
 		{
 			return default;
 		}
@@ -158,7 +158,7 @@ public static partial class ContainerExtension
 
 	public static TValue Pop<TValue>(this IList<TValue> list,int index)
 	{
-		if(!IsValid(list))
+		if(!_IsValid(list))
 		{
 			return default;
 		}

@@ -43,13 +43,13 @@ namespace GameData
 		{
 			foreach(var key in m_DataKeyList)
 			{
-				m_AccountDataDict.Add(key,GetAccountData(key));
+				m_AccountDataDict.Add(key,_GetAccountData(key));
 			}
 
 			await UniTask.Yield();
 		}
 
-		private IAccountData GetAccountData(string key)
+		private IAccountData _GetAccountData(string key)
 		{
 			var type = Type.GetType($"GameData.Account+{key.Replace(" ", "")}");
 			var defaultData = Activator.CreateInstance(type) as IAccountData;
@@ -71,7 +71,7 @@ namespace GameData
 			await UniTask.Yield();
 		}
 
-		private void OnUpdateData(string _key)
+		private void _OnUpdateData(string _key)
 		{
 			var gameCfg = ConfigMgr.In.Access<ConfigData.GameConfig>();
 

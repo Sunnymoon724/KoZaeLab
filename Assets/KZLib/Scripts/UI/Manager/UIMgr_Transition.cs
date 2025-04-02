@@ -9,15 +9,15 @@ namespace KZLib
 	{
 		public void PlayTransitionOutIn(TransitionInfo info,Func<UniTask> onPlayTask)
 		{
-			PlayTransitionOutInAsync(info,onPlayTask).Forget();
+			_PlayTransitionOutInAsync(info,onPlayTask).Forget();
 		}
 
 		public void PlayTransitionOutIn(TransitionInfo info,Action onPlayAction)
 		{
-			PlayTransitionOutInAsync(info,onPlayAction).Forget();
+			_PlayTransitionOutInAsync(info,onPlayAction).Forget();
 		}
 
-		private async UniTask PlayTransitionOutInAsync(TransitionInfo info,Func<UniTask> onPlayTask)
+		private async UniTask _PlayTransitionOutInAsync(TransitionInfo info,Func<UniTask> onPlayTask)
 		{
 			// darker
 			await PlayTransitionOutAsync(info,false);
@@ -28,7 +28,7 @@ namespace KZLib
 			await PlayTransitionInAsync(info,true);
 		}
 
-		private async UniTask PlayTransitionOutInAsync(TransitionInfo info,Action onPlayAction)
+		private async UniTask _PlayTransitionOutInAsync(TransitionInfo info,Action onPlayAction)
 		{
 			// darker
 			await PlayTransitionOutAsync(info,false);

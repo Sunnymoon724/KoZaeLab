@@ -34,11 +34,11 @@ namespace KZLib
 
 			var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-			optionCfg.OnSoundVolumeChange += OnChangeSoundOption;
+			optionCfg.OnSoundVolumeChange += _OnChangeSoundOption;
 
 			m_optionRef = new WeakReference<ConfigData.OptionConfig>(optionCfg);
 
-			OnChangeSoundOption(optionCfg.MasterVolume,optionCfg.MusicVolume,optionCfg.EffectVolume);
+			_OnChangeSoundOption(optionCfg.MasterVolume,optionCfg.MusicVolume,optionCfg.EffectVolume);
 		}
 
 		protected override void Release(bool disposing)
@@ -52,7 +52,7 @@ namespace KZLib
 			{
 				if(m_optionRef.TryGetTarget(out var optionCfg))
 				{
-					optionCfg.OnSoundVolumeChange -= OnChangeSoundOption;
+					optionCfg.OnSoundVolumeChange -= _OnChangeSoundOption;
 				}
 
 				m_optionRef = null;
@@ -66,7 +66,7 @@ namespace KZLib
 			base.Release(disposing);
 		}
 
-		private void OnChangeSoundOption(SoundVolume masterVolume,SoundVolume musicVolume,SoundVolume effectVolume)
+		private void _OnChangeSoundOption(SoundVolume masterVolume,SoundVolume musicVolume,SoundVolume effectVolume)
 		{
 			m_bgmSource.volume = masterVolume.level*musicVolume.level;
 			m_bgmSource.mute = masterVolume.mute || musicVolume.mute;

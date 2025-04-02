@@ -4,7 +4,7 @@ public static class BoxCollider2DExtension
 {
 	public static Bounds CalculateLocalBounds(this BoxCollider2D boxCollider2D)
 	{
-		if(!IsValid(boxCollider2D))
+		if(!_IsValid(boxCollider2D))
 		{
 			return default;
 		}
@@ -14,7 +14,7 @@ public static class BoxCollider2DExtension
 
 	public static float CalculateRadius(this BoxCollider2D boxCollider2D,out Vector2 localCenter)
 	{
-		if(!IsValid(boxCollider2D))
+		if(!_IsValid(boxCollider2D))
 		{
 			localCenter = Vector2.zero;
 
@@ -31,7 +31,7 @@ public static class BoxCollider2DExtension
 
 	public static bool ApplyScale(this BoxCollider2D boxCollider2D,Vector3 scale)
 	{
-		if(!IsValid(boxCollider2D))
+		if(!_IsValid(boxCollider2D))
 		{
 			return false;
 		}
@@ -42,7 +42,7 @@ public static class BoxCollider2DExtension
 		return true;
 	}
 
-		private static bool IsValid(BoxCollider2D boxCollider2D)
+		private static bool _IsValid(BoxCollider2D boxCollider2D)
 	{
 		if(!boxCollider2D)
 		{

@@ -66,12 +66,12 @@ namespace KZLib.KZDevelop
 
 		protected virtual void OnDisable()
 		{
-			KillProgress();
+			_KillProgress();
 		}
 
 		protected virtual void OnDestroy()
 		{
-			KillProgress();
+			_KillProgress();
 		}
 
 		public void ResetProgress()
@@ -79,7 +79,7 @@ namespace KZLib.KZDevelop
 			Progress = 0.0f;
 		}
 
-		private void KillProgress()
+		private void _KillProgress()
 		{
 			CommonUtility.KillTokenSource(ref m_tokenSource);
 

@@ -58,7 +58,7 @@ namespace KZLib
 		{
 			if(!m_registerDict.ContainsKey(uiTag))
 			{
-				m_registerDict.Add(uiTag,MakeUI(uiTag));
+				m_registerDict.Add(uiTag,_MakeUI(uiTag));
 
 				if(isActive)
 				{
@@ -71,9 +71,9 @@ namespace KZLib
 			return m_registerDict[uiTag];
 		}
 
-		private WindowUI MakeUI(UITag uiTag)
+		private WindowUI _MakeUI(UITag uiTag)
 		{
-			var prefab = ResMgr.In.GetObject(GetUIPath(uiTag));
+			var prefab = ResMgr.In.GetObject(_GetUIPath(uiTag));
 
 			if(!prefab)
 			{
@@ -102,7 +102,7 @@ namespace KZLib
 
 			transform.SetUIChild(prefab.transform);
 
-			if(IsLibraryUI(uiTag))
+			if(_IsLibraryUI(uiTag))
 			{
 				RegisterDontRelease(uiTag);
 			}
@@ -124,7 +124,7 @@ namespace KZLib
 
 		public TBase Open<TBase>(UITag uiTag,object param = null) where TBase : class,IWindowUI
 		{
-			var window = FindOpened(uiTag);
+			var window = _FindOpened(uiTag);
 
 			if(window == null)
 			{
@@ -147,14 +147,14 @@ namespace KZLib
 
 		public bool IsOpened(UITag uiTag)
 		{
-			return FindOpened(uiTag) != null;
+			return _FindOpened(uiTag) != null;
 		}
 		#endregion Open
 
 		#region Close
 		public void Close(UITag uiTag,bool isRelease = false)
 		{
-			var data = FindOpened(uiTag);
+			var data = _FindOpened(uiTag);
 
 			if(data != null)
 			{
@@ -234,7 +234,7 @@ namespace KZLib
 
 		public bool? IsHidden(UITag uiTag)
 		{
-			var window = FindOpened(uiTag);
+			var window = _FindOpened(uiTag);
 
 			return window == null ? null : window.IsHidden;
 		}
@@ -243,12 +243,12 @@ namespace KZLib
 		#region Find
 		public TTag Find<TTag>(UITag uiTag) where TTag : class,IWindowUI
 		{
-			var window = FindOpened(uiTag);
+			var window = _FindOpened(uiTag);
 
 			return (window != null) ? window as TTag : null;
 		}
 
-		private WindowUI FindOpened(UITag uiTag)
+		private WindowUI _FindOpened(UITag uiTag)
 		{
 			foreach(var repository in m_repositoryList)
 			{

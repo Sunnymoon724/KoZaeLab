@@ -8,12 +8,12 @@ namespace KZLib
 	{
 		private static readonly UITag[] s_library_ui_array = new UITag[] { UITag.TransitionPanelUI, UITag.HudPanelUI, UITag.VideoPanelUI };
 
-		private string GetUIPath(UITag uiTag)
+		private string _GetUIPath(UITag uiTag)
 		{
-			return $"{(IsLibraryUI(uiTag) ? "Resources/Common" : m_uiPrefabPath)}/{uiTag}.prefab";
+			return $"{(_IsLibraryUI(uiTag) ? "Resources/Common" : m_uiPrefabPath)}/{uiTag}.prefab";
 		}
 
-		private bool IsLibraryUI(UITag uiTag)
+		private bool _IsLibraryUI(UITag uiTag)
 		{
 			return s_library_ui_array.Contains(uiTag);
 		}

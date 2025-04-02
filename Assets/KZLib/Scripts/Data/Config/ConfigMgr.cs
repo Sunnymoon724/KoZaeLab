@@ -93,7 +93,7 @@ namespace KZLib
 			}
 
 			var deserializer = new DeserializerBuilder().IncludeNonPublicProperties().Build();
-			var text = LoadConfigFile(name);
+			var text = _LoadConfigFile(name);
 
 			try
 			{
@@ -107,7 +107,7 @@ namespace KZLib
 			return null;
 		}
 
-		private string LoadConfigFile(string name)
+		private string _LoadConfigFile(string name)
 		{
 			var fileName = $"{name.Replace("Config","")}.yaml";
 			var text = string.Empty;

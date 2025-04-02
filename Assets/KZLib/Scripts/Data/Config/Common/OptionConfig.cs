@@ -70,7 +70,7 @@ namespace ConfigData
 
 				var text = PlayerPrefs.GetString(nameKey,string.Empty);
 
-				if(!TryParseValue(nameKey,propertyType,text,out var value))
+				if(!_TryParseValue(nameKey,propertyType,text,out var value))
 				{
 					return false;
 				}
@@ -81,26 +81,26 @@ namespace ConfigData
 			return true;
 		}
 
-		private bool TryParseValue(string propertyName,Type propertyType,string text,out object value)
+		private bool _TryParseValue(string propertyName,Type propertyType,string text,out object value)
 		{
 			value = null;
 
 			switch(Type.GetTypeCode(propertyType))
 			{
 				case TypeCode.String:
-					return TryParseStringValue(propertyName,text,out value);
+					return _TryParseStringValue(propertyName,text,out value);
 				case TypeCode.Int32:
-					return TryParseIntValue(propertyName,text,out value);
+					return _TryParseIntValue(propertyName,text,out value);
 				case TypeCode.Boolean:
-					return TryParseBoolValue(propertyName,text,out value);
+					return _TryParseBoolValue(propertyName,text,out value);
 				case TypeCode.Single:
-					return TryParseFloatValue(propertyName,text,out value);
+					return _TryParseFloatValue(propertyName,text,out value);
 				case TypeCode.Object when propertyType == typeof(Enum):
-					return TryParseEnumValue(propertyName,text,propertyType,out value);
+					return _TryParseEnumValue(propertyName,text,propertyType,out value);
 				case TypeCode.Object when propertyType == typeof(SoundVolume):
-					return TryParseSoundVolumeValue(propertyName,text,out value);
+					return _TryParseSoundVolumeValue(propertyName,text,out value);
 				case TypeCode.Object when propertyType == typeof(ScreenResolution):
-					return TryParseScreenResolutionValue(propertyName,text,out value);
+					return _TryParseScreenResolutionValue(propertyName,text,out value);
 				default:
 					LogTag.System.E($"Not supported propertyType ({propertyType}), name ({propertyName})");
 
@@ -108,7 +108,7 @@ namespace ConfigData
 			}
 		}
 
-		private bool TryParseStringValue(string propertyName,string text,out object value)
+		private bool _TryParseStringValue(string propertyName,string text,out object value)
 		{
 			if(text.IsEmpty())
 			{
@@ -124,7 +124,7 @@ namespace ConfigData
 			return true;
 		}
 
-		private bool TryParseIntValue(string propertyName,string text,out object value)
+		private bool _TryParseIntValue(string propertyName,string text,out object value)
 		{
 			if(!int.TryParse(text,out var number))
 			{
@@ -140,7 +140,7 @@ namespace ConfigData
 			return true;
 		}
 
-		private bool TryParseBoolValue(string propertyName,string text,out object value)
+		private bool _TryParseBoolValue(string propertyName,string text,out object value)
 		{
 			if(!bool.TryParse(text,out var boolean))
 			{
@@ -156,7 +156,7 @@ namespace ConfigData
 			return true;
 		}
 
-		private bool TryParseFloatValue(string propertyName,string text,out object value)
+		private bool _TryParseFloatValue(string propertyName,string text,out object value)
 		{
 			if(!float.TryParse(text,out var number))
 			{
@@ -172,7 +172,7 @@ namespace ConfigData
 			return true;
 		}
 
-		private bool TryParseEnumValue(string propertyName,string text,Type enumType,out object value)
+		private bool _TryParseEnumValue(string propertyName,string text,Type enumType,out object value)
 		{
 			if(!Enum.TryParse(enumType,text,out var result))
 			{
@@ -188,7 +188,7 @@ namespace ConfigData
 			return true;
 		}
 
-		private bool TryParseSoundVolumeValue(string propertyName,string text,out object value)
+		private bool _TryParseSoundVolumeValue(string propertyName,string text,out object value)
 		{
 			if(!SoundVolume.TryParse(text,out var volume))
 			{
@@ -204,7 +204,7 @@ namespace ConfigData
 			return true;
 		}
 
-		private bool TryParseScreenResolutionValue(string propertyName,string text,out object value)
+		private bool _TryParseScreenResolutionValue(string propertyName,string text,out object value)
 		{
 			if(!ScreenResolution.TryParse(text,out var resolution))
 			{
@@ -220,7 +220,7 @@ namespace ConfigData
 			return true;
 		}
 
-		private void SetStringPlayerPrefs(string key,string value)
+		private void _SetStringPlayerPrefs(string key,string value)
 		{
 			try
 			{
@@ -257,7 +257,7 @@ namespace ConfigData
 
 			refValue = newValue;
 
-			SetStringPlayerPrefs(nameKey,newValue.ToString());
+			_SetStringPlayerPrefs(nameKey,newValue.ToString());
 
 			OnSoundVolumeChange?.Invoke(MasterVolume,MusicVolume,EffectVolume);
 		}
@@ -275,7 +275,7 @@ namespace ConfigData
 
 			Screen.SetResolution(Resolution.width,Resolution.height,Resolution.fullscreen);
 
-			SetStringPlayerPrefs(nameof(Resolution),newResolution.ToString());
+			_SetStringPlayerPrefs(nameof(Resolution),newResolution.ToString());
 
 			OnResolutionChange?.Invoke(newResolution);
 		}
@@ -291,7 +291,7 @@ namespace ConfigData
 
 			Application.targetFrameRate = newFrameRate;
 
-			SetStringPlayerPrefs(nameof(FrameRate),newFrameRate.ToString());
+			_SetStringPlayerPrefs(nameof(FrameRate),newFrameRate.ToString());
 
 			OnFrameRateChange?.Invoke(newFrameRate);
 		}
@@ -315,12 +315,12 @@ namespace ConfigData
 
 			GraphicQuality = quality;
 
-			CheckGraphicQuality();
+			_CheckGraphicQuality();
 
 			OnGraphicQualityChange?.Invoke(quality);
 		}
 
-		private void CheckGraphicQuality()
+		private void _CheckGraphicQuality()
 		{
 			QualitySettings.globalTextureMipmapLimit = int.Parse(GraphicQualityOption.In.FindValue(GraphicQuality,Global.GLOBAL_TEXTURE_MIPMAP_LIMIT));
 			QualitySettings.anisotropicFiltering = (AnisotropicFiltering) Enum.Parse(typeof(AnisotropicFiltering),GraphicQualityOption.In.FindValue(GraphicQuality,Global.ANISOTROPIC_FILTERING));
@@ -338,7 +338,7 @@ namespace ConfigData
 
 			UseVibration = newUseVibration;
 
-			SetStringPlayerPrefs(nameof(UseVibration),newUseVibration.ToString());
+			_SetStringPlayerPrefs(nameof(UseVibration),newUseVibration.ToString());
 
 			OnUseVibrationChange.Invoke(newUseVibration);
 		}
@@ -354,7 +354,7 @@ namespace ConfigData
 
 			Language = newLanguage;
 
-			SetStringPlayerPrefs(nameof(Language),newLanguage.ToString());
+			_SetStringPlayerPrefs(nameof(Language),newLanguage.ToString());
 
 			OnLanguageChange.Invoke(newLanguage);
 		}

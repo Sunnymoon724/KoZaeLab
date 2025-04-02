@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace KZLib
 {
 	[RequireComponent(typeof(Animator))]
-	public class MotionController : BaseComponent
+	public class MotionCon : BaseComponent
 	{
 		[SerializeField]
 		protected Animator m_animator = null;

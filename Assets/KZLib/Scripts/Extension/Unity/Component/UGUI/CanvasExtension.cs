@@ -4,7 +4,7 @@ public static class CanvasExtension
 {
 	public static Camera GetEventCamera(this Canvas canvas)
 	{
-		if(!IsValid(canvas))
+		if(!_IsValid(canvas))
 		{
 			return null;
 		}
@@ -12,7 +12,7 @@ public static class CanvasExtension
 		return !canvas.worldCamera ? Camera.main : canvas.worldCamera;
 	}
 
-	private static bool IsValid(Canvas canvas)
+	private static bool _IsValid(Canvas canvas)
 	{
 		if(!canvas)
 		{

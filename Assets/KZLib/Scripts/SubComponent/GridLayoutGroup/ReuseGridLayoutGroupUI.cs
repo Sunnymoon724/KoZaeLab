@@ -60,7 +60,7 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 
 		if(m_cellDataList.Count < m_slotList.Count)
 		{
-			RecycleExtraSlot(m_cellDataList.Count);
+			_RecycleExtraSlot(m_cellDataList.Count);
 		}
 		else if(m_cellDataList.Count > m_slotList.Count)
 		{
@@ -68,7 +68,7 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 			
 			for(var i=0;i<count;i++)
 			{
-				m_slotList.Add(GetOrCreateSlot());
+				m_slotList.Add(_GetOrCreateSlot());
 			}
 		}
 
@@ -78,7 +78,7 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 		}
 	}
 
-	private SlotUI GetOrCreateSlot()
+	private SlotUI _GetOrCreateSlot()
 	{
 		var slot = m_slotUIPool.GetOrCreate(m_gridLayoutGroup.transform);
 
@@ -87,7 +87,7 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 		return slot;
 	}
 
-	private void RecycleExtraSlot(int count)
+	private void _RecycleExtraSlot(int count)
 	{
 		for(var i=count;i<m_slotList.Count;i++)
 		{

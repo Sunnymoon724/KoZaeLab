@@ -5,14 +5,14 @@ public static class LayoutGroupExtension
 {
 	public static void ForceRebuild(this LayoutGroup layoutGroup,bool isRecursive = true)
 	{
-		if(!IsValid(layoutGroup))
+		if(!_IsValid(layoutGroup))
 		{
 			return;
 		}
 
 		if(isRecursive)
 		{
-			RecursiveLayoutRebuild(layoutGroup.transform as RectTransform);
+			_RecursiveLayoutRebuild(layoutGroup.transform as RectTransform);
 		}
 		else
 		{
@@ -22,14 +22,14 @@ public static class LayoutGroupExtension
 
 	public static void MarkForRebuild(this LayoutGroup layoutGroup,bool isRecursive = true)
 	{
-		if(!IsValid(layoutGroup))
+		if(!_IsValid(layoutGroup))
 		{
 			return;
 		}
 
 		if(isRecursive)
 		{
-			RecursiveMarkForRebuild(layoutGroup.transform as RectTransform);
+			_RecursiveMarkForRebuild(layoutGroup.transform as RectTransform);
 		}
 		else
 		{
@@ -37,7 +37,7 @@ public static class LayoutGroupExtension
 		}
 	}
 
-	private static void RecursiveMarkForRebuild(RectTransform rectTransform)
+	private static void _RecursiveMarkForRebuild(RectTransform rectTransform)
 	{
 		for(var i=0;i<rectTransform.childCount;i++)
 		{
@@ -45,14 +45,14 @@ public static class LayoutGroupExtension
 
 			if(childRectTransform)
 			{
-				RecursiveMarkForRebuild(childRectTransform);
+				_RecursiveMarkForRebuild(childRectTransform);
 			}
 		}
 
 		LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
 	}
 
-	private static void RecursiveLayoutRebuild(RectTransform rectTransform)
+	private static void _RecursiveLayoutRebuild(RectTransform rectTransform)
 	{
 		for(var i=0;i<rectTransform.childCount;i++)
 		{
@@ -60,14 +60,14 @@ public static class LayoutGroupExtension
 
 			if(childRectTransform)
 			{
-				RecursiveLayoutRebuild(childRectTransform);
+				_RecursiveLayoutRebuild(childRectTransform);
 			}
 		}
 
 		LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
 	}
 
-	private static bool IsValid(LayoutGroup layoutGroup)
+	private static bool _IsValid(LayoutGroup layoutGroup)
 	{
 		if(!layoutGroup)
 		{

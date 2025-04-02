@@ -11,7 +11,7 @@ public class CombineMesh : BaseMesh
 			return;
 		}
 
-		InitializeMesh();
+		_InitializeMesh();
 
 		var count = CalculateMeshIndexCount(filterArray);
 
@@ -38,7 +38,7 @@ public class CombineMesh : BaseMesh
 			instanceList.Add(instance);
 		}
 
-		SetMesh(instanceList.ToArray());
+		_SetMesh(instanceList.ToArray());
 	}
 
 	public void CombineMeshFilter(Mesh[] _meshArray)
@@ -48,7 +48,7 @@ public class CombineMesh : BaseMesh
 			return;
 		}
 
-		InitializeMesh();
+		_InitializeMesh();
 
 		var count = CalculateMeshIndexCount(_meshArray);
 
@@ -74,7 +74,7 @@ public class CombineMesh : BaseMesh
 			instanceList.Add(instance);
 		}
 
-		SetMesh(instanceList.ToArray());
+		_SetMesh(instanceList.ToArray());
 	}
 
 	public bool AppendMesh(params MeshFilter[] filterArray)
@@ -122,7 +122,7 @@ public class CombineMesh : BaseMesh
 			instanceList.Add(instance);
 		}
 
-		SetMesh(instanceList.ToArray());
+		_SetMesh(instanceList.ToArray());
 
 		return true;
 	}
@@ -166,12 +166,12 @@ public class CombineMesh : BaseMesh
 			instanceList.Add(new CombineInstance { mesh = mesh, transform = Matrix4x4.identity, });
 		}
 
-		SetMesh(instanceList.ToArray());
+		_SetMesh(instanceList.ToArray());
 
 		return true;
 	}
 
-	private void InitializeMesh()
+	private void _InitializeMesh()
 	{
 		if(m_meshFilter.sharedMesh == null)
 		{
@@ -183,7 +183,7 @@ public class CombineMesh : BaseMesh
 		}
 	}
 
-	private void SetMesh(CombineInstance[] instanceArray)
+	private void _SetMesh(CombineInstance[] instanceArray)
 	{
 		var combined = new Mesh();
 

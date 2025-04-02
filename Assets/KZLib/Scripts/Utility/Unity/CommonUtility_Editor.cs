@@ -23,7 +23,7 @@ public static partial class CommonUtility
 		InternalEditorUtility.AddTag(newTag);
 	}
 
-	private static SerializedObject FindTagManagerObject()
+	private static SerializedObject _FindTagManagerObject()
 	{
 		var assetArray = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset");
 
@@ -37,7 +37,7 @@ public static partial class CommonUtility
 
 	public static void AddLayer(string layerName)
 	{
-		var serialized = FindTagManagerObject();
+		var serialized = _FindTagManagerObject();
 
 		if(serialized == null)
 		{
@@ -100,7 +100,7 @@ public static partial class CommonUtility
 
 	public static void ChangeDefineSymbol(string[] oldDefineSymbolArray,string[] newDefineSymbolArray)
 	{
-		foreach(var target in GetBuildTargetGroup())
+		foreach(var target in _GetBuildTargetGroup())
 		{
 			var defineSymbolText = PlayerSettings.GetScriptingDefineSymbolsForGroup(target);
 
@@ -127,13 +127,13 @@ public static partial class CommonUtility
 
 	public static void ChangePackageName(string packageName)
 	{
-		foreach(var target in GetBuildTargetGroup())
+		foreach(var target in _GetBuildTargetGroup())
 		{
 			PlayerSettings.SetApplicationIdentifier(target,packageName);
 		}
 	}
 
-	private static IEnumerable<BuildTargetGroup> GetBuildTargetGroup()
+	private static IEnumerable<BuildTargetGroup> _GetBuildTargetGroup()
 	{
 		return new BuildTargetGroup[] { BuildTargetGroup.Standalone, BuildTargetGroup.Android, BuildTargetGroup.iOS };
 	}
@@ -215,7 +215,7 @@ public static partial class CommonUtility
 
 	public static string FindTsvFile()
 	{
-		return FindFile("Find tsv file","*.tsv");
+		return _FindFile("Find tsv file","*.tsv");
 	}
 
 	public static string FindExcelFilePath()
@@ -232,15 +232,15 @@ public static partial class CommonUtility
 
 	public static string FindJsonFile()
 	{
-		return FindFile("Find json file","*.json");
+		return _FindFile("Find json file","*.json");
 	}
 
 	public static string FindTestFile()
 	{
-		return FindFile("Find test file.","*.*");
+		return _FindFile("Find test file.","*.*");
 	}
 
-	private static string FindFile(string title,string kind)
+	private static string _FindFile(string title,string kind)
 	{
 		var filePath = FindFilePathInPanel(title,kind);
 

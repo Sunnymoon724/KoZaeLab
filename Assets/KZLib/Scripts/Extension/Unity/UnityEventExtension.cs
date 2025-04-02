@@ -7,7 +7,7 @@ public static class UnityEventExtension
 	/// </summary>
 	public static void AddAction(this UnityEvent unityEvent,UnityAction onAction,bool isOverlap = false)
 	{
-		if(!IsValid(unityEvent))
+		if(!_IsValid(unityEvent))
 		{
 			return;
 		}
@@ -25,7 +25,7 @@ public static class UnityEventExtension
 	/// </summary>
 	public static void SetAction(this UnityEvent unityEvent,UnityAction onAction)
 	{
-		if(!IsValid(unityEvent))
+		if(!_IsValid(unityEvent))
 		{
 			return;
 		}
@@ -39,7 +39,7 @@ public static class UnityEventExtension
 	/// </summary>
 	public static void RemoveAction(this UnityEvent unityEvent,UnityAction onAction)
 	{
-		if(!IsValid(unityEvent))
+		if(!_IsValid(unityEvent))
 		{
 			return;
 		}
@@ -52,7 +52,7 @@ public static class UnityEventExtension
 	/// </summary>
 	public static void ClearAction(this UnityEvent unityEvent)
 	{
-		if(!IsValid(unityEvent))
+		if(!_IsValid(unityEvent))
 		{
 			return;
 		}
@@ -65,7 +65,7 @@ public static class UnityEventExtension
 	/// </summary>
 	public static void AddAction<TData>(this UnityEvent<TData> unityEvent,UnityAction<TData> onAction,bool isOverlap = false)
 	{
-		if(!IsValid(unityEvent))
+		if(!_IsValid(unityEvent))
 		{
 			return;
 		}
@@ -83,7 +83,7 @@ public static class UnityEventExtension
 	/// </summary>
 	public static void SetAction<TData>(this UnityEvent<TData> unityEvent,UnityAction<TData> onAction)
 	{
-		if(!IsValid(unityEvent))
+		if(!_IsValid(unityEvent))
 		{
 			return;
 		}
@@ -97,7 +97,7 @@ public static class UnityEventExtension
 	/// </summary>
 	public static void RemoveAction<TValue>(this UnityEvent<TValue> unityEvent,UnityAction<TValue> onAction)
 	{
-		if(!IsValid(unityEvent))
+		if(!_IsValid(unityEvent))
 		{
 			return;
 		}
@@ -110,7 +110,7 @@ public static class UnityEventExtension
 	/// </summary>
 	public static void ClearAction<TValue>(this UnityEvent<TValue> unityEvent)
 	{
-		if(!IsValid(unityEvent))
+		if(!_IsValid(unityEvent))
 		{
 			return;
 		}
@@ -118,7 +118,7 @@ public static class UnityEventExtension
 		unityEvent.RemoveAllListeners();
 	}
 
-	private static bool IsValid(UnityEvent unityEvent)
+	private static bool _IsValid(UnityEvent unityEvent)
 	{
 		if(unityEvent == null)
 		{
@@ -130,7 +130,7 @@ public static class UnityEventExtension
 		return true;
 	}
 
-	private static bool IsValid<TValue>(UnityEvent<TValue> unityEvent)
+	private static bool _IsValid<TValue>(UnityEvent<TValue> unityEvent)
 	{
 		if(unityEvent == null)
 		{

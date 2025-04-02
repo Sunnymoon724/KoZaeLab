@@ -42,12 +42,12 @@ namespace KZLib
 
 		protected override void Initialize()
 		{
-			Application.lowMemory += OnLowMemory;
+			Application.lowMemory += _OnLowMemory;
 		}
 
 		protected override void Release()
 		{
-			Application.lowMemory -= OnLowMemory;
+			Application.lowMemory -= _OnLowMemory;
 
 			CommonUtility.ClearUnloadedAssetMemory();
 		}
@@ -292,12 +292,12 @@ namespace KZLib
 #endif
 			LogTag.System.I($"{current.SceneName} destroy end.");
 
-			OnLowMemory();
+			_OnLowMemory();
 
 			onUpdateProgress?.Invoke(1.0f);
 		}
 
-		private void OnLowMemory()
+		private void _OnLowMemory()
 		{
 			if(Time.unscaledTime-m_lastUnloadTime < c_unloadMinTime)
 			{

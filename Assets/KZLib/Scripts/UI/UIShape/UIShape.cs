@@ -49,15 +49,15 @@ namespace UnityEngine.UI
 				//? Draw Fill
 				if(m_fillType != FillType.None)
 				{
-					var fillColor = GetColor();
+					var fillColor = _GetColor();
 
-					DrawPolygon(vertexHelper,size,angle,center,inner,fillColor,false);
+					_DrawPolygon(vertexHelper,size,angle,center,inner,fillColor,false);
 				}
 
 				//? Draw Outline
 				if(color != Color.clear)
 				{
-					DrawPolygonOutline(vertexHelper,size,angle,center,radius,inner,false);
+					_DrawPolygonOutline(vertexHelper,size,angle,center,radius,inner,false);
 				}
 			}
 			else if(m_shapeType == ShapeType.Polygon)
@@ -67,20 +67,20 @@ namespace UnityEngine.UI
 				//? Draw Fill
 				if(m_fillType != FillType.None)
 				{
-					var fillColor = GetColor();
+					var fillColor = _GetColor();
 
-					DrawPolygon(vertexHelper,m_polygonSideCount,angle,center,inner,fillColor,true);
+					_DrawPolygon(vertexHelper,m_polygonSideCount,angle,center,inner,fillColor,true);
 				}
 
 				//? Draw Outline
 				if(color != Color.clear)
 				{
-					DrawPolygonOutline(vertexHelper,m_polygonSideCount,angle,center,radius,inner,true);
+					_DrawPolygonOutline(vertexHelper,m_polygonSideCount,angle,center,radius,inner,true);
 				}
 			}
 		}
 
-		private void DrawPolygon(VertexHelper vertexHelper,int size,float angle,Vector2 center,Vector2 radius,Color color,bool useDistance)
+		private void _DrawPolygon(VertexHelper vertexHelper,int size,float angle,Vector2 center,Vector2 radius,Color color,bool useDistance)
 		{
 			var count = vertexHelper.currentVertCount;
 
@@ -102,7 +102,7 @@ namespace UnityEngine.UI
 			}
 		}
 
-		private void DrawPolygonOutline(VertexHelper vertexHelper,int size,float angle,Vector2 center,Vector2 radius,Vector2 inner,bool useDistance)
+		private void _DrawPolygonOutline(VertexHelper vertexHelper,int size,float angle,Vector2 center,Vector2 radius,Vector2 inner,bool useDistance)
 		{
 			var count = vertexHelper.currentVertCount;
 
@@ -124,7 +124,7 @@ namespace UnityEngine.UI
 			}
 		}
 
-		private Color GetColor()
+		private Color _GetColor()
 		{
 			if(m_fillType == FillType.Solid)
 			{

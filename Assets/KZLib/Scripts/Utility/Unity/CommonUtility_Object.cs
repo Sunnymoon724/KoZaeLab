@@ -14,12 +14,12 @@ public static partial class CommonUtility
 #if UNITY_EDITOR
 	public static bool IsExistAsset(string filter = null,string[] searchInFolderArray = null)
 	{
-		return FindAssetArray(filter,searchInFolderArray).Length > 0;
+		return _FindAssetArray(filter,searchInFolderArray).Length > 0;
 	}
 
 	public static IEnumerable<string> FindAssetPathGroup(string filter = null,string[] searchInFolderArray = null)
 	{
-		foreach(var guid in FindAssetArray(filter,searchInFolderArray))
+		foreach(var guid in _FindAssetArray(filter,searchInFolderArray))
 		{
 			var path = AssetDatabase.GUIDToAssetPath(guid);
 
@@ -32,7 +32,7 @@ public static partial class CommonUtility
 
 	public static TObject FindAsset<TObject>(string filter = null,string[] searchInFolderArray = null) where TObject : Object
 	{
-		var guidArray = FindAssetArray(filter,searchInFolderArray);
+		var guidArray = _FindAssetArray(filter,searchInFolderArray);
 
 		if(guidArray.Length == 0)
 		{
@@ -60,7 +60,7 @@ public static partial class CommonUtility
 		}
 	}
 
-	private static string[] FindAssetArray(string filter,string[] searchInFolderArray)
+	private static string[] _FindAssetArray(string filter,string[] searchInFolderArray)
 	{
 		return AssetDatabase.FindAssets(filter,searchInFolderArray);
 	}

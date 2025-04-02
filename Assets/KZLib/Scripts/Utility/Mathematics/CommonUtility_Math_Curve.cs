@@ -7,7 +7,7 @@ public static partial class CommonUtility
 	public static Vector3 Parabola(Vector3 start,Vector3 velocity,float time,float? gravity = null)
 	{
 		var result = Vector3.zero;
-		var realGravity = GetGravity(gravity);
+		var realGravity = _GetGravity(gravity);
 
 		result.x = start.x + velocity.x*time;
 		result.y = start.y + (velocity.y*time)-(0.5f*realGravity*time*time);
@@ -25,7 +25,7 @@ public static partial class CommonUtility
 		projectile.LookAt(targetPosition);
 
 		var horizontalDistance = Vector3.Distance(startPosition,targetPosition);
-		var effectiveGravity = GetGravity(gravity);
+		var effectiveGravity = _GetGravity(gravity);
 		var launchAngleTan = Mathf.Tan(launchAngle*Mathf.Deg2Rad);
 		var heightDifference = target.position.y-projectile.position.y;
 		var velocity = Mathf.Sqrt(effectiveGravity*horizontalDistance*horizontalDistance/(2.0f*(heightDifference-horizontalDistance*launchAngleTan)));
@@ -33,7 +33,7 @@ public static partial class CommonUtility
 		return projectile.TransformDirection(new Vector3(0.0f,launchAngleTan*velocity,velocity));
 	}
 
-	private static float GetGravity(float? gravity = null)
+	private static float _GetGravity(float? gravity = null)
 	{
 		return gravity ?? Physics.gravity.y;
 	}

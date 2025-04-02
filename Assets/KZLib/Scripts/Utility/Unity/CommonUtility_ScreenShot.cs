@@ -32,7 +32,7 @@ public static partial class CommonUtility
 
 		RenderTexture.active = renderTexture;
 
-		var texture = CreateTexture2D(width,height,textureFormat);
+		var texture = _CreateTexture2D(width,height,textureFormat);
 
 		camera.targetTexture = null;
 		RenderTexture.active = null;
@@ -42,7 +42,7 @@ public static partial class CommonUtility
 		return texture;
 	}
 
-	private static Texture2D CreateTexture2D(int width,int height,TextureFormat textureFormat)
+	private static Texture2D _CreateTexture2D(int width,int height,TextureFormat textureFormat)
 	{
 		if(width == 0 || height == 0)
 		{

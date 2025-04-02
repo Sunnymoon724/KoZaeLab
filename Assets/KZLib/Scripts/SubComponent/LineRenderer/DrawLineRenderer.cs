@@ -16,17 +16,17 @@ public class DrawLineRenderer : BaseLineRenderer
 	{
 		base.OnDisable();
 
-		KillRenderer();
+		_KillRenderer();
 	}
 
 	protected override void Release()
 	{
 		base.Release();
 
-		KillRenderer();
+		_KillRenderer();
 	}
 
-	private void KillRenderer()
+	private void _KillRenderer()
 	{
 		m_lineRenderer.positionCount = 0;
 

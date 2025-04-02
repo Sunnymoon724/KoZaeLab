@@ -22,13 +22,13 @@ public class ProtoDrawer : OdinValueDrawer<IProto>
 
 		if(SirenixEditorGUI.SDFIconButton(new Rect(rect.x+rect.width-50.0f,rect.y,50.0f,rect.height),SdfIconType.Clipboard,new GUIStyle(GUI.skin.button)))
 		{
-			CopyAllPropertiesToClipboard(proto);
+			_CopyAllPropertiesToClipboard(proto);
 		}
 
 		EditorGUILayout.EndHorizontal();
 	}
 
-	private void CopyAllPropertiesToClipboard(IProto proto)
+	private void _CopyAllPropertiesToClipboard(IProto proto)
 	{
 		var propertyArray = proto.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
 		var stringBuilder = new System.Text.StringBuilder();

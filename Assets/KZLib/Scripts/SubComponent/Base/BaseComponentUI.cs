@@ -9,7 +9,7 @@ public abstract class BaseComponentUI : BaseComponent
 	{
 		get
 		{
-			InitializeRectTransform();
+			_InitializeRectTransform();
 
 			return m_rectTransform;
 		}
@@ -19,10 +19,10 @@ public abstract class BaseComponentUI : BaseComponent
 	{
 		base.Reset();
 
-		InitializeRectTransform();
+		_InitializeRectTransform();
 	}
 
-	private void InitializeRectTransform()
+	private void _InitializeRectTransform()
 	{
 		if(!m_rectTransform)
 		{

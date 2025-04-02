@@ -121,29 +121,29 @@ public static partial class CommonUtility
 	public static void ReleaseManager()
 	{
 		//? Release SingletonMB
-		ReleaseSingletonMB<SceneStateMgr>();
-		ReleaseSingletonMB<UIMgr>();
-		ReleaseSingletonMB<CameraMgr>();
-		ReleaseSingletonMB<TouchMgr>();
-		ReleaseSingletonMB<EffectMgr>();
+		_ReleaseSingletonMB<SceneStateMgr>();
+		_ReleaseSingletonMB<UIMgr>();
+		_ReleaseSingletonMB<CameraMgr>();
+		_ReleaseSingletonMB<TouchMgr>();
+		_ReleaseSingletonMB<EffectMgr>();
 
 		//? Release Singleton
-		ReleaseSingleton<ProtoMgr>();
-		ReleaseSingleton<ClusterMgr>();
-		ReleaseSingleton<ConfigMgr>();
+		_ReleaseSingleton<ProtoMgr>();
+		_ReleaseSingleton<ClusterMgr>();
+		_ReleaseSingleton<ConfigMgr>();
 
-		ReleaseSingleton<GameDataMgr>();
-		ReleaseSingleton<PlayerPrefsMgr>();
-		ReleaseSingleton<ResMgr>();
-		ReleaseSingleton<LogMgr>();
-		ReleaseSingleton<AddressablesMgr>();
-		ReleaseSingleton<SoundMgr>();
-		ReleaseSingleton<ShaderMgr>();
+		_ReleaseSingleton<GameDataMgr>();
+		_ReleaseSingleton<PlayerPrefsMgr>();
+		_ReleaseSingleton<ResMgr>();
+		_ReleaseSingleton<LogMgr>();
+		_ReleaseSingleton<AddressablesMgr>();
+		_ReleaseSingleton<SoundMgr>();
+		_ReleaseSingleton<ShaderMgr>();
 
-		ReleaseSingleton<InputMgr>();
+		_ReleaseSingleton<InputMgr>();
 
-		ReleaseSingleton<EventMgr>();
-		ReleaseSingleton<RouteMgr>();
+		_ReleaseSingleton<EventMgr>();
+		_ReleaseSingleton<RouteMgr>();
 
 		ClearCacheData();
 
@@ -151,7 +151,7 @@ public static partial class CommonUtility
 		ColorExtension.ClearCacheData();
 	}
 
-	private static void ReleaseSingletonMB<TBehaviour>() where TBehaviour : AutoSingletonMB<TBehaviour>
+	private static void _ReleaseSingletonMB<TBehaviour>() where TBehaviour : AutoSingletonMB<TBehaviour>
 	{
 		if(AutoSingletonMB<TBehaviour>.HasInstance)
 		{
@@ -159,7 +159,7 @@ public static partial class CommonUtility
 		}
 	}
 
-	private static void ReleaseSingleton<TClass>() where TClass : Singleton<TClass>,new()
+	private static void _ReleaseSingleton<TClass>() where TClass : Singleton<TClass>,new()
 	{
 		if(Singleton<TClass>.HasInstance)
 		{

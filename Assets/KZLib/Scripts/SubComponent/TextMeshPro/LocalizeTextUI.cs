@@ -44,7 +44,7 @@ public class LocalizeTextUI : BaseTextUI
 
 		if(!m_localizeKey.IsEmpty())
 		{
-			OnChangeLocalization();
+			_OnChangeLocalization();
 		}
 	}
 
@@ -52,17 +52,17 @@ public class LocalizeTextUI : BaseTextUI
 	{
 		base.OnEnable();
 
-		LocalizationMgr.In.OnLocalizationChange += OnChangeLocalization;
+		LocalizationMgr.In.OnLocalizationChange += _OnChangeLocalization;
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
 
-		LocalizationMgr.In.OnLocalizationChange -= OnChangeLocalization;
+		LocalizationMgr.In.OnLocalizationChange -= _OnChangeLocalization;
 	}
 
-	private void OnChangeLocalization()
+	private void _OnChangeLocalization()
 	{
 		var localize = m_localizeKey.ToLocalize();
 
@@ -78,6 +78,6 @@ public class LocalizeTextUI : BaseTextUI
 		
 		m_localizeKey = key;
 
-		OnChangeLocalization();
+		_OnChangeLocalization();
 	}
 }

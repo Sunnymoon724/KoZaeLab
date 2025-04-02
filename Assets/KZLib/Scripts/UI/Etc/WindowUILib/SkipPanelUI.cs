@@ -10,18 +10,18 @@ public class SkipPanelUI : WindowUI2D
 
 	public override UITag Tag => UITag.SkipPanelUI;
 
-	[SerializeField,LabelText("Skip Show Duration"),ValidateInput(nameof(IsValidShowDuration),"0 is not defined.",InfoMessageType.Error),PropertyTooltip("Negative numbers represent infinity, and zero doesn't work.")]
+	[SerializeField,ValidateInput(nameof(IsValidShowDuration),"0 is not defined.",InfoMessageType.Error),PropertyTooltip("Negative numbers represent infinity, and zero doesn't work.")]
 	private float m_skipShowDuration = 0.0f;
-	[SerializeField,LabelText("Skip Hide Duration"),MinValue(0.02f)]
+	[SerializeField,MinValue(0.02f)]
 	private float m_skipHideDuration = 0.0f;
 
-	[SerializeField,LabelText("Click Sound")]
+	[SerializeField]
 	private AudioClip m_clickSoundClip = null;
 
-	[SerializeField,LabelText("Trigger Button")]
+	[SerializeField]
 	private Button m_triggerButton = null;
 
-	[SerializeField,LabelText("Skip Button")]
+	[SerializeField]
 	private Button m_skipButton = null;
 
 	private bool IsValidShowDuration => m_skipShowDuration != 0.0f;
@@ -54,35 +54,35 @@ public class SkipPanelUI : WindowUI2D
 		// 스킵 버튼 계속 보임
 		if(m_skipShowDuration < 0.0f)
 		{
-			SetButtonsState(isSkipActive : true,isTriggerActive : false);
+			_SetButtonsState(isSkipActive : true,isTriggerActive : false);
 
 			return;
 		}
 
-		SetButtonsState(isSkipActive : false,isTriggerActive : false);
-		ShowSkipButton(m_skipShowDuration);
+		_SetButtonsState(isSkipActive : false,isTriggerActive : false);
+		_ShowSkipButton(m_skipShowDuration);
 
-		m_triggerButton.onClick.AddAction(()=> { ShowSkipButton(0.0f); } );
+		m_triggerButton.onClick.AddAction(()=> { _ShowSkipButton(0.0f); } );
 	}
 
-	private void SetButtonsState(bool isSkipActive,bool isTriggerActive)
+	private void _SetButtonsState(bool isSkipActive,bool isTriggerActive)
 	{
 		m_skipButton.gameObject.EnsureActive(isSkipActive);
 		m_triggerButton.gameObject.EnsureActive(isTriggerActive);
 	}
 
-	private void ShowSkipButton(float delayTime)
+	private void _ShowSkipButton(float delayTime)
 	{
 		CommonUtility.DelayAction(()=>
 		{
-			SetButtonsState(isSkipActive : true,isTriggerActive : false);
+			_SetButtonsState(isSkipActive : true,isTriggerActive : false);
 
-			CommonUtility.DelayAction(HideSkipButton,m_skipHideDuration);
+			CommonUtility.DelayAction(_HideSkipButton,m_skipHideDuration);
 		},delayTime);
 	}
 
-	private void HideSkipButton()
+	private void _HideSkipButton()
 	{
-		SetButtonsState(isSkipActive : false,isTriggerActive : true);
+		_SetButtonsState(isSkipActive : false,isTriggerActive : true);
 	}
 }

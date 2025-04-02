@@ -4,7 +4,7 @@ public static class Texture2DExtension
 {
 	public static void ToSolidColor(this Texture2D texture2D,Color color)
 	{
-		if(!IsValid(texture2D))
+		if(!_IsValid(texture2D))
 		{
 			return;
 		}
@@ -14,7 +14,7 @@ public static class Texture2DExtension
 
 	public static void ToSolidColor(this Texture2D texture2D,Color32 color32)
 	{
-		if(!IsValid(texture2D))
+		if(!_IsValid(texture2D))
 		{
 			return;
 		}
@@ -32,7 +32,7 @@ public static class Texture2DExtension
 
 	public static void ScaleTexture(this Texture2D texture2D,Vector2Int scaleSize)
 	{
-		if(!IsValid(texture2D))
+		if(!_IsValid(texture2D))
 		{
 			return;
 		}
@@ -52,7 +52,7 @@ public static class Texture2DExtension
 
 	public static Texture2D CopyTexture(this Texture2D texture2D)
 	{
-		if(!IsValid(texture2D))
+		if(!_IsValid(texture2D))
 		{
 			return null;
 		}
@@ -67,7 +67,7 @@ public static class Texture2DExtension
 
 	public static Sprite CreateSprite(this Texture2D texture2D)
 	{
-		if(!IsValid(texture2D))
+		if(!_IsValid(texture2D))
 		{
 			return null;
 		}
@@ -77,7 +77,7 @@ public static class Texture2DExtension
 
 	public static Sprite CreateTiledSprite(this Texture2D texture2D,float border = 0.0f,float pixelsPerUnit = 100.0f)
 	{
-		if(!IsValid(texture2D))
+		if(!_IsValid(texture2D))
 		{
 			return null;
 		}
@@ -89,7 +89,7 @@ public static class Texture2DExtension
 
 	public static Texture2D[,] SplitTexture(this Texture2D texture2D,Vector2Int splitCount)
 	{
-		if(!IsValid(texture2D))
+		if(!_IsValid(texture2D))
 		{
 			return null;
 		}
@@ -135,7 +135,7 @@ public static class Texture2DExtension
 
 	public static Texture2D CropTexture(this Texture2D texture2D,RectInt cropSize)
 	{
-		if(!IsValid(texture2D))
+		if(!_IsValid(texture2D))
 		{
 			return null;
 		}
@@ -167,7 +167,7 @@ public static class Texture2DExtension
 
 	public static void RotateTexture(this Texture2D texture2D,float rotateAngle)
 	{
-		if(!IsValid(texture2D))
+		if(!_IsValid(texture2D))
 		{
 			return;
 		}
@@ -185,13 +185,13 @@ public static class Texture2DExtension
 		var originColorArray = texture2D.GetPixels32();
 		var rotateColorArray = new Color32[width*height];
 
-		var dxX = RotateX(angle,1.0f,0.0f);
-		var dxY = RotateY(angle,1.0f,0.0f);
-		var dyX = RotateX(angle,0.0f,1.0f);
-		var dyY = RotateY(angle,0.0f,1.0f);
+		var dxX = _RotateX(angle,1.0f,0.0f);
+		var dxY = _RotateY(angle,1.0f,0.0f);
+		var dyX = _RotateX(angle,0.0f,1.0f);
+		var dyY = _RotateY(angle,0.0f,1.0f);
 
-		var rotX = RotateX(angle,-width/2.0f,-height/2.0f)+width/2.0f;
-		var rotY = RotateY(angle,-width/2.0f,-height/2.0f)+height/2.0f;
+		var rotX = _RotateX(angle,-width/2.0f,-height/2.0f)+width/2.0f;
+		var rotY = _RotateY(angle,-width/2.0f,-height/2.0f)+height/2.0f;
 
 		for(var i=0;i<width;i++)
 		{
@@ -214,17 +214,17 @@ public static class Texture2DExtension
 		texture2D.Apply();
 	}
 
-	private static float RotateX(float _angle,float _x,float _y)
+	private static float _RotateX(float _angle,float _x,float _y)
 	{
 		return _x*Mathf.Cos(_angle/180.0f*Mathf.PI)+_y*-Mathf.Sin(_angle/180.0f*Mathf.PI);
 	}
 
-	private static float RotateY(float _angle,float _x,float _y)
+	private static float _RotateY(float _angle,float _x,float _y)
 	{
 		return _x*Mathf.Sin(_angle/180.0f*Mathf.PI)+_y*Mathf.Cos(_angle/180.0f*Mathf.PI);
 	}
 
-	private static bool IsValid(Texture2D texture2D)
+	private static bool _IsValid(Texture2D texture2D)
 	{
 		if(!texture2D)
 		{

@@ -42,12 +42,12 @@ public static partial class CommonUtility
 
 	public static async UniTask LoopUniTaskAsync(Func<UniTask> onPlayTask,int count,CancellationToken token)
 	{
-		await LoopPlayAsync(onPlayTask,count,token);
+		await _LoopPlayAsync(onPlayTask,count,token);
 	}
 
 	public static async UniTask LoopActionNWaitForSecondAsync(Action onAction,float second,bool ignoreTimeScale,int count,CancellationToken token)
 	{
-		await LoopPlayAsync(async ()=>
+		await _LoopPlayAsync(async ()=>
 		{
 			onAction();
 			await UniTask.Delay(TimeSpan.FromSeconds(second),ignoreTimeScale,cancellationToken : token);
@@ -57,7 +57,7 @@ public static partial class CommonUtility
 
 	public static async UniTask LoopActionNWaitForFrameAsync(Action onAction,int count,CancellationToken token)
 	{
-		await LoopPlayAsync(async ()=>
+		await _LoopPlayAsync(async ()=>
 		{
 			onAction();
 			await UniTask.Yield(token);
@@ -65,7 +65,7 @@ public static partial class CommonUtility
 		},count,token);
 	}
 
-	private static async UniTask LoopPlayAsync(Func<UniTask> onPlayTask,int count,CancellationToken token)
+	private static async UniTask _LoopPlayAsync(Func<UniTask> onPlayTask,int count,CancellationToken token)
 	{
 		if(count == 0)
 		{
@@ -118,7 +118,7 @@ public static partial class CommonUtility
 
 			await UniTask.Yield();
 
-			var deltaTime = GetDeltaTime(ignoreTimescale);
+			var deltaTime = _GetDeltaTime(ignoreTimescale);
 
 			if(deltaTime > 0.0f)
 			{
@@ -152,7 +152,7 @@ public static partial class CommonUtility
 
 			await UniTask.Yield(token);
 
-			var deltaTime = GetDeltaTime(ignoreTimescale);
+			var deltaTime = _GetDeltaTime(ignoreTimescale);
 
 			if(deltaTime > 0.0f)
 			{
@@ -189,7 +189,7 @@ public static partial class CommonUtility
 		onComplete?.Invoke();
 	}
 
-	private static float GetDeltaTime(bool ignoreTimescale)
+	private static float _GetDeltaTime(bool ignoreTimescale)
 	{
 		return ignoreTimescale ? Time.unscaledDeltaTime : Time.deltaTime;
 	}

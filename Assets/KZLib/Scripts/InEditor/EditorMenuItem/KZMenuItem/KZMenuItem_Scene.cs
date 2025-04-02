@@ -6,13 +6,13 @@ namespace KZLib.KZMenu
 	public partial class KZMenuItem
 	{
 		[MenuItem("KZMenu/Scene/Open Main Scene",false,(int) MenuType.Scene_Core)]
-		private static void OnOpenMainScene()
+		private static void _OnOpenMainScene()
 		{
 			CommonUtility.OpenSceneInEditor("MainScene");
 		}
 
 		[MenuItem("KZMenu/Scene/Open Motion Editor Scene",false,(int) MenuType.Scene_Core)]
-		private static void OnOpenMotionEditorScene()
+		private static void _OnOpenMotionEditorScene()
 		{
 			CommonUtility.OpenSceneInEditor("MotionEditorScene");
 		}

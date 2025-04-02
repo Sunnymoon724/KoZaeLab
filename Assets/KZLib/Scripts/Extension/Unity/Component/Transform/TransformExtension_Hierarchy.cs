@@ -10,7 +10,7 @@ public static partial class TransformExtension
 	/// </summary>
 	public static string FindHierarchy(this Transform origin)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return string.Empty;
 		}
@@ -34,7 +34,7 @@ public static partial class TransformExtension
 
 	public static Transform FindFromRoot(this Transform origin,string name)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return null;
 		}
@@ -44,7 +44,7 @@ public static partial class TransformExtension
 
 	public static Transform FindSibling(this Transform origin,string name)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return null;
 		}
@@ -54,7 +54,7 @@ public static partial class TransformExtension
 
 	public static Transform FindInParentHierarchy(this Transform origin,string name)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return null;
 		}
@@ -72,7 +72,7 @@ public static partial class TransformExtension
 
 	public static Transform GetParent(this Transform origin)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return null;
 		}
@@ -82,7 +82,7 @@ public static partial class TransformExtension
 
 	public static Transform AddChild(this Transform origin,string name)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return null;
 		}
@@ -96,7 +96,7 @@ public static partial class TransformExtension
 
 	public static Transform[] AddChildren(this Transform origin,string[] nameArray)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return null;
 		}
@@ -113,7 +113,7 @@ public static partial class TransformExtension
 
 	public static Transform[] AddChildren(this Transform origin,string name,int count)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return null;
 		}
@@ -130,7 +130,7 @@ public static partial class TransformExtension
 
 	public static void SetChild(this Transform origin,Transform child,bool isSameLayer = true)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return;
 		}
@@ -140,7 +140,7 @@ public static partial class TransformExtension
 
 	public static void SetUIChild(this Transform origin,Transform child,bool isSameLayer = true)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return;
 		}
@@ -150,7 +150,7 @@ public static partial class TransformExtension
 
 	private static void _SetChild(Transform origin,Transform child,bool worldPositionStays,bool isSameLayer)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return;
 		}
@@ -163,9 +163,9 @@ public static partial class TransformExtension
 		}
 	}
 
-	private static Transform AddChildInside(Transform origin,GameObject prefab,bool worldPositionStays,bool isSameLayer)
+	private static Transform _AddChildInside(Transform origin,GameObject prefab,bool worldPositionStays,bool isSameLayer)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return null;
 		}
@@ -179,17 +179,17 @@ public static partial class TransformExtension
 
 	public static Transform AddChild(this Transform origin,GameObject prefab,bool isSameLayer = true)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return null;
 		}
 
-		return AddChildInside(origin,prefab,true,isSameLayer);
+		return _AddChildInside(origin,prefab,true,isSameLayer);
 	}
 
 	public static Transform[] AddChildren(this Transform origin,GameObject prefab,int count,bool isSameLayer = true)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return null;
 		}
@@ -206,17 +206,17 @@ public static partial class TransformExtension
 
 	public static Transform AddUIChild(this Transform origin,GameObject prefab,bool isSameLayer = true)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return null;
 		}
 
-		return AddChildInside(origin,prefab,false,isSameLayer);
+		return _AddChildInside(origin,prefab,false,isSameLayer);
 	}
 
 	public static Transform[] AddUIChildren(this Transform origin,GameObject prefab,int count,bool isSameLayer = true)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return null;
 		}
@@ -233,7 +233,7 @@ public static partial class TransformExtension
 
 	public static Transform FindChildRecursive(this Transform origin,string name)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return null;
 		}
@@ -261,7 +261,7 @@ public static partial class TransformExtension
 
 	public static IEnumerable<Transform> FindChildGroup(this Transform origin,string name = null)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			yield break;
 		}
@@ -287,7 +287,7 @@ public static partial class TransformExtension
 
 	public static Transform DestroyChildren(this Transform origin,bool isActiveOnly = false,params Transform[] exceptionArray)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return null;
 		}
@@ -324,7 +324,7 @@ public static partial class TransformExtension
 
 	public static void TraverseChildren(this Transform origin,Action<Transform> onAction)
 	{
-		if(!IsValid(origin))
+		if(!_IsValid(origin))
 		{
 			return;
 		}

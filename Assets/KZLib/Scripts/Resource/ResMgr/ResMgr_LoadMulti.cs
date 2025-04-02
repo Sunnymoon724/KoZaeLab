@@ -21,7 +21,7 @@ namespace KZLib
 		{
 			if(immediately)
 			{
-				var gameObjectArray = GetResourceArray<GameObject>(folderPath);
+				var gameObjectArray = _GetResourceArray<GameObject>(folderPath);
 
 				foreach(var gameObject in gameObjectArray)
 				{
@@ -32,7 +32,7 @@ namespace KZLib
 			}
 			else
 			{
-				AddLoadingQueue(folderPath,false,parent);
+				_AddLoadingQueue(folderPath,false,parent);
 			}
 
 			return null;
@@ -40,45 +40,45 @@ namespace KZLib
 
 		public AnimatorOverrideController[] GetAnimatorOverrideControllerArray(string folderPath)
 		{
-			return GetResourceArray<AnimatorOverrideController>(folderPath);
+			return _GetResourceArray<AnimatorOverrideController>(folderPath);
 		}
 
 		public AnimationClip[] GetAnimationClipArray(string folderPath)
 		{
-			return GetResourceArray<AnimationClip>(folderPath);
+			return _GetResourceArray<AnimationClip>(folderPath);
 		}
 
 		public ScriptableObject[] GetScriptableObjectArray(string folderPath)
 		{
-			return GetResourceArray<ScriptableObject>(folderPath);
+			return _GetResourceArray<ScriptableObject>(folderPath);
 		}
 
 		public AudioClip[] GetAudioClipArray(string folderPath)
 		{
-			return GetResourceArray<AudioClip>(folderPath);
+			return _GetResourceArray<AudioClip>(folderPath);
 		}
 
 		public VideoClip[] GetVideoClipArray(string folderPath)
 		{
-			return GetResourceArray<VideoClip>(folderPath);
+			return _GetResourceArray<VideoClip>(folderPath);
 		}
 
 		public Sprite[] GetSpriteArray(string folderPath)
 		{
-			return GetResourceArray<Sprite>(folderPath);
+			return _GetResourceArray<Sprite>(folderPath);
 		}
 
 		public TextAsset[] GetTextAssetArray(string folderPath)
 		{
-			return GetResourceArray<TextAsset>(folderPath);
+			return _GetResourceArray<TextAsset>(folderPath);
 		}
 
 		public Material[] GetMaterialArray(string folderPath)
 		{
-			return GetResourceArray<Material>(folderPath);
+			return _GetResourceArray<Material>(folderPath);
 		}
 
-		private TObject[] GetResourceArray<TObject>(string folderPath) where TObject : Object
+		private TObject[] _GetResourceArray<TObject>(string folderPath) where TObject : Object
 		{
 			if(folderPath.IsEmpty())
 			{
@@ -88,12 +88,12 @@ namespace KZLib
 			}
 
 			// use cache data
-			var cacheDataArray = GetCacheDataArray<TObject>(folderPath);
+			var cacheDataArray = _GetCacheDataArray<TObject>(folderPath);
 
 			if(cacheDataArray.IsNullOrEmpty())
 			{
 				// load data
-				cacheDataArray = LoadDataArray<TObject>(folderPath);
+				cacheDataArray = _LoadDataArray<TObject>(folderPath);
 
 				if(cacheDataArray.IsNullOrEmpty())
 				{
@@ -102,7 +102,7 @@ namespace KZLib
 					return null;
 				}
 
-				PutDataArray(folderPath,cacheDataArray);
+				_PutDataArray(folderPath,cacheDataArray);
 			}
 
 			// data is GameObject -> copy data
@@ -128,7 +128,7 @@ namespace KZLib
 			return cacheDataArray;
 		}
 
-		private TObject[] LoadDataArray<TObject>(string folderPath) where TObject : Object
+		private TObject[] _LoadDataArray<TObject>(string folderPath) where TObject : Object
 		{
 #if UNITY_EDITOR
 			if(Path.HasExtension(folderPath))

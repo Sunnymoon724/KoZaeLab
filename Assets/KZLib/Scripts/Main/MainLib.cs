@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 using KZLib.KZAttribute;
 using Cysharp.Threading.Tasks;
 using System.Threading;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
@@ -26,7 +25,7 @@ namespace KZLib
 		[SerializeField,HideInInspector]
 		private SystemLanguage? m_gameLanguage = null;
 
-		[VerticalGroup("2",2),ShowInInspector,InlineButton(nameof(OnChangeDefaultLanguage),Label = "",Icon = SdfIconType.Reply)]
+		[VerticalGroup("2",2),ShowInInspector,InlineButton(nameof(_OnChangeDefaultLanguage),Label = "",Icon = SdfIconType.Reply)]
 		public SystemLanguage GameLanguage
 		{
 			get
@@ -56,7 +55,7 @@ namespace KZLib
 			}
 		}
 
-		private void OnChangeDefaultLanguage()
+		private void _OnChangeDefaultLanguage()
 		{
 			GameLanguage = SystemLanguage.English;
 		}
@@ -106,7 +105,7 @@ namespace KZLib
 
 				m_gamePlayType = MainPreset.GamePlayType = value;
 
-				SavePresetData();
+				_SavePresetData();
 #endif
 			}
 		}
@@ -140,7 +139,7 @@ namespace KZLib
 
 				m_startSceneName = MainPreset.StartSceneName = value;
 
-				SavePresetData();
+				_SavePresetData();
 #endif
 			}
 		}
@@ -246,7 +245,7 @@ namespace KZLib
 			}
 		}
 
-		private void SavePresetData()
+		private void _SavePresetData()
 		{
 			EditorPrefs.SetString(c_mainPreset,JsonConvert.SerializeObject(MainPreset));
 		}

@@ -48,11 +48,11 @@ public class ParticleEffectClip : EffectClip
 
 		if(param.StartColor.HasValue)
 		{
-			SetColor(m_mainParticle.main,param.StartColor.Value);
+			_SetColor(m_mainParticle.main,param.StartColor.Value);
 
 			foreach(var particle in m_subParticleList)
 			{
-				SetColor(particle.main,param.StartColor.Value);
+				_SetColor(particle.main,param.StartColor.Value);
 			}
 		}
 	}
@@ -62,7 +62,7 @@ public class ParticleEffectClip : EffectClip
 		await CommonUtility.WaitForConditionAsync(()=>!m_mainParticle.isPlaying,SetTime,m_ignoreTimeScale,m_tokenSource.Token);
 	}
 
-	private void SetColor(ParticleSystem.MainModule mainModule,Color color)
+	private void _SetColor(ParticleSystem.MainModule mainModule,Color color)
 	{
 		mainModule.startColor = new ParticleSystem.MinMaxGradient(color);
 	}

@@ -17,14 +17,14 @@ public class RepositoryUI2D : RepositoryUI
 			return;
 		}
 
-		var repository = GetRepository(window.PriorityType);
+		var repository = _GetRepository(window.PriorityType);
 
 		repository.SetUIChild(window.transform);
 
 		_Add(window);
 	}
 
-	private Transform GetRepository(UIPriorityType priorityType)
+	private Transform _GetRepository(UIPriorityType priorityType)
 	{
 		if(!m_repositoryDict.ContainsKey(priorityType))
 		{

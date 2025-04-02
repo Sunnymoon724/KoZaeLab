@@ -130,7 +130,7 @@ public class VideoPanelUI : WindowUI2D
 
 		CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
-		UpdateVideoStateAsync().Forget();
+		_UpdateVideoStateAsync().Forget();
 	}
 
 	public void Stop()
@@ -140,7 +140,7 @@ public class VideoPanelUI : WindowUI2D
 		CommonUtility.KillTokenSource(ref m_tokenSource);
 	}
 
-	private async UniTask UpdateVideoStateAsync()
+	private async UniTask _UpdateVideoStateAsync()
 	{
 		while(m_videoPlayer.isPlaying)
 		{

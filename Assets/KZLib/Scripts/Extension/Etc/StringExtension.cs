@@ -349,7 +349,7 @@ public static class StringExtension
 		return default;
 	}
 
-	private static float GetNumberInArray(string[] textArray,int index)
+	private static float _GetNumberInArray(string[] textArray,int index)
 	{
 		return textArray.ContainsIndex(index) ? textArray[index].ToFloat() : 0.0f;
 	}
@@ -386,14 +386,14 @@ public static class StringExtension
 	{
 		vector = default;
 
-		var vectorArray = ConvertVectorArray(text);		
+		var vectorArray = _ConvertVectorArray(text);		
 
 		if(vectorArray.IsNullOrEmpty())
 		{
 			return false;
 		}
 
-		vector = new Vector2(GetNumberInArray(vectorArray,0),GetNumberInArray(vectorArray,1));
+		vector = new Vector2(_GetNumberInArray(vectorArray,0),_GetNumberInArray(vectorArray,1));
 
 		return true;
 	}
@@ -414,19 +414,19 @@ public static class StringExtension
 	{
 		vector = default;
 
-		var vectorArray = ConvertVectorArray(text);
+		var vectorArray = _ConvertVectorArray(text);
 
 		if(vectorArray.IsNullOrEmpty())
 		{
 			return false;
 		}
 
-		vector = new Vector3(GetNumberInArray(vectorArray,0),GetNumberInArray(vectorArray,1),GetNumberInArray(vectorArray,2));
+		vector = new Vector3(_GetNumberInArray(vectorArray,0),_GetNumberInArray(vectorArray,1),_GetNumberInArray(vectorArray,2));
 
 		return true;
 	}
 
-	private static string[] ConvertVectorArray(string text)
+	private static string[] _ConvertVectorArray(string text)
 	{
 		return text.IsEmpty() ? null : text.TrimParentheses().Split(',');
 	}

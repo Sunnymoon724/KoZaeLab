@@ -25,7 +25,7 @@ namespace KZLib
 		{
 			if(immediately)
 			{
-				var gameObject = GetResource<GameObject>(filePath);
+				var gameObject = _GetResource<GameObject>(filePath);
 
 				if(gameObject)
 				{
@@ -36,7 +36,7 @@ namespace KZLib
 			}
 			else
 			{
-				AddLoadingQueue(filePath,true,parent);
+				_AddLoadingQueue(filePath,true,parent);
 			}
 
 			return null;
@@ -44,50 +44,50 @@ namespace KZLib
 
 		public AnimatorOverrideController GetAnimatorOverrideController(string filePath)
 		{
-			return GetResource<AnimatorOverrideController>(filePath);
+			return _GetResource<AnimatorOverrideController>(filePath);
 		}
 
 		public AnimationClip GetAnimationClip(string filePath)
 		{
-			return GetResource<AnimationClip>(filePath);
+			return _GetResource<AnimationClip>(filePath);
 		}
 
 		public ScriptableObject GetScriptableObject(string filePath)
 		{
-			return GetResource<ScriptableObject>(filePath);
+			return _GetResource<ScriptableObject>(filePath);
 		}
 
 		public TObject GetScriptableObject<TObject>(string filePath) where TObject : ScriptableObject
 		{
-			return GetResource<TObject>(filePath);
+			return _GetResource<TObject>(filePath);
 		}
 
 		public AudioClip GetAudioClip(string filePath)
 		{
-			return GetResource<AudioClip>(filePath);
+			return _GetResource<AudioClip>(filePath);
 		}
 
 		public VideoClip GetVideoClip(string filePath)
 		{
-			return GetResource<VideoClip>(filePath);
+			return _GetResource<VideoClip>(filePath);
 		}
 
 		public Sprite GetSprite(string filePath)
 		{
-			return GetResource<Sprite>(filePath);
+			return _GetResource<Sprite>(filePath);
 		}
 
 		public TextAsset GetTextAsset(string filePath)
 		{
-			return GetResource<TextAsset>(filePath);
+			return _GetResource<TextAsset>(filePath);
 		}
 
 		public Material GetMaterial(string filePath)
 		{
-			return GetResource<Material>(filePath);
+			return _GetResource<Material>(filePath);
 		}
 
-		private TObject GetResource<TObject>(string filePath) where TObject : Object
+		private TObject _GetResource<TObject>(string filePath) where TObject : Object
 		{
 			if(filePath.IsEmpty())
 			{
@@ -97,12 +97,12 @@ namespace KZLib
 			}
 
 			// use cache data
-			var cacheData = GetCacheData<TObject>(filePath);
+			var cacheData = _GetCacheData<TObject>(filePath);
 
 			if(!cacheData)
 			{
 				// load data
-				cacheData = LoadData<TObject>(filePath);
+				cacheData = _LoadData<TObject>(filePath);
 
 				if(!cacheData)
 				{
@@ -111,7 +111,7 @@ namespace KZLib
 					return null;
 				}
 
-				PutData(filePath,cacheData);
+				_PutData(filePath,cacheData);
 			}
 
 			// data is GameObject -> copy data
@@ -130,7 +130,7 @@ namespace KZLib
 			return cacheData;
 		}
 
-		private TObject LoadData<TObject>(string filePath) where TObject : Object
+		private TObject _LoadData<TObject>(string filePath) where TObject : Object
 		{
 #if UNITY_EDITOR
 			if(!Path.HasExtension(filePath))

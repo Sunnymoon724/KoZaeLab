@@ -44,11 +44,11 @@ namespace KZLib
 		{
 			var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-			optionCfg.OnUseVibrationChange += OnChangeUseVibration;
+			optionCfg.OnUseVibrationChange += _OnChangeUseVibration;
 
 			m_optionRef = new WeakReference<ConfigData.OptionConfig>(optionCfg);
 
-			OnChangeUseVibration(optionCfg.UseVibration);
+			_OnChangeUseVibration(optionCfg.UseVibration);
 
 #if UNITY_IOS && !UNITY_EDITOR
 			VibrationInitialize();
@@ -71,7 +71,7 @@ namespace KZLib
 			{
 				if(m_optionRef.TryGetTarget(out var optionCfg))
 				{
-					optionCfg.OnUseVibrationChange -= OnChangeUseVibration;
+					optionCfg.OnUseVibrationChange -= _OnChangeUseVibration;
 				}
 
 				m_optionRef = null;
@@ -82,7 +82,7 @@ namespace KZLib
 			base.Release(disposing);
 		}
 
-		private void OnChangeUseVibration(bool useVibration)
+		private void _OnChangeUseVibration(bool useVibration)
 		{
 			m_useVibration = useVibration;
 		}

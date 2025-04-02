@@ -6,10 +6,10 @@ public static partial class CommonUtility
 {
 	public static Tween SetTweenProgress(float start,float finish,float duration,Action<float> onProgress,Action onComplete = null)
 	{
-		return SetTween(start,finish,duration,onProgress,onComplete).SetId(GetTag("Progress"));
+		return _SetTween(start,finish,duration,onProgress,onComplete).SetId(_GetTag("Progress"));
 	}
 
-	private static Tween SetTween(float start,float finish,float duration,Action<float> onUpdate,Action onComplete = null)
+	private static Tween _SetTween(float start,float finish,float duration,Action<float> onUpdate,Action onComplete = null)
 	{
 		if(onUpdate == null)
 		{
@@ -36,7 +36,7 @@ public static partial class CommonUtility
 			return null;
 		}
 
-		return DOVirtual.DelayedCall(duration,onComplete).SetLoops(count).SetId(GetTag("Timer"));
+		return DOVirtual.DelayedCall(duration,onComplete).SetLoops(count).SetId(_GetTag("Timer"));
 	}
 
 	public static bool IsTweenPlaying(Tween tween)
@@ -44,7 +44,7 @@ public static partial class CommonUtility
 		return tween != null && tween.IsPlaying();
 	}
 
-	private static string GetTag(string prefix)
+	private static string _GetTag(string prefix)
 	{
 		return $"{prefix}_{DateTime.Now:mm:ss}";
 	}

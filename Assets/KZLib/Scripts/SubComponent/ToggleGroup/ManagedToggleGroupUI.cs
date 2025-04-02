@@ -12,7 +12,7 @@ public class ManagedToggleGroupUI : BaseComponentUI
 	[SerializeField]
 	private int m_startIndex = Global.INVALID_INDEX;
 
-	[SerializeField,ListDrawerSettings(DraggableItems = false,ShowFoldout = false,HideAddButton = true,CustomRemoveIndexFunction = nameof(OnRemoveToggleByIndex)),OnValueChanged(nameof(OnChangeList))]
+	[SerializeField,ListDrawerSettings(DraggableItems = false,ShowFoldout = false,HideAddButton = true,CustomRemoveIndexFunction = nameof(_OnRemoveToggleByIndex)),OnValueChanged(nameof(_OnChangeList))]
 	private List<BaseToggleUI> m_toggleUIList = new();
 
 	[PropertySpace(5)]
@@ -31,7 +31,7 @@ public class ManagedToggleGroupUI : BaseComponentUI
 		Select(m_startIndex);
 	}
 
-	private void OnRemoveToggleByIndex(int index)
+	private void _OnRemoveToggleByIndex(int index)
 	{
 		if(!m_toggleUIList.ContainsIndex(index))
 		{
@@ -45,7 +45,7 @@ public class ManagedToggleGroupUI : BaseComponentUI
 		m_toggleUIList.Remove(m_toggleUIList[index]);
 	}
 
-	private void OnChangeList()
+	private void _OnChangeList()
 	{
 		var toggleList = new List<BaseToggleUI>(m_toggleUIList);
 		m_toggleUIList.Clear();

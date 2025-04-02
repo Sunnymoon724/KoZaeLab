@@ -25,16 +25,16 @@ public class EffectTestCon : MonoBehaviour
 
 			if(m_EffectName == EffectType.RedFX)
 			{
-				PlayEffect(m_EffectName,worldPoint,null);
+				_PlayEffect(m_EffectName,worldPoint,null);
 			}
 			else if(m_EffectName == EffectType.OstrichFX)
 			{
-				PlayEffect(m_EffectName,worldPoint,new AnimatorEffectClip.AnimatorEffectParam("Rotate"));
+				_PlayEffect(m_EffectName,worldPoint,new AnimatorEffectClip.AnimatorEffectParam("Rotate"));
 			}
 		}
 	}
 
-	private void PlayEffect(EffectType _effectType,Vector3 _worldPoint,EffectClip.EffectParam _param)
+	private void _PlayEffect(EffectType _effectType,Vector3 _worldPoint,EffectClip.EffectParam _param)
 	{
 		EffectMgr.In.PlayEffect(_effectType.ToString(),_worldPoint,null,_param);
 	}

@@ -88,7 +88,7 @@ namespace KZLib.KZDevelop
 				m_velocity = 0.0f;
 				m_dragging = false;
 
-				UpdateLocation(value,false);
+				_UpdateLocation(value,false);
 			}
 		}
 
@@ -158,7 +158,7 @@ namespace KZLib.KZDevelop
 				m_scrollData.Reset();
 			}
 
-			UpdateLocation(location,false);
+			_UpdateLocation(location,false);
 		}
 
 		public void OnBeginDrag(PointerEventData eventData)
@@ -194,18 +194,18 @@ namespace KZLib.KZDevelop
 			var delta = point - m_beginDragPoint;
 			var location = (m_vertical ? delta.y : -delta.x)/ViewportSize*m_sensitivity+m_scrollStartLocation;
 
-			var offset = GetOffset(location);
+			var offset = _GetOffset(location);
 			location += offset;
 
 			if(!IsCircularMode)
 			{
 				if(offset != 0.0f)
 				{
-					location -= RubberDelta(offset,m_sensitivity);
+					location -= _RubberDelta(offset,m_sensitivity);
 				}
 			}
 
-			UpdateLocation(location,false);
+			_UpdateLocation(location,false);
 		}
 
 		public void OnEndDrag(PointerEventData eventData)
@@ -221,7 +221,7 @@ namespace KZLib.KZDevelop
 		private void Update()
 		{
 			var deltaTime = Time.unscaledDeltaTime;
-			var offset = GetOffset(CurrentLocation);
+			var offset = _GetOffset(CurrentLocation);
 			var isMoving = m_dragging || m_scrolling;
 
 			if(m_scrollData.IsEnable)
@@ -251,7 +251,7 @@ namespace KZLib.KZDevelop
 					}
 				}
 
-				UpdateLocation(location,false);
+				_UpdateLocation(location,false);
 			}
 			else if(!isMoving && (!offset.ApproximatelyZero() || !m_velocity.ApproximatelyZero()))
 			{
@@ -294,7 +294,7 @@ namespace KZLib.KZDevelop
 
 				if(!m_velocity.ApproximatelyZero())
 				{
-					UpdateLocation(location,false);
+					_UpdateLocation(location,false);
 				}
 			}
 
@@ -318,7 +318,7 @@ namespace KZLib.KZDevelop
 				return;
 			}
 
-			var endLocation = CurrentLocation+CalculateLoopedMovementAmount(CurrentLocation,location);
+			var endLocation = CurrentLocation+_CalculateLoopedMovementAmount(CurrentLocation,location);
 
 			m_scrollData.SetData(duration,easeType,endLocation,()=>
 			{
@@ -338,12 +338,12 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		private float RubberDelta(float stretching,float size)
+		private float _RubberDelta(float stretching,float size)
 		{
 			return (1.0f-1.0f/(Mathf.Abs(stretching)*0.55f/size+1))*size*Mathf.Sign(stretching);
 		}
 
-		private float CalculateLoopedMovementAmount(float start,float finish)
+		private float _CalculateLoopedMovementAmount(float start,float finish)
 		{
 			var count = m_cellDataList.Count;
 
@@ -362,7 +362,7 @@ namespace KZLib.KZDevelop
 			return amount;
 		}
 
-		private float GetOffset(float location)
+		private float _GetOffset(float location)
 		{
 			if(IsCircularMode)
 			{

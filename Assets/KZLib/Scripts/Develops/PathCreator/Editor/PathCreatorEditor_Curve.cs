@@ -7,7 +7,7 @@ namespace KZLib.KZDevelop
 {
 	public partial class PathCreatorEditor : OdinEditor
 	{
-		private void SetCurvePathInput(Event currentEvent)
+		private void _SetCurvePathInput(Event currentEvent)
 		{
 			var handleArray = m_pathCreator.HandleArray;
 			var handleIndex = (m_mouseOverHandleIndex == Global.INVALID_INDEX) ? 0 : m_mouseOverHandleIndex;
@@ -17,7 +17,7 @@ namespace KZLib.KZDevelop
 			for(var i=0;i<handleArray.Length;i++)
 			{
 				var index = (handleIndex+i)%handleArray.Length;
-				var radius = GetHandleDiameter(m_anchorSize,handleArray[index])/2.0f;
+				var radius = _GetHandleDiameter(m_anchorSize,handleArray[index])/2.0f;
 				var position = handleArray[index].TransformPoint(m_pathCreator.transform,m_pathCreator.PathSpaceType);
 	
 				if(HandleUtility.DistanceToCircle(position,radius) == 0.0f)
@@ -39,7 +39,7 @@ namespace KZLib.KZDevelop
 						if(currentEvent.shift)
 						{
 							var distance = (Camera.current.transform.position-handleArray[^1]).magnitude;
-							var newPosition = GetMousePosition(distance);
+							var newPosition = _GetMousePosition(distance);
 
 							Undo.RecordObject(m_pathCreator,"Add Anchor");
 
@@ -82,7 +82,7 @@ namespace KZLib.KZDevelop
 					case EventType.MouseDrag when m_dragHandleIndex != Global.INVALID_INDEX:
 					{
 						var currentPosition = handleArray[m_dragHandleIndex];
-						var newPosition = GetMousePosition();
+						var newPosition = _GetMousePosition();
 
 						if(currentPosition != newPosition)
 						{
@@ -103,7 +103,7 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		private void DrawLineInCurve(Vector3[] handleArray)
+		private void _DrawLineInCurve(Vector3[] handleArray)
 		{
 			var cachedColor = Handles.color;
 
@@ -127,7 +127,7 @@ namespace KZLib.KZDevelop
 			Handles.color = cachedColor;
 		}
 
-		private bool IsCurveAnchor(int _index)
+		private bool _IsCurveAnchor(int _index)
 		{
 			return  _index%3 == 0;
 		}

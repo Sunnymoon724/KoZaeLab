@@ -5,7 +5,7 @@ public static class TextMeshProExtension
 {
 	public static void SetSafeTextMeshPro(this TMP_Text textMesh,string text,Color? color = null)
 	{
-		if(!IsValid(textMesh,text))
+		if(!_IsValid(textMesh,text))
 		{
 			return;
 		}
@@ -15,7 +15,7 @@ public static class TextMeshProExtension
 
 	public static void SetLocalizeText(this TMP_Text textMesh,string text)
 	{
-		if(!IsValid(textMesh,text))
+		if(!_IsValid(textMesh,text))
 		{
 			return;
 		}
@@ -44,7 +44,7 @@ public static class TextMeshProExtension
 		textMesh.color = color.Value;
 	}
 
-	private static bool IsValid(TMP_Text textMesh,string text)
+	private static bool _IsValid(TMP_Text textMesh,string text)
 	{
 		if(!textMesh)
 		{

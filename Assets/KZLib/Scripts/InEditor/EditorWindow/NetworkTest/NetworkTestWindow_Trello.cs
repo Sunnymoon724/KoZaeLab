@@ -24,7 +24,7 @@ namespace KZLib.KZWindow
 		{
 			NetworkMgr.In.GetTrelloBoard(TrelloCoreKey,(resultList) =>
 			{
-				ShowResult_Trello(resultList);
+				_ShowResult_Trello(resultList);
 			});
 		}
 
@@ -38,7 +38,7 @@ namespace KZLib.KZWindow
 		{
 			NetworkMgr.In.GetTrelloList(TrelloCoreKey,m_trelloTestId,(resultList) =>
 			{
-				ShowResult_Trello(resultList);
+				_ShowResult_Trello(resultList);
 			});
 		}
 
@@ -47,7 +47,7 @@ namespace KZLib.KZWindow
 		{
 			NetworkMgr.In.GetTrelloCard(TrelloCoreKey,m_trelloTestId,(resultList) =>
 			{
-				ShowResult_Trello(resultList);
+				_ShowResult_Trello(resultList);
 			});
 		}
 
@@ -68,7 +68,7 @@ namespace KZLib.KZWindow
 
 		private bool IsShowTrelloResultList => m_trelloDataList.Count > 0;
 
-		private void ShowResult_Trello(List<string> resultList)
+		private void _ShowResult_Trello(List<string> resultList)
 		{
 			m_trelloDataList.Clear();
 

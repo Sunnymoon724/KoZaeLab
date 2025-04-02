@@ -48,7 +48,7 @@ namespace KZLib.KZWindow
 		}
 		#endregion PlayerPrefsInfo
 
-		[VerticalGroup("1",Order = 1),LabelText("Info List"),SerializeField,ListDrawerSettings(ShowFoldout = false,DraggableItems = false,HideAddButton = true,CustomRemoveIndexFunction = nameof(OnRemoveInfo),OnTitleBarGUI = nameof(OnRefreshInfo)),ShowIf(nameof(IsExistInfo))]
+		[VerticalGroup("1",Order = 1),LabelText("Info List"),SerializeField,ListDrawerSettings(ShowFoldout = false,DraggableItems = false,HideAddButton = true,CustomRemoveIndexFunction = nameof(_OnRemoveInfo),OnTitleBarGUI = nameof(_OnRefreshInfo)),ShowIf(nameof(IsExistInfo))]
 		private List<PlayerPrefsInfo> m_playerPrefsInfoList = new();
 
 		[VerticalGroup("1",Order = 1),HideLabel,ShowInInspector,HideIf(nameof(IsExistInfo)),KZRichText]
@@ -63,7 +63,7 @@ namespace KZLib.KZWindow
 			_LoadPlayerPrefsInfo();
 		}
 
-		private void OnRemoveInfo(int index)
+		private void _OnRemoveInfo(int index)
 		{
 			if(!CommonUtility.DisplayCheck("Remove playerPrefs","Are you sure?"))
 			{
@@ -79,7 +79,7 @@ namespace KZLib.KZWindow
 			LogTag.Editor.I($"{info.Key} is removed");
 		}
 
-		private void OnRefreshInfo()
+		private void _OnRefreshInfo()
 		{
 			if(SirenixEditorGUI.ToolbarButton(EditorIcons.Refresh))
 			{

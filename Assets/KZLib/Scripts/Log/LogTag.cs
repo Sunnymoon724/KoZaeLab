@@ -34,6 +34,8 @@ public class LogTag : CustomTag
 	public static readonly LogTag UI		=	new(nameof(UI));
 	public static readonly LogTag FX		=	new(nameof(FX));
 
+	public static readonly LogTag Game		=	new(nameof(Game));
+
 	public static readonly LogTag Editor	=	new(nameof(Editor));
 
 	public static readonly LogTag Test		=	new(nameof(Test));
@@ -131,7 +133,7 @@ public static class LogExtension
 
 #if UNITY_EDITOR
 	[OnOpenAsset(0)]
-	private static bool _OnOpenDebugLog(int instance,int _)
+	public static bool OnOpenDebugLog(int instance,int _)
 	{
 		var objectName = EditorUtility.InstanceIDToObject(instance).name;
 

@@ -11,11 +11,10 @@ using UnityEditor.iOS.Xcode;
 
 namespace KZLib.KZBuild
 {
-#pragma warning disable IDE0051
 	public static class KZPostProcessBuild
 	{
 		[PostProcessBuild]
-		private static void OnPostProcessBuild(BuildTarget buildTarget,string path)
+		public static void _OnPostProcessBuild(BuildTarget buildTarget,string path)
 		{
 #if UNITY_IOS
 			var projectPath = PBXProject.GetPBXProjectPath(path);
@@ -27,6 +26,5 @@ namespace KZLib.KZBuild
 #endif
 		}
 	}
-#pragma warning restore IDE0051
 }
 #endif

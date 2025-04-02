@@ -4,7 +4,7 @@ public static class SpriteRendererExtension
 {
 	public static void SetSafeSpriteRenderer(this SpriteRenderer spriteRenderer,Sprite sprite,Color? color = null)
 	{
-		if(!IsValid(spriteRenderer))
+		if(!_IsValid(spriteRenderer))
 		{
 			return;
 		}
@@ -28,7 +28,7 @@ public static class SpriteRendererExtension
 		spriteRenderer.color = color.Value;
 	}
 
-	private static bool IsValid(SpriteRenderer spriteRenderer)
+	private static bool _IsValid(SpriteRenderer spriteRenderer)
 	{
 		if(!spriteRenderer)
 		{

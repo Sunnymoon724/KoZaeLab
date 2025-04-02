@@ -24,10 +24,10 @@ namespace KZLib.KZDevelop
 		private Vector3 m_centerPosition = Vector3.zero;
 		public Vector3 CenterPosition => m_centerPosition;
 
-		[VerticalGroup("5",Order = 5),SerializeField,PropertyRange(0.0f,1.0f),ListDrawerSettings(DraggableItems = false,HideAddButton = true,HideRemoveButton = true,OnTitleBarGUI = nameof(OnRefreshDistance)),LabelText("Vertex Distance"),HideIf(nameof(IsCurveMode))]
+		[VerticalGroup("5",Order = 5),SerializeField,PropertyRange(0.0f,1.0f),ListDrawerSettings(DraggableItems = false,HideAddButton = true,HideRemoveButton = true,OnTitleBarGUI = nameof(_OnRefreshDistance)),HideIf(nameof(IsCurveMode))]
 		private List<float> m_vertexDistanceList = new();
 
-		private void GetShapePointArray()
+		private void _GetShapePointArray()
 		{
 			m_pointArray = new Vector3[m_sideCount];
 			var degrees = (IsReverse ? -1 : +1)*Global.FULL_ANGLE/m_sideCount;
@@ -78,7 +78,7 @@ namespace KZLib.KZDevelop
 			SetDirty();
 		}
 
-		private void OnRefreshDistance()
+		private void _OnRefreshDistance()
 		{
 #if UNITY_EDITOR
 			if(SirenixEditorGUI.ToolbarButton(EditorIcons.Refresh))
@@ -88,7 +88,7 @@ namespace KZLib.KZDevelop
 #endif
 		}
 
-		[VerticalGroup("1",Order = 1),ShowInInspector,PropertyRange(3,360),LabelText("Side Count"),HideIf(nameof(IsCurveMode))]
+		[VerticalGroup("1",Order = 1),ShowInInspector,PropertyRange(3,360),HideIf(nameof(IsCurveMode))]
 		public int SideCount
 		{
 			get => m_sideCount;
@@ -118,7 +118,7 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		[VerticalGroup("1",Order = 1),ShowInInspector,PropertyRange(-180.0f,+180.0f),LabelText("Rotation"),HideIf(nameof(IsCurveMode))]
+		[VerticalGroup("1",Order = 1),ShowInInspector,PropertyRange(-180.0f,+180.0f),HideIf(nameof(IsCurveMode))]
 		public float Rotation
 		{
 			get => m_rotation;
@@ -135,7 +135,7 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		[VerticalGroup("1",Order = 1),ShowInInspector,LabelText("Is Reverse"),HideIf(nameof(IsCurveMode))]
+		[VerticalGroup("1",Order = 1),ShowInInspector,HideIf(nameof(IsCurveMode))]
 		public bool IsReverse
 		{
 			get => m_reverse;
@@ -153,10 +153,10 @@ namespace KZLib.KZDevelop
 		}
 
 #if UNITY_EDITOR
-		private void ResetShape()
+		private void _ResetShape()
 		{
 			var handle = m_handleList.Count > 0 ? m_handleList[0] : Vector3.zero;
-			var position = ConvertPosition(handle);
+			var position = _ConvertPosition(handle);
 
 			m_handleList.Clear();
 
@@ -180,7 +180,7 @@ namespace KZLib.KZDevelop
 
 		public void MovePolygon(int index,Vector3 position)
 		{
-			var convertPosition = ConvertPosition(position);
+			var convertPosition = _ConvertPosition(position);
 
 			if(index == 0)
 			{
@@ -201,7 +201,7 @@ namespace KZLib.KZDevelop
 			SetDirty();
 		}
 
-		private void DrawShapeGizmos()
+		private void _DrawShapeGizmos()
 		{
 			Gizmos.color = Color.green;
 

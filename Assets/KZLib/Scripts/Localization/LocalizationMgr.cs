@@ -38,11 +38,11 @@ namespace KZLib
 
 			var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-			optionCfg.OnLanguageChange += OnChangeLanguage;
+			optionCfg.OnLanguageChange += _OnChangeLanguage;
 
 			m_optionRef = new WeakReference<ConfigData.OptionConfig>(optionCfg);
 
-			OnChangeLanguage(optionCfg.Language);
+			_OnChangeLanguage(optionCfg.Language);
 		}
 
 		protected override void Release(bool disposing)
@@ -56,7 +56,7 @@ namespace KZLib
 			{
 				if(m_optionRef.TryGetTarget(out var optionCfg))
 				{
-					optionCfg.OnLanguageChange -= OnChangeLanguage;
+					optionCfg.OnLanguageChange -= _OnChangeLanguage;
 				}
 
 				m_optionRef = null;
@@ -69,7 +69,7 @@ namespace KZLib
 			base.Release(disposing);
 		}
 
-		private void OnChangeLanguage(SystemLanguage newLanguage)
+		private void _OnChangeLanguage(SystemLanguage newLanguage)
 		{
 			if(!m_languageTextDict.ContainsKey(newLanguage))
 			{

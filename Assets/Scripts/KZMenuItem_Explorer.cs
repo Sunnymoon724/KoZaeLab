@@ -5,7 +5,7 @@ using UnityEditor;
 
 namespace KZLib.KZMenu
 {
-	public class KZMenuItem
+	public  class KZMenuItem
 	{
 		private const int c_pivotOrder = 10;
 		private const int c_menuLine = 20;
@@ -19,7 +19,7 @@ namespace KZLib.KZMenu
 		}
 
 		[MenuItem("KZMenu/Explorer/Open Library Project",false,(int) InnerMenuType.Explorer_Etc1)]
-		private static void OnOpenLibraryProject()
+		private static void _OnOpenLibraryProject()
 		{
 			var solutionPath = Path.Combine(Global.PROJECT_PARENT_PATH,"KoZaeLibrary");
 
@@ -32,7 +32,7 @@ namespace KZLib.KZMenu
 		}
 
 		[MenuItem("KZMenu/Explorer/Build Library Project",false,(int) InnerMenuType.Explorer_Etc2)]
-		private static void OnBuildLibraryProject()
+		private static void _OnBuildLibraryProject()
 		{
 			var batchFilePath = Path.Combine(Global.PROJECT_PARENT_PATH,"BuildLibrary.bat");
 

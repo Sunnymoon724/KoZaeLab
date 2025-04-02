@@ -31,7 +31,7 @@ namespace KZLib
 
 			if(disposing)
 			{
-				ClearProto();
+				_ClearProto();
 			}
 
 			m_disposed = true;
@@ -39,7 +39,7 @@ namespace KZLib
 			base.Release(disposing);
 		}
 
-		private void ClearProto()
+		private void _ClearProto()
 		{
 			m_protoDict.Clear();
 
@@ -55,7 +55,7 @@ namespace KZLib
 
 			var start = DateTime.Now;
 
-			if(!TryGetTextAsset(out var textAssetArray))
+			if(!_TryGetTextAsset(out var textAssetArray))
 			{
 				return false;
 			}
@@ -78,7 +78,7 @@ namespace KZLib
 
 				stopwatch.Restart();
 
-				if(!TryLoadProto(textAsset))
+				if(!_TryLoadProto(textAsset))
 				{
 					return false;
 				}
@@ -187,7 +187,7 @@ namespace KZLib
 			return m_protoDict.TryGetValue(typeof(TProto),out var protoDict) ? protoDict.Count : 0;
 		}
 
-		private bool TryLoadProto(TextAsset textAsset)
+		private bool _TryLoadProto(TextAsset textAsset)
 		{
 			try
 			{
@@ -263,7 +263,7 @@ namespace KZLib
 #if UNITY_EDITOR
 		public void Reload()
 		{
-			ClearProto();
+			_ClearProto();
 
 			LoadInEditor();
 		}
@@ -275,7 +275,7 @@ namespace KZLib
 				return;
 			}
 
-			if(!TryGetTextAsset(out var textAssetArray))
+			if(!_TryGetTextAsset(out var textAssetArray))
 			{
 				return;
 			}
@@ -291,7 +291,7 @@ namespace KZLib
 					continue;
 				}
 
-				if(!TryLoadProto(textAsset))
+				if(!_TryLoadProto(textAsset))
 				{
 					return;
 				}
@@ -300,7 +300,7 @@ namespace KZLib
 			m_isLoaded = true;
 		}
 #endif
-		private bool TryGetTextAsset(out TextAsset[] textAssetArray)
+		private bool _TryGetTextAsset(out TextAsset[] textAssetArray)
 		{
 			var gameCfg = ConfigMgr.In.Access<ConfigData.GameConfig>();
 

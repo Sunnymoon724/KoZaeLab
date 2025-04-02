@@ -6,7 +6,7 @@ public static partial class ContainerExtension
 {
 	public static void AddNotOverlap<TValue>(this ICollection<TValue> collection,TValue value)
 	{
-		if(!IsValid(collection))
+		if(!_IsValid(collection))
 		{
 			return;
 		}
@@ -19,7 +19,7 @@ public static partial class ContainerExtension
 
 	public static void AddCount<TValue>(this ICollection<TValue> collection,TValue value,int count)
 	{
-		if(!IsValid(collection))
+		if(!_IsValid(collection))
 		{
 			return;
 		}
@@ -32,7 +32,7 @@ public static partial class ContainerExtension
 
 	public static bool ContainsIndex<TValue>(this ICollection<TValue> collection,int index)
 	{
-		if(!IsValid(collection))
+		if(!_IsValid(collection))
 		{
 			return false;
 		}
@@ -42,7 +42,7 @@ public static partial class ContainerExtension
 
 	public static TValue Middle<TValue>(this ICollection<TValue> collection)
 	{
-		if(!IsValid(collection))
+		if(!_IsValid(collection))
 		{
 			return default;
 		}
@@ -58,17 +58,17 @@ public static partial class ContainerExtension
 
 		if(count == 1)
 		{
-			return collection.GetValue(1);
+			return collection._GetValue(1);
 		}
 
 		var index = Mathf.RoundToInt(collection.Count/2);
 
-		return collection.GetValue(index);
+		return collection._GetValue(index);
 	}
 
 	public static bool RemoveSafe<TValue>(this ICollection<TValue> collection,TValue value)
 	{
-		if(!IsValid(collection))
+		if(!_IsValid(collection))
 		{
 			return false;
 		}
@@ -78,7 +78,7 @@ public static partial class ContainerExtension
 
 	public static void RemoveRange<TValue>(this ICollection<TValue> collection,IList<TValue> valueList)
 	{
-		if(!IsValid(collection))
+		if(!_IsValid(collection))
 		{
 			return;
 		}
@@ -91,7 +91,7 @@ public static partial class ContainerExtension
 
 	public static bool RemoveRandomValue<TValue>(this ICollection<TValue> collection,out TValue value)
 	{
-		if(!IsValid(collection))
+		if(!_IsValid(collection))
 		{
 			value = default;
 
@@ -102,7 +102,7 @@ public static partial class ContainerExtension
 
 		if(count == 1)
 		{
-			value = collection.GetFirstValue();
+			value = collection._GetFirstValue();
 
 			return true;
 		}
@@ -115,7 +115,7 @@ public static partial class ContainerExtension
 
 	public static TValue GetValueByIndex<TValue>(this ICollection<TValue> collection,int index)
 	{
-		if(!IsValid(collection))
+		if(!_IsValid(collection))
 		{
 			return default;
 		}
@@ -125,7 +125,7 @@ public static partial class ContainerExtension
 
 	public static bool TryGetValueByIndex<TValue>(this ICollection<TValue> collection,int index,out TValue value)
 	{
-		if(!IsValid(collection))
+		if(!_IsValid(collection))
 		{
 			value = default;
 
@@ -139,14 +139,14 @@ public static partial class ContainerExtension
 			return false;
 		}
 
-		value = collection.GetValue(index);
+		value = collection._GetValue(index);
 
 		return true;
 	}
 
 	public static void Initialize<TValue>(this ICollection<TValue> collection,TValue value)
 	{
-		if(!IsValid(collection))
+		if(!_IsValid(collection))
 		{
 			return;
 		}

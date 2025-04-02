@@ -102,12 +102,12 @@ public class MotionEditorController : MonoBehaviour
 
 	private void OnEnable()
 	{
-		EditorApplication.update += UpdateInEditMode;
+		EditorApplication.update += _UpdateInEditMode;
 	}
 
 	private void OnDisable()
 	{
-		EditorApplication.update -= UpdateInEditMode;
+		EditorApplication.update -= _UpdateInEditMode;
 	}
 
 	[HorizontalGroup("Button",Order = 5),Button("",ButtonHeight = 30,Icon = SdfIconType.PlayFill)]
@@ -137,7 +137,7 @@ public class MotionEditorController : MonoBehaviour
 		m_isPlaying = false;
 	}
 
-	private void UpdateInEditMode()
+	private void _UpdateInEditMode()
 	{
 		if(!m_isPlaying || !m_animator)
 		{

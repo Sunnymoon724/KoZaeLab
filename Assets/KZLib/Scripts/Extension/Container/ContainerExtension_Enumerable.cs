@@ -6,7 +6,7 @@ public static partial class ContainerExtension
 {
 	public static TValue FindValueInRange<TValue>(this IEnumerable<TValue> enumerable,int index)
 	{
-		if(!IsValid(enumerable))
+		if(!_IsValid(enumerable))
 		{
 			return default;
 		}
@@ -18,12 +18,12 @@ public static partial class ContainerExtension
 			count++;
 		}
 
-		return enumerable.GetValue(count == 1 ? 0 : Mathf.Clamp(index,0,count-1));
+		return enumerable._GetValue(count == 1 ? 0 : Mathf.Clamp(index,0,count-1));
 	}
 
 	public static TValue GenerateRandomValue<TValue>(this IEnumerable<TValue> enumerable)
 	{
-		if(!IsValid(enumerable))
+		if(!_IsValid(enumerable))
 		{
 			return default;
 		}
@@ -35,12 +35,12 @@ public static partial class ContainerExtension
 			count++;
 		}
 
-		return enumerable.GetValue(count == 1 ? 0 : CommonUtility.GenerateRandomInt(0,count-1));
+		return enumerable._GetValue(count == 1 ? 0 : CommonUtility.GenerateRandomInt(0,count-1));
 	}
 
 	public static TValue GenerateWeightedRandomValue<TValue>(this IEnumerable<TValue> enumerable,float[] weightedArray)
 	{
-		if(!IsValid(enumerable))
+		if(!_IsValid(enumerable))
 		{
 			return default;
 		}
@@ -52,12 +52,12 @@ public static partial class ContainerExtension
 			return default;
 		}
 
-		return enumerable.GetValue(index);
+		return enumerable._GetValue(index);
 	}
 
 	public static IEnumerable<TValue> GenerateRandomValueGroup<TValue>(this IEnumerable<TValue> enumerable,int count,bool allowDuplicate = true)
 	{
-		if(!IsValid(enumerable))
+		if(!_IsValid(enumerable))
 		{
 			yield break;
 		}
@@ -87,7 +87,7 @@ public static partial class ContainerExtension
 
 	public static TValue FindOrFirst<TValue>(this IEnumerable<TValue> enumerable,Func<TValue,bool> onFunc)
 	{
-		if(!IsValid(enumerable))
+		if(!_IsValid(enumerable))
 		{
 			return default;
 		}
@@ -100,17 +100,17 @@ public static partial class ContainerExtension
 			}
 		}
 
-		return enumerable.GetFirstValue();
+		return enumerable._GetFirstValue();
 	}
 
 	public static int FindMinIndex<TValue,TCompare>(this IEnumerable<TValue> enumerable,Func<TValue,TCompare> onFunc) where TCompare : IComparable
 	{
-		if(!IsValid(enumerable))
+		if(!_IsValid(enumerable))
 		{
 			return Global.INVALID_INDEX;
 		}
 
-		var minValue = onFunc(enumerable.GetFirstValue());
+		var minValue = onFunc(enumerable._GetFirstValue());
 		var minIndex = -1;
 		var curIndex = 0;
 
@@ -132,12 +132,12 @@ public static partial class ContainerExtension
 
 	public static int FindMaxIndex<TValue,TCompare>(this IEnumerable<TValue> enumerable,Func<TValue,TCompare> onFunc) where TCompare : IComparable
 	{
-		if(!IsValid(enumerable))
+		if(!_IsValid(enumerable))
 		{
 			return Global.INVALID_INDEX;
 		}
 
-		var maxValue = onFunc(enumerable.GetFirstValue());
+		var maxValue = onFunc(enumerable._GetFirstValue());
 		var maxIndex = 0;
 		var curIndex = 0;
 
@@ -159,12 +159,12 @@ public static partial class ContainerExtension
 
 	public static int IndexOf<TValue>(this IEnumerable<TValue> enumerable,Predicate<TValue> onPredicate)
 	{
-		if(!IsValid(enumerable))
+		if(!_IsValid(enumerable))
 		{
 			return Global.INVALID_INDEX;
 		}
 
-		if(!IsEmpty(enumerable))
+		if(!_IsEmpty(enumerable))
 		{
 			return Global.INVALID_INDEX;
 		}
@@ -209,7 +209,7 @@ public static partial class ContainerExtension
 
 	public static IEnumerable<TResult> Zip<TValue1,TValue2,TResult>(this IEnumerable<TValue1> enumerable1,IEnumerable<TValue2> enumerable2,Func<TValue1,TValue2,TResult> _predicate)
 	{
-		if(!IsValid(enumerable1) || !IsValid(enumerable2))
+		if(!_IsValid(enumerable1) || !_IsValid(enumerable2))
 		{
 			yield break;
 		}
@@ -225,12 +225,12 @@ public static partial class ContainerExtension
 
 	public static bool? AllEqual<TCompare>(this IEnumerable<TCompare> enumerable) where TCompare : IComparable
 	{
-		if(!IsValid(enumerable))
+		if(!_IsValid(enumerable))
 		{
 			return false;
 		}
 
-		var firstValue = enumerable.GetFirstValue();
+		var firstValue = enumerable._GetFirstValue();
 
 		foreach(var value in enumerable)
 		{
@@ -286,14 +286,14 @@ public static partial class ContainerExtension
 
 	public static string ToString<TValue>(this IEnumerable<TValue> enumerable,string separator)
 	{
-		var count = CalculateCount(enumerable);
+		var count = _CalculateCount(enumerable);
 
 		return count == 0 ? $"Empty - [{enumerable}]" : $"{count} - [{string.Join(separator,enumerable)}]";
 	}
 
 	public static IEnumerable<TValue> DeepCopy<TValue>(this IEnumerable<TValue> enumerable) where TValue : ICloneable
 	{
-		if(!IsValid(enumerable))
+		if(!_IsValid(enumerable))
 		{
 			yield break;
 		}
@@ -304,7 +304,7 @@ public static partial class ContainerExtension
 		}
 	}
 
-	private static TValue GetFirstValue<TValue>(this IEnumerable<TValue> enumerable)
+	private static TValue _GetFirstValue<TValue>(this IEnumerable<TValue> enumerable)
 	{
 		using var enumerator = enumerable.GetEnumerator();
 
@@ -316,7 +316,7 @@ public static partial class ContainerExtension
 		return default;
 	}
 
-	private static TValue GetValue<TValue>(this IEnumerable<TValue> enumerable,int index)
+	private static TValue _GetValue<TValue>(this IEnumerable<TValue> enumerable,int index)
 	{
 		if(enumerable is IList<TValue> list)
 		{
@@ -333,7 +333,7 @@ public static partial class ContainerExtension
 		return enumerator.Current;
 	}
 
-	private static bool IsValid<TValue>(IEnumerable<TValue> enumerable)
+	private static bool _IsValid<TValue>(IEnumerable<TValue> enumerable)
 	{
 		if(enumerable == null)
 		{
@@ -345,14 +345,14 @@ public static partial class ContainerExtension
 		return true;
 	}
 
-	private static bool IsEmpty<TValue>(IEnumerable<TValue> enumerable)
+	private static bool _IsEmpty<TValue>(IEnumerable<TValue> enumerable)
 	{
 		using var enumerator = enumerable.GetEnumerator();
 
 		return !enumerator.MoveNext();
 	}
 
-	private static int CalculateCount<TValue>(IEnumerable<TValue> enumerable)
+	private static int _CalculateCount<TValue>(IEnumerable<TValue> enumerable)
 	{
 		if(enumerable is ICollection<TValue> collection)
 		{

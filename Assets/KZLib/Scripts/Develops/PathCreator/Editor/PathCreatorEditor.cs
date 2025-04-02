@@ -33,13 +33,13 @@ namespace KZLib.KZDevelop
 
 			m_pathCreator = target as PathCreator;
 
-			m_pathCreator.OnPathChanged -= OnResetState;
-			m_pathCreator.OnPathChanged += OnResetState;
+			m_pathCreator.OnPathChanged -= _OnResetState;
+			m_pathCreator.OnPathChanged += _OnResetState;
 
-			Undo.undoRedoPerformed -= OnUndoRedo;
-			Undo.undoRedoPerformed += OnUndoRedo;
+			Undo.undoRedoPerformed -= _OnUndoRedo;
+			Undo.undoRedoPerformed += _OnUndoRedo;
 
-			OnResetState();
+			_OnResetState();
 		}
 
 		protected override void OnDisable()
@@ -49,14 +49,14 @@ namespace KZLib.KZDevelop
 			Tools.hidden = false;
 		}
 
-		private void OnUndoRedo()
+		private void _OnUndoRedo()
 		{
 			m_pathCreator.SetDirty();
 
 			Repaint();
 		}
 
-		private void OnResetState()
+		private void _OnResetState()
 		{
 			m_mouseOverHandleIndex = Global.INVALID_INDEX;
 		}
@@ -76,10 +76,10 @@ namespace KZLib.KZDevelop
 
 			if(eventType != EventType.Repaint && eventType != EventType.Layout)
 			{
-				SetPathInput(Event.current);
+				_SetPathInput(Event.current);
 			}
 
-			DrawPath();
+			_DrawPath();
 
 			if(eventType == EventType.Layout)
 			{
@@ -92,19 +92,19 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		private void SetPathInput(Event currentEvent)
+		private void _SetPathInput(Event currentEvent)
 		{
 			if(m_pathCreator.IsCurveMode)
 			{
-				SetCurvePathInput(currentEvent);
+				_SetCurvePathInput(currentEvent);
 			}
 			else
 			{
-				SetShapePathInput(currentEvent);
+				_SetShapePathInput(currentEvent);
 			}
 		}
 
-		private void DrawPath()
+		private void _DrawPath()
 		{
 			if(Event.current.type != EventType.Repaint)
 			{
@@ -117,7 +117,7 @@ namespace KZLib.KZDevelop
 			{
 				for(var i=0;i<handleArray.Length;i++)
 				{
-					DrawHandle(i,handleArray[i]);
+					_DrawHandle(i,handleArray[i]);
 				}
 			}
 			else
@@ -127,34 +127,34 @@ namespace KZLib.KZDevelop
 					//? center,start,direction
 					for(var i=0;i<3;i++)
 					{
-						DrawHandle(i,handleArray[i]);
+						_DrawHandle(i,handleArray[i]);
 					}
 				}
 			}
 
-			DrawLine(handleArray);
+			_DrawLine(handleArray);
 		}
 
-		private void DrawLine(Vector3[] handleArray)
+		private void _DrawLine(Vector3[] handleArray)
 		{
 			if(m_pathCreator.IsCurveMode)
 			{
-				DrawLineInCurve(handleArray);
+				_DrawLineInCurve(handleArray);
 			}
 			else
 			{
-				DrawLineInShape();
+				_DrawLineInShape();
 			}
 		}
 
-		private void DrawHandle(int index,Vector3 position)
+		private void _DrawHandle(int index,Vector3 position)
 		{
 			var transformPoint = position.TransformPoint(m_pathCreator.transform,m_pathCreator.PathSpaceType);
 
 			var isSelected = index == m_selectedHandleIndex;
 			var isMouseOver = index == m_mouseOverHandleIndex;
-			var isAnchor = m_pathCreator.IsCurveMode ? IsCurveAnchor(index) : IsShapeAnchor(index);
-			var diameter = GetHandleDiameter(isAnchor ? m_anchorSize : m_controlSize,position);
+			var isAnchor = m_pathCreator.IsCurveMode ? _IsCurveAnchor(index) : _IsShapeAnchor(index);
+			var diameter = _GetHandleDiameter(isAnchor ? m_anchorSize : m_controlSize,position);
 
 			var handleId = GUIUtility.GetControlID(index.GetHashCode(),FocusType.Passive);
 
@@ -174,12 +174,12 @@ namespace KZLib.KZDevelop
 			Handles.color = cachedColor;
 		}
 
-		private float GetHandleDiameter(float diameter,Vector3 position)
+		private float _GetHandleDiameter(float diameter,Vector3 position)
 		{
 			return diameter*0.01f*HandleUtility.GetHandleSize(position)*2.5f;
 		}
 
-		private Vector3 GetMousePosition(float depth = 10.0f)
+		private Vector3 _GetMousePosition(float depth = 10.0f)
 		{
 			var ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
 			var position = ray.GetPoint(depth);

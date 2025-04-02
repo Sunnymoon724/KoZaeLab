@@ -54,7 +54,7 @@ namespace KZLib
 
 			m_useServerResource = !gameCfg.IsLocalResource;
 
-			LoopProcessAsync().Forget();
+			_LoopProcessAsync().Forget();
 		}
 
 		protected override void Release(bool disposing)
@@ -77,7 +77,7 @@ namespace KZLib
 			base.Release(disposing);
 		}
 
-		private async UniTaskVoid LoopProcessAsync()
+		private async UniTaskVoid _LoopProcessAsync()
 		{
 			while(true)
 			{
@@ -120,19 +120,19 @@ namespace KZLib
 			}
 		}
 
-		private void AddLoadingQueue(string path,bool isFilePath,Transform parent = null)
+		private void _AddLoadingQueue(string path,bool isFilePath,Transform parent = null)
 		{
 			m_loadingQueue.Enqueue(new LoadingData(path,isFilePath,parent));
 		}
 
-		private TObject GetCacheData<TObject>(string path) where TObject : Object
+		private TObject _GetCacheData<TObject>(string path) where TObject : Object
 		{
-			var dataArray = GetCacheDataArray<TObject>(path);
+			var dataArray = _GetCacheDataArray<TObject>(path);
 
 			return dataArray?.Length > 0 ? dataArray[0] : null;
 		}
 
-		private TObject[] GetCacheDataArray<TObject>(string path) where TObject : Object
+		private TObject[] _GetCacheDataArray<TObject>(string path) where TObject : Object
 		{
 			if(m_cacheDataDict.TryGetValue(path,out var dataList) && dataList.Count > 0)
 			{
@@ -147,12 +147,12 @@ namespace KZLib
 			return null;
 		}
 
-		private void PutData<TObject>(string path,TObject cache) where TObject : Object
+		private void _PutData<TObject>(string path,TObject cache) where TObject : Object
 		{
-			PutDataArray(path,new TObject[] { cache });
+			_PutDataArray(path,new TObject[] { cache });
 		}
 
-		private void PutDataArray<TObject>(string path,TObject[] cacheArray) where TObject : Object
+		private void _PutDataArray<TObject>(string path,TObject[] cacheArray) where TObject : Object
 		{
 			if(!m_cacheDataDict.TryGetValue(path,out var dataList))
 			{

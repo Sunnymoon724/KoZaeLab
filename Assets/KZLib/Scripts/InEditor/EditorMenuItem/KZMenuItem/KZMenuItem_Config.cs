@@ -16,7 +16,7 @@ namespace KZLib.KZMenu
 		/// excel file -> yaml file
 		/// </summary>
 		[MenuItem("KZMenu/Config/Generate All Config",false,(int) MenuType.Data_GenerateAll)]
-		private static void OnGenerateAllConfig()
+		private static void _OnGenerateAllConfig()
 		{
 			var templateFilePath = CommonUtility.FindTemplateText("ConfigTemplate.txt");
 			var outputRoute = RouteMgr.In.GetOrCreateRoute("generatedScript");
@@ -69,7 +69,7 @@ namespace KZLib.KZMenu
 		}
 
 		// [MenuItem("KZMenu/Config/Generate GameConfig Template File",false,(int) MenuType.Data_Generate)]
-		// private static void OnGenerateGameConfigTemplateFile()
+		// private static void _OnGenerateGameConfigTemplateFile()
 		// {
 		// 	var configFolderPath = Path.Combine(CommonUtility.GetProjectParentPath(),c_config_path);
 
@@ -80,25 +80,25 @@ namespace KZLib.KZMenu
 
 		#region Game Config
 		[MenuItem("KZMenu/Config/Game/Generate GameConfig Yaml File",false,(int) MenuType.Data_Generate)]
-		private static void OnGenerateGameConfigYamlFile()
+		private static void _OnGenerateGameConfigYamlFile()
 		{
 			_GenerateConfigYamlFile("Game.yaml",new GameConfig(),"defaultRes:config");
 		}
 
 		[MenuItem("KZMenu/Config/Game/Generate GameConfig Yaml File",true,(int) MenuType.Data_Generate)]
-		private static bool IsExistGameConfigYamlFile()
+		private static bool _IsExistGameConfigYamlFile()
 		{
 			return _IsExistConfigYamlFile("Game.yaml");
 		}
 
 		[MenuItem("KZMenu/Config/Game/Generate Custom GameConfig Yaml File",false,(int) MenuType.Data_Generate)]
-		private static void OnGenerateCustomGameConfigYamlFile()
+		private static void _OnGenerateCustomGameConfigYamlFile()
 		{
 			_GenerateCustomConfigYamlFile("CustomGame.yaml",ConfigMgr.In.Access<GameConfig>());
 		}
 
 		[MenuItem("KZMenu/Config/Game/Generate Custom GameConfig Yaml File",true,(int) MenuType.Data_Generate)]
-		private static bool IsExistCustomGameConfigYamlFile()
+		private static bool _IsExistCustomGameConfigYamlFile()
 		{
 			return _IsExistCustomConfigYamlFile("CustomGame.yaml");
 		}
@@ -106,25 +106,25 @@ namespace KZLib.KZMenu
 
 		#region Service Config
 		[MenuItem("KZMenu/Config/Service/Generate ServiceConfig Yaml File",false,(int) MenuType.Data_Generate)]
-		private static void OnGenerateServiceConfigYamlFile()
+		private static void _OnGenerateServiceConfigYamlFile()
 		{
 			_GenerateConfigYamlFile("Service.yaml",new ServiceConfig(),"defaultRes:config");
 		}
 
 		[MenuItem("KZMenu/Config/Service/Generate ServiceConfig Yaml File",true,(int) MenuType.Data_Generate)]
-		private static bool IsExistServiceConfigYamlFile()
+		private static bool _IsExistServiceConfigYamlFile()
 		{
 			return _IsExistConfigYamlFile("Service.yaml");
 		}
 
 		[MenuItem("KZMenu/Config/Service/Generate Custom ServiceConfig Yaml File",false,(int) MenuType.Data_Generate)]
-		private static void OnGenerateCustomServiceConfigYamlFile()
+		private static void _OnGenerateCustomServiceConfigYamlFile()
 		{
 			_GenerateCustomConfigYamlFile("CustomService.yaml",ConfigMgr.In.Access<ServiceConfig>());
 		}
 
 		[MenuItem("KZMenu/Config/Service/Generate Custom ServiceConfig Yaml File",true,(int) MenuType.Data_Generate)]
-		private static bool IsExistCustomServiceConfigYamlFile()
+		private static bool _IsExistCustomServiceConfigYamlFile()
 		{
 			return _IsExistCustomConfigYamlFile("CustomService.yaml");
 		}
@@ -132,25 +132,25 @@ namespace KZLib.KZMenu
 
 		#region Editor Config
 		[MenuItem("KZMenu/Config/Editor/Generate EditorConfig Yaml File",false,(int) MenuType.Data_Generate)]
-		private static void OnGenerateEditorConfigYamlFile()
+		private static void _OnGenerateEditorConfigYamlFile()
 		{
 			_GenerateConfigYamlFile("Editor.yaml",new EditorConfig(),"workRes:config");
 		}
 
 		[MenuItem("KZMenu/Config/Editor/Generate GameConfig Yaml File",true,(int) MenuType.Data_Generate)]
-		private static bool IsExistEditorConfigYamlFile()
+		private static bool _IsExistEditorConfigYamlFile()
 		{
 			return _IsExistConfigYamlFile("Editor.yaml");
 		}
 
 		[MenuItem("KZMenu/Config/Editor/Generate Custom EditorConfig Yaml File",false,(int) MenuType.Data_Generate)]
-		private static void OnGenerateCustomEditorConfigYamlFile()
+		private static void _OnGenerateCustomEditorConfigYamlFile()
 		{
 			_GenerateCustomConfigYamlFile("CustomEditor.yaml",ConfigMgr.In.Access<EditorConfig>());
 		}
 
 		[MenuItem("KZMenu/Config/Editor/Generate Custom EditorConfig Yaml File",true,(int) MenuType.Data_Generate)]
-		private static bool IsExistCustomEditorConfigYamlFile()
+		private static bool _IsExistCustomEditorConfigYamlFile()
 		{
 			return _IsExistCustomConfigYamlFile("CustomEditor.yaml");
 		}
@@ -203,7 +203,7 @@ namespace KZLib.KZMenu
 		#endregion Common
 
 		[MenuItem("KZMenu/Config/Open Default Config Folder",false,(int) MenuType.Data_Open)]
-		private static void OnOpenDefaultConfigFolder()
+		private static void _OnOpenDefaultConfigFolder()
 		{
 			var configFolderRoute = RouteMgr.In.GetOrCreateRoute("defaultRes:config");
 
@@ -211,7 +211,7 @@ namespace KZLib.KZMenu
 		}
 
 		[MenuItem("KZMenu/Config/Open Default Config Folder",true,(int) MenuType.Data_Open)]
-		private static bool IsExistDefaultConfigFolder()
+		private static bool _IsExistDefaultConfigFolder()
 		{
 			var configFolderRoute = RouteMgr.In.GetOrCreateRoute("defaultRes:config");
 
@@ -219,13 +219,13 @@ namespace KZLib.KZMenu
 		}
 
 		[MenuItem("KZMenu/Config/Open Custom Config Folder",false,(int) MenuType.Data_Open)]
-		private static void OnOpenCustomConfigFolder()
+		private static void _OnOpenCustomConfigFolder()
 		{
 			CommonUtility.Open(Global.CUSTOM_CONFIG_FOLDER_PATH);
 		}
 
 		[MenuItem("KZMenu/Config/Open Custom Config Folder",true,(int) MenuType.Data_Open)]
-		private static bool IsExistCustomConfigFolder()
+		private static bool _IsExistCustomConfigFolder()
 		{
 			return Directory.Exists(Global.CUSTOM_CONFIG_FOLDER_PATH);
 		}

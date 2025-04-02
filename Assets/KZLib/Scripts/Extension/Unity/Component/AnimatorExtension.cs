@@ -13,7 +13,7 @@ public static class AnimatorExtension
 {
 	public static bool IsState(this Animator animator,string animationName,int layerIndex = 0)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return false;
 		}
@@ -23,7 +23,7 @@ public static class AnimatorExtension
 
 	public static bool IsState(this Animator animator,int animationHashName,int layerIndex = 0)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return false;
 		}
@@ -36,7 +36,7 @@ public static class AnimatorExtension
 	/// </summary>
 	public static void SetAnimationStopAtFrame(this Animator animator,string animationName,float normalizedTime,int layerIndex = 0,float speed = 1.0f)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return;
 		}
@@ -49,7 +49,7 @@ public static class AnimatorExtension
 	/// </summary>
 	public static void SetAnimationStopAtFrame(this Animator animator,int animationHashName,float normalizedTime,int layerIndex = 0,float speed = 1.0f)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return;
 		}
@@ -60,7 +60,7 @@ public static class AnimatorExtension
 
 	public static AnimatorStateInfo GetCurrentState(this Animator animator,int layerIndex = 0)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return default;
 		}
@@ -96,7 +96,7 @@ public static class AnimatorExtension
 
 	public static async UniTask PlayAndWaitAsync(this Animator animator,string animationName,int layerIndex = 0,CancellationToken cancellationToken = default)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return;
 		}
@@ -106,7 +106,7 @@ public static class AnimatorExtension
 
 	public static async UniTask PlayAndWaitAsync(this Animator animator,int animationHashName,int layerIndex = 0,CancellationToken cancellationToken = default)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return;
 		}
@@ -118,7 +118,7 @@ public static class AnimatorExtension
 
 	public static async UniTask WaitForAnimationFinishAsync(this Animator animator,string animationName,int layerIndex = 0,CancellationToken cancellationToken = default)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return;
 		}
@@ -128,7 +128,7 @@ public static class AnimatorExtension
 
 	public static async UniTask WaitForAnimationFinishAsync(this Animator animator,int animationHashName,int layerIndex = 0,CancellationToken cancellationToken = default)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return;
 		}
@@ -138,7 +138,7 @@ public static class AnimatorExtension
 
 	public static bool IsAnimationFinish(this Animator animator,string animationName,int layerIndex = 0)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return false;
 		}
@@ -148,7 +148,7 @@ public static class AnimatorExtension
 
 	public static bool IsAnimationFinish(this Animator animator,int animationHashName,int layerIndex = 0)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return false;
 		}
@@ -160,7 +160,7 @@ public static class AnimatorExtension
 
 	public static async UniTask WaitForAnimationStartAsync(this Animator animator,string animationName,int layerIndex = 0,CancellationToken cancellationToken = default)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return;
 		}
@@ -170,7 +170,7 @@ public static class AnimatorExtension
 
 	public static async UniTask WaitForAnimationStartAsync(this Animator animator,int animationHashName,int layerIndex = 0,CancellationToken cancellationToken = default)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return;
 		}
@@ -180,7 +180,7 @@ public static class AnimatorExtension
 
 	public static bool IsAnimationStart(this Animator animator,string animationName,int layerIndex = 0)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return false;
 		}
@@ -190,7 +190,7 @@ public static class AnimatorExtension
 
 	public static bool IsAnimationStart(this Animator animator,int animationHashName,int layerIndex = 0)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return false;
 		}
@@ -202,7 +202,7 @@ public static class AnimatorExtension
 
 	public static float FindAnimationClipLength(this Animator animator,string clipName)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			return -1.0f;
 		}
@@ -226,7 +226,7 @@ public static class AnimatorExtension
 #if UNITY_EDITOR
 	public static AnimatorController GetAnimatorController(this Animator animator,out bool isOverride)
 	{
-		if(!IsValid(animator))
+		if(!_IsValid(animator))
 		{
 			isOverride = false;
 
@@ -248,7 +248,7 @@ public static class AnimatorExtension
 	}
 #endif
 
-	private static bool IsValid(Animator animator)
+	private static bool _IsValid(Animator animator)
 	{
 		if(!animator)
 		{

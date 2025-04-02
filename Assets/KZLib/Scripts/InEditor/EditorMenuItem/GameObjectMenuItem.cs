@@ -11,16 +11,16 @@ namespace KZLib.KZMenu
 		#region UI
 		#region Empty Panel
 		[MenuItem("GameObject/UI/Empty Panel",false,1000)]
-		private static void OnCreateEmptyPanel()
+		private static void _OnCreateEmptyPanel()
 		{
 			Undo.IncrementCurrentGroup();
 
 			var group = Undo.GetCurrentGroup();
-			var panel = CreatePanel("EmptyPanel",true);
+			var panel = _CreatePanel("EmptyPanel",true);
 
 			Undo.RegisterCreatedObjectUndo(panel,"Create EmptyPanel");
 
-			LinkCanvas(panel);
+			_LinkCanvas(panel);
 
 			Undo.CollapseUndoOperations(group);
 		}
@@ -28,18 +28,18 @@ namespace KZLib.KZMenu
 
 		#region UIShape
 		[MenuItem("GameObject/UI/Shape",false,1021)]
-		private static void OnCreateShape()
+		private static void _OnCreateShape()
 		{
 			Undo.IncrementCurrentGroup();
 
 			var group = Undo.GetCurrentGroup();
-			var shape = CreatePanel("Shape");
+			var shape = _CreatePanel("Shape");
 
 			shape.AddComponent<UIShape>();
 
 			Undo.RegisterCreatedObjectUndo(shape,"Create Shape");
 
-			LinkCanvas(shape);
+			_LinkCanvas(shape);
 
 			Undo.CollapseUndoOperations(group);
 		}
@@ -47,18 +47,18 @@ namespace KZLib.KZMenu
 
 		#region Focus Scroller
 		[MenuItem("GameObject/UI/Focus Scroller",false,1025)]
-		private static void OnCreateFocusScroller()
+		private static void _OnCreateFocusScroller()
 		{
 			Undo.IncrementCurrentGroup();
 
 			var group = Undo.GetCurrentGroup();
-			var scroller = CreatePanel("Scroller",false);
+			var scroller = _CreatePanel("Scroller",false);
 
 			Undo.RegisterCreatedObjectUndo(scroller,"Create Scroller");
 
 			scroller.AddComponent<Image>();
 
-			var viewport = CreatePanel("Viewport",true);
+			var viewport = _CreatePanel("Viewport",true);
 
 			Undo.RegisterCreatedObjectUndo(viewport,"Create Viewport");
 
@@ -68,7 +68,7 @@ namespace KZLib.KZMenu
 			viewport.AddComponent<Mask>();
 			scroller.transform.SetUIChild(viewport.transform);
 
-			var content = CreatePanel("Content",true);
+			var content = _CreatePanel("Content",true);
 
 			Undo.RegisterCreatedObjectUndo(content,"Create Content");
 
@@ -78,13 +78,13 @@ namespace KZLib.KZMenu
 
 			scroller.AddComponent<FocusScroller>();
 
-			LinkCanvas(scroller);
+			_LinkCanvas(scroller);
 
 			Undo.CollapseUndoOperations(group);
 		}
 		#endregion Focus Scroller
 
-		private static GameObject CreatePanel(string name,bool isExpand = false)
+		private static GameObject _CreatePanel(string name,bool isExpand = false)
 		{
 			var panel = new GameObject(name);
 			var rect = panel.AddComponent<RectTransform>();
@@ -97,7 +97,7 @@ namespace KZLib.KZMenu
 			return panel;
 		}
 
-		private static void LinkCanvas(GameObject child)
+		private static void _LinkCanvas(GameObject child)
 		{
 			var selected = Selection.activeGameObject;
 
@@ -107,7 +107,7 @@ namespace KZLib.KZMenu
 			}
 			else
 			{
-				var canvas = FindCanvas();
+				var canvas = _FindCanvas();
 
 				canvas.transform.SetUIChild(child.transform);
 			}
@@ -115,7 +115,7 @@ namespace KZLib.KZMenu
 			Selection.activeObject = child;
 		}
 
-		private static Canvas FindCanvas(GameObject selected = null)
+		private static Canvas _FindCanvas(GameObject selected = null)
 		{
 			var canvas = selected ? selected.GetComponentInParent<Canvas>() : Object.FindObjectOfType<Canvas>(true);
 
@@ -144,7 +144,7 @@ namespace KZLib.KZMenu
 
 		#region Category Line
 		[MenuItem("GameObject/Create Category Line",false,0)]
-		private static void OnCreateCategoryLine()
+		private static void _OnCreateCategoryLine()
 		{
 			Undo.IncrementCurrentGroup();
 
@@ -168,7 +168,7 @@ namespace KZLib.KZMenu
 
 		#region Copy Hierarchy
 		[MenuItem("GameObject/Copy Hierarchy",false,-10)]
-		private static void OnCopyHierarchy()
+		private static void _OnCopyHierarchy()
 		{
 			var selected = Selection.activeGameObject;
 
@@ -181,7 +181,7 @@ namespace KZLib.KZMenu
 		}
 
 		[MenuItem("GameObject/Copy Hierarchy",true)]
-		private static bool IsCopyHierarchy()
+		private static bool _IsCopyHierarchy()
 		{
 			return Selection.gameObjects.Length == 1;
 		}

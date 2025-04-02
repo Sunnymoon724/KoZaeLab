@@ -6,7 +6,7 @@ public static class ImageExtension
 {
 	public static void SetDefaultImage(this Image image,bool isClearColor)
 	{
-		if(!IsValid(image))
+		if(!_IsValid(image))
 		{
 			return;
 		}
@@ -16,7 +16,7 @@ public static class ImageExtension
 
 	public static void SetSafeImage(this Image image,Sprite sprite,Material material = null,Color? color = null)
 	{
-		if(!IsValid(image))
+		if(!_IsValid(image))
 		{
 			return;
 		}
@@ -49,7 +49,7 @@ public static class ImageExtension
 		});
 	}
 
-	private static bool IsValid(Image image)
+	private static bool _IsValid(Image image)
 	{
 		if(!image)
 		{

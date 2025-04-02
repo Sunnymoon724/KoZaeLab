@@ -32,14 +32,14 @@ namespace KZLib.KZMenu
 			{
 				if(s_assetsPathDict == null)
 				{
-					LoadAssetsPath();
+					_LoadAssetsPath();
 				}
 
 				return s_assetsPathDict;
 			}
 		}
 
-		private static void LoadAssetsPath()
+		private static void _LoadAssetsPath()
 		{
 			if(CommonUtility.DisplayCancelableProgressBar("Asset finder load","Loading asset finder",0.1f))
 			{
@@ -88,7 +88,7 @@ namespace KZLib.KZMenu
 			s_assetsPathDict = null;
 		}
 
-		private static bool IsValidAsset()
+		private static bool _IsValidAsset()
 		{
 			if(Selection.activeObject == null)
 			{
@@ -111,9 +111,9 @@ namespace KZLib.KZMenu
 
 		#region Total
 		[MenuItem("Assets/KZSubMenu/Find Assets Using",false,(int) MenuType.Total)]
-		private static void OnFindAssetsUsing()
+		private static void _OnFindAssetsUsing()
 		{
-			if(!IsValidAsset())
+			if(!_IsValidAsset())
 			{
 				return;
 			}
@@ -151,9 +151,9 @@ namespace KZLib.KZMenu
 		}
 
 		[MenuItem("Assets/KZSubMenu/Find Assets With",false,(int) MenuType.Total)]
-		private static void OnFindAssetsWith()
+		private static void _OnFindAssetsWith()
 		{
-			if(!IsValidAsset())
+			if(!_IsValidAsset())
 			{
 				return;
 			}
@@ -196,7 +196,7 @@ namespace KZLib.KZMenu
 
 		#region Script
 		[MenuItem("Assets/KZSubMenu/Script/Create ScriptableObject",false,(int) MenuType.Script)]
-		private static void OnCreateScriptableObject()
+		private static void _OnCreateScriptableObject()
 		{
 			var selection = Selection.activeObject;
 			var dataPath = FileUtility.NormalizePath($"Resources/ScriptableObject/{selection.name}.asset");
@@ -220,7 +220,7 @@ namespace KZLib.KZMenu
 		}
 
 		[MenuItem("Assets/KZSubMenu/Script/Create ScriptableObject",true,(int) MenuType.Script)]
-		private static bool IsCreateAbleScriptableObject()
+		private static bool _IsCreateAbleScriptableObject()
 		{
 			var script = Selection.activeObject as MonoScript;
 
@@ -235,7 +235,7 @@ namespace KZLib.KZMenu
 
 		#region Texture
 		[MenuItem("Assets/KZSubMenu/Texture/Open Texture",false,(int) MenuType.Texture)]
-		private static void OnOpenTexture()
+		private static void _OnOpenTexture()
 		{
 			var viewer = EditorWindow.GetWindow<TextureWindow>("Viewer");
 
@@ -244,7 +244,7 @@ namespace KZLib.KZMenu
 		}
 
 		[MenuItem("Assets/KZSubMenu/Texture/Open Texture",true,(int) MenuType.Texture)]
-		private static bool IsOpenAbleTexture()
+		private static bool _IsOpenAbleTexture()
 		{
 			return Selection.activeObject as Texture2D;
 		}
@@ -252,7 +252,7 @@ namespace KZLib.KZMenu
 
 		#region ScriptableObject
 		[MenuItem("Assets/KZSubMenu/ScriptableObject/Open ScriptableObject",false,(int) MenuType.ScriptableObject)]
-		private static void OnOpenScriptableObject()
+		private static void _OnOpenScriptableObject()
 		{
 			var viewer = EditorWindow.GetWindow<ScriptableObjectWindow>("Viewer");
 
@@ -261,7 +261,7 @@ namespace KZLib.KZMenu
 		}
 
 		[MenuItem("Assets/KZSubMenu/ScriptableObject/Open ScriptableObject",true,(int) MenuType.ScriptableObject)]
-		private static bool IsOpenAbleScriptableObject()
+		private static bool _IsOpenAbleScriptableObject()
 		{
 			return Selection.activeObject is ScriptableObject;
 		}

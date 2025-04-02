@@ -10,7 +10,7 @@ namespace KZLib.KZMenu
 	public partial class KZMenuItem
 	{
 		[MenuItem("KZMenu/Option/Delete All Mgr",false,(int) MenuType.Option_Delete)]
-		private static void OnDeleteAllMgr()
+		private static void _OnDeleteAllMgr()
 		{
 			if(!CommonUtility.DisplayCheck("Delete all manager","Delete all manager?"))
 			{
@@ -25,7 +25,7 @@ namespace KZLib.KZMenu
 		}
 
 		[MenuItem("KZMenu/Option/Delete Empty Folder",false,(int) MenuType.Option_Delete)]
-		private static void OnDeleteAllEmptyFolder()
+		private static void _OnDeleteAllEmptyFolder()
 		{
 			if(!CommonUtility.DisplayCheck("Delete all empty folder","Delete all empty folder?"))
 			{
@@ -41,7 +41,7 @@ namespace KZLib.KZMenu
 		}
 
 		[MenuItem("KZMenu/Option/Unload Unused Assets Immediate",false,(int) MenuType.Option_Delete)]
-		private static void OnUnloadUnusedAssets()
+		private static void _OnUnloadUnusedAssets()
 		{
 			if(!CommonUtility.DisplayCheck("Unload unused assets","Unload unused assets?"))
 			{
@@ -54,7 +54,7 @@ namespace KZLib.KZMenu
 		}
 
 		[MenuItem("KZMenu/Option/Find Missing Component",false,(int) MenuType.Option_Find)]
-		private static void OnFindMissingComponent()
+		private static void _OnFindMissingComponent()
 		{
 			if(!CommonUtility.DisplayCheck("Find missing component","Find missing component?"))
 			{
@@ -94,7 +94,7 @@ namespace KZLib.KZMenu
 		}
 
 		[MenuItem("KZMenu/Option/Find Missing MeshFilter",false,(int) MenuType.Option_Find)]
-		private static void OnFindMissingMeshFilter()
+		private static void _OnFindMissingMeshFilter()
 		{
 			if(!CommonUtility.DisplayCheck("Find missing meshFilter","Find missing meshFilter?"))
 			{
@@ -134,7 +134,7 @@ namespace KZLib.KZMenu
 		}
 
 		[MenuItem("KZMenu/Option/Check Internet",false,(int) MenuType.Option_Check)]
-		private static void OnCheckInternet()
+		private static void _OnCheckInternet()
 		{
 			if(Application.internetReachability != NetworkReachability.NotReachable)
 			{

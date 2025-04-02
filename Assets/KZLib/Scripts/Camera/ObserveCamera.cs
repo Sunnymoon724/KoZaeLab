@@ -25,13 +25,13 @@ public class ObserveCamera : BaseComponent
 			return;
 		}
 
-		ProcessMouseKey();
+		_ProcessMouseKey();
 
-		UpdatePosition();
-		UpdateRotation();
+		_UpdatePosition();
+		_UpdateRotation();
 	}
 
-	private void UpdatePosition()
+	private void _UpdatePosition()
 	{
 		var target = m_target.transform.position;
 
@@ -39,12 +39,12 @@ public class ObserveCamera : BaseComponent
 		transform.position = target-(transform.forward*m_backDistance);
 	}
 
-	private void UpdateRotation()
+	private void _UpdateRotation()
 	{
 		transform.rotation = Quaternion.Euler(m_rotate.x,m_rotate.y,0.0f);
 	}
 
-	private void ProcessMouseKey()
+	private void _ProcessMouseKey()
 	{
 		if(Input.GetMouseButton(0))
 		{
@@ -57,7 +57,7 @@ public class ObserveCamera : BaseComponent
 				m_rotate.y -= rotY*m_rotateSpeed;
 			}
 
-			UpdateRotation();
+			_UpdateRotation();
 
 			m_mousePosition = Input.mousePosition;
 		}

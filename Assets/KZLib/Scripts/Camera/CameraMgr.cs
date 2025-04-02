@@ -25,11 +25,11 @@ namespace KZLib
 
 			var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-			optionCfg.OnGraphicQualityChange += OnChangeFarClipPlane;
+			optionCfg.OnGraphicQualityChange += _OnChangeFarClipPlane;
 
 			m_optionRef = new WeakReference<ConfigData.OptionConfig>(optionCfg);
 
-			OnChangeFarClipPlane(optionCfg.GraphicQuality);
+			_OnChangeFarClipPlane(optionCfg.GraphicQuality);
 		}
 
 		protected override void Release()
@@ -38,7 +38,7 @@ namespace KZLib
 
 			if(m_optionRef.TryGetTarget(out var optionCfg))
 			{
-				optionCfg.OnGraphicQualityChange -= OnChangeFarClipPlane;
+				optionCfg.OnGraphicQualityChange -= _OnChangeFarClipPlane;
 			}
 
 			m_optionRef = null;
@@ -75,7 +75,7 @@ namespace KZLib
 			m_mainCamera.enabled = enable;
 		}
 
-		private void OnChangeFarClipPlane(long graphicQuality)
+		private void _OnChangeFarClipPlane(long graphicQuality)
 		{
 			m_farFactor = float.Parse(GraphicQualityOption.In.FindValue(graphicQuality,Global.DISABLE_CAMERA_FAR_HALF));
 		}

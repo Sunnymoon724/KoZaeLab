@@ -57,12 +57,12 @@ public abstract class BaseToggleUI : BaseComponentUI
 	{
 		base.Initialize();
 
-		m_toggle.onValueChanged.AddAction(OnClickedToggle);
+		m_toggle.onValueChanged.AddAction(_OnClickedToggle);
 
-		OnClickedToggle(m_toggle.isOn);
+		_OnClickedToggle(m_toggle.isOn);
 	}
 
-	private void OnClickedToggle(bool isToggle)
+	private void _OnClickedToggle(bool isToggle)
 	{
 		foreach(var child in ToggleChildGroup)
 		{

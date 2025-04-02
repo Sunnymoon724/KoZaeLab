@@ -55,7 +55,7 @@ public class TimerTextUI : BaseTextUI
 		{
 			onUpdate?.Invoke(remainingTime);
 
-			UpdateText(remainingTime,format);
+			_UpdateText(remainingTime,format);
 
 			await UniTask.Delay(1000,ignoreTimeScale,cancellationToken : m_tokenSource.Token);
 
@@ -66,12 +66,12 @@ public class TimerTextUI : BaseTextUI
 
 		onUpdate?.Invoke(remainingTime);
 
-		UpdateText(remainingTime,format);
+		_UpdateText(remainingTime,format);
 
 		onComplete?.Invoke();
 	}
 
-	private void UpdateText(TimeSpan timeSpan,string format)
+	private void _UpdateText(TimeSpan timeSpan,string format)
     {
         m_textMesh.SetSafeTextMeshPro(string.IsNullOrEmpty(format) ? timeSpan.ToString() : timeSpan.ToString(format));
     }

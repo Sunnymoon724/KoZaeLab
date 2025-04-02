@@ -28,7 +28,7 @@ public class MagnetImageUI : BaseImageUI
 
 			if(Target && IsValidTarget)
 			{
-				OnChangedImage(Target.CalculateWorldSize());
+				_OnChangedImage(Target.CalculateWorldSize());
 			}
 		}
 	}
@@ -66,10 +66,10 @@ public class MagnetImageUI : BaseImageUI
 			return;
 		}
 
-		Observable.EveryUpdate().Select(_=>Target.CalculateWorldSize()).DistinctUntilChanged().Subscribe(OnChangedImage);
+		Observable.EveryUpdate().Select(_=>Target.CalculateWorldSize()).DistinctUntilChanged().Subscribe(_OnChangedImage);
 	}
 
-	private void OnChangedImage(Vector2 targetSize)
+	private void _OnChangedImage(Vector2 targetSize)
 	{
 		if(IsValidTarget)
 		{
@@ -84,20 +84,20 @@ public class MagnetImageUI : BaseImageUI
 
 		var size = new Vector2((targetSize.x+pivotSize.x)/2.0f+space,(targetSize.y+pivotSize.y)/2.0f+space);
 
-		if(CanMove(DirectionType.Top))
+		if(_CanMove(DirectionType.Top))
 		{
 			position += Vector3.up*size.y;
 		}
-		else if(CanMove(DirectionType.Bottom))
+		else if(_CanMove(DirectionType.Bottom))
 		{
 			position += Vector3.down*size.y;
 		}
 
-		if(CanMove(DirectionType.Left))
+		if(_CanMove(DirectionType.Left))
 		{
 			position += Vector3.left*size.x;
 		}
-		else if(CanMove(DirectionType.Right))
+		else if(_CanMove(DirectionType.Right))
 		{
 			position += Vector3.right*size.x;
 		}
@@ -105,12 +105,12 @@ public class MagnetImageUI : BaseImageUI
 		UIRectTransform.position = position;
 	}
 
-	private bool CanMove(DirectionType directionType)
+	private bool _CanMove(DirectionType directionType)
 	{
-		return m_direction.HasFlag(directionType) && !m_direction.HasFlag(GetOpposite(directionType));
+		return m_direction.HasFlag(directionType) && !m_direction.HasFlag(_GetOpposite(directionType));
 	}
 
-	private DirectionType GetOpposite(DirectionType directionType)
+	private DirectionType _GetOpposite(DirectionType directionType)
 	{
 		switch(directionType)
 		{

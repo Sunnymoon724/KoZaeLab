@@ -6,7 +6,7 @@ public static class ObjectExtension
 {
 	public static Object CopyObject(this Object origin,Transform parent = null)
 	{
-		if(!IsValid(origin,true))
+		if(!_IsValid(origin,true))
 		{
 			return null;
 		}
@@ -19,7 +19,7 @@ public static class ObjectExtension
 
 	public static void DestroyObject(this Object origin)
 	{
-		if(!IsValid(origin,false))
+		if(!_IsValid(origin,false))
 		{
 			return;
 		}
@@ -36,7 +36,7 @@ public static class ObjectExtension
 
 	public static byte[] ToByte(this Object origin)
 	{
-		if(!IsValid(origin,true))
+		if(!_IsValid(origin,true))
 		{
 			return null;
 		}
@@ -49,7 +49,7 @@ public static class ObjectExtension
 		return stream.ToArray();
 	}
 
-	private static bool IsValid(Object value,bool isShowLog)
+	private static bool _IsValid(Object value,bool isShowLog)
 	{
 		if(!value)
 		{

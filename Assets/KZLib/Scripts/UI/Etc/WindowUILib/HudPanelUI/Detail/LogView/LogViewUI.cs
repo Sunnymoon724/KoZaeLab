@@ -75,14 +75,14 @@ namespace HudPanel
 
 			foreach(var data in m_hudLogDataDict.Values)
 			{
-				data.Initialize(SetScrollRect);
+				data.Initialize(_SetScrollRect);
 			}
 
 			m_inputField.onValueChanged.SetAction((text)=>
 			{
 				m_compareText = text.IsEmpty() ? null : text;
 
-				SetScrollRect();
+				_SetScrollRect();
 			});
 		}
 
@@ -90,19 +90,19 @@ namespace HudPanel
 		{
 			base.OnEnable();
 
-			LogMgr.In.OnLogDisplay += OnUpdateLogScroll;
+			LogMgr.In.OnLogDisplay += _OnUpdateLogScroll;
 
-			SetScrollRect();
+			_SetScrollRect();
 		}
 
 		protected override void OnDisable()
 		{
 			base.OnEnable();
 
-			LogMgr.In.OnLogDisplay -= OnUpdateLogScroll;
+			LogMgr.In.OnLogDisplay -= _OnUpdateLogScroll;
 		}
 
-		private void SetScrollRect()
+		private void _SetScrollRect()
 		{
 			var cellDataList = new List<ICellData>();
 
@@ -113,7 +113,7 @@ namespace HudPanel
 
 			foreach(var message in LogMgr.In.LogDataGroup)
 			{
-				var cellData = CreateLogCellData(message);
+				var cellData = _CreateLogCellData(message);
 
 				if(cellData != null)
 				{
@@ -124,9 +124,9 @@ namespace HudPanel
 			m_scrollRectUI.SetCellList(cellDataList,0);
 		}
 
-		private void OnUpdateLogScroll(MessageData messageData)
+		private void _OnUpdateLogScroll(MessageData messageData)
 		{
-			var cellData = CreateLogCellData(messageData);
+			var cellData = _CreateLogCellData(messageData);
 
 			if(cellData != null)
 			{
@@ -134,9 +134,9 @@ namespace HudPanel
 			}
 		}
 
-		private LogCellData CreateLogCellData(MessageData messageData)
+		private LogCellData _CreateLogCellData(MessageData messageData)
 		{
-			var (Type,Time) = SplitHeader(messageData.Header);
+			var (Type,Time) = _SplitHeader(messageData.Header);
 
 			if(Type.HasValue)
 			{
@@ -144,7 +144,7 @@ namespace HudPanel
 
 				logData.AddCount();
 
-				if(logData.IsToggleOn && IsContainsText(messageData.Body))
+				if(logData.IsToggleOn && _IsContainsText(messageData.Body))
 				{
 					return new LogCellData(logData.Color,Time,messageData.Body,() =>
 					{
@@ -156,12 +156,12 @@ namespace HudPanel
 			return null;
 		}
 
-		private bool IsContainsText(string message)
+		private bool _IsContainsText(string message)
 		{
 			return m_compareText.IsEmpty() || message.Contains(m_compareText,StringComparison.OrdinalIgnoreCase);
 		}
 
-		private (HudLogType? Type,string Time) SplitHeader(string header)
+		private (HudLogType? Type,string Time) _SplitHeader(string header)
 		{
 			var headerArray = header.Split(' ',2);
 

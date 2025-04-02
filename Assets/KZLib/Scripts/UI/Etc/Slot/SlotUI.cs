@@ -44,7 +44,7 @@ public class SlotUI : BaseComponentUI
 
 		if(m_button)
 		{
-			m_button.onClick.AddAction(OnClicked);
+			m_button.onClick.AddAction(_OnClicked);
 		}
 	}
 
@@ -54,11 +54,11 @@ public class SlotUI : BaseComponentUI
 
 		if(m_button)
 		{
-			m_button.onClick.RemoveAction(OnClicked);
+			m_button.onClick.RemoveAction(_OnClicked);
 		}
 	}
 
-	private void OnClicked()
+	private void _OnClicked()
 	{
 		m_onClicked?.Invoke();
 	}

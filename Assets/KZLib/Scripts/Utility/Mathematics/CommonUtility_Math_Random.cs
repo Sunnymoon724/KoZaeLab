@@ -13,14 +13,14 @@ public static partial class CommonUtility
 	/// </summary>
 	public static int GenerateRandomInt(int minValue,int maxValue)
 	{
-		(minValue,maxValue) = NormalizeRange(minValue,maxValue);
+		(minValue,maxValue) = _NormalizeRange(minValue,maxValue);
 
 		return minValue == maxValue ? minValue : s_random.Next(minValue,maxValue+1);
 	}
 
 	public static IEnumerable<int> GenerateRandomIntGroup(int minValue,int maxValue,int count,bool allowDuplicate = true)
 	{
-		(minValue,maxValue) = NormalizeRange(minValue,maxValue);
+		(minValue,maxValue) = _NormalizeRange(minValue,maxValue);
 
 		if(allowDuplicate)
 		{
@@ -120,14 +120,14 @@ public static partial class CommonUtility
 	/// </summary>
 	public static float GenerateRandomFloat(float minValue,float maxValue)
 	{
-		(minValue,maxValue) = NormalizeRange(minValue,maxValue);
+		(minValue,maxValue) = _NormalizeRange(minValue,maxValue);
 
 		return GenerateRandomFloat()*(maxValue-minValue)+minValue;
 	}
 
 	public static IEnumerable<float> GenerateRandomFloatGroup(float minValue,float maxValue,int count,bool allowDuplicate = true)
 	{
-		(minValue,maxValue) = NormalizeRange(minValue,maxValue);
+		(minValue,maxValue) = _NormalizeRange(minValue,maxValue);
 
 		if(allowDuplicate)
 		{
@@ -189,7 +189,7 @@ public static partial class CommonUtility
 
 	public static IEnumerable<double> GenerateRandomDoubleGroup(double minValue,double maxValue,int count,bool allowDuplicate = true)
 	{
-		(minValue,maxValue) = NormalizeRange(minValue,maxValue);
+		(minValue,maxValue) = _NormalizeRange(minValue,maxValue);
 
 		if(allowDuplicate)
 		{
@@ -298,12 +298,12 @@ public static partial class CommonUtility
 	{
 		var value = GenerateRandomFloat();
 
-		(minValue,maxValue) = NormalizeRange(minValue,maxValue);
+		(minValue,maxValue) = _NormalizeRange(minValue,maxValue);
 
 		return minValue <= value && value <= maxValue;
 	}
 
-	private static (TValue min,TValue max) NormalizeRange<TValue>(TValue minValue,TValue maxValue) where TValue : IComparable<TValue>
+	private static (TValue min,TValue max) _NormalizeRange<TValue>(TValue minValue,TValue maxValue) where TValue : IComparable<TValue>
 	{
 		return minValue.CompareTo(maxValue) > 0 ? (maxValue,minValue) : (minValue,maxValue);
 	}

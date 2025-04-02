@@ -8,7 +8,7 @@ using UnityEditor.Animations;
 namespace KZLib
 {
 	[ExecuteInEditMode]
-	public class MotionControllerInEditMode : MotionController
+	public class MotionConInEditMode : MotionCon
 	{
 		[SerializeField,ValueDropdown(nameof(StateNameGroup))]
 		private string m_stateName = null;

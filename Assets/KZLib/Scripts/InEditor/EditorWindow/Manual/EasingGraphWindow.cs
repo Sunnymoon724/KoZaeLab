@@ -39,21 +39,21 @@ namespace KZLib.KZWindow
 
 			var rect = GUILayoutUtility.GetRect(700,700);
 
-			DrawGrid(rect,20.0f);
+			_DrawGrid(rect,20.0f);
 
 			if(Event.current.type == EventType.Repaint)
 			{
 				Handles.BeginGUI();
 
-				DrawGraphLine(rect,Color.blue);
+				_DrawGraphLine(rect,Color.blue);
 
-				DrawPoint(rect,Color.red);
+				_DrawPoint(rect,Color.red);
 
 				Handles.EndGUI();
 			}
 		}
 
-		private void DrawGrid(Rect rect,float size)
+		private void _DrawGrid(Rect rect,float size)
 		{
 			Handles.color = new Color(0.5f,0.5f,0.5f,0.2f);
 
@@ -73,7 +73,7 @@ namespace KZLib.KZWindow
 			Handles.DrawLine(new Vector3(rect.x,rect.y+rect.height,0.0f),new Vector3(rect.x+rect.width,rect.y+rect.height,0.0f));
 		}
 
-		private void DrawGraphLine(Rect rect,Color color)
+		private void _DrawGraphLine(Rect rect,Color color)
 		{
 			Handles.color = color;
 
@@ -94,7 +94,7 @@ namespace KZLib.KZWindow
 			Handles.DrawAAPolyLine(3.0f,pointList.ToArray());
 		}
 
-		private void DrawPoint(Rect rect,Color color)
+		private void _DrawPoint(Rect rect,Color color)
 		{
 			var currentX = Mathf.Lerp(rect.x,rect.x+rect.width,CurrentPoint);
 			var currentY = rect.y + rect.height-(m_resultPoint*rect.height);

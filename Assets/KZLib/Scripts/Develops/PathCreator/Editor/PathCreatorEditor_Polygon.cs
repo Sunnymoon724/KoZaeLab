@@ -9,7 +9,7 @@ namespace KZLib.KZDevelop
 	{
 		private const int c_shapeCount = 3;
 
-		private void SetShapePathInput(Event currentEvent)
+		private void _SetShapePathInput(Event currentEvent)
 		{
 			var handleArray = m_pathCreator.HandleArray;
 
@@ -17,7 +17,7 @@ namespace KZLib.KZDevelop
 
 			for(var i=0;i<c_shapeCount;i++)
 			{
-				var radius = GetHandleDiameter(m_anchorSize,handleArray[i])/2.0f;
+				var radius = _GetHandleDiameter(m_anchorSize,handleArray[i])/2.0f;
 				var position = handleArray[i].TransformPoint(m_pathCreator.transform,m_pathCreator.PathSpaceType);
 	
 				if(HandleUtility.DistanceToCircle(position,radius) == 0.0f)
@@ -47,7 +47,7 @@ namespace KZLib.KZDevelop
 					case EventType.MouseDrag when m_dragHandleIndex != Global.INVALID_INDEX:
 					{
 						var currentPosition = handleArray[m_dragHandleIndex];
-						var newPosition = GetMousePosition();
+						var newPosition = _GetMousePosition();
 
 						if(currentPosition != newPosition)
 						{
@@ -68,7 +68,7 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		private void DrawLineInShape()
+		private void _DrawLineInShape()
 		{
 			var cachedColor = Handles.color;
 
@@ -85,7 +85,7 @@ namespace KZLib.KZDevelop
 			Handles.color = cachedColor;
 		}
 
-		private bool IsShapeAnchor(int index)
+		private bool _IsShapeAnchor(int index)
 		{
 			return  index == 0;
 		}

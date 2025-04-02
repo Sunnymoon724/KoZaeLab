@@ -19,11 +19,11 @@ public class AdjustDragThreshold : BaseComponent
 
 		if(m_runOnAwake)
 		{
-			SetPixelDrag(Screen.dpi);
+			_SetPixelDrag(Screen.dpi);
 		}
 	}
 
-	private void SetPixelDrag(float screen_dpi)
+	private void _SetPixelDrag(float screen_dpi)
 	{
 		if(!m_eventSystem)
 		{

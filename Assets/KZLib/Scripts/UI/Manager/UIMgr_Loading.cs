@@ -18,7 +18,7 @@ namespace KZLib
 
 		public async UniTask PlayLoadingIncludeTransitionAsync(TransitionInfo info,Func<UniTask> onPlayTask)
 		{
-			await PlayTransitionOutInAsync(info,async ()=> { await PlayLoadingAsync(onPlayTask); });
+			await _PlayTransitionOutInAsync(info,async ()=> { await PlayLoadingAsync(onPlayTask); });
 		}
 	}
 }

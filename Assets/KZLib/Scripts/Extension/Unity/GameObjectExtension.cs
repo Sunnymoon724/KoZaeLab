@@ -6,7 +6,7 @@ public static class GameObjectExtension
 {
 	public static void SetRenderOff(this GameObject gameObject)
 	{
-		if(!IsValid(gameObject))
+		if(!_IsValid(gameObject))
 		{
 			return;
 		}
@@ -22,7 +22,7 @@ public static class GameObjectExtension
 	/// </summary>
 	public static void EnsureActive(this GameObject gameObject,bool value)
 	{
-		if(!IsValid(gameObject))
+		if(!_IsValid(gameObject))
 		{
 			return;
 		}
@@ -38,7 +38,7 @@ public static class GameObjectExtension
 	/// </summary>
 	public static void SetActiveToggle(this GameObject gameObject)
 	{
-		if(!IsValid(gameObject))
+		if(!_IsValid(gameObject))
 		{
 			return;
 		}
@@ -51,7 +51,7 @@ public static class GameObjectExtension
 	/// </summary>
 	public static void SetActiveAll(this GameObject gameObject,bool value,bool includeSelf)
 	{
-		if(!IsValid(gameObject))
+		if(!_IsValid(gameObject))
 		{
 			return;
 		}
@@ -66,7 +66,7 @@ public static class GameObjectExtension
 
 	public static void SetAllLayer(this GameObject gameObject,int layer)
 	{
-		if(!IsValid(gameObject))
+		if(!_IsValid(gameObject))
 		{
 			return;
 		}
@@ -78,7 +78,7 @@ public static class GameObjectExtension
 
 	public static void SetAllLayer(this GameObject gameObject,string layerName)
 	{
-		if(!IsValid(gameObject))
+		if(!_IsValid(gameObject))
 		{
 			return;
 		}
@@ -88,7 +88,7 @@ public static class GameObjectExtension
 
 	public static bool IsPrefab(this GameObject gameObject)
 	{
-		if(!IsValid(gameObject))
+		if(!_IsValid(gameObject))
 		{
 			return false;
 		}
@@ -98,7 +98,7 @@ public static class GameObjectExtension
 
 	public static bool IsExistMeshFilter(this GameObject gameObject)
 	{
-		if(!IsValid(gameObject))
+		if(!_IsValid(gameObject))
 		{
 			return false;
 		}
@@ -123,7 +123,7 @@ public static class GameObjectExtension
 
 	public static TComponent GetOrAddComponent<TComponent>(this GameObject gameObject) where TComponent : Component
 	{
-		if(!IsValid(gameObject))
+		if(!_IsValid(gameObject))
 		{
 			return null;
 		}
@@ -133,7 +133,7 @@ public static class GameObjectExtension
 
 	public static bool IsInComponent<TComponent>(this GameObject gameObject) where TComponent : Component
 	{
-		if(!IsValid(gameObject))
+		if(!_IsValid(gameObject))
 		{
 			return false;
 		}
@@ -143,7 +143,7 @@ public static class GameObjectExtension
 
 	public static void ReAssignShader(this GameObject gameObject)
 	{
-		if(!IsValid(gameObject))
+		if(!_IsValid(gameObject))
 		{
 			return;
 		}
@@ -175,7 +175,7 @@ public static class GameObjectExtension
 
 	public static void SetCanvasCullTransparentMeshOff(this GameObject gameObject)
 	{
-		if(!IsValid(gameObject))
+		if(!_IsValid(gameObject))
 		{
 			return;
 		}
@@ -193,7 +193,7 @@ public static class GameObjectExtension
 	/// </summary>
 	public static void SkinMeshFlip(this GameObject gameObject)
 	{
-		if(!IsValid(gameObject))
+		if(!_IsValid(gameObject))
 		{
 			return;
 		}
@@ -247,7 +247,7 @@ public static class GameObjectExtension
 		mesh.bindposes = bindposeList.ToArray();
 	}
 
-	private static bool IsValid(GameObject gameObject)
+	private static bool _IsValid(GameObject gameObject)
 	{
 		if(!gameObject)
 		{

@@ -92,7 +92,7 @@ namespace KZLib.KZDevelop
 			m_cellDataList.Clear();
 			m_cellDataList.AddRange(cellDataList);
 
-			UpdateLocation(focusIndex,true);
+			_UpdateLocation(focusIndex,true);
 			UpdateIndex(focusIndex);
 		}
 
@@ -103,7 +103,7 @@ namespace KZLib.KZDevelop
 			OnFocusSet?.Invoke(m_cellDataList[m_focusIndex]);
 		}
 
-		private void UpdateLocation(float location,bool isForceRefresh)
+		private void _UpdateLocation(float location,bool isForceRefresh)
 		{
 			m_currentLocation = location;
 
@@ -113,13 +113,13 @@ namespace KZLib.KZDevelop
 
 			if(firstLocation+m_slotUIList.Count*m_slotSpace < 1.0f)
 			{
-				ResizePool(firstLocation);
+				_ResizePool(firstLocation);
 			}
 
-			UpdateSlotList(firstLocation,firstIndex,isForceRefresh);
+			_UpdateSlotList(firstLocation,firstIndex,isForceRefresh);
 		}
 
-		private void ResizePool(float firstLocation)
+		private void _ResizePool(float firstLocation)
 		{
 			var count = Mathf.CeilToInt((1.0f-firstLocation)/m_slotSpace)-m_slotUIList.Count;
 
@@ -129,7 +129,7 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		private void UpdateSlotList(float firstLocation,int firstIndex,bool isForceRefresh)
+		private void _UpdateSlotList(float firstLocation,int firstIndex,bool isForceRefresh)
 		{
 			var cellCount = m_cellDataList.Count;
 			var slotCount = m_slotUIList.Count;

@@ -35,7 +35,7 @@ namespace KZLib.KZWindow
 
 			for(var i=0;i<pixelArray.Length;i++)
 			{
-				if(CanChangeColor(pixelArray[i]))
+				if(_CanChangeColor(pixelArray[i]))
 				{
 					if(!m_includeAlpha)
 					{
@@ -84,7 +84,7 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Option/1"),LabelText("Include Alpha"),SerializeField]
 		private bool m_includeAlpha = false;
 
-		private bool CanChangeColor(Color32 color32)
+		private bool _CanChangeColor(Color32 color32)
 		{
 			return Mathf.Abs(color32.r-m_beforeColor.r) <= m_errorRange && Mathf.Abs(color32.g-m_beforeColor.g) <= m_errorRange && Mathf.Abs(color32.b-m_beforeColor.b) <= m_errorRange;
 		}

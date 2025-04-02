@@ -12,14 +12,19 @@ public class Test : MonoBehaviour
     {
         for(int i=0;i<100;i++)
         {
-            LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(new SquadParam(5,2).ToString())}");
+            LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(wasdwe(new SquadParam(5,2)))}");
         }
 
         
-        LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(new SquadParam(5,2).ToString())}");
-        LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(new SquadParam(5,25).ToString())}");
-        LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(new SquadParam(5,25).ToString())}");
-        LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(new SquadParam(5,25).ToString())}");
+        
+        // LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(wasdwe(new SquadParam(5,2)))}");
+        // LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(wasdwe(new SquadParam(5,2)))}");
+        // LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(wasdwe(new SquadParam(5,2)))}");
+    }
+
+    private string wasdwe(object aa)
+    {
+        return aa.ToString();
     }
 }
 
