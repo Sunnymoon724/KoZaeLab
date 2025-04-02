@@ -15,7 +15,7 @@ namespace ConfigData
 				return null;
 			}
 
-			return JsonConvert.SerializeObject(param);
+			return JsonConvert.SerializeObject(param, new JsonSerializerSettings { FloatFormatHandling = FloatFormatHandling.DefaultValue, });
 		}
 	}
 }

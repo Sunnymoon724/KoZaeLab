@@ -225,7 +225,7 @@ namespace KZLib
 			}
 
 			var paramName = StartSceneName.Replace("Scene","Param");
-			var paramType = Type.GetType($"{StartSceneName}.{paramName}, Assembly-CSharp");
+			var paramType = Type.GetType($"{StartSceneName}+{paramName}, Assembly-CSharp");
 
 			var stateParam = JsonConvert.DeserializeObject(paramText,paramType) as SceneState.StateParam;
 
