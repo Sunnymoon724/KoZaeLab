@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.Serialization;
 using KZLib.KZAttribute;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
@@ -59,7 +60,8 @@ namespace KZLib.KZWindow
 
 		private object _GenerateInstance()
 		{
-			var instance = Activator.CreateInstance(m_type);
+			var constructor = m_type.GetConstructor(Type.EmptyTypes);
+			var instance = constructor != null ? Activator.CreateInstance(m_type) : FormatterServices.GetUninitializedObject(m_type);
 
 			foreach(var propertyInfo in m_type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
 			{
