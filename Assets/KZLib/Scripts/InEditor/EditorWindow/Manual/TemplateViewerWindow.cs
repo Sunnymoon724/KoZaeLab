@@ -65,6 +65,13 @@ namespace KZLib.KZWindow
 
 			foreach(var propertyInfo in m_type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
 			{
+				var setMethod = propertyInfo.SetMethod ?? propertyInfo.GetSetMethod(true);
+
+				if(setMethod == null)
+				{
+					continue;
+				}
+
 				var propertyType = propertyInfo.PropertyType;
 
 				if(propertyType.IsArray)
