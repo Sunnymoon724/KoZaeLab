@@ -65,31 +65,38 @@ namespace KZLib.KZWindow
 
 			foreach(var propertyInfo in m_type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
 			{
+				var propertyType = propertyInfo.PropertyType;
 				var setMethod = propertyInfo.SetMethod ?? propertyInfo.GetSetMethod(true);
 
-				if(setMethod == null)
-				{
-					continue;
-				}
-
-				var propertyType = propertyInfo.PropertyType;
-
-				if(propertyType.IsArray)
-				{
-					var elementType = propertyType.GetElementType();
-					var elementArray = Array.CreateInstance(elementType,2);
-
-					for(var i=0;i<2;i++)
-					{
-						elementArray.SetValue(_GenerateValue(elementType),i);
-					}
-
-					propertyInfo.SetValue(instance,elementArray);
-				}
-				else
+				if(setMethod != null && setMethod.IsPublic)
 				{
 					propertyInfo.SetValue(instance,_GenerateValue(propertyType));
 				}
+				else
+				{
+					var backingField = m_type.GetField($"<{propertyInfo.Name}>k__BackingField",BindingFlags.NonPublic | BindingFlags.Instance);
+
+					backingField?.SetValue(instance,_GenerateValue(propertyType));
+				}
+
+				// var propertyType = propertyInfo.PropertyType;
+
+				// if(propertyType.IsArray)
+				// {
+				// 	var elementType = propertyType.GetElementType();
+				// 	var elementArray = Array.CreateInstance(elementType,2);
+
+				// 	for(var i=0;i<2;i++)
+				// 	{
+				// 		elementArray.SetValue(_GenerateValue(elementType),i);
+				// 	}
+
+				// 	propertyInfo.SetValue(instance,elementArray);
+				// }
+				// else
+				// {
+				// 	propertyInfo.SetValue(instance,_GenerateValue(propertyType));
+				// }
 			}
 
 			return instance;
@@ -113,7 +120,14 @@ namespace KZLib.KZWindow
 			}
 			catch
 			{
-				return default;
+				try
+				{
+					return FormatterServices.GetUninitializedObject(type);
+				}
+				catch
+				{
+					return null;
+				}
 			}
 		}
 
