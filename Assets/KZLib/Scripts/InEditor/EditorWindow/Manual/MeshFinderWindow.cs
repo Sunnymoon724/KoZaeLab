@@ -13,7 +13,7 @@ namespace KZLib.KZWindow
 		private Mesh m_replaceMesh = null;
 
 		[TitleGroup("Find Mesh",BoldTitle = false,Order = 0)]
-		[HorizontalGroup("Find Mesh/0",Order = 0),LabelText("Selection Mesh"),ShowInInspector]
+		[HorizontalGroup("Find Mesh/0",Order = 0),ShowInInspector]
 		private Mesh SelectionMesh
 		{
 			get => m_selectionMesh;
@@ -54,7 +54,7 @@ namespace KZLib.KZWindow
 			}
 		}
 
-		[HorizontalGroup("Find Mesh/1",Order = 1),LabelText("Replace Mesh"),ShowInInspector]
+		[HorizontalGroup("Find Mesh/1",Order = 1),ShowInInspector]
 		private Mesh ReplaceMesh
 		{
 			get => m_replaceMesh;
@@ -85,13 +85,13 @@ namespace KZLib.KZWindow
 			}
 		}
 
-		[HorizontalGroup("Find Mesh/2",Order = 2),LabelText("Prefab List"),SerializeField,ShowIf(nameof(HasPrefab)),ListDrawerSettings(ShowFoldout = false,DraggableItems = false,HideAddButton = true,HideRemoveButton = true)]
+		[HorizontalGroup("Find Mesh/2",Order = 2),SerializeField,ShowIf(nameof(HasPrefab)),ListDrawerSettings(ShowFoldout = false,DraggableItems = false,HideAddButton = true,HideRemoveButton = true)]
 		private List<Prefab> m_prefabList = new();
 		private bool HasPrefab => SelectionMesh && !m_prefabList.IsNullOrEmpty();
 
 		private bool IsValidReplace => ReplaceMesh && SelectionMesh != ReplaceMesh && HasPrefab;
 
-		[VerticalGroup("Find Mesh/3",Order = 3),Button("Change All Mesh"),ShowIf(nameof(HasPrefab)),EnableIf(nameof(IsValidReplace))]
+		[VerticalGroup("Find Mesh/3",Order = 3),ShowIf(nameof(HasPrefab)),EnableIf(nameof(IsValidReplace))]
 		protected void OnMeshToolBar()
 		{
 			foreach(var meshData in m_prefabList)

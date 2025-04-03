@@ -12,6 +12,7 @@ namespace KZLib.KZWindow
 				{ "Easing Graph", CreateInstance<EasingGraphWindow>() },
 				{ "Mesh Finder", CreateInstance<MeshFinderWindow>() },
 				{ "Pixel Editor", CreateInstance<PixelEditorWindow>() },
+				{ "Template Viewer", CreateInstance<TemplateViewerWindow>() },
 			};
 
 			menuTree.Config.DrawSearchToolbar = true;
