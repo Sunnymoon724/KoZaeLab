@@ -26,31 +26,40 @@ namespace KZLib.KZWindow
 				}
 
 				m_typeName = value;
-
-				var type = Type.GetType(value);
-
-				if(type == null)
-				{
-					return;
-				}
-
-				var data = Activator.CreateInstance(type);
-
-				var serializer = new SerializerBuilder().IncludeNonPublicProperties().Build();
-
-				m_yamlText = serializer.Serialize(data,type);
-				m_jsonText = JsonConvert.SerializeObject(data);
 			}
 		}
 
 		private bool IsValid => !m_typeName.IsEmpty() && Type.GetType(TypeName) != null;
 
-		[VerticalGroup("1",Order = 1),ShowInInspector,HideIf(nameof(IsValid)),KZRichText]
+		[VerticalGroup("1",Order = 1),Button("Convert")]
+		protected void OnConvert()
+		{
+			if(TypeName.IsEmpty())
+			{
+				return;
+			}
+
+			var type = Type.GetType(TypeName);
+
+			if(type == null)
+			{
+				return;
+			}
+
+			var data = Activator.CreateInstance(type);
+
+			var serializer = new SerializerBuilder().IncludeNonPublicProperties().Build();
+
+			m_yamlText = serializer.Serialize(data,type);
+			m_jsonText = JsonConvert.SerializeObject(data);
+		}
+
+		[VerticalGroup("2",Order = 2),ShowInInspector,HideIf(nameof(IsValid)),KZRichText]
 		protected string DisableText => "Not Exist Type";
 
-		[VerticalGroup("2",Order = 2),ShowInInspector,ShowIf(nameof(IsValid))]
+		[VerticalGroup("3",Order = 3),ShowInInspector,ShowIf(nameof(IsValid))]
 		protected string YamlText => m_yamlText;
-		[VerticalGroup("2",Order = 2),ShowInInspector,ShowIf(nameof(IsValid))]
+		[VerticalGroup("3",Order = 3),ShowInInspector,ShowIf(nameof(IsValid))]
 		protected string JsonText => m_jsonText;
 	}
 }
