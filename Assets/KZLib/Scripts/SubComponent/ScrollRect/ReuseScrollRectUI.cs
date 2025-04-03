@@ -15,8 +15,8 @@ public class ReuseScrollRectUI : BaseComponentUI
 	[SerializeField]
 	private ScrollRect m_scrollRect = null;
 
-	[SerializeField,ReadOnly]
-	private bool m_isVertical = false;
+	[ShowInInspector,ReadOnly]
+	private bool IsVertical => m_scrollRect.vertical;
 
 	[SerializeField]
 	private float m_padding = 0.0f;
@@ -45,9 +45,21 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 	private Tween m_tween = null;
 
+	private bool m_initialize = false;
+
 	protected override void Initialize()
 	{
 		base.Initialize();
+
+		_EnsureInitialized();
+	}
+
+	private void _EnsureInitialized()
+	{
+		if(m_initialize)
+		{
+			return;
+		}
 
 		if(!m_pivot)
 		{
@@ -55,8 +67,6 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 			return;
 		}
-
-		m_isVertical = m_scrollRect.vertical;
 
 		m_pivot.gameObject.EnsureActive(false);
 		m_scrollRect.viewport.transform.SetUIChild(m_pivot.transform);
@@ -68,7 +78,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 		m_scrollRect.viewport.pivot = Vector2.up;
 
-		if(m_isVertical)
+		if(IsVertical)
 		{
 			m_slotSize = m_pivot.UIRectTransform.rect.height;
 			m_slotPivot = m_slotSize*m_scrollRect.content.pivot.y-m_slotSize-m_padding;
@@ -89,6 +99,33 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 		m_cellDataList.Clear();
 		m_slotDict.Clear();
+
+		m_initialize = true;
+	}
+
+	protected override void OnEnable()
+	{
+		base.OnEnable();
+
+		m_scrollRect.onValueChanged.AddAction(_OnScrollChanged);
+	}
+
+	protected override void OnDisable()
+	{
+		base.OnDisable();
+
+		m_scrollRect.onValueChanged.RemoveAction(_OnScrollChanged);
+
+		CommonUtility.KillTween(m_tween);
+	}
+
+	protected override void Release()
+	{
+		base.Release();
+
+		CommonUtility.KillTween(m_tween);
+
+		Clear();
 	}
 
 	public void Clear()
@@ -135,6 +172,8 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 	private void _ScrollTo(int index,ScrollToType ScrollToType,float duration = 0.0f,Action onComplete = null)
 	{
+		_EnsureInitialized();
+
 		if(!m_cellDataList.ContainsIndex(index))
 		{
 			return;
@@ -182,32 +221,9 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 	public void SetContentLocation(float location)
 	{
-		m_scrollRect.content.anchoredPosition = m_isVertical ? new Vector2(m_scrollRect.content.anchoredPosition.x,location) : new Vector2(-location,m_scrollRect.content.anchoredPosition.y);
-	}
+		_EnsureInitialized();
 
-	protected override void OnEnable()
-	{
-		base.OnEnable();
-
-		m_scrollRect.onValueChanged.AddAction(_OnScrollChanged);
-	}
-
-	protected override void OnDisable()
-	{
-		base.OnDisable();
-
-		m_scrollRect.onValueChanged.RemoveAction(_OnScrollChanged);
-
-		CommonUtility.KillTween(m_tween);
-	}
-
-	protected override void Release()
-	{
-		base.Release();
-
-		CommonUtility.KillTween(m_tween);
-
-		Clear();
+		m_scrollRect.content.anchoredPosition = IsVertical ? new Vector2(m_scrollRect.content.anchoredPosition.x,location) : new Vector2(-location,m_scrollRect.content.anchoredPosition.y);
 	}
 
 	private void _OnScrollChanged(Vector2 location)
@@ -294,11 +310,13 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 	private float _GetViewportSize()
 	{
-		return m_isVertical ? m_scrollRect.viewport.rect.height : m_scrollRect.viewport.rect.width;
+		return IsVertical ? m_scrollRect.viewport.rect.height : m_scrollRect.viewport.rect.width;
 	}
 
 	public void SetCellList(List<ICellData> cellDataList,int? index = null)
 	{
+		_EnsureInitialized();
+
 		var cellIndex = index.HasValue ? Mathf.Clamp(index.Value,0,cellDataList.Count) : 0;
 
 		m_cellDataList.Clear();
@@ -316,6 +334,8 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 	public void AddCell(ICellData cellData)
 	{
+		_EnsureInitialized();
+
 		m_cellDataList.Add(cellData);
 
 		_ResizeContent();
@@ -325,7 +345,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 	private float _GetContentLocation()
 	{
-		return m_isVertical ? m_scrollRect.content.anchoredPosition.y : -m_scrollRect.content.anchoredPosition.x;
+		return IsVertical ? m_scrollRect.content.anchoredPosition.y : -m_scrollRect.content.anchoredPosition.x;
 	}
 
 	private int _FindShowHeadIndex()
@@ -368,21 +388,21 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 	private float _GetContentSize()
 	{
-		return m_isVertical ? m_scrollRect.content.rect.height : m_scrollRect.content.rect.width;
+		return IsVertical ? m_scrollRect.content.rect.height : m_scrollRect.content.rect.width;
 	}
 
 	private void _ResizeContent()
 	{
 		var size = m_cellDataList.Count == 0 ? 0.0f : m_cellDataList.Count*m_slotSize+(m_cellDataList.Count-1)*m_space+m_padding*2.0f;
 
-		m_scrollRect.content.sizeDelta = m_isVertical ? new Vector2(m_scrollRect.content.sizeDelta.x,size) : new Vector2(size,m_scrollRect.content.sizeDelta.y);
+		m_scrollRect.content.sizeDelta = IsVertical ? new Vector2(m_scrollRect.content.sizeDelta.x,size) : new Vector2(size,m_scrollRect.content.sizeDelta.y);
 	}
 
 	private void _SetSlotLocation(RectTransform rectTransform,int index)
 	{
 		var size = _GetSizeToIndex(index);
 
-		rectTransform.anchoredPosition = m_isVertical ? new Vector2(0.0f,m_slotPivot-size) : new Vector2(m_slotPivot+size,0.0f);
+		rectTransform.anchoredPosition = IsVertical ? new Vector2(0.0f,m_slotPivot-size) : new Vector2(m_slotPivot+size,0.0f);
 	}
 
 	private float _GetSizeToIndex(int index)
