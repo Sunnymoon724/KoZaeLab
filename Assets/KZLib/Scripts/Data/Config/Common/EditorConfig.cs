@@ -8,20 +8,22 @@ namespace ConfigData
 {
 	public class EditorConfig : IConfig
 	{
-		private Dictionary<string,string> SceneParamDict { get; set; }
+		private Dictionary<string,object> SceneParamDict { get; set; }
 
 		public SceneState.StateParam GetSceneParam(string sceneName,Type targetType)
 		{
-			if(!SceneParamDict.TryGetValue(sceneName,out var text))
+			if(!SceneParamDict.TryGetValue(sceneName,out var param))
 			{
 				return null;
 			}
 
-			if(text.IsEmpty())
+			if(param == null)
 			{
 				return null;
 			}
-	
+
+			var text = JsonConvert.SerializeObject(param);
+
 			return JsonConvert.DeserializeObject(text,targetType) as SceneState.StateParam;
 		}
 	}

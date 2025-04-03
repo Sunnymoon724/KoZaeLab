@@ -9,8 +9,6 @@ using Cysharp.Threading.Tasks;
 using System.Threading;
 using System.Collections.Generic;
 using System.IO;
-using ExcelDataReader.Log;
-
 
 #if UNITY_EDITOR
 
@@ -289,15 +287,9 @@ namespace KZLib
 			stringBuilder.AppendFormat($"Current FPS {Application.targetFrameRate}\n");
 		}
 
-		protected virtual void InitializeRenderSetting(StringBuilder stringBuilder)
-		{
+		protected virtual void InitializeRenderSetting(StringBuilder stringBuilder) { }
 
-		}
-
-		protected virtual void InitializeObject(StringBuilder stringBuilder)
-		{
-
-		}
+		protected virtual void InitializeObject(StringBuilder stringBuilder) { }
 
 		protected virtual void OnDestroy()
 		{
