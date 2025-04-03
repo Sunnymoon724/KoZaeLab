@@ -64,42 +64,18 @@ namespace KZLib.KZWindow
 			var instance = constructor != null ? Activator.CreateInstance(m_type) : FormatterServices.GetUninitializedObject(m_type);
 
 			foreach(var propertyInfo in m_type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
-			{
-				var propertyType = propertyInfo.PropertyType;
-				var setMethod = propertyInfo.SetMethod ?? propertyInfo.GetSetMethod(true);
+            {
+                var setMethod = propertyInfo.SetMethod ?? propertyInfo.GetSetMethod(true);
+                if (setMethod == null)
+                {
+                    continue;
+                }
 
-				if(setMethod != null && setMethod.IsPublic)
-				{
-					propertyInfo.SetValue(instance,_GenerateValue(propertyType));
-				}
-				else
-				{
-					var backingField = m_type.GetField($"<{propertyInfo.Name}>k__BackingField",BindingFlags.NonPublic | BindingFlags.Instance);
+                var propertyType = propertyInfo.PropertyType;
+                propertyInfo.SetValue(instance, _GenerateValue(propertyType));
+            }
 
-					backingField?.SetValue(instance,_GenerateValue(propertyType));
-				}
-
-				// var propertyType = propertyInfo.PropertyType;
-
-				// if(propertyType.IsArray)
-				// {
-				// 	var elementType = propertyType.GetElementType();
-				// 	var elementArray = Array.CreateInstance(elementType,2);
-
-				// 	for(var i=0;i<2;i++)
-				// 	{
-				// 		elementArray.SetValue(_GenerateValue(elementType),i);
-				// 	}
-
-				// 	propertyInfo.SetValue(instance,elementArray);
-				// }
-				// else
-				// {
-				// 	propertyInfo.SetValue(instance,_GenerateValue(propertyType));
-				// }
-			}
-
-			return instance;
+            return instance;
 		}
 
 		private object _GenerateValue(Type type)
@@ -125,6 +101,21 @@ namespace KZLib.KZWindow
 				}
 
 				return arrayInstance;
+			}
+
+			var infoArray = type.GetConstructors();
+
+			if(infoArray != null && infoArray.Length > 0)
+			{
+				var parameters = infoArray[0].GetParameters();
+				var argumentArray = new object[parameters.Length];
+
+				for(var i=0;i<argumentArray.Length;i++)
+				{
+					argumentArray[i] = _GenerateValue(parameters[i].ParameterType);
+				}
+
+				return Activator.CreateInstance(type,argumentArray);
 			}
 
 			try
