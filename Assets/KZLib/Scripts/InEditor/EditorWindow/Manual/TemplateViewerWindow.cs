@@ -114,6 +114,19 @@ namespace KZLib.KZWindow
 				return Enum.GetValues(type).GetValue(0);
 			}
 
+			if(type.IsArray)
+			{
+				var elementType = type.GetElementType();
+				var arrayInstance = Array.CreateInstance(elementType,2);
+
+				for(var i=0;i<2;i++)
+				{
+					arrayInstance.SetValue(_GenerateValue(elementType),i);
+				}
+
+				return arrayInstance;
+			}
+
 			try
 			{
 				return Activator.CreateInstance(type);
