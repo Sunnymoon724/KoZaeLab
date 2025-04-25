@@ -51,7 +51,7 @@ public static partial class CommonUtility
 	{
 		foreach(var path in FileUtility.FindFilePathGroup(FileUtility.GetAbsolutePath(folderPath,true)))
 		{
-			var asset = AssetDatabase.LoadAssetAtPath<TObject>(FileUtility.GetAssetsPath(path));
+			var asset = AssetDatabase.LoadAssetAtPath<TObject>(FileUtility.GetAssetPath(path));
 
 			if(asset != null)
 			{
@@ -65,23 +65,30 @@ public static partial class CommonUtility
 		return AssetDatabase.FindAssets(filter,searchInFolderArray);
 	}
 
-	public static void SaveAsset(string dataPath,Object asset)
+	public static void SaveAsset(string path,Object asset,bool isOverride)
 	{
-		if(dataPath.IsEmpty() || !asset)
+		if(path.IsEmpty() || !asset)
 		{
-			LogTag.System.E($"Path or asset is null {dataPath} or {asset}");
+			LogTag.System.E($"Path or asset is null {path} or {asset}");
 
 			return;
 		}
 
-		var folderPath = FileUtility.GetParentAbsolutePath(dataPath,true);
-		var assetPath = FileUtility.GetAssetsPath(dataPath);
+		var folderPath = FileUtility.GetParentAbsolutePath(path,true);
+		var assetPath = FileUtility.GetAssetPath(path);
 
 		FileUtility.CreateFolder(folderPath);
 
-		if(FileUtility.IsFileExist(dataPath))
+		if(FileUtility.IsFileExist(path))
 		{
-			AssetDatabase.DeleteAsset(assetPath);
+			if(isOverride)
+			{
+				AssetDatabase.DeleteAsset(assetPath);
+			}
+			else
+			{
+				return;
+			}
 		}
 
 		AssetDatabase.CreateAsset(asset,assetPath);
@@ -90,7 +97,7 @@ public static partial class CommonUtility
 		AssetDatabase.SaveAssets();
 		AssetDatabase.Refresh();
 
-		LogTag.System.I($"{asset.name} is saved in {dataPath}.");
+		LogTag.System.I($"{asset.name} is saved in {path}.");
 	}
 #endif
 }

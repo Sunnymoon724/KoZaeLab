@@ -32,12 +32,7 @@ public static partial class ContainerExtension
 
 	public static bool ContainsIndex<TValue>(this ICollection<TValue> collection,int index)
 	{
-		if(!_IsValid(collection))
-		{
-			return false;
-		}
-
-		return 0 <= index && index < collection.Count;
+		return _IsValid(collection) && 0 <= index && index < collection.Count;
 	}
 
 	public static TValue Middle<TValue>(this ICollection<TValue> collection)
@@ -68,12 +63,7 @@ public static partial class ContainerExtension
 
 	public static bool RemoveSafe<TValue>(this ICollection<TValue> collection,TValue value)
 	{
-		if(!_IsValid(collection))
-		{
-			return false;
-		}
-
-		return collection.Contains(value) && collection.Remove(value);
+		return _IsValid(collection) && collection.Contains(value) && collection.Remove(value);
 	}
 
 	public static void RemoveRange<TValue>(this ICollection<TValue> collection,IList<TValue> valueList)
@@ -91,10 +81,10 @@ public static partial class ContainerExtension
 
 	public static bool RemoveRandomValue<TValue>(this ICollection<TValue> collection,out TValue value)
 	{
+		value = default;
+
 		if(!_IsValid(collection))
 		{
-			value = default;
-
 			return false;
 		}
 
@@ -115,27 +105,15 @@ public static partial class ContainerExtension
 
 	public static TValue GetValueByIndex<TValue>(this ICollection<TValue> collection,int index)
 	{
-		if(!_IsValid(collection))
-		{
-			return default;
-		}
-
-		return collection.TryGetValueByIndex(index,out var value) ? value : default;
+		return _IsValid(collection) && collection.TryGetValueByIndex(index, out var value) ? value : default;
 	}
 
 	public static bool TryGetValueByIndex<TValue>(this ICollection<TValue> collection,int index,out TValue value)
 	{
-		if(!_IsValid(collection))
+		value = default;
+
+		if(!_IsValid(collection) || !collection.ContainsIndex(index))
 		{
-			value = default;
-
-			return false;
-		}
-
-		if(!collection.ContainsIndex(index))
-		{
-			value = default;
-
 			return false;
 		}
 

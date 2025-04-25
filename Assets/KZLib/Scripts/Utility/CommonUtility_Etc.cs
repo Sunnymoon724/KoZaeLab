@@ -1,5 +1,7 @@
 #if UNITY_EDITOR
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEditor;
 
 #endif
@@ -13,5 +15,19 @@ public static partial class CommonUtility
 #else
 		GUIUtility.systemCopyBuffer = text;
 #endif
+	}
+
+	public static string PrettifyJson(string text)
+	{
+		try
+		{
+			var parsedText = JToken.Parse(text);
+
+			return parsedText.ToString(Formatting.Indented);
+		}
+		catch
+		{
+			return text;
+		}
 	}
 }

@@ -25,7 +25,7 @@ namespace KZLib
 				return;
 			}
 
-			await PostWebRequest(PostGoogleSheetAddRowWebRequest.Create(url,sheetId,sheetOrder,content));
+			await _SendWebRequest(PostGoogleSheetAddRowWebRequest.Create(url,sheetId,sheetOrder,content));
 		}
 
 		public void GetGoogleSheet(string sheetName,int sheetOrder,Action<string> onAction)
@@ -45,7 +45,7 @@ namespace KZLib
 				return null;
 			}
 
-			var info = await GetWebRequest(GetGoogleSheetWebRequest.Create(url,sheetId,sheetOrder));
+			var info = await _SendWebRequest(GetGoogleSheetWebRequest.Create(url,sheetId,sheetOrder));
 
 			return info.Result ? info.Content : string.Empty;
 		}
@@ -69,7 +69,7 @@ namespace KZLib
 				return;
 			}
 
-			await PostWebRequest(PostGoogleDriveFileWebRequest.Create(url,folderId,fileName,file,mimeType));
+			await _SendWebRequest(PostGoogleDriveFileWebRequest.Create(url,folderId,fileName,file,mimeType));
 		}
 
 		public void GetGoogleDriveEntry(string folderName,Action<List<string>> onAction)
@@ -89,7 +89,7 @@ namespace KZLib
 				return null;
 			}
 
-			var info = await GetWebRequest(GetGoogleDriveEntryWebRequest.Create(url,folderId));
+			var info = await _SendWebRequest(GetGoogleDriveEntryWebRequest.Create(url,folderId));
 
 
 			if(info.Result)
@@ -108,12 +108,12 @@ namespace KZLib
 				}
 				catch(Exception exception)
 				{
-					LogTag.System.E($"Convert is failed - {exception}");
+					LogTag.Network.E($"Convert is failed - {exception}");
 				}
 			}
 			else
 			{
-				LogTag.System.E("Result is failed");
+				LogTag.Network.E("Result is failed");
 			}
 
 			return null;
@@ -126,7 +126,7 @@ namespace KZLib
 
 			if(sheetId.IsEmpty())
 			{
-				LogTag.System.E("Sheet id is empty");
+				LogTag.Network.E("Sheet id is empty");
 
 				return false;
 			}
@@ -141,7 +141,7 @@ namespace KZLib
 
 			if(url.IsEmpty())
 			{
-				LogTag.System.E("Google Sheet URL is empty");
+				LogTag.Network.E("Google Sheet URL is empty");
 
 				return false;
 			}
@@ -156,7 +156,7 @@ namespace KZLib
 
 			if(folderId.IsEmpty())
 			{
-				LogTag.System.E("Folder id is empty");
+				LogTag.Network.E("Folder id is empty");
 
 				return false;
 			}
@@ -171,7 +171,7 @@ namespace KZLib
 
 			if(url.IsEmpty())
 			{
-				LogTag.System.E("Google Drive URL is empty");
+				LogTag.Network.E("Google Drive URL is empty");
 
 				return false;
 			}

@@ -27,12 +27,12 @@ namespace KZLib
 		{
 			if(link.IsEmpty())
 			{
-				LogTag.System.E("Link is empty");
+				LogTag.Network.E("Link is empty");
 
 				return;
 			}
 
-			await PostWebRequest(PostDiscordWebHookWebRequest.Create(link,content,messageGroup,file));
+			await _SendWebRequest(PostDiscordWebHookWebRequest.Create(link,content,messageGroup,file));
 		}
 	}
 }

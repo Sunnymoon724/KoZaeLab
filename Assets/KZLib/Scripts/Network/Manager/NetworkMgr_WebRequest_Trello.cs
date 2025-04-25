@@ -34,7 +34,7 @@ namespace KZLib
 				return null;
 			}
 
-			var info = await GetWebRequest(GetTrelloBoardWebRequest.Create(trelloKey));
+			var info = await _SendWebRequest(GetTrelloBoardWebRequest.Create(trelloKey));
 
 			return _ParseTrelloData(info,"boards");
 		}
@@ -60,19 +60,19 @@ namespace KZLib
 		{
 			if(trelloKey.IsEmpty())
 			{
-				LogTag.System.E("TrelloKey is empty");
+				LogTag.Network.E("TrelloKey is empty");
 
 				return null;
 			}
 
 			if(boardId.IsEmpty())
 			{
-				LogTag.System.E("Trello boardId is empty");
+				LogTag.Network.E("Trello boardId is empty");
 
 				return null;
 			}
 
-			var info = await GetWebRequest(GetTrelloListWebRequest.Create(trelloKey,boardId));
+			var info = await _SendWebRequest(GetTrelloListWebRequest.Create(trelloKey,boardId));
 
 			return _ParseTrelloData(info,"boards");
 		}
@@ -98,19 +98,19 @@ namespace KZLib
 		{
 			if(trelloKey.IsEmpty())
 			{
-				LogTag.System.E("TrelloKey is empty");
+				LogTag.Network.E("TrelloKey is empty");
 
 				return null;
 			}
 
 			if(listId.IsEmpty())
 			{
-				LogTag.System.E("Trello listId is empty");
+				LogTag.Network.E("Trello listId is empty");
 
 				return null;
 			}
 
-			var info = await GetWebRequest(GetTrelloCardWebRequest.Create(trelloKey,listId));
+			var info = await _SendWebRequest(GetTrelloCardWebRequest.Create(trelloKey,listId));
 
 			return _ParseTrelloData(info,"boards");
 		}
@@ -138,12 +138,12 @@ namespace KZLib
 				}
 				catch(Exception exception)
 				{
-					LogTag.System.E($"Parse is failed - {exception}");
+					LogTag.Network.E($"Parse is failed - {exception}");
 				}
 			}
 			else
 			{
-				LogTag.System.E("Result is failed");
+				LogTag.Network.E("Result is failed");
 			}
 
 			return null;
@@ -170,12 +170,12 @@ namespace KZLib
 		{
 			if(trelloKey.IsEmpty())
 			{
-				LogTag.System.E("TrelloKey is empty");
+				LogTag.Network.E("TrelloKey is empty");
 
 				return;
 			}
 
-			await PostWebRequest(PostTrelloListWebRequest.Create(trelloKey,boardId,name));
+			await _SendWebRequest(PostTrelloListWebRequest.Create(trelloKey,boardId,name));
 		}
 
 		public void PostTrelloCard(string listId,string name,string description,byte[] file = null)
@@ -199,12 +199,12 @@ namespace KZLib
 		{
 			if(trelloKey.IsEmpty())
 			{
-				LogTag.System.E("TrelloKey is empty");
+				LogTag.Network.E("TrelloKey is empty");
 
 				return;
 			}
 
-			var cardInfo = await PostWebRequest(PostTrelloCardWebRequest.Create(trelloKey,listId,name,description));
+			var cardInfo = await _SendWebRequest(PostTrelloCardWebRequest.Create(trelloKey,listId,name,description));
 
 			if(file == null)
 			{
@@ -215,12 +215,12 @@ namespace KZLib
 
 			if(cardId.IsEmpty())
 			{
-				LogTag.System.E("Card id is empty");
+				LogTag.Network.E("Card id is empty");
 
 				return;
 			}
 
-			await PostWebRequest(PostTrelloAttachmentCardWebRequest.Create(trelloKey,cardId,file));
+			await _SendWebRequest(PostTrelloAttachmentCardWebRequest.Create(trelloKey,cardId,file));
 		}
 
 		public void PostTrelloListInCard(string boardName,string listName,string cardName,string cardDescription,byte[] file = null)
@@ -244,7 +244,7 @@ namespace KZLib
 		{
 			if(trelloKey.IsEmpty())
 			{
-				LogTag.System.E("TrelloKey is empty");
+				LogTag.Network.E("TrelloKey is empty");
 
 				return;
 			}
@@ -253,7 +253,7 @@ namespace KZLib
 
 			if(boardList.IsNullOrEmpty())
 			{
-				LogTag.System.W("Trello board is empty");
+				LogTag.Network.W("Trello board is empty");
 
 				return;
 			}
@@ -262,7 +262,7 @@ namespace KZLib
 
 			if(boardId.IsEmpty())
 			{
-				LogTag.System.E("Trello board id is null");
+				LogTag.Network.E("Trello board id is null");
 
 				return;
 			}
@@ -271,7 +271,7 @@ namespace KZLib
 
 			if(listList.IsNullOrEmpty())
 			{
-				LogTag.System.W("Trello list is empty");
+				LogTag.Network.W("Trello list is empty");
 
 				return;
 			}
@@ -304,7 +304,7 @@ namespace KZLib
 			}
 			catch(Exception exception)
 			{
-				LogTag.System.E($"Convert is failed - {exception}");
+				LogTag.Network.E($"Convert is failed - {exception}");
 			}
 
 			return null;

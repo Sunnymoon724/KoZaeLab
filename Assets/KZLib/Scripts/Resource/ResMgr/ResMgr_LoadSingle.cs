@@ -147,7 +147,7 @@ namespace KZLib
 				return Resources.Load<TObject>(resourcePath[..resourcePath.LastIndexOf('.')]);
 			}
 
-			var assetPath = FileUtility.GetAssetsPath(filePath);
+			var assetPath = FileUtility.GetAssetPath(filePath);
 
 			if(m_useServerResource)
 			{

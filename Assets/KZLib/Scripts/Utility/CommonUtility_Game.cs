@@ -3,6 +3,7 @@ using KZLib;
 using UnityEngine;
 using KZLib.KZUtility;
 using System.IO;
+using UnityEngine.Localization.Settings;
 
 #if UNITY_EDITOR
 

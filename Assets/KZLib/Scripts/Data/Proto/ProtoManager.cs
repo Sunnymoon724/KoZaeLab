@@ -186,7 +186,7 @@ namespace KZLib
 			}
 		}
 
-		public bool IsValidate<TProto>(int num) where TProto : class,IProto
+		public bool IsValid<TProto>(int num) where TProto : class,IProto
 		{
 			return num > 0 && m_protoDict.TryGetValue(typeof(TProto),out var protoDict) && protoDict.ContainsKey(num);
 		}

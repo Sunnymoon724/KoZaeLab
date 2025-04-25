@@ -87,7 +87,11 @@ namespace KZLib
 			var form = new WWWForm();
 			form.AddBinaryData("file",file,"screenShot.png","image/png");
 
-			m_webRequest.uploadHandler = new UploadHandlerRaw(form.data) { contentType = form.headers["Content-Type"] };
+			var rawData = form.data; // create this time
+			var contentType = form.headers["Content-Type"];
+
+			_CreateUploadHandler(rawData,contentType);
+
 			m_webRequest.SetRequestHeader("Accept","application/json");
 		}
 	}

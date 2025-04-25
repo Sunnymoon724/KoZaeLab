@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using KZLib.KZUtility;
 using UnityEngine;
 
 public partial struct Global
@@ -32,12 +33,20 @@ public partial struct Global
 	public readonly static string PROJECT_PATH = Directory.GetCurrentDirectory();
 	public readonly static string PROJECT_PARENT_PATH = Path.GetFullPath(Path.Combine(PROJECT_PATH,".."));
 
+	#region Config
 	public readonly static string CONFIG_FOLDER_PATH = Path.Combine(PROJECT_PARENT_PATH,"Documents","Config");
 	public readonly static string CUSTOM_CONFIG_FOLDER_PATH = Path.Combine(CONFIG_FOLDER_PATH,"Custom");
+	#endregion Config
 
+	#region Proto
 	public readonly static string PROTO_FOLDER_PATH = Path.Combine(PROJECT_PARENT_PATH,"Documents","Proto");
+	#endregion Proto
 
+	#region Lingo
+	public readonly static string LINGO_FOLDER_PATH = Path.Combine(PROJECT_PARENT_PATH,"Documents","Lingo");
+	#endregion Lingo
 	public readonly static string[] EXCEL_EXTENSION_ARRAY = new string[] { ".xls", ".xlsx", ".xlsm" };
+
 
 	public const string GLOBAL_TEXTURE_MIPMAP_LIMIT = "GlobalTextureMipmapLimit";
 	public const string ANISOTROPIC_FILTERING = "AnisotropicFiltering";

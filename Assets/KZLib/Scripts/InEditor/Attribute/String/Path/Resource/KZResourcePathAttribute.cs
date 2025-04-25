@@ -50,9 +50,9 @@ namespace KZLib.KZAttribute
 
 		protected UResource GetResource<UResource>() where UResource : Object
 		{
-			var assetsPath = FileUtility.GetAssetsPath(ValueEntry.SmartValue);
+			var assetsPath = FileUtility.GetAssetPath(ValueEntry.SmartValue);
 
-			if(!FileUtility.IsStartWithAssetsHeader(assetsPath))
+			if(!FileUtility.IsStartWithAssetHeader(assetsPath))
 			{
 				CommonUtility.DisplayError(new Exception($"{ValueEntry.SmartValue} is not in the Assets folder."));
 
@@ -97,7 +97,7 @@ namespace KZLib.KZAttribute
 					return;
 				}
 
-				ViewerObject = AssetDatabase.LoadAssetAtPath<UObject>(FileUtility.GetAssetsPath(m_objectPath));
+				ViewerObject = AssetDatabase.LoadAssetAtPath<UObject>(FileUtility.GetAssetPath(m_objectPath));
 			}
 
 			[OnInspectorGUI]

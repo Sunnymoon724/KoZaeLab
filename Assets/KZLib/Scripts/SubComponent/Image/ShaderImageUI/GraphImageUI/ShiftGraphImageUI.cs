@@ -4,7 +4,7 @@ public class ShiftGraphImageUI : GraphImageUI
 {
 	public void UpdateGraph(float value)
 	{
-		if(IsValidate)
+		if(IsValidGraph)
 		{
 			return;
 		}

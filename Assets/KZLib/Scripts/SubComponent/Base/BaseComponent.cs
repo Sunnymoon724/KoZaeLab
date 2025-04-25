@@ -30,7 +30,7 @@ public abstract class BaseComponent : SerializedMonoBehaviour
 
 	protected virtual void Reset() { }
 
-	protected bool IsValid(Object value,string objectText)
+	protected bool IsValidObject(Object value,string objectText)
 	{
 		if(!value)
 		{

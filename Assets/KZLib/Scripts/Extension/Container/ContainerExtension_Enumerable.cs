@@ -105,26 +105,26 @@ public static partial class ContainerExtension
 
 	public static int FindMinIndex<TValue,TCompare>(this IEnumerable<TValue> enumerable,Func<TValue,TCompare> onFunc) where TCompare : IComparable
 	{
-		if(!_IsValid(enumerable))
-		{
-			return Global.INVALID_INDEX;
-		}
-
-		var minValue = onFunc(enumerable._GetFirstValue());
 		var minIndex = -1;
-		var curIndex = 0;
 
-		foreach(var value in enumerable)
+		if(_IsValid(enumerable))
 		{
-			var compareValue = onFunc(value);
+			var minValue = onFunc(enumerable._GetFirstValue());
+		
+			var curIndex = 0;
 
-			if(minValue.CompareTo(compareValue) > 0)
+			foreach(var value in enumerable)
 			{
-				minValue = compareValue;
-				minIndex = curIndex;
-			}
+				var compareValue = onFunc(value);
 
-			curIndex++;
+				if(minValue.CompareTo(compareValue) > 0)
+				{
+					minValue = compareValue;
+					minIndex = curIndex;
+				}
+
+				curIndex++;
+			}
 		}
 
 		return minIndex;
@@ -132,26 +132,25 @@ public static partial class ContainerExtension
 
 	public static int FindMaxIndex<TValue,TCompare>(this IEnumerable<TValue> enumerable,Func<TValue,TCompare> onFunc) where TCompare : IComparable
 	{
-		if(!_IsValid(enumerable))
+		var maxIndex = -1;
+
+		if(_IsValid(enumerable))
 		{
-			return Global.INVALID_INDEX;
-		}
+			var maxValue = onFunc(enumerable._GetFirstValue());
+			var curIndex = 0;
 
-		var maxValue = onFunc(enumerable._GetFirstValue());
-		var maxIndex = 0;
-		var curIndex = 0;
-
-		foreach(var value in enumerable)
-		{
-			var compareValue = onFunc(value);
-
-			if(maxValue.CompareTo(compareValue) < 0)
+			foreach(var value in enumerable)
 			{
-				maxValue = compareValue;
-				maxIndex = curIndex;
-			}
+				var compareValue = onFunc(value);
 
-			curIndex++;
+				if(maxValue.CompareTo(compareValue) < 0)
+				{
+					maxValue = compareValue;
+					maxIndex = curIndex;
+				}
+
+				curIndex++;
+			}
 		}
 
 		return maxIndex;
@@ -159,26 +158,19 @@ public static partial class ContainerExtension
 
 	public static int IndexOf<TValue>(this IEnumerable<TValue> enumerable,Predicate<TValue> onPredicate)
 	{
-		if(!_IsValid(enumerable))
+		if(_IsValid(enumerable) && _IsEmpty(enumerable))
 		{
-			return Global.INVALID_INDEX;
-		}
+			var index = 0;
 
-		if(!_IsEmpty(enumerable))
-		{
-			return Global.INVALID_INDEX;
-		}
-
-		var index = 0;
-
-		foreach(var value in enumerable)
-		{
-			if(onPredicate(value))
+			foreach(var value in enumerable)
 			{
-				return index;
-			}
+				if(onPredicate(value))
+				{
+					return index;
+				}
 
-			index++;
+				index++;
+			}
 		}
 
 		return Global.INVALID_INDEX;
@@ -209,17 +201,15 @@ public static partial class ContainerExtension
 
 	public static IEnumerable<TResult> Zip<TValue1,TValue2,TResult>(this IEnumerable<TValue1> enumerable1,IEnumerable<TValue2> enumerable2,Func<TValue1,TValue2,TResult> _predicate)
 	{
-		if(!_IsValid(enumerable1) || !_IsValid(enumerable2))
+		if(_IsValid(enumerable1) && _IsValid(enumerable2))
 		{
-			yield break;
-		}
+			using var enumerator1 = enumerable1.GetEnumerator();
+			using var enumerator2 = enumerable2.GetEnumerator();
 
-		using var enumerator1 = enumerable1.GetEnumerator();
-		using var enumerator2 = enumerable2.GetEnumerator();
-
-		while(enumerator1.MoveNext() && enumerator2.MoveNext())
-		{
-			yield return _predicate(enumerator1.Current,enumerator2.Current);
+			while(enumerator1.MoveNext() && enumerator2.MoveNext())
+			{
+				yield return _predicate(enumerator1.Current, enumerator2.Current);
+			}
 		}
 	}
 
@@ -293,15 +283,30 @@ public static partial class ContainerExtension
 
 	public static IEnumerable<TValue> DeepCopy<TValue>(this IEnumerable<TValue> enumerable) where TValue : ICloneable
 	{
-		if(!_IsValid(enumerable))
+		if(_IsValid(enumerable))
 		{
-			yield break;
+			foreach(var value in enumerable)
+			{
+				yield return (TValue) value.Clone();
+			}
+		}
+	}
+
+	public static Dictionary<TValue,int> ToDictionary<TValue>(this IEnumerable<TValue> enumerable)
+	{
+		var dictionary = new Dictionary<TValue,int>();
+
+		if(_IsValid(enumerable))
+		{
+			var index = 0;
+
+			foreach(var value in enumerable)
+			{
+				dictionary.Add(value,index++);
+			}
 		}
 
-		foreach(var value in enumerable)
-		{
-			yield return (TValue) value.Clone();
-		}
+		return dictionary;
 	}
 
 	private static TValue _GetFirstValue<TValue>(this IEnumerable<TValue> enumerable)

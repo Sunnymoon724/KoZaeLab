@@ -2,40 +2,83 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using KZLib.KZUtility;
+using MoonSharp.Interpreter;
 using Sirenix.OdinInspector;
+using UnityEditor;
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings;
+using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine;
 
 public class Test : MonoBehaviour
 {
+    [SerializeField] private string testString = "Test";
+
     [Button("Test")]
     void Text()
     {
-        for(int i=0;i<100;i++)
+        var settings2 = AddressableAssetSettingsDefaultObject.Settings;
+
+            var newGroup = settings2.FindGroup($"Localization-Asset-Tables-{SystemLanguage.Japanese}");
+
+            if(newGroup == null)
+            {
+                LogTag.System.E($"{SystemLanguage.Japanese} is not exist.");
+            }
+    }
+
+    [Button("Test2")]
+    void Text2()
+    {
+        var settings = AddressableAssetSettingsDefaultObject.Settings;
+
+        var newGroup1 = settings.FindGroup($"Localization-Asset-Tables-{SystemLanguage.Japanese}");
+
+        // 새 그룹에서 BundledAssetGroupSchema 가져오기
+        BundledAssetGroupSchema schema2 = newGroup1.GetSchema<BundledAssetGroupSchema>();
+
+        if (schema2 != null)
         {
-            LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(wasdwe(new SquadParam(5,2)))}");
+            LogTag.System.I($"{schema2.BundleNaming}");
         }
 
-        
-        
-        // LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(wasdwe(new SquadParam(5,2)))}");
-        // LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(wasdwe(new SquadParam(5,2)))}");
-        // LogTag.Build.I($"{CryptoUtility.SHA.ComputeHashToString(wasdwe(new SquadParam(5,2)))}");
+        if (schema2 != null)
+        {
+            schema2.BundleNaming = BundledAssetGroupSchema.BundleNamingStyle.NoHash;
+            // 필요 시 여기에 다른 설정도 바꿀 수 있음
+        }
+
+        AddressableAssetGroup newGroup = settings.CreateGroup(testString,false,true,false,newGroup1.Schemas);
+
+        newGroup.AddSchema(schema2);
+
+        // 새 그룹에서 BundledAssetGroupSchema 가져오기
+        var schema = newGroup.GetSchema<BundledAssetGroupSchema>();
+
+        if (schema != null)
+        {
+            LogTag.System.I($"{schema.BundleNaming}");
+        }
+
+        AssetDatabase.SaveAssets();
     }
 
-    private string wasdwe(object aa)
+    [Button("Test3")]
+    void Text3()
     {
-        return aa.ToString();
-    }
-}
+        var settings = AddressableAssetSettingsDefaultObject.Settings;
 
-public record SquadParam
-{
-    public int AAA { get; set; }
-    public int BBB { get; set; }
+        var japaneseGroup = settings.FindGroup($"Localization-Asset-Tables-{SystemLanguage.Japanese}");
 
-    public SquadParam(int aaa,int bbb)
-    {
-        AAA = aaa;
-        BBB = bbb;
+        var newGroup = CommonUtility.CreateAddressableGroup(testString,japaneseGroup.Schemas,true);
+
+        var namingSchema = newGroup.GetSchema<BundledAssetGroupSchema>();
+
+        if (namingSchema != null)
+        {
+            namingSchema.BundleNaming = BundledAssetGroupSchema.BundleNamingStyle.NoHash;
+        }
+
+        // newGroup.AddSchema(namingSchema);
     }
 }

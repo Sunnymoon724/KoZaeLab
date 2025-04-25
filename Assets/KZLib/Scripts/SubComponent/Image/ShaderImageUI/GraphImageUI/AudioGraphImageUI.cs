@@ -4,7 +4,7 @@ public class AudioGraphImageUI : GraphImageUI
 {
 	public override void UpdateGraph(float[] valueArray)
 	{
-		if(IsValidate)
+		if(IsValidGraph)
 		{
 			return;
 		}

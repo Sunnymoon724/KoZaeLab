@@ -63,8 +63,10 @@ public abstract class RepositoryUI : BaseComponentUI
 	{
 		var tagHashSet = new HashSet<UITag>(excludeTagGroup ?? Enumerable.Empty<UITag>());
 
-		foreach(var window in new List<WindowUI>(m_openedWindowList))
+		for(var i=m_openedWindowList.Count-1;i>=0;i--)
 		{
+			var window = m_openedWindowList[i];
+
 			if(tagHashSet.Contains(window.Tag))
 			{
 				continue;

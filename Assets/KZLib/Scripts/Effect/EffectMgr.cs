@@ -34,11 +34,9 @@ namespace KZLib
 			{
 				await UniTask.Delay(TimeSpan.FromSeconds(c_poolInterval),true);
 
-				foreach(var key in new List<string>(m_poolDataDict.Keys))
+				foreach(var (key,poolDataList) in m_poolDataDict)
 				{
-					var poolDataList = m_poolDataDict[key];
-
-					poolDataList.RemoveAll(data => data.IsOverdue() && data.Release());
+					poolDataList.RemoveAll(x => x.IsOverdue() && x.Release());
 
 					if(poolDataList.Count == 0)
 					{
@@ -116,8 +114,10 @@ namespace KZLib
 
 		public void StopAllEffectClip()
 		{
-			foreach(var clip in new List<EffectClip>(m_playingList))
+			for(var i=m_playingList.Count-1;i>=0;i--)
 			{
+				var clip = m_playingList[i];
+
 				if(clip)
 				{
 					ReleaseEffect(clip);
@@ -131,20 +131,24 @@ namespace KZLib
 		{
 			CommonUtility.KillTokenSource(ref m_tokenSource);
 
-			foreach(var clip in new List<EffectClip>(m_playingList))
+			for(var i=0;i<m_playingList.Count;i++)
 			{
+				var clip = m_playingList[i];
+
 				if(clip)
 				{
 					clip.gameObject.DestroyObject();
 				}
 			}
 
-			foreach(var pair in m_poolDataDict)
+            foreach(var (_,poolList) in m_poolDataDict)
 			{
-				foreach(var data in new List<PoolData>(pair.Value))
+				for(var i=poolList.Count-1;i>=0;i--)
 				{
+					var data = poolList[i];
+
 					data.Release();
-					pair.Value.Remove(data);
+					poolList.Remove(data);
 				}
 			}
 

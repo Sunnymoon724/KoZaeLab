@@ -143,7 +143,7 @@ namespace KZLib
 				return Resources.LoadAll<TObject>(FileUtility.RemoveHeaderInPath(folderPath,c_resource_text));
 			}
 
-			var assetPath = FileUtility.GetAssetsPath(folderPath);
+			var assetPath = FileUtility.GetAssetPath(folderPath);
 
 			if(m_useServerResource)
 			{

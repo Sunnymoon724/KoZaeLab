@@ -7,54 +7,29 @@ public static partial class ContainerExtension
 {
 	public static bool RemoveSafe<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,TKey key)
 	{
-		if(!_IsValid(dictionary))
-		{
-			return false;
-		}
-
-		return key != null && dictionary.ContainsKey(key) && dictionary.Remove(key);
+		return _IsValid(dictionary) && key != null && dictionary.ContainsKey(key) && dictionary.Remove(key);
 	}
 
 	public static bool RemoveOut<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,TKey key,out TValue value)
 	{
-		if(!_IsValid(dictionary))
-		{
-			value = default;
+		value = default;
 
-			return false;
-		}
-
-		return dictionary.TryGetValue(key,out value);
+		return _IsValid(dictionary) && dictionary.TryGetValue(key,out value);
 	}
 
 	public static bool RemoveSafeValueInCollection<TKey,TValue>(this IDictionary<TKey,ICollection<TValue>> dictionary,TKey key,TValue value)
 	{
-		if(!_IsValid(dictionary))
-		{
-			return false;
-		}
-
-		return key != null && dictionary.ContainsKey(key) && value != null && dictionary[key].Remove(value);
+		return _IsValid(dictionary) && key != null && dictionary.ContainsKey(key) && value != null && dictionary[key].Remove(value);
 	}
 
 	public static bool IsKeysEquals<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,ICollection<TKey> keyCollection)
 	{
-		if(!_IsValid(dictionary))
-		{
-			return false;
-		}
-
-		return dictionary.Keys.IsEquals(keyCollection);
+		return _IsValid(dictionary) && dictionary.Keys.IsEquals(keyCollection);
 	}
 
 	public static bool IsValuesEquals<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,ICollection<TValue> valueCollection)
 	{
-		if(!_IsValid(dictionary))
-		{
-			return false;
-		}
-
-		return dictionary.Values.IsEquals(valueCollection);
+		return _IsValid(dictionary) && dictionary.Values.IsEquals(valueCollection);
 	}
 
 	public static void AddRange<TKey,TValue>(this IDictionary<TKey,TValue> dictionary1,IDictionary<TKey,TValue> dictionary2)
@@ -93,12 +68,10 @@ public static partial class ContainerExtension
 
 	public static void AddRange<TValue>(this IDictionary<string,TValue> dictionary,ICollection<TValue> valueCollection,Action onAction = null) where TValue : Object
 	{
-		if(!_IsValid(dictionary))
+		if(_IsValid(dictionary))
 		{
-			return;
+			dictionary.AddRange(valueCollection,x=>x.name,onAction);
 		}
-
-		dictionary.AddRange(valueCollection,x=>x.name,onAction);
 	}
 
 	public static void AddOrCreate<TKey,TValue,TCollection>(this IDictionary<TKey,TCollection> dictionary,TKey key,TValue value) where TCollection : ICollection<TValue>,new()
@@ -184,18 +157,16 @@ public static partial class ContainerExtension
 
 	public static IEnumerable<(TKey,TValue)> FindAllPairGroup<TKey,TValue>(this IDictionary<TKey,ICollection<TValue>> dictionary,Func<TValue,bool> onFunc)
 	{
-		if(!_IsValid(dictionary))
+		if(_IsValid(dictionary))
 		{
-			yield break;
-		}
-
-		foreach(var pair in dictionary)
-		{
-			foreach(var value in pair.Value)
+			foreach(var pair in dictionary)
 			{
-				if(onFunc(value))
+				foreach(var value in pair.Value)
 				{
-					yield return (pair.Key,value);
+					if(onFunc(value))
+					{
+						yield return (pair.Key,value);
+					}
 				}
 			}
 		}
@@ -203,21 +174,19 @@ public static partial class ContainerExtension
 
 	public static IEnumerable<TValue> MergeToGroup<TKey,TEnumerable,TValue>(this IDictionary<TKey,TEnumerable> dictionary) where TEnumerable : IEnumerable<TValue>
 	{
-		if(!_IsValid(dictionary))
+		if(_IsValid(dictionary))
 		{
-			yield break;
-		}
-
-		foreach(var pair in dictionary)
-		{
-			if(pair.Value.IsNullOrEmpty())
+			foreach(var pair in dictionary)
 			{
-				continue;
-			}
+				if(pair.Value.IsNullOrEmpty())
+				{
+					continue;
+				}
 
-			foreach(var value in pair.Value)
-			{
-				yield return value;
+				foreach(var value in pair.Value)
+				{
+					yield return value;
+				}
 			}
 		}
 	}

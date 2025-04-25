@@ -9,7 +9,9 @@ EditorBuildSettings:
     path: Assets/Test.unity
     guid: 4719c4ab84f4a7a49a31d59929cc07c0
   m_configObjects:
-    com.unity.addressableassets: {fileID: 11400000, guid: de231f7db03a94d778ddfb0d33b32248,
+    com.unity.addressableassets: {fileID: 11400000, guid: e3b6b483f9912e142957595983e019d0,
+      type: 2}
+    com.unity.localization.settings: {fileID: 11400000, guid: 3031b6a1cf6d2f044bc893fa6968ac05,
       type: 2}
     com.willykc.templ: {fileID: 11400000, guid: e274758ee56781a4ead8d4c077c66e99,
       type: 2}

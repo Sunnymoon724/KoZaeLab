@@ -35,7 +35,7 @@ namespace KZLib.KZAttribute
 			var rect = DrawPrefixLabel(label);
 
 			var text = ValueEntry.SmartValue ? Attribute.CorrectText : Attribute.WrongText;
-			var style = GetValidateStyle(ValueEntry.SmartValue,Attribute.WrongHexColor);
+			var style = GetValidationStyle(ValueEntry.SmartValue,Attribute.WrongHexColor);
 
 			EditorGUI.LabelField(rect,text,style);
 		}

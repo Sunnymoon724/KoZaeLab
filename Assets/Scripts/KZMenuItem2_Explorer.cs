@@ -5,20 +5,22 @@ using UnityEditor;
 
 namespace KZLib.KZMenu
 {
-	public  class KZMenuItem
+	public class KZMenuItem2
 	{
-		private const int c_pivotOrder = 10;
-		private const int c_menuLine = 20;
-
-		private enum InnerMenuType
+		private class MenuOrder
 		{
-			Explorer			= 1 << c_pivotOrder,
+			private const int MAIN_GAP = 1000000;
+			public const int SUB_GAP = 50;
 
-			Explorer_Etc1		= Explorer+3*c_menuLine,
-			Explorer_Etc2		= Explorer+4*c_menuLine,
+			public class Explorer
+			{
+				private const int DEFAULT			= +1 * MAIN_GAP;
+
+				public const int LIBRARY			= DEFAULT + 1 * SUB_GAP;
+			}
 		}
 
-		[MenuItem("KZMenu/Explorer/Open Library Project",false,(int) InnerMenuType.Explorer_Etc1)]
+		[MenuItem("KZMenu/Explorer/Open Library Project",false,MenuOrder.Explorer.LIBRARY)]
 		private static void _OnOpenLibraryProject()
 		{
 			var solutionPath = Path.Combine(Global.PROJECT_PARENT_PATH,"KoZaeLibrary");
@@ -31,7 +33,7 @@ namespace KZLib.KZMenu
 			});
 		}
 
-		[MenuItem("KZMenu/Explorer/Build Library Project",false,(int) InnerMenuType.Explorer_Etc2)]
+		[MenuItem("KZMenu/Explorer/Build Library Project",false,MenuOrder.Explorer.LIBRARY+1)]
 		private static void _OnBuildLibraryProject()
 		{
 			var batchFilePath = Path.Combine(Global.PROJECT_PARENT_PATH,"BuildLibrary.bat");

@@ -1,45 +1,108 @@
 #if UNITY_EDITOR
 
+using System;
+using System.IO;
+using KZLib.KZUtility;
+using UnityEditor;
+using UnityEngine;
+
+using Object = UnityEngine.Object;
+
 namespace KZLib.KZMenu
 {
 	public partial class KZMenuItem
 	{
-		private const int c_pivotOrder = 10;
-		private const int c_menuLine = 20;
-
-		private enum MenuType
+		private class MenuOrder
 		{
-			Option				= 0 << c_pivotOrder,
+			private const int MAIN_GAP = 1000000;
+			public const int SUB_GAP = 50;
+			
+			public class Option
+			{
+				private const int DEFAULT			= +0 * MAIN_GAP;
 
-			Option_Delete		= Option+0*c_menuLine,
-			Option_Find			= Option+1*c_menuLine,
-			Option_Check		= Option+2*c_menuLine,
-			Option_Etc			= Option+3*c_menuLine,
+				public const int DELETE				= DEFAULT + 0 * SUB_GAP;
+				public const int FIND				= DEFAULT + 1 * SUB_GAP;
+				public const int CHECK				= DEFAULT + 2 * SUB_GAP;
+			}
 
+			public class Explorer
+			{
+				private const int DEFAULT			= +1 * MAIN_GAP;
 
-			Explorer			= 1 << c_pivotOrder,
+				public const int OPEN				= DEFAULT + 0 * SUB_GAP;
+			}
 
-			Explorer_Open		= Explorer+0*c_menuLine,
+			public class Data
+			{
+				private const int DEFAULT			= +2 * MAIN_GAP;
 
+				public const int GENERATE			= DEFAULT + 0 * SUB_GAP;
+				public const int OPEN				= DEFAULT + 1 * SUB_GAP;
+				public const int WINDOW				= DEFAULT + 2 * SUB_GAP;
+			}
 
-			Data				= 2 << c_pivotOrder,
+			public class Window
+			{
+				private const int DEFAULT			= +3 * MAIN_GAP;
 
-			Data_GenerateAll	= Data+0*c_menuLine,
-			Data_Generate		= Data+1*c_menuLine,
-			Data_Open			= Data+2*c_menuLine,
-			Data_Window			= Data+3*c_menuLine,
+				public const int MANUAL				= DEFAULT + 0 * SUB_GAP;
+				public const int CUSTOM				= DEFAULT + 1 * SUB_GAP;
+				public const int TEST				= DEFAULT + 2 * SUB_GAP;
+			}
 
+			public class Scene
+			{
+				private const int DEFAULT			= +4 * MAIN_GAP;
 
-			Window				= 3 << c_pivotOrder,
+				public const int QUICK				= DEFAULT + 0 * SUB_GAP;
+				public const int CORE				= DEFAULT + 1 * SUB_GAP;
+			}
+		}
 
-			Window_Manual		= Window+0*c_menuLine,
-			Window_Etc			= Window+1*c_menuLine,
+		private static void _OpenFolder(string name,string folderPath)
+		{
+			if(!FileUtility.IsFolderExist(folderPath))
+			{
+				if(!CommonUtility.DisplayCheck($"Create {name}Folder",$"{name}Folder is not exist.\n you want to create the {name}Folder?"))
+				{
+					return;
+				}
 
+				FileUtility.CreateFolder(folderPath);
+			}
 
-			Scene				= 4 << c_pivotOrder,
+			CommonUtility.Open(folderPath);
+		}
 
-			Scene_Quick			= Scene+0*c_menuLine,
-			Scene_Core			= Scene+1*c_menuLine,
+		private static void _DisplayGenerateEnd()
+		{
+			_DisplayInfo("Generate is done.",true);
+		}
+
+		private static void _DisplayInfo(string message,bool refreshAsset)
+		{
+			CommonUtility.DisplayInfo(message);
+
+			if(refreshAsset)
+			{
+				AssetDatabase.Refresh();
+			}
+		}
+
+		public static bool IsExcelFile(string filePath)
+		{
+			string a = Path.GetExtension(filePath).ToLower();
+			string[] array = new string[3] { "*.xls", "*.xlsx", "*.xlsm" };
+			foreach (string b in array)
+			{
+				if (string.Equals(a, b))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }

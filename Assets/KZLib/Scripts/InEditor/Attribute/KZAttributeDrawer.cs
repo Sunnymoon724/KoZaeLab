@@ -61,7 +61,7 @@ namespace KZLib.KZAttribute
 			return CommonUtility.FindValueInObject<TMember>(memberName,Property.ParentValues[0]);
 		}
 
-		protected GUIStyle GetValidateStyle(bool isValid,string wrongHexColor = null)
+		protected GUIStyle GetValidationStyle(bool isValid,string wrongHexColor = null)
 		{
 			var style = new GUIStyle(GUI.skin.label);
 

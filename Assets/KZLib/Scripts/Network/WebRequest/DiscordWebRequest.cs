@@ -38,7 +38,7 @@ namespace KZLib
 
 			if(file == null)
 			{
-				m_webRequest.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(webHookText)) { contentType = "application/json", };
+				_CreateUploadHandler(webHookText,"application/json");
 			}
 			else
 			{
@@ -46,7 +46,10 @@ namespace KZLib
 				form.AddBinaryData("files[0]",file,"image.png","image/png");
 				form.AddField("payload_json",webHookText);
 
-				m_webRequest.uploadHandler = new UploadHandlerRaw(form.data) { contentType = form.headers["Content-Type"], };
+				var rawData = form.data; // create this time
+				var contentType = form.headers["Content-Type"];
+
+				_CreateUploadHandler(rawData,contentType);
 			}
 		}
 	}

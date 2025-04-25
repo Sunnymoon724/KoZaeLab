@@ -199,16 +199,16 @@ namespace KZLib.KZMenu
 		private static void _OnCreateScriptableObject()
 		{
 			var selection = Selection.activeObject;
-			var dataPath = FileUtility.NormalizePath($"Resources/ScriptableObject/{selection.name}.asset");
+			var assetPath = FileUtility.NormalizePath($"Resources/ScriptableObject/{selection.name}.asset");
 
-			if(!CommonUtility.DisplayCheck("Create scriptableObject",$"Create scriptableObject? \n Name : {selection.name} \n Path : {dataPath}"))
+			if(!CommonUtility.DisplayCheck("Create scriptableObject",$"Create scriptableObject? \n Name : {selection.name} \n Path : {assetPath}"))
 			{
 				return;
 			}
 
-			if(FileUtility.IsFileExist(dataPath))
+			if(FileUtility.IsFileExist(assetPath))
 			{
-				CommonUtility.DisplayError(new NullReferenceException($"{dataPath} is exist."));
+				CommonUtility.DisplayError(new NullReferenceException($"{assetPath} is exist."));
 
 				return;
 			}
@@ -216,7 +216,7 @@ namespace KZLib.KZMenu
 			var script = selection as MonoScript;
 			var asset = ScriptableObject.CreateInstance(script.GetClass());
 
-			CommonUtility.SaveAsset(dataPath,asset);
+			CommonUtility.SaveAsset(assetPath,asset,true);
 		}
 
 		[MenuItem("Assets/KZSubMenu/Script/Create ScriptableObject",true,(int) MenuType.Script)]

@@ -185,7 +185,7 @@ namespace KZLib
 
 		public void CloseAllOpened(bool isRelease,bool isExcludeClose)
 		{
-			foreach(var window in new List<WindowUI>(m_registerDict.Values))
+			foreach(var (_,window) in m_registerDict)
 			{
 				if(isExcludeClose)
 				{

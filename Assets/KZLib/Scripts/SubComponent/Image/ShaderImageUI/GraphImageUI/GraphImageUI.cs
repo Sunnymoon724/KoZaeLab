@@ -11,13 +11,13 @@ public class GraphImageUI : ShaderImageUI
 
 	protected float[] m_graphArray = null;
 
-	protected bool IsValidate => m_graphLength <= 0;
+	protected bool IsValidGraph => m_graphLength <= 0;
 
 	protected override void Initialize()
 	{
 		base.Initialize();
 
-		if(IsValidate)
+		if(IsValidGraph)
 		{
 			return;
 		}
@@ -49,7 +49,7 @@ public class GraphImageUI : ShaderImageUI
 
 	public void ResetGraph()
 	{
-		if(IsValidate)
+		if(IsValidGraph)
 		{
 			return;
 		}
@@ -61,7 +61,7 @@ public class GraphImageUI : ShaderImageUI
 
 	public virtual void UpdateGraph(float[] valueArray)
 	{
-		if(IsValidate)
+		if(IsValidGraph)
 		{
 			return;
 		}

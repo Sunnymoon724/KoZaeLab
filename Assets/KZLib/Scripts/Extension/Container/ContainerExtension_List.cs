@@ -5,17 +5,10 @@ public static partial class ContainerExtension
 {
 	public static bool TryGetValueByIndex<TValue>(this IList<TValue> list,int index,out TValue value)
 	{
-		if(!_IsValid(list))
+		value = default;
+
+		if(!_IsValid(list) || !ContainsIndex(list,index))
 		{
-			value = default;
-
-			return default;
-		}
-
-		if(!ContainsIndex(list,index))
-		{
-			value = default;
-
 			return false;
 		}
 
@@ -45,12 +38,10 @@ public static partial class ContainerExtension
 
 	public static void Move<TValue>(this IList<TValue> list,TValue value,int newIndex)
 	{
-		if(!_IsValid(list))
+		if(_IsValid(list))
 		{
-			return;
+			list.Move(list.IndexOf(value),newIndex);
 		}
-
-		list.Move(list.IndexOf(value),newIndex);
 	}
 
 	public static void Move<TValue>(this IList<TValue> list,int oldIndex,int newIndex)
@@ -91,35 +82,23 @@ public static partial class ContainerExtension
 
 	public static void Randomize<TValue>(this IList<TValue> list)
 	{
-		if(!_IsValid(list))
+		if(_IsValid(list))
 		{
-			return;
-		}
-
-		for(var i=list.Count-1;i>0;i--)
-		{
-			list.Swap(CommonUtility.GenerateRandomInt(0,i),i);
+			for(var i=list.Count-1;i>0;i--)
+			{
+				list.Swap(CommonUtility.GenerateRandomInt(0,i),i);
+			}
 		}
 	}
 
 	public static TValue PopFront<TValue>(this IList<TValue> list)
 	{
-		if(!_IsValid(list))
-		{
-			return default;
-		}
-
-		return list.Pop(0);
+		return _IsValid(list) ? list.Pop(0) : default;
 	}
 
 	public static TValue PopBack<TValue>(this IList<TValue> list)
 	{
-		if(!_IsValid(list))
-		{
-			return default;
-		}
-
-		return list.Pop(list.Count-1);
+		return _IsValid(list) ? list.Pop(list.Count-1) : default;
 	}
 
 	public static TValue Pop<TValue>(this IList<TValue> list,Predicate<TValue> onPredicate)

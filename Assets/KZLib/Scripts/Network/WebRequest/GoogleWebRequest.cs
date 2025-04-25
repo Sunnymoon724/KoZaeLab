@@ -40,8 +40,7 @@ namespace KZLib
 	{
 		protected PostGoogleWebRequest(string name,string url,byte[] data) : base(name,url,UnityWebRequest.kHttpVerbPOST)
 		{
-			m_webRequest.uploadHandler = new UploadHandlerRaw(data);
-			m_webRequest.SetRequestHeader("Content-Type","application/x-www-form-urlencoded");
+			_CreateUploadHandler(data,"application/x-www-form-urlencoded");
 		}
 	}
 
