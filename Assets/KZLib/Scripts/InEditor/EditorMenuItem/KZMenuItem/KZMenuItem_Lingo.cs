@@ -24,17 +24,15 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Lingo/Generate Lingo",false,MenuOrder.Data.GENERATE)]
 		private static void _OnGenerateLingo()
 		{
-			LocalizationSettings.Instance = null;
+			var localizationSettings = LocalizationSettings.GetInstanceDontCreateDefault();
 
-			var settings = LocalizationSettings.GetInstanceDontCreateDefault();
-
-			if(settings == null)
+			if(localizationSettings == null)
 			{
-				settings = ScriptableObject.CreateInstance<LocalizationSettings>();
+				localizationSettings = ScriptableObject.CreateInstance<LocalizationSettings>();
 
-				CommonUtility.SaveAsset(Path.Combine("Localization","LocalizationSettings.asset"),settings,true);
+				CommonUtility.SaveAsset(Path.Combine("Localization","LocalizationSettings.asset"),localizationSettings,true);
 
-				EditorBuildSettings.AddConfigObject("com.unity.localization.settings",settings,true);
+				EditorBuildSettings.AddConfigObject("com.unity.localization.settings",localizationSettings,true);
 			}
 
 			var lingoRoute = RouteMgr.In.GetOrCreateRoute("defaultRes:lingo");
@@ -220,7 +218,7 @@ namespace KZLib.KZMenu
 
 					if(tableEntry == null)
 					{
-						tableEntry = table.AddEntry(key,guid);
+						table.AddEntry(key,guid);
 					}
 					else
 					{

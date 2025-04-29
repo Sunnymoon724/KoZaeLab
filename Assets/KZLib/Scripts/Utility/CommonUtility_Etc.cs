@@ -1,10 +1,15 @@
 #if UNITY_EDITOR
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using UnityEditor;
 
+#else
+
+using UnityEngine;
+
 #endif
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 public static partial class CommonUtility
 {

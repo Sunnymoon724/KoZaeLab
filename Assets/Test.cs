@@ -1,30 +1,41 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using KZLib.KZUtility;
-using MoonSharp.Interpreter;
+#if UNITY_EDITOR
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 
 public class Test : MonoBehaviour
 {
     [SerializeField] private string testString = "Test";
 
-    [Button("Test")]
-    void Text()
+    [Button("Test1")]
+    void Text1()
     {
-        var settings2 = AddressableAssetSettingsDefaultObject.Settings;
+        TextAsync().Forget();
+    }
 
-            var newGroup = settings2.FindGroup($"Localization-Asset-Tables-{SystemLanguage.Japanese}");
+    private async UniTaskVoid TextAsync()
+    {
+        await LocalizationSettings.InitializationOperation.Task;
 
-            if(newGroup == null)
-            {
-                LogTag.System.E($"{SystemLanguage.Japanese} is not exist.");
-            }
+        var handle = LocalizationSettings.StringDatabase.GetAllTables();
+
+        await handle.Task;
+
+        if (handle.Result == null || handle.Result.Count == 0)
+        {
+            Debug.LogError("No tables found.");
+            return;
+        }
+
+        foreach (var table in handle.Result)
+        {
+            Debug.Log("Table Name: " + table.TableCollectionName);
+        }
     }
 
     [Button("Test2")]
@@ -82,3 +93,4 @@ public class Test : MonoBehaviour
         // newGroup.AddSchema(namingSchema);
     }
 }
+#endif

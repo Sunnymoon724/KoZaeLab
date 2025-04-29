@@ -15,7 +15,7 @@ MonoBehaviour:
   m_GroupName: Localization-Assets-Shared
   m_Data:
     m_SerializedData: []
-  m_GUID: 068a7dc80048a8749a16627926992aa3
+  m_GUID: 18af4f4765963c04581d82fc8577eac2
   m_SerializeEntries:
   - m_GUID: 50e9564320c81f740b2c66d63d8266c8
     m_Address: Assets/Localization/String/System/SystemTable Shared Data.asset
@@ -24,11 +24,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9939de5b72642af4aa8b6acff0729921
     m_Address: Assets/Localization/String/Default/DefaultTable Shared Data.asset
-    m_ReadOnly: 1
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ac702a67cfd44ae4fa723a25e5b48f78
-    m_Address: Assets/Localization/String/System3/System3Table Shared Data.asset
     m_ReadOnly: 1
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

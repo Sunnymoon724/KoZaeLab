@@ -2,11 +2,11 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine.Networking;
 using System.Diagnostics;
+using System.Text;
 
 #if UNITY_EDITOR
 
 using System.IO;
-using System.Text;
 using KZLib.KZUtility;
 
 #endif
@@ -118,7 +118,6 @@ namespace KZLib
 		private ResponseInfo _WriteDump(ResponseInfo responseInfo)
 		{
 #if UNITY_EDITOR
-
 			var apiUrl = m_webRequest.uri.AbsolutePath;
 
 			CommonUtility.PrettifyJson(responseInfo.Content);

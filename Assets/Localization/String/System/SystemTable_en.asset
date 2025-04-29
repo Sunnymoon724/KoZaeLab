@@ -18,15 +18,15 @@ MonoBehaviour:
   m_Metadata:
     m_Items: []
   m_TableData:
-  - m_Id: 614191104
+  - m_Id: 526110720
     m_Localized: No
     m_Metadata:
       m_Items: []
-  - m_Id: 647745536
+  - m_Id: 555470848
     m_Localized: Continue
     m_Metadata:
       m_Items: []
-  - m_Id: 647745537
+  - m_Id: 555470849
     m_Localized: Restart
     m_Metadata:
       m_Items: []

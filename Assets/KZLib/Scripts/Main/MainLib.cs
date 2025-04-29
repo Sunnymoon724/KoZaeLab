@@ -321,13 +321,13 @@ namespace KZLib
 #endif
 		}
 
-#if UNITY_EDITOR
 		private static readonly List<string> s_sceneNameList = new();
 
 		private static List<string> SceneNameList
 		{
 			get
 			{
+#if UNITY_EDITOR
 				if(s_sceneNameList.IsNullOrEmpty())
 				{
 					foreach(var scene in EditorBuildSettings.scenes)
@@ -342,10 +342,11 @@ namespace KZLib
 						s_sceneNameList.Add(sceneName);
 					}
 				}
+#endif
 
 				return s_sceneNameList;
 			}
 		}
-#endif
+
 	}
 }

@@ -15,27 +15,27 @@ MonoBehaviour:
   m_TableCollectionName: SystemTable
   m_TableCollectionNameGuidString: 50e9564320c81f740b2c66d63d8266c8
   m_Entries:
-  - m_Id: 614191104
+  - m_Id: 526110720
     m_Key: text_no
     m_Metadata:
       m_Items: []
-  - m_Id: 647745536
+  - m_Id: 555470848
     m_Key: text_continue
     m_Metadata:
       m_Items: []
-  - m_Id: 647745537
+  - m_Id: 555470849
     m_Key: text_restart
     m_Metadata:
       m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
-    rid: 8932241732692344866
+    rid: 8932241732692344941
   references:
     version: 2
     RefIds:
-    - rid: 8932241732692344866
+    - rid: 8932241732692344941
       type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
         asm: Unity.Localization}
       data:
-        m_CustomEpoch: 1745606416507
+        m_CustomEpoch: 1745615167427

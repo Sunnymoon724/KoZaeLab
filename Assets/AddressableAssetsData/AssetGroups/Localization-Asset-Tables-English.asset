@@ -15,7 +15,7 @@ MonoBehaviour:
   m_GroupName: Localization-Asset-Tables-English
   m_Data:
     m_SerializedData: []
-  m_GUID: 4aac58a2d1b9d8246b56d1a4ed187451
+  m_GUID: b4844c260add1934cb06bfae205dae90
   m_SerializeEntries:
   - m_GUID: 5f5b32dca6d274948b86e0ebd0c6c22d
     m_Address: SpriteTable_en

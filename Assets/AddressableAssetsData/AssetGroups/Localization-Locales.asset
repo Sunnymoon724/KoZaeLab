@@ -15,7 +15,7 @@ MonoBehaviour:
   m_GroupName: Localization-Locales
   m_Data:
     m_SerializedData: []
-  m_GUID: 4314333a891138d4097020c419ef9fcb
+  m_GUID: 6958d03d6d0ad634186382dc89db44db
   m_SerializeEntries:
   - m_GUID: 240b7ad46832252418faedd21275bf74
     m_Address: Korean
@@ -25,12 +25,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 32c8f6a2f2d6b1440b32047f54dd390e
     m_Address: English
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: bccb983bc1b0086439f05a0a83f18842
-    m_Address: Czech
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale

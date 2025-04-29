@@ -61,7 +61,6 @@ namespace KZLib.KZDevelop
 			protected string ErrorText { get; private set; }
 
 			private readonly Func<string,string,string,bool> m_onAddOption = null;
-			private OdinEditorWindow m_optionWindow = null;
 
 			private bool IsValidAddOption => !OptionName.IsEmpty() && !EnableValue.IsEmpty() && !DisableValue.IsEmpty();
 
@@ -69,6 +68,9 @@ namespace KZLib.KZDevelop
 			{
 				m_onAddOption = onAddOption;
 			}
+
+#if UNITY_EDITOR
+			private OdinEditorWindow m_optionWindow = null;
 
 			[HorizontalGroup("5",Order = 5),Button("Add",ButtonSizes.Large),EnableIf(nameof(IsValidAddOption))]
 			protected void OnAddOption()
@@ -89,6 +91,7 @@ namespace KZLib.KZDevelop
 			{
 				m_optionWindow = window;
 			}
+#endif
 		}
 		#endregion Option Window
 		

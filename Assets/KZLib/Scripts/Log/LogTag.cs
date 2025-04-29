@@ -54,6 +54,7 @@ public static class LogExtension
 	public static void I(this LogTag logTag,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
 		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
+
 #if UNITY_EDITOR
 		Debug.Log(text);
 #endif
@@ -63,12 +64,12 @@ public static class LogExtension
 	{
 		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
 
+#if UNITY_EDITOR
 		if(_CheckLogAtOnce(text))
 		{
-#if UNITY_EDITOR
 			Debug.Log(text);
-#endif
 		}
+#endif
 	}
 	#endregion I : Info Log
 
@@ -76,6 +77,7 @@ public static class LogExtension
 	public static void W(this LogTag logTag,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
 		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
+
 #if UNITY_EDITOR
 		Debug.LogWarning(text);
 #endif
@@ -85,12 +87,12 @@ public static class LogExtension
 	{
 		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
 
+#if UNITY_EDITOR
 		if(_CheckLogAtOnce(text))
 		{
-#if UNITY_EDITOR
 			Debug.LogWarning(text);
-#endif
 		}
+#endif
 	}
 	#endregion W : Warning Log
 
@@ -98,6 +100,7 @@ public static class LogExtension
 	public static void E(this LogTag logTag,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
 		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
+
 #if UNITY_EDITOR
 		Debug.LogError(text);
 #endif
@@ -107,12 +110,12 @@ public static class LogExtension
 	{
 		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
 
+#if UNITY_EDITOR
 		if(_CheckLogAtOnce(text))
 		{
-#if UNITY_EDITOR
 			Debug.LogError(text);
-#endif
 		}
+#endif
 	}
 	#endregion E : Error Log
 
@@ -125,6 +128,7 @@ public static class LogExtension
 		}
 
 		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
+
 #if UNITY_EDITOR
 		Debug.Assert(condition,text);
 #endif

@@ -15,23 +15,23 @@ MonoBehaviour:
   m_TableCollectionName: SpriteTable
   m_TableCollectionNameGuidString: fd719716c7921c244a1c5e0bbe806de0
   m_Entries:
-  - m_Id: 2988167168
+  - m_Id: 2753286144
     m_Key: sprite_profile
     m_Metadata:
       m_Items: []
-  - m_Id: 3554334724096
+  - m_Id: 5416669184
     m_Key: sprite_profile2
     m_Metadata:
       m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
-    rid: 8932241732692344864
+    rid: 8932241732692344939
   references:
     version: 2
     RefIds:
-    - rid: 8932241732692344864
+    - rid: 8932241732692344939
       type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
         asm: Unity.Localization}
       data:
-        m_CustomEpoch: 1745606414732
+        m_CustomEpoch: 1745615165584

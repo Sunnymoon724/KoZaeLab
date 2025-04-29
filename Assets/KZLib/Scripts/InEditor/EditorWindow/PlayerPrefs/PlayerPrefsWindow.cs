@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEngine;
@@ -161,3 +162,4 @@ namespace KZLib.KZWindow
 		}
 	}
 }
+#endif

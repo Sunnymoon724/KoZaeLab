@@ -1,4 +1,5 @@
-﻿using Sirenix.OdinInspector.Editor;
+﻿#if UNITY_EDITOR
+using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -153,3 +154,4 @@ namespace KZLib
 		}
 	}
 }
+#endif

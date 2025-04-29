@@ -15,7 +15,7 @@ MonoBehaviour:
   m_GroupName: Localization-Asset-Tables-Korean
   m_Data:
     m_SerializedData: []
-  m_GUID: d0be967150de8cd41a0a1baebc6fc960
+  m_GUID: 84efbab11f1e11b4ebafb436e9fc7f05
   m_SerializeEntries:
   - m_GUID: 2912764a387ef1046a8cc21c56f95bba
     m_Address: SpriteTable_ko

@@ -140,7 +140,7 @@ namespace KZLib
 
 			var texture = CommonUtility.GetScreenShot();
 
-			await CommonUtility.SendBugReportAsync(m_logDataQueue,texture.EncodeToPNG());
+			await NetworkMgr.In.PostBugReportWebRequestAsync(m_logDataQueue,texture.EncodeToPNG());
 
 			//? Send once and wait for 30 seconds -> If sent too frequently, it can cause a load.
 			await UniTask.Delay(TimeSpan.FromSeconds(c_coolTimeTimer));
