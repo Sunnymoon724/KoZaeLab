@@ -29,10 +29,10 @@ public class DialogBoxPopupUI : WindowUI2D
 
 		if(m_titleText)
 		{
-			m_titleText.SetLocalizeText(dialogParam.Title);
+			m_titleText.SetSafeTextMeshPro(dialogParam.Title);
 		}
 
-		m_messageText.SetLocalizeText(dialogParam.Message);
+		m_messageText.SetSafeTextMeshPro(dialogParam.Message);
 
 		var cellDataList = new List<ICellData>();
 

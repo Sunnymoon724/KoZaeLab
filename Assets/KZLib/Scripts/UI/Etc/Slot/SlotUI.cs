@@ -93,7 +93,7 @@ public class SlotUI : BaseComponentUI
 	{
 		if(m_nameText)
 		{
-			m_nameText.SetLocalizeText(text);
+			m_nameText.SetSafeTextMeshPro(text);
 		}
 	}
 
@@ -101,7 +101,7 @@ public class SlotUI : BaseComponentUI
 	{
 		if(m_descriptionText)
 		{
-			m_descriptionText.SetLocalizeText(text);
+			m_descriptionText.SetSafeTextMeshPro(text);
 		}
 	}
 
