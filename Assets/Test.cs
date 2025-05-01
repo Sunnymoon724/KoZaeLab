@@ -62,24 +62,5 @@ public class Test : MonoBehaviour
         LogTag.Build.I(route2.Extension);
         LogTag.Build.I(route2.AbsolutePath);
     }
-
-    [Button("Test3")]
-    void Text3()
-    {
-        var settings = AddressableAssetSettingsDefaultObject.Settings;
-
-        var japaneseGroup = settings.FindGroup($"Localization-Asset-Tables-{SystemLanguage.Japanese}");
-
-        var newGroup = CommonUtility.CreateAddressableGroup(testString,japaneseGroup.Schemas,true);
-
-        var namingSchema = newGroup.GetSchema<BundledAssetGroupSchema>();
-
-        if (namingSchema != null)
-        {
-            namingSchema.BundleNaming = BundledAssetGroupSchema.BundleNamingStyle.NoHash;
-        }
-
-        // newGroup.AddSchema(namingSchema);
-    }
 }
 #endif
