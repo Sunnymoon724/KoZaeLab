@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
 using KZLib.KZUtility;
 
-namespace KZLib
+namespace KZLib.KZNetwork
 {
 	public partial class NetworkMgr : Singleton<NetworkMgr>
 	{
@@ -15,8 +15,6 @@ namespace KZLib
 			}
 
 			var responseInfo = await webRequest.SendAsync();
-
-			
 
 			if(responseInfo.Result)
 			{

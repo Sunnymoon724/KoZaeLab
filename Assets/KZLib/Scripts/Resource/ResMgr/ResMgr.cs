@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using KZLib.KZUtility;
 using Object = UnityEngine.Object;
+using KZLib.KZData;
 
 namespace KZLib
 {
@@ -29,7 +30,6 @@ namespace KZLib
 
 		private bool m_disposed = false;
 
-		private const string c_resource_text = "Resources";
 		private const float c_update_period = 0.1f;
 
 		private const float c_pool_loop_time = 30.0f;   // 30s

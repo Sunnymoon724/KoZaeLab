@@ -3,6 +3,7 @@ using UnityEngine;
 using KZLib.KZUtility;
 using System;
 using KZLib.KZDevelop;
+using KZLib.KZData;
 
 namespace KZLib
 {

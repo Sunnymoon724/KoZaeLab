@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace KZLib
+namespace KZLib.KZNetwork
 {
 	public abstract class TrelloWebRequest : BaseWebRequest
 	{

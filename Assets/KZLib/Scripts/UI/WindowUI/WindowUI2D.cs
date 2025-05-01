@@ -42,7 +42,7 @@ public abstract class WindowUI2D : WindowUI
 		base.Initialize();
 
 #if UNITY_ANDROID || UNITY_IOS
-		CheckSafeArea();
+		_CheckSafeArea();
 #endif
 
 		if(LayerType == UILayerType.PopUp && m_popUpTransform)

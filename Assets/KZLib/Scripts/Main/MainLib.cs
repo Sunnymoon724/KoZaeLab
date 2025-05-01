@@ -9,6 +9,8 @@ using Cysharp.Threading.Tasks;
 using System.Threading;
 using System.Collections.Generic;
 using System.IO;
+using KZLib.KZData;
+
 
 #if UNITY_EDITOR
 

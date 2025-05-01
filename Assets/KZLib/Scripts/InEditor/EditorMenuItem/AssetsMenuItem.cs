@@ -168,7 +168,7 @@ namespace KZLib.KZMenu
 
 				foreach(var dependant in AssetDatabase.GetDependencies(asset,false))
 				{
-					if(!dependant.StartsWith(Global.ASSETS_HEADER))
+					if(!dependant.StartsWith(Global.ASSETS_TEXT))
 					{
 						continue;
 					}

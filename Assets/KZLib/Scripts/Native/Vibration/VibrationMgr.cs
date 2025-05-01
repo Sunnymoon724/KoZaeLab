@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine;
 using KZLib.KZUtility;
 using System;
+using KZLib.KZData;
 
 namespace KZLib
 {

@@ -2,6 +2,7 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 using KZLib.KZUtility;
+using KZLib.KZData;
 
 namespace KZLib
 {

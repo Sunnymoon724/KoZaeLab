@@ -6,9 +6,8 @@ using Cysharp.Threading.Tasks;
 using MessagePack;
 using UnityEngine;
 using KZLib.KZUtility;
-using KZLib.KZData;
 
-namespace KZLib
+namespace KZLib.KZData
 {
 	public class ProtoMgr : Singleton<ProtoMgr>
 	{

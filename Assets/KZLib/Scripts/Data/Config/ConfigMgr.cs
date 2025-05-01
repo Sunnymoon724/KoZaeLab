@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using YamlDotNet.Serialization;
 using KZLib.KZUtility;
-using KZLib.KZData;
 using System.IO;
 using ConfigData;
 
-namespace KZLib
+namespace KZLib.KZData
 {
 	public class ConfigMgr : Singleton<ConfigMgr>
 	{

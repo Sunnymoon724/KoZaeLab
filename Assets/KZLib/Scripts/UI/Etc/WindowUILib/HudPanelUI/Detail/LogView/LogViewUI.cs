@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using KZLib;
+using KZLib.KZNetwork;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;

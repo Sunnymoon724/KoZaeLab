@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using KZLib.KZData;
 using KZLib.KZUtility;
 using Newtonsoft.Json.Linq;
 
-namespace KZLib
+namespace KZLib.KZNetwork
 {
 	public partial class NetworkMgr : Singleton<NetworkMgr>
 	{

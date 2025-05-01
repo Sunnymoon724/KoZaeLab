@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using KZLib.KZNetwork;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEngine;

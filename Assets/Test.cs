@@ -1,5 +1,7 @@
 #if UNITY_EDITOR
 using Cysharp.Threading.Tasks;
+using ExcelDataReader.Log;
+using KZLib;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
@@ -41,37 +43,24 @@ public class Test : MonoBehaviour
     [Button("Test2")]
     void Text2()
     {
-        var settings = AddressableAssetSettingsDefaultObject.Settings;
+        var route = RouteMgr.In.GetOrCreateRoute("defaultRes:lingo");
 
-        var newGroup1 = settings.FindGroup($"Localization-Asset-Tables-{SystemLanguage.Japanese}");
+        LogTag.Build.I(route.LocalPath);
+        LogTag.Build.I(route.Extension);
+        LogTag.Build.I(route.AbsolutePath);
 
-        // 새 그룹에서 BundledAssetGroupSchema 가져오기
-        BundledAssetGroupSchema schema2 = newGroup1.GetSchema<BundledAssetGroupSchema>();
+        var route3 = RouteMgr.In.GetOrCreateRoute("defaultRes:lingo:test.txt");
 
-        if (schema2 != null)
-        {
-            LogTag.System.I($"{schema2.BundleNaming}");
-        }
+        LogTag.Build.I(route3.LocalPath);
+        LogTag.Build.I(route3.Extension);
+        LogTag.Build.I(route3.AbsolutePath);
 
-        if (schema2 != null)
-        {
-            schema2.BundleNaming = BundledAssetGroupSchema.BundleNamingStyle.NoHash;
-            // 필요 시 여기에 다른 설정도 바꿀 수 있음
-        }
 
-        AddressableAssetGroup newGroup = settings.CreateGroup(testString,false,true,false,newGroup1.Schemas);
+        var route2 = RouteMgr.In.GetOrCreateRoute("Assets\\Test.cs");
 
-        newGroup.AddSchema(schema2);
-
-        // 새 그룹에서 BundledAssetGroupSchema 가져오기
-        var schema = newGroup.GetSchema<BundledAssetGroupSchema>();
-
-        if (schema != null)
-        {
-            LogTag.System.I($"{schema.BundleNaming}");
-        }
-
-        AssetDatabase.SaveAssets();
+        LogTag.Build.I(route2.LocalPath);
+        LogTag.Build.I(route2.Extension);
+        LogTag.Build.I(route2.AbsolutePath);
     }
 
     [Button("Test3")]

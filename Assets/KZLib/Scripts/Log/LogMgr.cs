@@ -9,6 +9,7 @@ using UnityEngine.Events;
 #if !UNITY_EDITOR
 
 using Cysharp.Threading.Tasks;
+using KZLib.KZNetwork;
 
 #endif
 

@@ -1,18 +1,23 @@
 #if UNITY_EDITOR
+using UnityEditor;
+
+#if KZLIB_LINGO
+
 using System;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using KZLib.KZTool;
 using KZLib.KZUtility;
-using UnityEditor;
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings.GroupSchemas;
+using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 using System.IO;
 using UnityEditor.Localization;
 using System.Collections.Generic;
-using UnityEditor.AddressableAssets;
-using UnityEditor.AddressableAssets.Settings.GroupSchemas;
-using UnityEditor.AddressableAssets.Settings;
+
+#endif
 
 namespace KZLib.KZMenu
 {
@@ -24,6 +29,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Lingo/Generate Lingo",false,MenuOrder.Data.GENERATE)]
 		private static void _OnGenerateLingo()
 		{
+#if KZLIB_LINGO
 			var localizationSettings = LocalizationSettings.GetInstanceDontCreateDefault();
 
 			if(localizationSettings == null)
@@ -140,8 +146,10 @@ namespace KZLib.KZMenu
 			}
 
 			_DisplayGenerateEnd();
+#endif
 		}
 
+#if KZLIB_LINGO
 		private static void _ApplyStringToTableCollection(StringTableCollection collection,Dictionary<string,string[]> lingoDict)
 		{
 			var keyHashSet = new HashSet<string>();
@@ -399,6 +407,17 @@ namespace KZLib.KZMenu
 			}
 
 			return guid;
+		}
+#endif
+
+		[MenuItem("KZMenu/Lingo/Generate Lingo",true,MenuOrder.Data.GENERATE)]
+		private static bool _IsValidLingo()
+		{
+#if KZLIB_LINGO
+			return true;
+#else
+			return false;
+#endif
 		}
 
 		[MenuItem("KZMenu/Lingo/Open Lingo Folder",false,MenuOrder.Data.OPEN)]

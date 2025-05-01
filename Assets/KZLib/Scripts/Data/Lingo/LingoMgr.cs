@@ -12,7 +12,7 @@
 // using System.Diagnostics;
 // using UnityEngine.ResourceManagement.AsyncOperations;
 
-// namespace KZLib
+// namespace KZLib.KZData
 // {
 // 	public class LingoMgr : Singleton<LingoMgr>
 // 	{

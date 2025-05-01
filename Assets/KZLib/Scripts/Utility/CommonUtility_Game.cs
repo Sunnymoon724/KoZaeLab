@@ -3,7 +3,7 @@ using KZLib;
 using UnityEngine;
 using KZLib.KZUtility;
 using System.IO;
-using UnityEngine.Localization.Settings;
+using KZLib.KZData;
 
 #if UNITY_EDITOR
 
@@ -142,9 +142,12 @@ public static partial class CommonUtility
 		_ReleaseSingleton<ShaderMgr>();
 
 		_ReleaseSingleton<InputMgr>();
+		_ReleaseSingleton<RouteMgr>();
 
 		_ReleaseSingleton<EventMgr>();
-		_ReleaseSingleton<RouteMgr>();
+		_ReleaseSingleton<TimeMgr>();
+		_ReleaseSingleton<LuaMgr>();
+
 
 		ClearCacheData();
 
@@ -199,7 +202,7 @@ public static partial class CommonUtility
 	{
 		var templateFilePath = FindTemplateFilePath(fileName);
 
-		return templateFilePath.StartsWith(Global.ASSETS_HEADER) ? Path.GetFullPath(templateFilePath) : Path.Combine(Global.PROJECT_PATH,templateFilePath);
+		return templateFilePath.StartsWith(Global.ASSETS_TEXT) ? Path.GetFullPath(templateFilePath) : Path.Combine(Global.PROJECT_PATH,templateFilePath);
 	}
 #endif
 }

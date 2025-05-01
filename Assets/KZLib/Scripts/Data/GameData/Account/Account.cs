@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using KZLib;
+using KZLib.KZData;
 
 namespace GameData
 {

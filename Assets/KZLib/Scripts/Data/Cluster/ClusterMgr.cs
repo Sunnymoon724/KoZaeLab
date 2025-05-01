@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using KZLib.KZUtility;
-using KZLib.KZData;
 
-namespace KZLib
+namespace KZLib.KZData
 {
 	public class ClusterMgr : Singleton<ClusterMgr>
 	{

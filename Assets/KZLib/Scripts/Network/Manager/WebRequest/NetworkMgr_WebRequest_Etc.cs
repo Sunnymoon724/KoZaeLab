@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Text;
 using Cysharp.Threading.Tasks;
+using KZLib.KZData;
 using KZLib.KZUtility;
 using UnityEngine;
 
-namespace KZLib
+namespace KZLib.KZNetwork
 {
 	public partial class NetworkMgr : Singleton<NetworkMgr>
 	{

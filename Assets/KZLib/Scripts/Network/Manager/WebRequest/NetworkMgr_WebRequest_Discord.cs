@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using KZLib.KZData;
 using KZLib.KZUtility;
 
-namespace KZLib
+namespace KZLib.KZNetwork
 {
 	public partial class NetworkMgr : Singleton<NetworkMgr>
 	{

@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using KZLib.KZUtility;
 using System.Threading;
+using KZLib.KZData;
 
 namespace KZLib
 {

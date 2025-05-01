@@ -11,7 +11,7 @@ using KZLib.KZUtility;
 
 #endif
 
-namespace KZLib
+namespace KZLib.KZNetwork
 {
 	public record ResponseInfo(bool Result,long Code,string Content,string Error);
 

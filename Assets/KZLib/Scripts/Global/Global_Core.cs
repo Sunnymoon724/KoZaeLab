@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using KZLib.KZUtility;
 using UnityEngine;
 
 public partial struct Global
@@ -28,7 +27,8 @@ public partial struct Global
 	public const string DISABLE_HEX_COLOR = "#808080FF";
 	public const string WRONG_HEX_COLOR = "#FFC300FF";
 
-	public const string ASSETS_HEADER = "Assets";
+	public const string ASSETS_TEXT = "Assets";
+	public const string RESOURCES_TEXT = "Resources";
 
 	public readonly static string PROJECT_PATH = Directory.GetCurrentDirectory();
 	public readonly static string PROJECT_PARENT_PATH = Path.GetFullPath(Path.Combine(PROJECT_PATH,".."));

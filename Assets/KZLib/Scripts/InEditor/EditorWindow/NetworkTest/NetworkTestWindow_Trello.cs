@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
+using KZLib.KZNetwork;
 using Newtonsoft.Json.Linq;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
