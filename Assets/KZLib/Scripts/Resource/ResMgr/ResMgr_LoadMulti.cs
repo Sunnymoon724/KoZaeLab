@@ -147,7 +147,11 @@ namespace KZLib
 
 			if(m_useServerResource)
 			{
+#if KZLIB_ADDRESSABLES
 				return AddressablesMgr.In.GetObjectArray<TObject>(assetPath);
+#else
+				throw new NotImplementedException($"Addressables is not implemented. [path : {assetPath}]");
+#endif
 			}
 
 #if UNITY_EDITOR
