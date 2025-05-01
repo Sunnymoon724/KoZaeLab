@@ -137,10 +137,7 @@ public static partial class CommonUtility
 		_ReleaseSingleton<PlayerPrefsMgr>();
 		_ReleaseSingleton<ResMgr>();
 		_ReleaseSingleton<LogMgr>();
-
-#if KZLIB_ADDRESSABLES
 		_ReleaseSingleton<AddressablesMgr>();
-#endif
 
 		_ReleaseSingleton<SoundMgr>();
 		_ReleaseSingleton<ShaderMgr>();

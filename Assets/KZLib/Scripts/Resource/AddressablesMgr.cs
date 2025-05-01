@@ -1,4 +1,3 @@
-#if KZLIB_ADDRESSABLES
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -179,4 +178,3 @@ namespace KZLib
 		}
 	}
 }
-#endif

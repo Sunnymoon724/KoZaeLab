@@ -53,62 +53,6 @@ namespace KZLib.KZMenu
 			CommonUtility.DisplayInfo("Assets are unloaded");
 		}
 
-#if KZLIB_ADDRESSABLES
-		[MenuItem("KZMenu/Option/Remove Addressables Module",false,MenuOrder.Option.MODULE)]
-		private static void _OnRemoveAddressablesModule()
-		{
-			if(!CommonUtility.DisplayCheck("Remove Addressables Module","Remove addressables module?"))
-			{
-				return;
-			}
-
-			var targetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
-
-			CommonUtility.RemoveDefineSymbol("KZLIB_ADDRESSABLES",targetGroup);
-		}
-#else
-		[MenuItem("KZMenu/Option/Add Addressables Module",false,MenuOrder.Option.MODULE)]
-		private static void _OnAddAddressablesModule()
-		{
-			if(!CommonUtility.DisplayCheck("Add Addressables Module","Add addressables module?"))
-			{
-				return;
-			}
-
-			var targetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
-
-			CommonUtility.AddDefineSymbol("KZLIB_ADDRESSABLES",targetGroup);
-		}
-#endif
-
-#if KZLIB_LINGO
-		[MenuItem("KZMenu/Option/Remove Lingo Module",false,MenuOrder.Option.MODULE)]
-		private static void _OnRemoveLingoModule()
-		{
-			if(!CommonUtility.DisplayCheck("Remove Lingo Module","Remove lingo module?"))
-			{
-				return;
-			}
-
-			var targetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
-
-			CommonUtility.RemoveDefineSymbol("KZLIB_LINGO",targetGroup);
-		}
-#else
-		[MenuItem("KZMenu/Option/Add Lingo Module",false,MenuOrder.Option.MODULE)]
-		private static void _OnAddLingoModule()
-		{
-			if(!CommonUtility.DisplayCheck("Add Lingo Module","Add lingo module?"))
-			{
-				return;
-			}
-
-			var targetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
-
-			CommonUtility.AddDefineSymbol("KZLIB_LINGO",targetGroup);
-		}
-#endif
-
 		[MenuItem("KZMenu/Option/Find Missing Component",false,MenuOrder.Option.FIND)]
 		private static void _OnFindMissingComponent()
 		{

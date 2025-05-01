@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR && KZLIB_ADDRESSABLES
+﻿#if UNITY_EDITOR
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
