@@ -2,34 +2,23 @@
 using KZLib.KZUtility;
 using KZLib.KZData;
 using System;
-using DG.Tweening;
 
 namespace KZLib
 {
-	public class SoundMgr : Singleton<SoundMgr>
+	public partial class SoundMgr : LoadSingletonMB<SoundMgr>
 	{
-		private bool m_disposed = false;
-
-		//? BGM
-		private AudioSource m_bgmSource = null;
-		public AudioSource BGMSource => m_bgmSource;
-
-		//? UI
-		private AudioSource m_uiSource = null;
-		public AudioSource UISource => m_uiSource;
-
-		private SoundVolume m_effectVolume = SoundVolume.zero;
-
 		private WeakReference<ConfigData.OptionConfig> m_optionRef = null;
 
 		protected override void Initialize()
 		{
-			//? Use CameraMgr or Camera main
-			m_bgmSource = CameraMgr.HasInstance ? CameraMgr.In.gameObject.GetComponentInChildren<AudioSource>() : Camera.main.gameObject.GetOrAddComponent<AudioSource>();
-
-			if(UIMgr.HasInstance)
+			if(m_bgmSource)
 			{
-				m_uiSource = UIMgr.In.gameObject.GetComponentInChildren<AudioSource>();
+				m_bgmSource = GetComponent<AudioSource>();
+			}
+
+			for(var i=0;i<c_sfxCount;i++)
+			{
+				m_sfxList.Add(CreateSFX(i));
 			}
 
 			var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
@@ -41,198 +30,89 @@ namespace KZLib
 			_OnChangeSoundOption(optionCfg.MasterVolume,optionCfg.MusicVolume,optionCfg.EffectVolume);
 		}
 
-		protected override void Release(bool disposing)
+		protected override void Release()
 		{
-			if(m_disposed)
+			if(m_optionRef.TryGetTarget(out var optionCfg))
 			{
-				return;
+				optionCfg.OnSoundVolumeChange -= _OnChangeSoundOption;
 			}
 
-			if(disposing)
-			{
-				if(m_optionRef.TryGetTarget(out var optionCfg))
-				{
-					optionCfg.OnSoundVolumeChange -= _OnChangeSoundOption;
-				}
+			m_optionRef = null;
 
-				m_optionRef = null;
-
-				m_bgmSource = null;
-				m_uiSource = null;
-			}
-
-			m_disposed = true;
-
-			base.Release(disposing);
+			m_sfxList.Clear();
 		}
 
 		private void _OnChangeSoundOption(SoundVolume masterVolume,SoundVolume musicVolume,SoundVolume effectVolume)
 		{
-			m_bgmSource.volume = masterVolume.level*musicVolume.level;
-			m_bgmSource.mute = masterVolume.mute || musicVolume.mute;
+			m_bgmVolume = new SoundVolume(masterVolume.level*musicVolume.level,masterVolume.mute || musicVolume.mute);
+			m_sfxVolume = new SoundVolume(masterVolume.level*effectVolume.level,masterVolume.mute || effectVolume.mute);
 
-			m_effectVolume = new SoundVolume(masterVolume.level*effectVolume.level,masterVolume.mute || effectVolume.mute);
+			m_bgmSource.volume = m_bgmVolume.level;
+			m_bgmSource.mute = m_bgmVolume.mute;
 
-			m_uiSource.volume = m_effectVolume.level;
-			m_uiSource.mute = m_effectVolume.mute;
+			foreach(var source in m_sfxList)
+			{
+				source.volume = m_sfxVolume.level;
+				source.mute = m_sfxVolume.mute;
+			}
 		}
 
-		#region UI
-		public bool TryPlayUISound(string audioPath,float volume = 1.0f)
+		private void _SetAudioSource(AudioSource audioSource,AudioClip audioClip,string sourceName,bool loop,SoundVolume soundVolume)
 		{
-			if(audioPath.IsEmpty())
-			{
-				LogTag.System.E("Audio path is empty");
+			audioSource.name = sourceName;
+			audioSource.clip = audioClip;
+			audioSource.loop = loop;
+			audioSource.pitch = 1.0f;
+			audioSource.ignoreListenerPause = false;
 
+			audioSource.volume = soundVolume.level;
+			audioSource.mute = soundVolume.mute;
+		}
+
+		private void _PlaySound(AudioSource audioSource,float time = 0.0f,float delay = 0.0f)
+		{
+			audioSource.time = time;
+
+			if(delay == 0.0f)
+			{
+				audioSource.Play();
+			}
+			else
+			{
+				if(delay < 0.0f)
+				{
+					LogTag.System.W($"Delay time is negative: {delay}");
+				}
+
+				audioSource.PlayDelayed(delay);
+			}
+		}
+
+		private bool _RestartSound(AudioSource audioSource,float time = 0.0f,float delay = 0.0f)
+		{
+			if(!_IsPlayingSource(audioSource))
+			{
 				return false;
 			}
 
-			return TryPlayUISound(ResMgr.In.GetAudioClip(audioPath),volume);
-		}
-
-		public bool TryPlayUISound(AudioClip audioClip,float volume = 1.0f)
-		{
-			return TryPlaySFXSound(m_uiSource,audioClip,volume);
-		}
-
-		public void StopUISound()
-		{
-			StopSFXSound(m_uiSource);
-		}
-		#endregion UI
-
-		#region SFX
-		public bool TryPlaySFXSound(AudioSource source,string audioPath,float volume = 1.0f)
-		{
-			if(!source)
-			{
-				LogTag.System.E("AudioSource is null");
-
-				return false;
-			}
-
-			if(audioPath.IsEmpty())
-			{
-				LogTag.System.E("Audio path is empty");
-
-				return false;
-			}
-
-			return TryPlaySFXSound(source,ResMgr.In.GetAudioClip(audioPath),volume);
-		}
-
-		public bool TryPlaySFXSound(AudioSource source,AudioClip audioClip,float volume = 1.0f)
-		{
-			if(!source)
-			{
-				LogTag.System.E("Audio Source is null");
-
-				return false;
-			}
-
-			if(!audioClip)
-			{
-				LogTag.System.E("Audio clip is null");
-
-				return false;
-			}
-
-			source.volume = m_effectVolume.level;
-			source.mute = m_effectVolume.mute;
-
-			source.PlayOneShot(audioClip,volume);
+			_PlaySound(audioSource,time,delay);
 
 			return true;
 		}
 
-		public void StopSFXSound(AudioSource source)
+		private bool _IsPlayingSource(AudioSource audioSource)
 		{
-			if(source)
-			{
-				source.Stop();
-			}
-		}
-		#endregion SFX
-
-		#region BGM
-		public bool TryPlayBGMSound(string audioPath,float startTime = 0.0f)
-		{
-			if(audioPath.IsEmpty())
-			{
-				LogTag.System.E("Audio path is empty");
-
-				return false;
-			}
-
-			return TryPlayBGMSound(ResMgr.In.GetAudioClip(audioPath),startTime);
+			return audioSource.clip && audioSource.isPlaying;
 		}
 
-		public bool TryPlayBGMSound(AudioClip audioClip,float startTime = 0.0f)
+		private void _StopSound(AudioSource audioSource,bool clearClip)
 		{
-			if(!audioClip)
-			{
-				LogTag.System.E("Audio clip is null");
-
-				return false;
-			}
-
-			if(m_bgmSource.clip != null && m_bgmSource.clip.name.IsEqual(audioClip.name))
-			{
-				LogTag.System.W($"{audioClip.name} is already played");
-
-				return false;
-			}
-
-			m_bgmSource.clip = audioClip;
-			m_bgmSource.loop = true;
-			m_bgmSource.time = startTime;
-
-			m_bgmSource.Play();
-
-			return true;
-		}
-
-		public Tween PlayBGMInFade(float volume,float duration)
-		{
-			var bgmVolume = Mathf.Clamp01(volume);
-
-			return DOTween.To(() => m_bgmSource.volume,x => m_bgmSource.volume = x,bgmVolume,duration);
-		}
-
-		public void ReplayBGMSound(float? startTime = null)
-		{
-			if(startTime != null)
-			{
-				m_bgmSource.time = startTime.Value;
-			}
-
-			m_bgmSource.Play();
-		}
-
-		public void PauseBGMSound()
-		{
-			m_bgmSource.Pause();
-		}
-
-		public void ResumeBGMSound()
-		{
-			m_bgmSource.Play();
-		}
-
-		public bool IsPlayingBGMSound()
-		{
-			return m_bgmSource.isPlaying;
-		}
-
-		public void StopBGMSound(bool clearClip)
-		{
-			m_bgmSource.Stop();
+			audioSource.Stop();
 
 			if(clearClip)
 			{
-				m_bgmSource.clip = null;
+				audioSource.clip = null;
 			}
 		}
-		#endregion BGM
 	}
 }

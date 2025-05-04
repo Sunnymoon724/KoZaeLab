@@ -127,6 +127,7 @@ public static partial class CommonUtility
 		_ReleaseSingletonMB<CameraMgr>();
 		_ReleaseSingletonMB<TouchMgr>();
 		_ReleaseSingletonMB<EffectMgr>();
+		_ReleaseSingletonMB<SoundMgr>();
 
 		//? Release Singleton
 		_ReleaseSingleton<ProtoMgr>();
@@ -134,14 +135,12 @@ public static partial class CommonUtility
 		_ReleaseSingleton<ConfigMgr>();
 
 		_ReleaseSingleton<GameDataMgr>();
+
 		_ReleaseSingleton<PlayerPrefsMgr>();
 		_ReleaseSingleton<ResMgr>();
 		_ReleaseSingleton<LogMgr>();
 		_ReleaseSingleton<AddressablesMgr>();
-
-		_ReleaseSingleton<SoundMgr>();
 		_ReleaseSingleton<ShaderMgr>();
-
 		_ReleaseSingleton<InputMgr>();
 		_ReleaseSingleton<RouteMgr>();
 
