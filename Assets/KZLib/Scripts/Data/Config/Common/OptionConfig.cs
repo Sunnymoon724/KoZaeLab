@@ -28,15 +28,15 @@ namespace ConfigData
 		public SystemLanguage Language { get; private set; } = Application.systemLanguage;
 #endif
 
-		public event UnityAction<SoundVolume,SoundVolume,SoundVolume> OnSoundVolumeChange = null;
+		public event Action<SoundVolume,SoundVolume,SoundVolume> OnSoundVolumeChange = null;
 
-		public event UnityAction<ScreenResolution> OnResolutionChange = null;
-		public event UnityAction<int> OnFrameRateChange = null;
-		public event UnityAction<long> OnGraphicQualityChange = null;
+		public event Action<ScreenResolution> OnResolutionChange = null;
+		public event Action<int> OnFrameRateChange = null;
+		public event Action<long> OnGraphicQualityChange = null;
 
-		public event UnityAction<bool> OnUseVibrationChange = null;
+		public event Action<bool> OnUseVibrationChange = null;
 
-		public event UnityAction<SystemLanguage> OnLanguageChange = null;
+		public event Action<SystemLanguage> OnLanguageChange = null;
 
 		public OptionConfig()
 		{

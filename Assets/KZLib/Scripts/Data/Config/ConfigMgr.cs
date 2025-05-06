@@ -130,7 +130,6 @@ namespace KZLib.KZData
 				return text;
 			}
 
-
 			//? check resource folder.
 #if UNITY_EDITOR
 

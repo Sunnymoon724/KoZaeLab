@@ -14,7 +14,14 @@ public static partial class ContainerExtension
 	{
 		value = default;
 
-		return _IsValid(dictionary) && dictionary.TryGetValue(key,out value);
+		if(!_IsValid(dictionary))
+		{
+			return false;
+		}
+
+		value = dictionary[key];
+
+		return dictionary.Remove(key);
 	}
 
 	public static bool RemoveSafeValueInCollection<TKey,TValue>(this IDictionary<TKey,ICollection<TValue>> dictionary,TKey key,TValue value)

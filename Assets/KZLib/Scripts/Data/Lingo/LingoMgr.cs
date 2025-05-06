@@ -24,8 +24,6 @@
 
 // 		public event Action OnLocalizationChange = null;
 
-// 		private WeakReference<ConfigData.OptionConfig> m_optionRef = null;
-
 // 		private bool m_isLoaded = false;
 
 // 		protected override void Initialize()
@@ -89,8 +87,6 @@
 // 			// var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
 // 			// optionCfg.OnLanguageChange += _OnChangeLanguage;
-
-// 			// m_optionRef = new WeakReference<ConfigData.OptionConfig>(optionCfg);
 
 // 			// _OnChangeLanguage(optionCfg.Language);
 // 		}

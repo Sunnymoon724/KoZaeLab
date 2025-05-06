@@ -17,8 +17,6 @@
 
 // 		public event UnityAction OnLocalizationChange = null;
 
-// 		private WeakReference<ConfigData.OptionConfig> m_optionRef = null;
-
 // 		protected override void Initialize()
 // 		{
 // 			m_languageTextDict.Clear();
@@ -39,8 +37,6 @@
 // 			var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
 // 			optionCfg.OnLanguageChange += _OnChangeLanguage;
-
-// 			m_optionRef = new WeakReference<ConfigData.OptionConfig>(optionCfg);
 
 // 			_OnChangeLanguage(optionCfg.Language);
 // 		}

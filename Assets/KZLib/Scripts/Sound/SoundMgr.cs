@@ -1,14 +1,11 @@
 ﻿using UnityEngine;
 using KZLib.KZUtility;
 using KZLib.KZData;
-using System;
 
 namespace KZLib
 {
 	public partial class SoundMgr : LoadSingletonMB<SoundMgr>
 	{
-		private WeakReference<ConfigData.OptionConfig> m_optionRef = null;
-
 		protected override void Initialize()
 		{
 			if(m_bgmSource)
@@ -25,19 +22,17 @@ namespace KZLib
 
 			optionCfg.OnSoundVolumeChange += _OnChangeSoundOption;
 
-			m_optionRef = new WeakReference<ConfigData.OptionConfig>(optionCfg);
-
 			_OnChangeSoundOption(optionCfg.MasterVolume,optionCfg.MusicVolume,optionCfg.EffectVolume);
 		}
 
 		protected override void Release()
 		{
-			if(m_optionRef.TryGetTarget(out var optionCfg))
+			if(ConfigMgr.HasInstance)
 			{
+				var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+
 				optionCfg.OnSoundVolumeChange -= _OnChangeSoundOption;
 			}
-
-			m_optionRef = null;
 
 			m_sfxList.Clear();
 		}

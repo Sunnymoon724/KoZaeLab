@@ -1,22 +1,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 using KZLib.KZUtility;
-using System;
 using KZLib.KZDevelop;
 using KZLib.KZData;
+using UnityEngine.Rendering.Universal;
 
 namespace KZLib
 {
-	public class CameraMgr : LoadSingletonMB<CameraMgr>
+	public class CameraMgr : Singleton<CameraMgr>
 	{
-		[SerializeField]
+		private record CameraStoreInfo(float Depth,CameraClearFlags ClearFlag);
+
 		private Camera m_mainCamera = null;
-		private Camera m_overrideCamera = null;
-		public Camera CurrentCamera => m_overrideCamera == null ? m_mainCamera : m_overrideCamera;
+		public Camera CurrentCamera => m_mainCamera;
 
-		private readonly Dictionary<Camera,bool> m_subCameraDict = new();
+		private readonly Dictionary<Camera,CameraStoreInfo> m_subCameraDict = new();
 
-		private WeakReference<ConfigData.OptionConfig> m_optionRef = null;
+		private bool m_disposed = false;
 
 		private float m_farFactor = 1.0f;
 
@@ -28,28 +28,53 @@ namespace KZLib
 
 			optionCfg.OnGraphicQualityChange += _OnChangeFarClipPlane;
 
-			m_optionRef = new WeakReference<ConfigData.OptionConfig>(optionCfg);
-
 			_OnChangeFarClipPlane(optionCfg.GraphicQuality);
 		}
 
-		protected override void Release()
+		protected override void Release(bool disposing)
 		{
-			base.Release();
-
-			if(m_optionRef.TryGetTarget(out var optionCfg))
+			if(m_disposed)
 			{
-				optionCfg.OnGraphicQualityChange -= _OnChangeFarClipPlane;
+				return;
 			}
 
-			m_optionRef = null;
+			if(disposing)
+			{
+				if(ConfigMgr.HasInstance)
+				{
+					var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+
+					optionCfg.OnGraphicQualityChange -= _OnChangeFarClipPlane;
+				}
+			}
+
+			m_disposed = true;
+
+			base.Release(disposing);
 		}
 
-		public void SetCamera(Camera newCamera)
+		public void AttachCamera(Camera newCamera)
 		{
-			m_mainCamera = newCamera;
+			if(newCamera == null)
+			{
+				return;
+			}
 
+			m_mainCamera = newCamera;
 			m_mainCamera.farClipPlane *= m_farFactor;
+
+			var mainCameraData = m_mainCamera.GetUniversalAdditionalCameraData();
+			var cameraList = mainCameraData.cameraStack;
+
+			foreach(var subCamera in m_subCameraDict.Keys)
+			{
+				if(cameraList.Contains(subCamera))
+				{
+					continue;
+				}
+
+				cameraList.Add(subCamera);
+			}
 
 			if(UIMgr.HasInstance)
 			{
@@ -57,52 +82,88 @@ namespace KZLib
 			}
 		}
 
-		public void SetOverrideCamera(Camera overrideCamera)
+		public void DetachCamera()
 		{
-			var onCamera = overrideCamera != null;
+			m_mainCamera = null;
 
-			m_overrideCamera = overrideCamera;
-
-			if(m_overrideCamera != null)
+			if(UIMgr.HasInstance)
 			{
-				m_overrideCamera.gameObject.EnsureActive(onCamera);
+				UIMgr.In.Set3DCamera(null);
 			}
-
-			m_mainCamera.gameObject.EnsureActive(!onCamera);
-		}
-
-		public void SetEnableCamera(bool enable)
-		{
-			m_mainCamera.enabled = enable;
 		}
 
 		private void _OnChangeFarClipPlane(long graphicQuality)
 		{
-			m_farFactor = float.Parse(GraphicQualityOption.In.FindValue(graphicQuality,Global.DISABLE_CAMERA_FAR_HALF));
-		}
+			var value = GraphicQualityOption.In.FindValue(graphicQuality,Global.DISABLE_CAMERA_FAR_HALF);
 
-		public void AddSubCamera(Camera camera,bool dependency = true)
-		{
-			if(!m_subCameraDict.ContainsKey(camera))
-			{
-				m_subCameraDict.Add(camera,dependency);
-			}
-
-			camera.depth = m_mainCamera.depth+1;
-			camera.clearFlags = CameraClearFlags.Nothing;
-		}
-
-		public void RemoveSubCamera(Camera camera)
-		{
-			if(m_subCameraDict.ContainsKey(camera))
+			if(!float.TryParse(value,out var factor))
 			{
 				return;
 			}
 
-			m_subCameraDict.Remove(camera);
+			m_farFactor = factor;
 
-			camera.depth = -1;
-			camera.clearFlags = CameraClearFlags.Color;
+			if (m_mainCamera != null)
+			{
+				m_mainCamera.farClipPlane *= m_farFactor;
+			}
+		}
+
+		public void AddSubCamera(Camera subCamera)
+		{
+			if(m_mainCamera == null || subCamera == null || m_subCameraDict.ContainsKey(subCamera))
+			{
+				return;
+			}
+
+			m_subCameraDict.Add(subCamera,new CameraStoreInfo(subCamera.depth,subCamera.clearFlags));
+
+			subCamera.depth = m_mainCamera.depth+1;
+			subCamera.clearFlags = CameraClearFlags.Nothing;
+
+			var mainCameraData = m_mainCamera.GetUniversalAdditionalCameraData();
+
+			mainCameraData.cameraStack.AddNotOverlap(subCamera);
+		}
+
+		public void RemoveSubCamera(Camera subCamera)
+		{
+			if(subCamera == null || m_mainCamera == null || !m_subCameraDict.ContainsKey(subCamera))
+			{
+				return;
+			}
+
+			m_subCameraDict.RemoveOut(subCamera,out var cameraInfo);
+
+			subCamera.depth = cameraInfo.Depth;
+			subCamera.clearFlags = cameraInfo.ClearFlag;
+
+			var mainCameraData = m_mainCamera.GetUniversalAdditionalCameraData();
+
+			mainCameraData.cameraStack.RemoveSafe(subCamera);
+		}
+
+		public void ClearAllSubCameras()
+		{
+			if(m_mainCamera == null)
+			{
+				return;
+			}
+
+			var mainCameraData = m_mainCamera.GetUniversalAdditionalCameraData();
+
+			foreach(var pair in m_subCameraDict)
+			{
+				var cam = pair.Key;
+				var info = pair.Value;
+
+				cam.depth = info.Depth;
+				cam.clearFlags = info.ClearFlag;
+
+				mainCameraData.cameraStack.RemoveSafe(cam);
+			}
+
+			m_subCameraDict.Clear();
 		}
 	}
 }
