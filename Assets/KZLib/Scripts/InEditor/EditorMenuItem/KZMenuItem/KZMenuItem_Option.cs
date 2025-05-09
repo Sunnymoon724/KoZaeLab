@@ -133,6 +133,29 @@ namespace KZLib.KZMenu
 			}
 		}
 
+		[MenuItem("KZMenu/Option/Add PlayFab Module",false,MenuOrder.Option.MODULE)]
+		private static void _OnAddPlayFabModule()
+		{
+			if(!CommonUtility.DisplayCheck("Add playFab module","Add playFab module?"))
+			{
+				return;
+			}
+
+			var targetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
+
+			CommonUtility.AddDefineSymbol("KZLIB_PLAY_FAB",targetGroup);
+		}
+
+		[MenuItem("KZMenu/Option/Add PlayFab Module",true,MenuOrder.Option.MODULE)]
+		private static bool _IsEnablePlayFabModule()
+		{
+#if KZLIB_PLAY_FAB
+			return false;
+#else
+			return true;
+#endif
+		}
+
 		[MenuItem("KZMenu/Option/Check Internet",false,MenuOrder.Option.CHECK)]
 		private static void _OnCheckInternet()
 		{

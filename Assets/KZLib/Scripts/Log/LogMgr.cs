@@ -32,7 +32,7 @@ namespace KZLib
 		private bool m_sendLock = false;
 #endif
 
-		public event UnityAction<MessageData> OnLogDisplay = null;
+		public event Action<MessageData> OnLogDisplay = null;
 
 		protected override void Initialize()
 		{

@@ -75,7 +75,7 @@ namespace KZLib.KZData
 			return config;
 		}
 
-		public void Clear<TConfig>()
+		public void Revoke<TConfig>()
 		{
 			var key = typeof(TConfig).Name;
 

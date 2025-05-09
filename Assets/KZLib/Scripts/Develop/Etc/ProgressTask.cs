@@ -1,8 +1,8 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace KZLib.KZDevelop
 {
@@ -46,9 +46,9 @@ namespace KZLib.KZDevelop
 
 		private bool m_isReverse = false;
 
-		public event UnityAction<float> OnProgressUpdate = null;
-		public event UnityAction OnProgressStart = null;
-		public event UnityAction OnProgressComplete = null;
+		public event Action<float> OnProgressUpdate = null;
+		public event Action OnProgressStart = null;
+		public event Action OnProgressComplete = null;
 
 		protected CancellationTokenSource m_tokenSource = null;
 

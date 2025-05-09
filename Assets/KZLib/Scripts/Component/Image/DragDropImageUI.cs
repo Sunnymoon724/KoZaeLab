@@ -1,14 +1,14 @@
+using System;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDragHandler
 {
 	private Canvas m_canvas = null;
 
-	public event UnityAction OnDragStart = null;
-	public event UnityAction OnDragUpdate = null;
-	public event UnityAction OnDragEnd = null;
+	public event Action OnDragStart = null;
+	public event Action OnDragUpdate = null;
+	public event Action OnDragEnd = null;
 
 	protected override void Initialize()
 	{

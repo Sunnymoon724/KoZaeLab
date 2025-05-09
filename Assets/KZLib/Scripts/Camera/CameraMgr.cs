@@ -26,7 +26,7 @@ namespace KZLib
 
 			var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-			optionCfg.OnGraphicQualityChange += _OnChangeFarClipPlane;
+			optionCfg.OnGraphicQualityChanged += _OnChangeFarClipPlane;
 
 			_OnChangeFarClipPlane(optionCfg.GraphicQuality);
 		}
@@ -44,7 +44,7 @@ namespace KZLib
 				{
 					var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-					optionCfg.OnGraphicQualityChange -= _OnChangeFarClipPlane;
+					optionCfg.OnGraphicQualityChanged -= _OnChangeFarClipPlane;
 				}
 			}
 

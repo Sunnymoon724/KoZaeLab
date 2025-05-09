@@ -49,7 +49,7 @@ namespace KZLib.KZDevelop
 
 		private bool IsCircularMode => m_circularMode && m_cellDataList.Count != 1;
 
-		public event UnityAction<ICellData> OnFocusSet = null;
+		public event Action<ICellData> OnFocusSet = null;
 
 		public ICellData FocusCellData => m_cellDataList.TryGetValueByIndex(m_focusIndex,out var data) ? data : null;
 

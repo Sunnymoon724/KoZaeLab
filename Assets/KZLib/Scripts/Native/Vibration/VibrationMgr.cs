@@ -42,7 +42,7 @@ namespace KZLib
 		{
 			var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-			optionCfg.OnUseVibrationChange += _OnChangeUseVibration;
+			optionCfg.OnUseVibrationChanged += _OnChangeUseVibration;
 
 			_OnChangeUseVibration(optionCfg.UseVibration);
 
@@ -69,7 +69,7 @@ namespace KZLib
 				{
 					var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-					optionCfg.OnUseVibrationChange -= _OnChangeUseVibration;
+					optionCfg.OnUseVibrationChanged -= _OnChangeUseVibration;
 				}
 			}
 

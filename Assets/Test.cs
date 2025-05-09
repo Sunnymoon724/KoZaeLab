@@ -2,6 +2,7 @@
 using Cysharp.Threading.Tasks;
 using ExcelDataReader.Log;
 using KZLib;
+using KZLib.KZData;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
@@ -12,55 +13,21 @@ using UnityEngine.Localization.Settings;
 
 public class Test : MonoBehaviour
 {
-    [SerializeField] private string testString = "Test";
-
     [Button("Test1")]
     void Text1()
     {
-        TextAsync().Forget();
+        var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+
+        LogTag.Build.I(optionCfg.MasterVolume.level);
+
+        optionCfg.SetMasterVolume(0.27f);
+
+        LogTag.Build.I(optionCfg.MasterVolume.level);
     }
 
-    private async UniTaskVoid TextAsync()
+    private async UniTask Test2()
     {
-        await LocalizationSettings.InitializationOperation.Task;
-
-        var handle = LocalizationSettings.StringDatabase.GetAllTables();
-
-        await handle.Task;
-
-        if (handle.Result == null || handle.Result.Count == 0)
-        {
-            Debug.LogError("No tables found.");
-            return;
-        }
-
-        foreach (var table in handle.Result)
-        {
-            Debug.Log("Table Name: " + table.TableCollectionName);
-        }
-    }
-
-    [Button("Test2")]
-    void Text2()
-    {
-        var route = RouteMgr.In.GetOrCreateRoute("defaultRes:lingo");
-
-        LogTag.Build.I(route.LocalPath);
-        LogTag.Build.I(route.Extension);
-        LogTag.Build.I(route.AbsolutePath);
-
-        var route3 = RouteMgr.In.GetOrCreateRoute("defaultRes:lingo:test.txt");
-
-        LogTag.Build.I(route3.LocalPath);
-        LogTag.Build.I(route3.Extension);
-        LogTag.Build.I(route3.AbsolutePath);
-
-
-        var route2 = RouteMgr.In.GetOrCreateRoute("Assets\\Test.cs");
-
-        LogTag.Build.I(route2.LocalPath);
-        LogTag.Build.I(route2.Extension);
-        LogTag.Build.I(route2.AbsolutePath);
+        var ww = await PlayFabMgr.In.ExecuteCloudScriptAsync("Test",new { Test = "Test" });
     }
 }
 #endif

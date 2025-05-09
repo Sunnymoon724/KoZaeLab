@@ -18,7 +18,8 @@ namespace KZLib.KZMenu
 
 				public const int DELETE				= DEFAULT + 0 * SUB_GAP;
 				public const int FIND				= DEFAULT + 1 * SUB_GAP;
-				public const int CHECK				= DEFAULT + 2 * SUB_GAP;
+				public const int MODULE				= DEFAULT + 2 * SUB_GAP;
+				public const int CHECK				= DEFAULT + 3 * SUB_GAP;
 			}
 
 			public class Explorer

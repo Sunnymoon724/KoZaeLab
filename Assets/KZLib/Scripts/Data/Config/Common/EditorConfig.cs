@@ -6,6 +6,9 @@ using Newtonsoft.Json;
 
 namespace ConfigData
 {
+	/// <summary>
+	/// EditorConfig is used to store scene parameters for test in editor.
+	/// </summary>
 	public class EditorConfig : IConfig
 	{
 		private Dictionary<string,object> SceneParamDict { get; set; }

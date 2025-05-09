@@ -20,7 +20,7 @@ namespace KZLib
 
 			var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-			optionCfg.OnSoundVolumeChange += _OnChangeSoundOption;
+			optionCfg.OnSoundVolumeChanged += _OnChangeSoundOption;
 
 			_OnChangeSoundOption(optionCfg.MasterVolume,optionCfg.MusicVolume,optionCfg.EffectVolume);
 		}
@@ -31,7 +31,7 @@ namespace KZLib
 			{
 				var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-				optionCfg.OnSoundVolumeChange -= _OnChangeSoundOption;
+				optionCfg.OnSoundVolumeChanged -= _OnChangeSoundOption;
 			}
 
 			m_sfxList.Clear();

@@ -15,7 +15,7 @@
 
 // 		private readonly Dictionary<SystemLanguage,Dictionary<string,string>> m_languageTextDict = new();
 
-// 		public event UnityAction OnLocalizationChange = null;
+// 		public event Action OnLocalizationChange = null;
 
 // 		protected override void Initialize()
 // 		{

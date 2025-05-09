@@ -101,8 +101,8 @@ namespace KZLib.KZDevelop
 
 		private float ViewportSize => m_vertical ? m_viewport.rect.height : m_viewport.rect.width;
 
-		public event UnityAction OnDragStart = null;
-		public event UnityAction<float> OnDragEnd = null;
+		public event Action OnDragStart = null;
+		public event Action<float> OnDragEnd = null;
 
 		public void OnPointerDown(PointerEventData eventData)
 		{

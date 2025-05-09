@@ -85,7 +85,7 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		public event UnityAction OnPathChanged = null;
+		public event Action OnPathChanged = null;
 
 		public void SetDirty()
 		{
