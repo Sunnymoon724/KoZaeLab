@@ -20,7 +20,7 @@ namespace KZLib.KZWindow
 		{
 			m_googleSheetArray = new string[1,1] { { "Loading..." } };
 
-			NetworkMgr.In.GetGoogleSheet("Test",m_googleSheetIndex,(result)=>
+			WebRequestMgr.In.GetGoogleSheet("Test",m_googleSheetIndex,(result)=>
 			{
 				if(result.IsEmpty())
 				{
@@ -48,7 +48,7 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/GoogleSheet/2",Order = 2),Button("Post Sheet",ButtonSizes.Large),EnableIf(nameof(IsExistGoogleSheet))]
 		protected void OnPostText_GoogleSheet()
 		{
-			NetworkMgr.In.PostGoogleSheetAddRow("Test",m_googleSheetIndex,"Test\tAAA\tBBB\tCCC");
+			WebRequestMgr.In.PostGoogleSheetAddRow("Test",m_googleSheetIndex,"Test\tAAA\tBBB\tCCC");
 
 			OnGetSheet_GoogleSheet();
 		}

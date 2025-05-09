@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace KZLib.KZNetwork
 {
-	public partial class NetworkMgr : Singleton<NetworkMgr>
+	public partial class WebRequestMgr : Singleton<WebRequestMgr>
 	{
 		public void PostBugReportWebRequest(IEnumerable<MessageData> messageGroup,byte[] file)
 		{

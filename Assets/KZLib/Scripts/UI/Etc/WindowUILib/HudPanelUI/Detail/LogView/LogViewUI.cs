@@ -149,7 +149,7 @@ namespace HudPanel
 				{
 					return new LogCellData(logData.Color,Time,messageData.Body,() =>
 					{
-						NetworkMgr.In.PostDiscordWebHook("Log Window",new MessageData[] { messageData });
+						WebRequestMgr.In.PostDiscordWebHook("Log Window",new MessageData[] { messageData });
 					});
 				}
 			}

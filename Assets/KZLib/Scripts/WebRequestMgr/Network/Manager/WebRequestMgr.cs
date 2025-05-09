@@ -1,19 +1,40 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
 using Cysharp.Threading.Tasks;
 using KZLib.KZUtility;
 
-#if UNITY_EDITOR
-
-using System;
-using System.Text;
-using System.IO;
-using System.Diagnostics;
-
-#endif
-
 namespace KZLib.KZNetwork
 {
-	public partial class NetworkMgr : Singleton<NetworkMgr>
+	public partial class WebRequestMgr : Singleton<WebRequestMgr>
 	{
+		private bool m_disposed = false;
+
+		public event Action<string> OnShowNetworkError = null;
+
+		protected override void Release(bool disposing)
+		{
+			if(m_disposed)
+			{
+				return;
+			}
+
+			if(disposing)
+			{
+				OnShowNetworkError = null;
+			}
+
+			m_disposed = true;
+
+			base.Release(disposing);
+		}
+
+		public void SendNetworkError(string message)
+		{
+			OnShowNetworkError?.Invoke(message);
+		}
+
 		private async UniTask<ResponseInfo> _SendWebRequest(BaseWebRequest webRequest)
 		{
 			if(webRequest == null)

@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace KZLib.KZNetwork
 {
-	public partial class NetworkMgr : Singleton<NetworkMgr>
+	public partial class WebRequestMgr : Singleton<WebRequestMgr>
 	{
 		public void GetTrelloBoard(Action<List<string>> onAction)
 		{

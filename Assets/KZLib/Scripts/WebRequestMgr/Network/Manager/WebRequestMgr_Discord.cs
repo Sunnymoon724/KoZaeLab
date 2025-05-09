@@ -5,7 +5,7 @@ using KZLib.KZUtility;
 
 namespace KZLib.KZNetwork
 {
-	public partial class NetworkMgr : Singleton<NetworkMgr>
+	public partial class WebRequestMgr : Singleton<WebRequestMgr>
 	{
 		public void PostDiscordWebHook(string content,IEnumerable<MessageData> messageGroup = null,byte[] file = null)
 		{

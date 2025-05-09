@@ -17,13 +17,13 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/Discord/1"),Button("Post Text",ButtonSizes.Large),EnableIf(nameof(IsExistDiscord))]
 		protected void OnPostTextTest_Discord()
 		{
-			NetworkMgr.In.PostDiscordWebHook(m_discordLink,"Text Test",new MessageData[] { new("Test","Hello World") },null);
+			WebRequestMgr.In.PostDiscordWebHook(m_discordLink,"Text Test",new MessageData[] { new("Test","Hello World") },null);
 		}
 
 		[HorizontalGroup("Network/Discord/1"),Button("Post Image",ButtonSizes.Large),EnableIf(nameof(IsExistDiscord))]
 		protected void OnPostImageTest_Discord()
 		{
-			NetworkMgr.In.PostDiscordWebHook(m_discordLink,"Image Test",new MessageData[] { new("Test","Hello World") },CommonUtility.FindTestImageData());
+			WebRequestMgr.In.PostDiscordWebHook(m_discordLink,"Image Test",new MessageData[] { new("Test","Hello World") },CommonUtility.FindTestImageData());
 		}
 	}
 }
