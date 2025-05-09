@@ -1,3 +1,4 @@
+#if KZLIB_PLAY_FAB
 using System.Text;
 using System.Text.RegularExpressions;
 using PlayFab;
@@ -44,3 +45,4 @@ public static partial class CommonUtility
 		return string.Format("{0}/[{1}]",_playFabError.Error,builder.ToString());
 	}
 }
+#endif
