@@ -145,8 +145,6 @@ namespace KZLib
 			await PlayFabMgr.In.UpdateUserDataAsync(key,JsonConvert.SerializeObject(affix));
 #else
 			await UniTask.Yield();
-
-			return null;
 #endif
 		}
 	}
