@@ -133,8 +133,8 @@ public static partial class CommonUtility
 		_ReleaseSingleton<ProtoMgr>();
 		_ReleaseSingleton<ClusterMgr>();
 		_ReleaseSingleton<ConfigMgr>();
-
-		_ReleaseSingleton<GameDataMgr>();
+		_ReleaseSingleton<AffixMgr>();
+		_ReleaseSingleton<LingoMgr>();
 
 		_ReleaseSingleton<CameraMgr>();
 		_ReleaseSingleton<PlayerPrefsMgr>();
