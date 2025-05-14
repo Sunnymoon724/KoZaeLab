@@ -26,7 +26,7 @@ public abstract class UnitStateCon : MonoBehaviour
 
 	private readonly Dictionary<UnitStateTag,IUnitState> m_stateDict = new();
 
-	private IUnitState m_state = null;
+	protected IUnitState m_state = null;
 
 	protected abstract bool IsChangeable(UnitStateTag newStateTag,bool isForce);
 
@@ -48,8 +48,6 @@ public abstract class UnitStateCon : MonoBehaviour
 	public virtual void Release()
 	{
 		m_stateDict.Clear();
-
-		// m_stateTag = UnitStateTag.Idle;
 	}
 
 	public void EnterState(UnitStateTag newStateTag,bool isForce = false)
