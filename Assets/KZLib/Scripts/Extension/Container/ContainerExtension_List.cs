@@ -26,7 +26,7 @@ public static partial class ContainerExtension
 
 		if(!list.Contains(value))
 		{
-			LogTag.System.E($"List does not include {value}");
+			KZLogType.System.E($"List does not include {value}");
 
 			return default;
 		}
@@ -67,7 +67,7 @@ public static partial class ContainerExtension
 
 		if(!list.ContainsIndex(index1) || !list.ContainsIndex(index2))
 		{
-			LogTag.System.E($"Sources does not include {index1} or {index2}");
+			KZLogType.System.E($"Sources does not include {index1} or {index2}");
 
 			return;
 		}

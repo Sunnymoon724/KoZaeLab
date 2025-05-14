@@ -44,7 +44,7 @@ public class MagnetImageUI : BaseImageUI
 		{
 			if(this == value)
 			{
-				LogTag.UI.W("Target is not self.");
+				KZLogType.UI.W("Target is not self.");
 
 				return;
 			}
@@ -61,7 +61,7 @@ public class MagnetImageUI : BaseImageUI
 
 		if(IsValidTarget)
 		{
-			LogTag.UI.E($"Target is null or direction is none {Target} or {m_direction}");
+			KZLogType.UI.E($"Target is null or direction is none {Target} or {m_direction}");
 
 			return;
 		}
@@ -73,7 +73,7 @@ public class MagnetImageUI : BaseImageUI
 	{
 		if(IsValidTarget)
 		{
-			LogTag.UI.E($"Target is null or direction is none {Target} or {m_direction}");
+			KZLogType.UI.E($"Target is null or direction is none {Target} or {m_direction}");
 
 			return;
 		}
@@ -126,7 +126,7 @@ public class MagnetImageUI : BaseImageUI
 				return DirectionType.None;
 
 			default:
-				LogTag.UI.E($"DirectionType is not exist {directionType}");
+				KZLogType.UI.E($"DirectionType is not exist {directionType}");
 				return DirectionType.None;
 		}
 	}

@@ -252,7 +252,7 @@ public static class AnimatorExtension
 	{
 		if(!animator)
 		{
-			LogTag.System.E("Animator is null");
+			KZLogType.System.E("Animator is null");
 
 			return false;
 		}

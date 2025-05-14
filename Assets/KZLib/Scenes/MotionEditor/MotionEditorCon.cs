@@ -34,14 +34,14 @@ public class MotionEditorCon : MonoBehaviour
 
 			if(!value.IsInComponent<Animator>())
 			{
-				LogTag.System.W("Prefab must have animator component");
+				KZLogType.System.W("Prefab must have animator component");
 
 				return;
 			}
 
 			if(!value.IsInComponent<MotionCon>())
 			{
-				LogTag.System.W("Prefab must have motionController component");
+				KZLogType.System.W("Prefab must have motionController component");
 
 				return;
 			}
@@ -116,7 +116,7 @@ public class MotionEditorCon : MonoBehaviour
 	{
 		if(!m_animator)
 		{
-			LogTag.System.W("Animator is null");
+			KZLogType.System.W("Animator is null");
 
 			return;
 		}

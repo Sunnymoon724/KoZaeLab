@@ -30,7 +30,7 @@ public static class ParticleSystemExtension
 	{
 		if(!particleSystem)
 		{
-			LogTag.System.E("ParticleSystem is null");
+			KZLogType.System.E("ParticleSystem is null");
 
 			return false;
 		}

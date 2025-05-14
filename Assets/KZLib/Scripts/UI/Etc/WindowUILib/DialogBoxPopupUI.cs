@@ -40,7 +40,7 @@ public class DialogBoxPopupUI : WindowUI2D
 		{
 			if(cellData.OnClicked == null)
 			{
-				LogTag.UI.E($"{cellData.Name} is null");
+				KZLogType.UI.E($"{cellData.Name} is null");
 
 				return;
 			}

@@ -16,15 +16,15 @@ public class HudTestCon : MonoBehaviour
 	{
 		while(true)
 		{
-			LogTag.Server.I("서버 인포");
+			KZLogType.Server.I("서버 인포");
 
 			await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 
-			LogTag.Editor.W("에디터 워닝");
+			KZLogType.Editor.W("에디터 워닝");
 
 			await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 
-			LogTag.Sound.E("사운드 에러");
+			KZLogType.Sound.E("사운드 에러");
 
 			await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 		}

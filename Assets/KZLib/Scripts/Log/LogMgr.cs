@@ -58,11 +58,11 @@ namespace KZLib
 			base.Release(disposing);
 		}
 
-		public string CreateLog(LogTag tag,object message,string memberName,string filePath,int lineNum)
+		public string CreateLog(KZLogType type,object message,string memberName,string filePath,int lineNum)
 		{
 			var builder = new StringBuilder();
 
-			builder.Append($"[{tag}] {message}");
+			builder.Append($"[{type}] {message}");
 
 			builder.Append(" [");
 
@@ -88,7 +88,7 @@ namespace KZLib
 
 		private void _HandleLogMessage(string condition,string stackTrace,LogType logType)
 		{
-			var header = $"<{_GetLogTag(logType)}> {DateTime.Now:MM/dd HH:mm:ss}";
+			var header = $"<{_GetKZLogType(logType)}> {DateTime.Now:MM/dd HH:mm:ss}";
 			var body = string.Empty;
 
 			if(logType == LogType.Exception)
@@ -98,7 +98,7 @@ namespace KZLib
 			else
 			{
 				var stackTraceArray = stackTrace.Split('\n');
-				var index = stackTraceArray.IndexOf(x => x.Contains(nameof(LogTag)));
+				var index = stackTraceArray.IndexOf(x => x.Contains(nameof(KZLogType)));
 				var stack = stackTraceArray[index+1];
 
 				body = $"{condition}\n\n{stack}";
@@ -117,7 +117,7 @@ namespace KZLib
 #endif
 		}
 
-		private string _GetLogTag(LogType logType)
+		private string _GetKZLogType(LogType logType)
 		{
 			return logType switch
 			{

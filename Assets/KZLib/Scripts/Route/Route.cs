@@ -17,7 +17,7 @@ namespace KZLib.KZData
 		{
 			if(path.IsEmpty())
 			{
-				LogTag.System.E("Path cannot be null or empty.");
+				KZLogType.System.E("Path cannot be null or empty.");
 
 				m_localPath = null;
 				m_extension = null;

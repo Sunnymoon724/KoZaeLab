@@ -251,7 +251,7 @@ public static class GameObjectExtension
 	{
 		if(!gameObject)
 		{
-			LogTag.System.E("GameObject is null");
+			KZLogType.System.E("GameObject is null");
 
 			return false;
 		}

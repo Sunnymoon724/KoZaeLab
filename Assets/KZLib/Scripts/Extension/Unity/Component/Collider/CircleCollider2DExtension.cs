@@ -45,7 +45,7 @@ public static class CircleCollider2DExtension
 	{
 		if(!circleCollider2D)
 		{
-			LogTag.System.E("CircleCollider2D is null");
+			KZLogType.System.E("CircleCollider2D is null");
 
 			return false;
 		}

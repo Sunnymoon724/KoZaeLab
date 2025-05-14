@@ -171,7 +171,7 @@ public static class CameraExtension
 
 		if(!target)
 		{
-			LogTag.System.E("Target is null");
+			KZLogType.System.E("Target is null");
 
 			distance = 0.0f;
 
@@ -220,7 +220,7 @@ public static class CameraExtension
 
 		if(!transform)
 		{
-			LogTag.System.E("Transform is null");
+			KZLogType.System.E("Transform is null");
 
 			position = Vector3.zero;
 
@@ -241,7 +241,7 @@ public static class CameraExtension
 
 		if(!target)
 		{
-			LogTag.System.E("Target is null");
+			KZLogType.System.E("Target is null");
 
 			position2 = Vector3.zero;
 
@@ -292,7 +292,7 @@ public static class CameraExtension
 	{
 		if(!camera)
 		{
-			LogTag.System.E("Camera is null");
+			KZLogType.System.E("Camera is null");
 
 			return false;
 		}

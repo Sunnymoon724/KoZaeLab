@@ -79,7 +79,7 @@ namespace KZLib
 			{
 				if(!errorLog.IsEmpty())
 				{
-					LogTag.System.E(errorLog);
+					KZLogType.System.E(errorLog);
 				}
 
 				return false;
@@ -90,7 +90,7 @@ namespace KZLib
 		{
 			if(!m_assetDataDict.ContainsKey(path))
 			{
-				LogTag.System.E($"Asset is not exist. [{path}]");
+				KZLogType.System.E($"Asset is not exist. [{path}]");
 
 				return null;
 			}
@@ -106,7 +106,7 @@ namespace KZLib
 
 			if(dataGroup.IsNullOrEmpty())
 			{
-				LogTag.System.E($"Asset is not exist. [{path}]");
+				KZLogType.System.E($"Asset is not exist. [{path}]");
 
 				return null;
 			}
@@ -118,7 +118,7 @@ namespace KZLib
 		{
 			if(labelArray.IsNullOrEmpty())
 			{
-				LogTag.System.E($"LabelArray is null or empty.");
+				KZLogType.System.E($"LabelArray is null or empty.");
 
 				return;
 			}

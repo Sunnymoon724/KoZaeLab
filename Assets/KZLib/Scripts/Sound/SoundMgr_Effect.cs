@@ -20,7 +20,7 @@ namespace KZLib
 		{
 			if(audioPath.IsEmpty())
 			{
-				LogTag.System.E("Audio path is empty");
+				KZLogType.System.E("Audio path is empty");
 
 				return null;
 			}
@@ -32,7 +32,7 @@ namespace KZLib
 		{
 			if(!audioClip)
 			{
-				LogTag.System.E("Audio clip is null");
+				KZLogType.System.E("Audio clip is null");
 
 				return null;
 			}

@@ -131,7 +131,7 @@ namespace KZLib.KZData
 		// 	}
 		// 	else
 		// 	{
-		// 		LogTag.System.E($"Failed to load tables: {handle.OperationException}");
+		// 		KZLogType.System.E($"Failed to load tables: {handle.OperationException}");
 		// 	}
 
 		// 	if(!_TryGetTextAsset(out var textAssetArray))
@@ -142,7 +142,7 @@ namespace KZLib.KZData
 		// 	var accumulatedTime = 0.0d;
 		// 	var stopwatch = new Stopwatch();
 
-		// 	LogTag.System.I("Proto Load Start");
+		// 	KZLogType.System.I("Proto Load Start");
 
 		// 	for(var i=0;i<textAssetArray.Length;i++)
 		// 	{
@@ -150,7 +150,7 @@ namespace KZLib.KZData
 
 		// 		if(textAsset == null)
 		// 		{
-		// 			LogTag.System.W($"TextAsset is null in {i}");
+		// 			KZLogType.System.W($"TextAsset is null in {i}");
 
 		// 			continue;
 		// 		}
@@ -174,7 +174,7 @@ namespace KZLib.KZData
 
 		// 	stopwatch.Stop();
 
-		// 	LogTag.System.I($"Proto Load Complete [Count : {textAssetArray.Length} / Duration : {(DateTime.Now-start).TotalSeconds}]");
+		// 	KZLogType.System.I($"Proto Load Complete [Count : {textAssetArray.Length} / Duration : {(DateTime.Now-start).TotalSeconds}]");
 
 		// 	m_isLoaded = true;
 

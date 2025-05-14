@@ -35,7 +35,7 @@ public static partial class CommonUtility
 
 			if(count > range)
 			{
-				LogTag.System.E($"Range({minValue} ~ {maxValue}) is smaller than count ({count}).");
+				KZLogType.System.E($"Range({minValue} ~ {maxValue}) is smaller than count ({count}).");
 
 				yield break;
 			}
@@ -58,7 +58,7 @@ public static partial class CommonUtility
 	{
 		if(weightedArray.IsNullOrEmpty())
 		{
-			LogTag.System.E("Weighted is null or empty");
+			KZLogType.System.E("Weighted is null or empty");
 
 			return Global.INVALID_INDEX;
 		}
@@ -74,7 +74,7 @@ public static partial class CommonUtility
 		{
 			if(weight < 0.0f)
 			{
-				LogTag.System.E($"Weight is below zero -> {weight} < 0.0f");
+				KZLogType.System.E($"Weight is below zero -> {weight} < 0.0f");
 
 				return Global.INVALID_INDEX;
 			}
@@ -142,7 +142,7 @@ public static partial class CommonUtility
 
 			if(count > range)
 			{
-				LogTag.System.E($"Range({minValue} ~ {maxValue}) is smaller than count ({count}).");
+				KZLogType.System.E($"Range({minValue} ~ {maxValue}) is smaller than count ({count}).");
 
 				yield break;
 			}
@@ -204,7 +204,7 @@ public static partial class CommonUtility
 
 			if(count > range)
 			{
-				LogTag.System.E($"Range({minValue} ~ {maxValue}) is smaller than count ({count}).");
+				KZLogType.System.E($"Range({minValue} ~ {maxValue}) is smaller than count ({count}).");
 
 				yield break;
 			}

@@ -69,7 +69,7 @@
 // 		{
 // 			if(!m_languageTextDict.ContainsKey(newLanguage))
 // 			{
-// 				LogTag.System.W($"{newLanguage} is not exist.");
+// 				KZLogType.System.W($"{newLanguage} is not exist.");
 
 // 				return;
 // 			}

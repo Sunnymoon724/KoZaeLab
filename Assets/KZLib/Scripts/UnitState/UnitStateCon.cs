@@ -1,50 +1,32 @@
 using System;
 using System.Collections.Generic;
-using KZLib.KZData;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class UnitStateTag : CustomTag
+public interface IUnitState<TEnum> where TEnum : struct,Enum
 {
-	public string StateName => $"{m_name}State";
-
-	public UnitStateTag(string name) : base(name) { }
-}
-
-public interface IUnitState
-{
-	public UnitStateTag StateTag { get; }
+	public TEnum Type { get; }
 
 	public void Enter();
 	public void Exit();
 	public void Update();
 }
 
-public abstract class UnitStateCon : MonoBehaviour
+public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,Enum
 {
-	public event Action<UnitStateTag,UnitStateTag> OnUnitStateChanged = null;
+	public event Action<TEnum,TEnum> OnUnitStateChanged = null;
 
-	[ShowInInspector] public UnitStateTag StateTag => m_state?.StateTag;
+	[ShowInInspector] public TEnum StateType => m_state == null ? default : m_state.Type;
 
-	private readonly Dictionary<UnitStateTag,IUnitState> m_stateDict = new();
+	private readonly Dictionary<TEnum,IUnitState<TEnum>> m_stateDict = new();
 
-	protected IUnitState m_state = null;
+	protected IUnitState<TEnum> m_state = null;
 
-	protected abstract bool IsChangeable(UnitStateTag newStateTag,bool isForce);
+	protected abstract bool IsChangeable(TEnum newStateTag,bool isForce);
 
 	public virtual void Initialize()
 	{
 		m_stateDict.Clear();
-
-		foreach(var stateTag in CustomTag.CollectCustomTagList<UnitStateTag>(true))
-		{
-			if(Activator.CreateInstance(Type.GetType(stateTag.StateName)) is not IUnitState state)
-			{
-				continue;
-			}
-
-			m_stateDict.Add(state.StateTag,state);
-		}
 	}
 
 	public virtual void Release()
@@ -52,31 +34,31 @@ public abstract class UnitStateCon : MonoBehaviour
 		m_stateDict.Clear();
 	}
 
-	public void EnterState(UnitStateTag newStateTag,bool isForce = false)
+	public void EnterState(TEnum newType,bool isForce = false)
 	{
 		if(isActiveAndEnabled == false)
 		{
 			return;
 		}
 
-		if(!IsChangeable(newStateTag,isForce))
+		if(!IsChangeable(newType,isForce))
 		{
 			return;
 		}
 
-		if(!m_stateDict.TryGetValue(newStateTag,out var state))
+		if(!m_stateDict.TryGetValue(newType,out var state))
 		{
-			LogTag.System.E($"{newStateTag} state not found");
+			KZLogType.System.E($"{newType} state not found");
 
 			return;
 		}
 
-		OnUnitStateChanged?.Invoke(StateTag,newStateTag);
+		OnUnitStateChanged?.Invoke(StateType,newType);
 
 		_ChangeState(state);
 	}
 
-	protected virtual void _ChangeState(IUnitState newState)
+	protected virtual void _ChangeState(IUnitState<TEnum> newState)
 	{
 		m_state?.Exit();
 

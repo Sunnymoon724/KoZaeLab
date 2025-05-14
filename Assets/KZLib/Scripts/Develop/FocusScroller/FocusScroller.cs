@@ -59,7 +59,7 @@ namespace KZLib.KZDevelop
 
 			if(!m_slotUI)
 			{
-				LogTag.System.E("Slot is null");
+				KZLogType.System.E("Slot is null");
 
 				return;
 			}
@@ -68,7 +68,7 @@ namespace KZLib.KZDevelop
 
 			if(!m_viewport)
 			{
-				LogTag.System.E("Viewport is null");
+				KZLogType.System.E("Viewport is null");
 
 				return;
 			}

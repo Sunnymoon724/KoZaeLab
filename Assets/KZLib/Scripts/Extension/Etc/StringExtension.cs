@@ -183,7 +183,7 @@ public static class StringExtension
 			return value;
 		}
 
-		LogTag.System.W($"Failed to convert {text} into Enum");
+		KZLogType.System.W($"Failed to convert {text} into Enum");
 
 		return default;
 	}
@@ -212,7 +212,7 @@ public static class StringExtension
 			return color;
 		}
 
-		LogTag.System.W($"Failed to convert {hexCode} into color");
+		KZLogType.System.W($"Failed to convert {hexCode} into color");
 
 		return Color.clear;
 	}
@@ -242,7 +242,7 @@ public static class StringExtension
 			return value;
 		}
 
-		LogTag.System.W($"Failed to convert {text} into bool");
+		KZLogType.System.W($"Failed to convert {text} into bool");
 
 		return false;
 	}
@@ -256,7 +256,7 @@ public static class StringExtension
 			return value;
 		}
 
-		LogTag.System.W($"Failed to convert {text} into BigInteger");
+		KZLogType.System.W($"Failed to convert {text} into BigInteger");
 
 		return default;
 	}
@@ -276,7 +276,7 @@ public static class StringExtension
 			}
 		}
 
-		LogTag.System.W($"Failed to convert {text} into int");
+		KZLogType.System.W($"Failed to convert {text} into int");
 
 		return default;
 	}
@@ -288,7 +288,7 @@ public static class StringExtension
 			return value;
 		}
 
-		LogTag.System.W($"Failed to convert {text} into float");
+		KZLogType.System.W($"Failed to convert {text} into float");
 
 		return default;
 	}
@@ -300,7 +300,7 @@ public static class StringExtension
 			return value;
 		}
 
-		LogTag.System.W($"Failed to convert {text} into double");
+		KZLogType.System.W($"Failed to convert {text} into double");
 
 		return default;
 	}
@@ -320,7 +320,7 @@ public static class StringExtension
 			}
 		}
 
-		LogTag.System.W($"Failed to convert {text} into byte");
+		KZLogType.System.W($"Failed to convert {text} into byte");
 
 		return default;
 	}
@@ -332,7 +332,7 @@ public static class StringExtension
 			return value;
 		}
 
-		LogTag.System.W($"Failed to convert {hexText} into int");
+		KZLogType.System.W($"Failed to convert {hexText} into int");
 
 		return default;
 	}
@@ -344,7 +344,7 @@ public static class StringExtension
 			return BitConverter.ToSingle(BitConverter.GetBytes(value),0);
 		}
 
-		LogTag.System.W($"Failed to convert {hexText} into float");
+		KZLogType.System.W($"Failed to convert {hexText} into float");
 
 		return default;
 	}
@@ -363,7 +363,7 @@ public static class StringExtension
 			return value;
 		}
 
-		LogTag.System.W($"Failed to convert {text} into DateTime");
+		KZLogType.System.W($"Failed to convert {text} into DateTime");
 
 		return default;
 	}
@@ -377,7 +377,7 @@ public static class StringExtension
 			return value;
 		}
 
-		LogTag.System.W($"Failed to convert {text} into Vector2");
+		KZLogType.System.W($"Failed to convert {text} into Vector2");
 
 		return default;
 	}
@@ -405,7 +405,7 @@ public static class StringExtension
 			return value;
 		}
 
-		LogTag.System.W($"Failed to convert {text} into Vector3");
+		KZLogType.System.W($"Failed to convert {text} into Vector3");
 
 		return default;
 	}

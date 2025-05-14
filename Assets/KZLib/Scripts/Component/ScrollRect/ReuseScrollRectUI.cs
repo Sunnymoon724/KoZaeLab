@@ -63,7 +63,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 		if(!m_pivot)
 		{
-			LogTag.System.E("Pivot is null");
+			KZLogType.System.E("Pivot is null");
 
 			return;
 		}

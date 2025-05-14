@@ -43,7 +43,7 @@ namespace KZLib.KZData
 
 				if(cluster == null)
 				{
-					LogTag.System.E($"Failed to create cluster of type {type}");
+					KZLogType.System.E($"Failed to create cluster of type {type}");
 
 					return null;
 				}

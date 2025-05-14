@@ -21,7 +21,7 @@ public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDr
 	{
 		if(m_canvas == null)
 		{
-			LogTag.UI.E("Canvas is null");
+			KZLogType.UI.E("Canvas is null");
 
 			return;
 		}

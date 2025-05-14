@@ -39,7 +39,7 @@ public static class MonoBehaviourExtension
 	{
 		if(!behaviour)
 		{
-			LogTag.System.E("MonoBehaviour is null");
+			KZLogType.System.E("MonoBehaviour is null");
 
 			return false;
 		}

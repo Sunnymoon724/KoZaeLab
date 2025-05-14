@@ -18,11 +18,11 @@ public class Test : MonoBehaviour
     {
         var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
 
-        LogTag.Build.I(optionCfg.MasterVolume.level);
+        KZLogType.Build.I(optionCfg.MasterVolume.level);
 
         optionCfg.SetMasterVolume(0.27f);
 
-        LogTag.Build.I(optionCfg.MasterVolume.level);
+        KZLogType.Build.I(optionCfg.MasterVolume.level);
     }
 
     private async UniTask Test2()

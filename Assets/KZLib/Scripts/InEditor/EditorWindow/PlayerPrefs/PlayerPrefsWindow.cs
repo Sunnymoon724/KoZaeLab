@@ -77,7 +77,7 @@ namespace KZLib.KZWindow
 
 			m_playerPrefsInfoList.Remove(info);
 
-			LogTag.Editor.I($"{info.Key} is removed");
+			KZLogType.Editor.I($"{info.Key} is removed");
 		}
 
 		private void _OnRefreshInfo()
@@ -98,7 +98,7 @@ namespace KZLib.KZWindow
 
 			PlayerPrefsMgr.In.Clear();
 
-			LogTag.Editor.I($"PlayerPrefs is deleted");
+			KZLogType.Editor.I($"PlayerPrefs is deleted");
 
 			m_playerPrefsInfoList.Clear();
 		}

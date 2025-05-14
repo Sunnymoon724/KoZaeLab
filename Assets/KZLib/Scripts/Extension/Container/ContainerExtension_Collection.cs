@@ -46,7 +46,7 @@ public static partial class ContainerExtension
 
 		if(count == 0)
 		{
-			LogTag.System.E("Collection is empty");
+			KZLogType.System.E("Collection is empty");
 
 			return default;
 		}

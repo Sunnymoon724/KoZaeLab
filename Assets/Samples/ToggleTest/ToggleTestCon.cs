@@ -6,6 +6,6 @@ public class ToggleTest : MonoBehaviour
 {
 	public void OnClick()
 	{
-		LogTag.UI.I("AAA");
+		KZLogType.UI.I("AAA");
 	}
 }

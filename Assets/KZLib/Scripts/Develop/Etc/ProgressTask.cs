@@ -118,14 +118,14 @@ namespace KZLib.KZDevelop
 		{
 			if(Duration <= 0.0f)
 			{
-				LogTag.System.W("Duration must be greater than 0.0f.");
+				KZLogType.System.W("Duration must be greater than 0.0f.");
 
 				return;
 			}
 
 			if(m_loopCount == 0)
 			{
-				LogTag.System.W("loop count is zero.");
+				KZLogType.System.W("loop count is zero.");
 
 				return;
 			}

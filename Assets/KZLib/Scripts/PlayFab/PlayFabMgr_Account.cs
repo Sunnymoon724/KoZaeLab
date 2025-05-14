@@ -177,7 +177,7 @@ namespace KZLib
 
 			return result;
 #else
-			LogTag.System.W($"aos Only");
+			KZLogType.System.W($"aos Only");
 
 			await UniTask.Yield();
 
@@ -224,7 +224,7 @@ namespace KZLib
 
 			return result;
 #else
-			LogTag.System.W($"ios Only");
+			KZLogType.System.W($"ios Only");
 
 			await UniTask.Yield();
 

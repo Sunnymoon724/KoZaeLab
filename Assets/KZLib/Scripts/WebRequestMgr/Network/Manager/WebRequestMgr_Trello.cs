@@ -30,7 +30,7 @@ namespace KZLib.KZNetwork
 		{
 			if(trelloKey.IsEmpty())
 			{
-				LogTag.System.E("TrelloKey is empty");
+				KZLogType.System.E("TrelloKey is empty");
 
 				return null;
 			}
@@ -61,14 +61,14 @@ namespace KZLib.KZNetwork
 		{
 			if(trelloKey.IsEmpty())
 			{
-				LogTag.Network.E("TrelloKey is empty");
+				KZLogType.Network.E("TrelloKey is empty");
 
 				return null;
 			}
 
 			if(boardId.IsEmpty())
 			{
-				LogTag.Network.E("Trello boardId is empty");
+				KZLogType.Network.E("Trello boardId is empty");
 
 				return null;
 			}
@@ -99,14 +99,14 @@ namespace KZLib.KZNetwork
 		{
 			if(trelloKey.IsEmpty())
 			{
-				LogTag.Network.E("TrelloKey is empty");
+				KZLogType.Network.E("TrelloKey is empty");
 
 				return null;
 			}
 
 			if(listId.IsEmpty())
 			{
-				LogTag.Network.E("Trello listId is empty");
+				KZLogType.Network.E("Trello listId is empty");
 
 				return null;
 			}
@@ -139,12 +139,12 @@ namespace KZLib.KZNetwork
 				}
 				catch(Exception exception)
 				{
-					LogTag.Network.E($"Parse is failed - {exception}");
+					KZLogType.Network.E($"Parse is failed - {exception}");
 				}
 			}
 			else
 			{
-				LogTag.Network.E("Result is failed");
+				KZLogType.Network.E("Result is failed");
 			}
 
 			return null;
@@ -171,7 +171,7 @@ namespace KZLib.KZNetwork
 		{
 			if(trelloKey.IsEmpty())
 			{
-				LogTag.Network.E("TrelloKey is empty");
+				KZLogType.Network.E("TrelloKey is empty");
 
 				return;
 			}
@@ -200,7 +200,7 @@ namespace KZLib.KZNetwork
 		{
 			if(trelloKey.IsEmpty())
 			{
-				LogTag.Network.E("TrelloKey is empty");
+				KZLogType.Network.E("TrelloKey is empty");
 
 				return;
 			}
@@ -216,7 +216,7 @@ namespace KZLib.KZNetwork
 
 			if(cardId.IsEmpty())
 			{
-				LogTag.Network.E("Card id is empty");
+				KZLogType.Network.E("Card id is empty");
 
 				return;
 			}
@@ -245,7 +245,7 @@ namespace KZLib.KZNetwork
 		{
 			if(trelloKey.IsEmpty())
 			{
-				LogTag.Network.E("TrelloKey is empty");
+				KZLogType.Network.E("TrelloKey is empty");
 
 				return;
 			}
@@ -254,7 +254,7 @@ namespace KZLib.KZNetwork
 
 			if(boardList.IsNullOrEmpty())
 			{
-				LogTag.Network.W("Trello board is empty");
+				KZLogType.Network.W("Trello board is empty");
 
 				return;
 			}
@@ -263,7 +263,7 @@ namespace KZLib.KZNetwork
 
 			if(boardId.IsEmpty())
 			{
-				LogTag.Network.E("Trello board id is null");
+				KZLogType.Network.E("Trello board id is null");
 
 				return;
 			}
@@ -272,7 +272,7 @@ namespace KZLib.KZNetwork
 
 			if(listList.IsNullOrEmpty())
 			{
-				LogTag.Network.W("Trello list is empty");
+				KZLogType.Network.W("Trello list is empty");
 
 				return;
 			}
@@ -305,7 +305,7 @@ namespace KZLib.KZNetwork
 			}
 			catch(Exception exception)
 			{
-				LogTag.Network.E($"Convert is failed - {exception}");
+				KZLogType.Network.E($"Convert is failed - {exception}");
 			}
 
 			return null;

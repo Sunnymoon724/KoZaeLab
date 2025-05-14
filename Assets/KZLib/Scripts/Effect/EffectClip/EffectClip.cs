@@ -75,7 +75,7 @@ public abstract class EffectClip : BaseComponent
 
 		if(!IsPlayable)
 		{
-			LogTag.FX.W($"{gameObject.name} duration is 0.");
+			KZLogType.FX.W($"{gameObject.name} duration is 0.");
 
 			EndEffect(false);
 

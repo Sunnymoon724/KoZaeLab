@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 
 using Debug = UnityEngine.Debug;
-using KZLib.KZData;
 using KZLib.KZUtility;
 
 #if UNITY_EDITOR
@@ -17,52 +16,47 @@ using System.Text.RegularExpressions;
 #endif
 
 /// <summary>
-/// LogType은 이미 존재하므로 그냥 LogTag로
+/// LogType은 이미 존재하므로 그냥 KZLogType로
 /// </summary>
-public class LogTag : CustomTag
+public enum KZLogType
 {
-	public static readonly LogTag None		=	new(nameof(None));
+	None,
+	System,
+	Build,
 
-	public static readonly LogTag System	=	new(nameof(System));
+	Network,
+	Server,
+	Client,
 
-	public static readonly LogTag Build		=	new(nameof(Build));
+	UI,
+	FX,
 
-	public static readonly LogTag Network	=	new(nameof(Network));
-	public static readonly LogTag Server	=	new(nameof(Server));
-	public static readonly LogTag Client	=	new(nameof(Client));
+	Game,
+	Editor,
 
-	public static readonly LogTag UI		=	new(nameof(UI));
-	public static readonly LogTag FX		=	new(nameof(FX));
-
-	public static readonly LogTag Game		=	new(nameof(Game));
-
-	public static readonly LogTag Editor	=	new(nameof(Editor));
-
-	public static readonly LogTag Test		=	new(nameof(Test));
-
-	public LogTag(string name) : base(name) { }
+	Test,
 }
 
 /// <summary>
 /// Show Only Editor
 /// </summary>
-public static class LogExtension
+public static class KZLogTypeExtension
 {
 	private static readonly HashSet<string> s_logHashSet = new();
 
 	#region I : Info Log
-	public static void I(this LogTag logTag,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void I(this KZLogType type,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
+		var text = LogMgr.In.CreateLog(type,message,memberName,filePath,lineNum);
 
 #if UNITY_EDITOR
 		Debug.Log(text);
 #endif
 	}
 
-	public static void IOnce(this LogTag logTag,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void IOnce(this KZLogType type,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
+		var text = LogMgr.In.CreateLog(type,message,memberName,filePath,lineNum);
 
 #if UNITY_EDITOR
 		if(_CheckLogAtOnce(text))
@@ -74,18 +68,18 @@ public static class LogExtension
 	#endregion I : Info Log
 
 	#region W : Warning Log
-	public static void W(this LogTag logTag,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void W(this KZLogType type,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
+		var text = LogMgr.In.CreateLog(type,message,memberName,filePath,lineNum);
 
 #if UNITY_EDITOR
 		Debug.LogWarning(text);
 #endif
 	}
 
-	public static void WOnce(this LogTag logTag,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void WOnce(this KZLogType type,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
+		var text = LogMgr.In.CreateLog(type,message,memberName,filePath,lineNum);
 
 #if UNITY_EDITOR
 		if(_CheckLogAtOnce(text))
@@ -97,18 +91,18 @@ public static class LogExtension
 	#endregion W : Warning Log
 
 	#region E : Error Log
-	public static void E(this LogTag logTag,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void E(this KZLogType type,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
+		var text = LogMgr.In.CreateLog(type,message,memberName,filePath,lineNum);
 
 #if UNITY_EDITOR
 		Debug.LogError(text);
 #endif
 	}
 
-	public static void EOnce(this LogTag logTag,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void EOnce(this KZLogType type,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
+		var text = LogMgr.In.CreateLog(type,message,memberName,filePath,lineNum);
 
 #if UNITY_EDITOR
 		if(_CheckLogAtOnce(text))
@@ -120,14 +114,14 @@ public static class LogExtension
 	#endregion E : Error Log
 
 	#region A : Assert Log
-	public static void A(this LogTag logTag,bool condition,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void A(this KZLogType type,bool condition,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
 		if(condition)
 		{
 			return;
 		}
 
-		var text = LogMgr.In.CreateLog(logTag,message,memberName,filePath,lineNum);
+		var text = LogMgr.In.CreateLog(type,message,memberName,filePath,lineNum);
 
 #if UNITY_EDITOR
 		Debug.Assert(condition,text);
@@ -141,7 +135,9 @@ public static class LogExtension
 	{
 		var objectName = EditorUtility.InstanceIDToObject(instance).name;
 
-		if(objectName.IsEmpty() || !objectName.IsEqual(nameof(LogTag)))
+		// Enum.IsDefined(typeof(KZLogType),objectName);
+
+		if(objectName.IsEmpty() || !objectName.IsEqual(nameof(KZLogType)))
 		{
 			return false;
 		}

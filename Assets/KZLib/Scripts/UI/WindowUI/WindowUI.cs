@@ -69,7 +69,7 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 	public virtual void Open(object param)
 	{
-		LogTag.UI.I($"{Tag} is opened");
+		KZLogType.UI.I($"{Tag} is opened");
 
 		gameObject.EnsureActive(true);
 	}
@@ -80,35 +80,35 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 		gameObject.EnsureActive(false);
 
-		LogTag.UI.I($"{Tag} is closed");
+		KZLogType.UI.I($"{Tag} is closed");
 	}
 
 	protected override void Release() { }
 
 	public virtual void Show()
 	{
-		LogTag.UI.I($"{Tag} is shown");
+		KZLogType.UI.I($"{Tag} is shown");
 
 		_SetCanvasGroupState(1,true,true);
 	}
 
 	public virtual void Hide()
 	{
-		LogTag.UI.I($"{Tag} is hidden");
+		KZLogType.UI.I($"{Tag} is hidden");
 
 		_SetCanvasGroupState(0,false,false);
 	}
 
 	public void BlockInput()
 	{
-		LogTag.UI.I($"{Tag} input is blocked");
+		KZLogType.UI.I($"{Tag} input is blocked");
 
 		_SetCanvasGroupState(1,false,false);
 	}
 
 	public void AllowInput()
 	{
-		LogTag.UI.I($"{Tag} input is allowed");
+		KZLogType.UI.I($"{Tag} input is allowed");
 
 		_SetCanvasGroupState(1,true,true);
 	}

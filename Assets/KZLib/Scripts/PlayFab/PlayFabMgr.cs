@@ -55,7 +55,7 @@ namespace KZLib
 
 			_WriteDump(methodName,requestText,null,playFabError,responseTime);
 #endif
-			LogTag.System.E($"PlayFabError - [Code : {playFabError.Error} / Message : {playFabError.ErrorMessage} / Details : {JsonConvert.SerializeObject(playFabError.ErrorDetails,Formatting.Indented)}]");
+			KZLogType.System.E($"PlayFabError - [Code : {playFabError.Error} / Message : {playFabError.ErrorMessage} / Details : {JsonConvert.SerializeObject(playFabError.ErrorDetails,Formatting.Indented)}]");
 		}
 
 #if UNITY_EDITOR

@@ -32,14 +32,14 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 
 		if(!m_pivot)
 		{
-			LogTag.UI.E("Pivot is null");
+			KZLogType.UI.E("Pivot is null");
 
 			return;
 		}
 
 		if(!m_storage)
 		{
-			LogTag.UI.E("Storage is null");
+			KZLogType.UI.E("Storage is null");
 
 			return;
 		}
