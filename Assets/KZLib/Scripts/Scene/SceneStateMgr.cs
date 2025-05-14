@@ -272,17 +272,13 @@ namespace KZLib
 
 			LogTag.System.I($"{current.SceneName} destroy start.");
 
+			// remove current scene
 			m_sceneStateStack.Pop();
 
-			var previousSceneName = string.Empty;
+			var previousSceneName = activePreviousScene ? CurrentScene?.SceneName : null;
 
-			if(activePreviousScene)
-			{
-				previousSceneName = CurrentScene.SceneName;
-			}
-
-			// Release current scene & Active on previous scene (if you want)
-			await current.ReleaseAsync(previousSceneName,(progress)=>
+            // Release current scene & Active on previous scene (if you want)
+            await current.ReleaseAsync(previousSceneName,(progress)=>
 			{
 				onUpdateProgress?.Invoke(progress*0.99f);
 			});

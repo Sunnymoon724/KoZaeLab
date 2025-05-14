@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.IO;
 using KZLib.KZData;
 
-
 #if UNITY_EDITOR
 
 using UnityEditor;
@@ -194,35 +193,42 @@ namespace KZLib
 
 			var stringBuilder = new StringBuilder();
 
-			InitializeResolution(stringBuilder);
-			InitializeFrame(stringBuilder);
-			InitializeRenderSetting(stringBuilder);
-			InitializeObject(stringBuilder);
+			_InitializeResolution(stringBuilder);
+			_InitializeFrame(stringBuilder);
+			_InitializeRenderSetting(stringBuilder);
+			_InitializeObject(stringBuilder);
 
 			LogTag.System.I(stringBuilder.ToString());
 
+			await _StartMainAsync();
+		}
+
+		private async UniTask _StartMainAsync()
+		{
 			CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
 			if(IsTestMode)
 			{
 #if UNITY_EDITOR
-				await StartTestMode(m_tokenSource.Token);
+				await _InitializeTestMode(m_tokenSource.Token);
+
+				var paramName = StartSceneName.Replace("Scene","Param");
+				var paramType = Type.GetType($"{StartSceneName}+{paramName}, Assembly-CSharp");
+
+				var editorCfg = ConfigMgr.In.Access<ConfigData.EditorConfig>();
+				var param = editorCfg.GetSceneParam(StartSceneName,paramType);
+
+				SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null,param);
 #else
 				throw new Exception("This cannot be tested outside of the editor mode.");
 #endif
 			}
 			else
 			{
-				await StartNormalMode(m_tokenSource.Token);
+				await _InitializeNormalMode(m_tokenSource.Token);
+
+				SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null);
 			}
-
-			var paramName = StartSceneName.Replace("Scene","Param");
-			var paramType = Type.GetType($"{StartSceneName}+{paramName}, Assembly-CSharp");
-
-			var editorCfg = ConfigMgr.In.Access<ConfigData.EditorConfig>();
-			var param = editorCfg.GetSceneParam(StartSceneName,paramType);
-
-			SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null,param);
 		}
 
 #if UNITY_EDITOR
@@ -258,11 +264,11 @@ namespace KZLib
 #endif
 
 #if UNITY_EDITOR
-		protected async virtual UniTask StartTestMode(CancellationToken token) { await ProtoMgr.In.TryLoadAsync(token); }
+		protected async virtual UniTask _InitializeTestMode(CancellationToken token) { await ProtoMgr.In.TryLoadAsync(token); }
 #endif
-		protected async virtual UniTask StartNormalMode(CancellationToken token) { await ProtoMgr.In.TryLoadAsync(token); }
+		protected async virtual UniTask _InitializeNormalMode(CancellationToken token) { await ProtoMgr.In.TryLoadAsync(token); }
 
-		protected virtual void InitializeResolution(StringBuilder stringBuilder)
+		protected virtual void _InitializeResolution(StringBuilder stringBuilder)
 		{
 			//? 모바일에서 화면잠김을 방지하기 위한 값.
 			Screen.sleepTimeout = SleepTimeout.NeverSleep;
@@ -276,7 +282,7 @@ namespace KZLib
 			stringBuilder.AppendFormat($"Current Screen Resolution {ScreenResolution.x}x{ScreenResolution.y}\n");
 		}
 
-		protected virtual void InitializeFrame(StringBuilder stringBuilder)
+		protected virtual void _InitializeFrame(StringBuilder stringBuilder)
 		{
 #if UNITY_ANDROID || UNITY_IOS
 			QualitySettings.vSyncCount	= 0;
@@ -289,9 +295,9 @@ namespace KZLib
 			stringBuilder.AppendFormat($"Current FPS {Application.targetFrameRate}\n");
 		}
 
-		protected virtual void InitializeRenderSetting(StringBuilder stringBuilder) { }
+		protected virtual void _InitializeRenderSetting(StringBuilder stringBuilder) { }
 
-		protected virtual void InitializeObject(StringBuilder stringBuilder) { }
+		protected virtual void _InitializeObject(StringBuilder stringBuilder) { }
 
 		protected virtual void OnDestroy()
 		{
@@ -320,8 +326,25 @@ namespace KZLib
 			{
 				throw new Exception("Force Exception");
 			}
+
+			//? Refresh Game
+			if(Input.GetKeyDown(KeyCode.F5))
+			{
+				LogTag.System.I("Refresh Game");
+
+				_RefreshGame().Forget();
+			}
 #endif
 		}
+
+#if UNITY_EDITOR
+		private async UniTask _RefreshGame()
+		{
+			await SceneStateMgr.In.RemoveSceneNoLoadingAsync(null);
+
+			await _StartMainAsync();
+		}
+#endif
 
 		private static readonly List<string> s_sceneNameList = new();
 
