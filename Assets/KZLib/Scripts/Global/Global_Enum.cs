@@ -52,13 +52,3 @@ public enum EnvironmentType
 	QA,		// QA
 	LIVE,	// 라이브
 }
-
-
-public enum ResponseType
-{
-	DEFAULT,
-	ACCOUNT,
-	CONFIG,
-	PATCH_INFO,
-	GAME,
-}
