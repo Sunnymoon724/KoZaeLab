@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class UnitStateTag : CustomTag
 {
+	public string StateName => $"{m_name}State";
+
 	public UnitStateTag(string name) : base(name) { }
 }
 
@@ -36,7 +38,7 @@ public abstract class UnitStateCon : MonoBehaviour
 
 		foreach(var stateTag in CustomTag.CollectCustomTagList<UnitStateTag>(true))
 		{
-			if(Activator.CreateInstance(Type.GetType(stateTag.Name)) is not IUnitState state)
+			if(Activator.CreateInstance(Type.GetType(stateTag.StateName)) is not IUnitState state)
 			{
 				continue;
 			}
