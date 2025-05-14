@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace KZLib
 {
 	[RequireComponent(typeof(Animator))]
-	public class MotionCon : BaseComponent
+	public class MotionCon : MonoBehaviour
 	{
 		[SerializeField]
 		protected Animator m_animator = null;
@@ -15,16 +15,6 @@ namespace KZLib
 		protected string m_currentStateName = null;
 
 		private readonly Dictionary<int,MotionEvent> m_motionEventDict = new();
-
-		protected override void Reset()
-		{
-			base.Reset();
-
-			if(!m_animator)
-			{
-				m_animator = GetComponent<Animator>();
-			}
-		}
 
 		public void PlayAnimation(string stateName,float normalizedTime = 0.0f)
 		{
@@ -66,5 +56,13 @@ namespace KZLib
 		}
 
 		protected virtual void PlayMotionEvent(MotionEvent motionEvent) { }
+
+		protected void Reset()
+		{
+			if(!m_animator)
+			{
+				m_animator = GetComponent<Animator>();
+			}
+		}
 	}
 }
