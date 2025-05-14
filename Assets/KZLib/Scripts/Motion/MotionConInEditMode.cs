@@ -36,17 +36,13 @@ namespace KZLib
 			}
 		}
 
-		protected override void OnEnable()
+		private void OnEnable()
 		{
-			base.OnEnable();
-
 			EditorApplication.update += UpdateInEditMode;
 		}
 
-		protected override void OnDisable()
+		private void OnDisable()
 		{
-			base.OnDisable();
-
 			EditorApplication.update -= UpdateInEditMode;
 		}
 
