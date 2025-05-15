@@ -19,7 +19,7 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct, 
 
 	[ShowInInspector] public TEnum StateType => m_state == null ? default : m_state.Type;
 
-	private readonly Dictionary<TEnum, IUnitState<TEnum>> m_stateDict = new();
+	protected readonly Dictionary<TEnum, IUnitState<TEnum>> m_stateDict = new();
 
 	protected IUnitState<TEnum> m_state = null;
 
