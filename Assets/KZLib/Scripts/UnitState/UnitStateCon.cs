@@ -82,7 +82,7 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct, 
 		}
 		catch(OperationCanceledException)
 		{
-			// Force canceled.
+			// Force canceled. -> skip
 		}
 		catch(Exception exception)
 		{
@@ -90,14 +90,12 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct, 
 		}
 	}
 
-	protected void _RegisterState(IUnitState<TEnum> state,IUnitStateParam param)
+	protected void _RegisterState(TEnum type,IUnitState<TEnum> state,IUnitStateParam param)
 	{
 		if(state == null)
 		{
 			return;
 		}
-
-		var type = state.Type;
 
 		m_stateDict[type] = state;
 		m_paramDict[type] = param;
