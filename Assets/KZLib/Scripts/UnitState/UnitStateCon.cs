@@ -6,24 +6,24 @@ using UnityEngine;
 public interface IUnitState<TEnum> where TEnum : struct,Enum
 {
 	public TEnum Type { get; }
-	public bool IsChangeable { get; }
+	public bool IsChangeAllowed { get; }
 
 	public void Enter();
 	public void Exit();
 	public void Update();
 }
 
-public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,Enum
+public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct, Enum
 {
-	public event Action<TEnum,TEnum> OnUnitStateChanged = null;
+	public event Action<TEnum, TEnum> OnUnitStateChanged = null;
 
 	[ShowInInspector] public TEnum StateType => m_state == null ? default : m_state.Type;
 
-	private readonly Dictionary<TEnum,IUnitState<TEnum>> m_stateDict = new();
+	private readonly Dictionary<TEnum, IUnitState<TEnum>> m_stateDict = new();
 
 	protected IUnitState<TEnum> m_state = null;
 
-	protected abstract bool _IsChangeable(TEnum newStateTag,bool isForce);
+	protected abstract bool _CanChange(TEnum newStateTag,bool isForce);
 
 	public virtual void Initialize()
 	{
@@ -37,17 +37,17 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 
 	public void EnterState(TEnum newType,bool isForce = false)
 	{
-		if(isActiveAndEnabled == false)
+		if (isActiveAndEnabled == false)
 		{
 			return;
 		}
 
-		if(!_IsChangeable(newType,isForce))
+		if (!_CanChange(newType,isForce))
 		{
 			return;
 		}
 
-		if(!m_stateDict.TryGetValue(newType,out var state))
+		if (!m_stateDict.TryGetValue(newType,out var state))
 		{
 			KZLogType.System.E($"{newType} state not found");
 
@@ -71,5 +71,15 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 	private void Update()
 	{
 		m_state?.Update();
+	}
+	
+	protected void _RegisterState(IUnitState<TEnum> state)
+	{
+		if(state == null)
+		{
+			return;
+		}
+
+		m_stateDict[state.Type] = state;
 	}
 }
