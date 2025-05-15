@@ -23,7 +23,6 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 	[ShowInInspector] public TEnum StateType => m_stateType;
 
 	private readonly Dictionary<TEnum,IUnitState<TEnum>> m_stateDict = new();
-	private readonly Dictionary<TEnum,IUnitStateParam> m_paramDict = new();
 
 	protected TEnum m_stateType = default;
 
@@ -41,14 +40,14 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 		CommonUtility.KillTokenSource(ref m_tokenSource);
 	}
 
-	public void EnterState(TEnum newType,bool isForce = false)
+	public void EnterState(TEnum newType,IUnitStateParam param,bool isForce = false)
 	{
 		if(isActiveAndEnabled == false || !_CanChange(newType,isForce))
 		{
 			return;
 		}
 
-		if(!m_stateDict.TryGetValue(newType,out var state) || !m_paramDict.TryGetValue(newType,out var param))
+		if(!m_stateDict.TryGetValue(newType,out var state))
 		{
 			KZLogType.System.E($"{newType} state not found");
 
@@ -70,7 +69,7 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 		{
 			var nextState = await state.PlayStateAsync(param,m_tokenSource.Token);
 
-			EnterState(nextState);
+			EnterState(nextState,null);
 		}
 		catch(OperationCanceledException)
 		{
@@ -82,7 +81,7 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 		}
 	}
 
-	protected void _RegisterState(TEnum type,IUnitState<TEnum> state,IUnitStateParam param)
+	protected void _RegisterState(TEnum type,IUnitState<TEnum> state)
 	{
 		if(state == null)
 		{
@@ -90,6 +89,5 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 		}
 
 		m_stateDict[type] = state;
-		m_paramDict[type] = param;
 	}
 }
