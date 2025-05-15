@@ -25,6 +25,7 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 	private readonly Dictionary<TEnum,IUnitState<TEnum>> m_stateDict = new();
 
 	protected TEnum m_stateType = default;
+	protected IUnitState<TEnum> m_currentState = null;
 
 	protected abstract bool _CanChange(TEnum newStateTag,bool isForce);
 
@@ -58,6 +59,7 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 
 		CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
+		m_currentState = state;
 		m_stateType = newType;
 
 		_PlayStateAsync(state,param).Forget();
