@@ -6,6 +6,7 @@ using UnityEngine;
 public interface IUnitState<TEnum> where TEnum : struct,Enum
 {
 	public TEnum Type { get; }
+	public bool IsChangeable { get; }
 
 	public void Enter();
 	public void Exit();
@@ -22,7 +23,7 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 
 	protected IUnitState<TEnum> m_state = null;
 
-	protected abstract bool IsChangeable(TEnum newStateTag,bool isForce);
+	protected abstract bool _IsChangeable(TEnum newStateTag,bool isForce);
 
 	public virtual void Initialize()
 	{
@@ -41,7 +42,7 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 			return;
 		}
 
-		if(!IsChangeable(newType,isForce))
+		if(!_IsChangeable(newType,isForce))
 		{
 			return;
 		}
