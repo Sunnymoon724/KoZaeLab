@@ -63,10 +63,12 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 		_PlayStateAsync(state,param).Forget();
 	}
 
-	private async UniTask _PlayStateAsync(IUnitState<TEnum> state,IUnitStateParam param)
+	protected async UniTask _PlayStateAsync(IUnitState<TEnum> state,IUnitStateParam param)
 	{
 		try
 		{
+			_ReadyState();
+
 			var nextState = await state.PlayStateAsync(param,m_tokenSource.Token);
 
 			EnterState(nextState,null);
@@ -90,4 +92,6 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 
 		m_stateDict[type] = state;
 	}
+
+	protected virtual void _ReadyState() { }
 }
