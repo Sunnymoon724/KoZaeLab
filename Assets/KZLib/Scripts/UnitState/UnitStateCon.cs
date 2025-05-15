@@ -1,53 +1,62 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public interface IUnitState<TEnum> where TEnum : struct,Enum
+public interface IUnitStateParam { }
+
+public interface IUnitState<TEnum> where TEnum : struct, Enum
 {
 	public TEnum Type { get; }
 	public bool IsChangeAllowed { get; }
 
-	public void Enter();
-	public void Exit();
-	public void Update();
+	public UniTask<TEnum> PlayStateAsync(IUnitStateParam param,CancellationToken token);
 }
 
 public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct, Enum
 {
-	public event Action<TEnum, TEnum> OnUnitStateChanged = null;
+	private CancellationTokenSource m_tokenSource = null;
+
+	public event Action<TEnum,TEnum> OnUnitStateChanged = null;
 
 	[ShowInInspector] public TEnum StateType => m_state == null ? default : m_state.Type;
 
-	protected readonly Dictionary<TEnum, IUnitState<TEnum>> m_stateDict = new();
+	private readonly Dictionary<TEnum,IUnitState<TEnum>> m_stateDict = new();
+	private readonly Dictionary<TEnum,IUnitStateParam> m_paramDict = new();
 
 	protected IUnitState<TEnum> m_state = null;
 
 	protected abstract bool _CanChange(TEnum newStateTag,bool isForce);
 
-	public virtual void Initialize()
+	public void Initialize()
 	{
 		m_stateDict.Clear();
 	}
 
-	public virtual void Release()
+	public void Release()
 	{
 		m_stateDict.Clear();
+
+		CommonUtility.KillTokenSource(ref m_tokenSource);
 	}
 
 	public void EnterState(TEnum newType,bool isForce = false)
 	{
-		if (isActiveAndEnabled == false)
+		if(isActiveAndEnabled == false || !_CanChange(newType,isForce))
 		{
 			return;
 		}
 
-		if (!_CanChange(newType,isForce))
+		if(!m_stateDict.TryGetValue(newType,out var state))
 		{
+			KZLogType.System.E($"{newType} state not found");
+
 			return;
 		}
 
-		if (!m_stateDict.TryGetValue(newType,out var state))
+		if(!m_paramDict.TryGetValue(newType,out var param))
 		{
 			KZLogType.System.E($"{newType} state not found");
 
@@ -56,30 +65,41 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct, 
 
 		OnUnitStateChanged?.Invoke(StateType,newType);
 
-		_ChangeState(state);
+		CommonUtility.RecycleTokenSource(ref m_tokenSource);
+
+		m_state = state;
+
+		_PlayStateAsync(state,param).Forget();
 	}
 
-	protected virtual void _ChangeState(IUnitState<TEnum> newState)
+	private async UniTask _PlayStateAsync(IUnitState<TEnum> state,IUnitStateParam param)
 	{
-		m_state?.Exit();
+		try
+		{
+			var nextState = await state.PlayStateAsync(param,m_tokenSource.Token);
 
-		m_state = newState;
-
-		m_state.Enter();
+			EnterState(nextState);
+		}
+		catch(OperationCanceledException)
+		{
+			// Force canceled.
+		}
+		catch(Exception exception)
+		{
+			KZLogType.System.E($"state exception : [{state.Type}] - {exception}");
+		}
 	}
 
-	private void Update()
-	{
-		m_state?.Update();
-	}
-	
-	protected void _RegisterState(IUnitState<TEnum> state)
+	protected void _RegisterState(IUnitState<TEnum> state,IUnitStateParam param)
 	{
 		if(state == null)
 		{
 			return;
 		}
 
-		m_stateDict[state.Type] = state;
+		var type = state.Type;
+
+		m_stateDict[type] = state;
+		m_paramDict[type] = param;
 	}
 }
