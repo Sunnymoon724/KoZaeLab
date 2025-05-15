@@ -9,24 +9,23 @@ public interface IUnitStateParam { }
 
 public interface IUnitState<TEnum> where TEnum : struct, Enum
 {
-	public TEnum Type { get; }
 	public bool IsChangeAllowed { get; }
 
 	public UniTask<TEnum> PlayStateAsync(IUnitStateParam param,CancellationToken token);
 }
 
-public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct, Enum
+public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,Enum
 {
 	private CancellationTokenSource m_tokenSource = null;
 
 	public event Action<TEnum,TEnum> OnUnitStateChanged = null;
 
-	[ShowInInspector] public TEnum StateType => m_state == null ? default : m_state.Type;
+	[ShowInInspector] public TEnum StateType => m_stateType;
 
 	private readonly Dictionary<TEnum,IUnitState<TEnum>> m_stateDict = new();
 	private readonly Dictionary<TEnum,IUnitStateParam> m_paramDict = new();
 
-	protected IUnitState<TEnum> m_state = null;
+	protected TEnum m_stateType = default;
 
 	protected abstract bool _CanChange(TEnum newStateTag,bool isForce);
 
@@ -49,25 +48,18 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct, 
 			return;
 		}
 
-		if(!m_stateDict.TryGetValue(newType,out var state))
+		if(!m_stateDict.TryGetValue(newType,out var state) || !m_paramDict.TryGetValue(newType,out var param))
 		{
 			KZLogType.System.E($"{newType} state not found");
 
 			return;
 		}
 
-		if(!m_paramDict.TryGetValue(newType,out var param))
-		{
-			KZLogType.System.E($"{newType} state not found");
-
-			return;
-		}
-
-		OnUnitStateChanged?.Invoke(StateType,newType);
+		OnUnitStateChanged?.Invoke(m_stateType,newType);
 
 		CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
-		m_state = state;
+		m_stateType = newType;
 
 		_PlayStateAsync(state,param).Forget();
 	}
@@ -86,7 +78,7 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct, 
 		}
 		catch(Exception exception)
 		{
-			KZLogType.System.E($"state exception : [{state.Type}] - {exception}");
+			KZLogType.System.E($"state exception : [{m_stateType}] - {exception}");
 		}
 	}
 
