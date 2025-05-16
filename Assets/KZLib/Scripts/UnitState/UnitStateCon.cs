@@ -7,48 +7,41 @@ using UnityEngine;
 
 public interface IUnitStateParam { }
 
-public interface IUnitState<TEnum> where TEnum : struct, Enum
-{
-	public bool IsChangeAllowed { get; }
-
-	public UniTask<TEnum> PlayStateAsync(IUnitStateParam param,CancellationToken token);
-}
-
 public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,Enum
 {
+	protected bool m_changeAllowed = false;
 	private CancellationTokenSource m_tokenSource = null;
 
 	public event Action<TEnum,TEnum> OnUnitStateChanged = null;
 
 	[ShowInInspector] public TEnum StateType => m_stateType;
 
-	private readonly Dictionary<TEnum,IUnitState<TEnum>> m_stateDict = new();
+	private readonly Dictionary<TEnum,Func<IUnitStateParam,UniTask<TEnum>>> m_stateFuncDict = new();
 
 	protected TEnum m_stateType = default;
-	protected IUnitState<TEnum> m_currentState = null;
 
 	protected abstract bool _CanChange(TEnum newStateTag,bool isForce);
 
 	public void Initialize()
 	{
-		m_stateDict.Clear();
+		m_stateFuncDict.Clear();
 	}
 
 	public void Release()
 	{
-		m_stateDict.Clear();
+		m_stateFuncDict.Clear();
 
 		CommonUtility.KillTokenSource(ref m_tokenSource);
 	}
 
-	public void EnterState(TEnum newType,IUnitStateParam param,bool isForce = false)
+	public async UniTask EnterStateAsync(TEnum newType,IUnitStateParam param,bool isForce = false)
 	{
 		if(isActiveAndEnabled == false || !_CanChange(newType,isForce))
 		{
 			return;
 		}
 
-		if(!m_stateDict.TryGetValue(newType,out var state))
+		if(!m_stateFuncDict.TryGetValue(newType,out var stateFunc))
 		{
 			KZLogType.System.E($"{newType} state not found");
 
@@ -59,40 +52,23 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 
 		CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
-		m_currentState = state;
 		m_stateType = newType;
 
-		_PlayStateAsync(state,param).Forget();
+		_ReadyState();
+
+		var nextState = await stateFunc.Invoke(param);
+
+		await EnterStateAsync(nextState,null);
 	}
 
-	protected async UniTask _PlayStateAsync(IUnitState<TEnum> state,IUnitStateParam param)
+	protected void _RegisterState(TEnum type,Func<IUnitStateParam,UniTask<TEnum>> stateFunc)
 	{
-		try
-		{
-			_ReadyState();
-
-			var nextState = await state.PlayStateAsync(param,m_tokenSource.Token);
-
-			EnterState(nextState,null);
-		}
-		catch(OperationCanceledException)
-		{
-			// Force canceled. -> skip
-		}
-		catch(Exception exception)
-		{
-			KZLogType.System.E($"state exception : [{m_stateType}] - {exception}");
-		}
-	}
-
-	protected void _RegisterState(TEnum type,IUnitState<TEnum> state)
-	{
-		if(state == null)
+		if(stateFunc == null)
 		{
 			return;
 		}
 
-		m_stateDict[type] = state;
+		m_stateFuncDict[type] = stateFunc;
 	}
 
 	protected virtual void _ReadyState() { }
