@@ -41,24 +41,46 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 			return;
 		}
 
-		if(!m_stateFuncDict.TryGetValue(newType,out var stateFunc))
-		{
-			KZLogType.System.E($"{newType} state not found");
-
-			return;
-		}
-
-		OnUnitStateChanged?.Invoke(m_stateType,newType);
+		var current = newType;
 
 		CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
-		m_stateType = newType;
+		while(isActiveAndEnabled)
+		{
+			if(!m_stateFuncDict.TryGetValue(current, out var stateFunc))
+			{
+				KZLogType.System.E($"{current} state not found");
 
-		_ReadyState();
+				return;
+			}
 
-		var nextState = await stateFunc.Invoke(param);
+			OnUnitStateChanged?.Invoke(m_stateType,current);
 
-		await EnterStateAsync(nextState,null);
+			m_stateType = current;
+
+			_ReadyState();
+
+			var token = m_tokenSource.Token;
+
+			try
+			{
+				KZLogType.System.I($"State Entered: {current}");
+
+				var next = await stateFunc.Invoke(param);
+
+				current = next;
+				param = null;
+			}
+			catch(OperationCanceledException)
+			{
+				return;
+			}
+
+			if(!_CanChange(current,false))
+			{
+				break;
+			}
+		}
 	}
 
 	protected void _RegisterState(TEnum type,Func<IUnitStateParam,UniTask<TEnum>> stateFunc)
