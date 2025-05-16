@@ -10,7 +10,7 @@ public interface IUnitStateParam { }
 public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,Enum
 {
 	protected bool m_changeAllowed = false;
-	private CancellationTokenSource m_tokenSource = null;
+	protected CancellationTokenSource m_tokenSource = null;
 
 	public event Action<TEnum,TEnum> OnUnitStateChanged = null;
 
