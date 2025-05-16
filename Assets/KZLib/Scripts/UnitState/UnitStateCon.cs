@@ -64,7 +64,7 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 
 			try
 			{
-				KZLogType.System.I($"State Entered: {current}");
+				KZLogType.System.I($"{name} is entered {current}");
 
 				var next = await stateFunc.Invoke(param);
 
