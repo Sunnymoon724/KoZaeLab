@@ -32,7 +32,7 @@ public class RepositoryUI2D : RepositoryUI
 
 			if(repository == null)
 			{
-				Logger.UI.E($"Not Found Repository. PriorityType : {priorityType}");
+				LogSvc.UI.E($"Not Found Repository. PriorityType : {priorityType}");
 
 				return null;
 			}

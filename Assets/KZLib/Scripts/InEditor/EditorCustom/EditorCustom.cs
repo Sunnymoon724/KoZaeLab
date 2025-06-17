@@ -112,7 +112,7 @@ namespace KZLib.Tet
 
 			if(propertyInfo == null)
 			{
-				Logger.System.E($"{key} is not exist in custom data");
+				LogSvc.System.E($"{key} is not exist in custom data");
 			}
 
 			return propertyInfo != null;
@@ -128,7 +128,7 @@ namespace KZLib.Tet
 			}
 			catch(Exception exception)
 			{
-				Logger.System.E($"Set editorPrefs failed. [{c_editorText}/{s_customData} - {exception.Message}]");
+				LogSvc.System.E($"Set editorPrefs failed. [{c_editorText}/{s_customData} - {exception.Message}]");
 			}
 		}
 

@@ -27,7 +27,7 @@ namespace KZLib
 		{
 			if(videoData == null)
 			{
-				Logger.System.E("VideoData is null");
+				LogSvc.System.E("VideoData is null");
 
 				return;
 			}

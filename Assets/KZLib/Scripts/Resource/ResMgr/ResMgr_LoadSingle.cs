@@ -93,7 +93,7 @@ namespace KZLib
 		{
 			if(filePath.IsEmpty())
 			{
-				Logger.System.I("Path is null.");
+				LogSvc.System.I("Path is null.");
 
 				return null;
 			}
@@ -108,7 +108,7 @@ namespace KZLib
 
 				if(!cacheData)
 				{
-					Logger.System.E($"Resources is not exist. [path : {filePath}]");
+					LogSvc.System.E($"Resources is not exist. [path : {filePath}]");
 
 					return null;
 				}
@@ -137,7 +137,7 @@ namespace KZLib
 #if UNITY_EDITOR
 			if(!Path.HasExtension(filePath))
 			{
-				Logger.System.E($"Path is folder path.[path : {filePath}]");
+				LogSvc.System.E($"Path is folder path.[path : {filePath}]");
 
 				return null;
 			}

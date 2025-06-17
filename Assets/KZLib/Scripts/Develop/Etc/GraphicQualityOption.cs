@@ -283,7 +283,7 @@ namespace KZLib.KZDevelop
 				}
 			}
 
-			Logger.System.E($"Not supported GraphicsQuality. [{optionName}]");
+			LogSvc.System.E($"Not supported GraphicsQuality. [{optionName}]");
 
 			return null;
 		} 

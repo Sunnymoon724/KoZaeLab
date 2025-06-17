@@ -22,7 +22,7 @@ using KZLib.KZNetwork;
 
 #endif
 
-public class Logger
+public class LogSvc
 {
 	public static readonly LogChannel None = new("None");
 

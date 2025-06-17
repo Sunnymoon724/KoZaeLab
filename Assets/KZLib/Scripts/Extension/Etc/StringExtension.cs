@@ -183,7 +183,7 @@ public static class StringExtension
 			return value;
 		}
 
-		Logger.System.W($"Failed to convert {text} into Enum");
+		LogSvc.System.W($"Failed to convert {text} into Enum");
 
 		return default;
 	}
@@ -212,7 +212,7 @@ public static class StringExtension
 			return color;
 		}
 
-		Logger.System.W($"Failed to convert {hexCode} into color");
+		LogSvc.System.W($"Failed to convert {hexCode} into color");
 
 		return Color.clear;
 	}
@@ -242,7 +242,7 @@ public static class StringExtension
 			return value;
 		}
 
-		Logger.System.W($"Failed to convert {text} into bool");
+		LogSvc.System.W($"Failed to convert {text} into bool");
 
 		return false;
 	}
@@ -256,7 +256,7 @@ public static class StringExtension
 			return value;
 		}
 
-		Logger.System.W($"Failed to convert {text} into BigInteger");
+		LogSvc.System.W($"Failed to convert {text} into BigInteger");
 
 		return default;
 	}
@@ -276,7 +276,7 @@ public static class StringExtension
 			}
 		}
 
-		Logger.System.W($"Failed to convert {text} into int");
+		LogSvc.System.W($"Failed to convert {text} into int");
 
 		return default;
 	}
@@ -288,7 +288,7 @@ public static class StringExtension
 			return value;
 		}
 
-		Logger.System.W($"Failed to convert {text} into float");
+		LogSvc.System.W($"Failed to convert {text} into float");
 
 		return default;
 	}
@@ -300,7 +300,7 @@ public static class StringExtension
 			return value;
 		}
 
-		Logger.System.W($"Failed to convert {text} into double");
+		LogSvc.System.W($"Failed to convert {text} into double");
 
 		return default;
 	}
@@ -320,7 +320,7 @@ public static class StringExtension
 			}
 		}
 
-		Logger.System.W($"Failed to convert {text} into byte");
+		LogSvc.System.W($"Failed to convert {text} into byte");
 
 		return default;
 	}
@@ -332,7 +332,7 @@ public static class StringExtension
 			return value;
 		}
 
-		Logger.System.W($"Failed to convert {hexText} into int");
+		LogSvc.System.W($"Failed to convert {hexText} into int");
 
 		return default;
 	}
@@ -344,7 +344,7 @@ public static class StringExtension
 			return BitConverter.ToSingle(BitConverter.GetBytes(value),0);
 		}
 
-		Logger.System.W($"Failed to convert {hexText} into float");
+		LogSvc.System.W($"Failed to convert {hexText} into float");
 
 		return default;
 	}
@@ -363,7 +363,7 @@ public static class StringExtension
 			return value;
 		}
 
-		Logger.System.W($"Failed to convert {text} into DateTime");
+		LogSvc.System.W($"Failed to convert {text} into DateTime");
 
 		return default;
 	}
@@ -377,7 +377,7 @@ public static class StringExtension
 			return value;
 		}
 
-		Logger.System.W($"Failed to convert {text} into Vector2");
+		LogSvc.System.W($"Failed to convert {text} into Vector2");
 
 		return default;
 	}
@@ -405,7 +405,7 @@ public static class StringExtension
 			return value;
 		}
 
-		Logger.System.W($"Failed to convert {text} into Vector3");
+		LogSvc.System.W($"Failed to convert {text} into Vector3");
 
 		return default;
 	}

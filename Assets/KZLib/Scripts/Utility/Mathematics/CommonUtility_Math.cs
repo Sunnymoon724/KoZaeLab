@@ -95,7 +95,7 @@ public static partial class CommonUtility
 	{
 		if(length <= 0)
 		{
-			Logger.System.E($"{length} can not be less than 1");
+			LogSvc.System.E($"{length} can not be less than 1");
 
 			return null;
 		}
@@ -120,14 +120,14 @@ public static partial class CommonUtility
 	{
 		if(objectList.IsNullOrEmpty())
 		{
-			Logger.System.E("List is null or empty");
+			LogSvc.System.E("List is null or empty");
 
 			return;
 		}
 
 		if(countX < 1 || countZ < 1)
 		{
-			Logger.System.E($"{(countX < 1 ? "countX" : "countZ")} can not be less than 1");
+			LogSvc.System.E($"{(countX < 1 ? "countX" : "countZ")} can not be less than 1");
 
 			return;
 		}

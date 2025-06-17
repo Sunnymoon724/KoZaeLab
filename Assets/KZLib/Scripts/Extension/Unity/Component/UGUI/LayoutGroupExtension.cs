@@ -71,7 +71,7 @@ public static class LayoutGroupExtension
 	{
 		if(!layoutGroup)
 		{
-			Logger.System.E("LayoutGroup is null");
+			LogSvc.System.E("LayoutGroup is null");
 
 			return false;
 		}

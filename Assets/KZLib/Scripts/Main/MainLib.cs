@@ -164,7 +164,7 @@ namespace KZLib
 #endif
 			stringBuilder.AppendLine($"Current PlayType {GamePlayType}");
 
-			Logger.System.I(stringBuilder.ToString());
+			LogSvc.System.I(stringBuilder.ToString());
 		}
 
 		private async void Start()
@@ -198,7 +198,7 @@ namespace KZLib
 			_InitializeRenderSetting(stringBuilder);
 			_InitializeObject(stringBuilder);
 
-			Logger.System.I(stringBuilder.ToString());
+			LogSvc.System.I(stringBuilder.ToString());
 
 			await _StartMainAsync();
 		}
@@ -330,7 +330,7 @@ namespace KZLib
 			//? Refresh Game
 			if(Input.GetKeyDown(KeyCode.F5))
 			{
-				Logger.System.I("Refresh Game");
+				LogSvc.System.I("Refresh Game");
 
 				_RefreshGame().Forget();
 			}

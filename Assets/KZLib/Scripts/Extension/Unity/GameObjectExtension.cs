@@ -251,7 +251,7 @@ public static class GameObjectExtension
 	{
 		if(!gameObject)
 		{
-			Logger.System.E("GameObject is null");
+			LogSvc.System.E("GameObject is null");
 
 			return false;
 		}

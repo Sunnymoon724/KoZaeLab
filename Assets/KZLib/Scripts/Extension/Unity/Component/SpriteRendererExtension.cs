@@ -32,7 +32,7 @@ public static class SpriteRendererExtension
 	{
 		if(!spriteRenderer)
 		{
-			Logger.System.E("SpriteRenderer is null");
+			LogSvc.System.E("SpriteRenderer is null");
 
 			return false;
 		}

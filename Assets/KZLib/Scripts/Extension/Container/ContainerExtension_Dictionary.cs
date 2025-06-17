@@ -108,7 +108,7 @@ public static partial class ContainerExtension
 		}
 		else
 		{
-			Logger.System.E("Not Supported");
+			LogSvc.System.E("Not Supported");
 		}
 	}
 
@@ -131,7 +131,7 @@ public static partial class ContainerExtension
 			}
 			else
 			{
-				Logger.System.E("Not Supported");
+				LogSvc.System.E("Not Supported");
 
 				return;
 			}
@@ -207,7 +207,7 @@ public static partial class ContainerExtension
 
 		if(!format.Contains("{0}") || !format.Contains("{1}"))
 		{
-			Logger.System.E($"{format} not include {{0}} or {{1}}.");
+			LogSvc.System.E($"{format} not include {{0}} or {{1}}.");
 
 			return null;
 		}

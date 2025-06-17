@@ -46,7 +46,7 @@ public static class BoxCollider2DExtension
 	{
 		if(!boxCollider2D)
 		{
-			Logger.System.E("BoxCollider2D is null");
+			LogSvc.System.E("BoxCollider2D is null");
 
 			return false;
 		}

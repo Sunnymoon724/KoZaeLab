@@ -175,7 +175,7 @@ public static partial class RectTransformExtension
 
 		if(canvas == null)
 		{
-			Logger.System.E("Canvas is null.");
+			LogSvc.System.E("Canvas is null.");
 
 			return default;
 		}
@@ -411,7 +411,7 @@ public static partial class RectTransformExtension
 	{
 		if(!rectTransform)
 		{
-			Logger.System.E("RectTransform is null.");
+			LogSvc.System.E("RectTransform is null.");
 
 			return false;
 		}

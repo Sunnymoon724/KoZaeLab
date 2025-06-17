@@ -17,7 +17,7 @@ public class CombineMesh : BaseMesh
 
 		if(!IsValidMeshIndexCount(count))
 		{
-			Logger.System.W($"The number of indices in the batched mesh is high. Object: {m_meshFilter.gameObject.name} : Index Count: {count}");
+			LogSvc.System.W($"The number of indices in the batched mesh is high. Object: {m_meshFilter.gameObject.name} : Index Count: {count}");
 
 			return;
 		}
@@ -54,7 +54,7 @@ public class CombineMesh : BaseMesh
 
 		if(!IsValidMeshIndexCount(count))
 		{
-			Logger.System.W($"The number of indices in the batched mesh is high. Object: {m_meshFilter.gameObject.name} : Index Count: {count}");
+			LogSvc.System.W($"The number of indices in the batched mesh is high. Object: {m_meshFilter.gameObject.name} : Index Count: {count}");
 
 
 			return;

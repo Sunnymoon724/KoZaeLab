@@ -92,7 +92,7 @@ namespace KZLib.KZNetwork
 			}
 			catch(Exception exception)
 			{
-				Logger.System.E($"Exception : {exception.Message}");
+				LogSvc.System.E($"Exception : {exception.Message}");
 
 				return new ResponseInfo(false,c_internalServerError,string.Empty,exception.Message);
 			}

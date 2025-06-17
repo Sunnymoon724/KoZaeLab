@@ -69,7 +69,7 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 	public virtual void Open(object param)
 	{
-		Logger.UI.I($"{Tag} is opened");
+		LogSvc.UI.I($"{Tag} is opened");
 
 		gameObject.EnsureActive(true);
 	}
@@ -80,35 +80,35 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 		gameObject.EnsureActive(false);
 
-		Logger.UI.I($"{Tag} is closed");
+		LogSvc.UI.I($"{Tag} is closed");
 	}
 
 	protected override void Release() { }
 
 	public virtual void Show()
 	{
-		Logger.UI.I($"{Tag} is shown");
+		LogSvc.UI.I($"{Tag} is shown");
 
 		_SetCanvasGroupState(1,true,true);
 	}
 
 	public virtual void Hide()
 	{
-		Logger.UI.I($"{Tag} is hidden");
+		LogSvc.UI.I($"{Tag} is hidden");
 
 		_SetCanvasGroupState(0,false,false);
 	}
 
 	public void BlockInput()
 	{
-		Logger.UI.I($"{Tag} input is blocked");
+		LogSvc.UI.I($"{Tag} input is blocked");
 
 		_SetCanvasGroupState(1,false,false);
 	}
 
 	public void AllowInput()
 	{
-		Logger.UI.I($"{Tag} input is allowed");
+		LogSvc.UI.I($"{Tag} input is allowed");
 
 		_SetCanvasGroupState(1,true,true);
 	}

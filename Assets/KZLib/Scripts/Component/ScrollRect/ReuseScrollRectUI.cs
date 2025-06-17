@@ -63,7 +63,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 		if(!m_pivot)
 		{
-			Logger.System.E("Pivot is null");
+			LogSvc.System.E("Pivot is null");
 
 			return;
 		}

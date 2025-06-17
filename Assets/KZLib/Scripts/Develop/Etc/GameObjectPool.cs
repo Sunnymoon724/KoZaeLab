@@ -16,14 +16,14 @@ namespace KZLib.KZDevelop
 		{
 			if(!pivot)
 			{
-				Logger.System.E("Pivot is null");
+				LogSvc.System.E("Pivot is null");
 
 				return;
 			}
 
 			if(!storage)
 			{
-				Logger.System.E("Storage is null");
+				LogSvc.System.E("Storage is null");
 
 				return;
 			}

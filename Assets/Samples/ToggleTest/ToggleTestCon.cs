@@ -6,6 +6,6 @@ public class ToggleTest : MonoBehaviour
 {
 	public void OnClick()
 	{
-		Logger.UI.I("AAA");
+		LogSvc.UI.I("AAA");
 	}
 }

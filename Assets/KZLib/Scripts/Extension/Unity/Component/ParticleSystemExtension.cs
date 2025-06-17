@@ -30,7 +30,7 @@ public static class ParticleSystemExtension
 	{
 		if(!particleSystem)
 		{
-			Logger.System.E("ParticleSystem is null");
+			LogSvc.System.E("ParticleSystem is null");
 
 			return false;
 		}

@@ -92,7 +92,7 @@ namespace KZLib.KZMenu
 		{
 			if(Selection.activeObject == null)
 			{
-				Logger.Editor.W("Selection is null.");
+				LogSvc.Editor.W("Selection is null.");
 
 				return false;
 			}
@@ -101,7 +101,7 @@ namespace KZLib.KZMenu
 
 			if(!FileUtility.IsFilePath(path))
 			{
-				Logger.Editor.W("Selection is folder.");
+				LogSvc.Editor.W("Selection is folder.");
 
 				return false;
 			}
@@ -137,15 +137,15 @@ namespace KZLib.KZMenu
 
 			if(textList.IsNullOrEmpty())
 			{
-				Logger.Editor.I("Using asset is null.");
+				LogSvc.Editor.I("Using asset is null.");
 			}
 			else
 			{
-				Logger.Editor.I("Using asset list");
+				LogSvc.Editor.I("Using asset list");
 
 				foreach(var text in textList)
 				{
-					Logger.Editor.I(text);
+					LogSvc.Editor.I(text);
 				}
 			}
 		}
@@ -179,15 +179,15 @@ namespace KZLib.KZMenu
 
 			if(textList.IsNullOrEmpty())
 			{
-				Logger.Editor.I("Assets with is null.");
+				LogSvc.Editor.I("Assets with is null.");
 			}
 			else
 			{
-				Logger.Editor.I("Assets with list");
+				LogSvc.Editor.I("Assets with list");
 
 				foreach(var text in textList)
 				{
-					Logger.Editor.I(text);
+					LogSvc.Editor.I(text);
 				}
 			}
 		}

@@ -41,7 +41,7 @@ namespace KZLib.KZMenu
 			{
 				if(!FileUtility.IsExcelFile(lingoFilePath))
 				{
-					Logger.System.W($"{lingoFilePath} is not exist. -> generate failed");
+					LogSvc.System.W($"{lingoFilePath} is not exist. -> generate failed");
 
 					continue;
 				}
@@ -99,7 +99,7 @@ namespace KZLib.KZMenu
 							}
 						default:
 							{
-								Logger.System.W($"Excel file name must be String or Asset.");
+								LogSvc.System.W($"Excel file name must be String or Asset.");
 
 								break;
 							}
@@ -133,7 +133,7 @@ namespace KZLib.KZMenu
 				}
 				catch(Exception exception)
 				{
-					Logger.System.E(exception);
+					LogSvc.System.E(exception);
 
 					return;
 				}

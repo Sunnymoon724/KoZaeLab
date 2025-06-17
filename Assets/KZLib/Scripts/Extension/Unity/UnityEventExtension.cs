@@ -122,7 +122,7 @@ public static class UnityEventExtension
 	{
 		if(unityEvent == null)
 		{
-			Logger.System.E("UnityEvent is null");
+			LogSvc.System.E("UnityEvent is null");
 
 			return false;
 		}
@@ -134,7 +134,7 @@ public static class UnityEventExtension
 	{
 		if(unityEvent == null)
 		{
-			Logger.System.E("UnityEvent is null");
+			LogSvc.System.E("UnityEvent is null");
 
 			return false;
 		}

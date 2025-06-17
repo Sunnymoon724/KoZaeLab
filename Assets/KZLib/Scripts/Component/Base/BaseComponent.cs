@@ -34,7 +34,7 @@ public abstract class BaseComponent : SerializedMonoBehaviour
 	{
 		if(!value)
 		{
-			Logger.System.E($"{objectText} is null");
+			LogSvc.System.E($"{objectText} is null");
 
 			return false;
 		}

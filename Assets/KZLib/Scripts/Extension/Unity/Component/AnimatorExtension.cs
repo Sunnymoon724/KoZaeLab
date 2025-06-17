@@ -252,7 +252,7 @@ public static class AnimatorExtension
 	{
 		if(!animator)
 		{
-			Logger.System.E("Animator is null");
+			LogSvc.System.E("Animator is null");
 
 			return false;
 		}

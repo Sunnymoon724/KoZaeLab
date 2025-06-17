@@ -16,7 +16,7 @@ public static class CanvasExtension
 	{
 		if(!canvas)
 		{
-			Logger.System.E("Canvas is null");
+			LogSvc.System.E("Canvas is null");
 
 			return false;
 		}

@@ -16,15 +16,15 @@ public class HudTestCon : MonoBehaviour
 	{
 		while(true)
 		{
-			Logger.Network.I("Network Info");
+			LogSvc.Network.I("Network Info");
 
 			await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 
-			Logger.Editor.W("Editor Warning");
+			LogSvc.Editor.W("Editor Warning");
 
 			await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 
-			Logger.System.E("System Error");
+			LogSvc.System.E("System Error");
 
 			await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 		}

@@ -51,7 +51,7 @@ namespace KZLib
 		{
 			if(!m_animator)
 			{
-				Logger.System.W("Animator is null");
+				LogSvc.System.W("Animator is null");
 
 				return;
 			}

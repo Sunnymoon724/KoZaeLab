@@ -53,7 +53,7 @@ public static class ImageExtension
 	{
 		if(!image)
 		{
-			Logger.System.E("Image is null");
+			LogSvc.System.E("Image is null");
 
 			return false;
 		}

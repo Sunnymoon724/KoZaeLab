@@ -10,7 +10,7 @@ public static partial class CommonUtility
 	[Obsolete("dummy check")]
 	public static void AddOrUpdateTemplateText(string folderPath,string templateName,string scriptName,string newData,Func<string,string> onUpdate)
 	{
-		Logger.Editor.E("사용??");
+		LogSvc.Editor.E("사용??");
 
 		var absolutePath = FileUtility.GetAbsolutePath(Path.Combine(folderPath,scriptName),true);
 		var templateText = FileUtility.IsFolderExist(absolutePath) ? FileUtility.ReadFileToText(absolutePath) : FindTemplateText(templateName);

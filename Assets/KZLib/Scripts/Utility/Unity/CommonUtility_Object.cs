@@ -41,7 +41,7 @@ public static partial class CommonUtility
 
 		if(guidArray.Length > 1)
 		{
-			Logger.System.W($"Result is not one. -> Use {guidArray[0]}");
+			LogSvc.System.W($"Result is not one. -> Use {guidArray[0]}");
 		}
 
 		return AssetDatabase.LoadAssetAtPath<TObject>(AssetDatabase.GUIDToAssetPath(guidArray[0]));
@@ -69,7 +69,7 @@ public static partial class CommonUtility
 	{
 		if(path.IsEmpty() || !asset)
 		{
-			Logger.System.E($"Path or asset is null {path} or {asset}");
+			LogSvc.System.E($"Path or asset is null {path} or {asset}");
 
 			return;
 		}
@@ -97,7 +97,7 @@ public static partial class CommonUtility
 		AssetDatabase.SaveAssets();
 		AssetDatabase.Refresh();
 
-		Logger.System.I($"{asset.name} is saved in {path}.");
+		LogSvc.System.I($"{asset.name} is saved in {path}.");
 	}
 #endif
 }

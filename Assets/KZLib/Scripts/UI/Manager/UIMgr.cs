@@ -80,7 +80,7 @@ namespace KZLib
 
 			if(!prefab)
 			{
-				Logger.UI.E($"{tag} is not exist.");
+				LogSvc.UI.E($"{tag} is not exist.");
 
 				return null;
 			}
@@ -89,7 +89,7 @@ namespace KZLib
 			{
 				prefab.DestroyObject();
 
-				Logger.UI.E($"Component is not exist in {tag}.");
+				LogSvc.UI.E($"Component is not exist in {tag}.");
 
 				return null;
 			}
@@ -98,7 +98,7 @@ namespace KZLib
 			{
 				prefab.DestroyObject();
 
-				Logger.UI.E($"UI tag is not matched. [{window.Tag} != {tag}]");
+				LogSvc.UI.E($"UI tag is not matched. [{window.Tag} != {tag}]");
 
 				return null;
 			}

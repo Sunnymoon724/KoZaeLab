@@ -57,7 +57,7 @@ public class SubtitlePanelUI : WindowUI2D
 
 			if(!textAsset)
 			{
-				Logger.System.E($"Subtitle path is wrong. [{subtitlePath}]");
+				LogSvc.System.E($"Subtitle path is wrong. [{subtitlePath}]");
 
 				return;
 			}
@@ -66,7 +66,7 @@ public class SubtitlePanelUI : WindowUI2D
 
 			if(subtitleText.IsEmpty())
 			{
-				Logger.System.E($"Subtitle is empty");
+				LogSvc.System.E($"Subtitle is empty");
 
 				return;
 			}

@@ -43,7 +43,7 @@ namespace KZLib.KZData
 
 				if(cluster == null)
 				{
-					Logger.System.E($"Failed to create cluster of type {type}");
+					LogSvc.System.E($"Failed to create cluster of type {type}");
 
 					return null;
 				}

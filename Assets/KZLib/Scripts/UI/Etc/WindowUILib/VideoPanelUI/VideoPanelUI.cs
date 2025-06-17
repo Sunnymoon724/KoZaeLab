@@ -77,7 +77,7 @@ public class VideoPanelUI : WindowUI2D
 
 			if(!videoClip)
 			{
-				Logger.System.E($"Video path is wrong. [{videoData.VideoPath}]");
+				LogSvc.System.E($"Video path is wrong. [{videoData.VideoPath}]");
 
 				return;
 			}

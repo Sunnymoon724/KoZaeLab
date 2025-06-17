@@ -113,7 +113,7 @@ namespace HudPanel
 				cellData.ResetCount();
 			}
 
-			foreach(var message in Logger.LogDataGroup)
+			foreach(var message in LogSvc.LogDataGroup)
 			{
 				var cellData = _CreateLogCellData(message);
 

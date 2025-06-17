@@ -57,7 +57,7 @@ namespace KZLib
 
 				if(!previousScene.IsValid())
 				{
-					Logger.System.E($"{previousSceneName} is not in the scene.");
+					LogSvc.System.E($"{previousSceneName} is not in the scene.");
 
 					return;
 				}

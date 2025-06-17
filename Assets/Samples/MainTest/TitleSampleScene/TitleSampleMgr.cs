@@ -4,6 +4,6 @@ public class TitleSampleMgr : SingletonMB<TitleSampleMgr>
 {
 	private void Start()
 	{
-		Logger.Client.I("Start");
+		LogSvc.Client.I("Start");
 	}
 }
