@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class DownloadPanelUI : WindowUI2D
 {
-	public override UITag Tag => UITag.DownloadPanelUI;
+	public override string Tag => Global.DOWNLOAD_PANEL_UI;
 
 	[SerializeField] private DownloadUI m_downloadUI = null;
 

@@ -54,14 +54,14 @@ public abstract class RepositoryUI : BaseComponentUI
 		}
 	}
 
-	public WindowUI FindOpenedUI(UITag uiTag)
+	public WindowUI FindOpenedUI(string tag)
 	{
-		return m_openedWindowList.Find(x=>x.Tag == uiTag);
+		return m_openedWindowList.Find(x=>x.Tag == tag);
 	}
 
-	public void RemoveAll(IEnumerable<UITag> excludeTagGroup,bool isRelease)
+	public void RemoveAll(IEnumerable<string> excludeTagGroup,bool isRelease)
 	{
-		var tagHashSet = new HashSet<UITag>(excludeTagGroup ?? Enumerable.Empty<UITag>());
+		var tagHashSet = new HashSet<string>(excludeTagGroup ?? Enumerable.Empty<string>());
 
 		for(var i=m_openedWindowList.Count-1;i>=0;i--)
 		{
@@ -76,25 +76,24 @@ public abstract class RepositoryUI : BaseComponentUI
 		}
 	}
 
-	public void ShowAllGroup(IEnumerable<UITag> includeTagGroup = null,IEnumerable<UITag> excludeTagGroup = null)
+	public void ShowAllGroup(IEnumerable<string> includeTagGroup = null,IEnumerable<string> excludeTagGroup = null)
 	{
 		_SetVisibleGroup(false,includeTagGroup,excludeTagGroup);
 	}
 
-	public void HideAllGroup(IEnumerable<UITag> includeTagGroup = null,IEnumerable<UITag> excludeTagGroup = null)
+	public void HideAllGroup(IEnumerable<string> includeTagGroup = null,IEnumerable<string> excludeTagGroup = null)
 	{
 		_SetVisibleGroup(true,includeTagGroup,excludeTagGroup);
 	}
 
-	private void _SetVisibleGroup(bool isHidden,IEnumerable<UITag> includeTagGroup = null,IEnumerable<UITag> excludeTagGroup = null)
+	private void _SetVisibleGroup(bool isHidden,IEnumerable<string> includeTagGroup = null,IEnumerable<string> excludeTagGroup = null)
 	{
-		var includeTagHashSet = new HashSet<UITag>(includeTagGroup ?? Enumerable.Empty<UITag>());
-		var excludeTagHashSet = new HashSet<UITag>(excludeTagGroup ?? Enumerable.Empty<UITag>())
-		{
-			// add default exclude tag
-			UITag.HudPanelUI,
-			UITag.TransitionPanelUI
-		};
+		var includeTagHashSet = new HashSet<string>(includeTagGroup ?? Enumerable.Empty<string>());
+		var excludeTagHashSet = new HashSet<string>(excludeTagGroup ?? Enumerable.Empty<string>())
+        {
+            Global.TRANSITION_PANEL_UI,
+            Global.HUD_PANEL_UI,
+        };
 
 		foreach(var window in m_openedWindowList)
 		{
@@ -107,16 +106,16 @@ public abstract class RepositoryUI : BaseComponentUI
 		}
 	}
 
-	public void Show(UITag uiTag)
+	public void Show(string tag)
 	{
-		var window = FindOpenedUI(uiTag);
+		var window = FindOpenedUI(tag);
 
 		_SetVisible(window,false);
 	}
 
-	public void Hide(UITag uiTag)
+	public void Hide(string tag)
 	{
-		var window = FindOpenedUI(uiTag);
+		var window = FindOpenedUI(tag);
 
 		_SetVisible(window,true);
 	}

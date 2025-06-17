@@ -131,7 +131,7 @@ public static class GameObjectExtension
 		return gameObject.GetComponent<TComponent>() ?? gameObject.AddComponent<TComponent>();
 	}
 
-	public static bool IsInComponent<TComponent>(this GameObject gameObject) where TComponent : Component
+	public static bool HasComponent<TComponent>(this GameObject gameObject) where TComponent : Component
 	{
 		if(!_IsValid(gameObject))
 		{
@@ -251,7 +251,7 @@ public static class GameObjectExtension
 	{
 		if(!gameObject)
 		{
-			KZLogType.System.E("GameObject is null");
+			Logger.System.E("GameObject is null");
 
 			return false;
 		}

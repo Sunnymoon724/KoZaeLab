@@ -13,7 +13,7 @@ public class VideoPanelUI : WindowUI2D
 	[SerializeField] private VideoPlayer m_videoPlayer = null;
 	[SerializeField] private AspectRatioFitter m_aspectRatio = null;
 
-	public override UITag Tag => UITag.VideoPanelUI;
+	public override string Tag => Global.VIDEO_PANEL_UI;
 
 	public TimeSpan Duration => TimeSpan.FromSeconds(m_videoPlayer.frameCount/m_videoPlayer.frameRate);
 
@@ -77,7 +77,7 @@ public class VideoPanelUI : WindowUI2D
 
 			if(!videoClip)
 			{
-				KZLogType.System.E($"Video path is wrong. [{videoData.VideoPath}]");
+				Logger.System.E($"Video path is wrong. [{videoData.VideoPath}]");
 
 				return;
 			}
@@ -87,7 +87,7 @@ public class VideoPanelUI : WindowUI2D
 
 		if(videoData.IsExistSubtitle)
 		{
-			var subtitlePanel = UIMgr.In.Open<SubtitlePanelUI>(UITag.SubtitlePanelUI,new SubtitlePanelUI.SubtitleParam(videoData.SubtitlePath));
+			var subtitlePanel = UIMgr.In.Open<SubtitlePanelUI>(Global.SUBTITLE_PANEL_UI,new SubtitlePanelUI.SubtitleParam(videoData.SubtitlePath));
 
 			AddLink(subtitlePanel);
 
@@ -97,7 +97,7 @@ public class VideoPanelUI : WindowUI2D
 
 		if(videoData.CanSkip)
 		{
-			var skipPanel = UIMgr.In.Open<SkipPanelUI>(UITag.SkipPanelUI,new SkipPanelUI.SkipParam(Stop));
+			var skipPanel = UIMgr.In.Open<SkipPanelUI>(Global.SKIP_PANEL_UI,new SkipPanelUI.SkipParam(Stop));
 
 			AddLink(skipPanel);
 		}

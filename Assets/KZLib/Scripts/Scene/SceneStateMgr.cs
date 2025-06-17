@@ -180,7 +180,7 @@ namespace KZLib
 
 			if(isLoading)
 			{
-				var panel = UIMgr.In.Open<LoadingPanelUI>(UITag.LoadingPanelUI);
+				var panel = UIMgr.In.Open<LoadingPanelUI>(Global.LOADING_PANEL_UI);
 
 				// brighter
 				await UIMgr.In.PlayTransitionInAsync(info,false);
@@ -201,7 +201,7 @@ namespace KZLib
 				// darker
 				await UIMgr.In.PlayTransitionOutAsync(info,false);
 
-				UIMgr.In.Close(UITag.LoadingPanelUI);
+				UIMgr.In.Close(Global.LOADING_PANEL_UI);
 			}
 			else
 			{
@@ -222,27 +222,27 @@ namespace KZLib
 		{
 			if(sceneName.IsEmpty())
 			{
-				KZLogType.System.E("Scene name is empty.");
+				Logger.System.E("Scene name is empty.");
 
 				return;
 			}
 
 			onUpdateProgress?.Invoke(0.0f);
 
-			KZLogType.System.I($"{sceneName} create start.");
+			Logger.System.I($"{sceneName} create start.");
 
 			var sceneType = Type.GetType($"{sceneName}, Assembly-CSharp");
 
 			if(sceneType == null)
 			{
-				KZLogType.System.E($"{sceneName} is not exists.");
+				Logger.System.E($"{sceneName} is not exists.");
 
 				return;
 			}
 
 			if(Activator.CreateInstance(sceneType) is not SceneState sceneState)
 			{
-				KZLogType.System.E($"{sceneName} create failed.");
+				Logger.System.E($"{sceneName} create failed.");
 
 				return;
 			}
@@ -254,7 +254,7 @@ namespace KZLib
 				onUpdateProgress?.Invoke(progress*0.99f);
 			},param);
 
-			KZLogType.System.I($"{sceneName} create end.");
+			Logger.System.I($"{sceneName} create end.");
 
 			onUpdateProgress?.Invoke(1.0f);
 		}
@@ -270,7 +270,7 @@ namespace KZLib
 
 			onUpdateProgress?.Invoke(0.0f);
 
-			KZLogType.System.I($"{current.SceneName} destroy start.");
+			Logger.System.I($"{current.SceneName} destroy start.");
 
 			// remove current scene
 			m_sceneStateStack.Pop();
@@ -286,7 +286,7 @@ namespace KZLib
 #if UNITY_EDITOR
 			EditorUtility.UnloadUnusedAssetsImmediate(true);
 #endif
-			KZLogType.System.I($"{current.SceneName} destroy end.");
+			Logger.System.I($"{current.SceneName} destroy end.");
 
 			_OnLowMemory();
 

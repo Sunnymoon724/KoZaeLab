@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using KZLib;
 using KZLib.KZNetwork;
+using KZLib.KZUtility;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -90,8 +91,8 @@ namespace HudPanel
 		protected override void OnEnable()
 		{
 			base.OnEnable();
-
-			LogMgr.In.OnLogDisplay += _OnUpdateLogScroll;
+			
+			Broadcaster.EnableListener<MessageData>(Global.DISPLAY_LOG,_OnUpdateLogScroll);
 
 			_SetScrollRect();
 		}
@@ -99,8 +100,8 @@ namespace HudPanel
 		protected override void OnDisable()
 		{
 			base.OnEnable();
-
-			LogMgr.In.OnLogDisplay -= _OnUpdateLogScroll;
+			
+			Broadcaster.DisableListener<MessageData>(Global.DISPLAY_LOG,_OnUpdateLogScroll);
 		}
 
 		private void _SetScrollRect()
@@ -112,7 +113,7 @@ namespace HudPanel
 				cellData.ResetCount();
 			}
 
-			foreach(var message in LogMgr.In.LogDataGroup)
+			foreach(var message in Logger.LogDataGroup)
 			{
 				var cellData = _CreateLogCellData(message);
 

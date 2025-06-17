@@ -76,7 +76,7 @@ namespace KZLib
 			{
 				var worldPoint = CameraMgr.In.CurrentCamera.ScreenToWorldPoint(point).ToVector2();
 
-				EventMgr.In.SendEvent(eventName,worldPoint);
+				Broadcaster.SendEvent(eventName,worldPoint);
 			}
 
 			_PlayTouchEffect(point);

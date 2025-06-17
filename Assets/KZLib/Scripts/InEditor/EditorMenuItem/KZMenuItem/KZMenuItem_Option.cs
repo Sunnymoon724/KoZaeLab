@@ -83,13 +83,13 @@ namespace KZLib.KZMenu
 
 			if(stringBuilder.Length == 0)
 			{
-				KZLogType.Editor.I("Missing component is not found.");
+				Logger.Editor.I("Missing component is not found.");
 			}
 			else
 			{
 				stringBuilder.Insert(0,"Missing component list\n");
 
-				KZLogType.Editor.I(stringBuilder.ToString());
+				Logger.Editor.I(stringBuilder.ToString());
 			}
 		}
 
@@ -123,13 +123,13 @@ namespace KZLib.KZMenu
 
 			if(stringBuilder.Length == 0)
 			{
-				KZLogType.Editor.I("Missing meshFilter is not found.");
+				Logger.Editor.I("Missing meshFilter is not found.");
 			}
 			else
 			{
 				stringBuilder.Insert(0,"Missing meshFilter list\n");
 
-				KZLogType.Editor.I(stringBuilder.ToString());
+				Logger.Editor.I(stringBuilder.ToString());
 			}
 		}
 
@@ -161,13 +161,13 @@ namespace KZLib.KZMenu
 		{
 			if(Application.internetReachability != NetworkReachability.NotReachable)
 			{
-				KZLogType.Editor.I($"Network is connected. [status : {Application.internetReachability}]");
+				Logger.Editor.I($"Network is connected. [status : {Application.internetReachability}]");
 
 				return;
 			}
 			else
 			{
-				KZLogType.Editor.W($"Network is not connected.");
+				Logger.Editor.W($"Network is not connected.");
 			}
 		}
 	}

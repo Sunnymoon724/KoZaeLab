@@ -71,7 +71,7 @@ public static class LayoutGroupExtension
 	{
 		if(!layoutGroup)
 		{
-			KZLogType.System.E("LayoutGroup is null");
+			Logger.System.E("LayoutGroup is null");
 
 			return false;
 		}

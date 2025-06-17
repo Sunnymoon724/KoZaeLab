@@ -12,6 +12,18 @@ namespace KZLib.KZMenu
 
 			CommonUtility.Open(filePath);
 		}
+
+		[MenuItem("KZMenu/Explorer/Open Documents Folder",false,MenuOrder.Explorer.OPEN)]
+		private static void _OnOpenDocumentFolder()
+		{
+			_OpenFolder("Documents",Global.DOCUMENT_FOLDER_PATH);
+		}
+
+		[MenuItem("KZMenu/Explorer/Open Tools Folder",false,MenuOrder.Explorer.OPEN)]
+		private static void _OnOpenToolFolder()
+		{
+			_OpenFolder("Tools",Global.TOOL_FOLDER_PATH);
+		}
 	}
 }
 #endif

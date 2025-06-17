@@ -56,7 +56,7 @@ namespace KZLib
 				return;
 			}
 
-			var panel = Open<TransitionPanelUI>(UITag.TransitionPanelUI);
+			var panel = Open<TransitionPanelUI>(Global.TRANSITION_PANEL_UI);
 
 			await panel.PlayTransitionAsync(info,isAutoHide,isReverse);
 		}

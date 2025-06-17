@@ -49,7 +49,7 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 		{
 			if(!m_stateFuncDict.TryGetValue(current, out var stateFunc))
 			{
-				KZLogType.System.E($"{current} state not found");
+				Logger.System.E($"{current} state not found");
 
 				return;
 			}
@@ -64,7 +64,7 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 
 			try
 			{
-				KZLogType.System.I($"{name} is entered {current}");
+				Logger.System.I($"{name} is entered {current}");
 
 				var next = await stateFunc.Invoke(param);
 

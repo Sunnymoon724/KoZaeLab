@@ -7,7 +7,7 @@ public class TransitionPanelUI : WindowUI2D
 	[SerializeField]
 	private TransitionProgressTask m_progressTask = null;
 
-	public override UITag Tag => UITag.TransitionPanelUI;
+	public override string Tag => Global.TRANSITION_PANEL_UI;
 
 	public async UniTask PlayTransitionAsync(TransitionInfo info,bool isAutoHide,bool isReverse)
 	{

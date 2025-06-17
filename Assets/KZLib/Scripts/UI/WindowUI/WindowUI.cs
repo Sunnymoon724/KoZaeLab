@@ -22,7 +22,7 @@ public interface IWindowUI
 	UILayerType LayerType { get; }
 	UIPriorityType PriorityType { get; }
 
-	UITag Tag { get; }
+	string Tag { get; }
 
 	bool IsPooling { get; }
 
@@ -47,7 +47,7 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 	public abstract UILayerType LayerType { get; }
 	public abstract UIPriorityType PriorityType { get; }
-	public abstract UITag Tag { get; }
+	public abstract string Tag { get; }
 
 	public abstract bool Is3D { get; }
 
@@ -69,7 +69,7 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 	public virtual void Open(object param)
 	{
-		KZLogType.UI.I($"{Tag} is opened");
+		Logger.UI.I($"{Tag} is opened");
 
 		gameObject.EnsureActive(true);
 	}
@@ -80,35 +80,35 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 		gameObject.EnsureActive(false);
 
-		KZLogType.UI.I($"{Tag} is closed");
+		Logger.UI.I($"{Tag} is closed");
 	}
 
 	protected override void Release() { }
 
 	public virtual void Show()
 	{
-		KZLogType.UI.I($"{Tag} is shown");
+		Logger.UI.I($"{Tag} is shown");
 
 		_SetCanvasGroupState(1,true,true);
 	}
 
 	public virtual void Hide()
 	{
-		KZLogType.UI.I($"{Tag} is hidden");
+		Logger.UI.I($"{Tag} is hidden");
 
 		_SetCanvasGroupState(0,false,false);
 	}
 
 	public void BlockInput()
 	{
-		KZLogType.UI.I($"{Tag} input is blocked");
+		Logger.UI.I($"{Tag} input is blocked");
 
 		_SetCanvasGroupState(1,false,false);
 	}
 
 	public void AllowInput()
 	{
-		KZLogType.UI.I($"{Tag} input is allowed");
+		Logger.UI.I($"{Tag} input is allowed");
 
 		_SetCanvasGroupState(1,true,true);
 	}

@@ -109,12 +109,12 @@ namespace KZLib.KZNetwork
 				}
 				catch(Exception exception)
 				{
-					KZLogType.Network.E($"Convert is failed - {exception}");
+					Logger.Network.E($"Convert is failed - {exception}");
 				}
 			}
 			else
 			{
-				KZLogType.Network.E("Result is failed");
+				Logger.Network.E("Result is failed");
 			}
 
 			return null;
@@ -127,7 +127,7 @@ namespace KZLib.KZNetwork
 
 			if(sheetId.IsEmpty())
 			{
-				KZLogType.Network.E("Sheet id is empty");
+				Logger.Network.E("Sheet id is empty");
 
 				return false;
 			}
@@ -142,7 +142,7 @@ namespace KZLib.KZNetwork
 
 			if(url.IsEmpty())
 			{
-				KZLogType.Network.E("Google Sheet URL is empty");
+				Logger.Network.E("Google Sheet URL is empty");
 
 				return false;
 			}
@@ -157,7 +157,7 @@ namespace KZLib.KZNetwork
 
 			if(folderId.IsEmpty())
 			{
-				KZLogType.Network.E("Folder id is empty");
+				Logger.Network.E("Folder id is empty");
 
 				return false;
 			}
@@ -172,7 +172,7 @@ namespace KZLib.KZNetwork
 
 			if(url.IsEmpty())
 			{
-				KZLogType.Network.E("Google Drive URL is empty");
+				Logger.Network.E("Google Drive URL is empty");
 
 				return false;
 			}

@@ -342,7 +342,7 @@ public static partial class ContainerExtension
 	{
 		if(enumerable == null)
 		{
-			KZLogType.System.E("Enumerable is null");
+			Logger.System.E("Enumerable is null");
 
 			return false;
 		}

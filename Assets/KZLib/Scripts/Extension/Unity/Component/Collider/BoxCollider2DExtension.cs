@@ -46,7 +46,7 @@ public static class BoxCollider2DExtension
 	{
 		if(!boxCollider2D)
 		{
-			KZLogType.System.E("BoxCollider2D is null");
+			Logger.System.E("BoxCollider2D is null");
 
 			return false;
 		}

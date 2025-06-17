@@ -6,16 +6,16 @@ namespace KZLib
 {
 	public partial class UIMgr : LoadSingletonMB<UIMgr>
 	{
-		private static readonly UITag[] s_library_ui_array = new UITag[] { UITag.TransitionPanelUI, UITag.HudPanelUI, UITag.VideoPanelUI };
+		private static readonly string[] s_definedTagArray = new string[] { Global.TRANSITION_PANEL_UI, Global.HUD_PANEL_UI, Global.VIDEO_PANEL_UI  };
 
-		private string _GetUIPath(UITag uiTag)
+		private string _GetUIPath(string tag)
 		{
-			return $"{(_IsLibraryUI(uiTag) ? "Resources/Common" : m_uiPrefabPath)}/{uiTag}.prefab";
+			return $"{(_IsDefinedUI(tag) ? "Resources/Common" : m_prefabPath)}/{tag}.prefab";
 		}
 
-		private bool _IsLibraryUI(UITag uiTag)
+		private bool _IsDefinedUI(string tag)
 		{
-			return s_library_ui_array.Contains(uiTag);
+			return s_definedTagArray.Contains(tag);
 		}
 	}
 }

@@ -4,6 +4,6 @@ public class TitleSampleMgr : SingletonMB<TitleSampleMgr>
 {
 	private void Start()
 	{
-		KZLogType.Client.I("Start");
+		Logger.Client.I("Start");
 	}
 }

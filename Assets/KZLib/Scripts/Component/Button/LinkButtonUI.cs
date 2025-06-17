@@ -10,7 +10,7 @@ public class LinkButtonUI : BaseButtonUI
 	{
 		if(m_linkPath.IsEmpty())
 		{
-			KZLogType.System.I("Link is empty");
+			Logger.System.I("Link is empty");
 
 			return;
 		}

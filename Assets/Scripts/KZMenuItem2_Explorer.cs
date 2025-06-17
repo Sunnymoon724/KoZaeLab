@@ -37,12 +37,8 @@ namespace KZLib.KZMenu
 		private static void _OnBuildLibraryProject()
 		{
 			var batchFilePath = Path.Combine(Global.PROJECT_PARENT_PATH,"BuildLibrary.bat");
-
-			Process.Start(new ProcessStartInfo
-			{
-				FileName = batchFilePath,
-				UseShellExecute = true,
-			});
+			
+			CommonUtility.OpenBatchFile(batchFilePath);
 		}
 	}
 }

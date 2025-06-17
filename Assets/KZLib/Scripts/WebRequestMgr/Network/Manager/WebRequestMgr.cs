@@ -39,7 +39,7 @@ namespace KZLib.KZNetwork
 		{
 			if(webRequest == null)
 			{
-				KZLogType.Network.E("WebRequest is null");
+				Logger.Network.E("WebRequest is null");
 
 				return null;
 			}
@@ -58,11 +58,11 @@ namespace KZLib.KZNetwork
 
 			if(responseInfo.Result)
 			{
-				KZLogType.Network.I($"{webRequest.Name} is Success");
+				Logger.Network.I($"{webRequest.Name} is Success");
 			}
 			else
 			{
-				KZLogType.Network.E($"{webRequest.Name} is Failed");
+				Logger.Network.E($"{webRequest.Name} is Failed");
 
 				OnShowNetworkError?.Invoke(responseInfo.Error);
 			}

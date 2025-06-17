@@ -48,7 +48,7 @@ public static class TextMeshProExtension
 	{
 		if(!textMesh)
 		{
-			KZLogType.System.E("TextMeshPro is null");
+			Logger.System.E("TextMeshPro is null");
 
 			textMesh.gameObject.EnsureActive(false);
 

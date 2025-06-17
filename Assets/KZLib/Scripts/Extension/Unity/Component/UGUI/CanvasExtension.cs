@@ -16,7 +16,7 @@ public static class CanvasExtension
 	{
 		if(!canvas)
 		{
-			KZLogType.System.E("Canvas is null");
+			Logger.System.E("Canvas is null");
 
 			return false;
 		}

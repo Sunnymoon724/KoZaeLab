@@ -96,7 +96,7 @@ public static class Texture2DExtension
 
 		if(splitCount.x <= 0 || splitCount.y <= 0 )
 		{
-			KZLogType.System.E($"Count is below zero {splitCount.x} or {splitCount.y}");
+			Logger.System.E($"Count is below zero {splitCount.x} or {splitCount.y}");
 
 			return null;
 		}
@@ -142,7 +142,7 @@ public static class Texture2DExtension
 
 		if(cropSize.x <= 0 || cropSize.y <= 0 )
 		{
-			KZLogType.System.E($"Size is below zero {cropSize.x} or {cropSize.y}");
+			Logger.System.E($"Size is below zero {cropSize.x} or {cropSize.y}");
 
 			return null;
 		}
@@ -228,7 +228,7 @@ public static class Texture2DExtension
 	{
 		if(!texture2D)
 		{
-			KZLogType.System.E("Texture2D is null");
+			Logger.System.E("Texture2D is null");
 
 			return false;
 		}

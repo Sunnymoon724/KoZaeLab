@@ -33,17 +33,20 @@ public partial struct Global
 	public readonly static string PROJECT_PATH = Directory.GetCurrentDirectory();
 	public readonly static string PROJECT_PARENT_PATH = Path.GetFullPath(Path.Combine(PROJECT_PATH,".."));
 
+	public readonly static string DOCUMENT_FOLDER_PATH = Path.Combine(PROJECT_PARENT_PATH,"Documents");
+	public readonly static string TOOL_FOLDER_PATH = Path.Combine(PROJECT_PARENT_PATH,"Tools");
+
 	#region Config
-	public readonly static string CONFIG_FOLDER_PATH = Path.Combine(PROJECT_PARENT_PATH,"Documents","Config");
+	public readonly static string CONFIG_FOLDER_PATH = Path.Combine(DOCUMENT_FOLDER_PATH,"Config");
 	public readonly static string CUSTOM_CONFIG_FOLDER_PATH = Path.Combine(CONFIG_FOLDER_PATH,"Custom");
 	#endregion Config
 
 	#region Proto
-	public readonly static string PROTO_FOLDER_PATH = Path.Combine(PROJECT_PARENT_PATH,"Documents","Proto");
+	public readonly static string PROTO_FOLDER_PATH = Path.Combine(DOCUMENT_FOLDER_PATH,"Proto");
 	#endregion Proto
 
 	#region Lingo
-	public readonly static string LINGO_FOLDER_PATH = Path.Combine(PROJECT_PARENT_PATH,"Documents","Lingo");
+	public readonly static string LINGO_FOLDER_PATH = Path.Combine(DOCUMENT_FOLDER_PATH,"Lingo");
 	#endregion Lingo
 	public readonly static string[] EXCEL_EXTENSION_ARRAY = new string[] { ".xls", ".xlsx", ".xlsm" };
 
@@ -52,4 +55,25 @@ public partial struct Global
 	public const string ANISOTROPIC_FILTERING = "AnisotropicFiltering";
 	public const string VERTICAL_SYNC_COUNT = "VerticalSyncCount";
 	public const string DISABLE_CAMERA_FAR_HALF = "DisableCameraFarHalf";
+
+	public const string DISPLAY_LOG = "DisplayLog";
 }
+
+#region UI Name
+public partial struct Global
+{
+	public const string HUD_PANEL_UI = "HudPanelUI";
+
+	public const string TRANSITION_PANEL_UI = "TransitionPanelUI";
+
+	public const string VIDEO_PANEL_UI = "VideoPanelUI";
+	public const string SUBTITLE_PANEL_UI = "SubtitlePanelUI";
+	public const string SKIP_PANEL_UI = "SkipPanelUI";
+
+	public const string DIALOG_BOX_PANEL_UI = "DialogBoxPopupUI";
+
+	public const string DOWNLOAD_PANEL_UI = "DownloadPanelUI";
+
+	public const string LOADING_PANEL_UI = "LoadingPanelUI";
+}
+#endregion UI Name

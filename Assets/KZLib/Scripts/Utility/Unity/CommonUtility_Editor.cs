@@ -1,6 +1,7 @@
 ﻿#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using KZLib.KZUtility;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -187,6 +188,20 @@ public static partial class CommonUtility
 		}
 
 		EditorUtility.OpenWithDefaultApp(absolutePath);
+	}
+
+	public static void OpenBatchFile(string absolutePath)
+	{
+		if(!FileUtility.IsPathExist(absolutePath))
+		{
+			return;
+		}
+
+		Process.Start(new ProcessStartInfo
+		{
+			FileName = absolutePath,
+			UseShellExecute = true,
+		});
 	}
 
 	public static void OpenTextFile(string absoluteFilePath,int line = 1)

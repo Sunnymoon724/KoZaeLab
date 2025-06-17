@@ -45,7 +45,7 @@ public static class MaterialExtension
 	{
 		if(!material)
 		{
-			KZLogType.System.E("Material is null");
+			Logger.System.E("Material is null");
 
 			return false;
 		}

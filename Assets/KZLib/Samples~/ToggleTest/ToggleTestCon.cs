@@ -6,6 +6,6 @@ public class ToggleTest : MonoBehaviour
 {
 	public void OnClick()
 	{
-		KZLogType.Effect.I("AAA");
+		Logger.Effect.I("AAA");
 	}
 }

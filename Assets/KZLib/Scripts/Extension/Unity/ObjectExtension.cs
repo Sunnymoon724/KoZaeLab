@@ -55,7 +55,7 @@ public static class ObjectExtension
 		{
 			if(isShowLog)
 			{
-				KZLogType.System.E("Object is null");
+				Logger.System.E("Object is null");
 			}
 
 			return false;

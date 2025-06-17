@@ -47,7 +47,7 @@ public static partial class TransformExtension
 
 		if(!target)
 		{
-			KZLogType.System.E("Target is null.");
+			Logger.System.E("Target is null.");
 
 			return;
 		}
@@ -72,7 +72,7 @@ public static partial class TransformExtension
 
 		if(!collider)
 		{
-			KZLogType.System.E("Collider is null.");
+			Logger.System.E("Collider is null.");
 
 			return false;
 		}
@@ -114,7 +114,7 @@ public static partial class TransformExtension
 	{
 		if(!transform)
 		{
-			KZLogType.System.E("Transform is null");
+			Logger.System.E("Transform is null");
 
 			return false;
 		}

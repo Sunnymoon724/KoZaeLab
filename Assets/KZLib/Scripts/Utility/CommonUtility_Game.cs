@@ -139,13 +139,11 @@ public static partial class CommonUtility
 		_ReleaseSingleton<CameraMgr>();
 		_ReleaseSingleton<PlayerPrefsMgr>();
 		_ReleaseSingleton<ResMgr>();
-		_ReleaseSingleton<LogMgr>();
 		_ReleaseSingleton<AddressablesMgr>();
 		_ReleaseSingleton<ShaderMgr>();
 		_ReleaseSingleton<InputMgr>();
 		_ReleaseSingleton<RouteMgr>();
 
-		_ReleaseSingleton<EventMgr>();
 		_ReleaseSingleton<TimeMgr>();
 		_ReleaseSingleton<LuaMgr>();
 

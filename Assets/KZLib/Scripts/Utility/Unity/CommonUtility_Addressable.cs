@@ -18,7 +18,7 @@ public static partial class CommonUtility
 	{
 		if(assetPath.IsEmpty())
 		{
-			KZLogType.System.E($"{assetPath} is null or empty.");
+			Logger.System.E($"{assetPath} is null or empty.");
 
 			entry = null;
 
@@ -50,7 +50,7 @@ public static partial class CommonUtility
 		{
 			if(assetPath.IsEmpty())
 			{
-				KZLogType.System.E($"{assetPath} is null or empty.");
+				Logger.System.E($"{assetPath} is null or empty.");
 
 				return false;
 			}
@@ -64,7 +64,7 @@ public static partial class CommonUtility
 
 			if(guid.IsEmpty())
 			{
-				KZLogType.System.E($"{assetPath} is not exist.");
+				Logger.System.E($"{assetPath} is not exist.");
 
 				return false;
 			}
@@ -100,7 +100,7 @@ public static partial class CommonUtility
 
 		if(guid.IsEmpty())
 		{
-			KZLogType.System.E($"{assetPath} is not exist.");
+			Logger.System.E($"{assetPath} is not exist.");
 
 			return false;
 		}
@@ -109,7 +109,7 @@ public static partial class CommonUtility
 
 		if(assetEntry == null)
 		{
-			KZLogType.System.E($"Asset at {assetPath} is not addressable.");
+			Logger.System.E($"Asset at {assetPath} is not addressable.");
 
 			return false;
 		}
@@ -120,7 +120,7 @@ public static partial class CommonUtility
 
 			if(newGroup == null)
 			{
-				KZLogType.System.E($"{newGroupName} is not exist.");
+				Logger.System.E($"{newGroupName} is not exist.");
 
 				return false;
 			}
@@ -214,7 +214,7 @@ public static partial class CommonUtility
 
 		if(settings == null)
 		{
-			KZLogType.System.E("AddressableAssetSettings is null. create first.");
+			Logger.System.E("AddressableAssetSettings is null. create first.");
 		}
 
 		return settings;

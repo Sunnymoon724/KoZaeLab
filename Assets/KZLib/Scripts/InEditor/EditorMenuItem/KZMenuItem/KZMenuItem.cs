@@ -60,7 +60,7 @@ namespace KZLib.KZMenu
 		{
 			if(!FileUtility.IsFolderExist(folderPath))
 			{
-				if(!CommonUtility.DisplayCheck($"Create {name}Folder",$"{name}Folder is not exist.\n you want to create the {name}Folder?"))
+				if(!CommonUtility.DisplayCheck($"Create {name} Folder",$"{name}Folder is not exist.\n you want to create the {name}Folder?"))
 				{
 					return;
 				}

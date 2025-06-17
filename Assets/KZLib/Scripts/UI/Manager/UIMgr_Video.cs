@@ -27,14 +27,14 @@ namespace KZLib
 		{
 			if(videoData == null)
 			{
-				KZLogType.System.E("VideoData is null");
+				Logger.System.E("VideoData is null");
 
 				return;
 			}
 
 			SoundMgr.In.PauseBGMSound();
 
-			var videoPanel = Open<VideoPanelUI>(UITag.VideoPanelUI);
+			var videoPanel = Open<VideoPanelUI>(Global.VIDEO_PANEL_UI);
 
 			videoPanel.Hide();
 

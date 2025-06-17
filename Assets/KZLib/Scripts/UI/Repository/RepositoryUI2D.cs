@@ -32,7 +32,7 @@ public class RepositoryUI2D : RepositoryUI
 
 			if(repository == null)
 			{
-				KZLogType.UI.E($"Not Found Repository. PriorityType : {priorityType}");
+				Logger.UI.E($"Not Found Repository. PriorityType : {priorityType}");
 
 				return null;
 			}

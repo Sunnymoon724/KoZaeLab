@@ -7,7 +7,7 @@ public class DialogBoxPopupUI : WindowUI2D
 {
 	public record DialogParam(string Title,string Message,params DialogCellData[] CellDataArray);
 
-	public override UITag Tag => UITag.DialogBoxPopupUI;
+	public override string Tag => Global.DIALOG_BOX_PANEL_UI;
 
 	[SerializeField]
 	private TMP_Text m_titleText = null;
@@ -40,7 +40,7 @@ public class DialogBoxPopupUI : WindowUI2D
 		{
 			if(cellData.OnClicked == null)
 			{
-				KZLogType.UI.E($"{cellData.Name} is null");
+				Logger.UI.E($"{cellData.Name} is null");
 
 				return;
 			}

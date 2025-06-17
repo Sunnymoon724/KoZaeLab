@@ -32,7 +32,7 @@ public static class SpriteRendererExtension
 	{
 		if(!spriteRenderer)
 		{
-			KZLogType.System.E("SpriteRenderer is null");
+			Logger.System.E("SpriteRenderer is null");
 
 			return false;
 		}

@@ -7,7 +7,7 @@ public class HudTestCon : MonoBehaviour
 {
 	private void Start()
 	{
-		UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
+		UIMgr.In.Open<HudPanelUI>(Global.HUD_PANEL_UI);
 
 		LoopTextAsync().Forget();
 	}
@@ -16,15 +16,15 @@ public class HudTestCon : MonoBehaviour
 	{
 		while(true)
 		{
-			KZLogType.Network.I("Network Info");
+			Logger.Network.I("Network Info");
 
 			await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 
-			KZLogType.Editor.W("Editor Warning");
+			Logger.Editor.W("Editor Warning");
 
 			await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 
-			KZLogType.System.E("System Error");
+			Logger.System.E("System Error");
 
 			await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 		}

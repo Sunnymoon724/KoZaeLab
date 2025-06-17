@@ -34,7 +34,7 @@ public abstract class BaseComponent : SerializedMonoBehaviour
 	{
 		if(!value)
 		{
-			KZLogType.System.E($"{objectText} is null");
+			Logger.System.E($"{objectText} is null");
 
 			return false;
 		}

@@ -1,33 +1,19 @@
 #if UNITY_EDITOR
-using Cysharp.Threading.Tasks;
-using ExcelDataReader.Log;
-using KZLib;
-using KZLib.KZData;
+using System.Reflection;
 using Sirenix.OdinInspector;
-using UnityEditor;
-using UnityEditor.AddressableAssets;
-using UnityEditor.AddressableAssets.Settings;
-using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine;
-using UnityEngine.Localization.Settings;
 
 public class Test : MonoBehaviour
 {
     [Button("Test1")]
     void Text1()
     {
-        var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
-
-        KZLogType.Build.I(optionCfg.MasterVolume.level);
-
-        optionCfg.SetMasterVolume(0.27f);
-
-        KZLogType.Build.I(optionCfg.MasterVolume.level);
+        
     }
-
-    private async UniTask Test2()
+    
+    public void Update()
     {
-        var ww = await PlayFabMgr.In.ExecuteCloudScriptAsync("Test",new { Test = "Test" });
+        Debug.Log(Application.targetFrameRate);
     }
 }
 #endif

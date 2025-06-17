@@ -164,7 +164,7 @@ namespace KZLib
 #endif
 			stringBuilder.AppendLine($"Current PlayType {GamePlayType}");
 
-			KZLogType.System.I(stringBuilder.ToString());
+			Logger.System.I(stringBuilder.ToString());
 		}
 
 		private async void Start()
@@ -174,12 +174,12 @@ namespace KZLib
 #if UNITY_EDITOR
 			if(gameCfg.UseHeadUpDisplay)
 			{
-				UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
+				UIMgr.In.Open<HudPanelUI>(Global.HUD_PANEL_UI);
 			}
 #else
 			if(Debug.isDebugBuild && gameCfg.UseHeadUpDisplay)
 			{
-				UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
+				UIMgr.In.Open<HudPanelUI>(Global.HUD_PANEL_UI);
 			}
 #endif
 
@@ -198,7 +198,7 @@ namespace KZLib
 			_InitializeRenderSetting(stringBuilder);
 			_InitializeObject(stringBuilder);
 
-			KZLogType.System.I(stringBuilder.ToString());
+			Logger.System.I(stringBuilder.ToString());
 
 			await _StartMainAsync();
 		}
@@ -311,13 +311,13 @@ namespace KZLib
 #if UNITY_EDITOR
 			if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C))
 			{
-				if(UIMgr.In.IsOpened(UITag.HudPanelUI))
+				if(UIMgr.In.IsOpened(Global.HUD_PANEL_UI))
 				{
-					UIMgr.In.Close(UITag.HudPanelUI);
+					UIMgr.In.Close(Global.HUD_PANEL_UI);
 				}
 				else
 				{
-					UIMgr.In.Open<HudPanelUI>(UITag.HudPanelUI);
+					UIMgr.In.Open<HudPanelUI>(Global.HUD_PANEL_UI);
 				}
 			}
 
@@ -330,7 +330,7 @@ namespace KZLib
 			//? Refresh Game
 			if(Input.GetKeyDown(KeyCode.F5))
 			{
-				KZLogType.System.I("Refresh Game");
+				Logger.System.I("Refresh Game");
 
 				_RefreshGame().Forget();
 			}

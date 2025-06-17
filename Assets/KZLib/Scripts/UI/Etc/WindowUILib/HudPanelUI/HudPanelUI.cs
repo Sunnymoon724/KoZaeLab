@@ -17,7 +17,7 @@ public class HudPanelUI : WindowUI2D
 {
 	private const float c_frame_update_period = 0.25f;
 
-	public override UITag Tag => UITag.HudPanelUI;
+	public override string Tag => Global.HUD_PANEL_UI;
 
 	private float m_deltaTime = 0.0f;
 	private int m_frameCount = 0;

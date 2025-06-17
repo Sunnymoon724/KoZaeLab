@@ -27,7 +27,7 @@ public class AdjustDragThreshold : BaseComponent
 	{
 		if(!m_eventSystem)
 		{
-			KZLogType.System.E("EventSystem is null");
+			Logger.System.E("EventSystem is null");
 
 			return;
 		}

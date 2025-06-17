@@ -78,7 +78,7 @@
 
 // 		private void OnPlayEvent(string text)
 // 		{
-// 			KZLogType.Build.W(text);
+// 			Logger.Build.W(text);
 // 		}
 
 // #if UNITY_EDITOR
@@ -87,7 +87,7 @@
 // 		{
 // 			if(!m_animator)
 // 			{
-// 				KZLogType.System.W("Animator is null");
+// 				Logger.System.W("Animator is null");
 
 // 				return;
 // 			}

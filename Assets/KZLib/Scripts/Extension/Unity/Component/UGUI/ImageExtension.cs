@@ -53,7 +53,7 @@ public static class ImageExtension
 	{
 		if(!image)
 		{
-			KZLogType.System.E("Image is null");
+			Logger.System.E("Image is null");
 
 			return false;
 		}

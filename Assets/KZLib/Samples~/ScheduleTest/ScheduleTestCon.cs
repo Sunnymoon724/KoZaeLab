@@ -31,7 +31,7 @@ namespace KZLib.KZTest
 		{
 			m_Schedule.gameObject.EnsureActive(true);
 
-			KZLogType.Test.I("스케쥴 테스트 시작");
+			Logger.Test.I("스케쥴 테스트 시작");
 
 			m_Stopwatch.Start();
 
@@ -39,7 +39,7 @@ namespace KZLib.KZTest
 
 			m_Stopwatch.Stop();
 
-			KZLogType.Test.I("스케쥴 테스트 종료 [경과 시간: {0}초]",m_Stopwatch.ElapsedMilliseconds/1000.0f);
+			Logger.Test.I("스케쥴 테스트 종료 [경과 시간: {0}초]",m_Stopwatch.ElapsedMilliseconds/1000.0f);
 		}
 	}
 }

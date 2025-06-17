@@ -36,7 +36,7 @@ public class SubtitlePanelUI : WindowUI2D
 
 	[SerializeField] private TMP_Text m_subtitleText = null;
 
-	public override UITag Tag => UITag.SubtitlePanelUI;
+	public override string Tag => Global.SUBTITLE_PANEL_UI;
 
 	private readonly List<SubtitleData> m_subtitleList = new();
 
@@ -57,7 +57,7 @@ public class SubtitlePanelUI : WindowUI2D
 
 			if(!textAsset)
 			{
-				KZLogType.System.E($"Subtitle path is wrong. [{subtitlePath}]");
+				Logger.System.E($"Subtitle path is wrong. [{subtitlePath}]");
 
 				return;
 			}
@@ -66,7 +66,7 @@ public class SubtitlePanelUI : WindowUI2D
 
 			if(subtitleText.IsEmpty())
 			{
-				KZLogType.System.E($"Subtitle is empty");
+				Logger.System.E($"Subtitle is empty");
 
 				return;
 			}

@@ -16,12 +16,12 @@ namespace KZLib
 
 
 		[ShowInInspector,ListDrawerSettings(ShowFoldout = false),ReadOnly]
-		private readonly HashSet<UITag> m_dontReleaseHashSet = new();
+		private readonly HashSet<string> m_dontReleaseHashSet = new();
 
 		[ShowInInspector,DictionaryDrawerSettings(IsReadOnly = true,DisplayMode = DictionaryDisplayOptions.Foldout),ReadOnly]
-		private readonly Dictionary<UITag,WindowUI> m_registerDict = new();
+		private readonly Dictionary<string,WindowUI> m_registerWindowDict = new();
 
-		private string m_uiPrefabPath = null;
+		private string m_prefabPath = null;
 
 		protected override void Initialize()
 		{
@@ -35,7 +35,7 @@ namespace KZLib
 				m_repositoryList.Add(m_repository3D);
 			}
 
-			m_uiPrefabPath = ConfigMgr.In.Access<ConfigData.GameConfig>().UIPrefabPath;
+			m_prefabPath = ConfigMgr.In.Access<ConfigData.GameConfig>().UIPrefabPath;
 		}
 
 		protected override void Release()
@@ -55,30 +55,32 @@ namespace KZLib
 		/// <summary>
 		/// Register -> Not open
 		/// </summary>
-		public WindowUI Register(UITag uiTag,bool isActive = true)
+		public WindowUI Register(string tag,bool isActive = true)
 		{
-			if(!m_registerDict.ContainsKey(uiTag))
+			if(!m_registerWindowDict.TryGetValue(tag,out var window))
 			{
-				m_registerDict.Add(uiTag,_MakeUI(uiTag));
+				window = _MakeUI(tag);
+
+				m_registerWindowDict.Add(tag,window);
 
 				if(isActive)
 				{
-					var data = m_registerDict[uiTag] as MonoBehaviour;
+					var behaviour = window as MonoBehaviour;
 
-					data.gameObject.EnsureActive(false);
+					behaviour.gameObject.EnsureActive(false);
 				}
 			}
 
-			return m_registerDict[uiTag];
+			return window;
 		}
 
-		private WindowUI _MakeUI(UITag uiTag)
+		private WindowUI _MakeUI(string tag)
 		{
-			var prefab = ResMgr.In.GetObject(_GetUIPath(uiTag));
+			var prefab = ResMgr.In.GetObject(_GetUIPath(tag));
 
 			if(!prefab)
 			{
-				KZLogType.UI.E($"{uiTag} is not exist.");
+				Logger.UI.E($"{tag} is not exist.");
 
 				return null;
 			}
@@ -87,49 +89,49 @@ namespace KZLib
 			{
 				prefab.DestroyObject();
 
-				KZLogType.UI.E($"Component is not exist in {uiTag}.");
+				Logger.UI.E($"Component is not exist in {tag}.");
 
 				return null;
 			}
 
-			if(window.Tag != uiTag)
+			if(window.Tag != tag)
 			{
 				prefab.DestroyObject();
 
-				KZLogType.UI.E($"UI tag is not matched. [{window.Tag} != {uiTag}]");
+				Logger.UI.E($"UI tag is not matched. [{window.Tag} != {tag}]");
 
 				return null;
 			}
 
 			transform.SetUIChild(prefab.transform);
 
-			if(_IsLibraryUI(uiTag))
+			if(_IsDefinedUI(tag))
 			{
-				RegisterDontRelease(uiTag);
+				RegisterDontRelease(tag);
 			}
 
 			return window;
 		}
 
-		public void RegisterDontRelease(UITag uiTag)
+		public void RegisterDontRelease(string tag)
 		{
-			m_dontReleaseHashSet.AddNotOverlap(uiTag);
+			m_dontReleaseHashSet.AddNotOverlap(tag);
 		}
 		#endregion Register
 
 		#region Open
-		public void DelayOpen<TBase>(UITag uiTag,object param,float delayTime) where TBase : class,IWindowUI
+		public void DelayOpen<TBase>(string tag,object param,float delayTime) where TBase : class,IWindowUI
 		{
-			CommonUtility.DelayAction(() => { Open<TBase>(uiTag,param); },delayTime);
+			CommonUtility.DelayAction(() => { Open<TBase>(tag,param); },delayTime);
 		}
 
-		public TBase Open<TBase>(UITag uiTag,object param = null) where TBase : class,IWindowUI
+		public TBase Open<TBase>(string tag,object param = null) where TBase : class,IWindowUI
 		{
-			var window = _FindOpened(uiTag);
+			var window = _FindOpened(tag);
 
 			if(window == null)
 			{
-				window = Register(uiTag,false);
+				window = Register(tag,false);
 
 				if(window.Is3D)
 				{
@@ -146,16 +148,16 @@ namespace KZLib
 			return window as TBase;
 		}
 
-		public bool IsOpened(UITag uiTag)
+		public bool IsOpened(string tag)
 		{
-			return _FindOpened(uiTag) != null;
+			return _FindOpened(tag) != null;
 		}
 		#endregion Open
 
 		#region Close
-		public void Close(UITag uiTag,bool isRelease = false)
+		public void Close(string tag,bool isRelease = false)
 		{
-			var data = _FindOpened(uiTag);
+			var data = _FindOpened(tag);
 
 			if(data != null)
 			{
@@ -169,7 +171,7 @@ namespace KZLib
 
 			if(release)
 			{
-				m_registerDict.Remove(windowUI.Tag);
+				m_registerWindowDict.Remove(windowUI.Tag);
 			}
 
 			windowUI.Close();
@@ -186,7 +188,7 @@ namespace KZLib
 
 		public void CloseAllOpened(bool isRelease,bool isExcludeClose)
 		{
-			foreach(var (_,window) in m_registerDict)
+			foreach(var (_,window) in m_registerWindowDict)
 			{
 				if(isExcludeClose)
 				{
@@ -199,15 +201,15 @@ namespace KZLib
 		#endregion Close
 
 		#region Show
-		public void Show(UITag uiTag)
+		public void Show(string tag)
 		{
 			for(var i=0;i<m_repositoryList.Count;i++)
 			{
-				m_repositoryList[i].Show(uiTag);
+				m_repositoryList[i].Show(tag);
 			}
 		}
 
-		public void ShowAllGroup(IEnumerable<UITag> includeTagGroup = null,IEnumerable<UITag> excludeTagGroup = null)
+		public void ShowAllGroup(IEnumerable<string> includeTagGroup = null,IEnumerable<string> excludeTagGroup = null)
 		{
 			for(var i=0;i<m_repositoryList.Count;i++)
 			{
@@ -217,15 +219,15 @@ namespace KZLib
 		#endregion Show
 
 		#region Hide
-		public void Hide(UITag uiTag)
+		public void Hide(string tag)
 		{
 			for(var i=0;i<m_repositoryList.Count;i++)
 			{
-				m_repositoryList[i].Hide(uiTag);
+				m_repositoryList[i].Hide(tag);
 			}
 		}
 
-		public void HideAllGroup(IEnumerable<UITag> includeTagGroup = null,IEnumerable<UITag> excludeTagGroup = null)
+		public void HideAllGroup(IEnumerable<string> includeTagGroup = null,IEnumerable<string> excludeTagGroup = null)
 		{
 			for(var i=0;i<m_repositoryList.Count;i++)
 			{
@@ -233,27 +235,27 @@ namespace KZLib
 			}
 		}
 
-		public bool? IsHidden(UITag uiTag)
+		public bool? IsHidden(string tag)
 		{
-			var window = _FindOpened(uiTag);
+			var window = _FindOpened(tag);
 
 			return window == null ? null : window.IsHidden;
 		}
 		#endregion Hide
 
 		#region Find
-		public TTag Find<TTag>(UITag uiTag) where TTag : class,IWindowUI
+		public TTag Find<TTag>(string tag) where TTag : class,IWindowUI
 		{
-			var window = _FindOpened(uiTag);
+			var window = _FindOpened(tag);
 
 			return (window != null) ? window as TTag : null;
 		}
 
-		private WindowUI _FindOpened(UITag uiTag)
+		private WindowUI _FindOpened(string tag)
 		{
 			foreach(var repository in m_repositoryList)
 			{
-				var window = repository.FindOpenedUI(uiTag);
+				var window = repository.FindOpenedUI(tag);
 
 				if(window != null)
 				{

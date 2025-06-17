@@ -28,14 +28,14 @@ public static partial class CommonUtility
 
 		foreach(var line in output.Split('\n'))
 		{
-			KZLogType.Editor.I($"Output : {line}");
+			Logger.Editor.I($"Output : {line}");
 		}
 
 		if(!error.IsEmpty())
 		{
 			errorLog = error;
 
-			KZLogType.Editor.E($"Error : {error.CP949ToUTF8()}");
+			Logger.Editor.E($"Error : {error.CP949ToUTF8()}");
 
 			return false;
 		}

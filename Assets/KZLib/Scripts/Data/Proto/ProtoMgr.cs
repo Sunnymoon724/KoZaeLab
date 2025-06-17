@@ -62,7 +62,7 @@ namespace KZLib.KZData
 			var accumulatedTime = 0.0d;
 			var stopwatch = new Stopwatch();
 
-			KZLogType.System.I("Proto Load Start");
+			Logger.System.I("Proto Load Start");
 
 			for(var i=0;i<textAssetArray.Length;i++)
 			{
@@ -70,7 +70,7 @@ namespace KZLib.KZData
 
 				if(textAsset == null)
 				{
-					KZLogType.System.W($"TextAsset is null in {i}");
+					Logger.System.W($"TextAsset is null in {i}");
 
 					continue;
 				}
@@ -94,7 +94,7 @@ namespace KZLib.KZData
 
 			stopwatch.Stop();
 
-			KZLogType.System.I($"Proto Load Complete [Count : {textAssetArray.Length} / Duration : {(DateTime.Now-start).TotalSeconds}]");
+			Logger.System.I($"Proto Load Complete [Count : {textAssetArray.Length} / Duration : {(DateTime.Now-start).TotalSeconds}]");
 
 			m_isLoaded = true;
 
@@ -121,7 +121,7 @@ namespace KZLib.KZData
 
 			if(proto == null)
 			{
-				KZLogType.System.W($"Proto not found for {protoType.Name} with num {num}.");
+				Logger.System.W($"Proto not found for {protoType.Name} with num {num}.");
 			}
 
 			return proto != null;
@@ -136,21 +136,21 @@ namespace KZLib.KZData
 		{
 			if(num <= Global.INVALID_NUM)
 			{
-				KZLogType.System.E($"{num} is not valid. [type : {protoType}]");
+				Logger.System.E($"{num} is not valid. [type : {protoType}]");
 
 				return null;
 			}
 
 			if(!m_protoDict.TryGetValue(protoType, out var protoDict))
 			{
-				KZLogType.System.E($"{protoType.Name} is not exist.");
+				Logger.System.E($"{protoType.Name} is not exist.");
 
 				return null;
 			}
 
 			if(!protoDict.TryGetValue(num, out var proto))
 			{
-				KZLogType.System.E($"{protoType.Name} is not include {num}.");
+				Logger.System.E($"{protoType.Name} is not include {num}.");
 
 				return null;
 			}
@@ -203,7 +203,7 @@ namespace KZLib.KZData
 
 				if(textAsset.bytes == null)
 				{
-					KZLogType.System.E($"{protoName} is empty.");
+					Logger.System.E($"{protoName} is empty.");
 					return false;
 				}
 
@@ -212,7 +212,7 @@ namespace KZLib.KZData
 
 				if(protoType == null)
 				{
-					KZLogType.System.E($"{protoTypeName} is not exist.");
+					Logger.System.E($"{protoTypeName} is not exist.");
 
 					return false;
 				}
@@ -221,7 +221,7 @@ namespace KZLib.KZData
 
 				if(deserialize is not object[] resultArray)
 				{
-					KZLogType.System.E($"{protoName} is not array.");
+					Logger.System.E($"{protoName} is not array.");
 
 					return false;
 				}
@@ -234,21 +234,21 @@ namespace KZLib.KZData
 
 					if(proto == null)
 					{
-						KZLogType.System.E($"{proto} is not exist.");
+						Logger.System.E($"{proto} is not exist.");
 
 						return false;
 					}
 
 					if(proto.Num == Global.INVALID_NUM)
 					{
-						KZLogType.System.E($"Num is zero in {proto}.");
+						Logger.System.E($"Num is zero in {proto}.");
 
 						return false;
 					}
 
 					if(protoDict.ContainsKey(proto.Num))
 					{
-						KZLogType.System.E($"{proto.Num} is already added in {proto}.");
+						Logger.System.E($"{proto.Num} is already added in {proto}.");
 
 						return false;
 					}
@@ -262,7 +262,7 @@ namespace KZLib.KZData
 			}
 			catch(Exception exception)
 			{
-				KZLogType.System.E($"Load failed. [Exception : {exception.Message}]");
+				Logger.System.E($"Load failed. [Exception : {exception.Message}]");
 			}
 
 			return false;
@@ -294,7 +294,7 @@ namespace KZLib.KZData
 
 				if(textAsset == null)
 				{
-					KZLogType.System.W($"TextAsset is null in {i}");
+					Logger.System.W($"TextAsset is null in {i}");
 
 					continue;
 				}
@@ -316,7 +316,7 @@ namespace KZLib.KZData
 
 			if(textAssetArray.IsNullOrEmpty())
 			{
-				KZLogType.System.E("Load failed, textAsset is null.");
+				Logger.System.E("Load failed, textAsset is null.");
 
 				return false;
 			}
