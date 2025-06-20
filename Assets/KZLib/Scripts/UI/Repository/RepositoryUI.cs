@@ -7,9 +7,14 @@ using UnityEngine.UI;
 
 public abstract class RepositoryUI : BaseComponentUI
 {
-	[InfoBox("canvas is null",InfoMessageType.Error,"@this.m_canvas == null")]
+	[InfoBox("canvas is null",InfoMessageType.Error,nameof(_IsValidCanvas))]
 	[VerticalGroup("Canvas",Order = -25),SerializeField]
 	protected Canvas m_canvas = null;
+
+	private bool _IsValidCanvas()
+	{
+		return m_canvas == null;
+	}
 
 	//? Current Opened Window List
 	[SerializeField,ListDrawerSettings(IsReadOnly = true)]

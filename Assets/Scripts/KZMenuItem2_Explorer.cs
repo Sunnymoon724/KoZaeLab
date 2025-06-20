@@ -24,6 +24,8 @@ namespace KZLib.KZMenu
 		private static void _OnOpenLibraryProject()
 		{
 			var solutionPath = Path.Combine(Global.PROJECT_PARENT_PATH,"KoZaeLibrary");
+			
+			LogSvc.Build.I(solutionPath);
 
 			Process.Start(new ProcessStartInfo
 			{
@@ -36,8 +38,8 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Explorer/Build Library Project",false,MenuOrder.Explorer.LIBRARY+1)]
 		private static void _OnBuildLibraryProject()
 		{
-			var batchFilePath = Path.Combine(Global.PROJECT_PARENT_PATH,"BuildLibrary.bat");
-			
+			var batchFilePath = Path.Combine(Global.PROJECT_PARENT_PATH,"KoZaeBuilding","BuildLibrary.bat");
+
 			CommonUtility.OpenBatchFile(batchFilePath);
 		}
 	}
