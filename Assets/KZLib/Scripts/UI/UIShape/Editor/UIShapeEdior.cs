@@ -7,25 +7,21 @@ using UnityEngine.UI;
 namespace KZLib
 {
 	[CustomEditor(typeof(UIShape))]
-	public class UIShapeEditor : OdinEditor
+	public partial class UIShapeEditor : OdinEditor
 	{
 		private UIShape m_shape = null;
 
 		private bool m_raycastPadding = false;
-		private bool m_arrayFoldout = false;
 
 		private SerializedObject m_serializedObject = null;
 
 		private SerializedProperty m_shapeTypeProperty = null;
 		private SerializedProperty m_outlineSizeProperty = null;
 
-		private SerializedProperty m_ellipseAngleProperty = null;
-
-		private SerializedProperty m_polygonSideCountProperty = null;
-		private SerializedProperty m_polygonVertexDistanceArrayProperty = null;
-
 		private SerializedProperty m_fillTypeProperty = null;
 		private SerializedProperty m_fillColorProperty = null;
+		
+		private RectTransform m_rectTransform;
 
 		protected override void OnEnable()
 		{
@@ -38,17 +34,17 @@ namespace KZLib
 
 			m_serializedObject = new SerializedObject(target);
 
+			_SetEllipse();
+			_SetPolygon();
+			// _SetRectangle();
+
 			m_shapeTypeProperty = m_serializedObject.FindProperty("m_shapeType");
-
 			m_outlineSizeProperty = m_serializedObject.FindProperty("m_outlineSize");
-
-			m_ellipseAngleProperty = m_serializedObject.FindProperty("m_ellipseAngle");
-
-			m_polygonSideCountProperty = m_serializedObject.FindProperty("m_polygonSideCount");
-			m_polygonVertexDistanceArrayProperty = m_serializedObject.FindProperty("m_polygonVertexDistanceArray");
 
 			m_fillTypeProperty = m_serializedObject.FindProperty("m_fillType");
 			m_fillColorProperty = m_serializedObject.FindProperty("m_fillColor");
+
+			m_rectTransform = m_shape.GetComponent<RectTransform>();
 		}
 
 		public override void OnInspectorGUI()
@@ -82,63 +78,16 @@ namespace KZLib
 
 			if(shapeType == 0)
 			{
-				//? Eclipse
-				m_ellipseAngleProperty.floatValue = EditorGUILayout.Slider("Angle",m_ellipseAngleProperty.floatValue,0.0f,360.0f);
+				_DrawEllipse();
 			}
 			else if(shapeType == 1)
 			{
-				//? Polygon
-				var sideCount = m_polygonSideCountProperty.intValue;
-
-				m_polygonSideCountProperty.intValue = EditorGUILayout.IntSlider("Side Count",m_polygonSideCountProperty.intValue,3,36);
-
-				if(sideCount != m_polygonSideCountProperty.intValue)
-				{
-					sideCount = m_polygonSideCountProperty.intValue;
-
-					var arrayCount = m_polygonVertexDistanceArrayProperty.arraySize;
-
-					if(arrayCount < sideCount)
-					{
-						for(var i=arrayCount;i<sideCount;i++)
-						{
-							m_polygonVertexDistanceArrayProperty.arraySize++;
-
-							var data = m_polygonVertexDistanceArrayProperty.GetArrayElementAtIndex(i);
-
-							data.floatValue = 1;
-						}
-					}
-					else
-					{
-						var difference = arrayCount-sideCount;
-
-						for(var i=0;i<difference;i++)
-						{
-							m_polygonVertexDistanceArrayProperty.arraySize--;
-						}
-					}
-				}
-
-				if(m_polygonVertexDistanceArrayProperty.arraySize > 0)
-				{
-					m_arrayFoldout = EditorGUILayout.Foldout(m_arrayFoldout,"Vertex Distance Array");
-
-					if(m_arrayFoldout)
-					{
-						EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-
-						for(var i=0;i<m_polygonVertexDistanceArrayProperty.arraySize;i++)
-						{
-							var distance = m_polygonVertexDistanceArrayProperty.GetArrayElementAtIndex(i);
-
-							distance.floatValue = EditorGUILayout.Slider($"Vertex {i + 1}",distance.floatValue,0.0f,1.0f);
-						}
-
-						EditorGUILayout.EndVertical();
-					}
-				}
+				_DrawPolygon();
 			}
+			// else if(shapeType == 2)
+			// {
+			// 	_DrawRectangle();
+			// }
 
 			EditorGUILayout.PropertyField(m_fillTypeProperty,new GUIContent("Fill Type"));
 

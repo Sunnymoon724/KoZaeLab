@@ -37,7 +37,7 @@ namespace KZLib
 
 			operation.allowSceneActivation = true;
 
-			await operation;
+			await operation.ToUniTask();
 
 			SceneManager.SetActiveScene(SceneManager.GetSceneByName(SceneName));
 
