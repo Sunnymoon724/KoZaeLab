@@ -117,7 +117,7 @@ namespace KZLib.KZMenu
 
 		private static Canvas _FindCanvas(GameObject selected = null)
 		{
-			var canvas = selected ? selected.GetComponentInParent<Canvas>() : Object.FindObjectOfType<Canvas>(true);
+			var canvas = selected ? selected.GetComponentInParent<Canvas>() : Object.FindAnyObjectByType<Canvas>(FindObjectsInactive.Include);
 
 			if(!canvas)
 			{

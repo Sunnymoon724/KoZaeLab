@@ -25,7 +25,7 @@ namespace HudPanel
 
 			base.Initialize();
 
-			m_audioListener = FindObjectOfType<AudioListener>();
+			m_audioListener = FindAnyObjectByType<AudioListener>();
 		}
 
 		public void Refresh()

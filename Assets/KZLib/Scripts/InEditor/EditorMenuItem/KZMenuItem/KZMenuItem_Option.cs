@@ -4,6 +4,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 using KZLib.KZUtility;
+using UnityEditor.Build;
 
 namespace KZLib.KZMenu
 {
@@ -143,7 +144,7 @@ namespace KZLib.KZMenu
 
 			var targetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
 
-			CommonUtility.AddDefineSymbol("KZLIB_PLAY_FAB",targetGroup);
+			CommonUtility.AddDefineSymbol("KZLIB_PLAY_FAB",NamedBuildTarget.FromBuildTargetGroup(targetGroup));
 		}
 
 		[MenuItem("KZMenu/Option/Add PlayFab Module",true,MenuOrder.Option.MODULE)]

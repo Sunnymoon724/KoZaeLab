@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using KZLib.KZUtility;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.SceneManagement;
 using UnityEditorInternal;
 using UnityEngine;
@@ -75,35 +76,35 @@ public static partial class CommonUtility
 	#endregion Tag & Layer
 
 	#region Player Settings
-	public static void AddDefineSymbol(string defineSymbol,BuildTargetGroup buildTargetGroup)
+	public static void AddDefineSymbol(string defineSymbol,NamedBuildTarget buildTargetGroup)
 	{
-		var symbolText = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTargetGroup);
+		var symbolText = PlayerSettings.GetScriptingDefineSymbols(buildTargetGroup);
 
 		if(symbolText.Contains(defineSymbol))
 		{
 			return;
 		}
 
-		PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTargetGroup,$"{symbolText};{defineSymbol}");
+		PlayerSettings.SetScriptingDefineSymbols(buildTargetGroup,$"{symbolText};{defineSymbol}");
 	}
 
-	public static void RemoveDefineSymbol(string defineSymbol,BuildTargetGroup buildTargetGroup)
+	public static void RemoveDefineSymbol(string defineSymbol,NamedBuildTarget buildTargetGroup)
 	{
-		var symbolText = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTargetGroup);
+		var symbolText = PlayerSettings.GetScriptingDefineSymbols(buildTargetGroup);
 
 		if(!symbolText.Contains(defineSymbol))
 		{
 			return;
 		}
 
-		PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTargetGroup,symbolText.Replace(defineSymbol,"").Replace(";;",";"));
+		PlayerSettings.SetScriptingDefineSymbols(buildTargetGroup,symbolText.Replace(defineSymbol,"").Replace(";;",";"));
 	}
 
 	public static void ChangeDefineSymbol(string[] oldDefineSymbolArray,string[] newDefineSymbolArray)
 	{
-		foreach(var target in _GetBuildTargetGroup())
+		foreach(var target in BuildTargetGroup)
 		{
-			var defineSymbolText = PlayerSettings.GetScriptingDefineSymbolsForGroup(target);
+			var defineSymbolText = PlayerSettings.GetScriptingDefineSymbols(target);
 
 			if(defineSymbolText.IsEmpty())
 			{
@@ -122,21 +123,24 @@ public static partial class CommonUtility
 				defineSymbolHashSet.Add(newDefineSymbol);
 			}
 
-			PlayerSettings.SetScriptingDefineSymbolsForGroup(target,string.Join(";",defineSymbolHashSet));
+			PlayerSettings.SetScriptingDefineSymbols(target,string.Join(";",defineSymbolHashSet));
 		}
 	}
 
 	public static void ChangePackageName(string packageName)
 	{
-		foreach(var target in _GetBuildTargetGroup())
+		foreach(var target in BuildTargetGroup)
 		{
 			PlayerSettings.SetApplicationIdentifier(target,packageName);
 		}
 	}
-
-	private static IEnumerable<BuildTargetGroup> _GetBuildTargetGroup()
+	
+	private static IEnumerable<NamedBuildTarget> BuildTargetGroup
 	{
-		return new BuildTargetGroup[] { BuildTargetGroup.Standalone, BuildTargetGroup.Android, BuildTargetGroup.iOS };
+		get
+		{
+			return new NamedBuildTarget[] { NamedBuildTarget.Standalone, NamedBuildTarget.Android, NamedBuildTarget.iOS };
+		}
 	}
 	#endregion Player Settings
 
