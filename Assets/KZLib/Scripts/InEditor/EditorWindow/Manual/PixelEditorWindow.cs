@@ -71,17 +71,17 @@ namespace KZLib.KZWindow
 		private bool IsExist => !m_spritePath.IsEmpty() && !m_beforeColor.Equals(m_afterColor);
 
 		[BoxGroup("Variable",ShowLabel = false,Order = 2)]
-		[HorizontalGroup("Variable/0"),LabelText("Sprite Path"),SerializeField,KZTexturePath]
+		[HorizontalGroup("Variable/0"),SerializeField,KZTexturePath]
 		private string m_spritePath = null;
-		[HorizontalGroup("Variable/1"),LabelText("Before Color"),SerializeField]
+		[HorizontalGroup("Variable/1"),SerializeField]
 		private Color32 m_beforeColor = Color.white;
-		[HorizontalGroup("Variable/1"),LabelText("After Color"),SerializeField]
+		[HorizontalGroup("Variable/1"),SerializeField]
 		private Color32 m_afterColor = Color.white;
 
 		[BoxGroup("Option",ShowLabel = false,Order = 3)]
-		[HorizontalGroup("Option/0"),LabelText("Error Range"),SerializeField,Range(0,255)]
+		[HorizontalGroup("Option/0"),SerializeField,Range(0,255)]
 		private int m_errorRange = 0;
-		[HorizontalGroup("Option/1"),LabelText("Include Alpha"),SerializeField]
+		[HorizontalGroup("Option/1"),SerializeField]
 		private bool m_includeAlpha = false;
 
 		private bool _CanChangeColor(Color32 color32)

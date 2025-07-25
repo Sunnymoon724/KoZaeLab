@@ -1,10 +1,9 @@
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
 public abstract class BaseLineRenderer : BaseComponent
 {
-	[SerializeField,LabelText("Line Renderer")]
+	[SerializeField]
 	protected LineRenderer m_lineRenderer = null;
 
 	private MaterialPropertyBlock m_propertyBlock = null;

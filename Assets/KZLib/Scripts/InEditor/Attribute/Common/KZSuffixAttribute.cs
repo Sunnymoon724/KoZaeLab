@@ -11,7 +11,7 @@ using UnityEditor;
 namespace KZLib.KZAttribute
 {
 	/// <summary>
-	/// 접미사를 표현하는 용도
+	/// For suffix
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property,AllowMultiple = false,Inherited = true)]
 	[Conditional("UNITY_EDITOR")]

@@ -42,7 +42,7 @@ namespace KZLib.KZSample
 
 		[VerticalGroup("2",Order = 2),SerializeField,Range(0.0f,1.0f)]
 		private float m_Duration = 0.5f;
-		[VerticalGroup("2",Order = 2),SerializeField,LabelText("Number"),ValueDropdown(nameof(m_OrderList))]
+		[VerticalGroup("2",Order = 2),SerializeField,ValueDropdown(nameof(m_OrderList))]
 		private int m_Order = 0;
 
 		private readonly List<int> m_OrderList = new();

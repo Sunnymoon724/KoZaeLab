@@ -55,22 +55,22 @@ namespace KZLib.KZDevelop
 		#endregion Scroll Data
 
 		[BoxGroup("General/Movement",ShowLabel = false,Order = 10)]
-		[VerticalGroup("General/Movement/0",Order = 0),SerializeField,LabelText("Elasticity")]
+		[VerticalGroup("General/Movement/0",Order = 0),SerializeField]
 		private float m_elasticity = 0.1f;
-		[VerticalGroup("General/Movement/0",Order = 0),SerializeField,LabelText("Sensitivity")]
+		[VerticalGroup("General/Movement/0",Order = 0),SerializeField]
 		private float m_sensitivity = 1.0f;
-		[VerticalGroup("General/Movement/0",Order = 0),SerializeField,LabelText("Deceleration Rate")]
+		[VerticalGroup("General/Movement/0",Order = 0),SerializeField]
 		private float m_decelerationRate = 0.03f;
-		[VerticalGroup("General/Movement/0",Order = 0),SerializeField,LabelText("Inertia")]
+		[VerticalGroup("General/Movement/0",Order = 0),SerializeField]
 		private bool m_inertia = true;
 
-		[VerticalGroup("General/Movement/1",Order = 1),SerializeField,LabelText("Magnet Mode")]
+		[VerticalGroup("General/Movement/1",Order = 1),SerializeField]
 		private bool m_magnetMode = false;
-		[VerticalGroup("General/Movement/1",Order = 1),SerializeField,LabelText("Velocity"),ShowIf(nameof(m_magnetMode))]
+		[VerticalGroup("General/Movement/1",Order = 1),SerializeField,ShowIf(nameof(m_magnetMode))]
 		private float m_magnetVelocity = 0.5f;
-		[VerticalGroup("General/Movement/1",Order = 1),SerializeField,LabelText("Duration"),ShowIf(nameof(m_magnetMode))]
+		[VerticalGroup("General/Movement/1",Order = 1),SerializeField,ShowIf(nameof(m_magnetMode))]
 		private float m_magnetDuration = 0.3f;
-		[VerticalGroup("General/Movement/1",Order = 1),SerializeField,LabelText("Easing Type"),ShowIf(nameof(m_magnetMode))]
+		[VerticalGroup("General/Movement/1",Order = 1),SerializeField,ShowIf(nameof(m_magnetMode))]
 		private EaseType m_magnetEasing = EaseType.InOutCubic;
 
 		private bool m_dragging = true;

@@ -13,11 +13,11 @@ namespace KZLib.KZWindow
 		[SerializeField,HideInInspector]
 		private float m_currentPoint = 0.0f;
 
-		[HorizontalGroup("Type",Order = 0),SerializeField,LabelText("Ease Type")]
+		[HorizontalGroup("Type",Order = 0),SerializeField]
 		private EaseType m_easeType = EaseType.Linear;
 
 		[HorizontalGroup("Value",Order = 1)]
-		[HorizontalGroup("Value/0",Order = 0),ShowInInspector,LabelText("Current Point"),PropertyRange(0.0f,1.0f)]
+		[HorizontalGroup("Value/0",Order = 0),ShowInInspector,PropertyRange(0.0f,1.0f)]
 		private float CurrentPoint
 		{
 			get => m_currentPoint;
@@ -29,7 +29,7 @@ namespace KZLib.KZWindow
 			}
 		}
 
-		[HorizontalGroup("Value/1",Order = 1),SerializeField,LabelText("Result Point"),KZRichText]
+		[HorizontalGroup("Value/1",Order = 1),SerializeField,KZRichText]
 		private float m_resultPoint = 0.0f;
 
 		[HorizontalGroup("Graph",Order = 2),OnInspectorGUI]

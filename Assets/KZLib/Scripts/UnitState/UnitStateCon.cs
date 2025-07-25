@@ -34,52 +34,44 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 		CommonUtility.KillTokenSource(ref m_tokenSource);
 	}
 
-	public async UniTask EnterStateAsync(TEnum newType,IUnitStateParam param,bool isForce = false)
+	public async UniTask EnterStateAsync(TEnum newState,IUnitStateParam param,bool isForce = false)
 	{
-		if(isActiveAndEnabled == false || !_CanChange(newType,isForce))
+		if(isActiveAndEnabled == false || !_CanChange(newState,isForce))
 		{
 			return;
 		}
 
-		var current = newType;
+		var curState = newState;
 
 		CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
 		while(isActiveAndEnabled)
 		{
-			if(!m_stateFuncDict.TryGetValue(current, out var stateFunc))
+			if(!m_stateFuncDict.TryGetValue(curState, out var stateFunc))
 			{
-				LogSvc.System.E($"{current} state not found");
+				LogSvc.System.E($"{curState} state not found");
 
 				return;
 			}
 
-			OnUnitStateChanged?.Invoke(m_stateType,current);
+			OnUnitStateChanged?.Invoke(m_stateType,curState);
 
-			m_stateType = current;
+			m_stateType = curState;
 
 			_ReadyState();
 
-			var token = m_tokenSource.Token;
+			LogSvc.System.I($"{name} is entered {curState}");
 
-			try
+			var nextState = await stateFunc.Invoke(param);
+
+			if(!_CanChange(nextState,false))
 			{
-				LogSvc.System.I($"{name} is entered {current}");
-
-				var next = await stateFunc.Invoke(param);
-
-				current = next;
-				param = null;
-			}
-			catch(OperationCanceledException)
-			{
-				return;
+				// wait one frame
+				await UniTask.Yield();
+				continue;
 			}
 
-			if(!_CanChange(current,false))
-			{
-				break;
-			}
+			curState = nextState;
 		}
 	}
 

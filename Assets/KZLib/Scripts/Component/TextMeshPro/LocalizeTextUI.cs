@@ -29,10 +29,10 @@
 // 	}
 
 // #if UNITY_EDITOR
-// 	[VerticalGroup("3",Order = 3),SerializeField,LabelText("Show LanguagePack")]
+// 	[VerticalGroup("3",Order = 3),SerializeField]
 // 	private bool m_showLanguagePack = false;
 
-// 	[VerticalGroup("3",Order = 3),SerializeField,LabelText("Language List"),ListDrawerSettings(ShowFoldout = false),ReadOnly,DisplayAsString,TextArea,ShowIf(nameof(ShowList))]
+// 	[VerticalGroup("3",Order = 3),SerializeField,ListDrawerSettings(ShowFoldout = false),ReadOnly,DisplayAsString,TextArea,ShowIf(nameof(ShowList))]
 // 	private List<string> m_localizeTextList = new();
 
 // 	private bool ShowList => m_showLanguagePack && m_localizeTextList.Count > 0;

@@ -1,11 +1,10 @@
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Button))]
 public abstract class BaseButtonUI : BaseComponentUI
 {
-	[SerializeField,LabelText("Button")]
+	[SerializeField]
 	protected Button m_button = null;
 
 	protected override void OnEnable()

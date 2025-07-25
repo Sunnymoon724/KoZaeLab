@@ -13,7 +13,7 @@ public class MagnetImageUI : BaseImageUI
 	[SerializeField,HideInInspector]
 	private RectTransform m_target = null;
 
-	[ShowInInspector,LabelText("Space")]
+	[ShowInInspector]
 	private float Space
 	{
 		get => m_space;
@@ -33,10 +33,10 @@ public class MagnetImageUI : BaseImageUI
 		}
 	}
 
-	[SerializeField,LabelText("Direction")]
+	[SerializeField]
 	private DirectionType m_direction = DirectionType.None;
 
-	[ShowInInspector,LabelText("Target")]
+	[ShowInInspector]
 	private RectTransform Target
 	{
 		get => m_target;
@@ -126,7 +126,7 @@ public class MagnetImageUI : BaseImageUI
 				return DirectionType.None;
 
 			default:
-				LogSvc.UI.E($"DirectionType is not exist {directionType}");
+				LogSvc.UI.E($"{directionType} is not DirectionType.");
 				return DirectionType.None;
 		}
 	}

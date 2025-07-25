@@ -5,7 +5,7 @@ namespace HudPanel
 {
 	public class FormatTextUI : BaseTextUI
 	{
-		[SerializeField,LabelText("Format Text")]
+		[SerializeField]
 		private string m_formatText = null;
 
 		public void SetFormatText(params object[] argumentArray)

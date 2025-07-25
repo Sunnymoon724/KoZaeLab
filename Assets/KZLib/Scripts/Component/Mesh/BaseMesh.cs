@@ -1,14 +1,13 @@
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter)),RequireComponent(typeof(MeshRenderer))]
 public abstract class BaseMesh : BaseComponent
 {
-	protected const long c_max_index_count = 65535L;
+	protected const long c_maxIndexCount = 65535L;
 
-	[SerializeField,LabelText("Mesh Filter")]
+	[SerializeField]
 	protected MeshFilter m_meshFilter = null;
-	[SerializeField,LabelText("Mesh Renderer")]
+	[SerializeField]
 	protected MeshRenderer m_meshRenderer = null;
 
 	private MaterialPropertyBlock m_propertyBlock = null;
@@ -78,6 +77,6 @@ public abstract class BaseMesh : BaseComponent
 
 	protected bool IsValidMeshIndexCount(long count)
 	{
-		return count < c_max_index_count;
+		return count < c_maxIndexCount;
 	}
 }

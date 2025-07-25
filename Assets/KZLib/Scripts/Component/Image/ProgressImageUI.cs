@@ -10,13 +10,13 @@ public class ProgressImageUI : BaseImageUI
 	[SerializeField,HideInInspector]
 	private float m_currentValue = 1.0f;
 
-	[LabelText("Min Value"),SerializeField,KZMaxClamp(nameof(m_maxValue))]
+	[SerializeField,KZMaxClamp(nameof(m_maxValue))]
 	private float m_minValue = 0.0f;
 
-	[LabelText("Max Value"),SerializeField,KZMinClamp(nameof(m_minValue))]
+	[SerializeField,KZMinClamp(nameof(m_minValue))]
 	private float m_maxValue = 1.0f;
 
-	[BoxGroup("Value",Order = 2),ShowInInspector,LabelText("Current Value"),PropertyRange(nameof(m_minValue),nameof(m_maxValue))]
+	[BoxGroup("Value",Order = 2),ShowInInspector,PropertyRange(nameof(m_minValue),nameof(m_maxValue))]
 	public float CurrentValue
 	{
 		get => m_currentValue;
@@ -42,14 +42,14 @@ public class ProgressImageUI : BaseImageUI
 	}
 
 	[BoxGroup("Option",Order = 1)]
-	[HorizontalGroup("Option/0"),LabelText("Use Gradient"),SerializeField,ToggleLeft]
+	[HorizontalGroup("Option/0"),SerializeField,ToggleLeft]
 	private bool m_useGradient = false;
 	[HorizontalGroup("Option/0"),HideLabel,SerializeField,ShowIf(nameof(m_useGradient))]
 	private Gradient m_gradientColor = null;
 
 	public float CurrentProgress => (CurrentValue-m_minValue)/(m_maxValue-m_minValue);
 
-	private Tween m_Tween = null;
+	private Tween m_tween = null;
 
 	protected override void Initialize()
 	{
@@ -62,14 +62,14 @@ public class ProgressImageUI : BaseImageUI
 	{
 		base.Release();
 
-		CommonUtility.KillTween(m_Tween);
+		CommonUtility.KillTween(m_tween);
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
 
-		CommonUtility.KillTween(m_Tween);
+		CommonUtility.KillTween(m_tween);
 	}
 
     public void SetRange(float minValue,float maxValue)
@@ -87,13 +87,13 @@ public class ProgressImageUI : BaseImageUI
 
 	public void SetValueDuration(float value,float duration,Action onComplete = null)
 	{
-		CommonUtility.KillTween(m_Tween);
+		CommonUtility.KillTween(m_tween);
 
 		var amount = value/m_maxValue;
 
-		m_Tween = CommonUtility.SetTweenProgress(CurrentValue,value,duration,null,onComplete);
+		m_tween = CommonUtility.SetTweenProgress(CurrentValue,value,duration,null,onComplete);
 
-		m_Tween.Play();
+		m_tween.Play();
 	}
 
 	protected override void Reset() 

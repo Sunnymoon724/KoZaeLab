@@ -1,9 +1,8 @@
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class LinkButtonUI : BaseButtonUI
 {
-	[SerializeField,LabelText("URL Link")]
+	[SerializeField]
 	private string m_linkPath = null;
 
 	protected override void Initialize()

@@ -8,7 +8,7 @@ public class TrailRendererEffectClip : EffectClip
 {
 	public record TrailRendererEffectParam(Gradient TrailColor = null,Action<bool> OnComplete = null) : EffectParam(OnComplete);
 
-	[FoldoutGroup("General",Order = -5),LabelText("Trail Renderer"),SerializeField]
+	[FoldoutGroup("General",Order = -5),SerializeField]
 	private TrailRenderer m_trailRenderer = null;
 
 	protected override float Duration => -1.0f;

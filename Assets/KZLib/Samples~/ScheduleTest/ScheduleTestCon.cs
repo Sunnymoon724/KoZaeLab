@@ -8,8 +8,8 @@ namespace KZLib.KZTest
 {
 	public class ScheduleTest : BaseComponent
 	{
-		[InfoBox("Space -> 스케쥴 시작 / Q -> 캔슬")]
-		[SerializeField,LabelText("시작할 스케쥴")]
+		[InfoBox("Space -> Schedule Start / Q -> Schedule Cancel")]
+		[SerializeField]
 		private Schedule m_Schedule = null;
 
 		private readonly Stopwatch m_Stopwatch = new();
@@ -31,7 +31,7 @@ namespace KZLib.KZTest
 		{
 			m_Schedule.gameObject.EnsureActive(true);
 
-			Logger.Test.I("스케쥴 테스트 시작");
+			Logger.Test.I("Schedule test start");
 
 			m_Stopwatch.Start();
 
@@ -39,7 +39,7 @@ namespace KZLib.KZTest
 
 			m_Stopwatch.Stop();
 
-			Logger.Test.I("스케쥴 테스트 종료 [경과 시간: {0}초]",m_Stopwatch.ElapsedMilliseconds/1000.0f);
+			Logger.Test.I("Schedule test stop [duration: {0}s]",m_Stopwatch.ElapsedMilliseconds/1000.0f);
 		}
 	}
 }

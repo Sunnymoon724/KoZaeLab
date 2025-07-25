@@ -13,13 +13,13 @@ namespace KZLib
 	{
 		private bool m_block = false;
 
-		[VerticalGroup("0",Order = 0),ShowInInspector,LabelText("Is Block"),KZIsValid("No","Yes")]
+		[VerticalGroup("0",Order = 0),ShowInInspector,KZIsValid("No","Yes")]
 		public bool IsBlock => !m_block;
 
-		[VerticalGroup("1",Order = 1),SerializeField,LabelText("Use Touch Effect")]
+		[VerticalGroup("1",Order = 1),SerializeField]
 		private bool m_useTouchEffect = false;
 
-		[VerticalGroup("1",Order = 1),SerializeField,LabelText("Touch Effect Name"),ShowIf(nameof(m_useTouchEffect))]
+		[VerticalGroup("1",Order = 1),SerializeField,ShowIf(nameof(m_useTouchEffect))]
 		private string m_touchEffectName = null;
 
 		private void Update()

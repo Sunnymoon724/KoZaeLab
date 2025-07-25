@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class AudioButtonUI : BaseButtonUI
 {
-	[SerializeField,LabelText("Path Mode")]
+	[SerializeField]
 	private bool m_pathMode = false;
-	[SerializeField,LabelText("Audio Path"),ShowIf(nameof(m_pathMode))]
+
+	[SerializeField,ShowIf(nameof(m_pathMode))]
 	private string m_audioPath = null;
-	[SerializeField,LabelText("Audio Clip"),HideIf(nameof(m_pathMode))]
+	[SerializeField,HideIf(nameof(m_pathMode))]
 	private AudioClip m_audioClip = null;
 
 	protected override void Initialize()

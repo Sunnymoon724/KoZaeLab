@@ -98,7 +98,7 @@ namespace KZLib.KZDevelop
 			m_lineRenderer.endWidth = width.y;
 		}
 
-		[VerticalGroup("0",Order = 0),ShowInInspector,LabelText("Current DrawMode")]
+		[VerticalGroup("0",Order = 0),ShowInInspector]
 		public PathDrawMode DrawMode
 		{
 			get => m_drawMode;

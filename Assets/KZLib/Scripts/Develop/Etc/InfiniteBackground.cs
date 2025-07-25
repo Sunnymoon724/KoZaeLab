@@ -7,16 +7,16 @@ namespace KZLib.KZDevelop
 {
 	public class InfiniteBackground : SerializedMonoBehaviour
 	{
-		[SerializeField,LabelText("Pivot")]
+		[SerializeField]
 		private SpriteRenderer m_pivot = null;
 
-		[SerializeField,LabelText("Count"),MinValue(1)]
+		[SerializeField,MinValue(1)]
 		private int m_count = 1;
 
-		[SerializeField,LabelText("Scroll Speed")]
+		[SerializeField]
 		private float m_speed = 0.0f;
 
-		[SerializeField,LabelText("Start Point")]
+		[SerializeField]
 		private Vector2 m_startPoint = Vector2.zero;
 
 		private List<Transform> m_backgroundList = null;
