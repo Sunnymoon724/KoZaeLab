@@ -149,8 +149,15 @@ namespace KZLib.KZMenu
 			var yamlRoute = RouteMgr.In.GetOrCreateRoute(routePath);
 
 			FileUtility.CreateFolder(yamlRoute.AbsolutePath);
-
+			
 			var filePath = Path.Combine(yamlRoute.AbsolutePath,fileName);
+
+			if(!FileUtility.IsFileExist(filePath))
+			{
+				_DisplayInfo($"{fileName} is already exist.",true);
+
+				return;
+			}
 
 			try
 			{
