@@ -8,11 +8,11 @@ namespace ConfigData
 	/// </summary>
 	public class EditorConfig : IConfig
 	{
-		private Dictionary<string,string> SceneParamPathDict { get; set; }
+		private Dictionary<string,string> ParamPathDict { get; set; }
 
-		public string GetSceneParamPath(string sceneName)
+		public string GetParamPath(string sceneName)
 		{
-			if(!SceneParamPathDict.TryGetValue(sceneName,out var paramPath))
+			if(!ParamPathDict.TryGetValue(sceneName,out var paramPath))
 			{
 				return null;
 			}

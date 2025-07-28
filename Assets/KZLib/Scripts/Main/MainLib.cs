@@ -218,7 +218,7 @@ namespace KZLib
 				var paramType = Type.GetType($"{StartSceneName}+{paramName}, Assembly-CSharp");
 
 				var editorCfg = ConfigMgr.In.Access<ConfigData.EditorConfig>();
-				var paramPath = editorCfg.GetSceneParamPath(StartSceneName);
+				var paramPath = editorCfg.GetParamPath(StartSceneName);
 				
 				var deserializer = new DeserializerBuilder().IncludeNonPublicProperties().Build();
 				var text = FileUtility.ReadFileToText(RouteMgr.In.GetOrCreateRoute(paramPath).AbsolutePath);
