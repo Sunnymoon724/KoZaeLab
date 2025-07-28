@@ -1,9 +1,5 @@
-using System;
 using System.Collections.Generic;
-using KZLib;
 using KZLib.KZData;
-using Newtonsoft.Json;
-using UnityEngine;
 
 namespace ConfigData
 {
