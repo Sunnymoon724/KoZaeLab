@@ -115,6 +115,8 @@ namespace KZLib.KZData
 
 			//? check custom. [only editor]
 #if UNITY_EDITOR
+			LogSvc.Server.I("Read Custom First");
+
 			text = FileUtility.ReadFileToText(Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,$"Custom{fileName}"));
 #endif
 
@@ -132,8 +134,7 @@ namespace KZLib.KZData
 
 			//? check resource folder.
 #if UNITY_EDITOR
-
-			var routePath = fileName == c_editorYaml ? $"workRes:config:{fileName}" : $"defaultRes:config:{fileName}";
+			var routePath = _IsEditorCfg(fileName) ? $"workRes:config:{fileName}" : $"defaultRes:config:{fileName}";
 #else
 			var routePath = $"defaultRes:config:{fileName}";
 #endif
@@ -152,7 +153,7 @@ namespace KZLib.KZData
 
 		private string _ReadConfigFileInAddressable(string fileName)
 		{
-			if(fileName == c_editorYaml)
+			if(_IsEditorCfg(fileName))
 			{
 				// Editor is only editor
 				return string.Empty;
@@ -178,6 +179,11 @@ namespace KZLib.KZData
 			}
 
 			return false;
+		}
+		
+		private bool _IsEditorCfg(string fileName)
+		{
+			return fileName == c_editorYaml;
 		}
 	}
 }
