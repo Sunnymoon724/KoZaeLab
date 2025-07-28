@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using KZLib;
 using KZLib.KZData;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace ConfigData
 {
@@ -11,23 +12,16 @@ namespace ConfigData
 	/// </summary>
 	public class EditorConfig : IConfig
 	{
-		private Dictionary<string,object> SceneParamDict { get; set; }
+		private Dictionary<string,string> SceneParamPathDict { get; set; }
 
-		public SceneState.StateParam GetSceneParam(string sceneName,Type targetType)
+		public string GetSceneParamPath(string sceneName)
 		{
-			if(!SceneParamDict.TryGetValue(sceneName,out var param))
+			if(!SceneParamPathDict.TryGetValue(sceneName,out var paramPath))
 			{
 				return null;
 			}
 
-			if(param == null)
-			{
-				return null;
-			}
-
-			var text = JsonConvert.SerializeObject(param);
-
-			return JsonConvert.DeserializeObject(text,targetType) as SceneState.StateParam;
+			return paramPath;
 		}
 	}
 }

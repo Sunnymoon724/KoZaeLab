@@ -13,6 +13,8 @@ using KZLib.KZData;
 
 #if UNITY_EDITOR
 
+using KZLib.KZUtility;
+using YamlDotNet.Serialization;
 using UnityEditor;
 
 #endif
@@ -216,7 +218,14 @@ namespace KZLib
 				var paramType = Type.GetType($"{StartSceneName}+{paramName}, Assembly-CSharp");
 
 				var editorCfg = ConfigMgr.In.Access<ConfigData.EditorConfig>();
-				var param = editorCfg.GetSceneParam(StartSceneName,paramType);
+				var paramPath = editorCfg.GetSceneParamPath(StartSceneName);
+				
+				var deserializer = new DeserializerBuilder().IncludeNonPublicProperties().Build();
+				var text = FileUtility.ReadFileToText(RouteMgr.In.GetOrCreateRoute(paramPath).AbsolutePath);
+
+				LogSvc.Server.I($"Param : {text}");
+
+				var param = deserializer.Deserialize(text,paramType) as SceneState.StateParam;
 
 				SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null,param);
 #else
