@@ -6,6 +6,10 @@ using KZLib.KZUtility;
 using System.Text;
 using UnityEngine;
 using System;
+using System.Linq;
+using System.IO;
+
+
 
 #if UNITY_EDITOR
 
@@ -258,7 +262,7 @@ public class LogChannel
 	{
 		var objectName = EditorUtility.InstanceIDToObject(instance).name;
 
-		if(objectName.IsEmpty() || !objectName.IsEqual(nameof(LogChannel)))
+		if(objectName.IsEmpty() || !objectName.IsEqual(nameof(LogSvc)))
 		{
 			return false;
 		}
@@ -272,8 +276,15 @@ public class LogChannel
 
 		var textMatch = Regex.Match(stackTrace,@"\(at (.+)\)",RegexOptions.IgnoreCase);
 
-		if(textMatch.Success)
+		while(textMatch.Success)
 		{
+			var content = textMatch.Groups[1].Value;
+
+			if(!content.Contains(nameof(LogSvc)))
+			{
+				break;
+			}
+			
 			textMatch = textMatch.NextMatch();
 		}
 
