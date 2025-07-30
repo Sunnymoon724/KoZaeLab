@@ -218,14 +218,7 @@ namespace KZLib
 				var paramType = Type.GetType($"{StartSceneName}+{paramName}, Assembly-CSharp");
 
 				var editorCfg = ConfigMgr.In.Access<ConfigData.EditorConfig>();
-				var paramPath = editorCfg.GetParamPath(StartSceneName);
-				
-				var deserializer = new DeserializerBuilder().IncludeNonPublicProperties().Build();
-				var text = FileUtility.ReadFileToText(RouteMgr.In.GetOrCreateRoute(paramPath).AbsolutePath);
-
-				LogSvc.Server.I($"Param : {text}");
-
-				var param = deserializer.Deserialize(text,paramType) as SceneState.StateParam;
+				var param = editorCfg.GetSceneParam(StartSceneName,paramType);
 
 				SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null,param);
 #else
