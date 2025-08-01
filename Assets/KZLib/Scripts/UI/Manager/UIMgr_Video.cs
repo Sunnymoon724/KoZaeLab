@@ -40,11 +40,11 @@ namespace KZLib
 
 			if(includeLoading)
 			{
-				await PlayLoadingIncludeTransitionAsync(new TransitionInfo(),async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
+				await PlayLoadingIncludeTransitionAsync(Global.TRANSITION_PANEL_UI,async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
 			}
 			else
 			{
-				await _PlayTransitionOutInAsync(new TransitionInfo(),async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
+				await _PlayTransitionOutInAsync(Global.TRANSITION_PANEL_UI,async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
 			}
 
 			videoPanel.PlayVideo();

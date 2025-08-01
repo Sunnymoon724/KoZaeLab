@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using KZLib;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class EffectTestCon : MonoBehaviour

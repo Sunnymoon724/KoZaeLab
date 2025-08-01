@@ -1,7 +1,6 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
 using KZLib.KZUtility;
-using TransitionPanel;
 
 namespace KZLib
 {
@@ -16,9 +15,9 @@ namespace KZLib
 			Close(loadingPanelUI);
 		}
 
-		public async UniTask PlayLoadingIncludeTransitionAsync(TransitionInfo info,Func<UniTask> onPlayTask)
+		public async UniTask PlayLoadingIncludeTransitionAsync(string transitionName,Func<UniTask> onPlayTask)
 		{
-			await _PlayTransitionOutInAsync(info,async ()=> { await PlayLoadingAsync(onPlayTask); });
+			await _PlayTransitionOutInAsync(transitionName,async ()=> { await PlayLoadingAsync(onPlayTask); });
 		}
 	}
 }

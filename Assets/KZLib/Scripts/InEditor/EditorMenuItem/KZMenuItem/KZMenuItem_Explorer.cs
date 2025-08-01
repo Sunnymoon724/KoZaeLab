@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEngine;
 
 namespace KZLib.KZMenu
 {
@@ -23,6 +24,18 @@ namespace KZLib.KZMenu
 		private static void _OnOpenToolFolder()
 		{
 			_OpenFolder("Tools",Global.TOOL_FOLDER_PATH);
+		}
+
+		[MenuItem("KZMenu/Explorer/Open DataPath Folder",false,MenuOrder.Explorer.OPEN)]
+		private static void _OnOpenDataPathFolder()
+		{
+			_OpenFolder("DataPath",Application.dataPath);
+		}
+
+		[MenuItem("KZMenu/Explorer/Open PersistentDataPath Folder",false,MenuOrder.Explorer.OPEN)]
+		private static void _OnOpenPersistentDataPathFolder()
+		{
+			_OpenFolder("PersistentDataPath",Application.persistentDataPath);
 		}
 	}
 }

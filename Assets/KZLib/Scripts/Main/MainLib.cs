@@ -13,8 +13,6 @@ using KZLib.KZData;
 
 #if UNITY_EDITOR
 
-using KZLib.KZUtility;
-using YamlDotNet.Serialization;
 using UnityEditor;
 
 #endif
@@ -214,13 +212,7 @@ namespace KZLib
 #if UNITY_EDITOR
 				await _InitializeTestMode(m_tokenSource.Token);
 
-				var paramName = StartSceneName.Replace("Scene","Param");
-				var paramType = Type.GetType($"{StartSceneName}+{paramName}, Assembly-CSharp");
-
-				var editorCfg = ConfigMgr.In.Access<ConfigData.EditorConfig>();
-				var param = editorCfg.GetSceneParam(StartSceneName,paramType);
-
-				SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null,param);
+				SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null);
 #else
 				throw new Exception("This cannot be tested outside of the editor mode.");
 #endif

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using KZLib.KZUtility;
 using KZLib.KZData;
 using Cysharp.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace KZLib
 {

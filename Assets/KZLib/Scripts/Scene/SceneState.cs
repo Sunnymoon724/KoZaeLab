@@ -7,21 +7,19 @@ namespace KZLib
 	/// <summary>
 	/// Unity Scene + Initialize asset 
 	/// </summary>
-	public interface ISceneState<TParam>
+	public interface ISceneState
 	{
-		UniTask InitializeAsync(Action<float> onUpdateProgress,TParam param);
+		UniTask InitializeAsync(Action<float> onUpdateProgress);
 		UniTask ReleaseAsync(string previousSceneName,Action<float> onUpdateProgress);
 
 		string SceneName { get; }
 	}
 
-	public abstract class SceneState : ISceneState<SceneState.StateParam>
+	public abstract class SceneState : ISceneState
 	{
-		public record StateParam();
-
 		public string SceneName => GetType().Name;
 
-		public async UniTask InitializeAsync(Action<float> onUpdateProgress,StateParam param)
+		public async UniTask InitializeAsync(Action<float> onUpdateProgress)
 		{
 			onUpdateProgress?.Invoke(0.0f);
 
@@ -39,12 +37,12 @@ namespace KZLib
 
 			await operation.ToUniTask();
 
-			SceneManager.SetActiveScene(SceneManager.GetSceneByName(SceneName));
-
 			await InitializeInnerAsync(progress =>
 			{
 				onUpdateProgress?.Invoke(0.5f+progress*0.5f);
-			},param);
+			});
+
+			SceneManager.SetActiveScene(SceneManager.GetSceneByName(SceneName));
 
 			onUpdateProgress?.Invoke(1.0f);
 		}
@@ -84,7 +82,7 @@ namespace KZLib
 			onUpdateProgress?.Invoke(1.0f);
 		}
 
-		protected async virtual UniTask InitializeInnerAsync(Action<float> onUpdateProgress,StateParam param) { await UniTask.Yield(); }
+		protected async virtual UniTask InitializeInnerAsync(Action<float> onUpdateProgress) { await UniTask.Yield(); }
 		protected async virtual UniTask ReleaseInnerAsync(Action<float> onUpdateProgress) { await UniTask.Yield(); }
 	}
 }

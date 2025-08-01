@@ -30,6 +30,7 @@ public class LogSvc
 {
 	public static readonly LogChannel None = new("None");
 
+	public static readonly LogChannel Scene = new("Scene");
 	public static readonly LogChannel System = new("System");
 	public static readonly LogChannel Build = new("Build");
 

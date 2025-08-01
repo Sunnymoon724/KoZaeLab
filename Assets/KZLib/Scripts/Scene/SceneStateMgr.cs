@@ -4,8 +4,8 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using KZLib.KZUtility;
-using TransitionPanel;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 #if UNITY_EDITOR
 
@@ -43,26 +43,32 @@ namespace KZLib
 		protected override void Initialize()
 		{
 			Application.lowMemory += _OnLowMemory;
+			SceneManager.sceneLoaded += _OnUnloadSceneAssetBundle;
 		}
 
 		protected override void Release()
 		{
 			Application.lowMemory -= _OnLowMemory;
+			SceneManager.sceneLoaded -= _OnUnloadSceneAssetBundle;
 
 			CommonUtility.ClearUnloadedAssetMemory();
+
+#if UNITY_EDITOR
+			EditorUtility.UnloadUnusedAssetsImmediate(true);
+#endif
 		}
 
-		public void ReloadSceneWithLoading(TransitionInfo info,SceneState.StateParam param = null)
+		public void ReloadSceneWithLoading(string transitionName)
 		{
-			_ReloadScene(info,true,param);
+			_ReloadScene(transitionName,true);
 		}
 
-		public void ReloadSceneNoLoading(TransitionInfo info,SceneState.StateParam param = null)
+		public void ReloadSceneNoLoading(string transitionName)
 		{
-			_ReloadScene(info,false,param);
+			_ReloadScene(transitionName,false);
 		}
 
-		private void _ReloadScene(TransitionInfo info,bool isLoading,SceneState.StateParam param = null)
+		private void _ReloadScene(string transitionName,bool isLoading)
 		{
 			var current = CurrentScene;
 
@@ -71,100 +77,100 @@ namespace KZLib
 				return;
 			}
 
-			_ChangeScene(current.SceneName,info,isLoading,param);
+			_ChangeScene(current.SceneName,transitionName,isLoading);
 		}
 
-		public void ChangeSceneWithLoading(string sceneName,TransitionInfo info,SceneState.StateParam param = null)
+		public void ChangeSceneWithLoading(string sceneName,string transitionName)
 		{
-			_ChangeScene(sceneName,info,true,param);
+			_ChangeScene(sceneName,transitionName,true);
 		}
 
-		public void ChangeSceneNoLoading(string sceneName,TransitionInfo info,SceneState.StateParam param = null)
+		public void ChangeSceneNoLoading(string sceneName,string transitionName)
 		{
-			_ChangeScene(sceneName,info,false,param);
+			_ChangeScene(sceneName,transitionName,false);
 		}
 
-		private void _ChangeScene(string sceneName,TransitionInfo info,bool isLoading,SceneState.StateParam param = null)
+		private void _ChangeScene(string sceneName,string transitionName,bool isLoading)
 		{
-			_ChangeSceneAsync(sceneName,info,isLoading,param).Forget();
+			_ChangeSceneAsync(sceneName,transitionName,isLoading).Forget();
 		}
 
-		public async UniTask ChangeSceneWithLoadingAsync(string sceneName,TransitionInfo info,SceneState.StateParam param = null)
+		public async UniTask ChangeSceneWithLoadingAsync(string sceneName,string transitionName)
 		{
-			await _ChangeSceneAsync(sceneName,info,true,param);
+			await _ChangeSceneAsync(sceneName,transitionName,true);
 		}
 
-		public async UniTask ChangeSceneNoLoadingAsync(string sceneName,TransitionInfo info,SceneState.StateParam param = null)
+		public async UniTask ChangeSceneNoLoadingAsync(string sceneName,string transitionName)
 		{
-			await _ChangeSceneAsync(sceneName,info,false,param);
+			await _ChangeSceneAsync(sceneName,transitionName,false);
 		}
 
-		private async UniTask _ChangeSceneAsync(string sceneName,TransitionInfo info,bool isLoading,SceneState.StateParam param = null)
+		private async UniTask _ChangeSceneAsync(string sceneName,string transitionName,bool isLoading)
 		{
-			await _PlaySceneAsync(info,isLoading,async (progress)=> { await _CreateSceneAsync(sceneName,progress,param); },async (progress)=> { await _DestroySceneAsync(false,progress); });
+			await _PlaySceneAsync(transitionName,isLoading,async (progress)=> { await _CreateSceneAsync(sceneName,progress); },async (progress)=> { await _DestroySceneAsync(false,progress); });
 		}
 
-		public void AddSceneWithLoading(string sceneName,TransitionInfo info,SceneState.StateParam param = null)
+		public void AddSceneWithLoading(string sceneName,string transitionName)
 		{
-			_AddScene(sceneName,info,true,param);
+			_AddScene(sceneName,transitionName,true);
 		}
 
-		public void AddSceneNoLoading(string sceneName,TransitionInfo info,SceneState.StateParam param = null)
+		public void AddSceneNoLoading(string sceneName,string transitionName)
 		{
-			_AddScene(sceneName,info,false,param);
+			_AddScene(sceneName,transitionName,false);
 		}
 
-		private void _AddScene(string sceneName,TransitionInfo info,bool isLoading,SceneState.StateParam param = null)
+		private void _AddScene(string sceneName,string transitionName,bool isLoading)
 		{
-			_AddSceneAsync(sceneName,info,isLoading,param).Forget();
+			_AddSceneAsync(sceneName,transitionName,isLoading).Forget();
 		}
 
-		public async UniTask AddSceneWithLoadingAsync(string sceneName,TransitionInfo info,SceneState.StateParam param = null)
+		public async UniTask AddSceneWithLoadingAsync(string sceneName,string transitionName)
 		{
-			await _AddSceneAsync(sceneName,info,true,param);
+			await _AddSceneAsync(sceneName,transitionName,true);
 		}
 
-		public async UniTask AddSceneNoLoadingAsync(string sceneName,TransitionInfo info,SceneState.StateParam param = null)
+		public async UniTask AddSceneNoLoadingAsync(string sceneName,string transitionName)
 		{
-			await _AddSceneAsync(sceneName,info,false,param);
+			await _AddSceneAsync(sceneName,transitionName,false);
 		}
 
-		private async UniTask _AddSceneAsync(string sceneName,TransitionInfo info,bool isLoading,SceneState.StateParam param = null)
+		private async UniTask _AddSceneAsync(string sceneName,string transitionName,bool isLoading)
 		{
-			await _PlaySceneAsync(info,isLoading,async (progress)=> { await _CreateSceneAsync(sceneName,progress,param); });
+			await _PlaySceneAsync(transitionName,isLoading,async (progress)=> { await _CreateSceneAsync(sceneName,progress); });
 		}
 
-		public void RemoveSceneWithLoading(TransitionInfo info)
+		public void RemoveSceneWithLoading(string transitionName)
 		{
-			_RemoveScene(info,true);
+			_RemoveScene(transitionName,true);
 		}
 
-		public void RemoveSceneNoLoading(TransitionInfo info)
+		public void RemoveSceneNoLoading(string transitionName)
 		{
-			_RemoveScene(info,false);
+			_RemoveScene(transitionName,false);
 		}
 
-		private void _RemoveScene(TransitionInfo info,bool isLoading)
+		private void _RemoveScene(string transitionName,bool isLoading)
 		{
-			_RemoveSceneAsync(info,isLoading).Forget();
+			_RemoveSceneAsync(transitionName,isLoading).Forget();
 		}
 
-		public async UniTask RemoveSceneWithLoadingAsync(TransitionInfo info)
+		public async UniTask RemoveSceneWithLoadingAsync(string transitionName)
 		{
-			await _RemoveSceneAsync(info,true);
+			await _RemoveSceneAsync(transitionName,true);
 		}
 
-		public async UniTask RemoveSceneNoLoadingAsync(TransitionInfo info)
+		public async UniTask RemoveSceneNoLoadingAsync(string transitionName)
 		{
-			await _RemoveSceneAsync(info,false);
+			await _RemoveSceneAsync(transitionName,false);
 		}
 
-		private async UniTask _RemoveSceneAsync(TransitionInfo info,bool isLoading)
+		private async UniTask _RemoveSceneAsync(string transitionName,bool isLoading)
 		{
-			await _PlaySceneAsync(info,isLoading,async (progress)=> { await _DestroySceneAsync(true,progress); });
+			await _PlaySceneAsync(transitionName,isLoading,async (progress)=> { await _DestroySceneAsync(true,progress); });
 		}
 
-		private async UniTask _PlaySceneAsync(TransitionInfo info,bool isLoading,params Func<Action<float>,UniTask>[] onPlayTaskArray)
+		private async UniTask _PlaySceneAsync(string transitionName,bool isLoading,params Func<Action<float>,UniTask>[] onPlayTaskArray)
 		{
 			if(IsSceneChanging)
 			{
@@ -176,14 +182,14 @@ namespace KZLib
 			CommonUtility.LockInput();
 
 			// darker
-			await UIMgr.In.PlayTransitionOutAsync(info,false);
+			await UIMgr.In.PlayTransitionOutAsync(transitionName,false);
 
 			if(isLoading)
 			{
 				var panel = UIMgr.In.Open<LoadingPanelUI>(Global.LOADING_PANEL_UI);
 
 				// brighter
-				await UIMgr.In.PlayTransitionInAsync(info,false);
+				await UIMgr.In.PlayTransitionInAsync(transitionName,false);
 
 				var count = (float) onPlayTaskArray.Length;
 				var percent = 0.0f;
@@ -199,7 +205,7 @@ namespace KZLib
 				}
 
 				// darker
-				await UIMgr.In.PlayTransitionOutAsync(info,false);
+				await UIMgr.In.PlayTransitionOutAsync(transitionName,false);
 
 				UIMgr.In.Close(Global.LOADING_PANEL_UI);
 			}
@@ -211,14 +217,15 @@ namespace KZLib
 				}
 			}
 
-			await UIMgr.In.PlayTransitionInAsync(info,true);
+			// brighter
+			await UIMgr.In.PlayTransitionInAsync(transitionName,true);
 
 			CommonUtility.UnLockInput();
 
 			m_isSceneChanging = false;
 		}
 
-		private async UniTask _CreateSceneAsync(string sceneName,Action<float> onUpdateProgress,SceneState.StateParam param)
+		private async UniTask _CreateSceneAsync(string sceneName,Action<float> onUpdateProgress)
 		{
 			if(sceneName.IsEmpty())
 			{
@@ -252,7 +259,7 @@ namespace KZLib
 			await sceneState.InitializeAsync((progress)=>
 			{
 				onUpdateProgress?.Invoke(progress*0.99f);
-			},param);
+			});
 
 			LogSvc.System.I($"{sceneName} create end.");
 
@@ -282,6 +289,10 @@ namespace KZLib
 			{
 				onUpdateProgress?.Invoke(progress*0.99f);
 			});
+			
+			// TODO 씬 전환시 사용하지 않는 어셋 삭제
+			// AssetBundleManager.Instance.UnloadLoadeAssetBundle();
+			CommonUtility.ClearUnloadedAssetMemory();
 
 #if UNITY_EDITOR
 			EditorUtility.UnloadUnusedAssetsImmediate(true);
@@ -303,6 +314,14 @@ namespace KZLib
 			m_lastUnloadTime = Time.unscaledTime;
 
 			CommonUtility.ClearUnloadedAssetMemory();
+		}
+		
+		private void _OnUnloadSceneAssetBundle(Scene scene, LoadSceneMode mode)
+		{
+			// TODO 어드레서블로 바뀐거 넣기
+#if !UNITY_EDITOR
+			AssetBundleManager.Instance.UnLoadAssetBundle(scene.name + ConfigData.AssetBundleExpend, false);
+#endif
 		}
 	}
 }
