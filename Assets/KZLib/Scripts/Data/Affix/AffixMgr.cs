@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using KZLib.KZUtility;
 using KZLib.KZData;
-using Cysharp.Threading.Tasks;
 
 namespace KZLib
 {
@@ -11,6 +10,17 @@ namespace KZLib
 
 		//? Type / Affix
 		private readonly Dictionary<string,IAffix> m_affixDict = new();
+
+		private bool m_isLocalSave;
+		
+		protected override void Initialize()
+		{
+			base.Initialize();
+
+			var gameCfg = ConfigMgr.In.Access<ConfigData.GameConfig>();
+
+			m_isLocalSave = gameCfg.IsLocalSave;
+		}
 
 		protected override void Release(bool disposing)
 		{
@@ -29,122 +39,57 @@ namespace KZLib
 			base.Release(disposing);
 		}
 
-		/// <summary>
-		/// If affix is not exist, create new affix.
-		/// </summary>
-		public async UniTask<TAffix> AccessAsync<TAffix>() where TAffix : class,IAffix,new()
+		public IAffix Set(IAffix newAffix)
 		{
-			var key = typeof(TAffix).Name;
-			var affix = _GetAffix(key);
+			var key = typeof(IAffix).Name;
 
-			if(affix == null)
+			if(m_affixDict.TryGetValue(key,out var oldAffix))
 			{
-				var gameCfg = ConfigMgr.In.Access<ConfigData.GameConfig>();
+				oldAffix.Set(newAffix);
 
-				affix = gameCfg.IsLocalSave ? await _AccessLocalAsync<TAffix>(key) : await _AccessServerAsync<TAffix>(key);
+				return oldAffix;
+			}
+			else
+			{
+				m_affixDict[key] = newAffix;
 
-				m_affixDict.Add(key,affix);
+				return newAffix;
+			}
+		}
+
+		public IAffix Update(IAffix newAffix)
+		{
+			var key = typeof(IAffix).Name;
+
+			if(m_affixDict.TryGetValue(key,out var oldAffix))
+			{
+				oldAffix.Update(newAffix);
 			}
 
-			return affix as TAffix;
+			return oldAffix;
+		}
+
+		public TAffix Get<TAffix>() where TAffix : class,IAffix,new()
+		{
+			var key = typeof(IAffix).Name;
+
+			if(m_affixDict.TryGetValue(key,out var affix))
+			{
+				return affix as TAffix;
+			}
+
+			return null;
 		}
 
 		public void Revoke<TAffix>()
 		{
 			var key = typeof(TAffix).Name;
-			var affix = _GetAffix(key);
 
-			if(affix == null)
+			if(m_affixDict.TryGetValue(key,out var affix))
 			{
-				return;
+				affix.Release();
+				m_affixDict.Remove(key);
 			}
-
-			affix.Release();
-
-			m_affixDict.Remove(key);
-		}
-
-		private IAffix _GetAffix(string key)
-		{
-			return m_affixDict.TryGetValue(key,out var affix) ? affix : null;
-		}
-
-		public async UniTask UpdateAsync<TAffix>() where TAffix : class,IAffix,new()
-		{
-			var key = typeof(TAffix).Name;
-			var affix = _GetAffix(key);
-
-			if(affix == null)
-			{
-				return;
-			}
-
-			var gameCfg = ConfigMgr.In.Access<ConfigData.GameConfig>();
-
-			if(gameCfg.IsLocalSave)
-			{
-				await _UpdateLocalAsync(key,affix);
-			}
-			else
-			{
-				await _UpdateServerAsync(key,affix);
-			}
-		}
-
-		private async UniTask<TAffix> _AccessLocalAsync<TAffix>(string key) where TAffix : class,IAffix,new()
-		{
-			if(!PlayerPrefsMgr.In.TryGetObject<TAffix>(key,out var affix))
-			{
-				affix = new TAffix();
-
-				affix.Initialize();
-
-				await _UpdateLocalAsync(key,affix);
-			}
-
-			return affix;
-		}
-
-		private async UniTask<TAffix> _AccessServerAsync<TAffix>(string key) where TAffix : class,IAffix,new()
-		{
-#if KZLIB_PLAY_FAB
-			var result = await PlayFabMgr.In.GetMyDataAsync(key);
-
-			if(result.IsEmpty())
-			{
-				var affix = new TAffix();
-
-				affix.Initialize();
-
-				await _UpdateServerAsync(key,affix);
-
-				return affix;
-			}
-			else
-			{
-				return JsonConvert.DeserializeObject<TAffix>(result);
-			}
-#else
-			await UniTask.Yield();
-
-			return null;
-#endif
-		}
-
-		private async UniTask _UpdateLocalAsync(string key,IAffix affix)
-		{
-			PlayerPrefsMgr.In.SetObject(key,affix);
-
-			await UniTask.Yield();
-		}
-
-		private async UniTask _UpdateServerAsync(string key,IAffix affix)
-		{
-#if KZLIB_PLAY_FAB
-			await PlayFabMgr.In.UpdateUserDataAsync(key,JsonConvert.SerializeObject(affix));
-#else
-			await UniTask.Yield();
-#endif
 		}
 	}
 }

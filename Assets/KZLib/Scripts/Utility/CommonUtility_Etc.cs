@@ -10,6 +10,7 @@ using UnityEngine;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 
 public static partial class CommonUtility
 {

@@ -57,6 +57,8 @@ public partial struct Global
 	public const string DISABLE_CAMERA_FAR_HALF = "DisableCameraFarHalf";
 
 	public const string DISPLAY_LOG = "DisplayLog";
+	
+	public const string TITLE_SCENE = "TitleScene";
 }
 
 #region UI Name

@@ -1,12 +1,14 @@
 ﻿#if KZLIB_PLAY_FAB
-using UnityEngine;
+using PlayFab;
 
-public enum PlayFabLogInOptionType
+public enum PlayFabLoginOptionType
 {
 	None,
-	GuestLogIn,
-	GoogleLogIn,
-	AppleLogIn,
+	GuestLogin,
+	GoogleLogin,
+	AppleLogin,
 }
+
+public record PlayFabPacket(object RequestPacket,NetworkPacket RespondPacket,long Duration);
 
 #endif

@@ -1,8 +1,9 @@
 #if KZLIB_PLAY_FAB
-using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Cysharp.Threading.Tasks;
 using KZLib.KZUtility;
+using Newtonsoft.Json;
 using PlayFab;
 using PlayFab.ClientModels;
 
@@ -10,10 +11,8 @@ namespace KZLib
 {
 	public partial class PlayFabMgr : Singleton<PlayFabMgr>
 	{
-		public async UniTask<ExecuteCloudScriptResult> ExecuteCloudScriptAsync(string functionName,object parameter)
+		public async UniTask<PlayFabPacket> ExecuteCloudScriptAsync(string functionName,object parameter)
 		{
-			var requestMethodName = "ExecuteCloudScriptAsync";
-
 			var request = new ExecuteCloudScriptRequest()
 			{
 				FunctionName = functionName,
@@ -21,27 +20,36 @@ namespace KZLib
 				GeneratePlayStreamEvent = true,
 			};
 
-			var source = new UniTaskCompletionSource<ExecuteCloudScriptResult>();
-
-			var stopwatch = Stopwatch.StartNew();
+            var source = new UniTaskCompletionSource<PlayFabPacket>();
+            var stopwatch = Stopwatch.StartNew();
 
 			PlayFabClientAPI.ExecuteCloudScript(request,(result) =>
 			{
 				stopwatch.Stop();
 
-				_WriteResult(requestMethodName,request,result,stopwatch.ElapsedMilliseconds);
+				var text = JsonConvert.SerializeObject(result.FunctionResult);
+				var packet = JsonConvert.DeserializeObject<NetworkPacket>(text);
 
-				source.TrySetResult(result);
+				source.TrySetResult(new PlayFabPacket(request,packet,stopwatch.ElapsedMilliseconds));
 			},(playFabError) =>
 			{
 				stopwatch.Stop();
-
-				_WriteError(requestMethodName,request,playFabError,stopwatch.ElapsedMilliseconds);
-
-				source.TrySetException(new Exception(playFabError.ErrorMessage));
+				source.TrySetResult(_CreateErrorPacket(playFabError,stopwatch.ElapsedMilliseconds));
 			});
 
 			return await source.Task;
+		}
+		
+		private PlayFabPacket _CreateErrorPacket(PlayFabError playFabError,long duration)
+		{
+			var code = (int)playFabError.Error;
+			var errorText = JsonConvert.SerializeObject(new Dictionary<string,string>()
+			{
+				{ "Message",playFabError.ErrorMessage },
+				{ "Details",JsonConvert.SerializeObject(playFabError.ErrorDetails,Formatting.Indented) }
+			});
+
+			return new PlayFabPacket(playFabError,new NetworkPacket(code,errorText,false),duration);
 		}
 	}
 }

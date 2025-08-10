@@ -16,7 +16,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 	private ScrollRect m_scrollRect = null;
 
 	[ShowInInspector,ReadOnly]
-	private bool IsVertical => m_scrollRect.vertical;
+	private bool IsVertical => m_scrollRect == null ? false : m_scrollRect.vertical;
 
 	[SerializeField]
 	private float m_padding = 0.0f;

@@ -40,10 +40,6 @@ namespace ConfigData
 #endif
 		public SystemLanguage Language => m_language;
 
-#if KZLIB_PLAY_FAB
-		private PlayFabLogInOptionType m_playFabLogInType = PlayFabLogInOptionType.None;
-		public PlayFabLogInOptionType PlayFabLogInType => m_playFabLogInType;
-#endif
 		public event Action<SoundVolume,SoundVolume,SoundVolume> OnSoundVolumeChanged = null;
 
 		public event Action<ScreenResolution> OnResolutionChanged = null;
@@ -54,9 +50,6 @@ namespace ConfigData
 
 		public event Action<SystemLanguage> OnLanguageChanged = null;
 
-#if KZLIB_PLAY_FAB
-		public event Action<PlayFabLogInOptionType> OnPlayFabLogInTypeChanged = null;
-#endif
 		public OptionConfig()
 		{
 			if(!TryReload())
@@ -337,18 +330,6 @@ namespace ConfigData
 			});
 		}
 		#endregion Language
-
-#if KZLIB_PLAY_FAB
-		#region PlayFab LogIn Type
-		public void SetPlayFabLogInType(PlayFabLogInOptionType newPlayFabLogInType)
-		{
-			_SetValue(ref m_playFabLogInType,newPlayFabLogInType,nameof(m_playFabLogInType),()=>
-			{
-				OnPlayFabLogInTypeChanged.Invoke(m_playFabLogInType);
-			});
-		}
-		#endregion PlayFab LogIn Type
-#endif
 
 		private void _SetValue<TValue>(ref TValue oldValue,TValue newValue,string nameKey,Action onValueChanged)
 		{

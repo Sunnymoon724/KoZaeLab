@@ -10,6 +10,8 @@ using System.Threading;
 using System.Collections.Generic;
 using System.IO;
 using KZLib.KZData;
+using KZLib.KZUtility;
+
 
 #if UNITY_EDITOR
 
@@ -21,8 +23,6 @@ namespace KZLib
 {
 	public abstract class MainLib : SerializedMonoBehaviour
 	{
-		private const string c_titleScene = "TitleScene";
-
 		[SerializeField,HideInInspector]
 		private SystemLanguage? m_gameLanguage = null;
 
@@ -122,12 +122,12 @@ namespace KZLib
 #if UNITY_EDITOR
 				if(m_startSceneName.IsEmpty())
 				{
-					m_startSceneName = IsTestMode ? MainPreset.StartSceneName : c_titleScene;
+					m_startSceneName = IsTestMode ? MainPreset.StartSceneName : Global.TITLE_SCENE;
 				}
 
-				return IsTestMode ? m_startSceneName : c_titleScene;
+				return IsTestMode ? m_startSceneName : Global.TITLE_SCENE;
 #else
-				return c_titleScene;
+				return Global.TITLE_SCENE;
 #endif
 			}
 			set
@@ -146,7 +146,7 @@ namespace KZLib
 		}
 
 		protected bool IsTestMode => GamePlayType == PlayType.Test;
-		private bool IsIncludeTitleName => !SceneNameList.Contains(c_titleScene);
+		private bool IsIncludeTitleName => !SceneNameList.Contains(Global.TITLE_SCENE);
 
 		protected CancellationTokenSource m_tokenSource = null;
 
@@ -230,8 +230,14 @@ namespace KZLib
 
 		private class PresetData
 		{
-			public PlayType GamePlayType { get; set; } = PlayType.Normal;
-			public string StartSceneName { get; set; } = "TitleScene";
+			public PlayType GamePlayType { get; set; }
+			public string StartSceneName { get; set; }
+			
+			public PresetData()
+			{
+				GamePlayType = PlayType.Normal;
+				StartSceneName = Global.TITLE_SCENE;
+			}
 		}
 
 		private PresetData m_mainPreset;

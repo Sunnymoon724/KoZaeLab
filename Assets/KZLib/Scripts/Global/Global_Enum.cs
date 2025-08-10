@@ -52,3 +52,12 @@ public enum EnvironmentType
 	QA,		// QA
 	LIVE,	// 라이브
 }
+
+public enum ResponseType
+{
+	None = 0,
+	Default,
+	Account,
+	Config,
+	Game,
+}

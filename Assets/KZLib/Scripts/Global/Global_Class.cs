@@ -7,3 +7,7 @@ namespace System.Runtime.CompilerServices
 }
 
 public record MessageData(string Header,string Body);
+
+public record RespondData(bool IsUpdate,string Type,string Data);
+
+public record NetworkPacket(int Code,string Message,bool IsEncrypted);

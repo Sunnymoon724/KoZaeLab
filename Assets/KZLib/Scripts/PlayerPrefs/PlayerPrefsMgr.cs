@@ -3,6 +3,7 @@ using KZLib.KZUtility;
 using Newtonsoft.Json;
 using System;
 using UnityEngine;
+using KZLib.KZData;
 
 namespace KZLib
 {
@@ -214,6 +215,14 @@ namespace KZLib
 		public void SetObject(string key,object value)
 		{
 			_SetValue(key,JsonConvert.SerializeObject(value));
+		}
+
+		public void SetAffix(bool isUpdate,IAffix newAffix)
+		{
+			var affix = isUpdate ? AffixMgr.In.Update(newAffix) : AffixMgr.In.Set(newAffix);
+			var key = typeof(IAffix).Name;
+
+			_SetValue(key,JsonConvert.SerializeObject(affix));
 		}
 
 		private void _SetValue(string key,string value)

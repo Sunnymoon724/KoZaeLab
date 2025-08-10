@@ -187,6 +187,18 @@ public static class StringExtension
 
 		return default;
 	}
+
+	public static bool TryToEnum<TEnum>(this string text,out TEnum value) where TEnum : struct
+	{
+		if(!text.IsEmpty() && Enum.TryParse(text,true,out value))
+		{
+			return true;
+		}
+
+		value = default;
+
+		return false;
+	}
 	#endregion Convert Enum
 
 	#region Convert Color
