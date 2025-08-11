@@ -165,9 +165,9 @@ namespace KZLib.KZNetwork
 				{
 					var respond = respondArray[i];
 					var typeText = respond.Type;
-					var dataText = respond.Data;
+					var affixText = respond.Data;
 					var type = Type.GetType($"{typeText}, Assembly-CSharp") ?? throw new NullReferenceException($"{typeText} is not found");
-					var newAffix = JsonConvert.DeserializeObject(dataText,type) as IAffix ?? throw new NullReferenceException($"{dataText} is not {type} type");
+					var newAffix = JsonConvert.DeserializeObject(affixText,type) as IAffix ?? throw new NullReferenceException($"{affixText} is not {type} type");
 					
 					if(respond.IsUpdate)
 					{
