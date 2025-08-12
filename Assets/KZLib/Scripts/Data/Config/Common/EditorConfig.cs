@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using KZLib.KZData;
 using Newtonsoft.Json;
@@ -12,23 +11,18 @@ namespace ConfigData
 	{
 		private Dictionary<string,object> AffixDict { get; set; }
 
-		public List<IAffix> GetAffixList()
+		public TAffix GetAffix<TAffix>() where TAffix : class,IAffix
 		{
-			var affixList = new List<IAffix>();
+			var type = typeof(TAffix);
 
-			foreach(var pair in AffixDict)
+			if(!AffixDict.TryGetValue(type.Name,out var result))
 			{
-				var typeText = pair.Key;
-				var affixObject = pair.Value;
-				var type = Type.GetType($"{typeText}, Assembly-CSharp") ?? throw new NullReferenceException($"{typeText} is not found");
-				var affixText = JsonConvert.SerializeObject(affixObject);
-
-				var newAffix = JsonConvert.DeserializeObject(affixText,type) as IAffix ?? throw new NullReferenceException($"{affixText} is not {type} type");
-
-				affixList.Add(newAffix);
+				return null;
 			}
 
-			return affixList;
+			var text = JsonConvert.SerializeObject(result);
+
+			return JsonConvert.DeserializeObject(text,type) as TAffix;
 		}
 	}
 }

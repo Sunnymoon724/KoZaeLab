@@ -69,7 +69,7 @@ namespace KZLib
 			return oldAffix;
 		}
 
-		public TAffix Get<TAffix>() where TAffix : class,IAffix,new()
+		public TAffix Get<TAffix>() where TAffix : class,IAffix
 		{
 			var key = typeof(IAffix).Name;
 

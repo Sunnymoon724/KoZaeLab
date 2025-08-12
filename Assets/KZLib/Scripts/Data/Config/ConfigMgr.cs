@@ -44,7 +44,7 @@ namespace KZLib.KZData
 		/// <summary>
 		/// If config is not exist, create new config.
 		/// </summary>
-		public TConfig Access<TConfig>() where TConfig : class,IConfig,new()
+		public TConfig Access<TConfig>() where TConfig : class,IConfig
 		{
 			var type = typeof(TConfig);
 
