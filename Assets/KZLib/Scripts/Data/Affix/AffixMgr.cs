@@ -28,15 +28,15 @@ namespace KZLib
 			base.Release(disposing);
 		}
 
-		public IAffix Set(IAffix newAfx)
+		public TAffix Set<TAffix>(TAffix newAfx) where TAffix : class,IAffix
 		{
-			var key = typeof(IAffix).Name;
+			var key = typeof(TAffix).Name;
 
 			if(m_affixDict.TryGetValue(key,out var oldAfx))
 			{
 				oldAfx.Set(newAfx);
 
-				return oldAfx;
+				return oldAfx as TAffix;
 			}
 			else
 			{
@@ -46,21 +46,21 @@ namespace KZLib
 			}
 		}
 
-		public IAffix Update(IAffix newAfx)
+		public TAffix Update<TAffix>(TAffix newAfx) where TAffix : class,IAffix
 		{
-			var key = typeof(IAffix).Name;
+			var key = typeof(TAffix).Name;
 
 			if(m_affixDict.TryGetValue(key,out var oldAfx))
 			{
 				oldAfx.Update(newAfx);
 			}
 
-			return oldAfx;
+			return oldAfx as TAffix;
 		}
 
 		public TAffix Get<TAffix>() where TAffix : class,IAffix
 		{
-			var key = typeof(IAffix).Name;
+			var key = typeof(TAffix).Name;
 
 			if(m_affixDict.TryGetValue(key,out var affix))
 			{
