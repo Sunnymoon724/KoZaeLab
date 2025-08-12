@@ -10,8 +10,6 @@ using System.Threading;
 using System.Collections.Generic;
 using System.IO;
 using KZLib.KZData;
-using KZLib.KZUtility;
-
 
 #if UNITY_EDITOR
 
@@ -33,7 +31,7 @@ namespace KZLib
 			{
 				if(!m_gameLanguage.HasValue)
 				{
-					var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+					var optionCfg = ConfigMgr.In.Access<OptionConfig>();
 
 					m_gameLanguage = optionCfg.Language;
 				}
@@ -50,7 +48,7 @@ namespace KZLib
 
 				m_gameLanguage = value;
 
-				var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+				var optionCfg = ConfigMgr.In.Access<OptionConfig>();
 
 				optionCfg.SetLanguage(m_gameLanguage.Value);
 			}
@@ -169,7 +167,7 @@ namespace KZLib
 
 		private async void Start()
 		{
-			var gameCfg = ConfigMgr.In.Access<ConfigData.GameConfig>();
+			var gameCfg = ConfigMgr.In.Access<GameConfig>();
 
 #if UNITY_EDITOR
 			if(gameCfg.UseHeadUpDisplay)

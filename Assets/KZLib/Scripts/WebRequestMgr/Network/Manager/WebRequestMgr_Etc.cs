@@ -16,7 +16,7 @@ namespace KZLib.KZNetwork
 
 		public async UniTask PostBugReportWebRequestAsync(IEnumerable<MessageData> messageGroup,byte[] file)
 		{
-			var serviceCfg = ConfigMgr.In.Access<ConfigData.ServiceConfig>();
+			var serviceCfg = ConfigMgr.In.Access<ServiceConfig>();
 			var postHashSet = new HashSet<string>(serviceCfg.BugReportPostList);
 			var taskList = new List<UniTask>();
 

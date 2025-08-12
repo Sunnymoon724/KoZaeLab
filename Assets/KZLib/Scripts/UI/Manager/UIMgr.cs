@@ -35,7 +35,7 @@ namespace KZLib
 				m_repositoryList.Add(m_repository3D);
 			}
 
-			m_prefabPath = ConfigMgr.In.Access<ConfigData.GameConfig>().UIPrefabPath;
+			m_prefabPath = ConfigMgr.In.Access<GameConfig>().UIPrefabPath;
 		}
 
 		protected override void Release()

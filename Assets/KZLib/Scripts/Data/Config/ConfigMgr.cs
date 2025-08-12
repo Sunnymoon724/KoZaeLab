@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using YamlDotNet.Serialization;
 using KZLib.KZUtility;
 using System.IO;
-using ConfigData;
 
 namespace KZLib.KZData
 {

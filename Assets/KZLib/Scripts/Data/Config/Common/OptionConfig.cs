@@ -1,11 +1,9 @@
 using System;
 using System.Reflection;
-using KZLib;
-using KZLib.KZData;
 using KZLib.KZDevelop;
 using UnityEngine;
 
-namespace ConfigData
+namespace KZLib.KZData
 {
 	/// <summary>
 	/// OptionConfig is only used to store by PlayerPrefs.

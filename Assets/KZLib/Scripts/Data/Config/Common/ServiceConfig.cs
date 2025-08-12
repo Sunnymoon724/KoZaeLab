@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using KZLib.KZData;
 using YamlDotNet.Serialization;
 
-namespace ConfigData
+namespace KZLib.KZData
 {
 	public class ServiceConfig : IConfig
 	{

@@ -40,7 +40,7 @@ namespace KZLib
 
 		protected override void Initialize()
 		{
-			var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+			var optionCfg = ConfigMgr.In.Access<OptionConfig>();
 
 			optionCfg.OnUseVibrationChanged += _OnChangeUseVibration;
 
@@ -67,7 +67,7 @@ namespace KZLib
 			{
 				if(ConfigMgr.HasInstance)
 				{
-					var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+					var optionCfg = ConfigMgr.In.Access<OptionConfig>();
 
 					optionCfg.OnUseVibrationChanged -= _OnChangeUseVibration;
 				}

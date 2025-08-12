@@ -19,7 +19,7 @@ namespace KZLib.KZNetwork
 
 		public async UniTask PostDiscordWebHookAsync(string content,IEnumerable<MessageData> messageGroup = null,byte[] file = null)
 		{
-			var serviceCfg = ConfigMgr.In.Access<ConfigData.ServiceConfig>();
+			var serviceCfg = ConfigMgr.In.Access<ServiceConfig>();
 
 			await PostDiscordWebHookAsync(serviceCfg.GetDiscordLink(content),content,messageGroup,file);
 		}

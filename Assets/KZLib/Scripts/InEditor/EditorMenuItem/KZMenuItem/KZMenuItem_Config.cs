@@ -1,7 +1,6 @@
 #if UNITY_EDITOR
 using System;
 using System.IO;
-using ConfigData;
 using KZLib.KZData;
 using KZLib.KZTool;
 using KZLib.KZUtility;

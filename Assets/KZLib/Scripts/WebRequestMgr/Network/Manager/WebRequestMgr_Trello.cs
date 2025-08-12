@@ -21,7 +21,7 @@ namespace KZLib.KZNetwork
 
 		public async UniTask<List<string>> GetTrelloBoardAsync()
 		{
-			var serviceCfg = ConfigMgr.In.Access<ConfigData.ServiceConfig>();
+			var serviceCfg = ConfigMgr.In.Access<ServiceConfig>();
 
 			return await GetTrelloBoardAsync(serviceCfg.TrelloKey);
 		}
@@ -52,7 +52,7 @@ namespace KZLib.KZNetwork
 
 		public async UniTask<List<string>> GetTrelloListAsync(string boardId)
 		{
-			var serviceCfg = ConfigMgr.In.Access<ConfigData.ServiceConfig>();
+			var serviceCfg = ConfigMgr.In.Access<ServiceConfig>();
 
 			return await GetTrelloListAsync(serviceCfg.TrelloKey,boardId);
 		}
@@ -90,7 +90,7 @@ namespace KZLib.KZNetwork
 
 		public async UniTask<List<string>> GetTrelloCardAsync(string listId)
 		{
-			var serviceCfg = ConfigMgr.In.Access<ConfigData.ServiceConfig>();
+			var serviceCfg = ConfigMgr.In.Access<ServiceConfig>();
 
 			return await GetTrelloCardAsync(serviceCfg.TrelloKey,listId);
 		}
@@ -162,7 +162,7 @@ namespace KZLib.KZNetwork
 
 		public async UniTask PostTrelloListAsync(string boardId,string name)
 		{
-			var serviceCfg = ConfigMgr.In.Access<ConfigData.ServiceConfig>();
+			var serviceCfg = ConfigMgr.In.Access<ServiceConfig>();
 
 			await PostTrelloListAsync(serviceCfg.TrelloKey,boardId,name);
 		}
@@ -191,7 +191,7 @@ namespace KZLib.KZNetwork
 
 		public async UniTask PostTrelloCardAsync(string listId,string name,string description,byte[] file = null)
 		{
-			var serviceCfg = ConfigMgr.In.Access<ConfigData.ServiceConfig>();
+			var serviceCfg = ConfigMgr.In.Access<ServiceConfig>();
 
 			await PostTrelloCardAsync(serviceCfg.TrelloKey,listId,name,description,file);
 		}
@@ -236,7 +236,7 @@ namespace KZLib.KZNetwork
 
 		public async UniTask PostTrelloListInCardAsync(string boardName,string listName,string cardName,string cardDescription,byte[] file = null)
 		{
-			var serviceCfg = ConfigMgr.In.Access<ConfigData.ServiceConfig>();
+			var serviceCfg = ConfigMgr.In.Access<ServiceConfig>();
 
 			await PostTrelloListInCardAsync(serviceCfg.TrelloKey,boardName,listName,cardName,cardDescription,file);
 		}

@@ -1,5 +1,4 @@
 #if UNITY_EDITOR
-using System.Diagnostics;
 using System.IO;
 using KZLib.KZWindow;
 using UnityEditor;

@@ -72,7 +72,7 @@ namespace KZLib.KZData
 
 
 			// // TODO 유니티 로컬라이즈 찾아보기.... -> 언어는 구글 시트 이용? & 루아 써서 실시간도 생각해보기
-			// foreach(var textAsset in ResMgr.In.GetTextAssetArray(ConfigMgr.In.Access<ConfigData.GameConfig>().LanguageFolderPath))
+			// foreach(var textAsset in ResMgr.In.GetTextAssetArray(ConfigMgr.In.Access<GameConfig>().LanguageFolderPath))
 			// {
 			// 	var languageDict = JsonConvert.DeserializeObject<Dictionary<string,string>>(textAsset.text);
 
@@ -84,7 +84,7 @@ namespace KZLib.KZData
 			// 	m_languageTextDict.Add(textAsset.name.ToEnum<SystemLanguage>(),languageDict);
 			// }
 
-			// var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+			// var optionCfg = ConfigMgr.In.Access<OptionConfig>();
 
 			// optionCfg.OnLanguageChange += _OnChangeLanguage;
 

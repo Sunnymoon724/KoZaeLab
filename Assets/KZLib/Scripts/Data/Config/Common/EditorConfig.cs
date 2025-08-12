@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using KZLib.KZData;
 using Newtonsoft.Json;
 
-namespace ConfigData
+namespace KZLib.KZData
 {
 	/// <summary>
 	/// EditorConfig is test data in editor.
@@ -10,6 +9,8 @@ namespace ConfigData
 	public class EditorConfig : IConfig
 	{
 		private Dictionary<string,object> AffixDict { get; set; }
+
+		private Dictionary<string,object> OptionDict { get; set; }
 
 		public TAffix GetAffix<TAffix>() where TAffix : class,IAffix
 		{
@@ -23,6 +24,20 @@ namespace ConfigData
 			var text = JsonConvert.SerializeObject(result);
 
 			return JsonConvert.DeserializeObject(text,type) as TAffix;
+		}
+
+		public bool TryGetOption<TObject>(string optionKey,out TObject option)
+		{
+			if (OptionDict.TryGetValue(optionKey, out var result) && result is TObject castValue)
+			{
+				option = castValue;
+
+				return true;
+			}
+
+			option = default;
+
+			return false;
 		}
 	}
 }

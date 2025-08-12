@@ -18,7 +18,7 @@ namespace KZLib
 				m_sfxList.Add(CreateSFX(i));
 			}
 
-			var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+			var optionCfg = ConfigMgr.In.Access<OptionConfig>();
 
 			optionCfg.OnSoundVolumeChanged += _OnChangeSoundOption;
 
@@ -29,7 +29,7 @@ namespace KZLib
 		{
 			if(ConfigMgr.HasInstance)
 			{
-				var optionCfg = ConfigMgr.In.Access<ConfigData.OptionConfig>();
+				var optionCfg = ConfigMgr.In.Access<OptionConfig>();
 
 				optionCfg.OnSoundVolumeChanged -= _OnChangeSoundOption;
 			}

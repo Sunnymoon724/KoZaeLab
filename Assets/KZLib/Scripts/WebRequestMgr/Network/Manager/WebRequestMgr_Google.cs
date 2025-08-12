@@ -122,7 +122,7 @@ namespace KZLib.KZNetwork
 
 		private bool _TryGetSheetId(string sheetName,out string sheetId)
 		{
-			var serviceCfg = ConfigMgr.In.Access<ConfigData.ServiceConfig>();
+			var serviceCfg = ConfigMgr.In.Access<ServiceConfig>();
 			sheetId = serviceCfg.GetGoogleSheetFileId(sheetName);
 
 			if(sheetId.IsEmpty())
@@ -137,7 +137,7 @@ namespace KZLib.KZNetwork
 
 		private bool _TryGetGoogleSheetURL(out string url)
 		{
-			var serviceCfg = ConfigMgr.In.Access<ConfigData.ServiceConfig>();
+			var serviceCfg = ConfigMgr.In.Access<ServiceConfig>();
 			url = serviceCfg.GoogleSheetURL;
 
 			if(url.IsEmpty())
@@ -152,7 +152,7 @@ namespace KZLib.KZNetwork
 
 		private bool _TryGetFolderId(string folderName,out string folderId)
 		{
-			var serviceCfg = ConfigMgr.In.Access<ConfigData.ServiceConfig>();
+			var serviceCfg = ConfigMgr.In.Access<ServiceConfig>();
 			folderId = serviceCfg.GetGoogleDriveFolderId(folderName);
 
 			if(folderId.IsEmpty())
@@ -167,7 +167,7 @@ namespace KZLib.KZNetwork
 
 		private bool _TryGetGoogleDriveURL(out string url)
 		{
-			var serviceCfg = ConfigMgr.In.Access<ConfigData.ServiceConfig>();
+			var serviceCfg = ConfigMgr.In.Access<ServiceConfig>();
 			url = serviceCfg.GoogleDriveURL;
 
 			if(url.IsEmpty())

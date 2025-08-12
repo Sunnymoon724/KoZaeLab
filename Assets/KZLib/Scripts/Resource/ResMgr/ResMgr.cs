@@ -50,7 +50,7 @@ namespace KZLib
 		{
 			m_tokenSource = new();
 
-			var gameCfg = ConfigMgr.In.Access<ConfigData.GameConfig>();
+			var gameCfg = ConfigMgr.In.Access<GameConfig>();
 
 			m_useServerResource = !gameCfg.IsLocalResource;
 

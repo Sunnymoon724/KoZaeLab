@@ -11,17 +11,6 @@ namespace KZLib
 		//? Type / Affix
 		private readonly Dictionary<string,IAffix> m_affixDict = new();
 
-		private bool m_isLocalSave;
-		
-		protected override void Initialize()
-		{
-			base.Initialize();
-
-			var gameCfg = ConfigMgr.In.Access<ConfigData.GameConfig>();
-
-			m_isLocalSave = gameCfg.IsLocalSave;
-		}
-
 		protected override void Release(bool disposing)
 		{
 			if(m_disposed)
@@ -39,34 +28,34 @@ namespace KZLib
 			base.Release(disposing);
 		}
 
-		public IAffix Set(IAffix newAffix)
+		public IAffix Set(IAffix newAfx)
 		{
 			var key = typeof(IAffix).Name;
 
-			if(m_affixDict.TryGetValue(key,out var oldAffix))
+			if(m_affixDict.TryGetValue(key,out var oldAfx))
 			{
-				oldAffix.Set(newAffix);
+				oldAfx.Set(newAfx);
 
-				return oldAffix;
+				return oldAfx;
 			}
 			else
 			{
-				m_affixDict[key] = newAffix;
+				m_affixDict[key] = newAfx;
 
-				return newAffix;
+				return newAfx;
 			}
 		}
 
-		public IAffix Update(IAffix newAffix)
+		public IAffix Update(IAffix newAfx)
 		{
 			var key = typeof(IAffix).Name;
 
-			if(m_affixDict.TryGetValue(key,out var oldAffix))
+			if(m_affixDict.TryGetValue(key,out var oldAfx))
 			{
-				oldAffix.Update(newAffix);
+				oldAfx.Update(newAfx);
 			}
 
-			return oldAffix;
+			return oldAfx;
 		}
 
 		public TAffix Get<TAffix>() where TAffix : class,IAffix
@@ -85,9 +74,9 @@ namespace KZLib
 		{
 			var key = typeof(TAffix).Name;
 
-			if(m_affixDict.TryGetValue(key,out var affix))
+			if(m_affixDict.TryGetValue(key,out var afx))
 			{
-				affix.Release();
+				afx.Release();
 				m_affixDict.Remove(key);
 			}
 		}

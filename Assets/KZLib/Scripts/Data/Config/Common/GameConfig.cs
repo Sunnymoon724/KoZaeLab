@@ -1,6 +1,5 @@
-﻿using KZLib.KZData;
-
-namespace ConfigData
+﻿
+namespace KZLib.KZData
 {
 	public class GameConfig : IConfig
 	{
