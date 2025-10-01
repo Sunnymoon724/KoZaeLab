@@ -1,15 +1,9 @@
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
-
-using Debug = UnityEngine.Debug;
 using KZLib.KZUtility;
 using System.Text;
 using UnityEngine;
 using System;
-using System.Linq;
-using System.IO;
-
-
 
 #if UNITY_EDITOR
 
@@ -25,6 +19,8 @@ using Cysharp.Threading.Tasks;
 using KZLib.KZNetwork;
 
 #endif
+
+using Debug = UnityEngine.Debug;
 
 public class LogSvc
 {
@@ -149,8 +145,9 @@ public class LogChannel
 	{
 		var builder = new StringBuilder();
 
-		builder.Append($"[{m_logTag}] {message}");
-		
+		builder.Append($"[<b>{m_logTag}<\b>] {message}");
+
+#if !UNITY_EDITOR
 		if(!memberName.IsEmpty() || !filePath.IsEmpty())
 		{
 			builder.Append(" [");
@@ -172,6 +169,7 @@ public class LogChannel
 
 			builder.Append("]");
 		}
+#endif
 
 		return builder.ToString();
 	}

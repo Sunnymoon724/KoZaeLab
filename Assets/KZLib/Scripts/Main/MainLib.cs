@@ -152,17 +152,13 @@ namespace KZLib
 		{
 			m_isPlaying = true;
 
-			var stringBuilder = new StringBuilder();
-
-			stringBuilder.AppendLine("Initialize Main");
+			LogSvc.System.I("Initialize Main");
 
 			//? 에디터가 아니면 Normal Play
 #if !UNITY_EDITOR
 			GamePlayType = PlayType.Normal;
 #endif
-			stringBuilder.AppendLine($"Current PlayType {GamePlayType}");
-
-			LogSvc.System.I(stringBuilder.ToString());
+			LogSvc.System.I($"Current PlayType {GamePlayType}");
 		}
 
 		private async void Start()
@@ -289,7 +285,6 @@ namespace KZLib
 			QualitySettings.vSyncCount = 1;
 			Application.targetFrameRate = Global.FRAME_RATE_60;
 #endif
-
 			stringBuilder.AppendFormat($"Current FPS {Application.targetFrameRate}\n");
 		}
 
@@ -299,6 +294,8 @@ namespace KZLib
 
 		protected virtual void OnDestroy()
 		{
+			LogSvc.System.I("Release Main");
+
 			m_isPlaying = false;
 
 			CommonUtility.ReleaseManager();
@@ -334,7 +331,6 @@ namespace KZLib
 			}
 #endif
 		}
-
 #if UNITY_EDITOR
 		private async UniTask _RefreshGame()
 		{
@@ -343,7 +339,6 @@ namespace KZLib
 			await _StartMainAsync();
 		}
 #endif
-
 		private static readonly List<string> s_sceneNameList = new();
 
 		private static List<string> SceneNameList
@@ -366,10 +361,8 @@ namespace KZLib
 					}
 				}
 #endif
-
 				return s_sceneNameList;
 			}
 		}
-
 	}
 }

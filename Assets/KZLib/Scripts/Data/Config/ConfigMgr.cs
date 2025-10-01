@@ -114,11 +114,8 @@ namespace KZLib.KZData
 
 			//? check custom. [only editor]
 #if UNITY_EDITOR
-			LogSvc.Server.I("Read Custom First");
-
 			text = FileUtility.ReadFileToText(Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,$"Custom{fileName}"));
 #endif
-
 			if(!text.IsEmpty())
 			{
 				return text;
@@ -137,7 +134,6 @@ namespace KZLib.KZData
 #else
 			var routePath = $"defaultRes:config:{fileName}";
 #endif
-
 			text = FileUtility.ReadFileToText(RouteMgr.In.GetOrCreateRoute(routePath).AbsolutePath);
 
 			if(!text.IsEmpty())
