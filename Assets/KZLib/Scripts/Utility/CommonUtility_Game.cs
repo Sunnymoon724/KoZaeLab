@@ -20,6 +20,11 @@ public static partial class CommonUtility
 		GC.Collect();
 	}
 
+	public static long MemoryCheck()
+	{
+		return GC.GetTotalMemory(true);
+	}
+
 	public static void LockInput()
 	{
 		_SetInput(true);

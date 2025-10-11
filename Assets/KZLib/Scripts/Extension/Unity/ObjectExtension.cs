@@ -12,6 +12,7 @@ public static class ObjectExtension
 		}
 
 		var instance = Object.Instantiate(origin,parent);
+
 		instance.name = origin.name;
 
 		return instance;

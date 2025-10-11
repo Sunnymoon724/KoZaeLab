@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -59,8 +58,16 @@ public static class StringExtension
 		}
 
 		var characterSet = new HashSet<char>(characterArray);
+		
+		foreach(var character in text)
+		{
+			if(characterSet.Contains(character))
+			{
+				return true;
+			}
+		}
 
-		return text.Any(x => characterSet.Contains(x));
+		return false;
 	}
 	/// <summary>
 	/// Convert first character to uppercase
@@ -113,7 +120,16 @@ public static class StringExtension
 	/// </summary>
 	public static int CountOf(this string text,char character)
 	{
-		return text.Count(x => x == character);
+		var count = 0;
+		var index = text.IndexOf(character);
+
+		while(index != -1)
+		{
+			count++;
+			index = text.IndexOf(character,index+1);
+		}
+
+		return count;
 	}
 
 	/// <summary>

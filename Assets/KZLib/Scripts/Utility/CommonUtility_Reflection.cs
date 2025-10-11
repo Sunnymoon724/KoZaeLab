@@ -9,14 +9,14 @@ public static partial class CommonUtility
 
 	public static Type FindType(string typeName,string namespaceName = null)
 	{
-		var fullName = namespaceName.IsEmpty() ? $"{typeName}" :$"{namespaceName}.{typeName}";
+		var fullName = namespaceName.IsEmpty() ? typeName : $"{namespaceName}.{typeName}";
 
 		if(s_typeDict.TryGetValue(fullName,out var type))
 		{
 			return type;
 		}
 
-		foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
+		foreach(var assembly in _GetAllAssemblyArray())
 		{
 			type = assembly.GetType(fullName);
 
@@ -33,7 +33,7 @@ public static partial class CommonUtility
 
 	public static IEnumerable<Type> FindTypeGroup(string namespaceName)
 	{
-		foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
+		foreach(var assembly in _GetAllAssemblyArray())
 		{
 			foreach(var type in assembly.GetTypes())
 			{
@@ -47,7 +47,7 @@ public static partial class CommonUtility
 
 	public static IEnumerable<Type> FindDerivedTypeGroup(Type type)
 	{
-		foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
+		foreach(var assembly in _GetAllAssemblyArray())
 		{
 			foreach(var derivedType in FindDerivedTypeGroup(type,assembly))
 			{
@@ -148,5 +148,10 @@ public static partial class CommonUtility
 	public static void ClearCacheData()
 	{
 		s_typeDict.Clear();
+	}
+	
+	private static Assembly[] _GetAllAssemblyArray()
+	{
+		return AppDomain.CurrentDomain.GetAssemblies();
 	}
 }

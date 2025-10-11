@@ -145,7 +145,7 @@ public class LogChannel
 	{
 		var builder = new StringBuilder();
 
-		builder.Append($"[<b>{m_logTag}<\b>] {message}");
+		builder.Append($"[<b>{m_logTag}</b>] {message}");
 
 #if !UNITY_EDITOR
 		if(!memberName.IsEmpty() || !filePath.IsEmpty())

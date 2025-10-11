@@ -6,7 +6,6 @@ using KZLib.KZUtility;
 using KZLib.KZWindow;
 using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace KZLib.KZMenu
 {
@@ -86,27 +85,6 @@ namespace KZLib.KZMenu
 		public static void ReLoad()
 		{
 			s_assetsPathDict = null;
-		}
-
-		private static bool _IsValidAsset()
-		{
-			if(Selection.activeObject == null)
-			{
-				LogSvc.Editor.W("Selection is null.");
-
-				return false;
-			}
-
-			var path = AssetDatabase.GetAssetPath(Selection.activeObject);
-
-			if(!FileUtility.IsFilePath(path))
-			{
-				LogSvc.Editor.W("Selection is folder.");
-
-				return false;
-			}
-
-			return true;
 		}
 
 		#region Script
