@@ -3,22 +3,20 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
-using UnityEngine;
 
 public interface IUnitStateParam { }
 
-public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,Enum
+public abstract class UnitStateCon<TEnum> : SerializedMonoBehaviour where TEnum : struct,Enum
 {
 	protected bool m_changeAllowed = false;
 	protected CancellationTokenSource m_tokenSource = null;
-
-	public event Action<TEnum,TEnum> OnUnitStateChanged = null;
+	private readonly Dictionary<TEnum,Func<CancellationToken,IUnitStateParam,UniTask<TEnum>>> m_stateFuncDict = new();
 
 	[ShowInInspector] public TEnum StateType => m_stateType;
 
-	private readonly Dictionary<TEnum,Func<IUnitStateParam,UniTask<TEnum>>> m_stateFuncDict = new();
-
 	protected TEnum m_stateType = default;
+
+	public event Action<TEnum,TEnum> OnUnitStateChanged = null;
 
 	protected abstract bool _CanChange(TEnum newStateTag,bool isForce);
 
@@ -62,20 +60,21 @@ public abstract class UnitStateCon<TEnum> : MonoBehaviour where TEnum : struct,E
 
 			LogSvc.System.I($"{name} is entered {curState}");
 
-			var nextState = await stateFunc.Invoke(param);
+			var nextState = await stateFunc.Invoke(m_tokenSource.Token,param);
 
 			if(!_CanChange(nextState,false))
 			{
 				// wait one frame
 				await UniTask.Yield();
-				continue;
 			}
-
-			curState = nextState;
+			else
+			{
+				curState = nextState;
+			}
 		}
 	}
 
-	protected void _RegisterState(TEnum type,Func<IUnitStateParam,UniTask<TEnum>> stateFunc)
+	protected void _RegisterState(TEnum type,Func<CancellationToken,IUnitStateParam,UniTask<TEnum>> stateFunc)
 	{
 		if(stateFunc == null)
 		{
