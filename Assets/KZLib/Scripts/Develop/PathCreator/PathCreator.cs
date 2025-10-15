@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using System;
-using UnityEngine.Events;
 
 #if UNITY_EDITOR
 

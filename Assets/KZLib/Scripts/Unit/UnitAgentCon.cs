@@ -4,7 +4,7 @@ using UnityEngine.AI;
 
 namespace KZLib
 {
-    public class UnitAgentCon : SerializedMonoBehaviour
+	public class UnitAgentCon : SerializedMonoBehaviour
 	{
 		[SerializeField] private NavMeshAgent m_navMeshAgent = null;
 

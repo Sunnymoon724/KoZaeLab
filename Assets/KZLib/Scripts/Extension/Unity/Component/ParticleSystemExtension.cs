@@ -13,7 +13,7 @@ public static class ParticleSystemExtension
 
 		particleSystem.Play();
 
-		await  particleSystem.WaitForParticleAsync();
+		await particleSystem.WaitForParticleAsync();
 	}
 
 	public static async UniTask WaitForParticleAsync(this ParticleSystem particleSystem,CancellationToken cancellationToken = default)

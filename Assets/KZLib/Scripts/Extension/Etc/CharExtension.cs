@@ -29,16 +29,18 @@ public static class CharExtension
 	{
 		character = char.ToUpperInvariant(character);
 
-		return character.IsNumber() ? character-'0' : character.IsAlphabet() ? 10+character-'A' : -1;
-	}
+		// check number
+		if(character >= '0' && character <= '9')
+		{
+			return character-'0';
+		}
 
-	public static bool IsNumber(this char character)
-	{
-		return character >= '0' && character <= '9';
-	}
+		// check hex number
+		if (character >= 'A' && character <= 'F')
+		{
+			return 10+(character-'A');
+		}
 
-	public static bool IsAlphabet(this char character)
-	{
-		return character >= 'A' && character <= 'F';
+		return -1;
 	}
 }

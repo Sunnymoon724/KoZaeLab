@@ -18,7 +18,7 @@ public class ManagedToggleGroupUI : BaseComponentUI
 	[PropertySpace(5)]
 
 	[ShowInInspector,ReadOnly]
-	private Toggle SelectedToggle => m_toggleGroup == null ? null : m_toggleGroup.GetFirstActiveToggle();
+	protected Toggle SelectedToggle => m_toggleGroup == null ? null : m_toggleGroup.GetFirstActiveToggle();
 
 	protected override void Initialize()
 	{

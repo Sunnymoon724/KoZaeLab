@@ -84,9 +84,14 @@ crashlytics-build.properties
 .history
 .ionide
 
+### common custom ignore ###
+
 *.DS_Store
 **~$*
 *.db
+
+### my custom ignore ###
 **/[Aa]ssets/[Pp]lugins
-**/[Aa]ssets/[Rr]esources/[Tt]exts
+
 Route.yaml
+[Aa]ssets/[Ss]amplesSandbox

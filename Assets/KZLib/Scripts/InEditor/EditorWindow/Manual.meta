@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Scripts/InEditor/Attribute/Gradient.meta
-guid: 98f54114f5642be498c5f9f20d1676bd
-========
 guid: 935829b2e393f8545a7b87549cce8573
->>>>>>>> te:Scripts/InEditor/EditorWindow/Manual.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

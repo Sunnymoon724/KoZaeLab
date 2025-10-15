@@ -3,28 +3,43 @@
   "displayName": "KoZaeLibrary",
   "author": { "name": "Ko KoZae", "url": "https://github.com/Sunnymoon724" },
   "description": "KoZae Library \nIt is using 'UniTask'.",
-  "version": "1.0.1",
-  "unity": "2022.3",
+  "version": "1.0.2000",
+  "unity": "6000.0",
   "license": "MIT",
   "dependencies": {
     "com.unity.nuget.newtonsoft-json" : "3.2.1",
-    "com.unity.addressables" : "1.22.3",
-    "com.unity.localization" : "1.5.4",
-    "com.unity.inputsystem" : "1.11.2",
-    "com.unity.render-pipelines.universal": "14.0.11",
+    "com.unity.addressables" : "2.7.4",
+    "com.unity.localization" : "1.5.8",
+    "com.unity.inputsystem" : "1.14.2",
+    "com.unity.render-pipelines.universal": "17.0.4",
     "com.unity.textmeshpro" : "3.0.9",
     "com.cysharp.unitask" : "2.5.10"
   },
   "samples": [
     {
-      "displayName": "VibrationTest",
-      "description": "Vibration Test",
-      "path": "Samples~/VibrationTest"
+      "displayName": "HudTest",
+      "description": "Hud Test",
+      "path": "Samples~/HudTest"
     },
     {
-      "displayName": "ScheduleTest",
-      "description": "Schedule Test",
-      "path": "Samples~/ScheduleTest"
+      "displayName": "MotionEditorTest",
+      "description": "MotionEditor Test",
+      "path": "Samples~/MotionEditorTest"
+    },
+    {
+      "displayName": "MainTest",
+      "description": "Main Test",
+      "path": "Samples~/MainTest"
+    },
+    {
+      "displayName": "FocusScrollerTest",
+      "description": "FocusScroller Test",
+      "path": "Samples~/FocusScrollerTest"
+    },
+    {
+      "displayName": "ReuseScrollRectTest",
+      "description": "ReuseScrollRect Test",
+      "path": "Samples~/ReuseScrollRectTest"
     }
   ]
 }

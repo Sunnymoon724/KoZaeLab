@@ -1,8 +1,6 @@
 ﻿// using UnityEngine;
 // using KZLib.KZAttribute;
-// using KZLib.KZData;
-// using Sirenix.OdinInspector;
-// using UnityEditor;
+
 
 // namespace KZLib
 // {
@@ -20,12 +18,7 @@
 // 		[SerializeField,KZRichText]
 // 		private string m_currentStateName = null;
 
-// #if UNITY_EDITOR
-// 		[SerializeField]
-// 		private string m_stateName = null;
-// 		private bool m_isPlaying = false;
-// 		private double m_lastTime = 0.0d;
-// #endif
+
 
 // 		protected override void Reset()
 // 		{
@@ -61,67 +54,13 @@
 // 			PlayAnimation(stateName,normalizedTime);
 // 		}
 
-// 		public bool IsExistAnimationClip(string stateName)
-// 		{
-// 			var clipsArray = m_animator.runtimeAnimatorController.animationClips;
-
-// 			foreach(var clip in clipsArray)
-// 			{
-// 				if(clip.name.Contains(stateName))
-// 				{
-// 					return true;
-// 				}
-// 			}
-
-// 			return false;
-// 		}
+		
 
 // 		private void OnPlayEvent(string text)
 // 		{
 // 			Logger.Build.W(text);
 // 		}
 
-// #if UNITY_EDITOR
-// 		[Button("Play Animation")]
-// 		protected void OnPlayAnimationInEditor()
-// 		{
-// 			if(!m_animator)
-// 			{
-// 				Logger.System.W("Animator is null");
 
-// 				return;
-// 			}
-
-// 			EditorApplication.update -= UpdateInEditor;
-// 			EditorApplication.update += UpdateInEditor;
-
-// 			m_animator.Play(m_stateName);
-
-// 			m_lastTime = EditorApplication.timeSinceStartup;
-// 			m_isPlaying = true;
-// 		}
-
-// 		[Button("Stop Animation")]
-// 		protected void OnStopAnimationInEditor()
-// 		{
-// 			m_isPlaying = false;
-// 			EditorApplication.update -= UpdateInEditor;
-// 		}
-
-// 		void UpdateInEditor()
-// 		{
-// 			if(!m_isPlaying || !m_animator)
-// 			{
-// 				return;
-// 			}
-
-// 			var currentTime = EditorApplication.timeSinceStartup;
-
-// 			m_lastTime = currentTime;
-
-// 			m_animator.Update((float)(currentTime-m_lastTime));
-// 			SceneView.RepaintAll();
-// 		}
-// #endif
 // 	}
 // }
