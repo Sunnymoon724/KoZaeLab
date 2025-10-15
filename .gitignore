@@ -92,7 +92,7 @@ crashlytics-build.properties
 
 ### my custom ignore ###
 **/[Aa]ssets/[Pp]lugins
-**/[Aa]ssets/[Ss]lugins.meta
+**/[Aa]ssets/[Pp]lugins.meta
 
 **/[Aa]ssets/[Ss]amplesSandbox
 **/[Aa]ssets/[Ss]amplesSandbox.meta
