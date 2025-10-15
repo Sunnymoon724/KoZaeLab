@@ -92,6 +92,10 @@ crashlytics-build.properties
 
 ### my custom ignore ###
 **/[Aa]ssets/[Pp]lugins
+**/[Aa]ssets/[Ss]lugins.meta
 
-Route.yaml
-[Aa]ssets/[Ss]amplesSandbox
+**/[Aa]ssets/[Ss]amplesSandbox
+**/[Aa]ssets/[Ss]amplesSandbox.meta
+
+[Aa]ssets/[Rr]esources/[Tt]ext/[Ss]etting/[Rr]oute.yaml
+[Aa]ssets/[Rr]esources/[Tt]ext/[Ss]etting/[Rr]oute.yaml.meta
