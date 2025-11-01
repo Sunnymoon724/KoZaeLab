@@ -10,7 +10,7 @@ namespace KZLib
 
 		private string _GetUIPath(string tag)
 		{
-			return $"{(_IsDefinedUI(tag) ? "Resources/Common" : m_prefabPath)}/{tag}.prefab";
+			return $"{(_IsDefinedUI(tag) ? "Resources/Prefab/UI" : m_prefabPath)}/{tag}.prefab";
 		}
 
 		private bool _IsDefinedUI(string tag)
