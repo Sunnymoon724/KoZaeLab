@@ -92,16 +92,20 @@ namespace KZLib.KZData
 				return new OptionConfig();
 			}
 
-			var deserializer = new DeserializerBuilder().IncludeNonPublicProperties().Build();
 			var text = _LoadConfigFile(name);
 
-			try
+			if(!text.IsEmpty())
 			{
-				return deserializer.Deserialize(text,type) as IConfig;
-			}
-			catch(Exception exception)
-			{
-				LogSvc.System.E($"Failed to deserialize {name}.yaml [{exception.Message}]");
+				var deserializer = new DeserializerBuilder().IncludeNonPublicProperties().Build();
+
+				try
+				{
+					return deserializer.Deserialize(text,type) as IConfig;
+				}
+				catch(Exception exception)
+				{
+					LogSvc.System.E($"Failed to deserialize {name}.yaml [{exception.Message}]");
+				}
 			}
 
 			return null;
