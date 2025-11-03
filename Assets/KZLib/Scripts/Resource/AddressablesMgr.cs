@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -15,6 +14,7 @@ namespace KZLib
 		private bool m_disposed = false;
 
 		private record AssetData(Object Asset,string Label);
+		private record LocationData(IResourceLocation Location,string Label);
 
 		private readonly Dictionary<string,AssetData> m_assetDataDict = new();
 
@@ -37,15 +37,7 @@ namespace KZLib
 
 		public async UniTask<long> GetDownloadAssetSizeAsync(string label)
 		{
-			var handle = Addressables.GetDownloadSizeAsync(label);
-
-			await handle;
-
-			var size = handle.Status == AsyncOperationStatus.Succeeded ? handle.Result : 0L;
-
-			Addressables.Release(handle);
-
-			return size;
+			return await CommonUtility.LoadHandleSafeAsync(Addressables.GetDownloadSizeAsync(label));
 		}
 
 		public async UniTask<bool> DownloadAssetAsync(string label,Action<float,long,long> onUpdateProgress = null)
@@ -69,7 +61,7 @@ namespace KZLib
 				errorLog = handle.OperationException.Message;
 			}
 
-			Addressables.Release(handle);
+			handle.Release();
 
 			if(result)
 			{
@@ -88,30 +80,39 @@ namespace KZLib
 
 		public TObject GetObject<TObject>(string path) where TObject : Object
 		{
-			if(!m_assetDataDict.ContainsKey(path))
+			if(!m_assetDataDict.TryGetValue(path,out var result))
 			{
 				LogSvc.System.E($"Asset is not exist. [{path}]");
 
 				return null;
 			}
 
-			var data = m_assetDataDict[path];
-
-			return data.Asset as TObject;
+			return result.Asset as TObject;
 		}
 
-		public TObject[] GetObjectArray<TObject>(string path) where TObject : Object
+		public TObject[] ExtractObjectArray<TObject>(string path) where TObject : Object
 		{
-			var dataGroup = m_assetDataDict.Where(x=>x.Key.Contains(path));
+			var objectList = new List<TObject>();
+			
+			foreach(var pair in m_assetDataDict)
+			{
+				if(pair.Key.IsEqual(path))
+				{
+					if(pair.Value.Asset is TObject result)
+					{
+						objectList.Add(result);
+					}
+				}
+			}
 
-			if(dataGroup.IsNullOrEmpty())
+			if(objectList.IsNullOrEmpty())
 			{
 				LogSvc.System.E($"Asset is not exist. [{path}]");
 
-				return null;
+				return Array.Empty<TObject>();
 			}
 
-			return dataGroup.Select(x => x.Value.Asset as TObject).Where(y => y != null).ToArray();
+			return objectList.ToArray();
 		}
 
 		public async UniTask LoadResourceAsync(string[] labelArray,Action<float,float> onUpdateProgress)
@@ -123,46 +124,33 @@ namespace KZLib
 				return;
 			}
 
-			var dataList = new List<(IResourceLocation,string)>();
+			var locationDataList = new List<LocationData>();
 
 			foreach(var label in labelArray)
 			{
-				var handle = Addressables.LoadResourceLocationsAsync(label);
-
-				await handle;
-
-				if(handle.Status == AsyncOperationStatus.Failed)
-				{
-					throw handle.OperationException;
-				}
-
-				dataList.AddRange(handle.Result.Select(x => (x,label)));
-
-				Addressables.Release(handle);
+				var locationList = await CommonUtility.LoadHandleSafeAsync(Addressables.LoadResourceLocationsAsync(label));
+				
+				foreach(var location in locationList)
+                {
+                    locationDataList.Add(new LocationData(location,label));
+                }
 			}
 
-			var totalCount = dataList.Count;
+			var totalCount = locationDataList.Count;
 
-			for(var i=0;i<dataList.Count;i++)
+			for(var i=0;i<locationDataList.Count;i++)
 			{
-				var data = dataList[i];
-				var key = data.Item1.InternalId;
+				var locationData = locationDataList[i];
+				var key = locationData.Location.InternalId;
 
 				if(m_assetDataDict.ContainsKey(key))
 				{
 					continue;
 				}
 
-				var handle = Addressables.LoadAssetAsync<Object>(data.Item1.PrimaryKey);
+				var asset = await CommonUtility.LoadHandleSafeAsync(Addressables.LoadAssetAsync<Object>(locationData.Location.PrimaryKey));
 
-				await handle;
-
-				if(handle.Status == AsyncOperationStatus.Failed)
-				{
-					throw handle.OperationException;
-				}
-
-				m_assetDataDict.Add(key,new AssetData(handle.Result,data.Item2));
+				m_assetDataDict.Add(key,new AssetData(asset,locationData.Label));
 
 				onUpdateProgress?.Invoke(i,totalCount);
 			}
@@ -170,9 +158,25 @@ namespace KZLib
 
 		public void ReleaseResources(params string[] labelArray)
 		{
-			foreach(var key in m_assetDataDict.Where(x => labelArray.Contains(x.Value.Label)).Select(y => y.Key))
+			var keyList = new List<string>();
+
+			foreach(var pair in m_assetDataDict)
+			{
+				var assetData = pair.Value;
+
+				foreach(var label in labelArray)
+				{
+					if(assetData.Label.IsEqual(label))
+					{
+						keyList.Add(label);
+					}
+				}
+			}
+
+			foreach(var key in keyList)
 			{
 				Addressables.Release(m_assetDataDict[key].Asset);
+
 				m_assetDataDict.Remove(key);
 			}
 		}

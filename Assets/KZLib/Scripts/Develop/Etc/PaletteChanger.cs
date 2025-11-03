@@ -112,7 +112,7 @@ namespace KZLib.KZDevelop
 
 					foreach(var prt in ProtoMgr.In.GetProtoGroup<ColorProto>())
 					{
-						m_paletteNameList.Add(prt.Name,prt.Num);
+						m_paletteNameList.Add(LingoMgr.In.FindString(prt.NameKey),prt.Num);
 					}
 				}
 

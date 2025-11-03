@@ -18,12 +18,16 @@ namespace KZLib.KZMenu
 {
 	public partial class KZMenuItem
 	{
+		private const string c_key = "Key";
+
 		/// <summary>
 		/// excel file -> asset file
 		/// </summary>
 		[MenuItem("KZMenu/Lingo/Generate Lingo",false,MenuOrder.Data.GENERATE)]
 		private static void _OnGenerateLingo()
 		{
+			AddressableAssetSettingsDefaultObject.GetSettings(true);
+
 			var localizationSettings = LocalizationSettings.GetInstanceDontCreateDefault();
 
 			if(localizationSettings == null)
@@ -71,11 +75,13 @@ namespace KZLib.KZMenu
 							{
 								foreach(var pair in lingoDict)
 								{
-									var collection = _GetOrCreateLocalizationTableCollection(pair.Key,fileName,LocalizationEditorSettings.GetStringTableCollection,LocalizationEditorSettings.CreateStringTableCollection);
+									var sheetName = pair.Key;
+
+									var collection = _GetOrCreateLocalizationTableCollection(sheetName,fileName,LocalizationEditorSettings.GetStringTableCollection,LocalizationEditorSettings.CreateStringTableCollection);
 
 									_SyncStringTableCollection(collection,identifierHashSet);
 
-									_ApplyStringToTableCollection(collection,pair.Value);
+									_ApplyStringToTableCollection(collection,sheetName,pair.Value);
 
 									tableNameHashSet.Add(collection.name);
 								}
@@ -86,11 +92,13 @@ namespace KZLib.KZMenu
 							{
 								foreach(var pair in lingoDict)
 								{
-									var collection = _GetOrCreateLocalizationTableCollection(pair.Key,fileName,LocalizationEditorSettings.GetAssetTableCollection,LocalizationEditorSettings.CreateAssetTableCollection);
+									var sheetName = pair.Key;
+
+									var collection = _GetOrCreateLocalizationTableCollection(sheetName,fileName,LocalizationEditorSettings.GetAssetTableCollection,LocalizationEditorSettings.CreateAssetTableCollection);
 
 									_SyncAssetTableCollection(collection,identifierHashSet);
 
-									_ApplyAssetTableCollection(collection,pair.Value);
+									_ApplyAssetTableCollection(collection,sheetName,pair.Value);
 
 									tableNameHashSet.Add(collection.name);
 								}
@@ -142,24 +150,33 @@ namespace KZLib.KZMenu
 			_DisplayGenerateEnd();
 		}
 
-		private static void _ApplyStringToTableCollection(StringTableCollection collection,Dictionary<string,string[]> lingoDict)
+		private static void _ApplyStringToTableCollection(StringTableCollection collection,string sheetName,Dictionary<string,string[]> lingoDict)
 		{
 			var keyHashSet = new HashSet<string>();
-			var schemeArray = lingoDict["Key"];
+			var schemeArray = lingoDict.TryGetValue(c_key,out var textArray) ? textArray : null;
+
+			if(schemeArray == null)
+			{
+				LogSvc.System.E($"{c_key} is not found in {sheetName}");
+
+				return;
+			}
 
 			foreach(var pair in lingoDict)
 			{
 				var key = pair.Key;
 
-				if(key.IsEqual("Key"))
+				if(key.IsEqual(c_key))
 				{
 					continue;
 				}
 
+				key = $"{sheetName.ToLower()}_{key}";
+
 				foreach(var table in collection.StringTables)
 				{
 					var language = table.LocaleIdentifier.CultureInfo.EnglishName;
-					var text = GetValueByLanguage(language,schemeArray,pair.Value);
+					var text = _GetValueByLanguage(language,schemeArray,pair.Value);
 
 					var tableEntry = table.GetEntry(key);
 
@@ -180,23 +197,28 @@ namespace KZLib.KZMenu
 				keyHashSet.Add(pair.Key);
 			}
 
-			CheckUnusedKeys(collection.SharedData,keyHashSet);
+			_CheckUnusedKeys(collection.SharedData,keyHashSet);
 
 			AssetDatabase.SaveAssets();
 		}
 
-		private static void _ApplyAssetTableCollection(AssetTableCollection collection,Dictionary<string,string[]> lingoDict)
+		private static void _ApplyAssetTableCollection(AssetTableCollection collection,string sheetName,Dictionary<string,string[]> lingoDict)
 		{
 			var keyHashSet = new HashSet<string>();
-			var schemeArray = lingoDict["Key"];
+			var schemeArray = lingoDict.TryGetValue(c_key,out var textArray) ? textArray : null;
 
-			AddressableAssetSettingsDefaultObject.GetSettings(true);
+			if(schemeArray == null)
+			{
+				LogSvc.System.E($"{c_key} is not found in {sheetName}");
+
+				return;
+			}
 
 			foreach(var pair in lingoDict)
 			{
 				var key = pair.Key;
 
-				if(key.IsEqual("Key"))
+				if(key.IsEqual(c_key))
 				{
 					continue;
 				}
@@ -204,7 +226,7 @@ namespace KZLib.KZMenu
 				foreach(var table in collection.AssetTables)
 				{
 					var language = table.LocaleIdentifier.CultureInfo.EnglishName;
-					var path = GetValueByLanguage(language,schemeArray,pair.Value);
+					var path = _GetValueByLanguage(language,schemeArray,pair.Value);
 
 					var assetPath = RouteMgr.In.GetOrCreateRoute(path).AssetPath;
 					var guid = _CreateAddressableGuid(assetPath,language,table.LocaleIdentifier.Code);
@@ -231,7 +253,7 @@ namespace KZLib.KZMenu
 				keyHashSet.Add(pair.Key);
 			}
 
-			CheckUnusedKeys(collection.SharedData,keyHashSet);
+			_CheckUnusedKeys(collection.SharedData,keyHashSet);
 
 			AssetDatabase.SaveAssets();
 		}
@@ -321,7 +343,7 @@ namespace KZLib.KZMenu
 			}
 		}
 
-		private static void CheckUnusedKeys(SharedTableData tableData,HashSet<string> usedKeyHashSet)
+		private static void _CheckUnusedKeys(SharedTableData tableData,HashSet<string> usedKeyHashSet)
 		{
 			var sharedData = tableData;
 			var unusedKeyList = new List<string>();
@@ -344,7 +366,7 @@ namespace KZLib.KZMenu
 			EditorUtility.SetDirty(sharedData);
 		}
 
-		private static string GetValueByLanguage(string language,string[] schemeArray,string[] cellArray)
+		private static string _GetValueByLanguage(string language,string[] schemeArray,string[] cellArray)
 		{
 			for(var i=0;i<schemeArray.Length;i++)
 			{

@@ -1,95 +1,24 @@
 using System;
-using System.Collections.Generic;
-using YamlDotNet.Serialization;
 using KZLib.KZUtility;
-using KZLib.KZData;
-using System.IO;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.Localization.Settings;
 using Cysharp.Threading.Tasks;
+using UnityEngine.Localization;
 using System.Threading;
-using System.Diagnostics;
-using UnityEngine.ResourceManagement.AsyncOperations;
+using Object = UnityEngine.Object;
 
 namespace KZLib.KZData
 {
 	public class LingoMgr : Singleton<LingoMgr>
 	{
 		private bool m_disposed = false;
+		private bool m_isLoaded = false;
 
-		// private SystemLanguage m_language = SystemLanguage.English;
+		private SystemLanguage m_currentLanguage = SystemLanguage.English;
 
-		// private readonly Dictionary<SystemLanguage,Dictionary<string,string>> m_languageTextDict = new();
+		public event Action OnLanguageChange = null;
 
-		// public event Action OnLocalizationChange = null;
-
-		// private bool m_isLoaded = false;
-
-		protected override void Initialize()
-		{
-			// base.Initialize();
-
-			// m_languageTextDict.Clear();
-
-			// var tableList = LocalizationSettings.StringDatabase.GetAllTables();
-
-			// foreach(var table in tableList)
-			// {
-				
-			// }
-
-			// localizationSettings.get
-
-			// var tables = LocalizationSettings.StringDatabase.GetTableNames();
-
-
-			// var stringTables = LocalizationSettings.StringDatabase.name();
-
-			// foreach (var table in stringTables)
-			// {
-			// 	var entry = table.GetEntry("TestKey");
-			// 	if (entry != null)
-			// 	{
-			// 		Debug.Log($"Table: {table.TableCollectionName}, Entry: {entry.Key}, Value: {entry.GetLocalizedString()}");
-			// 	}
-			// }
-
-
-			// if (table != null)
-			// {
-			// 	var entry = table.GetEntry(entryName);
-			// 	if (entry != null)
-			// 	{
-			// 		textComponent.text = entry.GetLocalizedString();
-			// 	}
-			// }
-
-			// LocalizationSettings.AssetDatabase.GetAllTables();
-
-			// // 
-
-
-
-			// // TODO 유니티 로컬라이즈 찾아보기.... -> 언어는 구글 시트 이용? & 루아 써서 실시간도 생각해보기
-			// foreach(var textAsset in ResMgr.In.GetTextAssetArray(ConfigMgr.In.Access<GameConfig>().LanguageFolderPath))
-			// {
-			// 	var languageDict = JsonConvert.DeserializeObject<Dictionary<string,string>>(textAsset.text);
-
-			// 	if(languageDict.IsNullOrEmpty())
-			// 	{
-			// 		continue;
-			// 	}
-
-			// 	m_languageTextDict.Add(textAsset.name.ToEnum<SystemLanguage>(),languageDict);
-			// }
-
-			// var optionCfg = ConfigMgr.In.Access<OptionConfig>();
-
-			// optionCfg.OnLanguageChange += _OnChangeLanguage;
-
-			// _OnChangeLanguage(optionCfg.Language);
-		}
+		public SystemLanguage CurrentLanguage => m_currentLanguage;
 
 		protected override void Release(bool disposing)
 		{
@@ -100,85 +29,112 @@ namespace KZLib.KZData
 
 			if(disposing)
 			{
-				
+				if(ConfigMgr.HasInstance)
+				{
+					var optionCfg = ConfigMgr.In.Access<OptionConfig>();
+
+					optionCfg.OnLanguageChanged -= _OnChangeLanguage;
+				}
+
+				m_isLoaded = false;
 			}
 
 			m_disposed = true;
 
 			base.Release(disposing);
 		}
+		
+		public async UniTask<bool> TryLoadAsync(CancellationToken token)
+		{
+			if(m_isLoaded)
+			{
+				return true;
+			}
 
-		// public async UniTask<bool> TryLoadAsync(CancellationToken token)
-		// {
-		// 	if(m_isLoaded)
-		// 	{
-		// 		return true;
-		// 	}
+			await LocalizationSettings.InitializationOperation;
 
-		// 	var start = DateTime.Now;
+			var optionCfg = ConfigMgr.In.Access<OptionConfig>();
 
-		// 	var handle = LocalizationSettings.StringDatabase.GetAllTables();
+			optionCfg.OnLanguageChanged += _OnChangeLanguage;
 
-		// 	await handle.Task;
+			_OnChangeLanguage(optionCfg.Language);
 
-		// 	// 비동기 작업이 완료되면, 테이블에 접근합니다.
-		// 	if(handle.Status == AsyncOperationStatus.Succeeded)
-		// 	{
-		// 		foreach (var table in handle.Result)
-		// 		{
-		// 			Debug.Log("Table Name: " + table.TableCollectionName);
-		// 		}
-		// 	}
-		// 	else
-		// 	{
-		// 		Logger.System.E($"Failed to load tables: {handle.OperationException}");
-		// 	}
+			m_isLoaded = true;
 
-		// 	if(!_TryGetTextAsset(out var textAssetArray))
-		// 	{
-		// 		return false;
-		// 	}
+			return true;
+		}
 
-		// 	var accumulatedTime = 0.0d;
-		// 	var stopwatch = new Stopwatch();
+		private void _OnChangeLanguage(SystemLanguage language)
+		{
+			var newLocal = LocalizationSettings.AvailableLocales.GetLocale(new LocaleIdentifier(language));
 
-		// 	Logger.System.I("Proto Load Start");
+			if(newLocal == null)
+			{
+				language = SystemLanguage.English;
 
-		// 	for(var i=0;i<textAssetArray.Length;i++)
-		// 	{
-		// 		var textAsset = textAssetArray[i];
+				newLocal = LocalizationSettings.AvailableLocales.GetLocale(new LocaleIdentifier(language));
 
-		// 		if(textAsset == null)
-		// 		{
-		// 			Logger.System.W($"TextAsset is null in {i}");
+				if(newLocal == null)
+				{
+					LogSvc.System.E("Localization is not include English locale");
 
-		// 			continue;
-		// 		}
+					return;
+				}
+			}
 
-		// 		stopwatch.Restart();
+			LocalizationSettings.SelectedLocale = newLocal;
+			m_currentLanguage = language;
 
-		// 		if(!_TryLoadProto(textAsset))
-		// 		{
-		// 			return false;
-		// 		}
+			OnLanguageChange?.Invoke();
+		}
 
-		// 		accumulatedTime += stopwatch.Elapsed.TotalSeconds;
+		public string FindString(string key)
+		{
+			if(!_SplitLingoFormat(key,out var tableName,out var entryKey))
+			{
+				return null;
+			}
 
-		// 		if(accumulatedTime >= c_frameTime)
-		// 		{
-		// 			accumulatedTime = 0.0d;
+			var localizedText = LocalizationSettings.StringDatabase.GetLocalizedString(tableName,entryKey);
 
-		// 			await UniTask.Delay(c_delayTime,cancellationToken : token);
-		// 		}
-		// 	}
+			if(localizedText == entryKey)
+			{
+				LogSvc.System.W($"{entryKey} is not exist in localization.");
+				
+				return key;
+			}
 
-		// 	stopwatch.Stop();
+			return localizedText;
+		}
 
-		// 	Logger.System.I($"Proto Load Complete [Count : {textAssetArray.Length} / Duration : {(DateTime.Now-start).TotalSeconds}]");
+		public async UniTask<TAsset> FindAssetAsync<TAsset>(string key) where TAsset : Object
+		{
+			if(!_SplitLingoFormat(key,out var tableName,out var _))
+			{
+				return null;
+			}
 
-		// 	m_isLoaded = true;
+			return await CommonUtility.LoadHandleSafeAsync(LocalizationSettings.AssetDatabase.GetLocalizedAssetAsync<TAsset>(tableName,key));
+		}
 
-		// 	return true;
-		// }
+		private bool _SplitLingoFormat(string key,out string tableName,out string entryKey)
+		{
+			var index = key.IndexOf('_');
+
+			if(index <= 0 || index >= key.Length - 1)
+			{
+				LogSvc.System.W($"{key} is not lingo format.");
+				
+				tableName = string.Empty;
+				entryKey = string.Empty;
+
+				return false;
+			}
+
+			tableName = key[..index];
+			entryKey = key[(index + 1)..];
+
+			return true;
+		}
 	}
 }

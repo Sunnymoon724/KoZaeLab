@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public static partial class CommonUtility
 {
@@ -192,5 +193,21 @@ public static partial class CommonUtility
 	private static float _GetDeltaTime(bool ignoreTimescale)
 	{
 		return ignoreTimescale ? Time.unscaledDeltaTime : Time.deltaTime;
+	}
+
+	public static async UniTask<T> LoadHandleSafeAsync<T>(AsyncOperationHandle<T> handle)
+	{
+		await handle;
+
+		if(handle.Status == AsyncOperationStatus.Failed)
+		{
+			throw handle.OperationException;
+		}
+		
+		var result = handle.Result;
+
+		handle.Release();
+
+		return result;
 	}
 }

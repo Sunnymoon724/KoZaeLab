@@ -11,11 +11,10 @@ namespace KZLib.KZData
 {
 	public class ProtoMgr : Singleton<ProtoMgr>
 	{
-		private bool m_disposed = false;
-
 		private const double c_frameTime = 1.0/30.0d; // 30 fps (0.0333s)
 		private const int c_delayTime = 1; // 1ms
 
+		private bool m_disposed = false;
 		private bool m_isLoaded = false;
 
 		//? Type / Num / Proto

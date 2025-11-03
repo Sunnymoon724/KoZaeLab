@@ -4,7 +4,8 @@ using KZLib.KZData;
 
 namespace KZLib
 {
-	public partial class SoundMgr : LoadSingletonMB<SoundMgr>
+    [RequireComponent(typeof(AudioSource))]
+    public partial class SoundMgr : LoadSingletonMB<SoundMgr>
 	{
 		protected override void Initialize()
 		{

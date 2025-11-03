@@ -147,7 +147,7 @@ namespace KZLib
 
 			if(m_useServerResource)
 			{
-				return AddressablesMgr.In.GetObjectArray<TObject>(assetPath);
+				return AddressablesMgr.In.ExtractObjectArray<TObject>(assetPath);
 			}
 
 #if UNITY_EDITOR

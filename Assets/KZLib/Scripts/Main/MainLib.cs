@@ -258,9 +258,15 @@ namespace KZLib
 #endif
 
 #if UNITY_EDITOR
-		protected async virtual UniTask _InitializeTestMode(CancellationToken token) { await ProtoMgr.In.TryLoadAsync(token); }
+		protected async virtual UniTask _InitializeTestMode(CancellationToken token) { await _InitializeMgr(token); }
 #endif
-		protected async virtual UniTask _InitializeNormalMode(CancellationToken token) { await ProtoMgr.In.TryLoadAsync(token); }
+		protected async virtual UniTask _InitializeNormalMode(CancellationToken token) { await _InitializeMgr(token); }
+		
+		protected async UniTask _InitializeMgr(CancellationToken token)
+		{
+			await ProtoMgr.In.TryLoadAsync(token);
+			await LingoMgr.In.TryLoadAsync(token);
+		}
 
 		protected virtual void _InitializeResolution(StringBuilder stringBuilder)
 		{
