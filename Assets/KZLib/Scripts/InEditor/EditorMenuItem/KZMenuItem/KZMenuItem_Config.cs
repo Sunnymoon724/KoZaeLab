@@ -151,7 +151,7 @@ namespace KZLib.KZMenu
 
 			var filePath = Path.Combine(yamlRoute.AbsolutePath,fileName);
 
-			if(!FileUtility.IsFileExist(filePath))
+			if(FileUtility.IsFileExist(filePath))
 			{
 				_DisplayInfo($"{fileName} is already exist.",true);
 
