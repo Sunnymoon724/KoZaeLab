@@ -74,7 +74,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Config/Game/Generate GameConfig Yaml File",true,MenuOrder.Data.GENERATE)]
 		private static bool _IsExistGameConfigYamlFile()
 		{
-			return _IsExistConfigYamlFile("Game.yaml");
+			return _IsExistConfigYamlFile("Game.yaml","defaultRes:config");
 		}
 
 		[MenuItem("KZMenu/Config/Game/Generate Custom GameConfig Yaml File",false,MenuOrder.Data.GENERATE)]
@@ -100,7 +100,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Config/Service/Generate ServiceConfig Yaml File",true,MenuOrder.Data.GENERATE)]
 		private static bool _IsExistServiceConfigYamlFile()
 		{
-			return _IsExistConfigYamlFile("Service.yaml");
+			return _IsExistConfigYamlFile("Service.yaml","defaultRes:config");
 		}
 
 		[MenuItem("KZMenu/Config/Service/Generate Custom ServiceConfig Yaml File",false,MenuOrder.Data.GENERATE)]
@@ -126,7 +126,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Config/Editor/Generate GameConfig Yaml File",true,MenuOrder.Data.GENERATE)]
 		private static bool _IsExistEditorConfigYamlFile()
 		{
-			return _IsExistConfigYamlFile("Editor.yaml");
+			return _IsExistConfigYamlFile("Editor.yaml","workRes:config");
 		}
 
 		[MenuItem("KZMenu/Config/Editor/Generate Custom EditorConfig Yaml File",false,MenuOrder.Data.GENERATE)]
@@ -148,7 +148,7 @@ namespace KZLib.KZMenu
 			var yamlRoute = RouteMgr.In.GetOrCreateRoute(routePath);
 
 			FileUtility.CreateFolder(yamlRoute.AbsolutePath);
-			
+
 			var filePath = Path.Combine(yamlRoute.AbsolutePath,fileName);
 
 			if(!FileUtility.IsFileExist(filePath))
@@ -172,11 +172,13 @@ namespace KZLib.KZMenu
 			_DisplayGenerateEnd();
 		}
 
-		private static bool _IsExistConfigYamlFile(string fileName)
+		private static bool _IsExistConfigYamlFile(string fileName,string routePath)
 		{
-			var yamlRoute = RouteMgr.In.GetOrCreateRoute("defaultRes:config");
+			var yamlRoute = RouteMgr.In.GetOrCreateRoute(routePath);
 
-			return !File.Exists(Path.Combine(yamlRoute.AbsolutePath,fileName));
+			var filePath = Path.Combine(yamlRoute.AbsolutePath,fileName);
+
+			return !FileUtility.IsFileExist(filePath);
 		}
 
 		private static void _GenerateCustomConfigYamlFile(string fileName,IConfig config)
