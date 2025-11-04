@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using Cysharp.Threading.Tasks;
 using System.Threading;
-
-
+using System.Collections;
+using UnityEditor.Animations;
 
 #if UNITY_EDITOR
 
@@ -24,13 +24,6 @@ namespace KZLib
 
 		[SerializeField,KZRichText]
 		protected string m_currentStateName = null;
-
-#if UNITY_EDITOR
-		[SerializeField]
-		private string m_stateName = null;
-		private bool m_isPlaying = false;
-		private double m_lastTime = 0.0d;
-#endif
 
 		private readonly Dictionary<int,MotionEvent> m_motionEventDict = new();
 
@@ -97,20 +90,25 @@ namespace KZLib
 				m_animator = GetComponent<Animator>();
 			}
 		}
-
+		
 #if UNITY_EDITOR
-		[Button("Play Animation")]
-		protected void OnPlayAnimationInEditor()
+		[BoxGroup("Animation",ShowLabel = false)]
+		[VerticalGroup("Animation/0"),SerializeField,ValueDropdown(nameof(StateNameList))]
+		private string m_stateName = null;
+
+		private bool m_isPlaying = false;
+		private double m_lastTime = 0.0d;
+
+		[HorizontalGroup("Animation/1"),Button(Name = "",Icon = SdfIconType.PlayFill,ButtonHeight = 30),EnableIf(nameof(IsValidState))]
+		protected void _OnPlayAnimationInEditor()
 		{
 			if(!m_animator)
 			{
-				LogSvc.System.W("Animator is null");
-
 				return;
 			}
 
-			EditorApplication.update -= UpdateInEditor;
-			EditorApplication.update += UpdateInEditor;
+			EditorApplication.update -= _UpdateInEditor;
+			EditorApplication.update += _UpdateInEditor;
 
 			m_animator.Play(m_stateName);
 
@@ -118,16 +116,22 @@ namespace KZLib
 			m_isPlaying = true;
 		}
 
-		[Button("Stop Animation")]
-		protected void OnStopAnimationInEditor()
+		[HorizontalGroup("Animation/1"),Button(Name = "",Icon = SdfIconType.StopFill,ButtonHeight = 30),EnableIf(nameof(IsValidState))]
+		protected void _OnStopAnimationInEditor()
 		{
 			m_isPlaying = false;
-			EditorApplication.update -= UpdateInEditor;
+
+			EditorApplication.update -= _UpdateInEditor;
 		}
 
-		void UpdateInEditor()
+		private void _UpdateInEditor()
 		{
-			if(!m_isPlaying || !m_animator)
+			if(!m_animator)
+			{
+				return;
+			}
+
+			if(!m_isPlaying)
 			{
 				return;
 			}
@@ -139,6 +143,34 @@ namespace KZLib
 			m_animator.Update((float)(currentTime-m_lastTime));
 			SceneView.RepaintAll();
 		}
+
+		private readonly ValueDropdownList<string> m_stateNameList = new();
+
+		private IEnumerable StateNameList
+		{
+			get
+			{
+				if(m_animator && m_stateNameList.IsNullOrEmpty())
+				{
+					var controller = m_animator.runtimeAnimatorController as AnimatorController;
+					
+					if(controller != null)
+                    {
+                        foreach(var layer in controller.layers)
+						{
+							foreach(var child in layer.stateMachine.states)
+							{
+								m_stateNameList.Add(child.state.name);
+							}
+						}
+                    }
+				}
+
+				return m_stateNameList;
+			}
+		}
+		
+		private bool IsValidState => !m_stateName.IsEmpty();
 #endif
 	}
 }

@@ -7,37 +7,8 @@ using System;
 
 namespace KZLib.KZDevelop
 {
-    public class PaletteChanger : MonoBehaviour
+	public class PaletteChanger : MonoBehaviour
 	{
-#if UNITY_EDITOR
-		[SerializeField,HideInInspector]
-		private int m_paletteNum = 0;
-
-		[ShowInInspector,ValueDropdown(nameof(PaletteNameList))]
-		protected int PaletteNum
-		{
-			get => m_paletteNum;
-			private set
-			{
-				if(m_paletteNum == value)
-				{
-					return;
-				}
-
-				m_paletteNum = value;
-
-				if(m_paletteNum < 1)
-				{
-					return;
-				}
-
-				ProtoMgr.In.LoadInEditor();
-
-				SetPalette(ProtoMgr.In.GetProto<ColorProto>(m_paletteNum));
-			}
-		}
-#endif
-
 		[SerializeField,ReadOnly]
 		private List<Renderer> m_rendererList = new();
 
@@ -82,7 +53,7 @@ namespace KZLib.KZDevelop
 			return colorArray;
 		}
 
-		[Button("Fill Renderer List")]
+		[Button("Fill Renderers",ButtonSizes.Large)]
 		private void OnFillRendererList()
 		{
 			m_rendererList.Clear();
@@ -100,15 +71,42 @@ namespace KZLib.KZDevelop
 		}
 
 #if UNITY_EDITOR
-		private static readonly ValueDropdownList<int> m_paletteNameList = new();
+		[SerializeField,HideInInspector]
+		private int m_paletteNum = 0;
 
-		private static IEnumerable PaletteNameList
+		[ShowInInspector,ValueDropdown(nameof(PaletteNameList))]
+		protected int PaletteNum
+		{
+			get => m_paletteNum;
+			private set
+			{
+				if(m_paletteNum == value)
+				{
+					return;
+				}
+
+				m_paletteNum = value;
+
+				if(m_paletteNum < 1)
+				{
+					return;
+				}
+
+				ProtoMgr.In.LoadInEditor();
+
+				SetPalette(ProtoMgr.In.GetProto<ColorProto>(m_paletteNum));
+			}
+		}
+
+		private readonly ValueDropdownList<int> m_paletteNameList = new();
+
+		private IEnumerable PaletteNameList
 		{
 			get
 			{
 				if(m_paletteNameList.IsNullOrEmpty())
 				{
-					ProtoMgr.In.Reload();
+					ProtoMgr.In.LoadInEditor();
 
 					foreach(var prt in ProtoMgr.In.GetProtoGroup<ColorProto>())
 					{

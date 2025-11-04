@@ -90,17 +90,17 @@ namespace KZLib.KZData
 
 		public string FindString(string key)
 		{
-			if(!_SplitLingoFormat(key,out var tableName,out var entryKey))
+			if(!_SplitLingoFormat(key,out var tableName))
 			{
-				return null;
+				return key;
 			}
 
-			var localizedText = LocalizationSettings.StringDatabase.GetLocalizedString(tableName,entryKey);
+			var localizedText = LocalizationSettings.StringDatabase.GetLocalizedString(tableName,key);
 
-			if(localizedText == entryKey)
+			if(localizedText == key)
 			{
-				LogSvc.System.W($"{entryKey} is not exist in localization.");
-				
+				LogSvc.System.W($"{key} is not exist in localization.");
+
 				return key;
 			}
 
@@ -109,7 +109,7 @@ namespace KZLib.KZData
 
 		public async UniTask<TAsset> FindAssetAsync<TAsset>(string key) where TAsset : Object
 		{
-			if(!_SplitLingoFormat(key,out var tableName,out var _))
+			if(!_SplitLingoFormat(key,out var tableName))
 			{
 				return null;
 			}
@@ -117,22 +117,18 @@ namespace KZLib.KZData
 			return await CommonUtility.LoadHandleSafeAsync(LocalizationSettings.AssetDatabase.GetLocalizedAssetAsync<TAsset>(tableName,key));
 		}
 
-		private bool _SplitLingoFormat(string key,out string tableName,out string entryKey)
+		private bool _SplitLingoFormat(string key,out string tableName)
 		{
 			var index = key.IndexOf('_');
 
 			if(index <= 0 || index >= key.Length - 1)
 			{
-				LogSvc.System.W($"{key} is not lingo format.");
-				
 				tableName = string.Empty;
-				entryKey = string.Empty;
 
 				return false;
 			}
 
 			tableName = key[..index];
-			entryKey = key[(index + 1)..];
 
 			return true;
 		}

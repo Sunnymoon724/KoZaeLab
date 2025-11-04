@@ -51,6 +51,8 @@ namespace KZLib.KZData
 				return true;
 			}
 
+			m_protoDict.Clear();
+
 			var start = DateTime.Now;
 
 			if(!_TryGetTextAsset(out var textAssetArray))
@@ -216,7 +218,7 @@ namespace KZLib.KZData
 					return false;
 				}
 
-				var deserialize = MessagePackSerializer.Deserialize(protoType.MakeArrayType(),textAsset.bytes);
+				var deserialize = MessagePackSerializer.Deserialize(protoType.MakeArrayType(),textAsset.bytes,MessagePackSerializerOptions.Standard.WithResolver(MessagePackResolver.Instance));
 
 				if(deserialize is not object[] resultArray)
 				{
@@ -281,6 +283,8 @@ namespace KZLib.KZData
 			{
 				return;
 			}
+
+			m_protoDict.Clear();
 
 			if(!_TryGetTextAsset(out var textAssetArray))
 			{
