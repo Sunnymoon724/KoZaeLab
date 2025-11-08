@@ -26,7 +26,7 @@ namespace KZLib.KZSample
 
 		public void OnClickPlay()
 		{
-			VibrationMgr.In.Play(m_IntensitySlider.value,m_TimeSlider.value);
+			VibrationManager.In.Play(m_IntensitySlider.value,m_TimeSlider.value);
 		}
 	}
 }

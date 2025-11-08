@@ -23,7 +23,7 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/Trello/2",Order = 2),Button("Get Board",ButtonSizes.Large),EnableIf(nameof(IsExistTrello))]
 		protected void OnFindBoard_Trello()
 		{
-			WebRequestMgr.In.GetTrelloBoard(TrelloCoreKey,(resultList) =>
+			WebRequestManager.In.GetTrelloBoard(TrelloCoreKey,(resultList) =>
 			{
 				_ShowResult_Trello(resultList);
 			});
@@ -37,7 +37,7 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/Trello/4",Order = 4),Button("Get List",ButtonSizes.Large),EnableIf(nameof(HasTestId))]
 		protected void OnFindList_Trello()
 		{
-			WebRequestMgr.In.GetTrelloList(TrelloCoreKey,m_trelloTestId,(resultList) =>
+			WebRequestManager.In.GetTrelloList(TrelloCoreKey,m_trelloTestId,(resultList) =>
 			{
 				_ShowResult_Trello(resultList);
 			});
@@ -46,7 +46,7 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/Trello/4",Order = 4),Button("Get Card",ButtonSizes.Large),EnableIf(nameof(HasTestId))]
 		protected void OnFindCard_Trello()
 		{
-			WebRequestMgr.In.GetTrelloCard(TrelloCoreKey,m_trelloTestId,(resultList) =>
+			WebRequestManager.In.GetTrelloCard(TrelloCoreKey,m_trelloTestId,(resultList) =>
 			{
 				_ShowResult_Trello(resultList);
 			});
@@ -55,13 +55,13 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/Trello/5",Order = 5),Button("Post List",ButtonSizes.Large),EnableIf(nameof(HasTestId))]
 		protected void OnPostList_Trello()
 		{
-			WebRequestMgr.In.PostTrelloList(m_trelloTestId,"Test");
+			WebRequestManager.In.PostTrelloList(m_trelloTestId,"Test");
 		}
 
 		[HorizontalGroup("Network/Trello/5",Order = 5),Button("Post Card",ButtonSizes.Large),EnableIf(nameof(HasTestId))]
 		protected void OnPostCard_Trello()
 		{
-			WebRequestMgr.In.PostTrelloCard(m_trelloTestId,"Test","Description");
+			WebRequestManager.In.PostTrelloCard(m_trelloTestId,"Test","Description");
 		}
 
 		[HorizontalGroup("Network/Trello/6",Order = 6),SerializeField,TableList(HideToolbar = true,AlwaysExpanded = true),ShowIf(nameof(IsShowTrelloResultList)),EnableIf(nameof(IsExistTrello))]

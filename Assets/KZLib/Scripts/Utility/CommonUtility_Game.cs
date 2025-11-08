@@ -4,6 +4,7 @@ using UnityEngine;
 using KZLib.KZUtility;
 using System.IO;
 using KZLib.KZData;
+using KZLib.KZNetwork;
 
 #if UNITY_EDITOR
 
@@ -39,15 +40,15 @@ public static partial class CommonUtility
 	{
 		// TODO Check Input
 
-		if(UIMgr.HasInstance)
+		if(UIManager.HasInstance)
 		{
 			if(isLock)
 			{
-				UIMgr.In.BlockInput();
+				UIManager.In.BlockInput();
 			}
 			else
 			{
-				UIMgr.In.AllowInput();
+				UIManager.In.AllowInput();
 			}
 		}
 	}
@@ -127,31 +128,46 @@ public static partial class CommonUtility
 	public static void ReleaseManager()
 	{
 		//? Release SingletonMB
-		_ReleaseSingletonMB<SceneStateMgr>();
-		_ReleaseSingletonMB<UIMgr>();
-		
-		_ReleaseSingletonMB<TouchMgr>();
-		_ReleaseSingletonMB<EffectMgr>();
-		_ReleaseSingletonMB<SoundMgr>();
+		_ReleaseSingletonMB<SceneStateManager>();
+		_ReleaseSingletonMB<UIManager>();
+
+		_ReleaseSingletonMB<TouchManager>();
+
+		_ReleaseSingletonMB<EffectManager>();
+		_ReleaseSingletonMB<SoundManager>();
 
 		//? Release Singleton
-		_ReleaseSingleton<ProtoMgr>();
-		_ReleaseSingleton<ClusterMgr>();
-		_ReleaseSingleton<ConfigMgr>();
-		_ReleaseSingleton<AffixMgr>();
-		_ReleaseSingleton<LingoMgr>();
+		_ReleaseSingleton<ClusterManager>();
 
-		_ReleaseSingleton<CameraMgr>();
-		_ReleaseSingleton<PlayerPrefsMgr>();
-		_ReleaseSingleton<ResMgr>();
-		_ReleaseSingleton<AddressablesMgr>();
-		_ReleaseSingleton<ShaderMgr>();
-		_ReleaseSingleton<InputMgr>();
-		_ReleaseSingleton<RouteMgr>();
+		_ReleaseSingleton<ProtoManager>();
+		_ReleaseSingleton<ConfigManager>();
+		_ReleaseSingleton<AffixManager>();
+		_ReleaseSingleton<LingoManager>();
 
-		_ReleaseSingleton<TimeMgr>();
-		_ReleaseSingleton<LuaMgr>();
+		_ReleaseSingleton<PlayerPrefsManager>();
 
+		_ReleaseSingleton<ResourceManager>();
+		_ReleaseSingleton<AddressablesManager>();
+
+		_ReleaseSingleton<CameraManager>();
+		_ReleaseSingleton<InputManager>();
+
+		_ReleaseSingleton<RouteManager>();
+
+		_ReleaseSingleton<ShaderManager>();
+		_ReleaseSingleton<GameTimeManager>();
+
+		_ReleaseSingleton<TimeManager>();
+		_ReleaseSingleton<LuaManager>();
+
+		_ReleaseSingleton<NetworkManager>();
+		_ReleaseSingleton<WebRequestManager>();
+
+		_ReleaseSingleton<VibrationManager>();
+
+#if KZLIB_PLAY_FAB
+		_ReleaseSingleton<PlayFabManager>();
+#endif
 
 		ClearCacheData();
 

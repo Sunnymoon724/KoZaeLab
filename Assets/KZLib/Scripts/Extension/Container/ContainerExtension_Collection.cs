@@ -78,30 +78,6 @@ public static partial class ContainerExtension
 		}
 	}
 
-	public static bool RemoveRandomValue<TValue>(this ICollection<TValue> collection,out TValue value)
-	{
-		value = default;
-
-		if(!_IsValid(collection))
-		{
-			return false;
-		}
-
-		var count = collection.Count;
-
-		if(count == 1)
-		{
-			value = collection._GetFirstValue();
-
-			return true;
-		}
-
-		value = collection.GenerateRandomValue();
-		collection.Remove(value);
-
-		return true;
-	}
-
 	public static TValue GetValueByIndex<TValue>(this ICollection<TValue> collection,int index)
 	{
 		return _IsValid(collection) && collection.TryGetValueByIndex(index, out var value) ? value : default;

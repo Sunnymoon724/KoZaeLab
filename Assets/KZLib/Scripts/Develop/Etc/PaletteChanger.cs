@@ -92,9 +92,9 @@ namespace KZLib.KZDevelop
 					return;
 				}
 
-				ProtoMgr.In.LoadInEditor();
+				ProtoManager.In.LoadInEditor();
 
-				SetPalette(ProtoMgr.In.GetProto<ColorProto>(m_paletteNum));
+				SetPalette(ProtoManager.In.GetProto<ColorProto>(m_paletteNum));
 			}
 		}
 
@@ -106,11 +106,11 @@ namespace KZLib.KZDevelop
 			{
 				if(m_paletteNameList.IsNullOrEmpty())
 				{
-					ProtoMgr.In.LoadInEditor();
+					ProtoManager.In.LoadInEditor();
 
-					foreach(var prt in ProtoMgr.In.GetProtoGroup<ColorProto>())
+					foreach(var prt in ProtoManager.In.GetProtoGroup<ColorProto>())
 					{
-						m_paletteNameList.Add(LingoMgr.In.FindString(prt.NameKey),prt.Num);
+						m_paletteNameList.Add(LingoManager.In.FindString(prt.NameKey),prt.Num);
 					}
 				}
 

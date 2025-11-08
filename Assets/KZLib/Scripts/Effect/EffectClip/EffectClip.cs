@@ -117,9 +117,9 @@ public abstract class EffectClip : BaseComponent
 			return;
 		}
 
-		if(EffectMgr.HasInstance)
+		if(EffectManager.HasInstance)
 		{
-			EffectMgr.In.ReleaseEffect(this);
+			EffectManager.In.ReleaseEffect(this);
 		}
 	}
 

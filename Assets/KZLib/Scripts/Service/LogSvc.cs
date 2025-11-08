@@ -245,7 +245,7 @@ public class LogChannel
 
 		var texture = CommonUtility.GetScreenShot();
 
-		await WebRequestMgr.In.PostBugReportWebRequestAsync(m_logDataQueue,texture.EncodeToPNG());
+		await WebRequestManager.In.PostBugReportWebRequestAsync(m_logDataQueue,texture.EncodeToPNG());
 
 		//? Send once and wait for 30 seconds -> If sent too frequently, it can cause a load.
 

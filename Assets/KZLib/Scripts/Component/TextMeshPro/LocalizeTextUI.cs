@@ -1,83 +1,67 @@
-// using System.Collections.Generic;
-// using KZLib;
-// using KZLib.KZUtility;
-// using Sirenix.OdinInspector;
-// using UnityEngine;
+using KZLib.KZData;
+using Sirenix.OdinInspector;
+using UnityEngine;
 
-// /// <summary>
-// /// 키 값을 세팅하면 해당 현지화 언어를 보여줌
-// /// </summary>
-// public class LocalizeTextUI : BaseTextUI
-// {
-// 	[SerializeField,HideInInspector]
-// 	private string m_localizeKey = null;
+public class LocalizeTextUI : BaseTextUI
+{
+	[SerializeField]
+	private string m_key = null;
 
-// 	[VerticalGroup("1",Order = 1),ShowInInspector]
-// 	public string LocalizeKey
-// 	{
-// 		get => m_localizeKey;
-// 		private set
-// 		{
-// 			SetLocalizeKey(value);
+	[Button("Execute Localize"),EnableIf(nameof(IsValidKey))]
+	protected void _ExecuteLocalize()
+	{
+		_OnChangedLanguage();
+	}
 
-// #if UNITY_EDITOR
-// 			m_localizeTextList.Clear();
+	private bool IsValidKey => !m_key.IsEmpty();
 
-// 			m_localizeTextList.AddRange(LocalizationMgr.In.GetLanguageGroup(m_localizeKey));
-// #endif
-// 		}
-// 	}
+	protected override void Initialize()
+	{
+		base.Initialize();
 
-// #if UNITY_EDITOR
-// 	[VerticalGroup("3",Order = 3),SerializeField]
-// 	private bool m_showLanguagePack = false;
+		_OnChangedLanguage();
+	}
 
-// 	[VerticalGroup("3",Order = 3),SerializeField,ListDrawerSettings(ShowFoldout = false),ReadOnly,DisplayAsString,TextArea,ShowIf(nameof(ShowList))]
-// 	private List<string> m_localizeTextList = new();
+	protected override void OnEnable()
+	{
+		base.OnEnable();
 
-// 	private bool ShowList => m_showLanguagePack && m_localizeTextList.Count > 0;
-// #endif
+		LingoManager.In.OnLanguageChange += _OnChangedLanguage;
+	}
 
-// 	protected override void Initialize()
-// 	{
-// 		base.Initialize();
+	protected override void OnDisable()
+	{
+		base.OnDisable();
 
-// 		if(!m_localizeKey.IsEmpty())
-// 		{
-// 			_OnChangeLocalization();
-// 		}
-// 	}
+		LingoManager.In.OnLanguageChange -= _OnChangedLanguage;
+	}
 
-// 	protected override void OnEnable()
-// 	{
-// 		base.OnEnable();
+	private void _OnChangedLanguage()
+	{
+		if(!IsValidKey)
+		{
+			return;
+		}
 
-// 		LocalizationMgr.In.OnLocalizationChange += _OnChangeLocalization;
-// 	}
+		var localize = m_key.ToLocalize();
 
-// 	protected override void OnDisable()
-// 	{
-// 		base.OnDisable();
+		m_textMesh.SetSafeTextMeshPro(localize);
+	}
 
-// 		LocalizationMgr.In.OnLocalizationChange -= _OnChangeLocalization;
-// 	}
-
-// 	private void _OnChangeLocalization()
-// 	{
-// 		var localize = m_localizeKey.ToLocalize();
-
-// 		m_textMesh.SetSafeTextMeshPro(localize);
-// 	}
-
-// 	public void SetLocalizeKey(string key)
-// 	{
-// 		if(m_localizeKey.IsEqual(key))
-// 		{
-// 			return;
-// 		}
+	public void SetLocalizeKey(string key)
+	{
+		if(!key.IsEmpty())
+		{
+			return;
+		}
 		
-// 		m_localizeKey = key;
+		if(m_key.IsEqual(key))
+		{
+			return;
+		}
 
-// 		_OnChangeLocalization();
-// 	}
-// }
+		m_key = key;
+
+		_OnChangedLanguage();
+	}
+}

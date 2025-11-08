@@ -156,7 +156,7 @@ public static class GameObjectExtension
 				continue;
 			}
 
-			graphic.fontMaterial.shader = ShaderMgr.In.FindShader(graphic.fontMaterial.shader.name);
+			graphic.fontMaterial.shader = ShaderManager.In.FindShader(graphic.fontMaterial.shader.name);
 		}
 
 		foreach(var renderer in gameObject.GetComponentsInChildren<Renderer>(true))
@@ -168,7 +168,7 @@ public static class GameObjectExtension
 
 			for(var i=0;i<renderer.materials.Length;i++)
 			{
-				renderer.materials[i].shader = ShaderMgr.In.FindShader(renderer.materials[i].shader.name);
+				renderer.materials[i].shader = ShaderManager.In.FindShader(renderer.materials[i].shader.name);
 			}
 		}
 	}

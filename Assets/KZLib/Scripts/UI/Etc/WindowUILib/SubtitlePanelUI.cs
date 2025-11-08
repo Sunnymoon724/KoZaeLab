@@ -53,7 +53,7 @@ public class SubtitlePanelUI : WindowUI2D
 
 		if(subtitlePath.IsEmpty())
 		{
-			var textAsset = ResMgr.In.GetTextAsset(subtitlePath);
+			var textAsset = ResourceManager.In.GetTextAsset(subtitlePath);
 
 			if(!textAsset)
 			{

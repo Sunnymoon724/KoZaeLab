@@ -16,7 +16,7 @@ public class AudioButtonUI : BaseButtonUI
 	{
 		if(m_pathMode)
 		{
-			m_audioClip = ResMgr.In.GetAudioClip(m_audioPath);
+			m_audioClip = ResourceManager.In.GetAudioClip(m_audioPath);
 		}
 
 		base.Initialize();
@@ -24,7 +24,7 @@ public class AudioButtonUI : BaseButtonUI
 
 	protected override void OnClickedButton()
 	{
-		SoundMgr.In.PlaySFX(m_audioClip);
+		SoundManager.In.PlaySFX(m_audioClip);
 	}
 
 	public void SetAudio(AudioClip audioClip)
@@ -38,7 +38,7 @@ public class AudioButtonUI : BaseButtonUI
 	{
 		m_audioPath = audioPath;
 
-		m_audioClip = ResMgr.In.GetAudioClip(m_audioPath);
+		m_audioClip = ResourceManager.In.GetAudioClip(m_audioPath);
 
 		m_pathMode = true;
 	}

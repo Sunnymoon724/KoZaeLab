@@ -12,7 +12,7 @@ namespace KZLib.KZNetwork
 
 		public AccountCredential()
 		{
-			m_accountId = PlayerPrefsMgr.In.TryGetString( c_accountId,out var id ) ? id : string.Empty;
+			m_accountId = PlayerPrefsManager.In.TryGetString( c_accountId,out var id ) ? id : string.Empty;
 		}
 
 		public virtual void Clear()
@@ -29,7 +29,7 @@ namespace KZLib.KZNetwork
 
 			m_accountId = profileId;
 
-			PlayerPrefsMgr.In.SetString(c_accountId,profileId);
+			PlayerPrefsManager.In.SetString(c_accountId,profileId);
 		}
 	}
 #if KZLIB_PLAY_FAB
@@ -42,7 +42,7 @@ namespace KZLib.KZNetwork
 
 		public PlayFabAccountCredential() : base()
 		{
-			m_loginOptionType = PlayerPrefsMgr.In.TryGetEnum<PlayFabLoginOptionType>( c_loginOptionType,out var type ) ? type : PlayFabLoginOptionType.None;
+			m_loginOptionType = PlayerPrefsManager.In.TryGetEnum<PlayFabLoginOptionType>( c_loginOptionType,out var type ) ? type : PlayFabLoginOptionType.None;
 		}
 
 		public override void Clear()
@@ -61,7 +61,7 @@ namespace KZLib.KZNetwork
 
 			m_loginOptionType = loginOptionType;
 
-			PlayerPrefsMgr.In.SetEnum(c_loginOptionType,loginOptionType);
+			PlayerPrefsManager.In.SetEnum(c_loginOptionType,loginOptionType);
 		}
 	}
 #endif

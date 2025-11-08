@@ -31,7 +31,7 @@ namespace KZLib.KZWindow
 						return;
 					}
 
-					PlayerPrefsMgr.In.SetString(m_key,value);
+					PlayerPrefsManager.In.SetString(m_key,value);
 
 					m_value = value;
 				}
@@ -73,7 +73,7 @@ namespace KZLib.KZWindow
 
 			var info = m_playerPrefsInfoList[index];
 
-			PlayerPrefsMgr.In.RemoveKey(info.Key);
+			PlayerPrefsManager.In.RemoveKey(info.Key);
 
 			m_playerPrefsInfoList.Remove(info);
 
@@ -96,7 +96,7 @@ namespace KZLib.KZWindow
 				return;
 			}
 
-			PlayerPrefsMgr.In.Clear();
+			PlayerPrefsManager.In.Clear();
 
 			LogSvc.Editor.I($"PlayerPrefs is deleted");
 

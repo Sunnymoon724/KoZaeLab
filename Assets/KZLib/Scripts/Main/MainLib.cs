@@ -31,7 +31,7 @@ namespace KZLib
 			{
 				if(!m_gameLanguage.HasValue)
 				{
-					var optionCfg = ConfigMgr.In.Access<OptionConfig>();
+					var optionCfg = ConfigManager.In.Access<OptionConfig>();
 
 					m_gameLanguage = optionCfg.Language;
 				}
@@ -48,7 +48,7 @@ namespace KZLib
 
 				m_gameLanguage = value;
 
-				var optionCfg = ConfigMgr.In.Access<OptionConfig>();
+				var optionCfg = ConfigManager.In.Access<OptionConfig>();
 
 				optionCfg.SetLanguage(m_gameLanguage.Value);
 			}
@@ -163,17 +163,17 @@ namespace KZLib
 
 		private async void Start()
 		{
-			var gameCfg = ConfigMgr.In.Access<GameConfig>();
+			var gameCfg = ConfigManager.In.Access<GameConfig>();
 
 #if UNITY_EDITOR
 			if(gameCfg.UseHeadUpDisplay)
 			{
-				UIMgr.In.Open<HudPanelUI>(Global.HUD_PANEL_UI);
+				UIManager.In.Open<HudPanelUI>(Global.HUD_PANEL_UI);
 			}
 #else
 			if(Debug.isDebugBuild && gameCfg.UseHeadUpDisplay)
 			{
-				UIMgr.In.Open<HudPanelUI>(Global.HUD_PANEL_UI);
+				UIManager.In.Open<HudPanelUI>(Global.HUD_PANEL_UI);
 			}
 #endif
 
@@ -206,7 +206,7 @@ namespace KZLib
 #if UNITY_EDITOR
 				await _InitializeTestMode(m_tokenSource.Token);
 
-				SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null);
+				SceneStateManager.In.AddSceneNoLoading(StartSceneName,null);
 #else
 				throw new Exception("This cannot be tested outside of the editor mode.");
 #endif
@@ -215,7 +215,7 @@ namespace KZLib
 			{
 				await _InitializeNormalMode(m_tokenSource.Token);
 
-				SceneStateMgr.In.AddSceneNoLoading(StartSceneName,null);
+				SceneStateManager.In.AddSceneNoLoading(StartSceneName,null);
 			}
 		}
 
@@ -258,14 +258,14 @@ namespace KZLib
 #endif
 
 #if UNITY_EDITOR
-		protected async virtual UniTask _InitializeTestMode(CancellationToken token) { await _InitializeMgr(token); }
+		protected async virtual UniTask _InitializeTestMode(CancellationToken token) { await _InitializeManager(token); }
 #endif
-		protected async virtual UniTask _InitializeNormalMode(CancellationToken token) { await _InitializeMgr(token); }
+		protected async virtual UniTask _InitializeNormalMode(CancellationToken token) { await _InitializeManager(token); }
 		
-		protected async UniTask _InitializeMgr(CancellationToken token)
+		protected async UniTask _InitializeManager(CancellationToken token)
 		{
-			await ProtoMgr.In.TryLoadAsync(token);
-			await LingoMgr.In.TryLoadAsync(token);
+			await ProtoManager.In.TryLoadAsync(token);
+			await LingoManager.In.TryLoadAsync(token);
 		}
 
 		protected virtual void _InitializeResolution(StringBuilder stringBuilder)
@@ -312,13 +312,13 @@ namespace KZLib
 #if UNITY_EDITOR
 			if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C))
 			{
-				if(UIMgr.In.IsOpened(Global.HUD_PANEL_UI))
+				if(UIManager.In.IsOpened(Global.HUD_PANEL_UI))
 				{
-					UIMgr.In.Close(Global.HUD_PANEL_UI);
+					UIManager.In.Close(Global.HUD_PANEL_UI);
 				}
 				else
 				{
-					UIMgr.In.Open<HudPanelUI>(Global.HUD_PANEL_UI);
+					UIManager.In.Open<HudPanelUI>(Global.HUD_PANEL_UI);
 				}
 			}
 
@@ -340,7 +340,7 @@ namespace KZLib
 #if UNITY_EDITOR
 		private async UniTask _RefreshGame()
 		{
-			await SceneStateMgr.In.RemoveSceneNoLoadingAsync(null);
+			await SceneStateManager.In.RemoveSceneNoLoadingAsync(null);
 
 			await _StartMainAsync();
 		}

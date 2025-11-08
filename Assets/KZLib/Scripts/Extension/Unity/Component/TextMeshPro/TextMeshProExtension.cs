@@ -13,24 +13,24 @@ public static class TextMeshProExtension
 		_SetSafeTextMeshPro(textMesh,text,color);
 	}
 
-	// public static void SetLocalizeText(this TMP_Text textMesh,string text)
-	// {
-	// 	if(!_IsValid(textMesh,text))
-	// 	{
-	// 		return;
-	// 	}
+	public static void SetLocalizeText(this TMP_Text textMesh,string text)
+	{
+		if(!_IsValid(textMesh,text))
+		{
+			return;
+		}
 
-	// 	var localizeTextUI = textMesh.GetComponent<LocalizeTextUI>();
+		var localizeTextUI = textMesh.GetComponent<LocalizeTextUI>();
 
-	// 	if(localizeTextUI)
-	// 	{
-	// 		localizeTextUI.SetLocalizeKey(text);
-	// 	}
-	// 	else
-	// 	{
-	// 		_SetSafeTextMeshPro(textMesh,text,null);
-	// 	}
-	// }
+		if(localizeTextUI)
+		{
+			localizeTextUI.SetLocalizeKey(text);
+		}
+		else
+		{
+			_SetSafeTextMeshPro(textMesh,text,null);
+		}
+	}
 
 	private static void _SetSafeTextMeshPro(TMP_Text textMesh,string text,Color? color)
 	{

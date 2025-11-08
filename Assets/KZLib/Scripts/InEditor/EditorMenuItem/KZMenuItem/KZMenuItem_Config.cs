@@ -17,7 +17,7 @@ namespace KZLib.KZMenu
 		private static void _OnGenerateAllConfig()
 		{
 			var templateFilePath = CommonUtility.FindTemplateText("ConfigTemplate.txt");
-			var outputRoute = RouteMgr.In.GetOrCreateRoute("generatedScript");
+			var outputRoute = RouteManager.In.GetOrCreateRoute("generatedScript");
 
 			foreach(var configFilePath in FileUtility.FindAllExcelFileGroupByFolderPath(Global.CONFIG_FOLDER_PATH))
 			{
@@ -32,7 +32,7 @@ namespace KZLib.KZMenu
 				{
 					var fileName = FileUtility.GetFileName(configFilePath);
 
-					if(ConfigMgr.IsDefaultConfig(fileName))
+					if(ConfigManager.IsDefaultConfig(fileName))
 					{
 						LogSvc.System.W($"{fileName} is default config. -> generate failed");
 
@@ -80,7 +80,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Config/Game/Generate Custom GameConfig Yaml File",false,MenuOrder.Data.GENERATE)]
 		private static void _OnGenerateCustomGameConfigYamlFile()
 		{
-			_GenerateCustomConfigYamlFile("CustomGame.yaml",ConfigMgr.In.Access<GameConfig>());
+			_GenerateCustomConfigYamlFile("CustomGame.yaml",ConfigManager.In.Access<GameConfig>());
 		}
 
 		[MenuItem("KZMenu/Config/Game/Generate Custom GameConfig Yaml File",true,MenuOrder.Data.GENERATE)]
@@ -106,7 +106,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Config/Service/Generate Custom ServiceConfig Yaml File",false,MenuOrder.Data.GENERATE)]
 		private static void _OnGenerateCustomServiceConfigYamlFile()
 		{
-			_GenerateCustomConfigYamlFile("CustomService.yaml",ConfigMgr.In.Access<ServiceConfig>());
+			_GenerateCustomConfigYamlFile("CustomService.yaml",ConfigManager.In.Access<ServiceConfig>());
 		}
 
 		[MenuItem("KZMenu/Config/Service/Generate Custom ServiceConfig Yaml File",true,MenuOrder.Data.GENERATE)]
@@ -132,7 +132,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Config/Editor/Generate Custom EditorConfig Yaml File",false,MenuOrder.Data.GENERATE)]
 		private static void _OnGenerateCustomEditorConfigYamlFile()
 		{
-			_GenerateCustomConfigYamlFile("CustomEditor.yaml",ConfigMgr.In.Access<EditorConfig>());
+			_GenerateCustomConfigYamlFile("CustomEditor.yaml",ConfigManager.In.Access<EditorConfig>());
 		}
 
 		[MenuItem("KZMenu/Config/Editor/Generate Custom EditorConfig Yaml File",true,MenuOrder.Data.GENERATE)]
@@ -145,7 +145,7 @@ namespace KZLib.KZMenu
 		#region Common
 		private static void _GenerateConfigYamlFile(string fileName,IConfig config,string routePath)
 		{
-			var yamlRoute = RouteMgr.In.GetOrCreateRoute(routePath);
+			var yamlRoute = RouteManager.In.GetOrCreateRoute(routePath);
 
 			FileUtility.CreateFolder(yamlRoute.AbsolutePath);
 
@@ -174,7 +174,7 @@ namespace KZLib.KZMenu
 
 		private static bool _IsExistConfigYamlFile(string fileName,string routePath)
 		{
-			var yamlRoute = RouteMgr.In.GetOrCreateRoute(routePath);
+			var yamlRoute = RouteManager.In.GetOrCreateRoute(routePath);
 
 			var filePath = Path.Combine(yamlRoute.AbsolutePath,fileName);
 
@@ -210,7 +210,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Config/Open Default Config Folder",false,MenuOrder.Data.OPEN)]
 		private static void _OnOpenDefaultConfigFolder()
 		{
-			var configFolderRoute = RouteMgr.In.GetOrCreateRoute("defaultRes:config");
+			var configFolderRoute = RouteManager.In.GetOrCreateRoute("defaultRes:config");
 
 			_OpenFolder("DefaultConfig",configFolderRoute.AbsolutePath);
 		}

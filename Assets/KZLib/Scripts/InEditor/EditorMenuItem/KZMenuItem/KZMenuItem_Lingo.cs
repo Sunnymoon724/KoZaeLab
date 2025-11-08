@@ -39,7 +39,7 @@ namespace KZLib.KZMenu
 				EditorBuildSettings.AddConfigObject("com.unity.localization.settings",localizationSettings,true);
 			}
 
-			var lingoRoute = RouteMgr.In.GetOrCreateRoute("defaultRes:lingo");
+			var lingoRoute = RouteManager.In.GetOrCreateRoute("defaultRes:lingo");
 
 			foreach(var lingoFilePath in FileUtility.FindAllExcelFileGroupByFolderPath(Global.LINGO_FOLDER_PATH))
 			{
@@ -228,7 +228,7 @@ namespace KZLib.KZMenu
 					var language = table.LocaleIdentifier.CultureInfo.EnglishName;
 					var path = _GetValueByLanguage(language,schemeArray,pair.Value);
 
-					var assetPath = RouteMgr.In.GetOrCreateRoute(path).AssetPath;
+					var assetPath = RouteManager.In.GetOrCreateRoute(path).AssetPath;
 					var guid = _CreateAddressableGuid(assetPath,language,table.LocaleIdentifier.Code);
 
 					if(guid.IsEmpty())

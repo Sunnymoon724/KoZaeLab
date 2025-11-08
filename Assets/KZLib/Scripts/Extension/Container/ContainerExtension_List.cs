@@ -80,17 +80,6 @@ public static partial class ContainerExtension
 		(list[index2],list[index1]) = (list[index1],list[index2]);
 	}
 
-	public static void Randomize<TValue>(this IList<TValue> list)
-	{
-		if(_IsValid(list))
-		{
-			for(var i=list.Count-1;i>0;i--)
-			{
-				list.Swap(CommonUtility.GenerateRandomInt(0,i),i);
-			}
-		}
-	}
-
 	public static TValue PopFront<TValue>(this IList<TValue> list)
 	{
 		return _IsValid(list) ? list.Pop(0) : default;

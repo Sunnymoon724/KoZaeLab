@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using KZLib.KZData;
 using Newtonsoft.Json;
 using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
@@ -35,6 +36,13 @@ public static class StringExtension
 #endif
 	}
 	#endregion Normalize
+	
+	#region Localize
+	public static string ToLocalize(this string text)
+	{
+		return LingoManager.In.FindString(text);
+	}
+	#endregion Localize
 
 	#region Encoding
 	public static string CP949ToUTF8(this string text)

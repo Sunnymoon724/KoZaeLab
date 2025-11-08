@@ -73,7 +73,7 @@ namespace KZLib.KZData
 				var fieldType = fieldInfo.FieldType;
 				var nameKey = fieldInfo.Name;
 
-				if(!PlayerPrefsMgr.In.TryGetString(nameKey,out var text))
+				if(!PlayerPrefsManager.In.TryGetString(nameKey,out var text))
 				{
 					continue;
 				}
@@ -230,7 +230,7 @@ namespace KZLib.KZData
 
 		private void _SetStringPlayerPrefs(string key,string value)
 		{
-			PlayerPrefsMgr.In.SetString(key,value);
+			PlayerPrefsManager.In.SetString(key,value);
 		}
 
 		#region Sound

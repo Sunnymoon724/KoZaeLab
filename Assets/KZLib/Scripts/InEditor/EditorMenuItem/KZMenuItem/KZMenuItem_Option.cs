@@ -10,8 +10,8 @@ namespace KZLib.KZMenu
 {
 	public partial class KZMenuItem
 	{
-		[MenuItem("KZMenu/Option/Delete All Mgr",false,MenuOrder.Option.DELETE)]
-		private static void _OnDeleteAllMgr()
+		[MenuItem("KZMenu/Option/Delete All Manager",false,MenuOrder.Option.DELETE)]
+		private static void _OnDeleteAllManager()
 		{
 			if(!CommonUtility.DisplayCheck("Delete all manager","Delete all manager?"))
 			{
