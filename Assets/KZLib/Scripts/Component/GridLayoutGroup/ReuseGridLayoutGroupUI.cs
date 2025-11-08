@@ -30,24 +30,10 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 	{
 		base.Initialize();
 
-		if(!m_pivot)
-		{
-			LogSvc.UI.E("Pivot is null");
-
-			return;
-		}
-
-		if(!m_storage)
-		{
-			LogSvc.UI.E("Storage is null");
-
-			return;
-		}
+		m_slotUIPool = new GameObjectUIPool<SlotUI>(m_pivot,m_storage,m_poolCapacity);
 
 		m_pivot.gameObject.EnsureActive(false);
 		m_storage.SetUIChild(m_pivot.transform);
-
-		m_slotUIPool = new GameObjectUIPool<SlotUI>(m_pivot,m_storage,m_poolCapacity);
 
 		m_cellDataList.Clear();
 		m_slotList.Clear();

@@ -1,5 +1,7 @@
 using UnityEngine;
 using Sirenix.OdinInspector;
+using System;
+using Object = UnityEngine.Object;
 
 #if UNITY_EDITOR
 
@@ -34,9 +36,7 @@ public abstract class BaseComponent : SerializedMonoBehaviour
 	{
 		if(!value)
 		{
-			LogSvc.System.E($"{objectText} is null");
-
-			return false;
+			throw new ArgumentNullException(nameof(value),$"{objectText} is null. Object must be assigned."); 
 		}
 
 		return true;

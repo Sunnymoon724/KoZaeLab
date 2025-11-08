@@ -61,9 +61,7 @@ public class MagnetImageUI : BaseImageUI
 
 		if(IsValidTarget)
 		{
-			LogSvc.UI.E($"Target is null or direction is none {Target} or {m_direction}");
-
-			return;
+			throw new InvalidOperationException($"Target is null or direction is none {Target} or {m_direction}");
 		}
 
 		Observable.EveryUpdate().Select(_=>Target.CalculateWorldSize()).DistinctUntilChanged().Subscribe(_OnChangedImage);
@@ -73,9 +71,7 @@ public class MagnetImageUI : BaseImageUI
 	{
 		if(IsValidTarget)
 		{
-			LogSvc.UI.E($"Target is null or direction is none {Target} or {m_direction}");
-
-			return;
+			throw new InvalidOperationException($"Target is null or direction is none {Target} or {m_direction}");
 		}
 
 		var space = Space*UIRectTransform.lossyScale.x;

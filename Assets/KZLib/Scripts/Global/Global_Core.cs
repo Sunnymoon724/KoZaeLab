@@ -18,9 +18,6 @@ public partial struct Global
 	public static readonly Vector3 CENTER_VIEWPORT_POINT = new(0.5f,0.5f,1.0f);
 
 	public const int INVALID_INDEX = -1;
-	public const int INVALID_NUM = 0;
-	public const float INVALID_TIME = Mathf.Infinity;
-	public const float INVALID_DURATION = Mathf.Infinity;
 
 	public const float FADE_TIME = 1.0f;
 

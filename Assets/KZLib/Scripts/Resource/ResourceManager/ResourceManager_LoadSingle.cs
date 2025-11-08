@@ -96,28 +96,28 @@ namespace KZLib
 				return null;
 			}
 
-			// use cache data
-			var cacheData = _GetCacheData<TObject>(filePath);
+			// use cache
+			var cache = _GetCache<TObject>(filePath);
 
-			if(!cacheData)
+			if(!cache)
 			{
-				// load data
-				cacheData = _LoadData<TObject>(filePath);
+				// load
+				cache = _LoadResource<TObject>(filePath);
 
-				if(!cacheData)
+				if(!cache)
 				{
 					LogSvc.System.E($"Resources is not exist. [path : {filePath}]");
 
 					return null;
 				}
 
-				_PutData(filePath,cacheData);
+				_StoreCache(filePath,cache);
 			}
 
-			// data is GameObject -> copy data
+			// resource is GameObject -> copy
 			if(typeof(TObject) == typeof(GameObject))
 			{
-				var gameObject = cacheData.CopyObject() as TObject;
+				var gameObject = cache.CopyObject() as TObject;
 
 				if(m_useServerResource)
 				{
@@ -127,10 +127,10 @@ namespace KZLib
 				return gameObject;
 			}
 
-			return cacheData;
+			return cache;
 		}
 
-		private TObject _LoadData<TObject>(string filePath) where TObject : Object
+		private TObject _LoadResource<TObject>(string filePath) where TObject : Object
 		{
 #if UNITY_EDITOR
 			if(!Path.HasExtension(filePath))

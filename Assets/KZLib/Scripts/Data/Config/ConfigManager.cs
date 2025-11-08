@@ -145,7 +145,7 @@ namespace KZLib.KZData
 				return text;
 			}
 
-			LogSvc.System.E($"{name} yaml file is not exist. generate config first.");
+			LogSvc.System.W($"{name} yaml file is not exist. generate config first.");
 
 			return null;
 		}

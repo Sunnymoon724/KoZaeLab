@@ -13,6 +13,7 @@ namespace KZLib.KZData
 	{
 		private const double c_frameTime = 1.0/30.0d; // 30 fps (0.0333s)
 		private const int c_delayTime = 1; // 1ms
+		private const int c_InvalidNumber = 0;
 
 		private bool m_disposed = false;
 		private bool m_isLoaded = false;
@@ -135,7 +136,7 @@ namespace KZLib.KZData
 
 		public IProto GetProto(int num,Type protoType)
 		{
-			if(num <= Global.INVALID_NUM)
+			if(num <= c_InvalidNumber)
 			{
 				LogSvc.System.E($"{num} is not valid. [type : {protoType}]");
 
@@ -204,54 +205,32 @@ namespace KZLib.KZData
 
 				if(textAsset.bytes == null)
 				{
-					LogSvc.System.E($"{protoName} is empty.");
-					return false;
+					throw new InvalidCastException($"{protoName} is empty.");
 				}
 
 				var protoTypeName = $"KZLib.KZData.{protoName}Proto";
-				var protoType = CommonUtility.FindType(protoTypeName);
-
-				if(protoType == null)
-				{
-					LogSvc.System.E($"{protoTypeName} is not exist.");
-
-					return false;
-				}
-
-				var deserialize = MessagePackSerializer.Deserialize(protoType.MakeArrayType(),textAsset.bytes,MessagePackSerializerOptions.Standard.WithResolver(MessagePackResolver.Instance));
+				var protoType = CommonUtility.FindType(protoTypeName) ?? throw new InvalidOperationException($"{protoTypeName} is not exist.");
+                var deserialize = MessagePackSerializer.Deserialize(protoType.MakeArrayType(),textAsset.bytes,MessagePackSerializerOptions.Standard.WithResolver(MessagePackResolver.Instance));
 
 				if(deserialize is not object[] resultArray)
 				{
-					LogSvc.System.E($"{protoName} is not array.");
-
-					return false;
+					throw new InvalidOperationException($"{protoName} is not array.");
 				}
 
 				var protoDict = new Dictionary<int,IProto>();
 
 				foreach(var result in resultArray)
 				{
-					var proto = result as IProto;
+					var proto = result as IProto ?? throw new InvalidOperationException($"{protoTypeName} is not exist.");
 
-					if(proto == null)
+                    if(proto.Num == c_InvalidNumber)
 					{
-						LogSvc.System.E($"{proto} is not exist.");
-
-						return false;
-					}
-
-					if(proto.Num == Global.INVALID_NUM)
-					{
-						LogSvc.System.E($"Num is zero in {proto}.");
-
-						return false;
+						throw new ArgumentException($"Num is zero in {proto}.");
 					}
 
 					if(protoDict.ContainsKey(proto.Num))
 					{
-						LogSvc.System.E($"{proto.Num} is already added in {proto}.");
-
-						return false;
+						throw new ArgumentException($"{proto.Num} is already added in {proto}.");
 					}
 
 					protoDict.Add(proto.Num,proto);
@@ -264,9 +243,9 @@ namespace KZLib.KZData
 			catch(Exception exception)
 			{
 				LogSvc.System.E($"Load failed. [Exception : {exception.Message}]");
-			}
 
-			return false;
+				return false;
+			}
 		}
 
 #if UNITY_EDITOR

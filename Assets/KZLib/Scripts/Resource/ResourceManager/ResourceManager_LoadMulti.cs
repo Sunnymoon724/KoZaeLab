@@ -87,48 +87,48 @@ namespace KZLib
 				return null;
 			}
 
-			// use cache data
-			var cacheDataArray = _GetCacheDataArray<TObject>(folderPath);
+			// use cache
+			var cacheArray = _GetCacheArray<TObject>(folderPath);
 
-			if(cacheDataArray.IsNullOrEmpty())
+			if(cacheArray.IsNullOrEmpty())
 			{
-				// load data
-				cacheDataArray = _LoadDataArray<TObject>(folderPath);
+				// load
+				cacheArray = _LoadResourceArray<TObject>(folderPath);
 
-				if(cacheDataArray.IsNullOrEmpty())
+				if(cacheArray.IsNullOrEmpty())
 				{
 					LogSvc.System.E($"Resources is not exist. [path : {folderPath}]");
 
 					return null;
 				}
 
-				_PutDataArray(folderPath,cacheDataArray);
+				_StoreCacheArray(folderPath,cacheArray);
 			}
 
-			// data is GameObject -> copy data
+			// resource is GameObject -> copy
 			if(typeof(TObject) == typeof(GameObject))
 			{
-				var dataArray = new TObject[cacheDataArray.Length];
+				var resourceArray = new TObject[cacheArray.Length];
 
-				for(var i=0;i<cacheDataArray.Length;i++)
+				for(var i=0;i<cacheArray.Length;i++)
 				{
-					var cacheData = cacheDataArray[i].CopyObject() as TObject;
+					var cache = cacheArray[i].CopyObject() as TObject;
 
 					if(m_useServerResource)
 					{
-						(cacheData as GameObject).ReAssignShader();
+						(cache as GameObject).ReAssignShader();
 					}
 
-					dataArray[i] = cacheData;
+					resourceArray[i] = cache;
 				}
 
-				return dataArray;
+				return resourceArray;
 			}
 
-			return cacheDataArray;
+			return cacheArray;
 		}
 
-		private TObject[] _LoadDataArray<TObject>(string folderPath) where TObject : Object
+		private TObject[] _LoadResourceArray<TObject>(string folderPath) where TObject : Object
 		{
 #if UNITY_EDITOR
 			if(Path.HasExtension(folderPath))

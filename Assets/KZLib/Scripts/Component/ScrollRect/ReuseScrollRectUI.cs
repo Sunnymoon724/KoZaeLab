@@ -61,12 +61,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 			return;
 		}
 
-		if(!m_pivot)
-		{
-			LogSvc.System.E("Pivot is null");
-
-			return;
-		}
+		m_slotUIPool = new GameObjectUIPool<SlotUI>(m_pivot,m_scrollRect.viewport,m_poolCapacity);
 
 		m_pivot.gameObject.EnsureActive(false);
 		m_scrollRect.viewport.transform.SetUIChild(m_pivot.transform);
@@ -94,8 +89,6 @@ public class ReuseScrollRectUI : BaseComponentUI
 			m_scrollRect.content.anchorMin = new Vector2(0.0f,content.anchorMin.y);
 			m_scrollRect.content.anchorMax = new Vector2(0.0f,content.anchorMax.y);
 		}
-
-		m_slotUIPool = new GameObjectUIPool<SlotUI>(m_pivot,m_scrollRect.viewport,m_poolCapacity);
 
 		m_cellDataList.Clear();
 		m_slotDict.Clear();

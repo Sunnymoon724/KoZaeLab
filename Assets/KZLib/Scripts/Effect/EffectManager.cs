@@ -1,76 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using KZLib.KZUtility;
-using System.Threading;
 using KZLib.KZData;
+using KZLib.KZDevelop;
 
 namespace KZLib
 {
 	public class EffectManager : AutoSingletonMB<EffectManager>
 	{
-		private const float c_poolInterval = 30.0f;	// 30s
-
-		private readonly Dictionary<string,List<PoolData>> m_poolDataDict = new();
-
 		private string m_effectPath = null;
 
 		[SerializeField,ReadOnly]
 		private List<EffectClip> m_playingList = new();
 
-		private readonly List<string> m_removeList = new();
-
-		private CancellationTokenSource m_tokenSource = null;
+		private readonly CacheResolver<EffectClip> m_cacheResolver = new();
 
 		protected override void Initialize()
 		{
 			m_effectPath = ConfigManager.In.Access<GameConfig>().FXPrefabPath;
 		}
 
-		private async UniTaskVoid CheckExpiredEffectAsync()
-		{
-			while(!m_tokenSource.Token.IsCancellationRequested)
-			{
-				await UniTask.Delay(TimeSpan.FromSeconds(c_poolInterval),true);
-
-				foreach(var (key,poolDataList) in m_poolDataDict)
-				{
-					poolDataList.RemoveAll(x => x.IsOverdue() && x.Release());
-
-					if(poolDataList.Count == 0)
-					{
-						m_removeList.Add(key);
-					}
-				}
-
-				foreach(var key in m_removeList)
-				{
-					m_poolDataDict.Remove(key);
-				}
-
-				m_removeList.Clear();
-
-				if(m_poolDataDict.Count == 0)
-				{
-					break;
-				}
-			}
-		}
-
 		protected override void Release()
 		{
 			base.Release();
 
-			DestroyAllEffectClip();
+			ClearAllEffectClip();
 		}
 
 		public void ReleaseEffect(EffectClip effectClip)
 		{
 			m_playingList.RemoveSafe(effectClip);
 
-			_PutEffectClip(effectClip);
+			_StoreEffectClip(effectClip);
 		}
 
 		public EffectClip PlayEffect(string name,Vector3 position,Transform parent = null,EffectClip.EffectParam effectParam = null)
@@ -128,10 +91,8 @@ namespace KZLib
 			m_playingList.Clear();
 		}
 
-		public void DestroyAllEffectClip()
+		public void ClearAllEffectClip()
 		{
-			CommonUtility.KillTokenSource(ref m_tokenSource);
-
 			for(var i=0;i<m_playingList.Count;i++)
 			{
 				var clip = m_playingList[i];
@@ -142,88 +103,28 @@ namespace KZLib
 				}
 			}
 
-            foreach(var (_,poolList) in m_poolDataDict)
-			{
-				for(var i=poolList.Count-1;i>=0;i--)
-				{
-					var data = poolList[i];
-
-					data.Release();
-					poolList.Remove(data);
-				}
-			}
-
 			m_playingList.Clear();
-			m_poolDataDict.Clear();
+			m_cacheResolver.Dispose();
 		}
 
-		private void _PutEffectClip(EffectClip effectClip)
+		private void _StoreEffectClip(EffectClip effectClip)
 		{
 			effectClip.transform.ResetTransform(transform);
 			effectClip.gameObject.EnsureActive(false);
 
-			m_poolDataDict.AddOrCreate(effectClip.name,new PoolData(effectClip));
-
-			if(m_poolDataDict.Count == 1)
-			{
-				CommonUtility.RecycleTokenSource(ref m_tokenSource);
-
-				CheckExpiredEffectAsync().Forget();
-			}
+			m_cacheResolver.StoreCache(effectClip.name,effectClip,true);
 		}
 
 		private EffectClip _GetEffectClip(string name,Transform parent)
 		{
-			if(m_poolDataDict.TryGetValue(name, out var poolDataList) && poolDataList.Count > 0)
+			if(m_cacheResolver.TryGetCache(name,out var cache))
 			{
-				var poolData = poolDataList.PopFront();
+				parent.SetChild(cache.transform);
 
-				poolData.SetParent(parent);
-
-				return poolData.GetEffectClip();
+				return cache;
 			}
 
 			return null;
-		}
-
-		private record PoolData
-		{
-			private const float c_deleteTime = 60.0f;	// 60s
-			public readonly EffectClip m_effectClip = null;
-			private readonly long m_duration = 0L;
-
-			public PoolData(EffectClip effectClip)
-			{
-				m_duration = DateTime.Now.AddSeconds(c_deleteTime).Ticks;
-				m_effectClip = effectClip;
-			}
-
-			public bool IsOverdue()
-			{
-				return m_duration < DateTime.Now.Ticks;
-			}
-
-			public bool Release()
-			{
-				if(m_effectClip)
-				{
-					m_effectClip.gameObject.DestroyObject();
-
-					return true;
-				}
-
-				return false;
-			}
-
-			public void SetParent(Transform parent)
-			{
-				m_effectClip.transform.parent = parent;
-			}
-
-			public EffectClip GetEffectClip()
-			{
-				return m_effectClip;
-			}
 		}
 	}
 }

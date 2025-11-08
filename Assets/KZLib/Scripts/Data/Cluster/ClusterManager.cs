@@ -41,7 +41,7 @@ namespace KZLib.KZData
 			{
 				int hashCode = m_type.GetHashCode();
 
-				foreach (var param in m_paramArray)
+				foreach(var param in m_paramArray)
 				{
 					hashCode = HashCode.Combine(hashCode,param?.GetHashCode() ?? 0);
 				}
@@ -50,8 +50,6 @@ namespace KZLib.KZData
 			}
 		}
 
-
-		
 		private bool m_disposed = false;
 
 		//? Type / Cluster
@@ -89,9 +87,7 @@ namespace KZLib.KZData
 
 				if(cluster == null)
 				{
-					LogSvc.System.E($"Failed to create cluster of type {type}");
-
-					return null;
+					throw new InvalidCastException($"Failed to create cluster of type {type}");
 				}
 
 				m_clusterDict.Add(key,cluster);

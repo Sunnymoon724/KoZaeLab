@@ -56,29 +56,15 @@ namespace KZLib.KZDevelop
 		{
 			base.Initialize();
 
-			if(!m_slotUI)
-			{
-				LogSvc.System.E("Slot is null");
-
-				return;
-			}
+			m_slotUIPool = new GameObjectUIPool<FocusSlotUI>(m_slotUI,m_viewport,m_poolCapacity);
 
 			var slotUI = m_slotUI as SlotUI;
-
-			if(!m_viewport)
-			{
-				LogSvc.System.E("Viewport is null");
-
-				return;
-			}
 
 			slotUI.gameObject.EnsureActive(false);
 			transform.SetUIChild(slotUI.transform);
 
 			m_viewport.pivot = new Vector2(0.0f,1.0f);
 			slotUI.UIRectTransform.pivot = new Vector2(0.5f,0.5f);
-
-			m_slotUIPool = new GameObjectUIPool<FocusSlotUI>(m_slotUI,m_viewport,m_poolCapacity);
 
 			m_cellDataList.Clear();
 			m_slotUIList.Clear();

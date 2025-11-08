@@ -19,11 +19,9 @@ public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDr
 
 	void IDragHandler.OnDrag(PointerEventData eventData)
 	{
-		if(m_canvas == null)
+		if(!m_canvas)
 		{
-			LogSvc.UI.E("Canvas is null");
-
-			return;
+			throw new NullReferenceException("Canvas is null");
 		}
 
 		UIRectTransform.anchoredPosition += eventData.delta/m_canvas.scaleFactor;
