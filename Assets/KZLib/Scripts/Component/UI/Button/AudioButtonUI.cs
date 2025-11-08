@@ -22,7 +22,7 @@ public class AudioButtonUI : BaseButtonUI
 		base.Initialize();
 	}
 
-	protected override void OnClickedButton()
+	protected override void _OnClickedButton()
 	{
 		SoundManager.In.PlaySFX(m_audioClip);
 	}

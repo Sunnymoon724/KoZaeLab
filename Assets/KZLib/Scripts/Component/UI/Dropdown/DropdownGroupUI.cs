@@ -5,34 +5,50 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(TMP_Dropdown))]
-public class DropdownGroupUI : BaseComponentUI
+public class DropdownGroupUI : BaseDropdownUI
 {
-	[SerializeField] private TMP_Dropdown m_dropdown = null;
 	[SerializeField] private Button m_prevButton = null;
 	[SerializeField] private Button m_nextButton = null;
 
-	public string GetCurrentText => m_dropdown.options[m_dropdown.value].text;
+	public string GetCurrentText => GetCurrentOptionData.text;
+	public Sprite GetCurrentSprite => GetCurrentOptionData.image;
+	public Color GetCurrentColor => GetCurrentOptionData.color;
+
+	private TMP_Dropdown.OptionData GetCurrentOptionData => m_dropdown.options.TryGetValueByIndex(m_dropdown.value,out var option) ? option : null;
 
 	private Action<string> OnValueChanged;
 
-	protected override void Initialize()
+	protected override void OnEnable()
 	{
-		base.Initialize();
-
-		m_dropdown.onValueChanged.AddListener(_OnValueChangedDropDown);
+		base.OnEnable();
 
 		if(m_prevButton != null)
 		{
-			m_prevButton.onClick.SetAction(_OnClickedPrevButton);
+			m_prevButton.onClick.AddAction(_OnClickedPrevButton);
 		}
 
 		if(m_nextButton != null)
 		{
-			m_nextButton.onClick.SetAction(_OnClickedNextButton);
+			m_nextButton.onClick.AddAction(_OnClickedNextButton);
 		}
 	}
 
-	private void _OnValueChangedDropDown(int _)
+	protected override void OnDisable()
+	{
+		base.OnDisable();
+
+		if(m_prevButton != null)
+		{
+			m_prevButton.onClick.RemoveAction(_OnClickedPrevButton);
+		}
+
+		if(m_nextButton != null)
+		{
+			m_nextButton.onClick.RemoveAction(_OnClickedNextButton);
+		}
+	}
+
+	protected override void _OnValueChanged(int _)
 	{
 		OnValueChanged?.Invoke(GetCurrentText);
 	}
@@ -62,6 +78,26 @@ public class DropdownGroupUI : BaseComponentUI
 	public void AddOptions(List<TMP_Dropdown.OptionData> optionList,Action<string> onValueChanged)
 	{
 		m_dropdown.AddOptions(optionList);
+
+		_AddOptions(onValueChanged);
+	}
+
+	public void AddOptions(List<string> textList,Action<string> onValueChanged)
+	{
+		m_dropdown.AddOptions(textList);
+
+		_AddOptions(onValueChanged);
+	}
+
+	public void AddOptions(List<Sprite> spriteList,Action<string> onValueChanged)
+	{
+		m_dropdown.AddOptions(spriteList);
+
+		_AddOptions(onValueChanged);
+	}
+
+	private void _AddOptions(Action<string> onValueChanged)
+	{
 		m_dropdown.value = 0;
 
 		OnValueChanged = onValueChanged;

@@ -11,14 +11,14 @@ public abstract class BaseButtonUI : BaseComponentUI
 	{
 		base.OnEnable();
 
-		m_button.onClick.AddAction(OnClickedButton);
+		m_button.onClick.AddAction(_OnClickedButton);
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
 
-		m_button.onClick.RemoveAction(OnClickedButton);
+		m_button.onClick.RemoveAction(_OnClickedButton);
 	}
 
 	protected override void Reset()
@@ -31,5 +31,5 @@ public abstract class BaseButtonUI : BaseComponentUI
 		}
 	}
 
-	protected abstract void OnClickedButton();
+	protected abstract void _OnClickedButton();
 }
