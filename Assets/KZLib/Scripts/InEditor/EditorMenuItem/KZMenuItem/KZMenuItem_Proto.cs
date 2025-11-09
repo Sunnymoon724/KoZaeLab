@@ -7,27 +7,20 @@ namespace KZLib.KZMenu
 {
 	public partial class KZMenuItem
 	{
-		[MenuItem("KZMenu/Proto/Generate DEV Proto",false,MenuOrder.Data.GENERATE)]
-		private static void _OnGenerateDEVProto()
+		[MenuItem("KZMenu/Proto/Generate Current Environment Proto",false,MenuOrder.Data.GENERATE)]
+		private static void _OnGenerateCurrentEnvironmentProto()
 		{
-			_OnGenerateProto(EnvironmentType.DEV);
-		}
+			var environmentType = CommonUtility.GetCurrentEnvironmentType();
 
-		[MenuItem("KZMenu/Proto/Generate QA Proto",false,MenuOrder.Data.GENERATE)]
-		private static void _OnGenerateQAProto()
-		{
-			_OnGenerateProto(EnvironmentType.QA);
-		}
-
-		[MenuItem("KZMenu/Proto/Generate LIVE Proto",false,MenuOrder.Data.GENERATE)]
-		private static void _OnGenerateLIVEProto()
-		{
-			_OnGenerateProto(EnvironmentType.LIVE);
-		}
-
-		private static void _OnGenerateProto(EnvironmentType environmentType)
-		{
 			var batchFilePath = Path.Combine(Global.TOOL_FOLDER_PATH,"GenerateProto",$"GenerateProto_{environmentType}.bat");
+
+			CommonUtility.OpenBatchFile(batchFilePath);
+		}
+		
+		[MenuItem("KZMenu/Proto/Generate All Environment Proto",false,MenuOrder.Data.GENERATE)]
+		private static void _OnGenerateAllEnvironmentProto()
+		{
+			var batchFilePath = Path.Combine(Global.TOOL_FOLDER_PATH,"GenerateProto",$"GenerateProto_All.bat");
 
 			CommonUtility.OpenBatchFile(batchFilePath);
 		}

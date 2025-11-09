@@ -191,6 +191,22 @@ public static partial class CommonUtility
 		}
 	}
 
+	public static EnvironmentType GetCurrentEnvironmentType()
+	{
+#if UNITY_EDITOR
+		var text = FileUtility.ReadFileToText(Path.Combine(Global.PROJECT_PARENT_PATH,"BranchInfo.txt"));
+
+		if(text.TryToEnum<EnvironmentType>(out var environment))
+		{
+			return environment;
+		}
+
+		return EnvironmentType.DEV;
+#else
+		return EnvironmentType.DEV;
+#endif
+	}
+
 #if UNITY_EDITOR
 	public static string FindTemplateFilePath(string fileName)
 	{

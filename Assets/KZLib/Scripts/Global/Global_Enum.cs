@@ -50,6 +50,7 @@ public enum EnvironmentType
 {
 	DEV,	// 개발
 	QA,		// QA
+	REVIEW,	// 리뷰
 	LIVE,	// 라이브
 }
 
