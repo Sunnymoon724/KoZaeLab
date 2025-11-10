@@ -75,28 +75,61 @@ public class DropdownGroupUI : BaseDropdownUI
 		OnValueChanged?.Invoke(GetCurrentText);
 	}
 
-	public void AddOptions(List<TMP_Dropdown.OptionData> optionList,Action<string> onValueChanged)
+	public void SetDropdown(List<TMP_Dropdown.OptionData> optionList,Action<string> onValueChanged)
+	{
+		SetOptions(optionList);
+
+		_SetAction(onValueChanged);
+	}
+
+	public void SetDropdown(List<string> textList,Action<string> onValueChanged)
+	{
+		SetOptions(textList);
+
+		_SetAction(onValueChanged);
+	}
+
+	public void SetDropdown(List<Sprite> spriteList,Action<string> onValueChanged)
+	{
+		SetOptions(spriteList);
+
+		_SetAction(onValueChanged);
+	}
+
+	public void SetOptions(List<TMP_Dropdown.OptionData> optionList)
+	{
+		m_dropdown.ClearOptions();
+		m_dropdown.AddOptions(optionList);
+	}
+
+	public void SetOptions(List<string> textList)
+	{
+		m_dropdown.ClearOptions();
+		m_dropdown.AddOptions(textList);
+	}
+
+	public void SetOptions(List<Sprite> spriteList)
+	{
+		m_dropdown.ClearOptions();
+		m_dropdown.AddOptions(spriteList);
+	}
+
+	public void AddOptions(List<TMP_Dropdown.OptionData> optionList)
 	{
 		m_dropdown.AddOptions(optionList);
-
-		_AddOptions(onValueChanged);
 	}
 
-	public void AddOptions(List<string> textList,Action<string> onValueChanged)
+	public void AddOptions(List<string> textList)
 	{
 		m_dropdown.AddOptions(textList);
-
-		_AddOptions(onValueChanged);
 	}
 
-	public void AddOptions(List<Sprite> spriteList,Action<string> onValueChanged)
+	public void AddOptions(List<Sprite> spriteList)
 	{
 		m_dropdown.AddOptions(spriteList);
-
-		_AddOptions(onValueChanged);
 	}
 
-	private void _AddOptions(Action<string> onValueChanged)
+	private void _SetAction(Action<string> onValueChanged)
 	{
 		m_dropdown.value = 0;
 
