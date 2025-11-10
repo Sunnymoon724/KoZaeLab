@@ -15,16 +15,14 @@ namespace KZLib.KZDevelop
 		private MaterialPropertyBlock m_propertyBlock = null;
 		private MaterialPropertyBlock PropertyBlock => m_propertyBlock ??= new MaterialPropertyBlock();
 
-		public void SetPalette(ColorProto colorPrt)
+		public void SetPalette(Vector4[] colorArray)
 		{
-			if(m_rendererList.Count < 1 || colorPrt == null)
+			if(m_rendererList.Count < 1 || colorArray.IsNullOrEmpty())
 			{
 				return;
 			}
 
-			var vectorArray = _HexCodeToVectorArray(colorPrt.ColorArray);
-
-			PropertyBlock.SetVectorArray("_PixelColorArray",vectorArray);
+			PropertyBlock.SetVectorArray("_PixelColorArray",colorArray);
 
 			for(var i=0;i<m_rendererList.Count;i++)
 			{
@@ -37,20 +35,6 @@ namespace KZLib.KZDevelop
 
 				renderer.SetPropertyBlock(PropertyBlock);
 			}
-		}
-
-		private Vector4[] _HexCodeToVectorArray(string[] hexCodeArray)
-		{
-			var colorArray = new Vector4[hexCodeArray.Length];
-
-			colorArray[0] = hexCodeArray[0].IsEmpty() ? Color.clear : hexCodeArray[0].ToColor();
-
-			for(var i=1;i<hexCodeArray.Length;i++)
-			{
-				colorArray[i] = hexCodeArray[i].IsEmpty() ? colorArray[0] : hexCodeArray[i].ToColor();
-			}
-
-			return colorArray;
 		}
 
 		[Button("Fill Renderers",ButtonSizes.Large)]
@@ -94,7 +78,9 @@ namespace KZLib.KZDevelop
 
 				ProtoManager.In.LoadInEditor();
 
-				SetPalette(ProtoManager.In.GetProto<ColorProto>(m_paletteNum));
+				var vectorArray = ProtoManager.In.GetColorVectorArray(m_paletteNum);
+
+				SetPalette(vectorArray);
 			}
 		}
 

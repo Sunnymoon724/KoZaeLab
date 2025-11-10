@@ -21,6 +21,8 @@ namespace KZLib.KZData
 		//? Type / Num / Proto
 		private readonly Dictionary<Type,Dictionary<int,IProto>> m_protoDict = new();
 
+		private readonly Dictionary<int,Vector4[]> m_colorVectorDict = new();
+
 		protected override void Release(bool disposing)
 		{
 			if(m_disposed)
@@ -210,7 +212,7 @@ namespace KZLib.KZData
 
 				var protoTypeName = $"KZLib.KZData.{protoName}Proto";
 				var protoType = CommonUtility.FindType(protoTypeName) ?? throw new InvalidOperationException($"{protoTypeName} is not exist.");
-                var deserialize = MessagePackSerializer.Deserialize(protoType.MakeArrayType(),textAsset.bytes,MessagePackSerializerOptions.Standard.WithResolver(MessagePackResolver.Instance));
+				var deserialize = MessagePackSerializer.Deserialize(protoType.MakeArrayType(),textAsset.bytes,MessagePackSerializerOptions.Standard.WithResolver(MessagePackResolver.Instance));
 
 				if(deserialize is not object[] resultArray)
 				{
@@ -223,7 +225,7 @@ namespace KZLib.KZData
 				{
 					var proto = result as IProto ?? throw new InvalidOperationException($"{protoTypeName} is not exist.");
 
-                    if(proto.Num == c_InvalidNumber)
+					if(proto.Num == c_InvalidNumber)
 					{
 						throw new ArgumentException($"Num is zero in {proto}.");
 					}
@@ -304,6 +306,34 @@ namespace KZLib.KZData
 			}
 
 			return true;
+		}
+
+		public Vector4[] GetColorVectorArray(int num)
+		{
+			if(!m_colorVectorDict.TryGetValue(num,out Vector4[] colorVectorArray))
+			{
+				var colorPrt = GetProto<ColorProto>(num);
+
+				if(colorPrt == null)
+				{
+					return null;
+				}
+
+				var hexCodeArray = colorPrt.ColorArray;
+
+				colorVectorArray = new Vector4[hexCodeArray.Length];
+
+				colorVectorArray[0] = hexCodeArray[0].IsEmpty() ? Color.clear : hexCodeArray[0].ToColor();
+
+				for(var i=1;i<hexCodeArray.Length;i++)
+				{
+					colorVectorArray[i] = hexCodeArray[i].IsEmpty() ? colorVectorArray[0] : hexCodeArray[i].ToColor();
+				}
+
+				m_colorVectorDict.Add(num,colorVectorArray);
+			}
+
+			return colorVectorArray;
 		}
 	}
 }
