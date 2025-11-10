@@ -137,8 +137,6 @@ public static partial class CommonUtility
 		_ReleaseSingletonMB<SoundManager>();
 
 		//? Release Singleton
-		_ReleaseSingleton<ClusterManager>();
-
 		_ReleaseSingleton<ProtoManager>();
 		_ReleaseSingleton<ConfigManager>();
 		_ReleaseSingleton<AffixManager>();
