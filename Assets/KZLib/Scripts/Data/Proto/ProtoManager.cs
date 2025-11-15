@@ -316,18 +316,24 @@ namespace KZLib.KZData
 
 				if(colorPrt == null)
 				{
-					return null;
+					return Array.Empty<Vector4>(); 
 				}
 
 				var hexCodeArray = colorPrt.ColorArray;
+				
+				if(hexCodeArray.Length < 2)
+				{
+					return Array.Empty<Vector4>(); 
+				}
 
 				colorVectorArray = new Vector4[hexCodeArray.Length];
 
 				colorVectorArray[0] = hexCodeArray[0].IsEmpty() ? Color.clear : hexCodeArray[0].ToColor();
+				colorVectorArray[1] = hexCodeArray[1].IsEmpty() ? Color.clear : hexCodeArray[1].ToColor();
 
-				for(var i=1;i<hexCodeArray.Length;i++)
+				for(var i=2;i<hexCodeArray.Length;i++)
 				{
-					colorVectorArray[i] = hexCodeArray[i].IsEmpty() ? colorVectorArray[0] : hexCodeArray[i].ToColor();
+					colorVectorArray[i] = hexCodeArray[i].IsEmpty() ? colorVectorArray[1] : hexCodeArray[i].ToColor();
 				}
 
 				m_colorVectorDict.Add(num,colorVectorArray);
