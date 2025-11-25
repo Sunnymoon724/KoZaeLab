@@ -23,7 +23,7 @@ public class AnimatorEffectClip : EffectClip
 	[VerticalGroup("General/2",Order = 2),SerializeField]
 	private Animator m_animator = null;
 
-	[VerticalGroup("General/3",Order = 3),ShowInInspector,ValueDropdown(nameof(AnimatorNameList))]
+	[VerticalGroup("General/3",Order = 3),ShowInInspector,ValueDropdown(nameof(StateNameGroup))]
 	private string AnimationName
 	{
 		get => m_animationName;
@@ -81,30 +81,21 @@ public class AnimatorEffectClip : EffectClip
 
 		await CommonUtility.WaitForConditionAsync(()=>m_animator.IsAnimationFinish(AnimationName),SetTime,m_ignoreTimeScale,m_tokenSource.Token);
 	}
+	
+#if UNITY_EDITOR
+	private readonly List<string> m_stateNameList = new();
 
-	private List<string> AnimatorNameList
+	private IEnumerable<string> StateNameGroup
 	{
 		get
 		{
-			var nameList = new List<string>();
-
-			if(!m_animator)
+			if(m_animator && m_stateNameList.IsNullOrEmpty())
 			{
-				return nameList;
+				m_stateNameList.AddRange(m_animator.FindStateNameGroup());
 			}
 
-#if UNITY_EDITOR
-			var controller = m_animator.runtimeAnimatorController as AnimatorController;
-
-			foreach(var layer in controller.layers)
-			{
-				foreach(var child in layer.stateMachine.states)
-				{
-					nameList.Add(child.state.name);
-				}
-			}
-#endif
-			return nameList;
+			return m_stateNameList;
 		}
 	}
+#endif
 }

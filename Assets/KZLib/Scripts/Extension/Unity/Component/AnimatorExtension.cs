@@ -2,6 +2,7 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using System;
+using System.Collections.Generic;
 
 #if UNITY_EDITOR
 
@@ -199,7 +200,7 @@ public static class AnimatorExtension
 
 		return stateInfo.shortNameHash == animationHashName && stateInfo.normalizedTime <= 0.0f;
 	}
-	
+
 	public static AnimationClip[] GetAnimationClipArray(this Animator animator)
 	{
 		if(_IsValid(animator))
@@ -273,6 +274,22 @@ public static class AnimatorExtension
 		var controller2 = animator.runtimeAnimatorController as AnimatorOverrideController;
 
 		return controller2.runtimeAnimatorController as AnimatorController;
+	}
+
+	public static IEnumerable<string> FindStateNameGroup(this Animator animator)
+	{
+		var controller = animator.GetAnimatorController(out var _);
+
+		if(_IsValid(animator))
+		{
+			foreach(var layer in controller.layers)
+			{
+				foreach(var child in layer.stateMachine.states)
+				{
+					yield return child.state.name;
+				}
+			}
+		}
 	}
 #endif
 

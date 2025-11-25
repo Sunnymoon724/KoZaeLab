@@ -34,7 +34,7 @@ namespace KZLib.KZWindow
 					return;
 				}
 
-				m_protoList.AddRange(ProtoManager.In.GetProtoGroup(value));
+				m_protoList.AddRange(ProtoManager.In.FindProtoGroup(value));
 			}
 		}
 
@@ -60,7 +60,7 @@ namespace KZLib.KZWindow
 
 					m_protoTypeList = new List<Type>();
 
-					foreach(var type in ProtoManager.In.GetProtoTypeGroup())
+					foreach(var type in ProtoManager.In.FindProtoTypeGroup())
 					{
 						m_protoTypeList.Add(type);
 					}

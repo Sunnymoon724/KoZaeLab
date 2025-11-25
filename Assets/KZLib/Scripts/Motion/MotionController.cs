@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using Cysharp.Threading.Tasks;
 using System.Threading;
-using System.Collections;
-using UnityEditor.Animations;
+using System;
+using PlayFab.Internal;
+
+
 
 #if UNITY_EDITOR
 
@@ -27,16 +29,44 @@ namespace KZLib
 
 		private readonly Dictionary<int,MotionEvent> m_motionEventDict = new();
 
-		public void PlayAnimation(string stateName,int layer,float normalizedTime = 0.0f)
+		public void PlayAnimation(string stateName,int layer,float speed = 1.0f,float normalizedTime = 0.0f)
 		{
 			if(!m_animator)
 			{
 				return;
 			}
 
+			SetSpeed(speed);
+
 			m_currentStateName = stateName;
 
 			m_animator.Play(stateName,layer,normalizedTime);
+		}
+		
+		public void PlayAnimationInTime(string stateName,int layer,float duration)
+		{
+			if(!m_animator)
+			{
+				return;
+			}
+
+			var clipLength = FindAnimationClipLength(stateName);
+
+			SetSpeed(clipLength/duration);
+
+			m_currentStateName = stateName;
+
+			m_animator.Play(stateName,layer);
+		}
+
+		public void SetSpeed(float speed = 1.0f)
+		{
+			if(!m_animator)
+			{
+				return;
+			}
+
+			m_animator.speed = speed;
 		}
 
 		public bool IsExistAnimationClip(string stateName)
@@ -90,14 +120,14 @@ namespace KZLib
 				m_animator = GetComponent<Animator>();
 			}
 		}
-		
+
 #if UNITY_EDITOR
 		[BoxGroup("Animation",ShowLabel = false)]
-		[VerticalGroup("Animation/0"),SerializeField,ValueDropdown(nameof(StateNameList))]
-		private string m_stateName = null;
+		[VerticalGroup("Animation/0"),SerializeField,ValueDropdown(nameof(StateNameGroup))]
+		protected string m_stateName = null;
 
 		private bool m_isPlaying = false;
-		private double m_lastTime = 0.0d;
+		private float m_lastTime = 0.0f;
 
 		[HorizontalGroup("Animation/1"),Button(Name = "",Icon = SdfIconType.PlayFill,ButtonHeight = 30),EnableIf(nameof(IsValidState))]
 		protected void _OnPlayAnimationInEditor()
@@ -112,7 +142,7 @@ namespace KZLib
 
 			m_animator.Play(m_stateName);
 
-			m_lastTime = EditorApplication.timeSinceStartup;
+			m_lastTime = Convert.ToSingle(EditorApplication.timeSinceStartup);
 			m_isPlaying = true;
 		}
 
@@ -136,40 +166,31 @@ namespace KZLib
 				return;
 			}
 
-			var currentTime = EditorApplication.timeSinceStartup;
+			var currentTime = Convert.ToSingle(EditorApplication.timeSinceStartup);
+
+			var deltaTime = currentTime-m_lastTime;
 
 			m_lastTime = currentTime;
 
-			m_animator.Update((float)(currentTime-m_lastTime));
+			m_animator.Update(deltaTime);
 			SceneView.RepaintAll();
 		}
 
-		private readonly ValueDropdownList<string> m_stateNameList = new();
+		private readonly List<string> m_stateNameList = new();
 
-		private IEnumerable StateNameList
+		private IEnumerable<string> StateNameGroup
 		{
 			get
 			{
 				if(m_animator && m_stateNameList.IsNullOrEmpty())
 				{
-					var controller = m_animator.runtimeAnimatorController as AnimatorController;
-					
-					if(controller != null)
-                    {
-                        foreach(var layer in controller.layers)
-						{
-							foreach(var child in layer.stateMachine.states)
-							{
-								m_stateNameList.Add(child.state.name);
-							}
-						}
-                    }
+					m_stateNameList.AddRange(m_animator.FindStateNameGroup());
 				}
 
 				return m_stateNameList;
 			}
 		}
-		
+
 		private bool IsValidState => !m_stateName.IsEmpty();
 #endif
 	}

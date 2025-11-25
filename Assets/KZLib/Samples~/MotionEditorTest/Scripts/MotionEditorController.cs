@@ -84,7 +84,7 @@ namespace KZLib.KZSample
 					yield break;
 				}
 
-				var controller = m_animator.runtimeAnimatorController as AnimatorController;
+				var controller = m_animator.GetAnimatorController(out var _);
 
 				foreach(var controllerLayer in controller.layers)
 				{

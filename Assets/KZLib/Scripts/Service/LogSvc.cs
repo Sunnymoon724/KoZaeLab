@@ -48,7 +48,6 @@ public class LogSvc
 public class LogChannel
 {
 	private const int c_maxLogCount = 100;
-	private static readonly Regex s_fileNameExtractor = new(@"([^\\\/]+)(?=\.[^.\\\/]+$)",RegexOptions.Compiled);
 
 	private static readonly HashSet<string> s_logHashSet = new();
 	private static readonly CircularQueue<MessageData> m_logDataQueue = new(c_maxLogCount);
