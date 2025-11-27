@@ -62,7 +62,7 @@ namespace KZLib.KZMenu
 				return;
 			}
 
-			var stringBuilder = new StringBuilder();
+			var textList = new List<string>();
 
 			foreach(var assetPath in CommonUtility.FindAssetPathGroup("t:prefab"))
 			{
@@ -77,20 +77,23 @@ namespace KZLib.KZMenu
 							continue;
 						}
 
-						stringBuilder.Append($"<b> <a href=\"{assetPath}\">{asset.name}</a> </b>\n");
+						textList.Add($"<b> <a href=\"{assetPath}\">{asset.name}</a> </b>");
 					}
 				});
 			}
 
-			if(stringBuilder.Length == 0)
+			if(textList.Count == 0)
 			{
 				LogSvc.Editor.I("Missing component is not found.");
 			}
 			else
 			{
-				stringBuilder.Insert(0,"Missing component list\n");
+				LogSvc.Editor.I("Missing component list");
 
-				LogSvc.Editor.I(stringBuilder.ToString());
+				foreach(var text in textList)
+				{
+					LogSvc.Editor.I(text);
+				}
 			}
 		}
 
@@ -102,8 +105,9 @@ namespace KZLib.KZMenu
 				return;
 			}
 
-			var stringBuilder = new StringBuilder();
 			var resultList = new List<string>();
+
+			var textListDict = new Dictionary<string,List<string>>();
 
 			foreach(var assetPath in CommonUtility.FindAssetPathGroup("t:prefab"))
 			{
@@ -118,19 +122,34 @@ namespace KZLib.KZMenu
 						return;
 					}
 
-					stringBuilder.Append($"<b> <a href=\"{assetPath}\">{asset.name}</a> </b> [<b> {child.FindHierarchy()} </b>]");
+					textListDict.AddOrCreate($"<b> <a href=\"{assetPath}\">{asset.name}</a> </b>",child.FindHierarchy());
 				});
 			}
 
-			if(stringBuilder.Length == 0)
+			if(textListDict.Count == 0)
 			{
 				LogSvc.Editor.I("Missing meshFilter is not found.");
 			}
 			else
 			{
-				stringBuilder.Insert(0,"Missing meshFilter list\n");
+				LogSvc.Editor.I("Missing meshFilter list");
+				var builder = new StringBuilder();
 
-				LogSvc.Editor.I(stringBuilder.ToString());
+				foreach(var pair in textListDict)
+				{
+					builder.Clear();
+
+					builder.Append($"{pair.Key}\n");
+
+					foreach(var path in pair.Value)
+					{
+						builder.Append($" -[{path}]\n");
+					}
+
+					builder.AppendLine();
+
+					LogSvc.Editor.I(builder.ToString());
+				}
 			}
 		}
 
