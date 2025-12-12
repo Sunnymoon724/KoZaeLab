@@ -258,7 +258,7 @@ public class LogChannel
 	[OnOpenAsset(0)]
 	protected static bool _OnOpenDebugLog(int instance,int _)
 	{
-		var objectName = EditorUtility.InstanceIDToObject(instance).name;
+		var objectName = EditorUtility.EntityIdToObject(instance).name;
 
 		if(objectName.IsEmpty() || !objectName.IsEqual(nameof(LogSvc)))
 		{

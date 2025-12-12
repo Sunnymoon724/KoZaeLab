@@ -289,7 +289,7 @@ namespace KZLib.Tet
 		private static void _DrawCategory(HierarchyData hierarchyData,Rect rect,int instanceId)
 		{
 			var categoryRect = new Rect(c_headSpace,rect.y,rect.width+25.0f+hierarchyData.TreeLevel*14.0f,rect.height);
-			var currentObject = EditorUtility.InstanceIDToObject(instanceId) as GameObject;
+			var currentObject = EditorUtility.EntityIdToObject(instanceId) as GameObject;
 			var categoryColor = Selection.activeGameObject == currentObject ? s_customData.CategoryColor.InvertColor() : s_customData.CategoryColor;
 
 			var currentName = currentObject == null ? "" : currentObject.name;
@@ -307,7 +307,7 @@ namespace KZLib.Tet
 		#region Draw Icon
 		private static void _DrawIcon(Rect rect,int instanceId)
 		{
-			var currentObject = EditorUtility.InstanceIDToObject(instanceId) as GameObject;
+			var currentObject = EditorUtility.EntityIdToObject(instanceId) as GameObject;
 
 			if(currentObject == null)
 			{

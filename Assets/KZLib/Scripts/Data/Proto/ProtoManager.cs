@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using MessagePack;
 using UnityEngine;
 using KZLib.KZUtility;
+using MemoryPack;
 
 namespace KZLib.KZData
 {
@@ -212,7 +212,7 @@ namespace KZLib.KZData
 
 				var protoTypeName = $"KZLib.KZData.{protoName}Proto";
 				var protoType = CommonUtility.FindType(protoTypeName) ?? throw new InvalidOperationException($"{protoTypeName} is not exist.");
-				var deserialize = MessagePackSerializer.Deserialize(protoType.MakeArrayType(),textAsset.bytes,MessagePackSerializerOptions.Standard.WithResolver(MessagePackResolver.Instance));
+				var deserialize = MemoryPackSerializer.Deserialize(protoType.MakeArrayType(),textAsset.bytes);
 
 				if(deserialize is not object[] resultArray)
 				{
