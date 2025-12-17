@@ -7,7 +7,7 @@
 PlayFab 같은 경우는 **KZPlayFab**을 사용시 필요합니다.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blueviolet.svg)](https://github.com/Sunnymoon724/KoZaeLab/blob/master/LICENSE)
-[![Unity Version](https://img.shields.io/badge/Unity-2022.3%20or%20later-important)](https://unity3d.com/)
+[![Unity Version](https://img.shields.io/badge/Unity-6.3%20or%20later-important)](https://unity3d.com/)
 
 ## 목차
 * [시작하기](#getting-started)
