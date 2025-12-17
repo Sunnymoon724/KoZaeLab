@@ -6,14 +6,13 @@ using UnityEngine.Video;
 using Cysharp.Threading.Tasks;
 using VideoPanel;
 using System.Threading;
+using KZLib.KZData;
 
 public class VideoPanelUI : WindowUI2D
 {
 	[SerializeField] private RawImage m_screenImage = null;
 	[SerializeField] private VideoPlayer m_videoPlayer = null;
 	[SerializeField] private AspectRatioFitter m_aspectRatio = null;
-
-	public override string Tag => Global.VIDEO_PANEL_UI;
 
 	public TimeSpan Duration => TimeSpan.FromSeconds(m_videoPlayer.frameCount/m_videoPlayer.frameRate);
 
@@ -87,7 +86,7 @@ public class VideoPanelUI : WindowUI2D
 
 		if(videoData.IsExistSubtitle)
 		{
-			var subtitlePanel = UIManager.In.Open<SubtitlePanelUI>(Global.SUBTITLE_PANEL_UI,new SubtitlePanelUI.SubtitleParam(videoData.SubtitlePath));
+			var subtitlePanel = UIManager.In.Open(UINameType.SubtitlePanelUI,new SubtitlePanelUI.SubtitleParam(videoData.SubtitlePath)) as SubtitlePanelUI;
 
 			AddLink(subtitlePanel);
 
@@ -97,7 +96,7 @@ public class VideoPanelUI : WindowUI2D
 
 		if(videoData.CanSkip)
 		{
-			var skipPanel = UIManager.In.Open<SkipPanelUI>(Global.SKIP_PANEL_UI,new SkipPanelUI.SkipParam(Stop));
+			var skipPanel = UIManager.In.Open(UINameType.SkipPanelUI,new SkipPanelUI.SkipParam(Stop)) as SkipPanelUI;
 
 			AddLink(skipPanel);
 		}

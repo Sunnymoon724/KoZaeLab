@@ -12,8 +12,6 @@ namespace LoadingPanel
 
 public class LoadingPanelUI : WindowUI2D
 {
-	public override string Tag => Global.LOADING_PANEL_UI;
-
 	[SerializeField]
 	private List<ILoadingUI> m_loadingList = new();
 

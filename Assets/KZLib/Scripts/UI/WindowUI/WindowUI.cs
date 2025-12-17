@@ -1,5 +1,6 @@
 using DG.Tweening;
 using KZLib;
+using KZLib.KZData;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -22,7 +23,7 @@ public interface IWindowUI
 	UILayerType LayerType { get; }
 	UIPriorityType PriorityType { get; }
 
-	string Tag { get; }
+	UINameType NameType { get; }
 
 	bool IsPooling { get; }
 
@@ -31,9 +32,11 @@ public interface IWindowUI
 
 public abstract class WindowUI : BaseComponentUI,IWindowUI
 {
-	[InfoBox("canvasGroup is null",InfoMessageType.Error,"@this.m_canvasGroup == null")]
+	[InfoBox("canvasGroup is null",InfoMessageType.Error,nameof(IsValidCanvasGroup))]
 	[VerticalGroup("CanvasGroup",Order = -25),SerializeField]
 	protected CanvasGroup m_canvasGroup = null;
+	
+	private bool IsValidCanvasGroup => m_canvasGroup != null;
 
 	protected Canvas m_canvas = null;
 
@@ -47,7 +50,31 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 	public abstract UILayerType LayerType { get; }
 	public abstract UIPriorityType PriorityType { get; }
-	public abstract string Tag { get; }
+
+	private UINameType? m_nameType = null;
+	public UINameType NameType
+	{
+		get
+		{
+			if(!m_nameType.HasValue)
+			{
+				var typeName = GetType().Name;
+				
+				if(typeName.TryToEnum<UINameType>(out var nameType))
+				{
+					m_nameType = nameType;
+				}
+				else
+				{
+					LogSvc.UI.E($"{typeName} is not defined UINameType");
+
+					m_nameType = UINameType.None;
+				}
+			}
+
+			return m_nameType.Value;
+		}
+	}
 
 	public abstract bool Is3D { get; }
 
@@ -69,7 +96,7 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 	public virtual void Open(object param)
 	{
-		LogSvc.UI.I($"{Tag} is opened");
+		LogSvc.UI.I($"{NameType} is opened");
 
 		gameObject.EnsureActive(true);
 	}
@@ -80,35 +107,35 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 		gameObject.EnsureActive(false);
 
-		LogSvc.UI.I($"{Tag} is closed");
+		LogSvc.UI.I($"{NameType} is closed");
 	}
 
 	protected override void Release() { }
 
 	public virtual void Show()
 	{
-		LogSvc.UI.I($"{Tag} is shown");
+		LogSvc.UI.I($"{NameType} is shown");
 
 		_SetCanvasGroupState(1,true,true);
 	}
 
 	public virtual void Hide()
 	{
-		LogSvc.UI.I($"{Tag} is hidden");
+		LogSvc.UI.I($"{NameType} is hidden");
 
 		_SetCanvasGroupState(0,false,false);
 	}
 
 	public void BlockInput()
 	{
-		LogSvc.UI.I($"{Tag} input is blocked");
+		LogSvc.UI.I($"{NameType} input is blocked");
 
 		_SetCanvasGroupState(1,false,false);
 	}
 
 	public void AllowInput()
 	{
-		LogSvc.UI.I($"{Tag} input is allowed");
+		LogSvc.UI.I($"{NameType} input is allowed");
 
 		_SetCanvasGroupState(1,true,true);
 	}
@@ -122,7 +149,7 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 	protected virtual void SelfClose()
 	{
-		UIManager.In.Close(Tag);
+		UIManager.In.Close(NameType);
 	}
 
 	protected void AddSequence(ref Sequence sequence,Tween tween)

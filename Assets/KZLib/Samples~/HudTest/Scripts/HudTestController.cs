@@ -1,6 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
-using KZLib;
+using KZLib.KZData;
 using UnityEngine;
 
 namespace KZLib.KZSample
@@ -9,7 +9,7 @@ namespace KZLib.KZSample
 	{
 		private void Start()
 		{
-			UIManager.In.Open<HudPanelUI>(Global.HUD_PANEL_UI);
+			UIManager.In.Open(UINameType.HudPanelUI);
 
 			LoopTextAsync().Forget();
 		}

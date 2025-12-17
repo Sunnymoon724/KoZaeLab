@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading;
 using KZLib;
+using KZLib.KZData;
 using TMPro;
 using UnityEngine;
 
@@ -35,8 +35,6 @@ public class SubtitlePanelUI : WindowUI2D
 	#endregion Subtitle Data
 
 	[SerializeField] private TMP_Text m_subtitleText = null;
-
-	public override string Tag => Global.SUBTITLE_PANEL_UI;
 
 	private readonly List<SubtitleData> m_subtitleList = new();
 

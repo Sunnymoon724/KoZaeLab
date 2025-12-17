@@ -1,5 +1,6 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using KZLib.KZData;
 using KZLib.KZUtility;
 
 namespace KZLib
@@ -8,16 +9,16 @@ namespace KZLib
 	{
 		public async UniTask PlayLoadingAsync(Func<UniTask> onPlayTask)
 		{
-			var loadingPanelUI = Open<LoadingPanelUI>(Global.LOADING_PANEL_UI);
+			var loadingPanelUI = Open(UINameType.LoadingPanelUI) as LoadingPanelUI;
 
 			await onPlayTask();
 
 			Close(loadingPanelUI);
 		}
 
-		public async UniTask PlayLoadingIncludeTransitionAsync(string transitionName,Func<UniTask> onPlayTask)
+		public async UniTask PlayLoadingIncludeTransitionAsync(UINameType transitionNameType,Func<UniTask> onPlayTask)
 		{
-			await _PlayTransitionOutInAsync(transitionName,async ()=> { await PlayLoadingAsync(onPlayTask); });
+			await _PlayTransitionOutInAsync(transitionNameType,async ()=> { await PlayLoadingAsync(onPlayTask); });
 		}
 	}
 }

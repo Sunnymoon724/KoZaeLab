@@ -57,22 +57,3 @@ public partial struct Global
 	
 	public const string TITLE_SCENE = "TitleScene";
 }
-
-#region UI Name
-public partial struct Global
-{
-	public const string HUD_PANEL_UI = "HudPanelUI";
-
-	public const string TRANSITION_PANEL_UI = "TransitionPanelUI";
-
-	public const string VIDEO_PANEL_UI = "VideoPanelUI";
-	public const string SUBTITLE_PANEL_UI = "SubtitlePanelUI";
-	public const string SKIP_PANEL_UI = "SkipPanelUI";
-
-	public const string DIALOG_BOX_PANEL_UI = "DialogBoxPopupUI";
-
-	public const string DOWNLOAD_PANEL_UI = "DownloadPanelUI";
-
-	public const string LOADING_PANEL_UI = "LoadingPanelUI";
-}
-#endregion UI Name

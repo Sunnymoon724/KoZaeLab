@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using KZLib;
+using KZLib.KZData;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -59,20 +60,20 @@ public abstract class RepositoryUI : BaseComponentUI
 		}
 	}
 
-	public WindowUI FindOpenedUI(string tag)
+	public WindowUI FindOpenedUI(UINameType nameType)
 	{
-		return m_openedWindowList.Find(x=>x.Tag == tag);
+		return m_openedWindowList.Find(x=>x.NameType == nameType);
 	}
 
-	public void RemoveAll(IEnumerable<string> excludeTagGroup,bool isRelease)
+	public void RemoveAll(IEnumerable<UINameType> excludeNameTypeGroup,bool isRelease)
 	{
-		var tagHashSet = new HashSet<string>(excludeTagGroup ?? Enumerable.Empty<string>());
+		var nameTypeHashSet = new HashSet<UINameType>(excludeNameTypeGroup ?? Enumerable.Empty<UINameType>());
 
 		for(var i=m_openedWindowList.Count-1;i>=0;i--)
 		{
 			var window = m_openedWindowList[i];
 
-			if(tagHashSet.Contains(window.Tag))
+			if(nameTypeHashSet.Contains(window.NameType))
 			{
 				continue;
 			}
@@ -81,28 +82,28 @@ public abstract class RepositoryUI : BaseComponentUI
 		}
 	}
 
-	public void ShowAllGroup(IEnumerable<string> includeTagGroup = null,IEnumerable<string> excludeTagGroup = null)
+	public void ShowAllGroup(IEnumerable<UINameType> includeNameTypeGroup = null,IEnumerable<UINameType> excludeNameTypeGroup = null)
 	{
-		_SetVisibleGroup(false,includeTagGroup,excludeTagGroup);
+		_SetVisibleGroup(false,includeNameTypeGroup,excludeNameTypeGroup);
 	}
 
-	public void HideAllGroup(IEnumerable<string> includeTagGroup = null,IEnumerable<string> excludeTagGroup = null)
+	public void HideAllGroup(IEnumerable<UINameType> includeNameTypeGroup = null,IEnumerable<UINameType> excludeNameTypeGroup = null)
 	{
-		_SetVisibleGroup(true,includeTagGroup,excludeTagGroup);
+		_SetVisibleGroup(true,includeNameTypeGroup,excludeNameTypeGroup);
 	}
 
-	private void _SetVisibleGroup(bool isHidden,IEnumerable<string> includeTagGroup = null,IEnumerable<string> excludeTagGroup = null)
+	private void _SetVisibleGroup(bool isHidden,IEnumerable<UINameType> includeNameTypeGroup = null,IEnumerable<UINameType> excludeNameTypeGroup = null)
 	{
-		var includeTagHashSet = new HashSet<string>(includeTagGroup ?? Enumerable.Empty<string>());
-		var excludeTagHashSet = new HashSet<string>(excludeTagGroup ?? Enumerable.Empty<string>())
+		var includeNameTypeHashSet = new HashSet<UINameType>(includeNameTypeGroup ?? Enumerable.Empty<UINameType>());
+		var excludeNameTypeHashSet = new HashSet<UINameType>(excludeNameTypeGroup ?? Enumerable.Empty<UINameType>())
         {
-            Global.TRANSITION_PANEL_UI,
-            Global.HUD_PANEL_UI,
+            UINameType.CommonTransitionPanelUI,
+            UINameType.HudPanelUI,
         };
 
 		foreach(var window in m_openedWindowList)
 		{
-			if(window == null || !includeTagHashSet.Contains(window.Tag) || excludeTagHashSet.Contains(window.Tag))
+			if(window == null || !includeNameTypeHashSet.Contains(window.NameType) || excludeNameTypeHashSet.Contains(window.NameType))
 			{
 				continue;
 			}
@@ -111,16 +112,16 @@ public abstract class RepositoryUI : BaseComponentUI
 		}
 	}
 
-	public void Show(string tag)
+	public void Show(UINameType nameType)
 	{
-		var window = FindOpenedUI(tag);
+		var window = FindOpenedUI(nameType);
 
 		_SetVisible(window,false);
 	}
 
-	public void Hide(string tag)
+	public void Hide(UINameType nameType)
 	{
-		var window = FindOpenedUI(tag);
+		var window = FindOpenedUI(nameType);
 
 		_SetVisible(window,true);
 	}

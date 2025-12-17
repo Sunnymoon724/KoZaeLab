@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using KZLib.KZData;
 using KZLib.KZUtility;
 using VideoPanel;
 
@@ -9,20 +10,20 @@ namespace KZLib
 		/// <summary>
 		/// fade out -> prepare video -> fade in -> play video
 		/// </summary>
-		public async UniTask WatchVideoAsync(VideoData videoData)
+		public async UniTask WatchVideoAsync(UINameType transitionNameType,VideoData videoData)
 		{
-			await _WatchVideoAsync(videoData,false);
+			await _WatchVideoAsync(transitionNameType,videoData,false);
 		}
 
 		/// <summary>
 		/// fade out -> show loading -> fade in -> play video
 		/// </summary>
-		public async UniTask WatchVideoIncludeLoadingAsync(VideoData videoData)
+		public async UniTask WatchVideoIncludeLoadingAsync(UINameType transitionNameType,VideoData videoData)
 		{
-			await _WatchVideoAsync(videoData,true);
+			await _WatchVideoAsync(transitionNameType,videoData,true);
 		}
 
-		private async UniTask _WatchVideoAsync(VideoData videoData,bool includeLoading)
+		private async UniTask _WatchVideoAsync(UINameType transitionNameType,VideoData videoData,bool includeLoading)
 		{
 			if(videoData == null)
 			{
@@ -33,17 +34,17 @@ namespace KZLib
 
 			SoundManager.In.PauseBGMSound();
 
-			var videoPanel = Open<VideoPanelUI>(Global.VIDEO_PANEL_UI);
+			var videoPanel = Open(UINameType.VideoPanelUI) as VideoPanelUI;
 
 			videoPanel.Hide();
 
 			if(includeLoading)
 			{
-				await PlayLoadingIncludeTransitionAsync(Global.TRANSITION_PANEL_UI,async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
+				await PlayLoadingIncludeTransitionAsync(transitionNameType,async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
 			}
 			else
 			{
-				await _PlayTransitionOutInAsync(Global.TRANSITION_PANEL_UI,async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
+				await _PlayTransitionOutInAsync(transitionNameType,async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
 			}
 
 			videoPanel.PlayVideo();

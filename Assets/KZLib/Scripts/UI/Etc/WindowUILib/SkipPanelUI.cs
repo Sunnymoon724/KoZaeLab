@@ -8,8 +8,6 @@ public class SkipPanelUI : WindowUI2D
 {
 	public record SkipParam(Action OnClicked);
 
-	public override string Tag => Global.SKIP_PANEL_UI;
-
 	[SerializeField,ValidateInput(nameof(IsValidShowDuration),"0 is not defined.",InfoMessageType.Error),PropertyTooltip("Negative numbers represent infinity, and zero doesn't work.")]
 	private float m_skipShowDuration = 0.0f;
 	[SerializeField,MinValue(0.02f)]
