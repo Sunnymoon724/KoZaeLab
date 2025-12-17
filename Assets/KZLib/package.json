@@ -4,7 +4,7 @@
   "author": { "name": "Ko KoZae", "url": "https://github.com/Sunnymoon724" },
   "description": "KoZae Library \nIt is using 'UniTask'.",
   "version": "1.0.2001",
-  "unity": "6000.3.0",
+  "unity": "6.3",
   "license": "MIT",
   "dependencies": {
     "com.unity.nuget.newtonsoft-json" : "3.2.2",
