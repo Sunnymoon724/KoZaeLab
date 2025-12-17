@@ -21,11 +21,6 @@
       "path": "Samples~/HudTest"
     },
     {
-      "displayName": "MotionEditorTest",
-      "description": "MotionEditor Test",
-      "path": "Samples~/MotionEditorTest"
-    },
-    {
       "displayName": "MainTest",
       "description": "Main Test",
       "path": "Samples~/MainTest"

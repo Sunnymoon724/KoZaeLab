@@ -1,3 +1,4 @@
+#if KZLIB_COMMON_PROTO
 using UnityEngine;
 using KZLib.KZAttribute;
 using KZLib.KZData;
@@ -192,3 +193,4 @@ namespace KZLib
 #endif
 	}
 }
+#endif
