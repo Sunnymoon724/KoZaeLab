@@ -5,14 +5,16 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using KZLib.KZAttribute;
+using KZLib.KZTool;
 using UnityEditor;
 using Sirenix.Utilities.Editor;
-using Microsoft.Win32;
 
 namespace KZLib.KZWindow
 {
 	public class PlayerPrefsWindow : OdinEditorWindow
 	{
+		private enum PlayerPrefsType { None, String, Int, Float, }
+
 		#region PlayerPrefsInfo
 		[Serializable]
 		private record PlayerPrefsInfo
@@ -20,7 +22,7 @@ namespace KZLib.KZWindow
 			[SerializeField,HideInInspector]
 			private string m_value = null;
 
-			[TitleGroup("$m_key",BoldTitle = false),HideLabel,ShowInInspector,MultiLineProperty(3)]
+			[TitleGroup("$m_key",BoldTitle = false,Subtitle = "$m_type"),HideLabel,ShowInInspector,MultiLineProperty(3)]
 			public string Value
 			{
 				get => m_value;
@@ -31,37 +33,64 @@ namespace KZLib.KZWindow
 						return;
 					}
 
-					PlayerPrefsManager.In.SetString(m_key,value);
+					switch(m_type)
+					{
+						case PlayerPrefsType.String:
+							PlayerPrefsManager.In.SetString(m_key,value);
+							break;
+						case PlayerPrefsType.Int:
+							if(int.TryParse(value,out var intNumber))
+							{
+								PlayerPrefsManager.In.SetInt(m_key,intNumber);
+							}
+							break;
+						case PlayerPrefsType.Float:
+							if(float.TryParse(value,out var floatNumber))
+							{
+								PlayerPrefsManager.In.SetFloat(m_key,floatNumber);
+							}
+							break;
+						case PlayerPrefsType.None:
+						default:
+							break;
+					}
 
 					m_value = value;
 				}
 			}
 
-			private readonly string m_key = null;
+			private readonly string m_key = string.Empty;
+			private readonly PlayerPrefsType m_type = PlayerPrefsType.None;
 
 			public string Key => m_key;
 
-			public PlayerPrefsInfo(string key,string value)
+			public PlayerPrefsInfo(string key,PlayerPrefsType type,string value)
 			{
 				m_key = key;
+				m_type = type;
 				m_value = value;
 			}
 		}
 		#endregion PlayerPrefsInfo
 
-		[VerticalGroup("1",Order = 1),LabelText("Info List"),SerializeField,ListDrawerSettings(ShowFoldout = false,DraggableItems = false,HideAddButton = true,CustomRemoveIndexFunction = nameof(_OnRemoveInfo),OnTitleBarGUI = nameof(_OnRefreshInfo)),ShowIf(nameof(IsExistInfo))]
+		[VerticalGroup("1",Order = 1),LabelText("Info List"),SerializeField,ListDrawerSettings(ShowFoldout = false,DraggableItems = false,HideAddButton = true,CustomRemoveIndexFunction = nameof(_OnRemoveInfo),OnTitleBarGUI = nameof(_OnRefreshInfo)),ShowIf(nameof(IsExistInfo)),Searchable]
 		private List<PlayerPrefsInfo> m_playerPrefsInfoList = new();
 
 		[VerticalGroup("1",Order = 1),HideLabel,ShowInInspector,HideIf(nameof(IsExistInfo)),KZRichText]
 		protected string InfoText => "PlayerPrefs is empty";
 
 		private bool IsExistInfo => m_playerPrefsInfoList.Count > 0;
+		
+		private bool m_ascending = true;
+		private bool m_isShowSystem = false;
 
 		protected override void Initialize()
 		{
 			base.Initialize();
 
 			_LoadPlayerPrefsInfo();
+
+			_SortInfoList();
 		}
 
 		private void _OnRemoveInfo(int index)
@@ -82,9 +111,43 @@ namespace KZLib.KZWindow
 
 		private void _OnRefreshInfo()
 		{
-			if(SirenixEditorGUI.ToolbarButton(EditorIcons.Refresh))
+			if(m_ascending)
+			{
+				if(SirenixEditorGUI.ToolbarButton(SdfIconType.CaretDownFill))
+				{
+					m_ascending = false;
+					_SortInfoList();
+				}
+			}
+			else
+			{
+				if(SirenixEditorGUI.ToolbarButton(SdfIconType.CaretUpFill))
+				{
+					m_ascending = true;
+					_SortInfoList();
+				}
+			}
+
+			if(SirenixEditorGUI.ToolbarButton(SdfIconType.ArrowRepeat))
 			{
 				_LoadPlayerPrefsInfo();
+			}
+			
+			if(m_isShowSystem)
+			{
+				if(SirenixEditorGUI.ToolbarButton(SdfIconType.EyeSlashFill))
+				{
+					m_isShowSystem = false;
+					_LoadPlayerPrefsInfo();
+				}
+			}
+			else
+			{
+				if(SirenixEditorGUI.ToolbarButton(SdfIconType.EyeFill))
+				{
+					m_isShowSystem = true;
+					_LoadPlayerPrefsInfo();
+				}
 			}
 		}
 
@@ -105,92 +168,84 @@ namespace KZLib.KZWindow
 
 		private void _LoadPlayerPrefsInfo()
 		{
-			var keyArray = _LoadPlayerPrefsKey(PlayerSettings.companyName,PlayerSettings.productName);
+			var keyArray = PlayerPrefsReader.LoadPlayerPrefsKeyArray(PlayerSettings.companyName,PlayerSettings.productName);
 
 			m_playerPrefsInfoList.Clear();
 
 			foreach(var key in keyArray)
 			{
-				if(!_TryGetPlayerValue(key,out var value))
+				if(!m_isShowSystem)
+				{
+					if(key.StartsWith("unity.") || key.Equals("UnityGraphicsQuality") || key.Equals("AddressablesRuntimeDataPath"))
+					{
+						continue;
+					}
+				}
+
+				if(!_TryGetPlayerValue(key,out var value,out var playerPrefsType))
 				{
 					continue;
 				}
 
-				m_playerPrefsInfoList.Add(new PlayerPrefsInfo(key,value));
+				m_playerPrefsInfoList.Add(new PlayerPrefsInfo(key,playerPrefsType,value));
 			}
+
+			_SortInfoList();
 		}
 
-		private bool _TryGetPlayerValue(string key,out string value)
+		private bool _TryGetPlayerValue(string key,out string value,out PlayerPrefsType playerPrefsType)
 		{
 			value = string.Empty;
+			playerPrefsType = PlayerPrefsType.None;
 
-			if(!PlayerPrefs.HasKey(key))
+			if(PlayerPrefs.HasKey(key))
 			{
-				return false;
+				var intValue = PlayerPrefs.GetInt(key,int.MinValue);
+
+				if(intValue != int.MinValue)
+				{
+					value = $"{intValue}";
+					playerPrefsType = PlayerPrefsType.Int;
+
+					return true;
+				}
+
+				var floatValue = PlayerPrefs.GetFloat(key,float.MinValue);
+
+				if(floatValue != float.MinValue)
+				{
+					value = $"{floatValue}";
+					playerPrefsType = PlayerPrefsType.Float;
+
+					return true;
+				}
+
+				var stringValue = PlayerPrefs.GetString(key,string.Empty);
+
+				if(!stringValue.IsEmpty())
+				{
+					value = stringValue;
+					playerPrefsType = PlayerPrefsType.String;
+
+					return true;
+				}
+
+				PlayerPrefs.DeleteKey(key);
 			}
-
-			var intValue = PlayerPrefs.GetInt(key,0);
-
-			if(intValue != 0)
-			{
-				value = $"{intValue}";
-
-				return true;
-			}
-
-			var floatValue = PlayerPrefs.GetFloat(key,0.0f);
-
-			if(floatValue != 0.0f)
-			{
-				value = $"{floatValue}";
-
-				return true;
-			}
-
-			var stringValue = PlayerPrefs.GetString(key,"");
-
-			if(!stringValue.IsEmpty())
-			{
-				value = stringValue;
-
-				return true;
-			}
-
-			PlayerPrefs.DeleteKey(key);
 
 			return false;
 		}
 
-		private static string[] _LoadPlayerPrefsKey(string companyName,string productName)
+		private void _SortInfoList()
 		{
-			var resultList = new List<string>();
-#if UNITY_EDITOR_WIN
-			var prefsPath = @$"SOFTWARE\Unity\UnityEditor\{companyName}\{productName}";
-
-			using var registryKey = Registry.CurrentUser.OpenSubKey(prefsPath);
-
-			if(registryKey != null)
+			if(m_ascending)
 			{
-				foreach(var key in registryKey.GetValueNames())
-				{
-					if(key.StartsWith("unity.") || key.StartsWith("UnityGraphicsQuality"))
-					{
-						continue;
-					}
-
-					resultList.Add(key[..key.LastIndexOf("_h",StringComparison.Ordinal)]);
-				}
+				m_playerPrefsInfoList.Sort((a,b) => string.Compare(a.Key,b.Key,StringComparison.Ordinal));
 			}
-#elif UNITY_EDITOR_OSX
-			var prefsPath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal),"Library/Preferences"),$"unity.{companyName}.{productName}.plist");
-			var dictionary = PropertyListParser.Parse(new FileInfo(prefsPath)) as NSDictionary ?? throw new InvalidOperationException($"{prefsPath} is not valid");
-
-			foreach(var pair in dictionary)
+			else
 			{
-				resultList.Add(pair.Key);
+				m_playerPrefsInfoList.Sort((a,b) => string.Compare(b.Key,a.Key,StringComparison.Ordinal));
 			}
-#endif
-			return resultList.ToArray();
 		}
 	}
 }
