@@ -176,31 +176,6 @@ namespace KZLib.KZMenu
 #endif
 		}
 
-		[MenuItem("KZMenu/Option/Add Common Proto Module",false,MenuOrder.Option.MODULE)]
-		private static void _OnAddCommonProtoModule()
-		{
-			if(!CommonUtility.DisplayCheck("Add common proto module","Add common proto module?"))
-			{
-				return;
-			}
-
-			var targetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
-
-			CommonUtility.AddDefineSymbol("KZLIB_COMMON_PROTO",NamedBuildTarget.FromBuildTargetGroup(targetGroup));
-			
-			// 파일 추가하기
-		}
-
-		[MenuItem("KZMenu/Option/Add Common Proto Module",true,MenuOrder.Option.MODULE)]
-		private static bool _IsEnableCommonProtoModule()
-		{
-#if KZLIB_COMMON_PROTO
-			return false;
-#else
-			return true;
-#endif
-		}
-
 		[MenuItem("KZMenu/Option/Check Internet",false,MenuOrder.Option.CHECK)]
 		private static void _OnCheckInternet()
 		{
