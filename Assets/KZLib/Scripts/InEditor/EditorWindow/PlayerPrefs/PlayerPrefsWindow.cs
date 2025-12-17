@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System;
 using KZLib.KZAttribute;
 using UnityEditor;
-using KZLib.KZTool;
 using Sirenix.Utilities.Editor;
+using Microsoft.Win32;
 
 namespace KZLib.KZWindow
 {
@@ -105,7 +105,7 @@ namespace KZLib.KZWindow
 
 		private void _LoadPlayerPrefsInfo()
 		{
-			var keyArray = PlayerPrefsReader.LoadPlayerPrefsKey(PlayerSettings.companyName,PlayerSettings.productName);
+			var keyArray = _LoadPlayerPrefsKey(PlayerSettings.companyName,PlayerSettings.productName);
 
 			m_playerPrefsInfoList.Clear();
 
@@ -159,6 +159,38 @@ namespace KZLib.KZWindow
 			PlayerPrefs.DeleteKey(key);
 
 			return false;
+		}
+
+		private static string[] _LoadPlayerPrefsKey(string companyName,string productName)
+		{
+			var resultList = new List<string>();
+#if UNITY_EDITOR_WIN
+			var prefsPath = @$"SOFTWARE\Unity\UnityEditor\{companyName}\{productName}";
+
+			using var registryKey = Registry.CurrentUser.OpenSubKey(prefsPath);
+
+			if(registryKey != null)
+			{
+				foreach(var key in registryKey.GetValueNames())
+				{
+					if(key.StartsWith("unity.") || key.StartsWith("UnityGraphicsQuality"))
+					{
+						continue;
+					}
+
+					resultList.Add(key[..key.LastIndexOf("_h",StringComparison.Ordinal)]);
+				}
+			}
+#elif UNITY_EDITOR_OSX
+			var prefsPath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal),"Library/Preferences"),$"unity.{companyName}.{productName}.plist");
+			var dictionary = PropertyListParser.Parse(new FileInfo(prefsPath)) as NSDictionary ?? throw new InvalidOperationException($"{prefsPath} is not valid");
+
+			foreach(var pair in dictionary)
+			{
+				resultList.Add(pair.Key);
+			}
+#endif
+			return resultList.ToArray();
 		}
 	}
 }
