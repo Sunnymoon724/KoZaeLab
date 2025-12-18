@@ -90,10 +90,10 @@ namespace KZLib.KZAttribute
 
 		protected abstract Rect OnClickToOpen(Rect rect,bool isValid);
 
-		protected override void _DrawPropertyLayout(GUIContent label)
+		protected override void _DoDrawPropertyLayout(GUIContent label)
 		{
 			var isValid = IsValidPath();
-			var rect = DrawPrefixLabel(label);
+			var rect = _DrawPrefixLabel(label);
 
 			//? Add other buttons
 			foreach(var onClicked in m_onClickedList)
@@ -101,7 +101,7 @@ namespace KZLib.KZAttribute
 				rect = onClicked(rect,isValid);
 			}
 
-			EditorGUI.LabelField(rect,ValueEntry.SmartValue,GetValidationStyle(isValid,Global.WRONG_HEX_COLOR));
+			EditorGUI.LabelField(rect,ValueEntry.SmartValue,_GetValidationStyle(isValid,Global.WRONG_HEX_COLOR));
 		}
 
 		protected Rect DrawButton(Rect rect,SdfIconType iconType,bool active,Action onClicked)

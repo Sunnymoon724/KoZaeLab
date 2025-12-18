@@ -23,9 +23,9 @@ namespace KZLib.KZAttribute
 
 		protected int m_listCount = 0;
 
-		protected override void _DrawPropertyLayout(GUIContent label)
+		protected override void _DoDrawPropertyLayout(GUIContent label)
 		{
-			var rect = DrawPrefixLabel(label);
+			var rect = _DrawPrefixLabel(label);
 			var countRect = new Rect(rect.x,rect.y,c_width,rect.height);
 
 			m_listCount = CommonUtility.MinClamp(EditorGUI.IntField(countRect,"",m_listCount),0);
@@ -69,7 +69,7 @@ namespace KZLib.KZAttribute
 		{
 			AdjustList(ValueEntry.SmartValue,0,ValueEntry.SmartValue.Count);
 
-			var rectArray = GetRectArray(rect,m_listCount,c_space);
+			var rectArray = _GetRectArray(rect,m_listCount,c_space);
 
 			for(var i=0;i<m_listCount;i++)
 			{
@@ -94,7 +94,7 @@ namespace KZLib.KZAttribute
 		{
 			AdjustList(ValueEntry.SmartValue,0.0f,ValueEntry.SmartValue.Count);
 
-			var rectArray = GetRectArray(rect,m_listCount,c_space);
+			var rectArray = _GetRectArray(rect,m_listCount,c_space);
 
 			for(var i=0;i<m_listCount;i++)
 			{
@@ -119,7 +119,7 @@ namespace KZLib.KZAttribute
 		{
 			AdjustList(ValueEntry.SmartValue,string.Empty,ValueEntry.SmartValue.Count);
 
-			var rectArray = GetRectArray(rect,m_listCount,c_space);
+			var rectArray = _GetRectArray(rect,m_listCount,c_space);
 
 			for(var i=0;i<m_listCount;i++)
 			{

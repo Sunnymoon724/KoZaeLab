@@ -30,7 +30,7 @@ namespace KZLib.KZAttribute
 	{
 		private const int c_labelSpace = 5;
 
-		protected override void _DrawPropertyLayout(GUIContent label)
+		protected override void _DoDrawPropertyLayout(GUIContent label)
 		{
 			var rect = EditorGUILayout.GetControlRect();
 
@@ -39,7 +39,7 @@ namespace KZLib.KZAttribute
 
 			rect.xMax -= width;
 
-			ValueEntry.SmartValue = DrawField(rect,GetLabelText(label));
+			ValueEntry.SmartValue = DrawField(rect,_GetLabelText(label));
 
 			rect.xMin = rect.xMax+c_labelSpace;
 			rect.xMax += width;

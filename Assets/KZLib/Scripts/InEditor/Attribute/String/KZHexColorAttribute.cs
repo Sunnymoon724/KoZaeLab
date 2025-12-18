@@ -17,9 +17,9 @@ namespace KZLib.KZAttribute
 #if UNITY_EDITOR
 	public class KZHexColorAttributeDrawer : KZAttributeDrawer<KZHexColorAttribute,string>
 	{
-		protected override void _DrawPropertyLayout(GUIContent label)
+		protected override void _DoDrawPropertyLayout(GUIContent label)
 		{
-			var rect = DrawPrefixLabel(label);
+			var rect = _DrawPrefixLabel(label);
 
 			var color = ValueEntry.SmartValue.ToColor();
 			var result = EditorGUI.ColorField(rect,color);

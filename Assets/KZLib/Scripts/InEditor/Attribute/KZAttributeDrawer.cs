@@ -17,7 +17,7 @@ namespace KZLib.KZAttribute
 	{
 		protected string m_errorMessage = null;
 
-		protected abstract void _DrawPropertyLayout(GUIContent label);
+		protected abstract void _DoDrawPropertyLayout(GUIContent label);
 
 		protected override void DrawPropertyLayout(GUIContent label)
 		{
@@ -29,7 +29,7 @@ namespace KZLib.KZAttribute
 			if(isValid)
 			{
 				//? No Error
-				_DrawPropertyLayout(label);
+				_DoDrawPropertyLayout(label);
 			}
 			else
 			{
@@ -42,7 +42,7 @@ namespace KZLib.KZAttribute
 			GUI.enabled = cashed;
 		}
 
-		protected Rect DrawPrefixLabel(GUIContent label,float? height = null)
+		protected Rect _DrawPrefixLabel(GUIContent label,float? height = null)
 		{
 			var rect = height.HasValue ? EditorGUILayout.GetControlRect(true,height.Value) : EditorGUILayout.GetControlRect();
 
@@ -56,12 +56,12 @@ namespace KZLib.KZAttribute
 			return rect.HorizontalPadding(EditorGUIUtility.labelWidth,0.0f);
 		}
 
-		protected TMember FindValue<TMember>(string memberName)
+		protected TMember _FindValue<TMember>(string memberName)
 		{
 			return CommonUtility.FindValueInObject<TMember>(memberName,Property.ParentValues[0]);
 		}
 
-		protected GUIStyle GetValidationStyle(bool isValid,string wrongHexColor = null)
+		protected GUIStyle _GetValidationStyle(bool isValid,string wrongHexColor = null)
 		{
 			var style = new GUIStyle(GUI.skin.label);
 
@@ -70,7 +70,7 @@ namespace KZLib.KZAttribute
 			return style;
 		}
 
-		protected void DrawColor(Rect rect,Color color)
+		protected void _DrawColor(Rect rect,Color color)
 		{
 			var height = rect.height;
 
@@ -79,7 +79,7 @@ namespace KZLib.KZAttribute
 			SirenixEditorGUI.DrawSolidRect(rect.VerticalPadding(height*0.7f,0.0f),new Color(0.0f,0.0f,0.0f,color.a));
 		}
 
-		protected Rect[] GetRectArray(Rect rect,int count,float space = 0.0f)
+		protected Rect[] _GetRectArray(Rect rect,int count,float space = 0.0f)
 		{
 			var rectArray = new Rect[count];
 			var totalWidth = rect.width-(count-1)*space;
@@ -95,12 +95,12 @@ namespace KZLib.KZAttribute
 			return rectArray;
 		}
 
-		protected string GetLabelText(GUIContent label)
+		protected string _GetLabelText(GUIContent label)
 		{
 			return label == null ? string.Empty : label.text;
 		}
 
-		protected object ConvertToValue(object value)
+		protected object _ConvertToValue(object value)
 		{
 			if(value == null)
 			{

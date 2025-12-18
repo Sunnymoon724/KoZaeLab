@@ -71,14 +71,14 @@ namespace KZLib.KZAttribute
 		{
 			base.Initialize();
 
-			m_minValue = TryConvertTo(Attribute.MinText,out var minValue) ? minValue : FindValue<TValue>(Attribute.MinText);
-			m_maxValue = TryConvertTo(Attribute.MaxText,out var maxValue) ? maxValue : FindValue<TValue>(Attribute.MaxText);
+			m_minValue = TryConvertTo(Attribute.MinText,out var minValue) ? minValue : _FindValue<TValue>(Attribute.MinText);
+			m_maxValue = TryConvertTo(Attribute.MaxText,out var maxValue) ? maxValue : _FindValue<TValue>(Attribute.MaxText);
 		}
 
-		protected override void _DrawPropertyLayout(GUIContent label)
+		protected override void _DoDrawPropertyLayout(GUIContent label)
 		{
 			var rect = EditorGUILayout.GetControlRect();
-			var current = DrawField(rect,GetLabelText(label));
+			var current = DrawField(rect,_GetLabelText(label));
 
 			ValueEntry.SmartValue = CommonUtility.Clamp(current,m_minValue,m_maxValue);
 		}

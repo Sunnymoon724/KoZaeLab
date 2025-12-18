@@ -19,9 +19,9 @@ namespace KZLib.KZAttribute
 #if UNITY_EDITOR
 	public class KZTagAttributeDrawer : KZAttributeDrawer<KZTagAttribute,string>
 	{
-		protected override void _DrawPropertyLayout(GUIContent label)
+		protected override void _DoDrawPropertyLayout(GUIContent label)
 		{
-			var rect = DrawPrefixLabel(label);
+			var rect = _DrawPrefixLabel(label);
 
 			var tagArray = InternalEditorUtility.tags;
 

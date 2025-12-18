@@ -34,9 +34,9 @@ namespace KZLib.KZAttribute
 			m_textFormat = Attribute.TextFormat.IsEmpty() ? DefaultFormat : Attribute.TextFormat;
 		}
 
-		protected override void _DrawPropertyLayout(GUIContent label)
+		protected override void _DoDrawPropertyLayout(GUIContent label)
 		{
-			var rect = DrawPrefixLabel(label);
+			var rect = _DrawPrefixLabel(label);
 
 			var style = new GUIStyle(GUI.skin.label)
 			{
