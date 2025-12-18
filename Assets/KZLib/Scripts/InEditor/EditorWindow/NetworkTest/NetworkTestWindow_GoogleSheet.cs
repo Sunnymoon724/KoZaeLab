@@ -20,7 +20,7 @@ namespace KZLib.KZWindow
 		{
 			m_googleSheetArray = new string[1,1] { { "Loading..." } };
 
-			WebRequestManager.In.GetGoogleSheet("Test",m_googleSheetIndex,(result)=>
+			void _CreateSheet(string result)
 			{
 				if(result.IsEmpty())
 				{
@@ -42,7 +42,9 @@ namespace KZLib.KZWindow
 						}
 					}
 				}
-			});
+			}
+
+			WebRequestManager.In.GetGoogleSheet("Test",m_googleSheetIndex,_CreateSheet);
 		}
 
 		[HorizontalGroup("Network/GoogleSheet/2",Order = 2),Button("Post Sheet",ButtonSizes.Large),EnableIf(nameof(IsExistGoogleSheet))]

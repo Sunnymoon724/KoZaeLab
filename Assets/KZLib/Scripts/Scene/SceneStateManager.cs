@@ -108,7 +108,17 @@ namespace KZLib
 
 		private async UniTask _ChangeSceneAsync(string sceneName,UINameType transitionNameType,bool isLoading)
 		{
-			await _PlaySceneAsync(transitionNameType,isLoading,async (progress)=> { await _CreateSceneAsync(sceneName,progress); },async (progress)=> { await _DestroySceneAsync(false,progress); });
+			async UniTask _CreateTaskAsync(Action<float> onUpdateProgress)
+			{
+				await _CreateSceneAsync(sceneName,onUpdateProgress);
+			}
+
+			async UniTask _DestroyTaskAsync(Action<float> onUpdateProgress)
+			{
+				await _DestroySceneAsync(false,onUpdateProgress);
+			}
+
+			await _PlaySceneAsync(transitionNameType,isLoading,_CreateTaskAsync,_DestroyTaskAsync);
 		}
 
 		public void AddSceneWithLoading(string sceneName,UINameType transitionNameType)
@@ -138,7 +148,12 @@ namespace KZLib
 
 		private async UniTask _AddSceneAsync(string sceneName,UINameType transitionNameType,bool isLoading)
 		{
-			await _PlaySceneAsync(transitionNameType,isLoading,async (progress)=> { await _CreateSceneAsync(sceneName,progress); });
+			async UniTask _CreateTaskAsync(Action<float> onUpdateProgress)
+			{
+				await _CreateSceneAsync(sceneName,onUpdateProgress);
+			}
+
+			await _PlaySceneAsync(transitionNameType,isLoading,_CreateTaskAsync);
 		}
 
 		public void RemoveSceneWithLoading(UINameType transitionNameType)
@@ -168,7 +183,12 @@ namespace KZLib
 
 		private async UniTask _RemoveSceneAsync(UINameType transitionNameType,bool isLoading)
 		{
-			await _PlaySceneAsync(transitionNameType,isLoading,async (progress)=> { await _DestroySceneAsync(true,progress); });
+			async UniTask _DestroyTaskAsync(Action<float> onUpdateProgress)
+			{
+				await _DestroySceneAsync(true,onUpdateProgress);
+			}
+
+			await _PlaySceneAsync(transitionNameType,isLoading,_DestroyTaskAsync);
 		}
 
 		private async UniTask _PlaySceneAsync(UINameType transitionNameType,bool isLoading,params Func<Action<float>,UniTask>[] onPlayTaskArray)
@@ -197,12 +217,14 @@ namespace KZLib
 
 				foreach(var task in onPlayTaskArray)
 				{
-					await task.Invoke((progress)=>
+					void _UpdateProgress(float progress)
 					{
 						percent += progress/count;
 
 						panel.SetLoadingProgress(percent);
-					});
+					}
+
+					await task.Invoke(_UpdateProgress);
 				}
 
 				// darker
@@ -257,10 +279,12 @@ namespace KZLib
 
 			m_sceneStateStack.Push(sceneState);
 
-			await sceneState.InitializeAsync((progress)=>
+			void _UpdateProgress(float progress)
 			{
-				onUpdateProgress?.Invoke(progress*0.99f);
-			});
+				_UpdateProgressCommon(onUpdateProgress,progress);
+			}
+
+			await sceneState.InitializeAsync(_UpdateProgress);
 
 			LogSvc.System.I($"{sceneName} create end.");
 
@@ -285,12 +309,14 @@ namespace KZLib
 
 			var previousSceneName = activePreviousScene ? CurrentScene?.SceneName : null;
 
-            // Release current scene & Active on previous scene (if you want)
-            await current.ReleaseAsync(previousSceneName,(progress)=>
+			void _UpdateProgress(float progress)
 			{
-				onUpdateProgress?.Invoke(progress*0.99f);
-			});
-			
+				_UpdateProgressCommon(onUpdateProgress,progress);
+			}
+
+            // Release current scene & Active on previous scene (if you want)
+            await current.ReleaseAsync(previousSceneName,_UpdateProgress);
+
 			// TODO 씬 전환시 사용하지 않는 어셋 삭제
 			// AssetBundleManager.Instance.UnloadLoadeAssetBundle();
 			CommonUtility.ClearUnloadedAssetMemory();
@@ -323,6 +349,16 @@ namespace KZLib
 #if !UNITY_EDITOR
 			AssetBundleManager.Instance.UnLoadAssetBundle(scene.name + ConfigData.AssetBundleExpend, false);
 #endif
+		}
+		
+		private void _UpdateProgressCommon(Action<float> onUpdateProgress,float progress)
+		{
+			onUpdateProgress?.Invoke(progress*0.99f);
+		}
+
+		private async UniTask _CreateSceneCommonAsync(string sceneName,Action<float> onUpdateProgress)
+		{
+			await _CreateSceneAsync(sceneName,onUpdateProgress);
 		}
 	}
 }

@@ -45,8 +45,13 @@ public class TrailRendererEffectClip : EffectClip
 		}
 	}
 
-	protected async override UniTask PlayTaskAsync()
+	protected async override UniTask _ExecuteEffectAsync()
 	{
-		await CommonUtility.WaitForConditionAsync(()=>false,SetTime,m_ignoreTimeScale,m_tokenSource.Token);
+		static bool _WaitForTrailRenderer()
+		{
+			return false;
+		}
+
+		await CommonUtility.WaitForConditionAsync(_WaitForTrailRenderer,SetTime,m_ignoreTimeScale,m_tokenSource.Token);
 	}
 }

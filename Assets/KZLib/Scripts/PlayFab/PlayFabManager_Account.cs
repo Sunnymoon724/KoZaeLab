@@ -1,19 +1,25 @@
 #if KZLIB_PLAY_FAB
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Cysharp.Threading.Tasks;
 using KZLib.KZUtility;
-using Newtonsoft.Json;
 using PlayFab;
 using PlayFab.ClientModels;
+using PlayFab.SharedModels;
 using UnityEngine;
+
+#if !UNITY_EDITOR
+
+using System.Collections.Generic;
+using Newtonsoft.Json;
+
+#endif
 
 namespace KZLib
 {
 	public partial class PlayFabManager : Singleton<PlayFabManager>
 	{
-		public async UniTask<PlayFabPacket> AutoLoginAsync(string sessionTicket,PlayFabLoginOptionType loginOptionType)
+		public async UniTask<PlayFabPacketInfo> AutoLoginAsync(string sessionTicket,PlayFabLoginOptionType loginOptionType)
 		{
 			if(loginOptionType == PlayFabLoginOptionType.None)
 			{
@@ -43,12 +49,16 @@ namespace KZLib
 
 		//? Log in -> Guest / Google / Apple
 		#region Login
-		public async UniTask<PlayFabPacket> LoginWithGuestAsync()
+		public async UniTask<PlayFabPacketInfo> LoginWithGuestAsync()
 		{
-			var stopwatch = Stopwatch.StartNew();
-			var source = new UniTaskCompletionSource<PlayFabPacket>();
-
 #if UNITY_ANDROID && !UNITY_EDITOR
+			static void _SendPacket(PlayFabRequestCommon commonRequest,Action<PlayFabResultCommon> onSendResult,Action<PlayFabError> onSendError)
+			{
+				var aosRequest = commonRequest as LoginWithAndroidDeviceIDRequest;
+
+				PlayFabClientAPI.LoginWithAndroidDeviceID(aosRequest,onSendResult,onSendError);
+			}
+
 			var request = new LoginWithAndroidDeviceIDRequest()
 			{
 				AndroidDevice = SystemInfo.deviceModel,
@@ -57,23 +67,15 @@ namespace KZLib
 				CreateAccount = true,
 			};
 
-			PlayFabClientAPI.LoginWithAndroidDeviceID(request,(result) =>
-			{
-				stopwatch.Stop();
-
-				var message = JsonConvert.SerializeObject(new Dictionary<string,string>()
-				{
-					{ "LoginOptionType", $"{PlayFabLoginOptionType.GuestLogin}" },
-					{ "ProfileId",result.PlayFabId },
-				});
-
-				source.TrySetResult(new PlayFabPacket(request,new NetworkPacket(0,message,false),stopwatch.ElapsedMilliseconds));
-			},(playFabError) =>
-			{
-				stopwatch.Stop();
-				source.TrySetResult(_CreateErrorPacket(playFabError,stopwatch.ElapsedMilliseconds));
-			});
+			return await _LoginAsync(request,PlayFabLoginOptionType.GuestLogin,_SendPacket);
 #elif UNITY_IOS && !UNITY_EDITOR
+			static void _SendPacket(PlayFabRequestCommon commonRequest,Action<PlayFabResultCommon> onSendResult,Action<PlayFabError> onSendError)
+			{
+				var iosRequest = commonRequest as LoginWithIOSDeviceIDRequest;
+
+				PlayFabClientAPI.LoginWithIOSDeviceID(iosRequest,onSendResult,onSendError);
+			}
+
 			var request = new LoginWithIOSDeviceIDRequest()
 			{
 				DeviceModel = SystemInfo.deviceModel,
@@ -82,121 +84,80 @@ namespace KZLib
 				CreateAccount = true,
 			};
 
-			PlayFabClientAPI.LoginWithIOSDeviceID(request,(result) =>
-			{
-				stopwatch.Stop();
-
-				var message = JsonConvert.SerializeObject(new Dictionary<string,string>()
-				{
-					{ "LoginOptionType", $"{PlayFabLoginOptionType.GuestLogin}" },
-					{ "ProfileId",result.PlayFabId },
-				});
-
-				source.TrySetResult(new PlayFabPacket(request,new NetworkPacket(0,message,false),stopwatch.ElapsedMilliseconds));
-			},(playFabError) =>
-			{
-				stopwatch.Stop();
-				source.TrySetResult(_CreateErrorPacket(playFabError,stopwatch.ElapsedMilliseconds));
-			});
+			return await _LoginAsync(request,PlayFabLoginOptionType.GuestLogin,_SendPacket);
 #else
+			static void _SendPacket(PlayFabRequestCommon commonRequest,Action<PlayFabResultCommon> onSendResult,Action<PlayFabError> onSendError)
+			{
+				var customRequest = commonRequest as LoginWithCustomIDRequest;
+
+				PlayFabClientAPI.LoginWithCustomID(customRequest,onSendResult,onSendError);
+			}
+
 			var request = new LoginWithCustomIDRequest()
 			{
 				CustomId = SystemInfo.deviceUniqueIdentifier,
 				CreateAccount = true
 			};
 
-			PlayFabClientAPI.LoginWithCustomID(request,(result) =>
-			{
-				stopwatch.Stop();
-
-				var message = JsonConvert.SerializeObject(new Dictionary<string,string>()
-				{
-					{ "LoginOptionType", $"{PlayFabLoginOptionType.GuestLogin}" },
-					{ "ProfileId",result.PlayFabId },
-				});
-
-				source.TrySetResult(new PlayFabPacket(request,new NetworkPacket(0,message,false),stopwatch.ElapsedMilliseconds));
-			},(playFabError) =>
-			{
-				stopwatch.Stop();
-				source.TrySetResult(_CreateErrorPacket(playFabError,stopwatch.ElapsedMilliseconds));
-			});
+			return await _LoginAsync(request,PlayFabLoginOptionType.GuestLogin,_SendPacket);
 #endif
-			return await source.Task;
 		}
 
-		public async UniTask<PlayFabPacket> LoginWithGoogleAsync(string sessionTicket)
+		public async UniTask<PlayFabPacketInfo> LoginWithGoogleAsync(string sessionTicket)
 		{
-#if UNITY_ANDROID && !UNITY_EDITOR
+			static void _SendPacket(PlayFabRequestCommon commonRequest,Action<PlayFabResultCommon> onSendResult,Action<PlayFabError> onSendError)
+			{
+				var googleRequest = commonRequest as LoginWithGoogleAccountRequest;
+
+				PlayFabClientAPI.LoginWithGoogleAccount(googleRequest,onSendResult,onSendError);
+			}
+
 			var request = new LoginWithGoogleAccountRequest()
 			{
 				ServerAuthCode = sessionTicket,
 				CreateAccount = true,
 			};
 
-			var source = new UniTaskCompletionSource<PlayFabPacket>();
-			var stopwatch = Stopwatch.StartNew();
-
-			PlayFabClientAPI.LoginWithGoogleAccount(request,(result) =>
-			{
-				stopwatch.Stop();
-
-				var message = JsonConvert.SerializeObject(new Dictionary<string,string>()
-				{
-					{ "LoginOptionType", $"{PlayFabLoginOptionType.GoogleLogin}" },
-					{ "ProfileId",result.PlayFabId },
-				});
-
-				source.TrySetResult(new PlayFabPacket(request,new NetworkPacket(0,message,false),stopwatch.ElapsedMilliseconds));
-			},(playFabError) =>
-			{
-				stopwatch.Stop();
-				source.TrySetResult(_CreateErrorPacket(playFabError,stopwatch.ElapsedMilliseconds));
-			});
-
-			return await source.Task;
-#else
-			LogSvc.System.W("aos Only");
-
-			await UniTask.Yield();
-
-			return null;
-#endif
+			return await _LoginAsync(request,PlayFabLoginOptionType.GoogleLogin,_SendPacket);
 		}
 
-		public async UniTask<PlayFabPacket> LoginWithAppleAsync(string sessionTicket)
+		public async UniTask<PlayFabPacketInfo> LoginWithAppleAsync(string sessionTicket)
 		{
-#if UNITY_IOS && !UNITY_EDITOR
+			static void _SendPacket(PlayFabRequestCommon commonRequest,Action<PlayFabResultCommon> onSendResult,Action<PlayFabError> onSendError)
+			{
+				var appleRequest = commonRequest as LoginWithAppleRequest;
+
+				PlayFabClientAPI.LoginWithApple(appleRequest,onSendResult,onSendError);
+			}
+
 			var request = new LoginWithAppleRequest()
 			{
 				IdentityToken = sessionTicket,
 				CreateAccount = true,
 			};
 
-			var source = new UniTaskCompletionSource<PlayFabPacket>();
+			return await _LoginAsync(request,PlayFabLoginOptionType.AppleLogin,_SendPacket);
+		}
 
-			var stopwatch = Stopwatch.StartNew();
-
-			PlayFabClientAPI.LoginWithApple(request,(result) =>
+		private async UniTask<PlayFabPacketInfo> _LoginAsync(PlayFabRequestCommon request,PlayFabLoginOptionType loginOptionType,Action<PlayFabRequestCommon,Action<PlayFabResultCommon>,Action<PlayFabError>> onSendPacket)
+		{
+#if !UNITY_EDITOR
+			NetworkPacket _CreatePacket(PlayFabResultCommon commonResult)
 			{
-				stopwatch.Stop();
+				var loginResult = commonResult as LoginResult;
 
 				var message = JsonConvert.SerializeObject(new Dictionary<string,string>()
 				{
-					{ "LoginOptionType", $"{PlayFabLoginOptionType.AppleLogin}" },
-					{ "ProfileId",result.PlayFabId },
+					{ "LoginOptionType", $"{loginOptionType}" },
+					{ "ProfileId",loginResult.PlayFabId },
 				});
 
-				source.TrySetResult(new PlayFabPacket(request,new NetworkPacket(0,message,false),stopwatch.ElapsedMilliseconds));
-			},(playFabError) =>
-			{
-				stopwatch.Stop();
-				source.TrySetResult(_CreateErrorPacket(playFabError,stopwatch.ElapsedMilliseconds));
-			});
+				return new NetworkPacket(0,message,false);
+			}
 
-			return await source.Task;
+			return await _ExecuteAsync(request,onSendPacket,_CreatePacket);
 #else
-			LogSvc.System.W("ios Only");
+			LogSvc.System.W("editor is not supported");
 
 			await UniTask.Yield();
 
@@ -206,7 +167,7 @@ namespace KZLib
 		#endregion Login
 
 		#region LogOut
-		public async UniTask<PlayFabPacket> LogOutAsync()
+		public async UniTask<PlayFabPacketInfo> LogOutAsync()
 		{
 			var stopwatch = Stopwatch.StartNew();
 
@@ -214,7 +175,7 @@ namespace KZLib
 
 			await UniTask.Yield();
 
-			return new PlayFabPacket(null,new NetworkPacket(0,string.Empty,false),stopwatch.ElapsedMilliseconds);
+			return new PlayFabPacketInfo(null,new NetworkPacketInfo(0,string.Empty,false),stopwatch.ElapsedMilliseconds);
 		}
 		#endregion LogOut
 	}

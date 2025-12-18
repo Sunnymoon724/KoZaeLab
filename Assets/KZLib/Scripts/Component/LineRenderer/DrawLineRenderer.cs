@@ -46,7 +46,7 @@ public class DrawLineRenderer : BaseLineRenderer
 		m_startGizmo = true;
 #endif
 
-		await CommonUtility.ExecuteProgressAsync(0.0f,pointArray.Length-1,duration,(progress)=>
+		void _Progress(float progress)
 		{
 			var prev = Mathf.FloorToInt(progress);
 			var next = Mathf.CeilToInt(progress);
@@ -68,7 +68,9 @@ public class DrawLineRenderer : BaseLineRenderer
 
 				m_lineRenderer.SetPosition(prev,position);
 			}
-		},ignoreTimescale,null,m_tokenSource.Token);
+		}
+
+		await CommonUtility.ExecuteProgressAsync(0.0f,pointArray.Length-1,duration,_Progress,ignoreTimescale,null,m_tokenSource.Token);
 
 #if UNITY_EDITOR
 		m_startGizmo = false;

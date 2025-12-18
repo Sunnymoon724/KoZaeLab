@@ -37,10 +37,12 @@ namespace KZLib
 
 			await operation.ToUniTask();
 
-			await InitializeInnerAsync(progress =>
+			void _UpdateProgress(float progress)
 			{
 				onUpdateProgress?.Invoke(0.5f+progress*0.5f);
-			});
+			}
+
+			await InitializeInnerAsync(_UpdateProgress);
 
 			SceneManager.SetActiveScene(SceneManager.GetSceneByName(SceneName));
 
@@ -65,10 +67,12 @@ namespace KZLib
 
 			onUpdateProgress?.Invoke(0.0f);
 
-			await ReleaseInnerAsync((progress)=>
+			void _UpdateProgress(float progress)
 			{
 				onUpdateProgress?.Invoke(progress*0.5f);
-			});
+			}
+
+			await ReleaseInnerAsync(_UpdateProgress);
 
 			var operation = SceneManager.UnloadSceneAsync(SceneName);
 

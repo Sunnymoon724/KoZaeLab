@@ -58,7 +58,12 @@ namespace KZLib
 
 		public void StopSFX(string sfxName)
 		{
-			var effect = m_sfxList.Find(x=>x.clip.name.IsEqual(sfxName));
+			bool _FindSource(AudioSource source)
+			{
+				return source.clip.name.IsEqual(sfxName);
+			}
+
+			var effect = m_sfxList.Find(_FindSource);
 
 			if(effect)
 			{
@@ -66,9 +71,14 @@ namespace KZLib
 			}
 		}
 
-		public void StopEffect(AudioClip _clip)
+		public void StopEffect(AudioClip clip)
 		{
-			var effect = m_sfxList.Find(x=>x.clip.Equals(_clip));
+			bool _FindSource(AudioSource source)
+			{
+				return source.clip.Equals(clip);
+			}
+
+			var effect = m_sfxList.Find(_FindSource);
 
 			if(effect)
 			{

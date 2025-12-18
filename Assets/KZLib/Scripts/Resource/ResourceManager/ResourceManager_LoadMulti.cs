@@ -14,7 +14,12 @@ namespace KZLib
 		{
 			var gameObjectArray = GetObjectArray(folderPath,parent,immediately);
 
-			return gameObjectArray != null ? Array.ConvertAll(gameObjectArray,x=>x.GetComponent<TComponent>()) : null;
+			static TComponent _Convert(GameObject gameObject)
+			{
+				return gameObject.GetComponent<TComponent>();
+			}
+
+			return gameObjectArray != null ? Array.ConvertAll(gameObjectArray,_Convert) : null;
 		}
 
 		public GameObject[] GetObjectArray(string folderPath,Transform parent = null,bool immediately = true)

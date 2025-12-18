@@ -9,9 +9,9 @@ public abstract class AnchorFocusSlotUI : FocusSlotUI
 	[VerticalGroup("Focus/0",Order = 0),SerializeField]
 	private float m_anchorValue = 0.2f;
 
-	public override void UpdateLocation(float location)
+	public override void RefreshLocation(float location)
 	{
-		base.UpdateLocation(location);
+		base.RefreshLocation(location);
 
 		if(m_vertical)
 		{

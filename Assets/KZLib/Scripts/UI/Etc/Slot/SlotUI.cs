@@ -124,7 +124,7 @@ public class SlotUI : BaseComponentUI
 
 public interface IFocusSlotUI
 {
-	public void UpdateLocation(float location);
+	public void RefreshLocation(float location);
 }
 
 public interface ICellData

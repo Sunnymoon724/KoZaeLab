@@ -29,8 +29,13 @@ public class TrailParticleEffectClip : ParticleEffectClip
 		mainModule.loop = true;
 	}
 
-	protected async override UniTask PlayTaskAsync()
+	protected async override UniTask _ExecuteEffectAsync()
 	{
-		await CommonUtility.WaitForConditionAsync(()=>false,SetTime,m_ignoreTimeScale,m_tokenSource.Token);
+		static bool _WaitForTrailParticle()
+		{
+			return false;
+		}
+
+		await CommonUtility.WaitForConditionAsync(_WaitForTrailParticle,SetTime,m_ignoreTimeScale,m_tokenSource.Token);
 	}
 }

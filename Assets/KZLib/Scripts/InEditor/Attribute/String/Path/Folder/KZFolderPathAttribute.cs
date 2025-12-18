@@ -23,10 +23,12 @@ namespace KZLib.KZAttribute
 
 		protected override Rect OnClickToOpen(Rect rect,bool isValid)
 		{
-			return DrawButton(rect,SdfIconType.Folder2,isValid,()=>
+			void _ClickButton()
 			{
 				CommonUtility.Open(AbsolutePath);
-			});
+			}
+
+			return DrawButton(rect,SdfIconType.Folder2,isValid,_ClickButton);
 		}
 
 		protected override bool IsValidPath()

@@ -12,11 +12,13 @@ using UnityEngine;
 using UnityEngine;
 using KZLib.KZUtility;
 using KZLib.KZData;
+using R3;
 
 namespace KZLib
 {
 	public class VibrationManager : Singleton<VibrationManager>
 	{
+		private readonly CompositeDisposable m_disposable = new();
 		private bool m_disposed = false;
 
 		private bool m_useVibration = true;
@@ -42,7 +44,7 @@ namespace KZLib
 		{
 			var optionCfg = ConfigManager.In.Access<OptionConfig>();
 
-			optionCfg.OnUseVibrationChanged += _OnChangeUseVibration;
+			optionCfg.OnUseVibrationChanged.Subscribe(_OnChangeUseVibration).AddTo(m_disposable);
 
 			_OnChangeUseVibration(optionCfg.UseVibration);
 
@@ -65,12 +67,7 @@ namespace KZLib
 
 			if(disposing)
 			{
-				if(ConfigManager.HasInstance)
-				{
-					var optionCfg = ConfigManager.In.Access<OptionConfig>();
-
-					optionCfg.OnUseVibrationChanged -= _OnChangeUseVibration;
-				}
+				m_disposable.Dispose();
 			}
 
 			m_disposed = true;

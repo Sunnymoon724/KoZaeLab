@@ -8,10 +8,9 @@ namespace KZLib.KZDevelop
 	/// </summary>
 	public class GameObjectPool<TComponent> : ObjectPool<TComponent> where TComponent : Component
 	{
-		private readonly TComponent m_pivot = null;
 		private readonly Transform m_storage = null;
 
-		public GameObjectPool(TComponent pivot,Transform storage,int capacity) : base(() => { return pivot.CopyObject() as TComponent; },capacity)
+		public GameObjectPool(TComponent pivot,Transform storage,int capacity) : base(_CopyObject,pivot,capacity)
 		{
 			if(!pivot)
 			{
@@ -23,8 +22,12 @@ namespace KZLib.KZDevelop
 				throw new NullReferenceException("Storage is null.");
 			}
 
-			m_pivot = pivot;
 			m_storage = storage;
+		}
+
+		private static TComponent _CopyObject(TComponent pivot) 
+		{
+			return pivot.CopyObject() as TComponent;
 		}
 
 		protected virtual void SetChild(Transform parent,Transform child)
@@ -36,9 +39,8 @@ namespace KZLib.KZDevelop
 		{
 			SetChild(m_storage,item.transform);
 
-			item.name = m_pivot.name;
 			item.gameObject.EnsureActive(false);
-			
+
 			base.Put(item);
 		}
 

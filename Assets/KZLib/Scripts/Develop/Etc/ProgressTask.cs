@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using R3;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -46,9 +47,14 @@ namespace KZLib.KZDevelop
 
 		private bool m_isReverse = false;
 
-		public event Action<float> OnProgressUpdate = null;
-		public event Action OnProgressStart = null;
-		public event Action OnProgressComplete = null;
+		private readonly Subject<float> m_progressChangeSubject = new();
+		public Observable<float> OnProgressChanged => m_progressChangeSubject;
+		
+		private readonly Subject<Unit> m_progressStartSubject = new();
+		public Observable<Unit> OnProgressStarted => m_progressStartSubject;
+		
+		private readonly Subject<Unit> m_progressCompleteSubject = new();
+		public Observable<Unit> OnProgressCompleted => m_progressCompleteSubject;
 
 		protected CancellationTokenSource m_tokenSource = null;
 
@@ -82,9 +88,6 @@ namespace KZLib.KZDevelop
 		private void _KillProgress()
 		{
 			CommonUtility.KillTokenSource(ref m_tokenSource);
-
-			OnProgressStart = null;
-			OnProgressComplete = null;
 		}
 
 		public void PlayProgress(ProgressParam progressParam = null)
@@ -133,19 +136,23 @@ namespace KZLib.KZDevelop
 			var start = m_isReverse ? 1.0f : 0.0f;
 			var finish = m_isReverse ? 0.0f : 1.0f;
 
-			await CommonUtility.LoopUniTaskAsync(async ()=>
+			void _Progress(float progress)
 			{
-				await CommonUtility.ExecuteProgressAsync(start,finish,Duration,(progress)=>
-				{
-					OnProgressUpdate?.Invoke(progress);
-					Progress = progress;
-				},m_ignoreTimeScale,null,m_tokenSource.Token);
-			},m_loopCount,m_tokenSource.Token);
+				m_progressChangeSubject.OnNext(progress);
+				Progress = progress;
+			}
+
+			async UniTask _ProgressAsync()
+			{
+				await CommonUtility.ExecuteProgressAsync(start,finish,Duration,_Progress,m_ignoreTimeScale,null,m_tokenSource.Token);
+			}
+
+			await CommonUtility.LoopUniTaskAsync(_ProgressAsync,m_loopCount,m_tokenSource.Token);
 		}
 
 		public virtual void ResetSchedule() { }
 
-		protected virtual void StartSchedule() { OnProgressStart?.Invoke(); }
-		protected virtual void CompleteSchedule() { OnProgressComplete?.Invoke(); }
+		protected virtual void StartSchedule() { m_progressStartSubject.OnNext(Unit.Default); }
+		protected virtual void CompleteSchedule() { m_progressCompleteSubject.OnNext(Unit.Default); }
 	}
 }

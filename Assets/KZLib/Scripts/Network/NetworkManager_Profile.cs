@@ -15,7 +15,7 @@ namespace KZLib.KZNetwork
 		public async UniTask<bool> GetPlayerProfileAsync(string sessionTicket)
 		{
 #if KZLIB_PLAY_FAB
-			return await _RequestToServerAsync( async () =>
+			async UniTask<bool> _RequestAsync()
 			{
 				var profileId = m_accountCredential.AccountId;
 
@@ -23,7 +23,9 @@ namespace KZLib.KZNetwork
 				var profileModel = JsonConvert.DeserializeObject<PlayerProfileModel>(packet.RespondPacket.Message); // 필요한 정보 분할은 나중에
 
 				return _GetPlayFabResult("GetPlayerProfileAsync",await PlayFabManager.In.GetPlayerProfileAsync(profileId));
-			},true,string.Empty);
+			}
+
+			return await _RequestToServerAsync(_RequestAsync,true,string.Empty);
 #else
 			await UniTask.Yield();
 

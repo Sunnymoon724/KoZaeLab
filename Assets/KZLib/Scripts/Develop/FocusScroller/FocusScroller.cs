@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using KZLib.KZAttribute;
-using System.Linq;
+using R3;
 
 namespace KZLib.KZDevelop
 {
@@ -36,7 +36,7 @@ namespace KZLib.KZDevelop
 		private readonly List<FocusSlotUI> m_slotUIList = new();
 		private readonly List<ICellData> m_cellDataList = new();
 
-		private readonly List<(float,Transform)> m_orderList = new();
+		private readonly List<OrderSortInfo> m_orderList = new();
 
 		[BoxGroup("Viewer",ShowLabel = false,Order = 99),SerializeField,KZRichText]
 		private int m_focusIndex = -1;
@@ -48,7 +48,8 @@ namespace KZLib.KZDevelop
 
 		private bool IsCircularMode => m_circularMode && m_cellDataList.Count != 1;
 
-		public event Action<ICellData> OnFocusSet = null;
+		private readonly Subject<ICellData> m_focusCellSubject = new();
+		public Observable<ICellData> OnFocusChanged => m_focusCellSubject;
 
 		public ICellData FocusCellData => m_cellDataList.TryGetValueByIndex(m_focusIndex,out var data) ? data : null;
 
@@ -77,18 +78,18 @@ namespace KZLib.KZDevelop
 			m_cellDataList.Clear();
 			m_cellDataList.AddRange(cellDataList);
 
-			_UpdateLocation(focusIndex,true);
-			UpdateIndex(focusIndex);
+			_RefreshLocation(focusIndex,true);
+			RefreshIndex(focusIndex);
 		}
 
-		public void UpdateIndex(int index)
+		public void RefreshIndex(int index)
 		{
 			m_focusIndex = CommonUtility.LoopClamp(index,m_cellDataList.Count);
 
-			OnFocusSet?.Invoke(m_cellDataList[m_focusIndex]);
+			m_focusCellSubject.OnNext(m_cellDataList[m_focusIndex]);
 		}
 
-		private void _UpdateLocation(float location,bool isForceRefresh)
+		private void _RefreshLocation(float location,bool isForceRefresh)
 		{
 			m_currentLocation = location;
 
@@ -101,7 +102,7 @@ namespace KZLib.KZDevelop
 				_ResizePool(firstLocation);
 			}
 
-			_UpdateSlotList(firstLocation,firstIndex,isForceRefresh);
+			_RefreshSlotList(firstLocation,firstIndex,isForceRefresh);
 		}
 
 		private void _ResizePool(float firstLocation)
@@ -114,7 +115,7 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		private void _UpdateSlotList(float firstLocation,int firstIndex,bool isForceRefresh)
+		private void _RefreshSlotList(float firstLocation,int firstIndex,bool isForceRefresh)
 		{
 			var cellCount = m_cellDataList.Count;
 			var slotCount = m_slotUIList.Count;
@@ -146,19 +147,29 @@ namespace KZLib.KZDevelop
 					slot.SetCell(m_cellDataList[index]);
 				}
 
-				slot.UpdateLocation(location);
+				slot.RefreshLocation(location);
 
 				if(m_orderMode)
 				{
-					m_orderList.Add((location,slot.transform));
+					m_orderList.Add(new OrderSortInfo(location,slot.transform));
 				}
 			}
 
 			if(m_orderMode)
 			{
-				foreach(var pair in m_orderList.OrderByDescending(x=>Math.Abs(x.Item1-0.5f)))
+				static int _Sort(OrderSortInfo infoA, OrderSortInfo infoB)
 				{
-					pair.Item2.SetAsLastSibling();
+					var valueA = Math.Abs(infoA.Location-0.5f);
+					var valueB = Math.Abs(infoB.Location-0.5f);
+
+					return valueB.CompareTo(valueA); 
+				}
+
+				m_orderList.Sort(_Sort);
+
+				foreach(var pair in m_orderList)
+				{
+					pair.Target.SetAsLastSibling();
 				}
 			}
 		}
@@ -179,5 +190,7 @@ namespace KZLib.KZDevelop
 				m_viewport = viewport.GetComponent<RectTransform>();
 			}
 		}
+
+		private record OrderSortInfo(float Location,Transform Target);
 	}
 }

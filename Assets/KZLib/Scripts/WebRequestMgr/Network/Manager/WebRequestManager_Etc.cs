@@ -9,12 +9,12 @@ namespace KZLib.KZNetwork
 {
 	public partial class WebRequestManager : Singleton<WebRequestManager>
 	{
-		public void PostBugReportWebRequest(IEnumerable<MessageData> messageGroup,byte[] file)
+		public void PostBugReportWebRequest(IEnumerable<MessageInfo> messageGroup,byte[] file)
 		{
 			PostBugReportWebRequestAsync(messageGroup,file).Forget();
 		}
 
-		public async UniTask PostBugReportWebRequestAsync(IEnumerable<MessageData> messageGroup,byte[] file)
+		public async UniTask PostBugReportWebRequestAsync(IEnumerable<MessageInfo> messageGroup,byte[] file)
 		{
 			var serviceCfg = ConfigManager.In.Access<ServiceConfig>();
 			var postHashSet = new HashSet<string>(serviceCfg.BugReportPostList);

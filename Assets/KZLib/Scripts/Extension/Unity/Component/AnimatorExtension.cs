@@ -134,20 +134,25 @@ public static class AnimatorExtension
 			return;
 		}
 
-		await UniTask.WaitUntil(()=>IsAnimationFinish(animator,animationHashName,layer),cancellationToken : cancellationToken);
+		bool _IsAnimationFinished()
+		{
+			return IsAnimationFinished(animator,animationHashName,layer);
+		}
+
+		await UniTask.WaitUntil(_IsAnimationFinished,cancellationToken : cancellationToken);
 	}
 
-	public static bool IsAnimationFinish(this Animator animator,string animationName,int layer = 0)
+	public static bool IsAnimationFinished(this Animator animator,string animationName,int layer = 0)
 	{
 		if(!_IsValid(animator))
 		{
 			return false;
 		}
 
-		return IsAnimationFinish(animator,Animator.StringToHash(animationName),layer);
+		return IsAnimationFinished(animator,Animator.StringToHash(animationName),layer);
 	}
 
-	public static bool IsAnimationFinish(this Animator animator,int animationHashName,int layer = 0)
+	public static bool IsAnimationFinished(this Animator animator,int animationHashName,int layer = 0)
 	{
 		if(!_IsValid(animator))
 		{
@@ -176,20 +181,25 @@ public static class AnimatorExtension
 			return;
 		}
 
-		await UniTask.WaitUntil(()=>IsAnimationStart(animator,animationHashName,layer),cancellationToken : cancellationToken);
+		bool _HasAnimationStarted()
+		{
+			return HasAnimationStarted(animator,animationHashName,layer);
+		}
+
+		await UniTask.WaitUntil(_HasAnimationStarted,cancellationToken : cancellationToken);
 	}
 
-	public static bool IsAnimationStart(this Animator animator,string animationName,int layer = 0)
+	public static bool HasAnimationStarted(this Animator animator,string animationName,int layer = 0)
 	{
 		if(!_IsValid(animator))
 		{
 			return false;
 		}
 
-		return IsAnimationStart(animator,Animator.StringToHash(animationName),layer);
+		return HasAnimationStarted(animator,Animator.StringToHash(animationName),layer);
 	}
 
-	public static bool IsAnimationStart(this Animator animator,int animationHashName,int layer = 0)
+	public static bool HasAnimationStarted(this Animator animator,int animationHashName,int layer = 0)
 	{
 		if(!_IsValid(animator))
 		{

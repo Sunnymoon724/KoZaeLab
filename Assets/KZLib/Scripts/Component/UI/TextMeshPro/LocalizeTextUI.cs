@@ -1,4 +1,5 @@
 using KZLib.KZData;
+using R3;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ public class LocalizeTextUI : BaseTextUI
 	[Button("Execute Localize"),EnableIf(nameof(IsValidKey))]
 	protected void _ExecuteLocalize()
 	{
-		_OnChangedLanguage();
+		_OnChangedLanguage(Unit.Default);
 	}
 
 	private bool IsValidKey => !m_key.IsEmpty();
@@ -19,24 +20,22 @@ public class LocalizeTextUI : BaseTextUI
 	{
 		base.Initialize();
 
-		_OnChangedLanguage();
+		_OnChangedLanguage(Unit.Default);
 	}
 
 	protected override void OnEnable()
 	{
 		base.OnEnable();
 
-		LingoManager.In.OnLanguageChange += _OnChangedLanguage;
+		LingoManager.In.OnLanguageChanged.Subscribe(_OnChangedLanguage).RegisterTo(destroyCancellationToken);
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
-
-		LingoManager.In.OnLanguageChange -= _OnChangedLanguage;
 	}
 
-	private void _OnChangedLanguage()
+	private void _OnChangedLanguage(Unit _)
 	{
 		if(!IsValidKey)
 		{
@@ -62,6 +61,6 @@ public class LocalizeTextUI : BaseTextUI
 
 		m_key = key;
 
-		_OnChangedLanguage();
+		_OnChangedLanguage(Unit.Default);
 	}
 }

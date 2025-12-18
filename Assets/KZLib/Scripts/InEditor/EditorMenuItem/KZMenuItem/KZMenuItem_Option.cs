@@ -33,12 +33,14 @@ namespace KZLib.KZMenu
 				return;
 			}
 
-			FileUtility.DeleteEmptyDirectory(Application.dataPath,()=>
+			static void _AfterDelete()
 			{
 				AssetDatabase.Refresh();
 
 				CommonUtility.DisplayInfo("Empty folder are deleted");
-			});
+			}
+
+			FileUtility.DeleteEmptyDirectory(Application.dataPath,_AfterDelete);
 		}
 
 		[MenuItem("KZMenu/Option/Unload Unused Assets Immediate",false,MenuOrder.Option.DELETE)]
@@ -68,7 +70,7 @@ namespace KZLib.KZMenu
 			{
 				var asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
 
-				asset.transform.TraverseChildren((child)=>
+				void _Traverse(Transform child)
 				{
 					foreach(var component in child.GetComponents<Component>())
 					{
@@ -79,7 +81,9 @@ namespace KZLib.KZMenu
 
 						textList.Add($"<b> <a href=\"{assetPath}\">{asset.name}</a> </b>");
 					}
-				});
+				}
+
+				asset.transform.TraverseChildren(_Traverse);
 			}
 
 			if(textList.Count == 0)
@@ -113,7 +117,7 @@ namespace KZLib.KZMenu
 			{
 				var asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
 
-				asset.transform.TraverseChildren((child)=>
+				void _Traverse(Transform child)
 				{
 					var filter = child.GetComponent<MeshFilter>();
 
@@ -123,7 +127,9 @@ namespace KZLib.KZMenu
 					}
 
 					textListDict.AddOrCreate($"<b> <a href=\"{assetPath}\">{asset.name}</a> </b>",child.FindHierarchy());
-				});
+				}
+
+				asset.transform.TraverseChildren(_Traverse);
 			}
 
 			if(textListDict.Count == 0)

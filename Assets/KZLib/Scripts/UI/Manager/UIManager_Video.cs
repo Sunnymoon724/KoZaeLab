@@ -10,7 +10,7 @@ namespace KZLib
 		/// <summary>
 		/// fade out -> prepare video -> fade in -> play video
 		/// </summary>
-		public async UniTask WatchVideoAsync(UINameType transitionNameType,VideoData videoData)
+		public async UniTask WatchVideoAsync(UINameType transitionNameType,VideoInfo videoData)
 		{
 			await _WatchVideoAsync(transitionNameType,videoData,false);
 		}
@@ -18,12 +18,12 @@ namespace KZLib
 		/// <summary>
 		/// fade out -> show loading -> fade in -> play video
 		/// </summary>
-		public async UniTask WatchVideoIncludeLoadingAsync(UINameType transitionNameType,VideoData videoData)
+		public async UniTask WatchVideoIncludeLoadingAsync(UINameType transitionNameType,VideoInfo videoData)
 		{
 			await _WatchVideoAsync(transitionNameType,videoData,true);
 		}
 
-		private async UniTask _WatchVideoAsync(UINameType transitionNameType,VideoData videoData,bool includeLoading)
+		private async UniTask _WatchVideoAsync(UINameType transitionNameType,VideoInfo videoData,bool includeLoading)
 		{
 			if(videoData == null)
 			{
@@ -38,13 +38,18 @@ namespace KZLib
 
 			videoPanel.Hide();
 
+			async UniTask _PlayTaskAsync()
+			{
+				await _PrepareVideoAsync(videoPanel,videoData);
+			}
+
 			if(includeLoading)
 			{
-				await PlayLoadingIncludeTransitionAsync(transitionNameType,async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
+				await PlayLoadingIncludeTransitionAsync(transitionNameType,_PlayTaskAsync);
 			}
 			else
 			{
-				await _PlayTransitionOutInAsync(transitionNameType,async ()=> { await _PrepareVideoAsync(videoPanel,videoData); });
+				await _PlayTransitionOutInAsync(transitionNameType,_PlayTaskAsync);
 			}
 
 			videoPanel.PlayVideo();
@@ -56,7 +61,7 @@ namespace KZLib
 			SoundManager.In.ResumeBGMSound();
 		}
 
-		private async UniTask _PrepareVideoAsync(VideoPanelUI videoPanel,VideoData videoData)
+		private async UniTask _PrepareVideoAsync(VideoPanelUI videoPanel,VideoInfo videoData)
 		{
 			videoPanel.Show();
 

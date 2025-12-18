@@ -17,9 +17,9 @@ namespace KZLib.KZNetwork
 		public bool IsRequesting => m_isRequesting;
 
 		private AccountCredential m_accountCredential = null;
-
+#if KZLIB_PLAY_FAB
 		private string m_publicKey = null;
-
+#endif
 		public bool HasAccountToken => m_accountCredential.HasAccountToken;
 
 		protected override void Initialize()
@@ -53,10 +53,12 @@ namespace KZLib.KZNetwork
 		public async UniTask<bool> RequestToServerAsync(string functionName,object parameter,bool touchBlock,string eventName)
 		{
 #if KZLIB_PLAY_FAB
-			return await _RequestToServerAsync( async () =>
+			async UniTask<bool> _RequestAsync()
 			{
 				return _GetPlayFabResult(functionName,await PlayFabManager.In.ExecuteCloudScriptAsync(functionName,parameter));
-			},touchBlock,eventName);
+			}
+
+			return await _RequestToServerAsync(_RequestAsync,touchBlock,eventName);
 #else
 			await UniTask.Yield();
 
@@ -96,7 +98,7 @@ namespace KZLib.KZNetwork
 		}
 
 #if KZLIB_PLAY_FAB
-		private bool _GetPlayFabResult(string functionName,PlayFabPacket playFabPacket)
+		private bool _GetPlayFabResult(string functionName,PlayFabPacketInfo playFabPacket)
 		{
 			var respondPacket = playFabPacket.RespondPacket;
 			var code = respondPacket.Code;
@@ -105,7 +107,7 @@ namespace KZLib.KZNetwork
 			var requestText = JsonConvert.SerializeObject(playFabPacket.RequestPacket,Formatting.Indented);
 
 			_WriteDump(functionName,requestText,isSuccess,message,playFabPacket.Duration);
-			
+
 			if(!isSuccess)
 			{
 				LogSvc.Network.E($"Respond Error : {code}");
@@ -124,13 +126,15 @@ namespace KZLib.KZNetwork
 					{
 						case NetworkErrorResultType.Popup:
 							{
-								_ShowErrorPopup(errorPrt.Description,()=>
+								void _Close()
 								{
 									if( errorPrt.ResultSubType == NetworkErrorResultType.Title )
 									{
-										SceneStateManager.In.ChangeSceneWithLoading(Global.TITLE_SCENE,Global.TRANSITION_PANEL_UI);
+										_ChangeTitleScene();
 									}
-								});
+								}
+
+								_ShowErrorPopup(errorPrt.Description,_Close);
 								break;
 							}
 						case NetworkErrorResultType.Toast:
@@ -140,7 +144,7 @@ namespace KZLib.KZNetwork
 							}
 						case NetworkErrorResultType.Title:
 							{
-								SceneStateManager.In.ChangeSceneWithLoading(Global.TITLE_SCENE,Global.TRANSITION_PANEL_UI);
+								_ChangeTitleScene();
 								break;
 							}
 					}
@@ -153,13 +157,18 @@ namespace KZLib.KZNetwork
 
 			return isSuccess;
 		}
+		
+		private void _ChangeTitleScene()
+		{
+			SceneStateManager.In.ChangeSceneWithLoading(Global.TITLE_SCENE,UINameType.CommonTransitionPanelUI);
+		}
 #endif
 
 		private void _SetPacketData(string message)
 		{
 			try
 			{
-				var respondArray = JsonConvert.DeserializeObject<RespondData[]>(message);
+				var respondArray = JsonConvert.DeserializeObject<NetworkRespondInfo[]>(message);
 
 				for(var i=0;i<respondArray.Length;i++)
 				{

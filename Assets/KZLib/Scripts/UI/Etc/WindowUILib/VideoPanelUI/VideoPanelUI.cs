@@ -7,6 +7,7 @@ using Cysharp.Threading.Tasks;
 using VideoPanel;
 using System.Threading;
 using KZLib.KZData;
+using R3;
 
 public class VideoPanelUI : WindowUI2D
 {
@@ -23,22 +24,8 @@ public class VideoPanelUI : WindowUI2D
 
 	private CancellationTokenSource m_tokenSource = null;
 
-	public event Action<float> OnVideoTimeUpdate;
-
-	protected override void Initialize()
-	{
-		base.Initialize();
-
-		m_videoPlayer.errorReceived += (player,message) => { throw new Exception(message); };
-
-		m_videoPlayer.loopPointReached += (player) =>
-		{
-			if(!m_videoPlayer.isLooping)
-			{
-				Stop();
-			}
-		};
-	}
+	private readonly Subject<float> m_videoTimeSubject = new();
+	public Observable<float> OnVideoTimeChanged => m_videoTimeSubject;
 
 	public override void Open(object param)
 	{
@@ -47,19 +34,38 @@ public class VideoPanelUI : WindowUI2D
 		m_screenImage.color = Color.black;
 
 		m_videoPlayer.targetCamera = m_canvas.worldCamera;
+
+		m_videoPlayer.errorReceived += _ReceiveError;
+		m_videoPlayer.loopPointReached += _IsVideoEnd;
 	}
 
 	public override void Close()
 	{
-		base.Close();
-
 		m_videoPlayer.clip = null;
 		m_screenImage.color = Color.black;
 
 		CommonUtility.KillTokenSource(ref m_tokenSource);
+
+		m_videoPlayer.errorReceived -= _ReceiveError;
+		m_videoPlayer.loopPointReached -= _IsVideoEnd;
+
+		base.Close();
 	}
 
-	public async UniTask PrepareVideoAsync(VideoData videoData)
+	private void _ReceiveError(VideoPlayer _,string message)
+	{
+		throw new Exception(message);
+	}
+
+	private void _IsVideoEnd(VideoPlayer _)
+	{
+		if(!m_videoPlayer.isLooping)
+		{
+			Stop();
+		}
+	}
+
+	public async UniTask PrepareVideoAsync(VideoInfo videoData)
 	{
 		m_videoPlayer.isLooping = videoData.IsLoop;
 
@@ -90,8 +96,7 @@ public class VideoPanelUI : WindowUI2D
 
 			AddLink(subtitlePanel);
 
-			OnVideoTimeUpdate -= subtitlePanel.SetSubtitle;
-			OnVideoTimeUpdate += subtitlePanel.SetSubtitle;
+			subtitlePanel.LinkVideo(this);
 		}
 
 		if(videoData.CanSkip)
@@ -103,17 +108,27 @@ public class VideoPanelUI : WindowUI2D
 
 		m_videoPlayer.Prepare();
 
-		await UniTask.WaitUntil(() => IsPrepared);
+		await WaitForPreparedAsync();
 	}
 
 	public async UniTask WaitForPreparedAsync()
 	{
-		await UniTask.WaitUntil(() => IsPrepared);
+		bool _IsPrepared()
+		{
+			return IsPlaying;
+		}
+
+		await UniTask.WaitUntil(_IsPrepared);
 	}
 
 	public async UniTask WaitForPlayingAsync()
 	{
-		await UniTask.WaitWhile(() => IsPlaying);
+		bool _IsPlaying()
+		{
+			return IsPlaying;
+		}
+
+		await UniTask.WaitWhile(_IsPlaying);
 	}
 
 	public void PlayVideo()
@@ -145,7 +160,7 @@ public class VideoPanelUI : WindowUI2D
 		{
 			m_tokenSource.Token.ThrowIfCancellationRequested();
 
-			OnVideoTimeUpdate?.Invoke(Time);
+			m_videoTimeSubject.OnNext(Time);
 
 			await UniTask.Delay(100,cancellationToken: m_tokenSource.Token);
 		}

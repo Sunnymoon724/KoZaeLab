@@ -16,7 +16,7 @@ public abstract class FocusSlotUI : SlotUI,IFocusSlotUI
 		get => m_currentLocation;
 		set
 		{
-			UpdateLocation(value);
+			RefreshLocation(value);
 		}
 	}
 
@@ -25,7 +25,7 @@ public abstract class FocusSlotUI : SlotUI,IFocusSlotUI
 
 	protected bool IsCenter => m_center;
 
-	public virtual void UpdateLocation(float location)
+	public virtual void RefreshLocation(float location)
 	{
 		m_currentLocation = location;
 		m_center = location.Approximately(0.5f);

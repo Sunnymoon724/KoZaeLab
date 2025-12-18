@@ -61,7 +61,12 @@ public static class GameObjectExtension
 			gameObject.EnsureActive(value);
 		}
 
-		gameObject.transform.TraverseChildren((child)=> { child.gameObject.EnsureActive(value); });
+		void _SetActive(Transform child)
+		{
+			child.gameObject.EnsureActive(value);
+		}
+
+		gameObject.transform.TraverseChildren(_SetActive);
 	}
 
 	public static void SetAllLayer(this GameObject gameObject,int layer)
@@ -73,7 +78,12 @@ public static class GameObjectExtension
 
 		gameObject.layer = layer;
 
-		gameObject.transform.TraverseChildren((child)=> { child.gameObject.layer = layer; });
+		void _SetLayer(Transform child)
+		{
+			child.gameObject.layer = layer;
+		}
+
+		gameObject.transform.TraverseChildren(_SetLayer);
 	}
 
 	public static void SetAllLayer(this GameObject gameObject,string layerName)

@@ -23,6 +23,8 @@ public class SkipPanelUI : WindowUI2D
 	private Button m_skipButton = null;
 
 	private bool IsValidShowDuration => m_skipShowDuration != 0.0f;
+	
+	private Action m_onClickedTrigger = null;
 
 	public override void Open(object param)
 	{
@@ -30,15 +32,7 @@ public class SkipPanelUI : WindowUI2D
 
 		if(param is SkipParam skipParam)
 		{
-			m_skipButton.onClick.SetAction(()=>
-			{
-				skipParam.OnClicked?.Invoke();
-
-				if(m_clickSoundClip)
-				{
-					SoundManager.In.PlaySFX(m_clickSoundClip);
-				}
-			});
+			m_onClickedTrigger = skipParam.OnClicked;
 		}
 
 		// ShowTime이 0초 이므로 작동 X
@@ -60,7 +54,16 @@ public class SkipPanelUI : WindowUI2D
 		_SetButtonsState(isSkipActive : false,isTriggerActive : false);
 		_ShowSkipButton(m_skipShowDuration);
 
-		m_triggerButton.onClick.AddAction(()=> { _ShowSkipButton(0.0f); } );
+		m_triggerButton.onClick.AddAction(_OnClickedTrigger);
+		m_skipButton.onClick.AddAction(_OnClickedSkip);
+	}
+
+	public override void Close()
+	{
+		m_triggerButton.onClick.RemoveAction(_OnClickedTrigger);
+		m_skipButton.onClick.RemoveAction(_OnClickedSkip);
+
+		base.Close();
 	}
 
 	private void _SetButtonsState(bool isSkipActive,bool isTriggerActive)
@@ -69,14 +72,31 @@ public class SkipPanelUI : WindowUI2D
 		m_triggerButton.gameObject.EnsureActive(isTriggerActive);
 	}
 
+	private void _OnClickedTrigger()
+	{
+		_ShowSkipButton(0.0f);
+	}
+
+	private void _OnClickedSkip()
+	{
+		m_onClickedTrigger?.Invoke();
+
+		if(m_clickSoundClip)
+		{
+			SoundManager.In.PlaySFX(m_clickSoundClip);
+		}
+	}
+
 	private void _ShowSkipButton(float delayTime)
 	{
-		CommonUtility.DelayAction(()=>
+		void _PlayAction()
 		{
 			_SetButtonsState(isSkipActive : true,isTriggerActive : false);
 
 			CommonUtility.DelayAction(_HideSkipButton,m_skipHideDuration);
-		},delayTime);
+		}
+
+		CommonUtility.DelayAction(_PlayAction,delayTime);
 	}
 
 	private void _HideSkipButton()

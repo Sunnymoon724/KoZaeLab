@@ -19,20 +19,30 @@ namespace KZLib.KZData
 
 		public string GetDiscordLink(string key)
 		{
-			return DiscordLinkDict.FindOrFirst(x=>x.Key.Contains(key)).Value;
+			return _FindKey(DiscordLinkDict,key);
 		}
 
 		public string GetGoogleSheetFileId(string key)
 		{
-			return GoogleSheetFileIdDict.FindOrFirst(x=>x.Key.Contains(key)).Value;
+			return _FindKey(GoogleSheetFileIdDict,key);
 		}
 
 		public string GetGoogleDriveFolderId(string key)
 		{
-			return GoogleDriveFolderIdDict.FindOrFirst(x=>x.Key.Contains(key)).Value;
+			return _FindKey(GoogleDriveFolderIdDict,key);
 		}
 
 		[YamlIgnore]
 		public string TrelloKey => TrelloApiKey.IsEmpty() || TrelloToken.IsEmpty() ? null : $"key={TrelloApiKey}&token={TrelloToken}";
+
+		private string _FindKey(Dictionary<string,string> dictionary,string key)
+		{
+			bool _IsKey(KeyValuePair<string,string> pair)
+			{
+				return pair.Key.Contains(key);
+			}
+
+			return dictionary.FindOrFirst(_IsKey).Value;
+		}
 	}
 }

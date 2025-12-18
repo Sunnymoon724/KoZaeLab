@@ -62,7 +62,12 @@ public abstract class RepositoryUI : BaseComponentUI
 
 	public WindowUI FindOpenedUI(UINameType nameType)
 	{
-		return m_openedWindowList.Find(x=>x.NameType == nameType);
+		bool _FindOpened(WindowUI openedWindow)
+		{
+			return openedWindow.NameType == nameType;
+		}
+
+		return m_openedWindowList.Find(_FindOpened);
 	}
 
 	public void RemoveAll(IEnumerable<UINameType> excludeNameTypeGroup,bool isRelease)

@@ -4,11 +4,13 @@ using KZLib.KZUtility;
 using KZLib.KZDevelop;
 using KZLib.KZData;
 using UnityEngine.Rendering.Universal;
+using R3;
 
 namespace KZLib
 {
 	public class CameraManager : Singleton<CameraManager>
 	{
+		private readonly CompositeDisposable m_disposable = new();
 		private record CameraStoreInfo(float Depth,CameraClearFlags ClearFlag);
 
 		private Camera m_mainCamera = null;
@@ -19,6 +21,7 @@ namespace KZLib
 		private bool m_disposed = false;
 
 		private float m_farFactor = 1.0f;
+		private float m_originalFarClipPlane = 0.0f;
 
 		protected override void Initialize()
 		{
@@ -26,9 +29,9 @@ namespace KZLib
 
 			var optionCfg = ConfigManager.In.Access<OptionConfig>();
 
-			optionCfg.OnGraphicQualityChanged += _OnChangeFarClipPlane;
+			optionCfg.OnGraphicQualityChanged.Subscribe(_OnChangeFarClipPlane).AddTo(m_disposable);
 
-			_OnChangeFarClipPlane(optionCfg.GraphicQuality);
+			_OnChangeFarClipPlane(optionCfg.CurrentGraphicQuality);
 		}
 
 		protected override void Release(bool disposing)
@@ -40,12 +43,7 @@ namespace KZLib
 
 			if(disposing)
 			{
-				if(ConfigManager.HasInstance)
-				{
-					var optionCfg = ConfigManager.In.Access<OptionConfig>();
-
-					optionCfg.OnGraphicQualityChanged -= _OnChangeFarClipPlane;
-				}
+				m_disposable.Dispose();
 			}
 
 			m_disposed = true;
@@ -61,7 +59,13 @@ namespace KZLib
 			}
 
 			m_mainCamera = newCamera;
-			m_mainCamera.farClipPlane *= m_farFactor;
+
+			if(m_originalFarClipPlane == 0.0f) 
+			{
+				m_originalFarClipPlane = m_mainCamera.farClipPlane;
+			}
+
+			m_mainCamera.farClipPlane = m_originalFarClipPlane * m_farFactor;
 
 			var mainCameraData = m_mainCamera.GetUniversalAdditionalCameraData();
 			var cameraList = mainCameraData.cameraStack;
@@ -103,9 +107,9 @@ namespace KZLib
 
 			m_farFactor = factor;
 
-			if (m_mainCamera != null)
+			if(m_mainCamera != null && m_originalFarClipPlane > 0.0f)
 			{
-				m_mainCamera.farClipPlane *= m_farFactor;
+				m_mainCamera.farClipPlane = m_originalFarClipPlane * m_farFactor; 
 			}
 		}
 

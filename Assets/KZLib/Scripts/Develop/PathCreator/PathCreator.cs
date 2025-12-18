@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using System;
+using R3;
+
 
 #if UNITY_EDITOR
 
@@ -66,7 +68,7 @@ namespace KZLib.KZDevelop
 						_GetShapePointArray();
 					}
 
-					OnPathChanged?.Invoke();
+					m_pathSubject.OnNext(Unit.Default);
 
 					m_pathLength = CommonUtility.GetTotalDistance(m_pointArray);
 
@@ -84,7 +86,8 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		public event Action OnPathChanged = null;
+		private readonly Subject<Unit> m_pathSubject = new();
+		public Observable<Unit> OnPathChanged => m_pathSubject;
 
 		public void SetDirty()
 		{

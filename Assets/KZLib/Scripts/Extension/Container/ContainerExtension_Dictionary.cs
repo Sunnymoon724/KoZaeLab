@@ -77,7 +77,12 @@ public static partial class ContainerExtension
 	{
 		if(_IsValid(dictionary))
 		{
-			dictionary.AddRange(valueCollection,x=>x.name,onAction);
+			static string _GetKey(TValue value)
+			{
+				return value.name;
+			}
+
+			dictionary.AddRange(valueCollection,_GetKey,onAction);
 		}
 	}
 

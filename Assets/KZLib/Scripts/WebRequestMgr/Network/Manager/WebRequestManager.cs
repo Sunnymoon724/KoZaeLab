@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using Cysharp.Threading.Tasks;
 using KZLib.KZUtility;
+using R3;
 
 namespace KZLib.KZNetwork
 {
@@ -11,7 +12,8 @@ namespace KZLib.KZNetwork
 	{
 		private bool m_disposed = false;
 
-		public event Action<string> OnShowNetworkError = null;
+		private readonly Subject<string> m_networkErrorSubject = new();
+		public Observable<string> OnNetworkErrorShown => m_networkErrorSubject;
 
 		protected override void Release(bool disposing)
 		{
@@ -22,7 +24,7 @@ namespace KZLib.KZNetwork
 
 			if(disposing)
 			{
-				OnShowNetworkError = null;
+				m_networkErrorSubject.Dispose();
 			}
 
 			m_disposed = true;
@@ -32,7 +34,7 @@ namespace KZLib.KZNetwork
 
 		public void SendNetworkError(string message)
 		{
-			OnShowNetworkError?.Invoke(message);
+			m_networkErrorSubject.OnNext(message);
 		}
 
 		private async UniTask<ResponseInfo> _SendWebRequest(BaseWebRequest webRequest)
@@ -64,7 +66,7 @@ namespace KZLib.KZNetwork
 			{
 				LogSvc.Network.E($"{webRequest.Name} is Failed");
 
-				OnShowNetworkError?.Invoke(responseInfo.Error);
+				m_networkErrorSubject.OnNext(responseInfo.Error);
 			}
 
 			return responseInfo;

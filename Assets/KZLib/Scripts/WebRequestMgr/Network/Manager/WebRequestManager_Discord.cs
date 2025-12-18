@@ -7,24 +7,24 @@ namespace KZLib.KZNetwork
 {
 	public partial class WebRequestManager : Singleton<WebRequestManager>
 	{
-		public void PostDiscordWebHook(string content,IEnumerable<MessageData> messageGroup = null,byte[] file = null)
+		public void PostDiscordWebHook(string content,IEnumerable<MessageInfo> messageGroup = null,byte[] file = null)
 		{
 			PostDiscordWebHookAsync(content,messageGroup,file).Forget();
 		}
 
-		public void PostDiscordWebHook(string link,string content,IEnumerable<MessageData> messageGroup = null,byte[] file = null)
+		public void PostDiscordWebHook(string link,string content,IEnumerable<MessageInfo> messageGroup = null,byte[] file = null)
 		{
 			PostDiscordWebHookAsync(link,content,messageGroup,file).Forget();
 		}
 
-		public async UniTask PostDiscordWebHookAsync(string content,IEnumerable<MessageData> messageGroup = null,byte[] file = null)
+		public async UniTask PostDiscordWebHookAsync(string content,IEnumerable<MessageInfo> messageGroup = null,byte[] file = null)
 		{
 			var serviceCfg = ConfigManager.In.Access<ServiceConfig>();
 
 			await PostDiscordWebHookAsync(serviceCfg.GetDiscordLink(content),content,messageGroup,file);
 		}
 
-		public async UniTask PostDiscordWebHookAsync(string link,string content,IEnumerable<MessageData> messageGroup = null,byte[] file = null)
+		public async UniTask PostDiscordWebHookAsync(string link,string content,IEnumerable<MessageInfo> messageGroup = null,byte[] file = null)
 		{
 			if(link.IsEmpty())
 			{

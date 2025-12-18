@@ -122,7 +122,12 @@ namespace KZLib
 		#region Open
 		public void DelayOpen(UINameType nameType,object param,float delayTime)
 		{
-			CommonUtility.DelayAction(() => { Open(nameType,param); },delayTime);
+			void _Open()
+			{
+				Open(nameType,param);
+			}
+
+			CommonUtility.DelayAction(_Open,delayTime);
 		}
 
 		public IWindowUI Open(UINameType nameType,object param = null)

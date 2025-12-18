@@ -1,5 +1,4 @@
 ﻿#if KZLIB_PLAY_FAB
-using PlayFab;
 
 public enum PlayFabLoginOptionType
 {
@@ -9,6 +8,6 @@ public enum PlayFabLoginOptionType
 	AppleLogin,
 }
 
-public record PlayFabPacket(object RequestPacket,NetworkPacket RespondPacket,long Duration);
+public record PlayFabPacketInfo(object RequestPacket,NetworkPacketInfo RespondPacket,long Duration);
 
 #endif

@@ -1,4 +1,5 @@
 using System;
+using R3;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -6,9 +7,14 @@ public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDr
 {
 	private Canvas m_canvas = null;
 
-	public event Action OnDragStart = null;
-	public event Action OnDragUpdate = null;
-	public event Action OnDragEnd = null;
+	private readonly Subject<Unit> m_dragStartSubject = new();
+	public Observable<Unit> OnDragStarted => m_dragStartSubject;
+
+	private readonly Subject<Unit> m_dragChangeSubject = new();
+	public Observable<Unit> OnDragChanged => m_dragChangeSubject;
+
+	private readonly Subject<Unit> m_dragFinishSubject = new();
+	public Observable<Unit> OnDragFinished => m_dragFinishSubject;
 
 	protected override void Initialize()
 	{
@@ -26,18 +32,18 @@ public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDr
 
 		UIRectTransform.anchoredPosition += eventData.delta/m_canvas.scaleFactor;
 
-		OnDragUpdate?.Invoke();
+		m_dragChangeSubject.OnNext(Unit.Default);
 	}
 
 	void IBeginDragHandler.OnBeginDrag(PointerEventData eventData)
 	{
 		transform.SetAsLastSibling();
 
-		OnDragStart?.Invoke();
+		m_dragStartSubject.OnNext(Unit.Default);
 	}
 
 	void IEndDragHandler.OnEndDrag(PointerEventData eventData)
 	{
-		OnDragEnd?.Invoke();
+		m_dragFinishSubject.OnNext(Unit.Default);
 	}
 }

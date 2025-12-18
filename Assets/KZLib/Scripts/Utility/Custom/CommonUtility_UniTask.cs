@@ -48,22 +48,26 @@ public static partial class CommonUtility
 
 	public static async UniTask LoopActionNWaitForSecondAsync(Action onAction,float second,bool ignoreTimeScale,int count,CancellationToken token)
 	{
-		await _LoopPlayAsync(async ()=>
+		async UniTask _PlayAndDelayAsync()
 		{
 			onAction();
-			await UniTask.Delay(TimeSpan.FromSeconds(second),ignoreTimeScale,cancellationToken : token);
 
-		},count,token);
+			await UniTask.Delay(TimeSpan.FromSeconds(second),ignoreTimeScale,cancellationToken : token);
+		}
+
+		await _LoopPlayAsync(_PlayAndDelayAsync,count,token);
 	}
 
 	public static async UniTask LoopActionNWaitForFrameAsync(Action onAction,int count,CancellationToken token)
 	{
-		await _LoopPlayAsync(async ()=>
+		async UniTask _PlayAndWaitAsync()
 		{
 			onAction();
-			await UniTask.Yield(token);
 
-		},count,token);
+			await UniTask.Yield(token);
+		}
+
+		await _LoopPlayAsync(_PlayAndWaitAsync,count,token);
 	}
 
 	private static async UniTask _LoopPlayAsync(Func<UniTask> onPlayTask,int count,CancellationToken token)

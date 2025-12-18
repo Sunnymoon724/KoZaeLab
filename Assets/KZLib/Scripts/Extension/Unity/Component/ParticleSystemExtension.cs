@@ -23,7 +23,12 @@ public static class ParticleSystemExtension
 			return;
 		}
 
-		await UniTask.WaitWhile(() => particleSystem.isPlaying,cancellationToken : cancellationToken);
+		bool _IsParticlePlaying()
+		{
+			return particleSystem.isPlaying;
+		}
+
+		await UniTask.WaitWhile(_IsParticlePlaying,cancellationToken : cancellationToken);
 	}
 
 	private static bool _IsValid(ParticleSystem particleSystem)

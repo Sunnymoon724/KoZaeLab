@@ -43,10 +43,12 @@ public static class ImageExtension
 
 	public static async UniTask FadeImageAsync(this Image image,float duration,Color prevColor,Color nextColor)
 	{
-		await CommonUtility.ExecuteProgressAsync(0.0f,1.0f,duration,(progress)=>
+		void _ProgressColor(float progress)
 		{
 			image.color = Color.Lerp(prevColor,nextColor,progress);
-		});
+		}
+
+		await CommonUtility.ExecuteProgressAsync(0.0f,1.0f,duration,_ProgressColor);
 	}
 
 	private static bool _IsValid(Image image)

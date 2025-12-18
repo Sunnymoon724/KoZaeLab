@@ -2,16 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using KZLib;
-using KZLib.KZData;
 using TMPro;
 using UnityEngine;
+using R3;
 
 public class SubtitlePanelUI : WindowUI2D
 {
 	public record SubtitleParam(string SubtitlePath);
 
-	#region Subtitle Data
-	private record SubtitleData
+	#region Subtitle Info
+	private record SubtitleInfo
 	{
 		private readonly float m_startTime = 0.0f;
 		private readonly float m_finishTime = 0.0f;
@@ -19,7 +19,7 @@ public class SubtitlePanelUI : WindowUI2D
 		public float Length => m_finishTime-m_startTime;
 		public string Text { get; }
 
-		public SubtitleData(float startTime,float finishTime,string text)
+		public SubtitleInfo(float startTime,float finishTime,string text)
 		{
 			m_startTime = startTime;
 			m_finishTime = finishTime;
@@ -32,11 +32,11 @@ public class SubtitlePanelUI : WindowUI2D
 			return m_startTime <= time && time <= m_finishTime;
 		}
 	}
-	#endregion Subtitle Data
+	#endregion Subtitle Info
 
 	[SerializeField] private TMP_Text m_subtitleText = null;
 
-	private readonly List<SubtitleData> m_subtitleList = new();
+	private readonly List<SubtitleInfo> m_subtitleList = new();
 
 	public override void Open(object param)
 	{
@@ -93,7 +93,7 @@ public class SubtitlePanelUI : WindowUI2D
 					builder.AppendFormat("{0}\n",textArray[pivot++]);
 				}
 
-				m_subtitleList.Add(new SubtitleData((float)startTime.TotalSeconds,(float)finishTime.TotalSeconds,builder.ToString()));
+				m_subtitleList.Add(new SubtitleInfo((float)startTime.TotalSeconds,(float)finishTime.TotalSeconds,builder.ToString()));
 			}
 
 			if(m_subtitleList.IsNullOrEmpty())
@@ -105,14 +105,24 @@ public class SubtitlePanelUI : WindowUI2D
 		}
 	}
 
-	public void SetSubtitle(float time)
+	public void LinkVideo(VideoPanelUI videoPanel)
+	{
+		videoPanel.OnVideoTimeChanged.Subscribe(_SetSubtitle).RegisterTo(destroyCancellationToken);
+	}
+
+	private void _SetSubtitle(float time)
 	{
 		if(time < 0.0f || m_subtitleList.Count == 0)
 		{
 			return;
 		}
 
-		var index = m_subtitleList.FindIndex(x=>x.IsIncludeTime(time));
+		bool _FindIndex(SubtitleInfo data)
+		{
+			return data.IsIncludeTime(time);
+		}
+
+		var index = m_subtitleList.FindIndex(_FindIndex);
 
 		if(index == -1)
 		{

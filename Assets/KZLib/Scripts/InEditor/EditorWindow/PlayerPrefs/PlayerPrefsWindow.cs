@@ -240,11 +240,21 @@ namespace KZLib.KZWindow
 		{
 			if(m_ascending)
 			{
-				m_playerPrefsInfoList.Sort((a,b) => string.Compare(a.Key,b.Key,StringComparison.Ordinal));
+				static int _Compare(PlayerPrefsInfo infoA,PlayerPrefsInfo infoB)
+				{
+					return string.Compare(infoA.Key,infoB.Key,StringComparison.Ordinal);
+				}
+
+				m_playerPrefsInfoList.Sort(_Compare);
 			}
 			else
 			{
-				m_playerPrefsInfoList.Sort((a,b) => string.Compare(b.Key,a.Key,StringComparison.Ordinal));
+				static int _Compare(PlayerPrefsInfo infoA,PlayerPrefsInfo infoB)
+				{
+					return string.Compare(infoB.Key,infoA.Key,StringComparison.Ordinal);
+				}
+
+				m_playerPrefsInfoList.Sort(_Compare);
 			}
 		}
 	}

@@ -1,41 +1,41 @@
 #if KZLIB_PLAY_FAB
-using System.Diagnostics;
+using System;
 using Cysharp.Threading.Tasks;
 using KZLib.KZUtility;
 using Newtonsoft.Json;
 using PlayFab;
 using PlayFab.ClientModels;
+using PlayFab.SharedModels;
 
 namespace KZLib
 {
 	public partial class PlayFabManager : Singleton<PlayFabManager>
 	{
-		public async UniTask<PlayFabPacket> GetPlayerProfileAsync(string playFabId)
+		public async UniTask<PlayFabPacketInfo> GetPlayerProfileAsync(string playFabId)
 		{
+			void _SendPacket(PlayFabRequestCommon commonRequest,Action<PlayFabResultCommon> onSendResult,Action<PlayFabError> onSendError)
+			{
+				var profileRequest = commonRequest as GetPlayerProfileRequest;
+
+				PlayFabClientAPI.GetPlayerProfile(profileRequest,onSendResult,onSendError);
+			}
+
+			NetworkPacketInfo _CreatePacket(PlayFabResultCommon commonResult)
+			{
+				var profileResult = commonResult as GetPlayerProfileResult;
+
+				var message = JsonConvert.SerializeObject(profileResult.PlayerProfile);
+
+				return new NetworkPacketInfo(0,message,false);
+			}
+
 			var request = new GetPlayerProfileRequest()
 			{
 				PlayFabId = playFabId,
 				ProfileConstraints = new PlayerProfileViewConstraints() { ShowDisplayName = true }
 			};
 
-			var source = new UniTaskCompletionSource<PlayFabPacket>();
-
-			var stopwatch = Stopwatch.StartNew();
-
-			PlayFabClientAPI.GetPlayerProfile(request,(result) =>
-			{
-				stopwatch.Stop();
-
-				var message = JsonConvert.SerializeObject(result.PlayerProfile);
-
-				source.TrySetResult(new PlayFabPacket(request,new NetworkPacket(0,message,false),stopwatch.ElapsedMilliseconds));
-			},(playFabError) =>
-			{
-				stopwatch.Stop();
-				source.TrySetResult(_CreateErrorPacket(playFabError,stopwatch.ElapsedMilliseconds));
-			});
-
-			return await source.Task;
+			return await _ExecuteAsync(request,_SendPacket,_CreatePacket);
 		}
 	}
 }

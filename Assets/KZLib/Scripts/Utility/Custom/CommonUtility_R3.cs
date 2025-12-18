@@ -5,6 +5,11 @@ public static partial class CommonUtility
 {
 	public static IDisposable DelayAction(Action onAction,float second)
 	{
-		return Observable.Timer(TimeSpan.FromSeconds(second)).Subscribe(_ => onAction?.Invoke());
+		void _PlayAction(Unit observer)
+		{
+			onAction?.Invoke();
+		}
+
+		return Observable.Timer(TimeSpan.FromSeconds(second)).Subscribe(_PlayAction);
 	}
 }

@@ -50,7 +50,12 @@ namespace HudPanel
 
 				m_text.SetSafeTextMeshPro(CheckCount(m_count));
 
-				m_toggle.onValueChanged.AddAction((dummy)=> { onAction?.Invoke(); });
+				void _ChangeValue(bool _)
+				{
+					onAction?.Invoke();
+				}
+
+				m_toggle.onValueChanged.AddAction(_ChangeValue);
 			}
 
 			private string CheckCount(int count) => count < 100 ? $"{count}" : "99+";
@@ -80,19 +85,21 @@ namespace HudPanel
 				data.Initialize(_SetScrollRect);
 			}
 
-			m_inputField.onValueChanged.SetAction((text)=>
+			void _ChangeValue(string text)
 			{
 				m_compareText = text.IsEmpty() ? null : text;
 
 				_SetScrollRect();
-			});
+			}
+
+			m_inputField.onValueChanged.SetAction(_ChangeValue);
 		}
 
 		protected override void OnEnable()
 		{
 			base.OnEnable();
-			
-			Broadcaster.EnableListener<MessageData>(Global.DISPLAY_LOG,_OnUpdateLogScroll);
+
+			Broadcaster.EnableListener<MessageInfo>(Global.DISPLAY_LOG,_OnUpdateLogScroll);
 
 			_SetScrollRect();
 		}
@@ -100,8 +107,8 @@ namespace HudPanel
 		protected override void OnDisable()
 		{
 			base.OnEnable();
-			
-			Broadcaster.DisableListener<MessageData>(Global.DISPLAY_LOG,_OnUpdateLogScroll);
+
+			Broadcaster.DisableListener<MessageInfo>(Global.DISPLAY_LOG,_OnUpdateLogScroll);
 		}
 
 		private void _SetScrollRect()
@@ -126,7 +133,7 @@ namespace HudPanel
 			m_scrollRectUI.SetCellList(cellDataList,0);
 		}
 
-		private void _OnUpdateLogScroll(MessageData messageData)
+		private void _OnUpdateLogScroll(MessageInfo messageData)
 		{
 			var cellData = _CreateLogCellData(messageData);
 
@@ -136,22 +143,24 @@ namespace HudPanel
 			}
 		}
 
-		private LogCellData _CreateLogCellData(MessageData messageData)
+		private LogCellData _CreateLogCellData(MessageInfo messageData)
 		{
-			var (Type,Time) = _SplitHeader(messageData.Header);
+			var headerInfo = _SplitHeader(messageData.Header);
 
-			if(Type.HasValue)
+			if(headerInfo != null)
 			{
-				var logData = m_hudLogDataDict[Type.Value];
+				var logData = m_hudLogDataDict[headerInfo.LogType];
 
 				logData.AddCount();
 
 				if(logData.IsToggleOn && _IsContainsText(messageData.Body))
 				{
-					return new LogCellData(logData.Color,Time,messageData.Body,() =>
+					void _ClickCell()
 					{
-						WebRequestManager.In.PostDiscordWebHook("Log Window",new MessageData[] { messageData });
-					});
+						WebRequestManager.In.PostDiscordWebHook("Log Window",new MessageInfo[] { messageData });
+					}
+
+					return new LogCellData(logData.Color,headerInfo.Time,messageData.Body,_ClickCell);
 				}
 			}
 
@@ -163,7 +172,7 @@ namespace HudPanel
 			return m_compareText.IsEmpty() || message.Contains(m_compareText,StringComparison.OrdinalIgnoreCase);
 		}
 
-		private (HudLogType? Type,string Time) _SplitHeader(string header)
+		private HeaderInfo _SplitHeader(string header)
 		{
 			var headerArray = header.Split(' ',2);
 
@@ -172,10 +181,12 @@ namespace HudPanel
 				var type = headerArray[0].TrimAngleBrackets().ToEnum<HudLogType>();
 				var time = headerArray[1];
 
-				return (type,time);
+				return new HeaderInfo(type,time);
 			}
 
-			return (null,null);
+			return null;
 		}
+
+		private record HeaderInfo(HudLogType LogType,string Time);
 	}
 }

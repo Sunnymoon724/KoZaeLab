@@ -57,7 +57,7 @@ namespace KZLib.KZNetwork
 	{
 		private const string c_post_discord_webHook = "Post DiscordWebHook";
 
-		public static PostDiscordWebHookWebRequest Create(string uri,string content,IEnumerable<MessageData> messageGroup = null,byte[] file = null)
+		public static PostDiscordWebHookWebRequest Create(string uri,string content,IEnumerable<MessageInfo> messageGroup = null,byte[] file = null)
 		{
 			if(uri.IsEmpty())
 			{
@@ -70,7 +70,7 @@ namespace KZLib.KZNetwork
 			}
 
 			//? Fields max count = 1024 -> device message
-			var dataQueue = new Queue<MessageData>();
+			var dataQueue = new Queue<MessageInfo>();
 			var maxSize = c_file_max_size;
 			var logCount = 0;
 
@@ -84,7 +84,7 @@ namespace KZLib.KZNetwork
 				{
 					var text = body.Substring(index,Mathf.Min(body.Length-index,maxSize));
 
-					dataQueue.Enqueue(new MessageData(header,text));
+					dataQueue.Enqueue(new MessageInfo(header,text));
 					logCount += header.Length+text.Length;
 
 					while(logCount >= c_embed_max_text_size)

@@ -1,4 +1,3 @@
-using System;
 using KZLib.KZUtility;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
@@ -6,17 +5,21 @@ using Cysharp.Threading.Tasks;
 using UnityEngine.Localization;
 using System.Threading;
 using Object = UnityEngine.Object;
+using R3;
 
 namespace KZLib.KZData
 {
 	public class LingoManager : Singleton<LingoManager>
 	{
+		private readonly CompositeDisposable m_disposable = new();
+
 		private bool m_disposed = false;
 		private bool m_isLoaded = false;
 
 		private SystemLanguage m_currentLanguage = SystemLanguage.English;
 
-		public event Action OnLanguageChange = null;
+		private readonly Subject<Unit> m_lingoSubject = new();
+		public Observable<Unit> OnLanguageChanged => m_lingoSubject;
 
 		public SystemLanguage CurrentLanguage => m_currentLanguage;
 
@@ -29,12 +32,8 @@ namespace KZLib.KZData
 
 			if(disposing)
 			{
-				if(ConfigManager.HasInstance)
-				{
-					var optionCfg = ConfigManager.In.Access<OptionConfig>();
-
-					optionCfg.OnLanguageChanged -= _OnChangeLanguage;
-				}
+				m_disposable.Dispose();
+				m_lingoSubject.Dispose();
 
 				m_isLoaded = false;
 			}
@@ -55,9 +54,9 @@ namespace KZLib.KZData
 
 			var optionCfg = ConfigManager.In.Access<OptionConfig>();
 
-			optionCfg.OnLanguageChanged += _OnChangeLanguage;
+			optionCfg.OnLanguageChanged.Subscribe(_OnChangeLanguage).AddTo(m_disposable);
 
-			_OnChangeLanguage(optionCfg.Language);
+			_OnChangeLanguage(optionCfg.CurrentLanguage);
 
 			m_isLoaded = true;
 
@@ -85,7 +84,7 @@ namespace KZLib.KZData
 			LocalizationSettings.SelectedLocale = newLocal;
 			m_currentLanguage = language;
 
-			OnLanguageChange?.Invoke();
+			m_lingoSubject.OnNext(Unit.Default);
 		}
 
 		public string FindString(string key)

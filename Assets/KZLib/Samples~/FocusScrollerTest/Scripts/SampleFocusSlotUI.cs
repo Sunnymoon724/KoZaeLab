@@ -11,9 +11,9 @@ namespace KZLib.KZSample
 		[BoxGroup("Animator",Order = 10),SerializeField]
 		private Animator m_animator = null;
 
-		public override void UpdateLocation(float location)
+		public override void RefreshLocation(float location)
 		{
-			base.UpdateLocation(location);
+			base.RefreshLocation(location);
 
 			if(m_animator.isActiveAndEnabled)
 			{

@@ -83,5 +83,8 @@ public static class ColorExtension
 		return gradient;
 	}
 
-	public static void ClearCacheData() => s_colorDict.Clear();
+	public static void ClearCacheData()
+	{
+		s_colorDict.Clear();
+	}
 }

@@ -12,7 +12,7 @@ namespace KZLib
 {
 	public partial class ResourceManager : Singleton<ResourceManager>
 	{
-		private record LoadingResource(string ResourcePath,bool IsFilePath,Transform Parent);
+		private record LoadingResourceInfo(string ResourcePath,bool IsFilePath,Transform Parent);
 
 		private bool m_disposed = false;
 
@@ -20,7 +20,7 @@ namespace KZLib
 
 		private CancellationTokenSource m_tokenSource = null;
 
-		private readonly Queue<LoadingResource> m_loadingQueue = new();
+		private readonly Queue<LoadingResourceInfo> m_loadingQueue = new();
 
 		private readonly CacheResolver<Object[]> m_cacheResolver = new();
 
@@ -76,7 +76,7 @@ namespace KZLib
 
 		private void _AddLoadingQueue(string path,bool isFilePath,Transform parent = null)
 		{
-			m_loadingQueue.Enqueue(new LoadingResource(path,isFilePath,parent));
+			m_loadingQueue.Enqueue(new LoadingResourceInfo(path,isFilePath,parent));
 		}
 
 		private TObject _GetCache<TObject>(string path) where TObject : Object

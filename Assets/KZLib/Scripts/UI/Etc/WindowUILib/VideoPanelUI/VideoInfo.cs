@@ -2,7 +2,7 @@
 
 namespace VideoPanel
 {
-	public record VideoData
+	public record VideoInfo
 	{
 		public string VideoPath { get; }
 		public string SubtitlePath { get; }
@@ -10,7 +10,7 @@ namespace VideoPanel
 		public bool IsLoop { get; }
 		public bool IsUrl { get; }
 
-		public VideoData(string videoPath,string subtitlePath,bool canSkip,bool isLoop)
+		public VideoInfo(string videoPath,string subtitlePath,bool canSkip,bool isLoop)
 		{
 			IsUrl = Uri.IsWellFormedUriString(videoPath,UriKind.Absolute);
 			VideoPath = videoPath;
@@ -21,7 +21,7 @@ namespace VideoPanel
 			IsLoop = isLoop;
 		}
 
-		public VideoData(string videoPath,bool canSkip,bool isLoop) : this(videoPath,null,canSkip,isLoop) { }
+		public VideoInfo(string videoPath,bool canSkip,bool isLoop) : this(videoPath,null,canSkip,isLoop) { }
 
 		public bool IsExistSubtitle => !SubtitlePath.IsEmpty();
 	}

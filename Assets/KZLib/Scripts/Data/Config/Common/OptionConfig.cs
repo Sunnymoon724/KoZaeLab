@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using KZLib.KZDevelop;
+using R3;
 using UnityEngine;
 
 namespace KZLib.KZData
@@ -8,25 +9,21 @@ namespace KZLib.KZData
 	/// <summary>
 	/// OptionConfig is only used to store by PlayerPrefs.
 	/// </summary>
-	public class OptionConfig : IConfig
+	public class OptionConfig : IConfig, IDisposable
 	{
 		private SoundVolume m_masterVolume = SoundVolume.max;
-		public SoundVolume MasterVolume => m_masterVolume;
-
 		private SoundVolume m_musicVolume = SoundVolume.max;
-		public SoundVolume MusicVolume => m_musicVolume;
-
 		private SoundVolume m_effectVolume = SoundVolume.max;
-		public SoundVolume EffectVolume => m_effectVolume;
+		public SoundProfile CurrentSound => new(m_masterVolume,m_musicVolume,m_effectVolume);
 
 		private ScreenResolution m_resolution = new(Global.BASE_WIDTH,Global.BASE_HEIGHT,true);
-		public ScreenResolution Resolution => m_resolution;
+		public ScreenResolution CurrentResolution => m_resolution;
 
 		private int m_frameRate = Global.FRAME_RATE_60;
-		public int FrameRate => m_frameRate;
+		public int CurrentFrameRate => m_frameRate;
 
 		private long m_graphicQuality = GraphicQualityOption.In.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityHighest);
-		public long GraphicQuality => m_graphicQuality;
+		public long CurrentGraphicQuality => m_graphicQuality;
 
 		private bool m_useVibration = true;
 		public bool UseVibration => m_useVibration;
@@ -36,17 +33,25 @@ namespace KZLib.KZData
 #else
 		public SystemLanguage m_language = Application.systemLanguage;
 #endif
-		public SystemLanguage Language => m_language;
+		public SystemLanguage CurrentLanguage => m_language;
 
-		public event Action<SoundVolume,SoundVolume,SoundVolume> OnSoundVolumeChanged = null;
+		private readonly Subject<SoundProfile> m_soundProfileSubject = new();
+		public Observable<SoundProfile> OnSoundVolumeChanged => m_soundProfileSubject;
 
-		public event Action<ScreenResolution> OnResolutionChanged = null;
-		public event Action<int> OnFrameRateChanged = null;
-		public event Action<long> OnGraphicQualityChanged = null;
+		private readonly Subject<ScreenResolution> m_screenResolutionSubject = new();
+		public Observable<ScreenResolution> OnResolutionChanged => m_screenResolutionSubject;
 
-		public event Action<bool> OnUseVibrationChanged = null;
+		private readonly Subject<int> m_frameRateSubject = new();
+		public Observable<int> OnFrameRateChanged => m_frameRateSubject;
 
-		public event Action<SystemLanguage> OnLanguageChanged = null;
+		private readonly Subject<long> m_graphicQualitySubject = new();
+		public Observable<long> OnGraphicQualityChanged => m_graphicQualitySubject;
+
+		private readonly Subject<bool> m_useVibrationSubject = new();
+		public Observable<bool> OnUseVibrationChanged => m_useVibrationSubject;
+
+		private readonly Subject<SystemLanguage> m_languageSubject = new();
+		public Observable<SystemLanguage> OnLanguageChanged => m_languageSubject;
 
 		public OptionConfig()
 		{
@@ -54,6 +59,18 @@ namespace KZLib.KZData
 			{
 				return;
 			}
+		}
+
+		public void Dispose()
+		{
+			m_soundProfileSubject.Dispose();
+			m_screenResolutionSubject.Dispose();
+			m_frameRateSubject.Dispose();
+			m_graphicQualitySubject.Dispose();
+			m_useVibrationSubject.Dispose();
+			m_languageSubject.Dispose();
+
+			GC.SuppressFinalize(this);
 		}
 
 		public bool TryReload()
@@ -251,32 +268,38 @@ namespace KZLib.KZData
 
 		private void _SetVolumeOption(ref SoundVolume oldValue,SoundVolume newValue,string nameKey)
 		{
-			_SetValue(ref oldValue,newValue,nameKey,()=>
+			void _ChangeVolume()
 			{
-				OnSoundVolumeChanged?.Invoke(m_masterVolume,m_musicVolume,m_effectVolume);
-			});
+				m_soundProfileSubject.OnNext(CurrentSound);
+			}
+
+			_SetValue(ref oldValue,newValue,nameKey,_ChangeVolume);
 		}
 		#endregion Sound
 
 		#region Graphic
 		public void SetScreenResolution(ScreenResolution newResolution)
 		{
-			_SetValue(ref m_resolution,newResolution,nameof(m_resolution),()=>
+			void _ChangeResolution()
 			{
 				Screen.SetResolution(m_resolution.width,m_resolution.height,m_resolution.fullscreen);
 
-				OnResolutionChanged?.Invoke(m_resolution);
-			});
+				m_screenResolutionSubject.OnNext(CurrentResolution);
+			}
+
+			_SetValue(ref m_resolution,newResolution,nameof(m_resolution),_ChangeResolution);
 		}
 
 		public void SetFrameRate(int newFrameRate)
 		{
-			_SetValue(ref m_frameRate,newFrameRate,nameof(m_frameRate),()=>
+			void _ChangeFrameRate()
 			{
 				Application.targetFrameRate = m_frameRate;
 
-				OnFrameRateChanged?.Invoke(m_frameRate);
-			});
+				m_frameRateSubject.OnNext(CurrentFrameRate);
+			}
+
+			_SetValue(ref m_frameRate,newFrameRate,nameof(m_frameRate),_ChangeFrameRate);
 		}
 
 		public void AddGraphicQuality(long graphicQuality)
@@ -291,12 +314,14 @@ namespace KZLib.KZData
 
 		private void _SetGraphicQuality(long newGraphicQuality)
 		{
-			_SetValue(ref m_graphicQuality,newGraphicQuality,nameof(m_graphicQuality),()=>
+			void _ChangeGraphicQuality()
 			{
 				_CheckGraphicQuality();
 
-				OnGraphicQualityChanged?.Invoke(m_graphicQuality);
-			});
+				m_graphicQualitySubject.OnNext(CurrentGraphicQuality);
+			}
+
+			_SetValue(ref m_graphicQuality,newGraphicQuality,nameof(m_graphicQuality),_ChangeGraphicQuality);
 		}
 
 		private void _CheckGraphicQuality()
@@ -310,22 +335,24 @@ namespace KZLib.KZData
 		#region Native
 		public void SetUseVibration(bool newUseVibration)
 		{
-			_SetValue(ref m_useVibration,newUseVibration,nameof(m_useVibration),()=>
+			void _ChangeVibration()
 			{
-				_CheckGraphicQuality();
+				m_useVibrationSubject.OnNext(UseVibration);
+			}
 
-				OnUseVibrationChanged.Invoke(m_useVibration);
-			});
+			_SetValue(ref m_useVibration,newUseVibration,nameof(m_useVibration),_ChangeVibration);
 		}
 		#endregion Native
 
 		#region Language
 		public void SetLanguage(SystemLanguage newLanguage)
 		{
-			_SetValue(ref m_language,newLanguage,nameof(m_language),()=>
+			void _ChangeLanguage()
 			{
-				OnLanguageChanged.Invoke(m_language);
-			});
+				m_languageSubject.OnNext(CurrentLanguage);
+			}
+
+			_SetValue(ref m_language,newLanguage,nameof(m_language),_ChangeLanguage);
 		}
 		#endregion Language
 

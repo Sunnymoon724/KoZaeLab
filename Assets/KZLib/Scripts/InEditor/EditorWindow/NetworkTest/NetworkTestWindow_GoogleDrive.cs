@@ -18,20 +18,22 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/GoogleDrive/1",Order = 1),Button("Get Entry List",ButtonSizes.Large),EnableIf(nameof(IsExistGoogleDrive))]
 		protected void OnFindEntry_GoogleDrive()
 		{
-			WebRequestManager.In.GetGoogleDriveEntry("Test",(dataList) =>
+			void _FindEntry(List<string> entryList)
 			{
-				if(dataList.IsNullOrEmpty())
+				if(entryList.IsNullOrEmpty())
 				{
 					return;
 				}
 
-				for(var i=0;i<dataList.Count;i++)
+				for(var i=0;i<entryList.Count;i++)
 				{
-					var json = JObject.Parse(dataList[i]);
+					var json = JObject.Parse(entryList[i]);
 
 					m_googleDriveList.Add(new ResultData(json["name"].ToString(),json["id"].ToString()));
 				}
-			});
+			}
+
+			WebRequestManager.In.GetGoogleDriveEntry("Test",_FindEntry);
 		}
 
 		[HorizontalGroup("Network/GoogleDrive/1",Order = 1),Button("Post Image",ButtonSizes.Large),EnableIf(nameof(IsExistGoogleDrive))]

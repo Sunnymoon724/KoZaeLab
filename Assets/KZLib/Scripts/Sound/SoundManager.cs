@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
 using KZLib.KZUtility;
 using KZLib.KZData;
+using System;
+using R3;
 
 namespace KZLib
 {
     [RequireComponent(typeof(AudioSource))]
     public partial class SoundManager : LoadSingletonMB<SoundManager>
 	{
+		private IDisposable m_soundSubscription;
+
 		protected override void Initialize()
 		{
 			if(m_bgmSource)
@@ -21,27 +25,20 @@ namespace KZLib
 
 			var optionCfg = ConfigManager.In.Access<OptionConfig>();
 
-			optionCfg.OnSoundVolumeChanged += _OnChangeSoundOption;
+			optionCfg.OnSoundVolumeChanged.Subscribe(_OnChangeSoundOption).RegisterTo(destroyCancellationToken);
 
-			_OnChangeSoundOption(optionCfg.MasterVolume,optionCfg.MusicVolume,optionCfg.EffectVolume);
+			_OnChangeSoundOption(optionCfg.CurrentSound);
 		}
 
 		protected override void Release()
 		{
-			if(ConfigManager.HasInstance)
-			{
-				var optionCfg = ConfigManager.In.Access<OptionConfig>();
-
-				optionCfg.OnSoundVolumeChanged -= _OnChangeSoundOption;
-			}
-
 			m_sfxList.Clear();
 		}
 
-		private void _OnChangeSoundOption(SoundVolume masterVolume,SoundVolume musicVolume,SoundVolume effectVolume)
+		private void _OnChangeSoundOption(SoundProfile soundProfile)
 		{
-			m_bgmVolume = new SoundVolume(masterVolume.level*musicVolume.level,masterVolume.mute || musicVolume.mute);
-			m_sfxVolume = new SoundVolume(masterVolume.level*effectVolume.level,masterVolume.mute || effectVolume.mute);
+			m_bgmVolume = soundProfile.OutputMusic;
+			m_sfxVolume = soundProfile.OutputEffect;
 
 			m_bgmSource.volume = m_bgmVolume.level;
 			m_bgmSource.mute = m_bgmVolume.mute;

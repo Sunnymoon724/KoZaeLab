@@ -19,9 +19,6 @@
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
 
-# Uncomment this line if you wish to ignore the asset store tools plugin
-# /[Aa]ssets/AssetStoreTools*
-
 # Visual Studio cache directory
 .vs/
 .vsconfig
@@ -86,7 +83,6 @@ crashlytics-build.properties
 .ionide
 
 ### common custom ignore ###
-
 *.DS_Store
 **~$*
 *.db
@@ -98,5 +94,5 @@ crashlytics-build.properties
 **/[Aa]ssets/[Ss]amplesSandbox
 **/[Aa]ssets/[Ss]amplesSandbox.meta
 
-[Aa]ssets/[Rr]esources/[Tt]ext/[Ss]etting/[Rr]oute.yaml
-[Aa]ssets/[Rr]esources/[Tt]ext/[Ss]etting/[Rr]oute.yaml.meta
+# [Aa]ssets/[Rr]esources/[Tt]ext/[Ss]etting/[Rr]oute.yaml
+# [Aa]ssets/[Rr]esources/[Tt]ext/[Ss]etting/[Rr]oute.yaml.meta

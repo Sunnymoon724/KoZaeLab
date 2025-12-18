@@ -33,7 +33,7 @@ namespace KZLib
 				{
 					var optionCfg = ConfigManager.In.Access<OptionConfig>();
 
-					m_gameLanguage = optionCfg.Language;
+					m_gameLanguage = optionCfg.CurrentLanguage;
 				}
 
 				return m_gameLanguage.Value;

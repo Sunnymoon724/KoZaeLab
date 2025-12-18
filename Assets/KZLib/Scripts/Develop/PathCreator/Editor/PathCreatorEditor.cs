@@ -2,12 +2,15 @@
 using UnityEditor;
 using UnityEngine;
 using Sirenix.OdinInspector.Editor;
+using R3;
 
 namespace KZLib.KZDevelop
 {
 	[CustomEditor(typeof(PathCreator))]
 	public partial class PathCreatorEditor : OdinEditor
 	{
+		private readonly CompositeDisposable m_disposable = new();
+
 		private PathCreator m_pathCreator = null;
 
 		private int m_selectedHandleIndex = Global.INVALID_INDEX;
@@ -33,18 +36,21 @@ namespace KZLib.KZDevelop
 
 			m_pathCreator = target as PathCreator;
 
-			m_pathCreator.OnPathChanged -= _OnResetState;
-			m_pathCreator.OnPathChanged += _OnResetState;
+			m_pathCreator.OnPathChanged.Subscribe(_OnResetState).AddTo(m_disposable);
 
 			Undo.undoRedoPerformed -= _OnUndoRedo;
 			Undo.undoRedoPerformed += _OnUndoRedo;
 
-			_OnResetState();
+			_OnResetState(Unit.Default);
 		}
 
 		protected override void OnDisable()
 		{
 			base.OnDisable();
+
+			m_disposable.Dispose(); 
+
+			Undo.undoRedoPerformed -= _OnUndoRedo;
 
 			Tools.hidden = false;
 		}
@@ -56,7 +62,7 @@ namespace KZLib.KZDevelop
 			Repaint();
 		}
 
-		private void _OnResetState()
+		private void _OnResetState(Unit _)
 		{
 			m_mouseOverHandleIndex = Global.INVALID_INDEX;
 		}

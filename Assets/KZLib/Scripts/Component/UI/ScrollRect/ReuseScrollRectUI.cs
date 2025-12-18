@@ -135,7 +135,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 	public void ScrollToTop(ICellData cellData,float duration = 0.0f)
 	{
-		ScrollToTop(m_cellDataList.FindIndex(x=>x.Equals(cellData)),duration);
+		ScrollToTop(_FindIndex(cellData),duration);
 	}
 
 	public void ScrollToTop(int index,float duration = 0.0f)
@@ -145,7 +145,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 	public void ScrollToCenter(ICellData cellData,float duration = 0.0f)
 	{
-		ScrollToCenter(m_cellDataList.FindIndex(x=>x.Equals(cellData)),duration);
+		ScrollToCenter(_FindIndex(cellData),duration);
 	}
 
 	public void ScrollToCenter(int index,float duration = 0.0f)
@@ -155,7 +155,17 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 	public void ScrollToBottom(ICellData cellData,float duration = 0.0f)
 	{
-		ScrollToBottom(m_cellDataList.FindIndex(x=>x.Equals(cellData)),duration);
+		ScrollToBottom(_FindIndex(cellData),duration);
+	}
+
+	private int _FindIndex(ICellData cellData)
+	{
+		bool _IsMatch(ICellData x)
+		{
+			return x.Equals(cellData);
+		}
+
+		return m_cellDataList.FindIndex(_IsMatch);
 	}
 
 	public void ScrollToBottom(int index,float duration = 0.0f)

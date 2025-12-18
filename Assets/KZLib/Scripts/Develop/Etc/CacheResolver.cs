@@ -8,14 +8,14 @@ namespace KZLib.KZDevelop
 {
 	public class CacheResolver<TCache>: IDisposable
 	{
-		private record CacheEntry
+		private record CacheInfo
 		{
 			public TCache Cache { get; }
 			public bool IsOverdue => m_duration < DateTime.Now.Ticks;
 
 			private long m_duration = 0L;
 
-			public CacheEntry(TCache cache,long duration)
+			public CacheInfo(TCache cache,long duration)
 			{
 				Cache = cache;
 				m_duration = duration;
@@ -27,7 +27,7 @@ namespace KZLib.KZDevelop
             }
 		}
 
-		private readonly Dictionary<string,List<CacheEntry>> m_cacheListDict = new();
+		private readonly Dictionary<string,List<CacheInfo>> m_cacheListDict = new();
 		private readonly List<string> m_removeList = new();
 
 		private readonly CancellationTokenSource m_tokenSource = null;
@@ -85,7 +85,7 @@ namespace KZLib.KZDevelop
 
 			if(!m_cacheListDict.TryGetValue(key, out var list))
 			{
-				list = new List<CacheEntry>();
+				list = new List<CacheInfo>();
 
 				m_cacheListDict.Add(key, list);
 			}
@@ -97,7 +97,7 @@ namespace KZLib.KZDevelop
 				}
 			}
 
-			list.Add(new CacheEntry(cache,newDuration));
+			list.Add(new CacheInfo(cache,newDuration));
 		}
 
 		private async UniTaskVoid _LoopProcessAsync()
@@ -110,7 +110,12 @@ namespace KZLib.KZDevelop
 
 				foreach(var pair in m_cacheListDict)
 				{
-					pair.Value.RemoveAll(x => x.IsOverdue);
+					static bool _IsOverdue(CacheInfo entry)
+					{
+						return entry.IsOverdue;
+					}
+
+					pair.Value.RemoveAll(_IsOverdue);
 
 					if(pair.Value.Count == 0)
 					{

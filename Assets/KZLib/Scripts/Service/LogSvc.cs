@@ -42,7 +42,7 @@ public class LogSvc
 
 	public static readonly LogChannel Test = new("Test");
 
-	public static IEnumerable<MessageData> LogDataGroup => LogChannel.LogDataGroup;
+	public static IEnumerable<MessageInfo> LogDataGroup => LogChannel.LogDataGroup;
 }
 
 public class LogChannel
@@ -50,9 +50,9 @@ public class LogChannel
 	private const int c_maxLogCount = 100;
 
 	private static readonly HashSet<string> s_logHashSet = new();
-	private static readonly CircularQueue<MessageData> m_logDataQueue = new(c_maxLogCount);
+	private static readonly CircularQueue<MessageInfo> m_logDataQueue = new(c_maxLogCount);
 
-	public static IEnumerable<MessageData> LogDataGroup => m_logDataQueue;
+	public static IEnumerable<MessageInfo> LogDataGroup => m_logDataQueue;
 
 	private readonly string m_logTag;
 
@@ -192,8 +192,14 @@ public class LogChannel
 		else
 		{
 			var stackTraceArray = stackTrace.Split('\n');
-			var index = stackTraceArray.IndexOf(x => x.Contains(nameof(LogChannel)));
-			
+
+			static bool _FindIndex(string stackTrace)
+			{
+				return stackTrace.Contains(nameof(LogChannel));
+			}
+
+			var index = stackTraceArray.IndexOf(_FindIndex);
+
 			if(index == -1)
 			{
 				body = condition;
@@ -206,7 +212,7 @@ public class LogChannel
 			}
 		}
 
-		var message = new MessageData(header,body);
+		var message = new MessageInfo(header,body);
 
 		m_logDataQueue.Enqueue(message);
 

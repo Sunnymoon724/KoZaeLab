@@ -23,10 +23,12 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/Trello/2",Order = 2),Button("Get Board",ButtonSizes.Large),EnableIf(nameof(IsExistTrello))]
 		protected void OnFindBoard_Trello()
 		{
-			WebRequestManager.In.GetTrelloBoard(TrelloCoreKey,(resultList) =>
+			void _ShowResult(List<string> resultList)
 			{
 				_ShowResult_Trello(resultList);
-			});
+			}
+
+			WebRequestManager.In.GetTrelloBoard(TrelloCoreKey,_ShowResult);
 		}
 
 		[HorizontalGroup("Network/Trello/3",Order = 3),SerializeField,EnableIf(nameof(IsExistTrello))]
@@ -37,19 +39,23 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/Trello/4",Order = 4),Button("Get List",ButtonSizes.Large),EnableIf(nameof(HasTestId))]
 		protected void OnFindList_Trello()
 		{
-			WebRequestManager.In.GetTrelloList(TrelloCoreKey,m_trelloTestId,(resultList) =>
+			void _ShowResult(List<string> resultList)
 			{
 				_ShowResult_Trello(resultList);
-			});
+			}
+
+			WebRequestManager.In.GetTrelloList(TrelloCoreKey,m_trelloTestId,_ShowResult);
 		}
 
 		[HorizontalGroup("Network/Trello/4",Order = 4),Button("Get Card",ButtonSizes.Large),EnableIf(nameof(HasTestId))]
 		protected void OnFindCard_Trello()
 		{
-			WebRequestManager.In.GetTrelloCard(TrelloCoreKey,m_trelloTestId,(resultList) =>
+			void _ShowResult(List<string> resultList)
 			{
 				_ShowResult_Trello(resultList);
-			});
+			}
+
+			WebRequestManager.In.GetTrelloCard(TrelloCoreKey,m_trelloTestId,_ShowResult);
 		}
 
 		[HorizontalGroup("Network/Trello/5",Order = 5),Button("Post List",ButtonSizes.Large),EnableIf(nameof(HasTestId))]

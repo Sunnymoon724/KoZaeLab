@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System;
 
 namespace System.Runtime.CompilerServices
 {
@@ -6,8 +7,10 @@ namespace System.Runtime.CompilerServices
 	internal class IsExternalInit { }
 }
 
-public record MessageData(string Header,string Body);
+public record MessageInfo(string Header,string Body);
 
-public record RespondData(bool IsUpdate,string Type,string Data);
+public record NetworkRespondInfo(bool IsUpdate,string Type,string Data);
 
-public record NetworkPacket(int Code,string Message,bool IsEncrypted);
+public record NetworkPacketInfo(int Code,string Message,bool IsEncrypted);
+
+public record UnitStateInfo(Enum PreState,Enum CurState);

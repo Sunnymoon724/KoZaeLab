@@ -12,7 +12,7 @@ namespace KZLib
 		private class GameTime
 		{
 			private record TimerInfo(float Trigger,Action CallBack);
-			
+
 			public float ElapsedTime { get; private set; }
 			public float DeltaTime => TimeScale*Time.deltaTime;
 			public float TimeScale { get; private set; }

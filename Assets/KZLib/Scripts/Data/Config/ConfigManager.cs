@@ -32,6 +32,14 @@ namespace KZLib.KZData
 
 			if(disposing)
 			{
+				foreach(var config in m_configDict.Values)
+				{
+					if(config is IDisposable disposable)
+					{
+						disposable.Dispose();
+					}
+				}
+
 				m_configDict.Clear();
 			}
 

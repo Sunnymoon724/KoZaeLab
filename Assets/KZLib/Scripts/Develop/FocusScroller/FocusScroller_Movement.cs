@@ -1,4 +1,5 @@
 using System;
+using R3;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,8 +8,8 @@ namespace KZLib.KZDevelop
 {
 	public partial class FocusScroller : BaseComponentUI,IPointerUpHandler,IPointerDownHandler,IBeginDragHandler,IEndDragHandler,IDragHandler,IScrollHandler
 	{
-		#region Scroll Data
-		private record ScrollData
+		#region Scroll Info
+		private record ScrollInfo
 		{
 			public bool IsEnable { get; private set; }
 			public bool IsElastic { get; private set; }
@@ -19,19 +20,19 @@ namespace KZLib.KZDevelop
 
 			private Action m_onComplete = null;
 
-			public void SetData(Action onComplete)
+			public void Set(Action onComplete)
 			{
-				_SetData(true,true,0.0f,EaseType.OutCubic,0.0f,0.0f,onComplete);
+				_Set(true,true,0.0f,EaseType.OutCubic,0.0f,0.0f,onComplete);
 			}
 
-			public void SetData(float duration,EaseType easeType,float endLocation,Action onComplete)
+			public void Set(float duration,EaseType easeType,float endLocation,Action onComplete)
 			{
-				_SetData(true,false,duration,easeType,Time.unscaledTime,endLocation,onComplete);
+				_Set(true,false,duration,easeType,Time.unscaledTime,endLocation,onComplete);
 			}
 
 			public void Reset()
 			{
-				_SetData();
+				_Set();
 			}
 
 			public void Complete()
@@ -40,7 +41,7 @@ namespace KZLib.KZDevelop
 				Reset();
 			}
 
-			private void _SetData(bool enable = false,bool elastic = false,float duration = 0.0f,EaseType easeType = EaseType.OutCubic,float startTime = 0.0f,float endLocation = 0.0f,Action onComplete = null)
+			private void _Set(bool enable = false,bool elastic = false,float duration = 0.0f,EaseType easeType = EaseType.OutCubic,float startTime = 0.0f,float endLocation = 0.0f,Action onComplete = null)
 			{
 				IsEnable = enable;
 				IsElastic = elastic;
@@ -51,7 +52,7 @@ namespace KZLib.KZDevelop
 				m_onComplete = onComplete;
 			}
 		}
-		#endregion Scroll Data
+		#endregion Scroll Info
 
 		[BoxGroup("General/Movement",ShowLabel = false,Order = 10)]
 		[VerticalGroup("General/Movement/0",Order = 0),SerializeField]
@@ -87,11 +88,11 @@ namespace KZLib.KZDevelop
 				m_velocity = 0.0f;
 				m_dragging = false;
 
-				_UpdateLocation(value,false);
+				_RefreshLocation(value,false);
 			}
 		}
 
-		private readonly ScrollData m_scrollData = new();
+		private readonly ScrollInfo m_scrollData = new();
 
 		private float m_prevPosition = 0.0f;
 
@@ -100,8 +101,11 @@ namespace KZLib.KZDevelop
 
 		private float ViewportSize => m_vertical ? m_viewport.rect.height : m_viewport.rect.width;
 
-		public event Action OnDragStart = null;
-		public event Action<float> OnDragEnd = null;
+		private readonly Subject<Unit> m_dragStartSubject = new();
+		public Observable<Unit> OnDragStarted => m_dragStartSubject;
+
+		private readonly Subject<float> m_dragEndSubject = new();
+		public Observable<float> OnDragFinished => m_dragEndSubject;
 
 		public void OnPointerDown(PointerEventData eventData)
 		{
@@ -157,7 +161,7 @@ namespace KZLib.KZDevelop
 				m_scrollData.Reset();
 			}
 
-			_UpdateLocation(location,false);
+			_RefreshLocation(location,false);
 		}
 
 		public void OnBeginDrag(PointerEventData eventData)
@@ -175,7 +179,7 @@ namespace KZLib.KZDevelop
 			m_dragging = true;
 			m_scrollData.Reset();
 
-			OnDragStart?.Invoke();
+			m_dragStartSubject.OnNext(Unit.Default);
 		}
 
 		public void OnDrag(PointerEventData eventData)
@@ -204,7 +208,7 @@ namespace KZLib.KZDevelop
 				}
 			}
 
-			_UpdateLocation(location,false);
+			_RefreshLocation(location,false);
 		}
 
 		public void OnEndDrag(PointerEventData eventData)
@@ -250,7 +254,7 @@ namespace KZLib.KZDevelop
 					}
 				}
 
-				_UpdateLocation(location,false);
+				_RefreshLocation(location,false);
 			}
 			else if(!isMoving && (!offset.ApproximatelyZero() || !m_velocity.ApproximatelyZero()))
 			{
@@ -258,10 +262,7 @@ namespace KZLib.KZDevelop
 
 				if(!IsCircularMode && !offset.ApproximatelyZero())
 				{
-					m_scrollData.SetData(()=>
-					{
-						UpdateIndex(Mathf.RoundToInt(CurrentLocation));
-					});
+					m_scrollData.Set(_RefreshAll);
 				}
 				else if(m_inertia)
 				{
@@ -278,7 +279,7 @@ namespace KZLib.KZDevelop
 					{
 						ScrollTo(Mathf.RoundToInt(CurrentLocation),m_magnetDuration,m_magnetEasing);
 
-						OnDragEnd?.Invoke(m_magnetDuration);
+						m_dragEndSubject.OnNext(m_magnetDuration);
 					}
 				}
 				else
@@ -287,13 +288,13 @@ namespace KZLib.KZDevelop
 
 					if(!m_magnetMode)
 					{
-						OnDragEnd?.Invoke(0.0f);
+						m_dragEndSubject.OnNext(0.0f);
 					}
 				}
 
 				if(!m_velocity.ApproximatelyZero())
 				{
-					_UpdateLocation(location,false);
+					_RefreshLocation(location,false);
 				}
 			}
 
@@ -319,10 +320,7 @@ namespace KZLib.KZDevelop
 
 			var endLocation = CurrentLocation+_CalculateLoopedMovementAmount(CurrentLocation,location);
 
-			m_scrollData.SetData(duration,easeType,endLocation,()=>
-			{
-				UpdateIndex(Mathf.RoundToInt(CurrentLocation));
-			});
+			m_scrollData.Set(duration,easeType,endLocation,_RefreshAll);
 
 			m_velocity = 0.0f;
 			m_scrollStartLocation = CurrentLocation;
@@ -332,7 +330,7 @@ namespace KZLib.KZDevelop
 		{
 			if(m_cellDataList.ContainsIndex(index))
 			{
-				UpdateIndex(index);
+				RefreshIndex(index);
 				CurrentLocation = index;
 			}
 		}
@@ -381,6 +379,11 @@ namespace KZLib.KZDevelop
 			}
 
 			return 0.0f;
+		}
+
+		private void _RefreshAll()
+		{
+			RefreshIndex(Mathf.RoundToInt(CurrentLocation));
 		}
     }
 }

@@ -83,22 +83,24 @@ public abstract class EffectClip : BaseComponent
 		}
 
 		var count = IsLoop ? -1 : 1;
-
-		await CommonUtility.LoopUniTaskAsync(async ()=>
+		
+		async UniTask _PlayTaskAsync()
 		{
 			m_currentTime = 0.0f;
 
-			await PlayTaskAsync();
+			await _ExecuteEffectAsync();
 
 			m_currentTime = Duration;
-		},count,m_tokenSource.Token);
+		}
+
+		await CommonUtility.LoopUniTaskAsync(_PlayTaskAsync,count,m_tokenSource.Token);
 
 		EndEffect(true);
 
 		CommonUtility.KillTokenSource(ref m_tokenSource);
 	}
 
-	protected abstract UniTask PlayTaskAsync();
+	protected abstract UniTask _ExecuteEffectAsync();
 
 	protected virtual void SetTime(float time)
 	{

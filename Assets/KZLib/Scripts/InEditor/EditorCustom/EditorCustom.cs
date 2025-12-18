@@ -38,11 +38,11 @@ namespace KZLib.Tet
 			public Color CategoryColor => CategoryHexColor.ToColor();
 		}
 
-		private record HierarchyData(int TreeLevel,int TreeGroup,bool HasChild,bool IsLast,bool IsCategory);
+		private record HierarchyInfo(int TreeLevel,int TreeGroup,bool HasChild,bool IsLast,bool IsCategory);
 
 		private static CustomData s_customData = null;
 
-		private static readonly Dictionary<int,HierarchyData> s_hierarchyDataDict = new();
+		private static readonly Dictionary<int,HierarchyInfo> s_hierarchyDataDict = new();
 
 		[InitializeOnLoadMethod]
 		private static void _Initialize()
@@ -205,7 +205,7 @@ namespace KZLib.Tet
 
 			var childCount = gameObject.transform.childCount;
 
-			s_hierarchyDataDict.Add(instanceId,new HierarchyData(treeLevel,treeGroup,childCount > 0,isLastChild,gameObject.CompareTag("Category")));
+			s_hierarchyDataDict.Add(instanceId,new HierarchyInfo(treeLevel,treeGroup,childCount > 0,isLastChild,gameObject.CompareTag("Category")));
 
 			for(var i=0;i<childCount;i++)
 			{
@@ -214,7 +214,7 @@ namespace KZLib.Tet
 		}
 
 		#region Draw Branch Tree
-		private static void _DrawBranchTree(HierarchyData hierarchyData,Rect rect,bool isCategory)
+		private static void _DrawBranchTree(HierarchyInfo hierarchyData,Rect rect,bool isCategory)
 		{
 			if(!s_customData.UseBranchTree || hierarchyData.TreeLevel < 0 || rect.x < 60 || isCategory)
 			{
@@ -286,7 +286,7 @@ namespace KZLib.Tet
 		#endregion Draw Branch Tree
 
 		#region Draw Category
-		private static void _DrawCategory(HierarchyData hierarchyData,Rect rect,int instanceId)
+		private static void _DrawCategory(HierarchyInfo hierarchyData,Rect rect,int instanceId)
 		{
 			var categoryRect = new Rect(c_headSpace,rect.y,rect.width+25.0f+hierarchyData.TreeLevel*14.0f,rect.height);
 			var currentObject = EditorUtility.EntityIdToObject(instanceId) as GameObject;

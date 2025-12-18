@@ -68,7 +68,7 @@ public class AnimatorEffectClip : EffectClip
 		AnimationName = param.Name;
 	}
 
-	protected async override UniTask PlayTaskAsync()
+	protected async override UniTask _ExecuteEffectAsync()
 	{
 		if(AnimationName.IsEmpty())
 		{
@@ -79,7 +79,12 @@ public class AnimatorEffectClip : EffectClip
 
 		await UniTask.Yield();
 
-		await CommonUtility.WaitForConditionAsync(()=>m_animator.IsAnimationFinish(AnimationName),SetTime,m_ignoreTimeScale,m_tokenSource.Token);
+		bool _WaitForAnimation()
+		{
+			return m_animator.IsAnimationFinished(AnimationName);
+		}
+
+		await CommonUtility.WaitForConditionAsync(_WaitForAnimation,SetTime,m_ignoreTimeScale,m_tokenSource.Token);
 	}
 	
 #if UNITY_EDITOR

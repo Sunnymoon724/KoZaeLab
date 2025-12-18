@@ -236,6 +236,11 @@ namespace KZLib.KZDevelop
 		{
 			var graphicsQuality = 0L;
 
+			static int _Compare(GraphicQualityData dataA,GraphicQualityData dataB)
+			{
+				return dataA.Flag.CompareTo(dataB.Flag);
+			}
+
 			foreach(var presetPair in PresetDict)
 			{
 				foreach(var preset in presetPair.Value)
@@ -243,7 +248,7 @@ namespace KZLib.KZDevelop
 					graphicsQuality = graphicsQuality.AddFlag(preset.Flag);
 				}
 
-				presetPair.Value.Sort((x,y)=>x.Flag.CompareTo(y.Flag));
+				presetPair.Value.Sort(_Compare);
 			}
 		}
 

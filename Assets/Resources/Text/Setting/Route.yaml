@@ -1,0 +1,20 @@
+# resources folder
+defaultRes : Assets/Resources
+
+# addressable folder
+gameRes : Assets/GameResources
+
+# for indirect references
+workRes : Assets/WorkResources
+
+# config folder
+config : Text/Config
+
+# proto folder
+proto : Text/Proto
+
+# lingo folder
+lingo : ScriptableObject/Lingo
+
+# generated script folder
+generatedScript : Assets/Scripts/Generated

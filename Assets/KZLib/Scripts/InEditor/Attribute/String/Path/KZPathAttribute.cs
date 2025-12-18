@@ -61,7 +61,7 @@ namespace KZLib.KZAttribute
 
 		private Rect _OnClickToChangePath(Rect rect,bool _)
 		{
-			return DrawButton(rect,SdfIconType.ArrowRepeat,true,()=>
+			void _ClickButton()
 			{
 				var dataPath = FindNewPath();
 
@@ -85,7 +85,9 @@ namespace KZLib.KZAttribute
 					//? Path in project folder
 					ValueEntry.SmartValue = dataPath;
 				}
-			});
+			}
+
+			return DrawButton(rect,SdfIconType.ArrowRepeat,true,_ClickButton);
 		}
 
 		protected abstract Rect OnClickToOpen(Rect rect,bool isValid);
@@ -123,10 +125,12 @@ namespace KZLib.KZAttribute
 
 		protected Rect DrawParentFolderOpenButton(Rect rect,bool isValid)
 		{
-			return DrawButton(rect,SdfIconType.Folder2,isValid,()=>
+			void _ClickButton()
 			{
 				CommonUtility.Open(FileUtility.GetParentPath(AbsolutePath));
-			});
+			}
+
+			return DrawButton(rect,SdfIconType.Folder2,isValid,_ClickButton);
 		}
 	}
 #endif

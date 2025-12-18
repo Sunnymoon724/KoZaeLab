@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using R3;
 using Sirenix.OdinInspector;
 
 namespace KZLib
@@ -18,7 +19,8 @@ namespace KZLib
 
 		protected TEnum m_stateType = default;
 
-		public event Action<TEnum,TEnum> OnUnitStateChanged = null;
+		private readonly Subject<UnitStateInfo> m_unitStateSubject = new();
+		public Observable<UnitStateInfo> OnUnitStateChanged => m_unitStateSubject;
 
 		protected abstract bool _CanChange(TEnum newStateTag,bool isForce);
 
@@ -54,7 +56,7 @@ namespace KZLib
 					return;
 				}
 
-				OnUnitStateChanged?.Invoke(m_stateType,curState);
+				m_unitStateSubject.OnNext(new UnitStateInfo(m_stateType,curState));
 
 				m_stateType = curState;
 

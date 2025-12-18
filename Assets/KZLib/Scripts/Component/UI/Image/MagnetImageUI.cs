@@ -28,7 +28,7 @@ public class MagnetImageUI : BaseImageUI
 
 			if(Target && IsValidTarget)
 			{
-				_OnChangedImage(Target.CalculateWorldSize());
+				_OnChangedImage(_CalculateSize(Unit.Default));
 			}
 		}
 	}
@@ -64,7 +64,12 @@ public class MagnetImageUI : BaseImageUI
 			throw new InvalidOperationException($"Target is null or direction is none {Target} or {m_direction}");
 		}
 
-		Observable.EveryUpdate().Select(_=>Target.CalculateWorldSize()).DistinctUntilChanged().Subscribe(_OnChangedImage);
+		Observable.EveryUpdate().Select(_CalculateSize).DistinctUntilChanged().Subscribe(_OnChangedImage);
+	}
+	
+	private Vector2 _CalculateSize(Unit _)
+	{
+		return Target.CalculateWorldSize();
 	}
 
 	private void _OnChangedImage(Vector2 targetSize)

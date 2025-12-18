@@ -16,11 +16,26 @@ public static partial class CommonUtility
 			throw new NullReferenceException("Tween update is null.");
 		}
 
-		var tween = DOTween.To(()=>start,x=>onUpdate(x),finish,duration);
+		float _Initialize()
+		{
+			return start;
+		}
+
+		void _Update(float x)
+		{
+			onUpdate(x);
+		}
+
+		var tween = DOTween.To(_Initialize,_Update,finish,duration);
 
 		if(onComplete != null)
 		{
-			tween.OnComplete(()=>{ onComplete(); });
+			void _Complete()
+			{
+				onComplete();
+			}
+
+			tween.OnComplete(_Complete);
 		}
 
 		return tween;
