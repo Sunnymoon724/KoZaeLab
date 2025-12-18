@@ -15,7 +15,7 @@ PlayFab 같은 경우는 **KZPlayFab**을 사용시 필요합니다.
 
 <a id="getting-started"></a>
 ## 시작하기
-현재 Unity 2022.3.50f1을 사용하고 있습니다.
+현재 Unity 6.3.0f1을 사용하고 있습니다.
 
 깃 URL은 다음과 같습니다.
 
@@ -35,3 +35,9 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
 ```
 * **PlayFab** https://github.com/PlayFab/UnitySDK
+
+
+## dll이 없어서 오류가 날 경우
+
+Packages\KoZaeLibrary\WorkResources\CommonLibs\KZLib의 압축을 풀어서 사용하시면 됩니다.
+(해당 dll은 엑셀 파일을 자동파싱하여 만들어지는 dll 인데 다른 프로그램들이 없어서 나는 오류 입니다. 추후 공개 예정)
