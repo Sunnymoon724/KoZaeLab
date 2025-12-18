@@ -5,7 +5,7 @@ using UnityEditor;
 
 namespace KZLib.KZMenu
 {
-	public partial class KZMenuItem
+	public static partial class KZMenuItem
 	{
 		[MenuItem("KZMenu/Proto/Generate Current Environment Proto",false,MenuOrder.Data.GENERATE)]
 		private static void _OnGenerateCurrentEnvironmentProto()

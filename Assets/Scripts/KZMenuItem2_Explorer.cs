@@ -5,18 +5,15 @@ using UnityEditor;
 
 namespace KZLib.KZMenu
 {
-	public class KZMenuItem2
+	public static class KZMenuItem2
 	{
 		private class MenuOrder
 		{
-			private const int MAIN_GAP = 1000000;
-			public const int SUB_GAP = 50;
-
 			public class Explorer
 			{
-				private const int DEFAULT			= +1 * MAIN_GAP;
+				private const int DEFAULT			= 1 * Global.MENU_ORDER_MAIN_SPACE;
 
-				public const int LIBRARY			= DEFAULT + 1 * SUB_GAP;
+				public const int LIBRARY			= DEFAULT + 1 * Global.MENU_ORDER_SUB_SPACE;
 			}
 		}
 

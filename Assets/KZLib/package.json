@@ -4,13 +4,13 @@
   "author": { "name": "Ko KoZae", "url": "https://github.com/Sunnymoon724" },
   "description": "KoZae Library \nIt is using 'UniTask'.",
   "version": "1.0.2001",
-  "unity": "6.3",
+  "unity": "6000.3",
   "license": "MIT",
   "dependencies": {
     "com.unity.nuget.newtonsoft-json" : "3.2.2",
     "com.unity.addressables" : "2.7.6",
     "com.unity.localization" : "1.5.9",
-    "com.unity.inputsystem" : "1.14.2",
+    "com.unity.inputsystem" : "1.16.0",
     "com.unity.render-pipelines.universal": "17.3.0",
     "com.cysharp.unitask" : "2.5.10"
   },

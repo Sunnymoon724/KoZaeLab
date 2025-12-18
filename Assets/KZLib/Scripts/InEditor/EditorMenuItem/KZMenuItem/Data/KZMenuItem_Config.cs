@@ -8,7 +8,7 @@ using UnityEditor;
 
 namespace KZLib.KZMenu
 {
-	public partial class KZMenuItem
+	public static partial class KZMenuItem
 	{
 		/// <summary>
 		/// excel file -> yaml file

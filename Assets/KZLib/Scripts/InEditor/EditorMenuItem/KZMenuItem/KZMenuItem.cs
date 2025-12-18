@@ -5,54 +5,43 @@ using UnityEditor;
 
 namespace KZLib.KZMenu
 {
-	public partial class KZMenuItem
+	public static partial class KZMenuItem
 	{
-		private class MenuOrder
+		private static class MenuOrder
 		{
-			private const int MAIN_GAP = 1000000;
-			public const int SUB_GAP = 50;
-			
-			public class Option
+			public static class Option
 			{
-				private const int DEFAULT			= +0 * MAIN_GAP;
+				private const int DEFAULT			= 0 * Global.MENU_ORDER_MAIN_SPACE;
 
-				public const int DELETE				= DEFAULT + 0 * SUB_GAP;
-				public const int FIND				= DEFAULT + 1 * SUB_GAP;
-				public const int MODULE				= DEFAULT + 2 * SUB_GAP;
-				public const int CHECK				= DEFAULT + 3 * SUB_GAP;
+				public const int DELETE				= DEFAULT + 0 * Global.MENU_ORDER_SUB_SPACE;
+				public const int FIND				= DEFAULT + 1 * Global.MENU_ORDER_SUB_SPACE;
+				public const int MODULE				= DEFAULT + 2 * Global.MENU_ORDER_SUB_SPACE;
+				public const int CHECK				= DEFAULT + 3 * Global.MENU_ORDER_SUB_SPACE;
 			}
 
-			public class Explorer
+			public static class Explorer
 			{
-				private const int DEFAULT			= +1 * MAIN_GAP;
+				private const int DEFAULT			= 1 * Global.MENU_ORDER_MAIN_SPACE;
 
-				public const int OPEN				= DEFAULT + 0 * SUB_GAP;
+				public const int OPEN				= DEFAULT + 0 * Global.MENU_ORDER_SUB_SPACE;
 			}
 
-			public class Data
+			public static class Data
 			{
-				private const int DEFAULT			= +2 * MAIN_GAP;
+				private const int DEFAULT			= 2 * Global.MENU_ORDER_MAIN_SPACE;
 
-				public const int GENERATE			= DEFAULT + 0 * SUB_GAP;
-				public const int OPEN				= DEFAULT + 1 * SUB_GAP;
-				public const int WINDOW				= DEFAULT + 2 * SUB_GAP;
+				public const int GENERATE			= DEFAULT + 0 * Global.MENU_ORDER_SUB_SPACE;
+				public const int OPEN				= DEFAULT + 1 * Global.MENU_ORDER_SUB_SPACE;
+				public const int WINDOW				= DEFAULT + 2 * Global.MENU_ORDER_SUB_SPACE;
 			}
 
-			public class Window
+			public static class Display
 			{
-				private const int DEFAULT			= +3 * MAIN_GAP;
+				private const int DEFAULT			= 3 * Global.MENU_ORDER_MAIN_SPACE;
 
-				public const int MANUAL				= DEFAULT + 0 * SUB_GAP;
-				public const int CUSTOM				= DEFAULT + 1 * SUB_GAP;
-				public const int TEST				= DEFAULT + 2 * SUB_GAP;
-			}
-
-			public class Scene
-			{
-				private const int DEFAULT			= +4 * MAIN_GAP;
-
-				public const int QUICK				= DEFAULT + 0 * SUB_GAP;
-				public const int CORE				= DEFAULT + 1 * SUB_GAP;
+				public const int MANUAL				= DEFAULT + 0 * Global.MENU_ORDER_SUB_SPACE;
+				public const int CUSTOM				= DEFAULT + 1 * Global.MENU_ORDER_SUB_SPACE;
+				public const int TEST				= DEFAULT + 2 * Global.MENU_ORDER_SUB_SPACE;
 			}
 		}
 

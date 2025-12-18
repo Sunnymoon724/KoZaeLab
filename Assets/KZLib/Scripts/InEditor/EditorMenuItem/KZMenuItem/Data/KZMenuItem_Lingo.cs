@@ -16,7 +16,7 @@ using System.Collections.Generic;
 
 namespace KZLib.KZMenu
 {
-	public partial class KZMenuItem
+	public static partial class KZMenuItem
 	{
 		private const string c_key = "Key";
 

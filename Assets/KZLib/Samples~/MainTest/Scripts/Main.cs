@@ -8,13 +8,11 @@ namespace KZLib.KZSample
 		protected override void Awake()
 		{
 			base.Awake();
-
 		}
 
 		protected override void OnDestroy()
 		{
 			base.OnDestroy();
-
 		}
 
 		protected override async UniTask _InitializeTestMode(CancellationToken token)

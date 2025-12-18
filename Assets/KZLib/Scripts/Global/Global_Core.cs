@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using UnityEngine;
 
-public partial struct Global
+public static partial class Global
 {
 	//? General
 	public const float HALF_ANGLE = 180.0f;
@@ -56,4 +56,9 @@ public partial struct Global
 	public const string DISPLAY_LOG = "DisplayLog";
 	
 	public const string TITLE_SCENE = "TitleScene";
+	
+	#region MenuItem
+	public const int MENU_ORDER_MAIN_SPACE = 1000000;
+	public const int MENU_ORDER_SUB_SPACE = 50;
+	#endregion MenuItem
 }

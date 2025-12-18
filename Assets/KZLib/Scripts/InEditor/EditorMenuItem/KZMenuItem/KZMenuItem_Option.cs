@@ -8,7 +8,7 @@ using UnityEditor.Build;
 
 namespace KZLib.KZMenu
 {
-	public partial class KZMenuItem
+	public static partial class KZMenuItem
 	{
 		[MenuItem("KZMenu/Option/Delete All Manager",false,MenuOrder.Option.DELETE)]
 		private static void _OnDeleteAllManager()
