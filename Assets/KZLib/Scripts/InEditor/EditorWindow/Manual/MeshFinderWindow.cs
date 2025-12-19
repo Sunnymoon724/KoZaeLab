@@ -94,9 +94,9 @@ namespace KZLib.KZWindow
 		[VerticalGroup("Find Mesh/3",Order = 3),ShowIf(nameof(HasPrefab)),EnableIf(nameof(IsValidReplace))]
 		protected void OnMeshToolBar()
 		{
-			foreach(var meshData in m_prefabList)
+			foreach(var prefab in m_prefabList)
 			{
-				meshData.OnChangeMesh();
+				prefab.OnChangeMesh();
 			}
 		}
 

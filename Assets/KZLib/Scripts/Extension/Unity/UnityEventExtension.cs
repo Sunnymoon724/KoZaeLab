@@ -63,7 +63,7 @@ public static class UnityEventExtension
 	/// <summary>
 	/// Add One Kind Listener
 	/// </summary>
-	public static void AddAction<TData>(this UnityEvent<TData> unityEvent,UnityAction<TData> onAction,bool isOverlap = false)
+	public static void AddAction<TValue>(this UnityEvent<TValue> unityEvent,UnityAction<TValue> onAction,bool isOverlap = false)
 	{
 		if(!_IsValid(unityEvent))
 		{
@@ -81,7 +81,7 @@ public static class UnityEventExtension
 	/// <summary>
 	/// Set One Listener
 	/// </summary>
-	public static void SetAction<TData>(this UnityEvent<TData> unityEvent,UnityAction<TData> onAction)
+	public static void SetAction<TValue>(this UnityEvent<TValue> unityEvent,UnityAction<TValue> onAction)
 	{
 		if(!_IsValid(unityEvent))
 		{

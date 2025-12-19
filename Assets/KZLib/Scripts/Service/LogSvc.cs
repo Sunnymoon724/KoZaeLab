@@ -4,6 +4,8 @@ using KZLib.KZUtility;
 using System.Text;
 using UnityEngine;
 using System;
+using MessagePipe;
+using Microsoft.Extensions.DependencyInjection;
 
 #if UNITY_EDITOR
 
@@ -41,8 +43,6 @@ public class LogSvc
 	public static readonly LogChannel Editor = new("Editor");
 
 	public static readonly LogChannel Test = new("Test");
-
-	public static IEnumerable<MessageInfo> LogDataGroup => LogChannel.LogDataGroup;
 }
 
 public class LogChannel
@@ -50,9 +50,9 @@ public class LogChannel
 	private const int c_maxLogCount = 100;
 
 	private static readonly HashSet<string> s_logHashSet = new();
-	private static readonly CircularQueue<MessageInfo> m_logDataQueue = new(c_maxLogCount);
+	private static readonly CircularQueue<MessageInfo> m_logMessageInfoQueue = new(c_maxLogCount);
 
-	public static IEnumerable<MessageInfo> LogDataGroup => m_logDataQueue;
+	public static IEnumerable<MessageInfo> LogMessageInfoGroup => m_logMessageInfoQueue;
 
 	private readonly string m_logTag;
 
@@ -176,10 +176,17 @@ public class LogChannel
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 	private static void _Initialize()
 	{
+		var builder = new ServiceCollection();
+		builder.AddMessagePipe();
+
+		var provider = builder.BuildServiceProvider();
+
+		GlobalMessagePipe.SetProvider(provider);
+
 		Application.logMessageReceived -= _HandleLogMessage;
 		Application.logMessageReceived += _HandleLogMessage;
 	}
-	
+
 	private static void _HandleLogMessage(string condition,string stackTrace,LogType logType)
 	{
 		var header = $"<{_ConvertType(logType)}> {DateTime.Now:MM/dd HH:mm:ss}";
@@ -214,10 +221,9 @@ public class LogChannel
 
 		var message = new MessageInfo(header,body);
 
-		m_logDataQueue.Enqueue(message);
+		m_logMessageInfoQueue.Enqueue(message);
 
-		Broadcaster.SendEvent(Global.DISPLAY_LOG,message);
-
+		GlobalMessagePipe.GetPublisher<CommonNoticeTag,MessageInfo>().Publish(CommonNoticeTag.DisplayLog,message);
 #if !UNITY_EDITOR
 		if(!m_sendLock && (logType == LogType.Exception))
 		{
@@ -225,7 +231,7 @@ public class LogChannel
 		}
 #endif
 	}
-	
+
 	private static string _ConvertType(LogType logType)
 	{
 		return logType switch
@@ -236,9 +242,9 @@ public class LogChannel
 		};
 	}
 	
-	public static void ClearLogData()
+	public static void ClearLogMessageInfo()
 	{
-		m_logDataQueue.Clear();
+		m_logMessageInfoQueue.Clear();
 	}
 
 #if !UNITY_EDITOR
@@ -250,7 +256,7 @@ public class LogChannel
 
 		var texture = CommonUtility.GetScreenShot();
 
-		await WebRequestManager.In.PostBugReportWebRequestAsync(m_logDataQueue,texture.EncodeToPNG());
+		await WebRequestManager.In.PostBugReportWebRequestAsync(m_logMessageInfoQueue,texture.EncodeToPNG());
 
 		//? Send once and wait for 30 seconds -> If sent too frequently, it can cause a load.
 

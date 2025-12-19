@@ -92,7 +92,6 @@ namespace KZLib.KZNetwork
 
 			var info = await _SendWebRequest(GetGoogleDriveEntryWebRequest.Create(url,folderId));
 
-
 			if(info.Result)
 			{
 				try

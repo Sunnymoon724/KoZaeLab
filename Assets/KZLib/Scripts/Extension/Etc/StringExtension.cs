@@ -716,7 +716,7 @@ public static class StringExtension
 	}
 	#endregion Layer
 
-	public static void ClearCacheData()
+	public static void ClearCache()
 	{
 		s_hexColorDict.Clear();
 	}

@@ -36,7 +36,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 	private float m_slotSize = 0.0f;
 	private float m_slotPivot = 0.0f;
 
-	private readonly List<ICellData> m_cellDataList = new();
+	private readonly List<IEntryInfo> m_entryInfoList = new();
 
 	private GameObjectUIPool<SlotUI> m_slotUIPool = null;
 
@@ -90,7 +90,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 			m_scrollRect.content.anchorMax = new Vector2(0.0f,content.anchorMax.y);
 		}
 
-		m_cellDataList.Clear();
+		m_entryInfoList.Clear();
 		m_slotDict.Clear();
 
 		m_initialize = true;
@@ -123,7 +123,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 	public void Clear()
 	{
-		m_cellDataList.Clear();
+		m_entryInfoList.Clear();
 
 		foreach(var (_,slotUI) in m_slotDict)
 		{
@@ -133,9 +133,9 @@ public class ReuseScrollRectUI : BaseComponentUI
 		m_slotDict.Clear();
 	}
 
-	public void ScrollToTop(ICellData cellData,float duration = 0.0f)
+	public void ScrollToTop(IEntryInfo entryInfo,float duration = 0.0f)
 	{
-		ScrollToTop(_FindIndex(cellData),duration);
+		ScrollToTop(_FindIndex(entryInfo),duration);
 	}
 
 	public void ScrollToTop(int index,float duration = 0.0f)
@@ -143,9 +143,9 @@ public class ReuseScrollRectUI : BaseComponentUI
 		_ScrollTo(index,ScrollToType.Top,duration);
 	}
 
-	public void ScrollToCenter(ICellData cellData,float duration = 0.0f)
+	public void ScrollToCenter(IEntryInfo entryInfo,float duration = 0.0f)
 	{
-		ScrollToCenter(_FindIndex(cellData),duration);
+		ScrollToCenter(_FindIndex(entryInfo),duration);
 	}
 
 	public void ScrollToCenter(int index,float duration = 0.0f)
@@ -153,19 +153,19 @@ public class ReuseScrollRectUI : BaseComponentUI
 		_ScrollTo(index,ScrollToType.Center,duration);
 	}
 
-	public void ScrollToBottom(ICellData cellData,float duration = 0.0f)
+	public void ScrollToBottom(IEntryInfo entryInfo,float duration = 0.0f)
 	{
-		ScrollToBottom(_FindIndex(cellData),duration);
+		ScrollToBottom(_FindIndex(entryInfo),duration);
 	}
 
-	private int _FindIndex(ICellData cellData)
+	private int _FindIndex(IEntryInfo entryInfo)
 	{
-		bool _IsMatch(ICellData x)
+		bool _IsMatch(IEntryInfo info)
 		{
-			return x.Equals(cellData);
+			return info.Equals(entryInfo);
 		}
 
-		return m_cellDataList.FindIndex(_IsMatch);
+		return m_entryInfoList.FindIndex(_IsMatch);
 	}
 
 	public void ScrollToBottom(int index,float duration = 0.0f)
@@ -177,7 +177,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 	{
 		_EnsureInitialized();
 
-		if(!m_cellDataList.ContainsIndex(index))
+		if(!m_entryInfoList.ContainsIndex(index))
 		{
 			return;
 		}
@@ -264,7 +264,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 			slotLocation += size;
 		}
 
-		for(var i=headIndex;i<m_cellDataList.Count;i++)
+		for(var i=headIndex;i<m_entryInfoList.Count;i++)
 		{
 			if(slotLocation-contentLocation >= viewportSize)
 			{
@@ -273,24 +273,24 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 			if(!m_slotDict.ContainsKey(i))
 			{
-				var data = m_slotUIPool.GetOrCreate(m_scrollRect.content);
+				var newSlot = m_slotUIPool.GetOrCreate(m_scrollRect.content);
 
-				data.gameObject.name = $"Slot_{i}";
-				data.gameObject.EnsureActive(true);
+				newSlot.gameObject.name = $"Slot_{i}";
+				newSlot.gameObject.EnsureActive(true);
 
-				m_slotDict.Add(i,data);
+				m_slotDict.Add(i,newSlot);
 
 				isForce = true;
 			}
 
-			var slot = m_slotDict[i];
+			var currentSlot = m_slotDict[i];
 
 			if(isForce)
 			{
-				slot.SetCell(m_cellDataList[i]);
+				currentSlot.SetEntry(m_entryInfoList[i]);
 			}
 
-			_SetSlotLocation(slot.UIRectTransform,i);
+			_SetSlotLocation(currentSlot.UIRectTransform,i);
 
 			slotLocation += size;
 		}
@@ -316,14 +316,14 @@ public class ReuseScrollRectUI : BaseComponentUI
 		return IsVertical ? m_scrollRect.viewport.rect.height : m_scrollRect.viewport.rect.width;
 	}
 
-	public void SetCellList(List<ICellData> cellDataList,int? index = null)
+	public void SetEntryList(List<IEntryInfo> entryInfoList,int? index = null)
 	{
 		_EnsureInitialized();
 
-		var cellIndex = index.HasValue ? Mathf.Clamp(index.Value,0,cellDataList.Count) : 0;
+		var entryInfoIndex = index.HasValue ? Mathf.Clamp(index.Value,0,entryInfoList.Count) : 0;
 
-		m_cellDataList.Clear();
-		m_cellDataList.AddRange(cellDataList);
+		m_entryInfoList.Clear();
+		m_entryInfoList.AddRange(entryInfoList);
 
 		_ResizeContent();
 
@@ -332,14 +332,14 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 		_UpdateVisibleSlot(true);
 
-		ScrollToTop(cellIndex);
+		ScrollToTop(entryInfoIndex);
 	}
 
-	public void AddCell(ICellData cellData)
+	public void AddEntry(IEntryInfo entryInfo)
 	{
 		_EnsureInitialized();
 
-		m_cellDataList.Add(cellData);
+		m_entryInfoList.Add(entryInfo);
 
 		_ResizeContent();
 
@@ -356,7 +356,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 		var contentLocation = _GetContentLocation();
 		var location = 0.0f;
 
-		for(var i=0;i<m_cellDataList.Count;i++)
+		for(var i=0;i<m_entryInfoList.Count;i++)
 		{
 			if(contentLocation <= location + m_slotSize)
 			{
@@ -366,7 +366,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 			location += m_slotSize + m_space;
 		}
 
-		return m_cellDataList.Count;
+		return m_entryInfoList.Count;
 	}
 
 	private int _FindShowTailIndex()
@@ -376,7 +376,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 		var space = m_slotSize+m_space;
 		var location = 0.0f;
 
-		for(var i=0;i<m_cellDataList.Count;i++)
+		for(var i=0;i<m_entryInfoList.Count;i++)
 		{
 			if(location-contentLocation>=viewportSize)
 			{
@@ -386,7 +386,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 			location += space;
 		}
 
-		return m_cellDataList.Count;
+		return m_entryInfoList.Count;
 	}
 
 	private float _GetContentSize()
@@ -396,7 +396,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 	private void _ResizeContent()
 	{
-		var size = m_cellDataList.Count == 0 ? 0.0f : m_cellDataList.Count*m_slotSize+(m_cellDataList.Count-1)*m_space+m_padding*2.0f;
+		var size = m_entryInfoList.Count == 0 ? 0.0f : m_entryInfoList.Count*m_slotSize+(m_entryInfoList.Count-1)*m_space+m_padding*2.0f;
 
 		m_scrollRect.content.sizeDelta = IsVertical ? new Vector2(m_scrollRect.content.sizeDelta.x,size) : new Vector2(size,m_scrollRect.content.sizeDelta.y);
 	}

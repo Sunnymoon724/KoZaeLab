@@ -167,10 +167,10 @@ public static partial class CommonUtility
 		_ReleaseSingleton<PlayFabManager>();
 #endif
 
-		ClearCacheData();
+		ClearCache();
 
-		StringExtension.ClearCacheData();
-		ColorExtension.ClearCacheData();
+		StringExtension.ClearCache();
+		ColorExtension.ClearCache();
 	}
 
 	private static void _ReleaseSingletonMB<TBehaviour>() where TBehaviour : AutoSingletonMB<TBehaviour>
@@ -225,7 +225,7 @@ public static partial class CommonUtility
 		throw new NullReferenceException($"{fileName} is not exist in template folder.");
 	}
 
-	public static byte[] FindTestImageData()
+	public static byte[] FindTestImage()
 	{
 		var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(FindTemplateFilePath("Ostrich.png"));
 

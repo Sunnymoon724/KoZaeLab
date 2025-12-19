@@ -71,13 +71,13 @@ namespace KZLib.KZWindow
 		}
 
 		[HorizontalGroup("Network/Trello/6",Order = 6),SerializeField,TableList(HideToolbar = true,AlwaysExpanded = true),ShowIf(nameof(IsShowTrelloResultList)),EnableIf(nameof(IsExistTrello))]
-		private List<ResultData> m_trelloDataList = new();
+		private List<ResultInfo> m_trelloResultInfoList = new();
 
-		private bool IsShowTrelloResultList => m_trelloDataList.Count > 0;
+		private bool IsShowTrelloResultList => m_trelloResultInfoList.Count > 0;
 
 		private void _ShowResult_Trello(List<string> resultList)
 		{
-			m_trelloDataList.Clear();
+			m_trelloResultInfoList.Clear();
 
 			if(resultList.IsNullOrEmpty())
 			{
@@ -88,7 +88,7 @@ namespace KZLib.KZWindow
 			{
 				var json = JObject.Parse(resultList[i]);
 
-				m_trelloDataList.Add(new ResultData(json["name"].ToString(),json["id"].ToString()));
+				m_trelloResultInfoList.Add(new ResultInfo(json["name"].ToString(),json["id"].ToString()));
 			}
 		}
 	}

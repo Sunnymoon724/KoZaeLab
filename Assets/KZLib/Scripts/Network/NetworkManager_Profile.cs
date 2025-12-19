@@ -25,7 +25,7 @@ namespace KZLib.KZNetwork
 				return _GetPlayFabResult("GetPlayerProfileAsync",await PlayFabManager.In.GetPlayerProfileAsync(profileId));
 			}
 
-			return await _RequestToServerAsync(_RequestAsync,true,string.Empty);
+			return await _RequestToServerAsync(_RequestAsync,true,CommonNoticeTag.None);
 #else
 			await UniTask.Yield();
 

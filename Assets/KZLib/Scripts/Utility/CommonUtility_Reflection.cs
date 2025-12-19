@@ -145,7 +145,7 @@ public static partial class CommonUtility
 		return default;
 	}
 
-	public static void ClearCacheData()
+	public static void ClearCache()
 	{
 		s_typeDict.Clear();
 	}

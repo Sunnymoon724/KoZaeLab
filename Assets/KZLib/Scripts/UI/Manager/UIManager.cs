@@ -162,11 +162,11 @@ namespace KZLib
 		#region Close
 		public void Close(UINameType nameType,bool isRelease = false)
 		{
-			var data = _FindOpened(nameType);
+			var window = _FindOpened(nameType);
 
-			if(data != null)
+			if(window != null)
 			{
-				Close(data,isRelease);
+				Close(window,isRelease);
 			}
 		}
 

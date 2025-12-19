@@ -9,32 +9,20 @@ using UnityEngine;
 
 namespace KZLib.KZMenu
 {
-	public static partial class AssetsMenuItem
+	public static partial class DefaultMenuItem
 	{
-		private const int c_pivotOrder = 2000;
-		private const int c_menuLine = 20;
+		private static Dictionary<string,List<string>> s_assetPathDict = null;
 
-		private enum MenuType
-		{
-			Total				= c_pivotOrder+0*c_menuLine,
-			Prefab				= c_pivotOrder+1*c_menuLine,
-			Script				= c_pivotOrder+2*c_menuLine,
-			Texture				= c_pivotOrder+3*c_menuLine,
-			ScriptableObject	= c_pivotOrder+4*c_menuLine,
-		}
-
-		private static Dictionary<string,List<string>> s_assetsPathDict = null;
-
-		private static Dictionary<string,List<string>> AssetsPathDict
+		private static Dictionary<string,List<string>> AssetPathDict
 		{
 			get
 			{
-				if(s_assetsPathDict == null)
+				if(s_assetPathDict == null)
 				{
 					_LoadAssetsPath();
 				}
 
-				return s_assetsPathDict;
+				return s_assetPathDict;
 			}
 		}
 
@@ -64,18 +52,18 @@ namespace KZLib.KZMenu
 				}
 			}
 
-			s_assetsPathDict = new Dictionary<string,List<string>>();
+			s_assetPathDict = new Dictionary<string,List<string>>();
 
 			foreach(var pair in dependantDict)
 			{
 				foreach(var dependant in pair.Value)
 				{
-					if(!s_assetsPathDict.ContainsKey(dependant))
+					if(!s_assetPathDict.ContainsKey(dependant))
 					{
-						s_assetsPathDict.Add(dependant,new List<string>());
+						s_assetPathDict.Add(dependant,new List<string>());
 					}
 
-					s_assetsPathDict[dependant].Add(pair.Key);
+					s_assetPathDict[dependant].Add(pair.Key);
 				}
 			}
 
@@ -84,11 +72,11 @@ namespace KZLib.KZMenu
 
 		public static void ReLoad()
 		{
-			s_assetsPathDict = null;
+			s_assetPathDict = null;
 		}
 
 		#region Script
-		[MenuItem("Assets/KZSubMenu/Script/Create ScriptableObject",false,(int) MenuType.Script)]
+		[MenuItem("Assets/KZSubMenu/Script/Create ScriptableObject",false,MenuOrder.Asset.SCRIPT)]
 		private static void _OnCreateScriptableObject()
 		{
 			var selection = Selection.activeObject;
@@ -112,7 +100,7 @@ namespace KZLib.KZMenu
 			CommonUtility.SaveAsset(assetPath,asset,true);
 		}
 
-		[MenuItem("Assets/KZSubMenu/Script/Create ScriptableObject",true,(int) MenuType.Script)]
+		[MenuItem("Assets/KZSubMenu/Script/Create ScriptableObject",true,MenuOrder.Asset.SCRIPT)]
 		private static bool _IsCreateAbleScriptableObject()
 		{
 			var script = Selection.activeObject as MonoScript;
@@ -127,7 +115,7 @@ namespace KZLib.KZMenu
 		#endregion Script
 
 		#region Texture
-		[MenuItem("Assets/KZSubMenu/Texture/Open Texture",false,(int) MenuType.Texture)]
+		[MenuItem("Assets/KZSubMenu/Texture/Open Texture",false,MenuOrder.Asset.TEXTURE)]
 		private static void _OnOpenTexture()
 		{
 			var viewer = EditorWindow.GetWindow<TextureWindow>("Viewer");
@@ -136,7 +124,7 @@ namespace KZLib.KZMenu
 			viewer.Show();
 		}
 
-		[MenuItem("Assets/KZSubMenu/Texture/Open Texture",true,(int) MenuType.Texture)]
+		[MenuItem("Assets/KZSubMenu/Texture/Open Texture",true,MenuOrder.Asset.TEXTURE)]
 		private static bool _IsOpenAbleTexture()
 		{
 			return Selection.activeObject as Texture2D;
@@ -144,7 +132,7 @@ namespace KZLib.KZMenu
 		#endregion Texture
 
 		#region ScriptableObject
-		[MenuItem("Assets/KZSubMenu/ScriptableObject/Open ScriptableObject",false,(int) MenuType.ScriptableObject)]
+		[MenuItem("Assets/KZSubMenu/ScriptableObject/Open ScriptableObject",false,MenuOrder.Asset.SCRIPTABLE_OBJECT)]
 		private static void _OnOpenScriptableObject()
 		{
 			var viewer = EditorWindow.GetWindow<ScriptableObjectWindow>("Viewer");
@@ -153,7 +141,7 @@ namespace KZLib.KZMenu
 			viewer.Show();
 		}
 
-		[MenuItem("Assets/KZSubMenu/ScriptableObject/Open ScriptableObject",true,(int) MenuType.ScriptableObject)]
+		[MenuItem("Assets/KZSubMenu/ScriptableObject/Open ScriptableObject",true,MenuOrder.Asset.SCRIPTABLE_OBJECT)]
 		private static bool _IsOpenAbleScriptableObject()
 		{
 			return Selection.activeObject is ScriptableObject;

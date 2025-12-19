@@ -7,42 +7,42 @@ namespace KZLib.KZSample
 {
 	public class FocusScrollerSampleController : BaseComponent
 	{
-		private record SampleData : CellData
+		private record SampleEntryInfo : EntryInfo
 		{
-			public SampleData(int index) : base($"{index}",null,null,null,null) { }
+			public SampleEntryInfo(int index) : base($"{index}") { }
 		}
 
 		[VerticalGroup("0",Order = 0),SerializeField]
 		private FocusScroller m_focusScroller = null;
 
 		[SerializeField,HideInInspector]
-		private int m_cellCount = 3;
+		private int m_entryInfoCount = 3;
 
 		[SerializeField,HideInInspector]
 		private int m_centerIndex = 0;
 
 		[VerticalGroup("1",Order = 1),ShowInInspector]
-		private int CellCount
+		private int EntryInfoCount
 		{
-			get => m_cellCount;
+			get => m_entryInfoCount;
 			set
 			{
-				if(m_cellCount == value)
+				if(m_entryInfoCount == value)
 				{
 					return;
 				}
 
-				m_cellCount = value;
+				m_entryInfoCount = value;
 				m_centerIndex = 0;
 
 				if(Application.isPlaying)
 				{
-					_SetCellList();
+					_SetEntryList();
 				}
 			}
 		}
 
-		protected int MaxCenter => CellCount-1;
+		protected int MaxCenter => EntryInfoCount-1;
 
 		[VerticalGroup("1",Order = 1),ShowInInspector,PropertyRange(0,nameof(MaxCenter))]
 		private int CenterIndex
@@ -59,34 +59,34 @@ namespace KZLib.KZSample
 
 				if(Application.isPlaying)
 				{
-					_SetCellList();
+					_SetEntryList();
 				}
 			}
 		}
 
 		private readonly List<int> m_orderList = new();
 
-		private readonly List<ICellData> m_cellDataList = new();
+		private readonly List<IEntryInfo> m_entryInfoList = new();
 
 		private void Start()
 		{
-			_SetCellList();
+			_SetEntryList();
 		}
 
-		private void _SetCellList()
+		private void _SetEntryList()
 		{
-			var count = CellCount;
+			var count = EntryInfoCount;
 
-			m_cellDataList.Clear();
+			m_entryInfoList.Clear();
 			m_orderList.Clear();
 
 			for(var i=0;i<count;i++)
 			{
-				m_cellDataList.Add(new SampleData(i));
+				m_entryInfoList.Add(new SampleEntryInfo(i));
 				m_orderList.Add(i);
 			}
 
-			m_focusScroller.SetCellList(m_cellDataList,CenterIndex);
+			m_focusScroller.SetEntryList(m_entryInfoList,CenterIndex);
 		}
 	}
 }

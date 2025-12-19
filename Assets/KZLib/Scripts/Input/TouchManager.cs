@@ -3,6 +3,7 @@ using UnityEngine;
 using KZLib.KZAttribute;
 using KZLib.KZUtility;
 using UnityEngine.EventSystems;
+using MessagePipe;
 
 namespace KZLib
 {
@@ -32,15 +33,15 @@ namespace KZLib
 #if UNITY_EDITOR || UNITY_STANDALONE
 			if(Input.GetMouseButtonDown(0))
 			{
-				_ProcessInputEvent("TouchDownPoint",Input.mousePosition,-1);
+				_ProcessInputEvent(CommonNoticeTag.TouchDownPoint,Input.mousePosition,-1);
 			}
 			else if(Input.GetMouseButton(0))
 			{
-				_ProcessInputEvent("TouchHoldingPoint",Input.mousePosition,-1);
+				_ProcessInputEvent(CommonNoticeTag.TouchHoldingPoint,Input.mousePosition,-1);
 			}
 			else if(Input.GetMouseButtonUp(0))
 			{
-				_ProcessInputEvent("TouchUpPoint",Input.mousePosition,-1);
+				_ProcessInputEvent(CommonNoticeTag.TouchUpPoint,Input.mousePosition,-1);
 			}
 #elif UNITY_IOS || UNITY_ANDROID
 			if(Input.touchCount > 0)
@@ -51,18 +52,18 @@ namespace KZLib
 				{
 					case TouchPhase.Began:
 					{
-						_ProcessInputEvent(EventTag.TouchDownPoint,touch.position,touch.fingerId);
+						_ProcessInputEvent(CommonNoticeTag.TouchDownPoint,touch.position,touch.fingerId);
 						break;
 					}
 					case TouchPhase.Moved:
 					case TouchPhase.Stationary:
 					{
-						_ProcessInputEvent(EventTag.TouchHoldingPoint,touch.position,touch.fingerId);
+						_ProcessInputEvent(CommonNoticeTag.TouchHoldingPoint,touch.position,touch.fingerId);
 						break;
 					}
 					case TouchPhase.Ended:
 					{
-						_ProcessInputEvent(EventTag.TouchUpPoint,touch.position,touch.fingerId);
+						_ProcessInputEvent(CommonNoticeTag.TouchUpPoint,touch.position,touch.fingerId);
 						break;
 					}
 				}
@@ -70,13 +71,13 @@ namespace KZLib
 #endif
 		}
 
-		private void _ProcessInputEvent(string eventName,Vector2 point,int pointerId)
+		private void _ProcessInputEvent(CommonNoticeTag noticeTag,Vector2 point,int pointerId)
 		{
 			if(EventSystem.current != null && !EventSystem.current.IsPointerOverGameObject(pointerId))
 			{
 				var worldPoint = CameraManager.In.CurrentCamera.ScreenToWorldPoint(point).ToVector2();
 
-				Broadcaster.SendEvent(eventName,worldPoint);
+				GlobalMessagePipe.GetPublisher<CommonNoticeTag,Vector2>().Publish(noticeTag,worldPoint);
 			}
 
 			_PlayTouchEffect(point);

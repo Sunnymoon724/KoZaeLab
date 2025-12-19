@@ -1,7 +1,7 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public abstract class FocusSlotUI : SlotUI,IFocusSlotUI
+public abstract class FocusSlotUI : SlotUI //,IFocusSlotUI
 {
 	[SerializeField,HideInInspector]
 	private float m_currentLocation = 0.5f;
@@ -37,12 +37,17 @@ public abstract class FocusSlotUI : SlotUI,IFocusSlotUI
 	}
 
 #if UNITY_EDITOR
-	protected override void DrawGizmo()
+	protected override void _DrawGizmo()
 	{
 		if(m_focusUI)
 		{
-			DrawGizmoText(m_focusUI.position);
+			_DrawGizmoText(m_focusUI.position);
 		}
 	}
 #endif
 }
+
+// public interface IFocusSlotUI
+// {
+// 	public void RefreshLocation(float location);
+// }

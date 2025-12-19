@@ -94,7 +94,7 @@ namespace KZLib.KZDevelop
 			m_dirty = true;
 		}
 
-		public void SetLineRendererData(Vector2 width)
+		public void SetLineRenderer(Vector2 width)
 		{
 			m_lineRenderer.startWidth = width.x;
 			m_lineRenderer.endWidth = width.y;

@@ -1,4 +1,5 @@
 using System;
+using KZLib;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -8,35 +9,37 @@ public class SlotUI : BaseComponentUI
 {
 	protected override bool UseGizmos => true;
 
-	protected const int c_image_order = 0;
-	protected const int c_text_order = 1;
-	protected const int c_button_order = 2;
+	protected const int c_imageOrder = 0;
+	protected const int c_textOrder = 1;
+	protected const int c_buttonOrder = 2;
 
 	#region IMAGE
-	[BoxGroup("Image",Order = c_image_order),SerializeField,ShowIf(nameof(UseImage))]
+	[BoxGroup("Image",Order = c_imageOrder),SerializeField,ShowIf(nameof(UseImage))]
 	protected Image m_image = null;
 
 	protected virtual bool UseImage => true;
 	#endregion IMAGE
 
 	#region  TEXT
-	[BoxGroup("Text",Order = c_text_order),SerializeField,ShowIf(nameof(UseText))]
+	[BoxGroup("Text",Order = c_textOrder),SerializeField,ShowIf(nameof(UseText))]
 	protected TMP_Text m_nameText = null;
 
-	[BoxGroup("Text",Order = c_text_order),SerializeField,ShowIf(nameof(UseText))]
+	[BoxGroup("Text",Order = c_textOrder),SerializeField,ShowIf(nameof(UseText))]
 	protected TMP_Text m_descriptionText = null;
 
 	protected virtual bool UseText => true;
 	#endregion TEXT
 
 	#region BUTTON
-	[BoxGroup("Button",Order = c_button_order),SerializeField,ShowIf(nameof(UseButton))]
+	[BoxGroup("Button",Order = c_buttonOrder),SerializeField,ShowIf(nameof(UseButton))]
 	protected Button m_button = null;
 
-	private Action m_onClicked = null;
+	private Action<IEntryInfo> m_onClicked = null;
 
 	protected virtual bool UseButton => true;
 	#endregion BUTTON
+
+	protected IEntryInfo CurrentEntryInfo { get; private set; }
 
 	protected override void OnEnable()
 	{
@@ -60,36 +63,41 @@ public class SlotUI : BaseComponentUI
 
 	private void _OnClicked()
 	{
-		m_onClicked?.Invoke();
+		m_onClicked?.Invoke(CurrentEntryInfo);
+
+		_PlaySound();
 	}
 
-    public virtual void SetCell(ICellData cellData)
+	private void _PlaySound()
 	{
+		if(CurrentEntryInfo.Sound != null)
+		{
+			SoundManager.In.PlaySFX(CurrentEntryInfo.Sound);
+		}
+	}
+
+    public virtual void SetEntry(IEntryInfo entryInfo)
+	{
+		CurrentEntryInfo = entryInfo;
+
 		if(UseText)
 		{
-			SetName(cellData.Name);
-			SetDescription(cellData.Description);
+			_SetName(entryInfo.Name);
+			_SetDescription(entryInfo.Description);
 		}
 
 		if(UseImage)
 		{
-			SetImage(cellData.Sprite);
+			_SetIcon(entryInfo.Icon);
 		}
 
 		if(UseButton)
 		{
-			if(cellData.AudioClip)
-			{
-				var button = gameObject.GetOrAddComponent<AudioButtonUI>();
-
-				button.SetAudio(cellData.AudioClip);
-			}
-
-			SetButton(cellData.OnClicked);
+			_SetButton(entryInfo.OnClicked);
 		}
 	}
 
-	protected virtual void SetName(string text)
+	protected virtual void _SetName(string text)
 	{
 		if(m_nameText)
 		{
@@ -97,7 +105,7 @@ public class SlotUI : BaseComponentUI
 		}
 	}
 
-	protected virtual void SetDescription(string text)
+	protected virtual void _SetDescription(string text)
 	{
 		if(m_descriptionText)
 		{
@@ -105,15 +113,15 @@ public class SlotUI : BaseComponentUI
 		}
 	}
 
-	protected virtual void SetImage(Sprite sprite)
+	protected virtual void _SetIcon(Sprite icon)
 	{
 		if(m_image)
 		{
-			m_image.SetSafeImage(sprite);
+			m_image.SetSafeImage(icon);
 		}
 	}
 
-	protected virtual void SetButton(Action onClicked)
+	protected virtual void _SetButton(Action<IEntryInfo> onClicked)
 	{
 		if(m_button)
 		{
@@ -121,19 +129,3 @@ public class SlotUI : BaseComponentUI
 		}
 	}
 }
-
-public interface IFocusSlotUI
-{
-	public void RefreshLocation(float location);
-}
-
-public interface ICellData
-{
-	string Name { get; }
-	string Description { get; }
-	Sprite Sprite { get; }
-	AudioClip AudioClip { get; }
-	Action OnClicked { get; }
-}
-
-public record CellData(string Name,string Description,Sprite Sprite,AudioClip AudioClip,Action OnClicked) : ICellData;

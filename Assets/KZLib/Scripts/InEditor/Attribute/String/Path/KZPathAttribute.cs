@@ -63,9 +63,9 @@ namespace KZLib.KZAttribute
 		{
 			void _ClickButton()
 			{
-				var dataPath = FindNewPath();
+				var newPath = FindNewPath();
 
-				if(dataPath.IsEmpty())
+				if(newPath.IsEmpty())
 				{
 					return;
 				}
@@ -73,17 +73,17 @@ namespace KZLib.KZAttribute
 				if(Attribute.IsIncludeAssets)
 				{
 					//? Path in assets folder
-					if(!FileUtility.IsIncludeAssetHeader(dataPath))
+					if(!FileUtility.IsIncludeAssetHeader(newPath))
 					{
-						CommonUtility.DisplayError(new NullReferenceException($"{dataPath} is not in assets folder."));
+						CommonUtility.DisplayError(new NullReferenceException($"{newPath} is not in assets folder."));
 					}
 
-					ValueEntry.SmartValue = FileUtility.RemoveAssetHeader(dataPath);
+					ValueEntry.SmartValue = FileUtility.RemoveAssetHeader(newPath);
 				}
 				else
 				{
 					//? Path in project folder
-					ValueEntry.SmartValue = dataPath;
+					ValueEntry.SmartValue = newPath;
 				}
 			}
 

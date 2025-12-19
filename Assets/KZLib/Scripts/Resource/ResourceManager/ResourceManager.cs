@@ -20,7 +20,7 @@ namespace KZLib
 
 		private CancellationTokenSource m_tokenSource = null;
 
-		private readonly Queue<LoadingResourceInfo> m_loadingQueue = new();
+		private readonly Queue<LoadingResourceInfo> m_loadingInfoQueue = new();
 
 		private readonly CacheResolver<Object[]> m_cacheResolver = new();
 
@@ -48,7 +48,7 @@ namespace KZLib
 
 			if(disposing)
 			{
-				m_loadingQueue.Clear();
+				m_loadingInfoQueue.Clear();
 
 				m_cacheResolver.Dispose();
 			}
@@ -65,18 +65,18 @@ namespace KZLib
 				await UniTask.Delay(TimeSpan.FromSeconds(c_updatePeriod),true,cancellationToken : m_tokenSource.Token);
 
 				// Set Loading Queue
-				if(m_loadingQueue.Count > 0)
+				if(m_loadingInfoQueue.Count > 0)
 				{
-					var loadingData = m_loadingQueue.Dequeue();
+					var loadingInfo = m_loadingInfoQueue.Dequeue();
 
-					GetObject(loadingData.ResourcePath,loadingData.Parent,true);
+					GetObject(loadingInfo.ResourcePath,loadingInfo.Parent,true);
 				}
 			}
 		}
 
 		private void _AddLoadingQueue(string path,bool isFilePath,Transform parent = null)
 		{
-			m_loadingQueue.Enqueue(new LoadingResourceInfo(path,isFilePath,parent));
+			m_loadingInfoQueue.Enqueue(new LoadingResourceInfo(path,isFilePath,parent));
 		}
 
 		private TObject _GetCache<TObject>(string path) where TObject : Object

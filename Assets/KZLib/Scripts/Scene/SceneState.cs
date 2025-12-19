@@ -24,6 +24,7 @@ namespace KZLib
 			onUpdateProgress?.Invoke(0.0f);
 
 			var operation = SceneManager.LoadSceneAsync(SceneName,LoadSceneMode.Additive);
+
 			operation.allowSceneActivation = false;
 
 			while(operation.progress < 0.9f)

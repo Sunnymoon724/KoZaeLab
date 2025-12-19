@@ -22,7 +22,7 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 	[SerializeField,ReadOnly]
 	private List<SlotUI> m_slotList = new();
 
-	private readonly List<ICellData> m_cellDataList = new();
+	private readonly List<IEntryInfo> m_entryInfoList = new();
 
 	private GameObjectUIPool<SlotUI> m_slotUIPool = null;
 
@@ -35,22 +35,22 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 		m_pivot.gameObject.EnsureActive(false);
 		m_storage.SetUIChild(m_pivot.transform);
 
-		m_cellDataList.Clear();
+		m_entryInfoList.Clear();
 		m_slotList.Clear();
 	}
 
-	public void SetCellList(List<ICellData> cellDataList)
+	public void SetEntryInfoList(List<IEntryInfo> entryInfoList)
 	{
-		m_cellDataList.Clear();
-		m_cellDataList.AddRange(cellDataList);
+		m_entryInfoList.Clear();
+		m_entryInfoList.AddRange(entryInfoList);
 
-		if(m_cellDataList.Count < m_slotList.Count)
+		if(m_entryInfoList.Count < m_slotList.Count)
 		{
-			_RecycleExtraSlot(m_cellDataList.Count);
+			_RecycleExtraSlot(m_entryInfoList.Count);
 		}
-		else if(m_cellDataList.Count > m_slotList.Count)
+		else if(m_entryInfoList.Count > m_slotList.Count)
 		{
-			var count = m_cellDataList.Count-m_slotList.Count;
+			var count = m_entryInfoList.Count-m_slotList.Count;
 			
 			for(var i=0;i<count;i++)
 			{
@@ -60,7 +60,7 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 
 		for(var i=0;i<m_slotList.Count;i++)
 		{
-			m_slotList[i].SetCell(m_cellDataList[i]);
+			m_slotList[i].SetEntry(m_entryInfoList[i]);
 		}
 	}
 

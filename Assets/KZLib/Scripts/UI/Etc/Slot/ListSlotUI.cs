@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ListSlotUI : SlotUI
@@ -8,22 +7,12 @@ public class ListSlotUI : SlotUI
 	protected override bool UseImage => false;
 	protected override bool UseButton => false;
 
-	public override void SetCell(ICellData cellData)
+	public override void SetEntry(IEntryInfo entryInfo)
 	{
-		var listCellData = cellData as ListCellData;
+		var listEntry = entryInfo as ListEntryInfo;
 
-		m_gridLayout.SetCellList(listCellData.CellDataList);
+		m_gridLayout.SetEntryInfoList(listEntry.EntryInfoList);
 
-		base.SetCell(cellData);
-	}
-}
-
-public record ListCellData : CellData
-{
-	public List<ICellData> CellDataList { get; }
-
-	public ListCellData(string name,List<ICellData> cellDataList) : base(name,null,null,null,null)
-	{
-		CellDataList = new List<ICellData>(cellDataList);
+		base.SetEntry(entryInfo);
 	}
 }

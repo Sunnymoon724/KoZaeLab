@@ -95,9 +95,9 @@ namespace KZLib.KZDevelop
 		}
 		#endregion Option Window
 		
-		#region Graphic Quality Data
+		#region Graphic Quality Info
 		[Serializable]
-		public class GraphicQualityData
+		public class GraphicQualityInfo
 		{
 			[SerializeField,HideInInspector]
 			private string m_name = null;
@@ -111,7 +111,7 @@ namespace KZLib.KZDevelop
 			[SerializeField,HideInInspector]
 			private string m_disableValue = null;
 
-			public GraphicQualityData(string name,long flag,string enableValue,string disableValue)
+			public GraphicQualityInfo(string name,long flag,string enableValue,string disableValue)
 			{
 				m_name = name;
 				m_flag = flag;
@@ -132,7 +132,7 @@ namespace KZLib.KZDevelop
 				return graphicQuality.HasFlag(m_flag) ? m_enableValue : m_disableValue;
 			}
 		}
-		#endregion Graphic Quality Data
+		#endregion Graphic Quality Info
 
 #if UNITY_EDITOR
 		[HorizontalGroup("Button",Order = 0),Button("Add Option",ButtonSizes.Large)]
@@ -153,7 +153,7 @@ namespace KZLib.KZDevelop
 				return false;
 			}
 
-			PresetDict[GraphicQualityPresetType.QualityLowest].Add(new GraphicQualityData(optionName,flag,enableValue,disableValue));
+			PresetDict[GraphicQualityPresetType.QualityLowest].Add(new GraphicQualityInfo(optionName,flag,enableValue,disableValue));
 
 			_OnChangedPreset();
 
@@ -203,23 +203,23 @@ namespace KZLib.KZDevelop
 
 		[HorizontalGroup("Preset",Order = 1)]
 		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(_OnChangedPreset))]
-		private List<GraphicQualityData> m_lowestPresetList = new();
+		private List<GraphicQualityInfo> m_lowestPresetList = new();
 		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(_OnChangedPreset))]
-		private List<GraphicQualityData> m_lowPresetList = new();
+		private List<GraphicQualityInfo> m_lowPresetList = new();
 		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(_OnChangedPreset))]
-		private List<GraphicQualityData> m_middlePresetList = new();
+		private List<GraphicQualityInfo> m_middlePresetList = new();
 		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(_OnChangedPreset))]
-		private List<GraphicQualityData> m_highPresetList = new();
+		private List<GraphicQualityInfo> m_highPresetList = new();
 		[HorizontalGroup("Preset/0",Order = 0),SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(_OnChangedPreset))]
-		private List<GraphicQualityData> m_highestPresetList = new();
+		private List<GraphicQualityInfo> m_highestPresetList = new();
 
-		private Dictionary<GraphicQualityPresetType,List<GraphicQualityData>> m_presetDict = null;
+		private Dictionary<GraphicQualityPresetType,List<GraphicQualityInfo>> m_presetDict = null;
 
-		private Dictionary<GraphicQualityPresetType,List<GraphicQualityData>> PresetDict
+		private Dictionary<GraphicQualityPresetType,List<GraphicQualityInfo>> PresetDict
 		{
 			get
 			{
-				m_presetDict ??= new Dictionary<GraphicQualityPresetType,List<GraphicQualityData>>
+				m_presetDict ??= new Dictionary<GraphicQualityPresetType,List<GraphicQualityInfo>>
 				{
 					{ GraphicQualityPresetType.QualityLowest,	m_lowestPresetList	},
 					{ GraphicQualityPresetType.QualityLow,		m_lowPresetList		},
@@ -236,9 +236,9 @@ namespace KZLib.KZDevelop
 		{
 			var graphicsQuality = 0L;
 
-			static int _Compare(GraphicQualityData dataA,GraphicQualityData dataB)
+			static int _Compare(GraphicQualityInfo infoA,GraphicQualityInfo infoB)
 			{
-				return dataA.Flag.CompareTo(dataB.Flag);
+				return infoA.Flag.CompareTo(infoB.Flag);
 			}
 
 			foreach(var presetPair in PresetDict)

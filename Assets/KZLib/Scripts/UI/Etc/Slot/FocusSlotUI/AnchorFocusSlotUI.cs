@@ -30,9 +30,9 @@ public abstract class AnchorFocusSlotUI : FocusSlotUI
 	}
 
 #if UNITY_EDITOR
-	protected override void DrawGizmo()
+	protected override void _DrawGizmo()
 	{
-		base.DrawGizmo();
+		base._DrawGizmo();
 
 		var cached = Gizmos.color;
 		var cubeSize = CubeSize;

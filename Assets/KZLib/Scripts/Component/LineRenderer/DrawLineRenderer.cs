@@ -78,7 +78,7 @@ public class DrawLineRenderer : BaseLineRenderer
 	}
 
 #if UNITY_EDITOR
-	protected override void DrawGizmo()
+	protected override void _DrawGizmo()
 	{
 		if(!m_startGizmo || m_lineRenderer.positionCount < 2)
 		{

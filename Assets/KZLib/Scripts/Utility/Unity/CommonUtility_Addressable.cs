@@ -7,46 +7,46 @@ using UnityEngine;
 
 public static partial class CommonUtility
 {
-	public static bool TryGetAddressableAsset(Object asset,out AddressableAssetEntry entry)
+	public static bool TryGetAddressableAsset(Object asset,out AddressableAssetEntry assetEntry)
 	{
 		var assetPath = AssetDatabase.GetAssetPath(asset);
 
-		return TryGetAddressableAsset(assetPath,out entry);
+		return TryGetAddressableAsset(assetPath,out assetEntry);
 	}
 
-	public static bool TryGetAddressableAsset(string assetPath,out AddressableAssetEntry entry)
+	public static bool TryGetAddressableAsset(string assetPath,out AddressableAssetEntry assetEntry)
 	{
 		if(assetPath.IsEmpty())
 		{
 			LogSvc.System.E($"{assetPath} is null or empty.");
 
-			entry = null;
+			assetEntry = null;
 
 			return false;
 		}
 
 		if(!_TryGetAddressableSettings(out var settings))
 		{
-			entry = null;
+			assetEntry = null;
 
 			return false;
 		}
 
-		entry = settings.FindAssetEntry(AssetDatabase.AssetPathToGUID(assetPath));
+		assetEntry = settings.FindAssetEntry(AssetDatabase.AssetPathToGUID(assetPath));
 
-		return entry != null;
+		return assetEntry != null;
 	}
 
-	public static bool TryRegisterAddressable(Object asset,string addressName,AddressableAssetGroup group,bool readOnly,out AddressableAssetEntry entry)
+	public static bool TryRegisterAddressable(Object asset,string addressName,AddressableAssetGroup group,bool readOnly,out AddressableAssetEntry assetEntry)
 	{
 		var assetPath = AssetDatabase.GetAssetPath(asset);
 
-		return TryRegisterAddressable(assetPath,addressName,group,readOnly,out entry);
+		return TryRegisterAddressable(assetPath,addressName,group,readOnly,out assetEntry);
 	}
 
-	public static bool TryRegisterAddressable(string assetPath,string addressName,AddressableAssetGroup group,bool readOnly,out AddressableAssetEntry entry)
+	public static bool TryRegisterAddressable(string assetPath,string addressName,AddressableAssetGroup group,bool readOnly,out AddressableAssetEntry assetEntry)
 	{
-		if(!TryGetAddressableAsset(assetPath,out entry))
+		if(!TryGetAddressableAsset(assetPath,out assetEntry))
 		{
 			if(assetPath.IsEmpty())
 			{
@@ -69,11 +69,11 @@ public static partial class CommonUtility
 				return false;
 			}
 
-			entry = settings.CreateOrMoveEntry(guid,group,readOnly);
+			assetEntry = settings.CreateOrMoveEntry(guid,group,readOnly);
 
 			if(!addressName.IsEmpty())
 			{
-				entry.address = addressName;
+				assetEntry.address = addressName;
 			}
 
 			AssetDatabase.SaveAssets();

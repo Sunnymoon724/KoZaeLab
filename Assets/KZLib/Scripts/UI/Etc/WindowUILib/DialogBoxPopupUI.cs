@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public class DialogBoxPopupUI : WindowUI2D
 {
-	public record DialogParam(string Title,string Message,params DialogCellData[] CellDataArray);
+	public record DialogParam(string Title,string Message,params DialogEntryInfo[] EntryInfoArray);
 
 	[SerializeField]
 	private TMP_Text m_titleText = null;
@@ -32,27 +31,25 @@ public class DialogBoxPopupUI : WindowUI2D
 
 		m_messageText.SetSafeTextMeshPro(dialogParam.Message);
 
-		var cellDataList = new List<ICellData>();
+		var entryInfoList = new List<IEntryInfo>();
 
-		foreach(var cellData in dialogParam.CellDataArray)
+		foreach(var entryInfo in dialogParam.EntryInfoArray)
 		{
-			if(cellData.OnClicked == null)
+			if(entryInfo.OnClicked == null)
 			{
-				LogSvc.UI.E($"{cellData.Name} is null");
+				LogSvc.UI.E($"{entryInfo.Name} is null");
 
 				return;
 			}
 
-			cellDataList.Add(cellData);
+			entryInfoList.Add(entryInfo);
 		}
 
-		if(cellDataList.IsNullOrEmpty())
+		if(entryInfoList.IsNullOrEmpty())
 		{
 			return;
 		}
 
-		m_gridLayout.SetCellList(cellDataList);
+		m_gridLayout.SetEntryInfoList(entryInfoList);
 	}
 }
-
-public record DialogCellData(string Name,Action OnClicked) : CellData(Name,null,null,null,OnClicked);

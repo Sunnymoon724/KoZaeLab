@@ -8,14 +8,14 @@ namespace KZLib.KZWindow
 	public partial class NetworkTestWindow : OdinEditorWindow
 	{
 		[Serializable]
-		private record ResultData
+		private record ResultInfo
 		{
 			[HorizontalGroup("Name"),HideLabel,ShowInInspector]
 			public string Name { get; init; }
 			[HorizontalGroup("Id"),HideLabel,ShowInInspector]
 			public string Id { get; init; }
 
-			public ResultData(string name,string id) { Name = name; Id = id; }
+			public ResultInfo(string name,string id) { Name = name; Id = id; }
 		}
 	}
 }

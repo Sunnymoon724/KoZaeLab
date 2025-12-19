@@ -20,7 +20,7 @@ namespace KZLib.KZMenu
 
 			CommonUtility.ReleaseManager();
 
-			AssetsMenuItem.ReLoad();
+			DefaultMenuItem.ReLoad();
 
 			CommonUtility.DisplayInfo("Managers are deleted.");
 		}

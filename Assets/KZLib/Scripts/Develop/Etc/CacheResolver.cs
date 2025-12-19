@@ -27,7 +27,7 @@ namespace KZLib.KZDevelop
             }
 		}
 
-		private readonly Dictionary<string,List<CacheInfo>> m_cacheListDict = new();
+		private readonly Dictionary<string,List<CacheInfo>> m_cacheInfoListDict = new();
 		private readonly List<string> m_removeList = new();
 
 		private readonly CancellationTokenSource m_tokenSource = null;
@@ -51,7 +51,7 @@ namespace KZLib.KZDevelop
 			m_tokenSource?.Cancel(); 
 			m_tokenSource?.Dispose(); 
 
-			m_cacheListDict.Clear();
+			m_cacheInfoListDict.Clear();
 			m_removeList.Clear();
 
 			GC.SuppressFinalize(this);
@@ -59,17 +59,17 @@ namespace KZLib.KZDevelop
 
 		public bool TryGetCache(string key,out TCache cache)
 		{
-			if(m_cacheListDict.TryGetValue(key,out var list) && list.Count > 0)
+			if(m_cacheInfoListDict.TryGetValue(key,out var cacheInfoList) && cacheInfoList.Count > 0)
 			{
-				var entry = list[0];
-				list.RemoveAt(0);
+				var cacheInfo = cacheInfoList[0];
+				cacheInfoList.RemoveAt(0);
 
-				if(list.Count == 0)
+				if(cacheInfoList.Count == 0)
 				{
-					m_cacheListDict.Remove(key);
+					m_cacheInfoListDict.Remove(key);
 				}
 
-				cache = entry.Cache;
+				cache = cacheInfo.Cache;
 
 				return true;
 			}
@@ -83,21 +83,21 @@ namespace KZLib.KZDevelop
 		{
 			long newDuration = DateTime.Now.AddSeconds(m_deleteTime).Ticks;
 
-			if(!m_cacheListDict.TryGetValue(key, out var list))
+			if(!m_cacheInfoListDict.TryGetValue(key,out var cacheInfoList))
 			{
-				list = new List<CacheInfo>();
+				cacheInfoList = new List<CacheInfo>();
 
-				m_cacheListDict.Add(key, list);
+				m_cacheInfoListDict.Add(key,cacheInfoList);
 			}
 			else if(updateDuration)
 			{
-				foreach(var entry in list)
+				foreach(var cacheInfo in cacheInfoList)
 				{
-					entry.UpdateDuration(newDuration);
+					cacheInfo.UpdateDuration(newDuration);
 				}
 			}
 
-			list.Add(new CacheInfo(cache,newDuration));
+			cacheInfoList.Add(new CacheInfo(cache,newDuration));
 		}
 
 		private async UniTaskVoid _LoopProcessAsync()
@@ -108,11 +108,11 @@ namespace KZLib.KZDevelop
 
 				m_removeList.Clear();
 
-				foreach(var pair in m_cacheListDict)
+				foreach(var pair in m_cacheInfoListDict)
 				{
-					static bool _IsOverdue(CacheInfo entry)
+					static bool _IsOverdue(CacheInfo cacheInfo)
 					{
-						return entry.IsOverdue;
+						return cacheInfo.IsOverdue;
 					}
 
 					pair.Value.RemoveAll(_IsOverdue);
@@ -125,7 +125,7 @@ namespace KZLib.KZDevelop
 
 				foreach(var remove in m_removeList)
 				{
-					m_cacheListDict.RemoveSafe(remove);
+					m_cacheInfoListDict.RemoveSafe(remove);
 				}
 			}
 		}

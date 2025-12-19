@@ -10,7 +10,7 @@ namespace HudPanel
 		[SerializeField]
 		private TMP_Text m_frameTimeText = null;
 		
-		public void SetFrameData(int frameRate,float frameTime)
+		public void SetFrame(int frameRate,float frameTime)
 		{
 			m_frameRateText.SetSafeTextMeshPro($"{frameRate:d2}");
 			m_frameTimeText.SetSafeTextMeshPro($"{frameTime:f2}");

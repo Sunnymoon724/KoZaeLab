@@ -33,10 +33,10 @@ namespace HudPanel
 			m_minFrameTime = Mathf.Min(m_minFrameTime,frameTime);
 			m_maxFrameTime = Mathf.Max(m_maxFrameTime,frameTime);
 
-			m_currentFrameMonitor.SetFrameData(frameRate,frameTime);
-			m_maximumFrameMonitor.SetFrameData(m_maxFrameRate,m_maxFrameTime);
-			m_minimumFrameMonitor.SetFrameData(m_minFrameRate,m_minFrameTime);
-			m_averageFrameMonitor.SetFrameData((m_maxFrameRate-m_minFrameRate)/2,(m_maxFrameTime-m_minFrameTime)/2.0f);
+			m_currentFrameMonitor.SetFrame(frameRate,frameTime);
+			m_maximumFrameMonitor.SetFrame(m_maxFrameRate,m_maxFrameTime);
+			m_minimumFrameMonitor.SetFrame(m_minFrameRate,m_minFrameTime);
+			m_averageFrameMonitor.SetFrame((m_maxFrameRate-m_minFrameRate)/2,(m_maxFrameTime-m_minFrameTime)/2.0f);
 
 			m_frameGraph.UpdateGraph(frameRate);
 		}

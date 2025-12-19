@@ -34,7 +34,7 @@ namespace KZLib.KZDevelop
 		private int m_poolCapacity = 1;
 
 		private readonly List<FocusSlotUI> m_slotUIList = new();
-		private readonly List<ICellData> m_cellDataList = new();
+		private readonly List<IEntryInfo> m_entryInfoList = new();
 
 		private readonly List<OrderSortInfo> m_orderList = new();
 
@@ -46,12 +46,12 @@ namespace KZLib.KZDevelop
 		[BoxGroup("Viewer",ShowLabel = false,Order = 99),SerializeField,KZRichText]
 		private float m_currentLocation = 0.0f;
 
-		private bool IsCircularMode => m_circularMode && m_cellDataList.Count != 1;
+		private bool IsCircularMode => m_circularMode && m_entryInfoList.Count != 1;
 
-		private readonly Subject<ICellData> m_focusCellSubject = new();
-		public Observable<ICellData> OnFocusChanged => m_focusCellSubject;
+		private readonly Subject<IEntryInfo> m_focusSubject = new();
+		public Observable<IEntryInfo> OnFocusChanged => m_focusSubject;
 
-		public ICellData FocusCellData => m_cellDataList.TryGetValueByIndex(m_focusIndex,out var data) ? data : null;
+		public IEntryInfo FocusEntryInfo => m_entryInfoList.TryGetValueByIndex(m_focusIndex,out var info) ? info : null;
 
 		protected override void Initialize()
 		{
@@ -67,16 +67,16 @@ namespace KZLib.KZDevelop
 			m_viewport.pivot = new Vector2(0.0f,1.0f);
 			slotUI.UIRectTransform.pivot = new Vector2(0.5f,0.5f);
 
-			m_cellDataList.Clear();
+			m_entryInfoList.Clear();
 			m_slotUIList.Clear();
 		}
 
-		public void SetCellList(List<ICellData> cellDataList,int? index = null)
+		public void SetEntryList(List<IEntryInfo> entryInfoList,int? index = null)
 		{
-			var focusIndex = index.HasValue ? Mathf.Clamp(index.Value,0,cellDataList.Count) : 0;
+			var focusIndex = index.HasValue ? Mathf.Clamp(index.Value,0,entryInfoList.Count) : 0;
 
-			m_cellDataList.Clear();
-			m_cellDataList.AddRange(cellDataList);
+			m_entryInfoList.Clear();
+			m_entryInfoList.AddRange(entryInfoList);
 
 			_RefreshLocation(focusIndex,true);
 			RefreshIndex(focusIndex);
@@ -84,9 +84,9 @@ namespace KZLib.KZDevelop
 
 		public void RefreshIndex(int index)
 		{
-			m_focusIndex = CommonUtility.LoopClamp(index,m_cellDataList.Count);
+			m_focusIndex = CommonUtility.LoopClamp(index,m_entryInfoList.Count);
 
-			m_focusCellSubject.OnNext(m_cellDataList[m_focusIndex]);
+			m_focusSubject.OnNext(m_entryInfoList[m_focusIndex]);
 		}
 
 		private void _RefreshLocation(float location,bool isForceRefresh)
@@ -117,7 +117,7 @@ namespace KZLib.KZDevelop
 
 		private void _RefreshSlotList(float firstLocation,int firstIndex,bool isForceRefresh)
 		{
-			var cellCount = m_cellDataList.Count;
+			var entryInfoCount = m_entryInfoList.Count;
 			var slotCount = m_slotUIList.Count;
 
 			m_orderList.Clear();
@@ -130,10 +130,10 @@ namespace KZLib.KZDevelop
 
 				if(IsCircularMode)
 				{
-					index = CommonUtility.LoopClamp(index,cellCount);
+					index = CommonUtility.LoopClamp(index,entryInfoCount);
 				}
 
-				if(index < 0 || index >= cellCount || location > 1.0f)
+				if(index < 0 || index >= entryInfoCount || location > 1.0f)
 				{
 					slot.gameObject.EnsureActive(false);
 
@@ -144,7 +144,7 @@ namespace KZLib.KZDevelop
 				{
 					slot.gameObject.EnsureActive(true);
 					slot.name = $"Slot_{i}";
-					slot.SetCell(m_cellDataList[index]);
+					slot.SetEntry(m_entryInfoList[index]);
 				}
 
 				slot.RefreshLocation(location);

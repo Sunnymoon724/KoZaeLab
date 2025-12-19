@@ -107,11 +107,11 @@ namespace KZLib
 			return _TryGetValue(key,out var result) && Enum.TryParse(result,true,out value);
 		}
 
-		public bool TryGetObject<TData>(string key,out TData value)
+		public bool TryGetObject<TValue>(string key,out TValue value)
 		{
-			if(TryGetObject(key,typeof(TData),out var result))
+			if(TryGetObject(key,typeof(TValue),out var result))
 			{
-				value = (TData) result;
+				value = (TValue) result;
 
 				return true;
 			}

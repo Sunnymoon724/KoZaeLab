@@ -13,10 +13,10 @@ namespace KZLib
 	{
 		private bool m_disposed = false;
 
-		private record AssetData(Object Asset,string Label);
-		private record LocationData(IResourceLocation Location,string Label);
+		private record AssetInfo(Object Asset,string Label);
+		private record LocationInfo(IResourceLocation Location,string Label);
 
-		private readonly Dictionary<string,AssetData> m_assetDataDict = new();
+		private readonly Dictionary<string,AssetInfo> m_assetInfoDict = new();
 
 		protected override void Release(bool disposing)
 		{
@@ -27,7 +27,7 @@ namespace KZLib
 
 			if(disposing)
 			{
-				m_assetDataDict.Clear();
+				m_assetInfoDict.Clear();
 			}
 
 			m_disposed = true;
@@ -80,7 +80,7 @@ namespace KZLib
 
 		public TObject GetObject<TObject>(string path) where TObject : Object
 		{
-			if(!m_assetDataDict.TryGetValue(path,out var result))
+			if(!m_assetInfoDict.TryGetValue(path,out var result))
 			{
 				LogSvc.System.E($"Asset is not exist. [{path}]");
 
@@ -94,7 +94,7 @@ namespace KZLib
 		{
 			var objectList = new List<TObject>();
 			
-			foreach(var pair in m_assetDataDict)
+			foreach(var pair in m_assetInfoDict)
 			{
 				if(pair.Key.IsEqual(path))
 				{
@@ -124,7 +124,7 @@ namespace KZLib
 				return;
 			}
 
-			var locationDataList = new List<LocationData>();
+			var locationInfoList = new List<LocationInfo>();
 
 			foreach(var label in labelArray)
 			{
@@ -132,25 +132,25 @@ namespace KZLib
 				
 				foreach(var location in locationList)
                 {
-                    locationDataList.Add(new LocationData(location,label));
+                    locationInfoList.Add(new LocationInfo(location,label));
                 }
 			}
 
-			var totalCount = locationDataList.Count;
+			var totalCount = locationInfoList.Count;
 
-			for(var i=0;i<locationDataList.Count;i++)
+			for(var i=0;i<locationInfoList.Count;i++)
 			{
-				var locationData = locationDataList[i];
-				var key = locationData.Location.InternalId;
+				var locationInfo = locationInfoList[i];
+				var key = locationInfo.Location.InternalId;
 
-				if(m_assetDataDict.ContainsKey(key))
+				if(m_assetInfoDict.ContainsKey(key))
 				{
 					continue;
 				}
 
-				var asset = await CommonUtility.LoadHandleSafeAsync(Addressables.LoadAssetAsync<Object>(locationData.Location.PrimaryKey));
+				var asset = await CommonUtility.LoadHandleSafeAsync(Addressables.LoadAssetAsync<Object>(locationInfo.Location.PrimaryKey));
 
-				m_assetDataDict.Add(key,new AssetData(asset,locationData.Label));
+				m_assetInfoDict.Add(key,new AssetInfo(asset,locationInfo.Label));
 
 				onUpdateProgress?.Invoke(i,totalCount);
 			}
@@ -160,13 +160,13 @@ namespace KZLib
 		{
 			var keyList = new List<string>();
 
-			foreach(var pair in m_assetDataDict)
+			foreach(var pair in m_assetInfoDict)
 			{
-				var assetData = pair.Value;
+				var assetInfo = pair.Value;
 
 				foreach(var label in labelArray)
 				{
-					if(assetData.Label.IsEqual(label))
+					if(assetInfo.Label.IsEqual(label))
 					{
 						keyList.Add(label);
 					}
@@ -175,9 +175,9 @@ namespace KZLib
 
 			foreach(var key in keyList)
 			{
-				Addressables.Release(m_assetDataDict[key].Asset);
+				Addressables.Release(m_assetInfoDict[key].Asset);
 
-				m_assetDataDict.Remove(key);
+				m_assetInfoDict.Remove(key);
 			}
 		}
 	}

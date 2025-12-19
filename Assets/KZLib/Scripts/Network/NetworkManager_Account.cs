@@ -25,7 +25,7 @@ namespace KZLib.KZNetwork
 				return _GetPlayFabResult("AutoLoginAsync",await PlayFabManager.In.AutoLoginAsync(sessionTicket,loginOptionType));
 			}
 
-			return await _RequestToServerAsync(_RequestAsync,true,string.Empty);
+			return await _RequestToServerAsync(_RequestAsync,true,CommonNoticeTag.None);
 #else
 			await UniTask.Yield();
 
@@ -46,7 +46,7 @@ namespace KZLib.KZNetwork
 				return _GetPlayFabResult("LoginWithGuestAsync",packet);
 			}
 
-			return await _RequestToServerAsync(_RequestAsync,true,string.Empty);
+			return await _RequestToServerAsync(_RequestAsync,true,CommonNoticeTag.None);
 #else
 			await UniTask.Yield();
 
@@ -67,7 +67,7 @@ namespace KZLib.KZNetwork
 				return _GetPlayFabResult("LoginWithGoogleAsync",packet);
 			}
 
-			return await _RequestToServerAsync(_RequestAsync,true,string.Empty);
+			return await _RequestToServerAsync(_RequestAsync,true,CommonNoticeTag.None);
 #else
 			await UniTask.Yield();
 
@@ -88,7 +88,7 @@ namespace KZLib.KZNetwork
 				return _GetPlayFabResult("LoginWithAppleAsync",packet);
 			}
 
-			return await _RequestToServerAsync(_RequestAsync,true,string.Empty);
+			return await _RequestToServerAsync(_RequestAsync,true,CommonNoticeTag.None);
 #else
 			await UniTask.Yield();
 
@@ -110,7 +110,7 @@ namespace KZLib.KZNetwork
 				return _GetPlayFabResult("LogOutAsync",packet);
 			}
 
-			return await _RequestToServerAsync(_RequestAsync,true,string.Empty);
+			return await _RequestToServerAsync(_RequestAsync,true,CommonNoticeTag.None);
 #else
 			await UniTask.Yield();
 

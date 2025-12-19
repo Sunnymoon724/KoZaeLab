@@ -117,9 +117,9 @@ public class SubtitlePanelUI : WindowUI2D
 			return;
 		}
 
-		bool _FindIndex(SubtitleInfo data)
+		bool _FindIndex(SubtitleInfo subtitleInfo)
 		{
-			return data.IsIncludeTime(time);
+			return subtitleInfo.IsIncludeTime(time);
 		}
 
 		var index = m_subtitleList.FindIndex(_FindIndex);

@@ -97,7 +97,7 @@ namespace KZLib.KZDevelop
 
 		public async UniTask PlayProgressAsync(ProgressParam progressParam = null)
 		{
-			SetParamData(progressParam);
+			SetParam(progressParam);
 
 			CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
@@ -110,7 +110,7 @@ namespace KZLib.KZDevelop
 			CommonUtility.KillTokenSource(ref m_tokenSource);
 		}
 
-		protected virtual void SetParamData(ProgressParam progressParam)
+		protected virtual void SetParam(ProgressParam progressParam)
 		{
 			var param = progressParam ?? new ProgressParam();
 

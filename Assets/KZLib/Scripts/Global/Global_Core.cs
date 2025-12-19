@@ -53,10 +53,8 @@ public static partial class Global
 	public const string VERTICAL_SYNC_COUNT = "VerticalSyncCount";
 	public const string DISABLE_CAMERA_FAR_HALF = "DisableCameraFarHalf";
 
-	public const string DISPLAY_LOG = "DisplayLog";
-	
 	public const string TITLE_SCENE = "TitleScene";
-	
+
 	#region MenuItem
 	public const int MENU_ORDER_MAIN_SPACE = 1000000;
 	public const int MENU_ORDER_SUB_SPACE = 50;

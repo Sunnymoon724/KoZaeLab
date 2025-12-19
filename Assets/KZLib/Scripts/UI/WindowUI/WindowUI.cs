@@ -36,7 +36,7 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 	[VerticalGroup("CanvasGroup",Order = -25),SerializeField]
 	protected CanvasGroup m_canvasGroup = null;
 	
-	private bool IsValidCanvasGroup => m_canvasGroup != null;
+	private bool IsValidCanvasGroup => m_canvasGroup == null;
 
 	protected Canvas m_canvas = null;
 

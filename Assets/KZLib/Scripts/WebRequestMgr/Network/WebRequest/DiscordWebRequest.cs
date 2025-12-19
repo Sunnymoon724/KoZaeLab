@@ -13,14 +13,14 @@ namespace KZLib.KZNetwork
 	/// </summary>
 	public abstract class DiscordWebRequest : BaseWebRequest
 	{
-		protected const int c_file_max_size = 1024;
-		protected const int c_file_max_count = 25;
-		protected const int c_embed_max_count = 10;
-		protected const int c_embed_max_text_size = 6000;
+		protected const int c_fileMaxSize = 1024;
+		protected const int c_fileMaxCount = 25;
+		protected const int c_embedMaxCount = 10;
+		protected const int c_embedMaxTextSize = 6000;
 
-		// WebHookData -> string content,string username,EmbedData[] embeds
-		// EmbedData -> int color,FieldData[] fields
-		// FieldData -> string name,string value
+		// WebHook -> string content,string username,Embed[] embeds
+		// Embed -> int color,Field[] fields
+		// Field -> string name,string value
 		protected DiscordWebRequest(string name,string uri,string method) : base(name,uri,method) { }
 	}
 
@@ -55,7 +55,7 @@ namespace KZLib.KZNetwork
 
 	public class PostDiscordWebHookWebRequest : PostDiscordWebRequest
 	{
-		private const string c_post_discord_webHook = "Post DiscordWebHook";
+		private const string c_postDiscordWebHook = "Post DiscordWebHook";
 
 		public static PostDiscordWebHookWebRequest Create(string uri,string content,IEnumerable<MessageInfo> messageGroup = null,byte[] file = null)
 		{
@@ -66,12 +66,12 @@ namespace KZLib.KZNetwork
 
 			if(messageGroup.IsNullOrEmpty())
 			{
-				return new PostDiscordWebHookWebRequest(c_post_discord_webHook,uri,content,null,file);
+				return new PostDiscordWebHookWebRequest(c_postDiscordWebHook,uri,content,null,file);
 			}
 
 			//? Fields max count = 1024 -> device message
-			var dataQueue = new Queue<MessageInfo>();
-			var maxSize = c_file_max_size;
+			var messageInfoQueue = new Queue<MessageInfo>();
+			var maxSize = c_fileMaxSize;
 			var logCount = 0;
 
 			foreach(var message in messageGroup)
@@ -84,14 +84,14 @@ namespace KZLib.KZNetwork
 				{
 					var text = body.Substring(index,Mathf.Min(body.Length-index,maxSize));
 
-					dataQueue.Enqueue(new MessageInfo(header,text));
+					messageInfoQueue.Enqueue(new MessageInfo(header,text));
 					logCount += header.Length+text.Length;
 
-					while(logCount >= c_embed_max_text_size)
+					while(logCount >= c_embedMaxTextSize)
 					{
-						var data = dataQueue.Dequeue();
+						var messageInfo = messageInfoQueue.Dequeue();
 
-						logCount -= data.Header.Length+data.Body.Length;
+						logCount -= messageInfo.Header.Length+messageInfo.Body.Length;
 					}
 
 					index += body.Length;
@@ -99,14 +99,14 @@ namespace KZLib.KZNetwork
 			}
 
 			//? Convert embeds -> embed max count = 10
-			var embedQueue = new CircularQueue<object>(c_embed_max_count);
-			var fieldList = new List<object>(c_file_max_count);
+			var embedQueue = new CircularQueue<object>(c_embedMaxCount);
+			var fieldList = new List<object>(c_fileMaxCount);
 
-			foreach(var data in dataQueue)
+			foreach(var messageInfo in messageInfoQueue)
 			{
-				fieldList.Add(new {name = data.Header,value = data.Body});
+				fieldList.Add(new {name = messageInfo.Header,value = messageInfo.Body});
 
-				if(fieldList.Count == c_file_max_count)
+				if(fieldList.Count == c_fileMaxCount)
 				{
 					embedQueue.Enqueue(new { color = 10926864,fields = fieldList.ToArray() });
 
@@ -119,7 +119,7 @@ namespace KZLib.KZNetwork
 				embedQueue.Enqueue(new { color = 10926864,fields = fieldList.ToArray() });
 			}
 
-			return new PostDiscordWebHookWebRequest(c_post_discord_webHook,uri,content,embedQueue.ToArray(),file);
+			return new PostDiscordWebHookWebRequest(c_postDiscordWebHook,uri,content,embedQueue.ToArray(),file);
 		}
 
 		private PostDiscordWebHookWebRequest(string name,string uri,string content,object[] embedArray,byte[] file) : base(name,uri,content,embedArray,file) { }

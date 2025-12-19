@@ -10,7 +10,7 @@ namespace KZLib.KZDevelop
 	{
 		private readonly Transform m_storage = null;
 
-		public GameObjectPool(TComponent pivot,Transform storage,int capacity) : base(_CopyObject,pivot,capacity)
+		public GameObjectPool(TComponent pivot,Transform storage,int capacity) : base(_CopyObject,pivot,capacity,false)
 		{
 			if(!pivot)
 			{
@@ -23,6 +23,8 @@ namespace KZLib.KZDevelop
 			}
 
 			m_storage = storage;
+
+			_Fill(capacity);
 		}
 
 		private static TComponent _CopyObject(TComponent pivot) 

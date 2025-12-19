@@ -65,24 +65,24 @@ public class VideoPanelUI : WindowUI2D
 		}
 	}
 
-	public async UniTask PrepareVideoAsync(VideoInfo videoData)
+	public async UniTask PrepareVideoAsync(VideoInfo videoInfo)
 	{
-		m_videoPlayer.isLooping = videoData.IsLoop;
+		m_videoPlayer.isLooping = videoInfo.IsLoop;
 
-		if(videoData.IsUrl)
+		if(videoInfo.IsUrl)
 		{
 			m_videoPlayer.source = VideoSource.Url;
-			m_videoPlayer.url = videoData.VideoPath;
+			m_videoPlayer.url = videoInfo.VideoPath;
 		}
 		else
 		{
 			m_videoPlayer.source = VideoSource.VideoClip;
 
-			var videoClip = ResourceManager.In.GetVideoClip(videoData.VideoPath);
+			var videoClip = ResourceManager.In.GetVideoClip(videoInfo.VideoPath);
 
 			if(!videoClip)
 			{
-				LogSvc.System.E($"Video path is wrong. [{videoData.VideoPath}]");
+				LogSvc.System.E($"Video path is wrong. [{videoInfo.VideoPath}]");
 
 				return;
 			}
@@ -90,16 +90,16 @@ public class VideoPanelUI : WindowUI2D
 			m_videoPlayer.clip = videoClip;
 		}
 
-		if(videoData.IsExistSubtitle)
+		if(videoInfo.IsExistSubtitle)
 		{
-			var subtitlePanel = UIManager.In.Open(UINameType.SubtitlePanelUI,new SubtitlePanelUI.SubtitleParam(videoData.SubtitlePath)) as SubtitlePanelUI;
+			var subtitlePanel = UIManager.In.Open(UINameType.SubtitlePanelUI,new SubtitlePanelUI.SubtitleParam(videoInfo.SubtitlePath)) as SubtitlePanelUI;
 
 			AddLink(subtitlePanel);
 
 			subtitlePanel.LinkVideo(this);
 		}
 
-		if(videoData.CanSkip)
+		if(videoInfo.CanSkip)
 		{
 			var skipPanel = UIManager.In.Open(UINameType.SkipPanelUI,new SkipPanelUI.SkipParam(Stop)) as SkipPanelUI;
 

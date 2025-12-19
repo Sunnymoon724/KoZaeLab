@@ -12,12 +12,22 @@ namespace KZLib.KZDevelop
 		private readonly TObject m_pivot = null;
 		private readonly Func<TObject,TObject> m_createFunc = null;
 
-		public ObjectPool(Func<TObject,TObject> createFunc,TObject pivot,int capacity)
+		public ObjectPool(Func<TObject,TObject> createFunc,TObject pivot,int capacity) : this(createFunc,pivot,capacity,true) { }
+
+		protected ObjectPool(Func<TObject,TObject> createFunc,TObject pivot,int capacity,bool autoFill)
 		{
 			m_poolQueue = new(capacity);
 			m_pivot = pivot;
 			m_createFunc = createFunc;
 
+			if(autoFill)
+			{
+				_Fill(capacity);
+			}
+		}
+
+		protected void _Fill(int capacity)
+		{
 			for(var i=0;i<capacity;i++)
 			{
 				var item = m_createFunc(m_pivot);

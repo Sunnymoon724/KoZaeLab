@@ -76,9 +76,9 @@ public static partial class CommonUtility
 		for(var i=0;i<=count;i++)
 		{
 			var time = i/resolution;
-			var data = 1.0f-time;
+			var value = 1.0f-time;
 
-			pointArray[i] = (data*data*data*point0) + (3*data*data*time*point1) + (3*data*time*time*point2) + (time*time*time*point3);
+			pointArray[i] = (value*value*value*point0) + (3*value*value*time*point1) + (3*value*time*time*point2) + (time*time*time*point3);
 		}
 
 		return pointArray;

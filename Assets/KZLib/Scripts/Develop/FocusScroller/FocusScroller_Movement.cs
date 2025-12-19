@@ -84,7 +84,7 @@ namespace KZLib.KZDevelop
 			get => m_currentLocation;
 			set
 			{
-				m_scrollData.Reset();
+				m_scrollInfo.Reset();
 				m_velocity = 0.0f;
 				m_dragging = false;
 
@@ -92,7 +92,7 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		private readonly ScrollInfo m_scrollData = new();
+		private readonly ScrollInfo m_scrollInfo = new();
 
 		private float m_prevPosition = 0.0f;
 
@@ -116,7 +116,7 @@ namespace KZLib.KZDevelop
 
 			m_hold = true;
 			m_velocity = 0.0f;
-			m_scrollData.Reset();
+			m_scrollInfo.Reset();
 		}
 
 		public void OnPointerUp(PointerEventData eventData)
@@ -156,9 +156,9 @@ namespace KZLib.KZDevelop
 
 			var location = CurrentLocation + scrollDelta/ViewportSize*m_sensitivity;
 
-			if(m_scrollData.IsEnable)
+			if(m_scrollInfo.IsEnable)
 			{
-				m_scrollData.Reset();
+				m_scrollInfo.Reset();
 			}
 
 			_RefreshLocation(location,false);
@@ -177,7 +177,7 @@ namespace KZLib.KZDevelop
 
 			m_scrollStartLocation = CurrentLocation;
 			m_dragging = true;
-			m_scrollData.Reset();
+			m_scrollInfo.Reset();
 
 			m_dragStartSubject.OnNext(Unit.Default);
 		}
@@ -227,30 +227,30 @@ namespace KZLib.KZDevelop
 			var offset = _GetOffset(CurrentLocation);
 			var isMoving = m_dragging || m_scrolling;
 
-			if(m_scrollData.IsEnable)
+			if(m_scrollInfo.IsEnable)
 			{
 				var location = 0.0f;
 
-				if(m_scrollData.IsElastic)
+				if(m_scrollInfo.IsElastic)
 				{
 					location = Mathf.SmoothDamp(CurrentLocation,CurrentLocation+offset,ref m_velocity,m_elasticity,Mathf.Infinity,deltaTime);
 
 					if(Mathf.Abs(m_velocity) < 0.001f)
 					{
-						location = Mathf.Clamp(Mathf.RoundToInt(location),0,m_cellDataList.Count-1);
+						location = Mathf.Clamp(Mathf.RoundToInt(location),0,m_entryInfoList.Count-1);
 						m_velocity = 0.0f;
-						m_scrollData.Complete();
+						m_scrollInfo.Complete();
 					}
 				}
 				else
 				{
-					var alpha = Mathf.Clamp01((Time.unscaledTime-m_scrollData.StartTime)/Mathf.Max(m_scrollData.Duration,float.Epsilon));
+					var alpha = Mathf.Clamp01((Time.unscaledTime-m_scrollInfo.StartTime)/Mathf.Max(m_scrollInfo.Duration,float.Epsilon));
 
-					location = Mathf.LerpUnclamped(m_scrollStartLocation,m_scrollData.EndLocation,m_scrollData.Curve.Evaluate(alpha));
+					location = Mathf.LerpUnclamped(m_scrollStartLocation,m_scrollInfo.EndLocation,m_scrollInfo.Curve.Evaluate(alpha));
 
 					if(alpha.Approximately(1.0f))
 					{
-						m_scrollData.Complete();
+						m_scrollInfo.Complete();
 					}
 				}
 
@@ -262,7 +262,7 @@ namespace KZLib.KZDevelop
 
 				if(!IsCircularMode && !offset.ApproximatelyZero())
 				{
-					m_scrollData.Set(_RefreshAll);
+					m_scrollInfo.Set(_RefreshAll);
 				}
 				else if(m_inertia)
 				{
@@ -298,7 +298,7 @@ namespace KZLib.KZDevelop
 				}
 			}
 
-			if(!m_scrollData.IsEnable && isMoving && m_inertia)
+			if(!m_scrollInfo.IsEnable && isMoving && m_inertia)
 			{
 				var velocity = (CurrentLocation-m_prevPosition)/deltaTime;
 
@@ -313,14 +313,14 @@ namespace KZLib.KZDevelop
 		{
 			if(duration <= 0.0f)
 			{
-				CurrentLocation = CommonUtility.LoopClamp(location,m_cellDataList.Count);
+				CurrentLocation = CommonUtility.LoopClamp(location,m_entryInfoList.Count);
 
 				return;
 			}
 
 			var endLocation = CurrentLocation+_CalculateLoopedMovementAmount(CurrentLocation,location);
 
-			m_scrollData.Set(duration,easeType,endLocation,_RefreshAll);
+			m_scrollInfo.Set(duration,easeType,endLocation,_RefreshAll);
 
 			m_velocity = 0.0f;
 			m_scrollStartLocation = CurrentLocation;
@@ -328,7 +328,7 @@ namespace KZLib.KZDevelop
 
 		public void JumpTo(int index)
 		{
-			if(m_cellDataList.ContainsIndex(index))
+			if(m_entryInfoList.ContainsIndex(index))
 			{
 				RefreshIndex(index);
 				CurrentLocation = index;
@@ -342,7 +342,7 @@ namespace KZLib.KZDevelop
 
 		private float _CalculateLoopedMovementAmount(float start,float finish)
 		{
-			var count = m_cellDataList.Count;
+			var count = m_entryInfoList.Count;
 
 			if(!IsCircularMode)
 			{
@@ -371,7 +371,7 @@ namespace KZLib.KZDevelop
 				return -location;
 			}
 
-			var count = m_cellDataList.Count-1;
+			var count = m_entryInfoList.Count-1;
 
 			if(location > count)
 			{

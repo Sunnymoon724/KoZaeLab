@@ -1,5 +1,4 @@
 #if UNITY_EDITOR
-using System.IO;
 using KZLib.KZUtility;
 using UnityEditor;
 
@@ -73,21 +72,6 @@ namespace KZLib.KZMenu
 			{
 				AssetDatabase.Refresh();
 			}
-		}
-
-		public static bool IsExcelFile(string filePath)
-		{
-			string a = Path.GetExtension(filePath).ToLower();
-			string[] array = new string[3] { "*.xls", "*.xlsx", "*.xlsm" };
-			foreach (string b in array)
-			{
-				if (string.Equals(a, b))
-				{
-					return true;
-				}
-			}
-
-			return false;
 		}
 	}
 }

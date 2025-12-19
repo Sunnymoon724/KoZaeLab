@@ -46,7 +46,7 @@ public static partial class ContainerExtension
 
 	public static void Move<TValue>(this IList<TValue> list,int oldIndex,int newIndex)
 	{
-		var data = list[oldIndex];
+		var value = list[oldIndex];
 
 		list.RemoveAt(oldIndex);
 
@@ -55,7 +55,7 @@ public static partial class ContainerExtension
 			newIndex--;
 		}
 
-		list.Insert(newIndex,data);
+		list.Insert(newIndex,value);
 	}
 
 	public static void Swap<TValue>(this IList<TValue> list,int index1,int index2)

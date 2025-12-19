@@ -10,24 +10,24 @@ namespace KZLib
 		/// <summary>
 		/// fade out -> prepare video -> fade in -> play video
 		/// </summary>
-		public async UniTask WatchVideoAsync(UINameType transitionNameType,VideoInfo videoData)
+		public async UniTask WatchVideoAsync(UINameType transitionNameType,VideoInfo videoInfo)
 		{
-			await _WatchVideoAsync(transitionNameType,videoData,false);
+			await _WatchVideoAsync(transitionNameType,videoInfo,false);
 		}
 
 		/// <summary>
 		/// fade out -> show loading -> fade in -> play video
 		/// </summary>
-		public async UniTask WatchVideoIncludeLoadingAsync(UINameType transitionNameType,VideoInfo videoData)
+		public async UniTask WatchVideoIncludeLoadingAsync(UINameType transitionNameType,VideoInfo videoInfo)
 		{
-			await _WatchVideoAsync(transitionNameType,videoData,true);
+			await _WatchVideoAsync(transitionNameType,videoInfo,true);
 		}
 
-		private async UniTask _WatchVideoAsync(UINameType transitionNameType,VideoInfo videoData,bool includeLoading)
+		private async UniTask _WatchVideoAsync(UINameType transitionNameType,VideoInfo videoInfo,bool includeLoading)
 		{
-			if(videoData == null)
+			if(videoInfo == null)
 			{
-				LogSvc.System.E("VideoData is null");
+				LogSvc.System.E("VideoInfo is null");
 
 				return;
 			}
@@ -40,7 +40,7 @@ namespace KZLib
 
 			async UniTask _PlayTaskAsync()
 			{
-				await _PrepareVideoAsync(videoPanel,videoData);
+				await _PrepareVideoAsync(videoPanel,videoInfo);
 			}
 
 			if(includeLoading)
@@ -61,11 +61,11 @@ namespace KZLib
 			SoundManager.In.ResumeBGMSound();
 		}
 
-		private async UniTask _PrepareVideoAsync(VideoPanelUI videoPanel,VideoInfo videoData)
+		private async UniTask _PrepareVideoAsync(VideoPanelUI videoPanel,VideoInfo videoInfo)
 		{
 			videoPanel.Show();
 
-			await videoPanel.PrepareVideoAsync(videoData);
+			await videoPanel.PrepareVideoAsync(videoInfo);
 		}
 	}
 }

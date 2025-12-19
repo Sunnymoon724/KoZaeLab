@@ -6,11 +6,11 @@ using KZLib.KZDevelop;
 
 namespace KZLib.KZMenu
 {
-	public class GameObjectMenuItem
+	public static partial class DefaultMenuItem
 	{
 		#region UI
 		#region Empty Panel
-		[MenuItem("GameObject/UI/Empty Panel",false,1000)]
+		[MenuItem("GameObject/UI/Empty Panel",false,MenuOrder.GameObject.UI)]
 		private static void _OnCreateEmptyPanel()
 		{
 			Undo.IncrementCurrentGroup();
@@ -27,7 +27,7 @@ namespace KZLib.KZMenu
 		#endregion Empty Panel
 
 		#region UIShape
-		[MenuItem("GameObject/UI/Shape",false,1021)]
+		[MenuItem("GameObject/UI/Shape",false,MenuOrder.GameObject.UI)]
 		private static void _OnCreateShape()
 		{
 			Undo.IncrementCurrentGroup();
@@ -46,7 +46,7 @@ namespace KZLib.KZMenu
 		#endregion UIShape
 
 		#region Focus Scroller
-		[MenuItem("GameObject/UI/Focus Scroller",false,1025)]
+		[MenuItem("GameObject/UI/Focus Scroller",false,MenuOrder.GameObject.UI)]
 		private static void _OnCreateFocusScroller()
 		{
 			Undo.IncrementCurrentGroup();
@@ -143,7 +143,7 @@ namespace KZLib.KZMenu
 		#endregion UI
 
 		#region Category Line
-		[MenuItem("GameObject/Create Category Line",false,0)]
+		[MenuItem("GameObject/Create Category Line",false,MenuOrder.GameObject.CATEGORY)]
 		private static void _OnCreateCategoryLine()
 		{
 			Undo.IncrementCurrentGroup();
@@ -167,7 +167,7 @@ namespace KZLib.KZMenu
 		#endregion Category Line
 
 		#region Copy Hierarchy
-		[MenuItem("GameObject/Copy Hierarchy",false,-10)]
+		[MenuItem("GameObject/Copy Hierarchy",false,MenuOrder.GameObject.HIERARCHY)]
 		private static void _OnCopyHierarchy()
 		{
 			var selected = Selection.activeGameObject;
@@ -180,7 +180,7 @@ namespace KZLib.KZMenu
 			CommonUtility.CopyToClipBoard(selected.transform.FindHierarchy());
 		}
 
-		[MenuItem("GameObject/Copy Hierarchy",true)]
+		[MenuItem("GameObject/Copy Hierarchy",true,MenuOrder.GameObject.HIERARCHY)]
 		private static bool _IsCopyHierarchy()
 		{
 			return Selection.gameObjects.Length == 1;

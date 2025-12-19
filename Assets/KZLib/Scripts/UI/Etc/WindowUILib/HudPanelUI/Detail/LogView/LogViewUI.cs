@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using KZLib;
 using KZLib.KZNetwork;
-using KZLib.KZUtility;
+using MessagePipe;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -12,9 +11,9 @@ namespace HudPanel
 {
 	public class LogViewUI : BaseComponentUI
 	{
-		#region HudLogData
+		#region HudLog Info
 		[Serializable]
-		private struct HudLogData
+		private record HudLogInfo
 		{
 			[HorizontalGroup("1",Order = 1),SerializeField,HideLabel]
 			private Color m_color;
@@ -23,8 +22,9 @@ namespace HudPanel
 			private Toggle m_toggle;
 
 			[HorizontalGroup("0",Order = 0),SerializeField]
-			private TMP_Text m_text;
+			private TMP_Text m_countText;
 
+			[SerializeField,HideInInspector]
 			private int m_count;
 
 			public Color Color => m_color;
@@ -34,7 +34,7 @@ namespace HudPanel
 			{
 				m_count++;
 
-				m_text.SetSafeTextMeshPro(CheckCount(m_count));
+				_SetCountText();
 			}
 
 			public void ResetCount()
@@ -48,24 +48,27 @@ namespace HudPanel
 
 				ResetCount();
 
-				m_text.SetSafeTextMeshPro(CheckCount(m_count));
+				_SetCountText();
 
 				void _ChangeValue(bool _)
 				{
 					onAction?.Invoke();
 				}
 
-				m_toggle.onValueChanged.AddAction(_ChangeValue);
+				m_toggle.onValueChanged.SetAction(_ChangeValue);
 			}
 
-			private string CheckCount(int count) => count < 100 ? $"{count}" : "99+";
+			private void _SetCountText()
+			{
+				m_countText.SetSafeTextMeshPro(m_count < 100 ? $"{m_count}" : "99+");
+			}
 		}
-		#endregion MsgData
+		#endregion HudLog Info
 
 		private enum HudLogType { Info, Warning, Error }
 
 		[VerticalGroup("0",Order = 0),SerializeField,DictionaryDrawerSettings(DisplayMode = DictionaryDisplayOptions.Foldout)]
-		private Dictionary<HudLogType,HudLogData> m_hudLogDataDict = new();
+		private Dictionary<HudLogType,HudLogInfo> m_hudLogInfoDict = new();
 
 		[VerticalGroup("1",Order = 1),SerializeField]
 		private ReuseScrollRectUI m_scrollRectUI = null;
@@ -74,15 +77,17 @@ namespace HudPanel
 
 		private string m_compareText = null;
 
+		private IDisposable m_subscription = null;
+
 		protected override void Initialize()
 		{
 			base.Initialize();
 
 			m_inputField.text = string.Empty;
 
-			foreach(var data in m_hudLogDataDict.Values)
+			foreach(var hudLogInfo in m_hudLogInfoDict.Values)
 			{
-				data.Initialize(_SetScrollRect);
+				hudLogInfo.Initialize(_SetScrollRect);
 			}
 
 			void _ChangeValue(string text)
@@ -99,68 +104,68 @@ namespace HudPanel
 		{
 			base.OnEnable();
 
-			Broadcaster.EnableListener<MessageInfo>(Global.DISPLAY_LOG,_OnUpdateLogScroll);
+			void _UpdateLogScroll(MessageInfo messageInfo)
+			{
+				var entryInfo = _CreateLogEntryInfo(messageInfo);
+
+				if(entryInfo != null)
+				{
+					m_scrollRectUI.AddEntry(entryInfo);
+				}
+			}
+
+			m_subscription = GlobalMessagePipe.GetSubscriber<CommonNoticeTag,MessageInfo>().Subscribe(CommonNoticeTag.DisplayLog,_UpdateLogScroll);
 
 			_SetScrollRect();
 		}
 
 		protected override void OnDisable()
 		{
-			base.OnEnable();
+			base.OnDisable();
 
-			Broadcaster.DisableListener<MessageInfo>(Global.DISPLAY_LOG,_OnUpdateLogScroll);
+			m_subscription?.Dispose();
 		}
 
 		private void _SetScrollRect()
 		{
-			var cellDataList = new List<ICellData>();
+			var entryInfoList = new List<IEntryInfo>();
 
-			foreach(var cellData in m_hudLogDataDict.Values)
+			foreach(var hudLogInfo in m_hudLogInfoDict.Values)
 			{
-				cellData.ResetCount();
+				hudLogInfo.ResetCount();
 			}
 
-			foreach(var message in LogSvc.LogDataGroup)
+			foreach(var message in LogChannel.LogMessageInfoGroup)
 			{
-				var cellData = _CreateLogCellData(message);
+				var entryInfo = _CreateLogEntryInfo(message);
 
-				if(cellData != null)
+				if(entryInfo != null)
 				{
-					cellDataList.Add(cellData);
+					entryInfoList.Add(entryInfo);
 				}
 			}
 
-			m_scrollRectUI.SetCellList(cellDataList,0);
+			m_scrollRectUI.SetEntryList(entryInfoList,0);
 		}
 
-		private void _OnUpdateLogScroll(MessageInfo messageData)
+		private LogEntryInfo _CreateLogEntryInfo(MessageInfo messageInfo)
 		{
-			var cellData = _CreateLogCellData(messageData);
-
-			if(cellData != null)
-			{
-				m_scrollRectUI.AddCell(cellData);
-			}
-		}
-
-		private LogCellData _CreateLogCellData(MessageInfo messageData)
-		{
-			var headerInfo = _SplitHeader(messageData.Header);
+			var headerInfo = _SplitHeader(messageInfo.Header);
 
 			if(headerInfo != null)
 			{
-				var logData = m_hudLogDataDict[headerInfo.LogType];
+				var logInfo = m_hudLogInfoDict[headerInfo.LogType];
 
-				logData.AddCount();
+				logInfo.AddCount();
 
-				if(logData.IsToggleOn && _IsContainsText(messageData.Body))
+				if(logInfo.IsToggleOn && _IsContainsText(messageInfo.Body))
 				{
-					void _ClickCell()
+					void _ClickSlot(IEntryInfo _)
 					{
-						WebRequestManager.In.PostDiscordWebHook("Log Window",new MessageInfo[] { messageData });
+						WebRequestManager.In.PostDiscordWebHook("Log Window",new MessageInfo[] { messageInfo });
 					}
 
-					return new LogCellData(logData.Color,headerInfo.Time,messageData.Body,_ClickCell);
+					return new LogEntryInfo(logInfo.Color,headerInfo.Time,messageInfo.Body,_ClickSlot);
 				}
 			}
 

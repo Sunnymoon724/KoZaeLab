@@ -17,10 +17,10 @@ namespace KZLib.Tet
 		private const float c_iconSpace = 7.0f;
 		private const int c_iconSize = 10;
 
-		private const string c_editorText = "[Editor] CustomData";
+		private const string c_editorText = "[Editor] CustomInfo";
 
 		[Serializable]
-		private class CustomData
+		private record CustomInfo
 		{
 			public bool UseHierarchy { get; set; } = false;
 
@@ -40,14 +40,14 @@ namespace KZLib.Tet
 
 		private record HierarchyInfo(int TreeLevel,int TreeGroup,bool HasChild,bool IsLast,bool IsCategory);
 
-		private static CustomData s_customData = null;
+		private static CustomInfo s_customInfo = null;
 
-		private static readonly Dictionary<int,HierarchyInfo> s_hierarchyDataDict = new();
+		private static readonly Dictionary<int,HierarchyInfo> s_hierarchyInfoDict = new();
 
 		[InitializeOnLoadMethod]
 		private static void _Initialize()
 		{
-			s_customData = _LoadData<CustomData>();
+			s_customInfo = _LoadInfo<CustomInfo>();
 
 			_InitializeHierarchy();
 		}
@@ -65,7 +65,7 @@ namespace KZLib.Tet
 			EditorApplication.hierarchyWindowItemOnGUI -= _OnDrawHierarchy;
 			EditorApplication.hierarchyChanged -= _OnUpdateHierarchy;
 
-			if(s_customData.UseHierarchy)
+			if(s_customInfo.UseHierarchy)
 			{
 				EditorApplication.hierarchyWindowItemOnGUI += _OnDrawHierarchy;
 				EditorApplication.hierarchyChanged += _OnUpdateHierarchy;
@@ -76,93 +76,93 @@ namespace KZLib.Tet
 			EditorApplication.RepaintHierarchyWindow();
 		}
 
-		private static TData _LoadData<TData>() where TData : new()
+		private static TInfo _LoadInfo<TInfo>() where TInfo : new()
 		{
 			var text = EditorPrefs.GetString(c_editorText,"");
 
-			return text.IsEmpty() ? new TData() : JsonConvert.DeserializeObject<TData>(text);
+			return text.IsEmpty() ? new TInfo() : JsonConvert.DeserializeObject<TInfo>(text);
 		}
 
-		public static void SetCustomData(string key,object value)
+		public static void SetCustomInfo(string key,object value)
 		{
 			if(!_TryGetPropertyInfo(key,out var propertyInfo))
 			{
 				return;
 			}
 
-			propertyInfo.SetValue(s_customData,value);
+			propertyInfo.SetValue(s_customInfo,value);
 
-			_SaveCustomData();
+			_SaveCustomInfo();
 		}
 
-		public static TValue GetCustomData<TValue>(string key)
+		public static TValue GetCustomInfo<TValue>(string key)
 		{
 			if(!_TryGetPropertyInfo(key,out var propertyInfo))
 			{
 				return default;
 			}
 
-			return (TValue) propertyInfo.GetValue(s_customData);
+			return (TValue) propertyInfo.GetValue(s_customInfo);
 		}
 
 		private static bool _TryGetPropertyInfo(string key,out PropertyInfo propertyInfo)
 		{
-			var customType = typeof(CustomData);
+			var customType = typeof(CustomInfo);
 			propertyInfo = customType.GetProperty(key);
 
 			if(propertyInfo == null)
 			{
-				LogSvc.System.E($"{key} is not exist in custom data");
+				LogSvc.System.E($"{key} is not exist in custom info");
 			}
 
 			return propertyInfo != null;
 		}
 
-		private static void _SaveCustomData()
+		private static void _SaveCustomInfo()
 		{
 			try
 			{
-				EditorPrefs.SetString(c_editorText,JsonConvert.SerializeObject(s_customData));
+				EditorPrefs.SetString(c_editorText,JsonConvert.SerializeObject(s_customInfo));
 
 				_SetHierarchy();
 			}
 			catch(Exception exception)
 			{
-				LogSvc.System.E($"Set editorPrefs failed. [{c_editorText}/{s_customData} - {exception.Message}]");
+				LogSvc.System.E($"Set editorPrefs failed. [{c_editorText}/{s_customInfo} - {exception.Message}]");
 			}
 		}
 
 		private static void _OnDrawHierarchy(int instanceId,Rect rect)
 		{
-			if(!s_customData.UseHierarchy || !s_hierarchyDataDict.TryGetValue(instanceId,out var hierarchyData))
+			if(!s_customInfo.UseHierarchy || !s_hierarchyInfoDict.TryGetValue(instanceId,out var hierarchyInfo))
 			{
 				return;
 			}
 
-			if(s_customData.UseCategoryLine && hierarchyData.IsCategory)
+			if(s_customInfo.UseCategoryLine && hierarchyInfo.IsCategory)
 			{
-				_DrawCategory(hierarchyData,rect,instanceId);
+				_DrawCategory(hierarchyInfo,rect,instanceId);
 			}
 
-			if(s_customData.UseIcon)
+			if(s_customInfo.UseIcon)
 			{
 				_DrawIcon(rect,instanceId);
 			}
 
-			if(s_customData.UseBranchTree)
+			if(s_customInfo.UseBranchTree)
 			{
-				_DrawBranchTree(hierarchyData,rect,hierarchyData.IsCategory);
+				_DrawBranchTree(hierarchyInfo,rect,hierarchyInfo.IsCategory);
 			}
 		}
 
 		private static void _OnUpdateHierarchy()
 		{
-			if(!s_customData.UseHierarchy)
+			if(!s_customInfo.UseHierarchy)
 			{
 				return;
 			}
 
-			s_hierarchyDataDict.Clear();
+			s_hierarchyInfoDict.Clear();
 
 			var prefab = PrefabStageUtility.GetCurrentPrefabStage();
 
@@ -198,14 +198,14 @@ namespace KZLib.Tet
 		{
 			var instanceId = gameObject.GetInstanceID();
 
-			if(s_hierarchyDataDict.ContainsKey(instanceId))
+			if(s_hierarchyInfoDict.ContainsKey(instanceId))
 			{
 				return;
 			}
 
 			var childCount = gameObject.transform.childCount;
 
-			s_hierarchyDataDict.Add(instanceId,new HierarchyInfo(treeLevel,treeGroup,childCount > 0,isLastChild,gameObject.CompareTag("Category")));
+			s_hierarchyInfoDict.Add(instanceId,new HierarchyInfo(treeLevel,treeGroup,childCount > 0,isLastChild,gameObject.CompareTag("Category")));
 
 			for(var i=0;i<childCount;i++)
 			{
@@ -214,20 +214,20 @@ namespace KZLib.Tet
 		}
 
 		#region Draw Branch Tree
-		private static void _DrawBranchTree(HierarchyInfo hierarchyData,Rect rect,bool isCategory)
+		private static void _DrawBranchTree(HierarchyInfo hierarchyInfo,Rect rect,bool isCategory)
 		{
-			if(!s_customData.UseBranchTree || hierarchyData.TreeLevel < 0 || rect.x < 60 || isCategory)
+			if(!s_customInfo.UseBranchTree || hierarchyInfo.TreeLevel < 0 || rect.x < 60 || isCategory)
 			{
 				return;
 			}
 
-			if(hierarchyData.IsLast)
+			if(hierarchyInfo.IsLast)
 			{
-				_DrawHalfVerticalAndHorizontalLine(rect,hierarchyData.TreeLevel,hierarchyData.HasChild);
+				_DrawHalfVerticalAndHorizontalLine(rect,hierarchyInfo.TreeLevel,hierarchyInfo.HasChild);
 			}
 			else
 			{
-				_DrawVerticalAndHorizontalLine(rect,hierarchyData.TreeLevel,hierarchyData.HasChild);
+				_DrawVerticalAndHorizontalLine(rect,hierarchyInfo.TreeLevel,hierarchyInfo.HasChild);
 			}
 		}
 
@@ -263,7 +263,7 @@ namespace KZLib.Tet
 			var x = _GetTreeStartX(rect,treeLevel);
 			var y = isUpper ? rect.y : (rect.y+height);
 
-			EditorGUI.DrawRect(new Rect(x,y,2.0f,height),s_customData.BranchTreeColor);
+			EditorGUI.DrawRect(new Rect(x,y,2.0f,height),s_customInfo.BranchTreeColor);
 		}
 
 		/// <summary>
@@ -276,7 +276,7 @@ namespace KZLib.Tet
 			var y = rect.y+rect.height/2.0f;
 			var width = rect.height+(hasChild ? -5.0f :  2.0f);
 
-			EditorGUI.DrawRect(new Rect(x,y,width,2.0f),s_customData.BranchTreeColor);
+			EditorGUI.DrawRect(new Rect(x,y,width,2.0f),s_customInfo.BranchTreeColor);
 		}
 
 		private static float _GetTreeStartX(Rect rect,int treeLevel)
@@ -286,11 +286,11 @@ namespace KZLib.Tet
 		#endregion Draw Branch Tree
 
 		#region Draw Category
-		private static void _DrawCategory(HierarchyInfo hierarchyData,Rect rect,int instanceId)
+		private static void _DrawCategory(HierarchyInfo hierarchyInfo,Rect rect,int instanceId)
 		{
-			var categoryRect = new Rect(c_headSpace,rect.y,rect.width+25.0f+hierarchyData.TreeLevel*14.0f,rect.height);
+			var categoryRect = new Rect(c_headSpace,rect.y,rect.width+25.0f+hierarchyInfo.TreeLevel*14.0f,rect.height);
 			var currentObject = EditorUtility.EntityIdToObject(instanceId) as GameObject;
-			var categoryColor = Selection.activeGameObject == currentObject ? s_customData.CategoryColor.InvertColor() : s_customData.CategoryColor;
+			var categoryColor = Selection.activeGameObject == currentObject ? s_customInfo.CategoryColor.InvertColor() : s_customInfo.CategoryColor;
 
 			var currentName = currentObject == null ? "" : currentObject.name;
 
@@ -372,7 +372,7 @@ namespace KZLib.Tet
 			{
 				EditorPrefs.DeleteKey(c_editorText);
 
-				s_customData = null;
+				s_customInfo = null;
 
 				_Initialize();
 

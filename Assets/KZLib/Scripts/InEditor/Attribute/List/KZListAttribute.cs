@@ -38,15 +38,15 @@ namespace KZLib.KZAttribute
 			DrawField(new Rect(rect.x+50,rect.y,rect.width-50,rect.height));
 		}
 
-		protected void AdjustList<TData>(List<TData> dataList,TData data,int count)
+		protected void AdjustList<UValue>(List<UValue> valueList,UValue value,int count)
 		{
 			if(count < m_listCount)
 			{
-				dataList.AddCount(data,m_listCount-count);
+				valueList.AddCount(value,m_listCount-count);
 			}
 			else if(count > m_listCount)
 			{
-				dataList.RemoveRange(m_listCount,count-m_listCount);
+				valueList.RemoveRange(m_listCount,count-m_listCount);
 			}
 		}
 

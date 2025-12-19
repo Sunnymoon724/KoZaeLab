@@ -101,14 +101,14 @@ public static partial class TransformExtension
 			return null;
 		}
 
-		var dataArray = new Transform[nameArray.Length];
+		var childArray = new Transform[nameArray.Length];
 
 		for(var i=0;i<nameArray.Length;i++)
 		{
-			dataArray[i] = AddChild(origin,nameArray[i]);
+			childArray[i] = AddChild(origin,nameArray[i]);
 		}
 
-		return dataArray;
+		return childArray;
 	}
 
 	public static Transform[] AddChildren(this Transform origin,string name,int count)
@@ -194,14 +194,14 @@ public static partial class TransformExtension
 			return null;
 		}
 
-		var dataArray = new Transform[count];
+		var childArray = new Transform[count];
 
 		for(var i=0;i<count;i++)
 		{
-			dataArray[i] = AddChild(origin,prefab,isSameLayer);
+			childArray[i] = AddChild(origin,prefab,isSameLayer);
 		}
 
-		return dataArray;
+		return childArray;
 	}
 
 	public static Transform AddUIChild(this Transform origin,GameObject prefab,bool isSameLayer = true)
@@ -221,14 +221,14 @@ public static partial class TransformExtension
 			return null;
 		}
 
-		var dataArray = new Transform[count];
+		var childArray = new Transform[count];
 
 		for(var i=0;i<count;i++)
 		{
-			dataArray[i] = AddUIChild(origin,prefab,isSameLayer);
+			childArray[i] = AddUIChild(origin,prefab,isSameLayer);
 		}
 
-		return dataArray;
+		return childArray;
 	}
 
 	public static Transform FindChildRecursive(this Transform origin,string name)

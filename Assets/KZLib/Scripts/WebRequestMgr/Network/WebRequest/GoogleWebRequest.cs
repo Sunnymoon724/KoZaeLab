@@ -38,9 +38,9 @@ namespace KZLib.KZNetwork
 
 	public abstract class PostGoogleWebRequest : GoogleWebRequest
 	{
-		protected PostGoogleWebRequest(string name,string url,byte[] data) : base(name,url,UnityWebRequest.kHttpVerbPOST)
+		protected PostGoogleWebRequest(string name,string url,byte[] rawData) : base(name,url,UnityWebRequest.kHttpVerbPOST)
 		{
-			_CreateUploadHandler(data,"application/x-www-form-urlencoded");
+			_CreateUploadHandler(rawData,"application/x-www-form-urlencoded");
 		}
 	}
 
@@ -57,7 +57,7 @@ namespace KZLib.KZNetwork
 			return new PostGoogleSheetAddRowWebRequest(url,form.data);
 		}
 
-		private PostGoogleSheetAddRowWebRequest(string url,byte[] data) : base("Post GoogleSheetAddRow",url,data) { }
+		private PostGoogleSheetAddRowWebRequest(string url,byte[] rawData) : base("Post GoogleSheetAddRow",url,rawData) { }
 	}
 
 	public class PostGoogleDriveFileWebRequest : PostGoogleWebRequest
@@ -74,6 +74,6 @@ namespace KZLib.KZNetwork
 			return new PostGoogleDriveFileWebRequest(url,form.data);
 		}
 
-		private PostGoogleDriveFileWebRequest(string url,byte[] data) : base("Post GoogleDriveFile",url,data) { }
+		private PostGoogleDriveFileWebRequest(string url,byte[] rawData) : base("Post GoogleDriveFile",url,rawData) { }
 	}
 }

@@ -5,6 +5,7 @@ using System.Text;
 using Cysharp.Threading.Tasks;
 using KZLib.KZData;
 using KZLib.KZUtility;
+using MessagePipe;
 using Newtonsoft.Json;
 
 namespace KZLib.KZNetwork
@@ -50,7 +51,7 @@ namespace KZLib.KZNetwork
 			base.Release(disposing);
 		}
 
-		public async UniTask<bool> RequestToServerAsync(string functionName,object parameter,bool touchBlock,string eventName)
+		public async UniTask<bool> RequestToServerAsync(string functionName,object parameter,bool touchBlock,CommonNoticeTag noticeTag)
 		{
 #if KZLIB_PLAY_FAB
 			async UniTask<bool> _RequestAsync()
@@ -58,7 +59,7 @@ namespace KZLib.KZNetwork
 				return _GetPlayFabResult(functionName,await PlayFabManager.In.ExecuteCloudScriptAsync(functionName,parameter));
 			}
 
-			return await _RequestToServerAsync(_RequestAsync,touchBlock,eventName);
+			return await _RequestToServerAsync(_RequestAsync,touchBlock,noticeTag);
 #else
 			await UniTask.Yield();
 
@@ -66,7 +67,7 @@ namespace KZLib.KZNetwork
 #endif
 		}
 
-		private async UniTask<bool> _RequestToServerAsync(Func<UniTask<bool>> onRequestFunc,bool touchBlock,string eventName)
+		private async UniTask<bool> _RequestToServerAsync(Func<UniTask<bool>> onRequestFunc,bool touchBlock,CommonNoticeTag noticeTag)
 		{
 			if(IsRequesting)
 			{
@@ -87,9 +88,9 @@ namespace KZLib.KZNetwork
 				CommonUtility.UnLockInput();
 			}
 
-			if( result )
+			if(result && noticeTag != CommonNoticeTag.None)
 			{
-				Broadcaster.SendEvent(eventName);
+				GlobalMessagePipe.GetPublisher<CommonNoticeTag,EmptyNoticeInfo>().Publish(noticeTag,EmptyNoticeInfo.Empty);
 			}
 
 			m_isRequesting = false;
@@ -152,7 +153,7 @@ namespace KZLib.KZNetwork
 			}
 			else
 			{
-				_SetPacketData(message);
+				_SetPacket(message);
 			}
 
 			return isSuccess;
@@ -164,7 +165,7 @@ namespace KZLib.KZNetwork
 		}
 #endif
 
-		private void _SetPacketData(string message)
+		private void _SetPacket(string message)
 		{
 			try
 			{
@@ -174,7 +175,7 @@ namespace KZLib.KZNetwork
 				{
 					var respond = respondArray[i];
 					var typeText = respond.Type;
-					var affixText = respond.Data;
+					var affixText = respond.Content;
 					var type = Type.GetType($"{typeText}, Assembly-CSharp") ?? throw new NullReferenceException($"{typeText} is not found");
 					var newAffix = JsonConvert.DeserializeObject(affixText,type) as IAffix ?? throw new NullReferenceException($"{affixText} is not {type} type");
 					

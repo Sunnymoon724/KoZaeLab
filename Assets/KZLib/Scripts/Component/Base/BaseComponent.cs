@@ -32,7 +32,7 @@ public abstract class BaseComponent : SerializedMonoBehaviour
 
 	protected virtual void Reset() { }
 
-	protected bool IsValidObject(Object value,string objectText)
+	protected bool _IsValidObject(Object value,string objectText)
 	{
 		if(!value)
 		{
@@ -50,15 +50,15 @@ public abstract class BaseComponent : SerializedMonoBehaviour
 			return;
 		}
 
-		DrawGizmo();
+		_DrawGizmo();
 	}
 
-	protected virtual void DrawGizmo()
+	protected virtual void _DrawGizmo()
 	{
-		DrawGizmoText(transform.position);
+		_DrawGizmoText(transform.position);
 	}
 
-	protected void DrawGizmoText(Vector3 position)
+	protected void _DrawGizmoText(Vector3 position)
 	{
 		var style = new GUIStyle();
 		style.normal.textColor = Color.white;

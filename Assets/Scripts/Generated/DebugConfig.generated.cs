@@ -6,7 +6,7 @@ namespace KZLib.KZData
 {
 	public partial class DebugConfig : IConfig
 	{
-		public bool IsCheckProtoData { get; private set; } = true; // 
+		public bool IsCheckProto { get; private set; } = true; // 
 		public bool IsOfflineMode { get; private set; } = false; // 오프라인 모드
 		public DateTime ServerStartTime { get; private set; } = DateTime.Now; // 
 		public List<string> BindDebugBtnList { get; private set; } = new(); // 

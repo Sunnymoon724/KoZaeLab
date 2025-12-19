@@ -104,7 +104,7 @@ namespace KZLib
 
 				m_gamePlayType = MainPreset.GamePlayType = value;
 
-				_SavePresetData();
+				_SavePresetInfo();
 #endif
 			}
 		}
@@ -138,7 +138,7 @@ namespace KZLib
 
 				m_startSceneName = MainPreset.StartSceneName = value;
 
-				_SavePresetData();
+				_SavePresetInfo();
 #endif
 			}
 		}
@@ -222,21 +222,21 @@ namespace KZLib
 #if UNITY_EDITOR
 		private const string c_mainPreset = "[Main] MainPreset";
 
-		private class PresetData
+		private class PresetInfo
 		{
 			public PlayType GamePlayType { get; set; }
 			public string StartSceneName { get; set; }
 			
-			public PresetData()
+			public PresetInfo()
 			{
 				GamePlayType = PlayType.Normal;
 				StartSceneName = Global.TITLE_SCENE;
 			}
 		}
 
-		private PresetData m_mainPreset;
+		private PresetInfo m_mainPreset;
 
-		private PresetData MainPreset
+		private PresetInfo MainPreset
 		{
 			get
 			{
@@ -244,14 +244,14 @@ namespace KZLib
 				{
 					var text = EditorPrefs.GetString(c_mainPreset,"");
 
-					m_mainPreset = text.IsEmpty() ? new PresetData() : JsonConvert.DeserializeObject<PresetData>(text);
+					m_mainPreset = text.IsEmpty() ? new PresetInfo() : JsonConvert.DeserializeObject<PresetInfo>(text);
 				}
 
 				return m_mainPreset;
 			}
 		}
 
-		private void _SavePresetData()
+		private void _SavePresetInfo()
 		{
 			EditorPrefs.SetString(c_mainPreset,JsonConvert.SerializeObject(MainPreset));
 		}

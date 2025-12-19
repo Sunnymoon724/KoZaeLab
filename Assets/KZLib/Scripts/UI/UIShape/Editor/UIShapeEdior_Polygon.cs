@@ -35,9 +35,9 @@ namespace KZLib
 					{
 						m_polygonVertexDistanceArrayProperty.arraySize++;
 
-						var data = m_polygonVertexDistanceArrayProperty.GetArrayElementAtIndex(i);
+						var element = m_polygonVertexDistanceArrayProperty.GetArrayElementAtIndex(i);
 
-						data.floatValue = 1;
+						element.floatValue = 1;
 					}
 				}
 				else

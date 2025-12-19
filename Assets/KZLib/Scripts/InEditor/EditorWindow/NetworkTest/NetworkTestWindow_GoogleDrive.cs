@@ -29,7 +29,7 @@ namespace KZLib.KZWindow
 				{
 					var json = JObject.Parse(entryList[i]);
 
-					m_googleDriveList.Add(new ResultData(json["name"].ToString(),json["id"].ToString()));
+					m_googleDriveList.Add(new ResultInfo(json["name"].ToString(),json["id"].ToString()));
 				}
 			}
 
@@ -39,11 +39,11 @@ namespace KZLib.KZWindow
 		[HorizontalGroup("Network/GoogleDrive/1",Order = 1),Button("Post Image",ButtonSizes.Large),EnableIf(nameof(IsExistGoogleDrive))]
 		protected void OnPostImage_GoogleDrive()
 		{
-			WebRequestManager.In.PostGoogleDriveFile("Test","Ostrich.png",CommonUtility.FindTestImageData(),"image/png");
+			WebRequestManager.In.PostGoogleDriveFile("Test","Ostrich.png",CommonUtility.FindTestImage(),"image/png");
 		}
 
 		[HorizontalGroup("Network/GoogleDrive/3",Order = 3),SerializeField,TableList(HideToolbar = true,AlwaysExpanded = true,IsReadOnly = true),EnableIf(nameof(IsExistGoogleDrive))]
-		private List<ResultData> m_googleDriveList = new();
+		private List<ResultInfo> m_googleDriveList = new();
 	}
 }
 #endif

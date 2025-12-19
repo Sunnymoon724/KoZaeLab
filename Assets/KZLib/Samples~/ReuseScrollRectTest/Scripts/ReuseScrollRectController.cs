@@ -6,9 +6,9 @@ namespace KZLib.KZSample
 {
 	public class ReuseScrollRectController : BaseComponent
 	{
-		private record SampleData : CellData
+		private record SampleEntryInfo : EntryInfo
 		{
-			public SampleData(int index) : base($"{index}",null,null,null,null) { }
+			public SampleEntryInfo(int index) : base($"{index}") { }
 		}
 
 		[VerticalGroup("0",Order = 0),SerializeField]
@@ -18,24 +18,24 @@ namespace KZLib.KZSample
 		private ReuseScrollRectUI m_horizontalScrollRect = null;
 
 		[SerializeField,HideInInspector]
-		private int m_cellCount = 10;
+		private int m_entryInfoCount = 10;
 
 		[VerticalGroup("1",Order = 1),ShowInInspector]
-		private int CellCount
+		private int EntryCount
 		{
-			get => m_cellCount;
+			get => m_entryInfoCount;
 			set
 			{
-				if(m_cellCount == value)
+				if(m_entryInfoCount == value)
 				{
 					return;
 				}
 
-				m_cellCount = value;
+				m_entryInfoCount = value;
 
 				if(Application.isPlaying)
 				{
-					_SetCellList();
+					_SetEntryList();
 				}
 			}
 		}
@@ -89,34 +89,34 @@ namespace KZLib.KZSample
 			}
 		}
 
-		private readonly List<ICellData> m_cellList = new();
+		private readonly List<IEntryInfo> m_entryInfoList = new();
 
 		private void Start()
 		{
-			_SetCellList();
+			_SetEntryList();
 		}
 
-		private void _SetCellList()
+		private void _SetEntryList()
 		{
-			var count = CellCount;
+			var count = EntryCount;
 
-			m_cellList.Clear();
+			m_entryInfoList.Clear();
 			m_orderList.Clear();
 
 			for(var i=0;i<count;i++)
 			{
-				m_cellList.Add(new SampleData(i));
+				m_entryInfoList.Add(new SampleEntryInfo(i));
 				m_orderList.Add(i);
 			}
 
 			if(m_verticalScrollRect.gameObject.activeInHierarchy)
 			{
-				m_verticalScrollRect.SetCellList(m_cellList);
+				m_verticalScrollRect.SetEntryList(m_entryInfoList);
 			}
 
 			if(m_horizontalScrollRect.gameObject.activeInHierarchy)
 			{
-				m_horizontalScrollRect.SetCellList(m_cellList);
+				m_horizontalScrollRect.SetEntryList(m_entryInfoList);
 			}
 		}
 	}

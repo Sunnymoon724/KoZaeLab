@@ -7,18 +7,20 @@ namespace HudPanel
 	{
 		private Color m_tagColor = Color.white;
 
-		public override void SetCell(ICellData cellData)
+		public override void SetEntry(IEntryInfo entryInfo)
 		{
-			m_tagColor = (cellData as LogCellData).TagColor;
+			var logEntry = entryInfo as LogEntryInfo;
 
-			base.SetCell(cellData);
+			m_tagColor = logEntry.TagColor;
+
+			base.SetEntry(entryInfo);
 		}
 
-		protected override void SetImage(Sprite sprite)
+		protected override void _SetIcon(Sprite sprite)
 		{
 			m_image.color = m_tagColor;
 		}
 	}
 
-	public record LogCellData(Color TagColor,string Name,string Description,Action OnClicked) : CellData(Name,Description,null,null,OnClicked);
+	public record LogEntryInfo(Color TagColor,string Name,string Description,Action<IEntryInfo> OnClicked) : EntryInfo(Name,Description,OnClicked);
 }
