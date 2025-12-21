@@ -60,7 +60,7 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 
 		for(var i=0;i<m_slotList.Count;i++)
 		{
-			m_slotList[i].SetEntry(m_entryInfoList[i]);
+			m_slotList[i].SetEntryInfo(m_entryInfoList[i]);
 		}
 	}
 

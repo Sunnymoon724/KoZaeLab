@@ -6,6 +6,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Canvas))]
 public abstract class RepositoryUI : BaseComponentUI
 {
 	[InfoBox("canvas is null",InfoMessageType.Error,nameof(_IsValidCanvas))]
@@ -170,7 +171,7 @@ public abstract class RepositoryUI : BaseComponentUI
 
 		if(!m_canvas)
 		{
-			m_canvas = gameObject.GetComponent<Canvas>();
+			m_canvas = GetComponent<Canvas>();
 		}
 
 		m_canvas.overrideSorting = true;

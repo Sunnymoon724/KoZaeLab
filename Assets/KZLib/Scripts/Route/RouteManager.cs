@@ -87,7 +87,7 @@ namespace KZLib
 
 		public string GetRouteFilePath()
 		{
-			return Path.Combine(Global.ASSETS_TEXT,Global.RESOURCES_TEXT,string.Format("{0}.yaml",m_routePath));
+			return Path.Combine("Assets","Resources",$"{m_routePath}.yaml");
 		}
 
 		/// <summary>

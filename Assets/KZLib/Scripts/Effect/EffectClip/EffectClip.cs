@@ -8,7 +8,7 @@ using System.Threading;
 
 public abstract class EffectClip : BaseComponent
 {
-	public record EffectParam(Action<bool> OnComplete = null);
+	public record Param(Action<bool> OnComplete = null);
 
 	[SerializeField,HideInInspector]
 	private float m_currentTime = 0.0f;
@@ -59,7 +59,7 @@ public abstract class EffectClip : BaseComponent
 		CommonUtility.KillTokenSource(ref m_tokenSource);
 	}
 
-	public virtual void SetEffect(EffectParam effectParam)
+	public virtual void SetEffect(Param effectParam)
 	{
 		if(effectParam != null)
 		{

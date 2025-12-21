@@ -140,9 +140,9 @@ namespace KZLib
 				return null;
 			}
 #endif
-			if(filePath.StartsWith(Global.RESOURCES_TEXT))
+			if(filePath.StartsWith(c_Resources))
 			{
-				var resourcePath = FileUtility.RemoveHeaderInPath(filePath,Global.RESOURCES_TEXT);
+				var resourcePath = FileUtility.RemoveHeaderInPath(filePath,c_Resources);
 
 				return Resources.Load<TObject>(resourcePath[..resourcePath.LastIndexOf('.')]);
 			}

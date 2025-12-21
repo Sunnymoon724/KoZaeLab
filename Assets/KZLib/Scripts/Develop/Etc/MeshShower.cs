@@ -8,14 +8,11 @@ namespace KZLib.KZDevelop
 	public class MeshNameShower : MonoBehaviour
 	{
 		[Button("Show Mesh Name",ButtonSizes.Large)]
-		private void OnShowMeshName()
+		protected void _OnShowMeshName()
 		{
-			var resultList = new List<string>();
-
 			var textListDict = new Dictionary<string,List<string>>();
-			
-			var meshFilterArray = gameObject.GetComponentsInChildren<MeshFilter>();
-			
+			var meshFilterArray = GetComponentsInChildren<MeshFilter>();
+
 			for(int i=0;i<meshFilterArray.Length;i++)
 			{
 				var meshFilter = meshFilterArray[i];

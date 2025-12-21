@@ -7,6 +7,7 @@ using System.Linq;
 using System;
 using KZLib.KZAttribute;
 using KZLib.KZData;
+using System.Collections;
 
 namespace KZLib.KZWindow
 {
@@ -14,7 +15,7 @@ namespace KZLib.KZWindow
 	{
 		private Type m_protoType = null;
 
-		[VerticalGroup("0",Order = 0),ShowInInspector,ValueDropdown(nameof(ProtoTypeList)),ShowIf(nameof(IsExistProto))]
+		[VerticalGroup("0",Order = 0),ShowInInspector,ValueDropdown(nameof(ProtoTypeGroup)),ShowIf(nameof(IsExistProto))]
 		private Type ProtoType
 		{
 			get => m_protoType;
@@ -48,13 +49,15 @@ namespace KZLib.KZWindow
 
 		private bool IsExistProto => ProtoTypeList.Count > 0;
 
-		private List<Type> m_protoTypeList = null;
+		private List<Type> m_protoTypeList = new();
 
-		private List<Type> ProtoTypeList
+		private List<Type> ProtoTypeList => ProtoTypeGroup as List<Type>;
+
+		private IEnumerable ProtoTypeGroup
 		{
 			get
 			{
-				if(m_protoTypeList == null)
+				if(m_protoTypeList.IsNullOrEmpty())
 				{
 					ProtoManager.In.Reload();
 

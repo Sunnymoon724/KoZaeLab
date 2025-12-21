@@ -6,13 +6,13 @@ using UnityEngine;
 public class TransitionPanelUI : WindowUI2D
 {
 	[SerializeField]
-	private TransitionProgressTask m_progressTask = null;
+	private TransitionProgressTaskSequence m_progressTask = null;
 
 	public async UniTask PlayTransitionAsync(bool isAutoHide,bool isReverse)
 	{
 		Show();
 
-		await m_progressTask.PlayProgressAsync(new ProgressTask.ProgressParam(isReverse));
+		await m_progressTask.PlaySequenceAsync(new ProgressTaskSequence.Param(null,isReverse));
 
 		if(isAutoHide)
 		{

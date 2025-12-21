@@ -71,7 +71,7 @@ namespace KZLib.KZDevelop
 			m_slotUIList.Clear();
 		}
 
-		public void SetEntryList(List<IEntryInfo> entryInfoList,int? index = null)
+		public void SetEntryInfoList(List<IEntryInfo> entryInfoList,int? index = null)
 		{
 			var focusIndex = index.HasValue ? Mathf.Clamp(index.Value,0,entryInfoList.Count) : 0;
 
@@ -144,7 +144,7 @@ namespace KZLib.KZDevelop
 				{
 					slot.gameObject.EnsureActive(true);
 					slot.name = $"Slot_{i}";
-					slot.SetEntry(m_entryInfoList[index]);
+					slot.SetEntryInfo(m_entryInfoList[index]);
 				}
 
 				slot.RefreshLocation(location);

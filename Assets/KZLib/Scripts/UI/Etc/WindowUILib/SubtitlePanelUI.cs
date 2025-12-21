@@ -8,7 +8,7 @@ using R3;
 
 public class SubtitlePanelUI : WindowUI2D
 {
-	public record SubtitleParam(string SubtitlePath);
+	public record Param(string SubtitlePath);
 
 	#region Subtitle Info
 	private record SubtitleInfo
@@ -42,7 +42,7 @@ public class SubtitlePanelUI : WindowUI2D
 	{
 		base.Open(param);
 
-		if(param is not SubtitleParam subtitleParam)
+		if(param is not Param subtitleParam)
 		{
 			return;
 		}

@@ -58,7 +58,7 @@ namespace KZLib.KZDevelop
 		[SerializeField,HideInInspector]
 		private int m_paletteNum = 0;
 
-		[ShowInInspector,ValueDropdown(nameof(PaletteNameList))]
+		[ShowInInspector,ValueDropdown(nameof(PaletteNameGroup))]
 		protected int PaletteNum
 		{
 			get => m_paletteNum;
@@ -86,7 +86,7 @@ namespace KZLib.KZDevelop
 
 		private readonly ValueDropdownList<int> m_paletteNameList = new();
 
-		private IEnumerable PaletteNameList
+		private IEnumerable PaletteNameGroup
 		{
 			get
 			{

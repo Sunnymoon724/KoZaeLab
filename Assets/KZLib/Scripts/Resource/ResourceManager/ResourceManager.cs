@@ -17,6 +17,7 @@ namespace KZLib
 		private bool m_disposed = false;
 
 		private const float c_updatePeriod = 0.1f;
+		private const string c_Resources = "Resources";
 
 		private CancellationTokenSource m_tokenSource = null;
 

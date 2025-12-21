@@ -76,7 +76,7 @@ public class SlotUI : BaseComponentUI
 		}
 	}
 
-    public virtual void SetEntry(IEntryInfo entryInfo)
+    public virtual void SetEntryInfo(IEntryInfo entryInfo)
 	{
 		CurrentEntryInfo = entryInfo;
 

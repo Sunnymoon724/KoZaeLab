@@ -10,6 +10,8 @@ using System.Threading;
 using System.Collections.Generic;
 using System.IO;
 using KZLib.KZData;
+using System.Collections;
+
 
 #if UNITY_EDITOR
 
@@ -21,6 +23,8 @@ namespace KZLib
 {
 	public abstract class MainLib : SerializedMonoBehaviour
 	{
+		private const string c_TitleScene = "TitleScene";
+
 		[SerializeField,HideInInspector]
 		private SystemLanguage? m_gameLanguage = null;
 
@@ -112,7 +116,7 @@ namespace KZLib
 		[SerializeField,HideInInspector]
 		private string m_startSceneName = "";
 
-		[VerticalGroup("0",0),ShowInInspector,ValueDropdown(nameof(SceneNameList)),EnableIf(nameof(IsTestMode)),InfoBox("TitleScene is not include in SceneArray.",InfoMessageType.Warning,nameof(IsIncludeTitleName))]
+		[VerticalGroup("0",0),ShowInInspector,ValueDropdown(nameof(SceneNameGroup)),EnableIf(nameof(IsTestMode)),InfoBox("TitleScene is not include in SceneArray.",InfoMessageType.Warning,nameof(IsIncludeTitleName))]
 		private string StartSceneName
 		{
 			get
@@ -120,12 +124,12 @@ namespace KZLib
 #if UNITY_EDITOR
 				if(m_startSceneName.IsEmpty())
 				{
-					m_startSceneName = IsTestMode ? MainPreset.StartSceneName : Global.TITLE_SCENE;
+					m_startSceneName = IsTestMode ? MainPreset.StartSceneName : c_TitleScene;
 				}
 
-				return IsTestMode ? m_startSceneName : Global.TITLE_SCENE;
+				return IsTestMode ? m_startSceneName : c_TitleScene;
 #else
-				return Global.TITLE_SCENE;
+				return c_TitleScene;
 #endif
 			}
 			set
@@ -144,7 +148,7 @@ namespace KZLib
 		}
 
 		protected bool IsTestMode => GamePlayType == PlayType.Test;
-		private bool IsIncludeTitleName => !SceneNameList.Contains(Global.TITLE_SCENE);
+		private bool IsIncludeTitleName => !SceneNameList.Contains(c_TitleScene);
 
 		protected CancellationTokenSource m_tokenSource = null;
 
@@ -230,7 +234,7 @@ namespace KZLib
 			public PresetInfo()
 			{
 				GamePlayType = PlayType.Normal;
-				StartSceneName = Global.TITLE_SCENE;
+				StartSceneName = c_TitleScene;
 			}
 		}
 
@@ -345,14 +349,14 @@ namespace KZLib
 			await _StartMainAsync();
 		}
 #endif
-		private static readonly List<string> s_sceneNameList = new();
+		private readonly List<string> m_sceneNameList = new();
+		private List<string> SceneNameList => SceneNameGroup as List<string>;
 
-		private static List<string> SceneNameList
+		private IEnumerable SceneNameGroup
 		{
 			get
 			{
-#if UNITY_EDITOR
-				if(s_sceneNameList.IsNullOrEmpty())
+				if(m_sceneNameList.IsNullOrEmpty())
 				{
 					foreach(var scene in EditorBuildSettings.scenes)
 					{
@@ -363,11 +367,11 @@ namespace KZLib
 							continue;
 						}
 
-						s_sceneNameList.Add(sceneName);
+						m_sceneNameList.Add(sceneName);
 					}
 				}
-#endif
-				return s_sceneNameList;
+
+				return m_sceneNameList;
 			}
 		}
 	}

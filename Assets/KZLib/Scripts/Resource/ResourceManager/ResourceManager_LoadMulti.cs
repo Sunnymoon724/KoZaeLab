@@ -143,9 +143,9 @@ namespace KZLib
 				return null;
 			}
 #endif
-			if(folderPath.StartsWith(Global.RESOURCES_TEXT))
+			if(folderPath.StartsWith(c_Resources))
 			{
-				return Resources.LoadAll<TObject>(FileUtility.RemoveHeaderInPath(folderPath,Global.RESOURCES_TEXT));
+				return Resources.LoadAll<TObject>(FileUtility.RemoveHeaderInPath(folderPath,c_Resources));
 			}
 
 			var assetPath = FileUtility.GetAssetPath(folderPath);

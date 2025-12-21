@@ -7,12 +7,12 @@ public class ListSlotUI : SlotUI
 	protected override bool UseImage => false;
 	protected override bool UseButton => false;
 
-	public override void SetEntry(IEntryInfo entryInfo)
+	public override void SetEntryInfo(IEntryInfo entryInfo)
 	{
 		var listEntry = entryInfo as ListEntryInfo;
 
 		m_gridLayout.SetEntryInfoList(listEntry.EntryInfoList);
 
-		base.SetEntry(entryInfo);
+		base.SetEntryInfo(entryInfo);
 	}
 }

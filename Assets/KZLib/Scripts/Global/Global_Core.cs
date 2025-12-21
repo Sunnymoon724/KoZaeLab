@@ -19,19 +19,19 @@ public static partial class Global
 
 	public const int INVALID_INDEX = -1;
 
-	public const float FADE_TIME = 1.0f;
-
 	public const string DISABLE_HEX_COLOR = "#808080FF";
 	public const string WRONG_HEX_COLOR = "#FFC300FF";
+}
 
-	public const string ASSETS_TEXT = "Assets";
-	public const string RESOURCES_TEXT = "Resources";
-
+#region Path
+public static partial class Global
+{
 	public readonly static string PROJECT_PATH = Directory.GetCurrentDirectory();
 	public readonly static string PROJECT_PARENT_PATH = Path.GetFullPath(Path.Combine(PROJECT_PATH,".."));
 
 	public readonly static string DOCUMENT_FOLDER_PATH = Path.Combine(PROJECT_PARENT_PATH,"Documents");
 	public readonly static string TOOL_FOLDER_PATH = Path.Combine(PROJECT_PARENT_PATH,"Tools");
+
 
 	#region Config
 	public readonly static string CONFIG_FOLDER_PATH = Path.Combine(DOCUMENT_FOLDER_PATH,"Config");
@@ -45,18 +45,24 @@ public static partial class Global
 	#region Lingo
 	public readonly static string LINGO_FOLDER_PATH = Path.Combine(DOCUMENT_FOLDER_PATH,"Lingo");
 	#endregion Lingo
-	public readonly static string[] EXCEL_EXTENSION_ARRAY = new string[] { ".xls", ".xlsx", ".xlsm" };
+}
+#endregion Path
 
-
+#region Graphic Option
+public static partial class Global
+{
+	
 	public const string GLOBAL_TEXTURE_MIPMAP_LIMIT = "GlobalTextureMipmapLimit";
 	public const string ANISOTROPIC_FILTERING = "AnisotropicFiltering";
 	public const string VERTICAL_SYNC_COUNT = "VerticalSyncCount";
 	public const string DISABLE_CAMERA_FAR_HALF = "DisableCameraFarHalf";
+}
+#endregion Graphic Option
 
-	public const string TITLE_SCENE = "TitleScene";
-
-	#region MenuItem
+#region Menu Item
+public static partial class Global
+{
 	public const int MENU_ORDER_MAIN_SPACE = 1000000;
 	public const int MENU_ORDER_SUB_SPACE = 50;
-	#endregion MenuItem
 }
+#endregion Menu Item

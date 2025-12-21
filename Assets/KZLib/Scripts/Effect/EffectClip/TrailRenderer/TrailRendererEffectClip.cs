@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(TrailRenderer))]
 public class TrailRendererEffectClip : EffectClip
 {
-	public record TrailRendererEffectParam(Gradient TrailColor = null,Action<bool> OnComplete = null) : EffectParam(OnComplete);
+	public record TrailRendererEffectParam(Gradient TrailColor = null,Action<bool> OnComplete = null) : Param(OnComplete);
 
 	[FoldoutGroup("General",Order = -5),SerializeField]
 	private TrailRenderer m_trailRenderer = null;
@@ -30,7 +30,7 @@ public class TrailRendererEffectClip : EffectClip
 		}
 	}
 
-	public override void SetEffect(EffectParam effectParam)
+	public override void SetEffect(Param effectParam)
 	{
 		base.SetEffect(effectParam);
 

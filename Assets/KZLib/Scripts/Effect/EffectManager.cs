@@ -36,7 +36,7 @@ namespace KZLib
 			_StoreEffectClip(effectClip);
 		}
 
-		public EffectClip PlayEffect(string name,Vector3 position,Transform parent = null,EffectClip.EffectParam effectParam = null)
+		public EffectClip PlayEffect(string name,Vector3 position,Transform parent = null,EffectClip.Param effectParam = null)
 		{
 			var effectClip = _GetEffectClip(name,parent);
 
@@ -62,7 +62,7 @@ namespace KZLib
 			return effectClip;
 		}
 
-		public EffectClip PlayUIEffect(string name,Vector3 position,RectTransform parent = null,EffectClip.EffectParam effectParam = null)
+		public EffectClip PlayUIEffect(string name,Vector3 position,RectTransform parent = null,EffectClip.Param effectParam = null)
 		{
 			var effectClip = PlayEffect(name,position,null,effectParam);
 

@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
@@ -97,11 +97,12 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
+  m_autoPlay: 0
+  m_skipButton: {fileID: 0}
+  m_loopCount: 1
   m_duration: 0
   m_progress: 0
-  m_autoPlay: 0
-  m_loopCount: 1
-  m_ignoreTimeScale: 0
+  m_IgnoreTimeScale: 0
   m_image: {fileID: 4348948429196818278}
   m_currentMaterial: {fileID: 0}
   m_currentType: 0
@@ -116,6 +117,8 @@ GameObject:
   - component: {fileID: 4259471444437858031}
   - component: {fileID: 4140638216953543654}
   - component: {fileID: 3831858738114336971}
+  - component: {fileID: 5659943223283456368}
+  - component: {fileID: 7427825026908949055}
   m_Layer: 5
   m_Name: TransitionPanelUI
   m_TagString: Untagged
@@ -176,10 +179,52 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
+  m_sortingLayerOrder: 0
+  m_canvas: {fileID: 5659943223283456368}
   m_canvasGroup: {fileID: 4140638216953543654}
   m_pooling: 1
-  m_LayerType: 0
+  m_layerType: 0
   m_popUpTransform: {fileID: 0}
   m_adjustRect: {fileID: 4259471444437858031}
   m_priorityType: 2
   m_progressTask: {fileID: 0}
+--- !u!223 &5659943223283456368
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4582253882050708188}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &7427825026908949055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4582253882050708188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 55

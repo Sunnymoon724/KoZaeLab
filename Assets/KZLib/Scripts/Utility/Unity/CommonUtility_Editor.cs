@@ -241,7 +241,9 @@ public static partial class CommonUtility
 	{
 		var filterArray = new List<string>();
 
-		foreach(var extension in Global.EXCEL_EXTENSION_ARRAY)
+		var excelExtensionArray = new string[] { ".xls", ".xlsx", ".xlsm" };
+
+		foreach(var extension in excelExtensionArray)
 		{
 			filterArray.Add($"*{extension}");
 		}

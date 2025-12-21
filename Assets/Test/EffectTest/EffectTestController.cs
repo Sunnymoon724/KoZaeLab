@@ -26,13 +26,13 @@ public class EffectTestController : MonoBehaviour
 			}
 			else if(m_EffectName == EffectType.OstrichFX)
 			{
-				_PlayEffect(m_EffectName,worldPoint,new AnimatorEffectClip.AnimatorEffectParam("Rotate"));
+				_PlayEffect(m_EffectName,worldPoint,new AnimatorEffectClip.Param("Rotate"));
 			}
 		}
 	}
 
-	private void _PlayEffect(EffectType _effectType,Vector3 _worldPoint,EffectClip.EffectParam _param)
+	private void _PlayEffect(EffectType effectType,Vector3 worldPoint,EffectClip.Param effectParam)
 	{
-		EffectManager.In.PlayEffect(_effectType.ToString(),_worldPoint,null,_param);
+		EffectManager.In.PlayEffect(effectType.ToString(),worldPoint,null,effectParam);
 	}
 }

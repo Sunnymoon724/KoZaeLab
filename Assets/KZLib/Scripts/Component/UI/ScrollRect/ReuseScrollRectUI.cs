@@ -287,7 +287,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 			if(isForce)
 			{
-				currentSlot.SetEntry(m_entryInfoList[i]);
+				currentSlot.SetEntryInfo(m_entryInfoList[i]);
 			}
 
 			_SetSlotLocation(currentSlot.UIRectTransform,i);
@@ -316,7 +316,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 		return IsVertical ? m_scrollRect.viewport.rect.height : m_scrollRect.viewport.rect.width;
 	}
 
-	public void SetEntryList(List<IEntryInfo> entryInfoList,int? index = null)
+	public void SetEntryInfoList(List<IEntryInfo> entryInfoList,int? index = null)
 	{
 		_EnsureInitialized();
 

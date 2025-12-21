@@ -7,13 +7,13 @@ namespace HudPanel
 	{
 		private Color m_tagColor = Color.white;
 
-		public override void SetEntry(IEntryInfo entryInfo)
+		public override void SetEntryInfo(IEntryInfo entryInfo)
 		{
 			var logEntry = entryInfo as LogEntryInfo;
 
 			m_tagColor = logEntry.TagColor;
 
-			base.SetEntry(entryInfo);
+			base.SetEntryInfo(entryInfo);
 		}
 
 		protected override void _SetIcon(Sprite sprite)

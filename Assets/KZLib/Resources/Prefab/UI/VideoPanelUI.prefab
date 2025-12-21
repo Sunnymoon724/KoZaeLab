@@ -120,6 +120,8 @@ GameObject:
   - component: {fileID: 4259471444437858031}
   - component: {fileID: 4662566304654294669}
   - component: {fileID: 2210728575114711771}
+  - component: {fileID: 5659943223283456368}
+  - component: {fileID: 7427825026908949055}
   m_Layer: 5
   m_Name: VideoPanelUI
   m_TagString: Untagged
@@ -181,15 +183,57 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
+  m_sortingLayerOrder: 0
+  m_canvas: {fileID: 5659943223283456368}
   m_canvasGroup: {fileID: 4662566304654294669}
   m_pooling: 1
-  m_LayerType: 0
+  m_layerType: 0
   m_popUpTransform: {fileID: 0}
   m_adjustRect: {fileID: 5024198068291769060}
   m_priorityType: 2
   m_screenImage: {fileID: 2642141442286311993}
   m_videoPlayer: {fileID: 4092074075805612466}
   m_aspectRatio: {fileID: 6522297718218743851}
+--- !u!223 &5659943223283456368
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4582253882050708188}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &7427825026908949055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4582253882050708188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 55
 --- !u!1 &7054755214244170949
 GameObject:
   m_ObjectHideFlags: 0

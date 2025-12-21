@@ -88,9 +88,9 @@ namespace KZLib.KZAttribute
 				}
 			}
 
-			public virtual void Initialize(object pathParam)
+			public virtual void Initialize(object param)
 			{
-				m_objectPath = pathParam as string;
+				m_objectPath = param as string;
 
 				if(m_objectPath.IsEmpty())
 				{

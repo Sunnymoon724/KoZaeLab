@@ -8,6 +8,8 @@ namespace KZLib.KZData
 	/// </summary>
 	public readonly struct Route
 	{
+		private const string c_Assets = "Assets";
+
 		private readonly string m_localPath;
 		private readonly string m_extension;
 
@@ -27,7 +29,7 @@ namespace KZLib.KZData
 
 			var projectPath = Global.PROJECT_PATH;
 
-			if(path.Contains(Global.ASSETS_TEXT))
+			if(path.Contains(c_Assets))
 			{
 				if(!Path.IsPathRooted(path))
 				{
@@ -41,18 +43,18 @@ namespace KZLib.KZData
 					throw new InvalidDataException("Path is not in the project.");
 				}
 
-				path = Path.Combine(projectPath,Global.ASSETS_TEXT,path);
+				path = Path.Combine(projectPath,c_Assets,path);
 			}
 
 			path = Path.GetFullPath(path);
 
-			var localPath = path.Replace($"{Path.Combine(projectPath,Global.ASSETS_TEXT)}{Path.DirectorySeparatorChar}","");
+			var localPath = path.Replace($"{Path.Combine(projectPath,c_Assets)}{Path.DirectorySeparatorChar}","");
 
 			m_localPath = Path.Combine(FileUtility.GetParentPath(localPath),FileUtility.GetFileName(localPath));
 			m_extension = FileUtility.GetExtension(localPath).TrimStart('.');
 		}
 
-		public string AssetPath => Path.Combine(Global.ASSETS_TEXT,LocalPath);
+		public string AssetPath => Path.Combine(c_Assets,LocalPath);
 		public string LocalPath => m_localPath;
 
 		public string AbsolutePath => Path.GetFullPath(AssetPath);

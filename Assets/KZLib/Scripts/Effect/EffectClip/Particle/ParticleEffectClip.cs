@@ -7,7 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(ParticleSystem))]
 public class ParticleEffectClip : EffectClip
 {
-	public record ParticleEffectParam(Color? StartColor = null,Action<bool> OnComplete = null) : EffectParam(OnComplete);
+	public new record Param(Color? StartColor = null,Action<bool> OnComplete = null) : EffectClip.Param(OnComplete);
 
 	[VerticalGroup("General/2",Order = 2),SerializeField]
 	protected ParticleSystem m_mainParticle = null;
@@ -37,11 +37,11 @@ public class ParticleEffectClip : EffectClip
 		mainModule.playOnAwake = true;
 	}
 
-	public override void SetEffect(EffectParam effectParam)
+	public override void SetEffect(EffectClip.Param effectParam)
 	{
 		base.SetEffect(effectParam);
 
-		if(effectParam is not ParticleEffectParam param)
+		if(effectParam is not Param param)
 		{
 			return;
 		}

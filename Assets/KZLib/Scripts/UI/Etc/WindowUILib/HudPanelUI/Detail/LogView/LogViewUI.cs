@@ -145,7 +145,7 @@ namespace HudPanel
 				}
 			}
 
-			m_scrollRectUI.SetEntryList(entryInfoList,0);
+			m_scrollRectUI.SetEntryInfoList(entryInfoList,0);
 		}
 
 		private LogEntryInfo _CreateLogEntryInfo(MessageInfo messageInfo)

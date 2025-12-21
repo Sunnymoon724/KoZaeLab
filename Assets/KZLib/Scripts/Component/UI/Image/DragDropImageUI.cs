@@ -20,7 +20,7 @@ public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDr
 	{
 		base.Initialize();
 
-		m_canvas = gameObject.GetComponentInParent<Canvas>();
+		m_canvas = GetComponentInParent<Canvas>();
 	}
 
 	void IDragHandler.OnDrag(PointerEventData eventData)

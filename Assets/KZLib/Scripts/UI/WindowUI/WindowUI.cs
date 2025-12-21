@@ -30,15 +30,14 @@ public interface IWindowUI
 	bool IsIgnoreHide { get; }
 }
 
-public abstract class WindowUI : BaseComponentUI,IWindowUI
+[RequireComponent(typeof(CanvasGroup))]
+public abstract class WindowUI : SortingLayerCanvas,IWindowUI
 {
-	[InfoBox("canvasGroup is null",InfoMessageType.Error,nameof(IsValidCanvasGroup))]
+	[InfoBox("CanvasGroup is null",InfoMessageType.Error,nameof(IsExistCanvasGroup))]
 	[VerticalGroup("CanvasGroup",Order = -25),SerializeField]
 	protected CanvasGroup m_canvasGroup = null;
-	
-	private bool IsValidCanvasGroup => m_canvasGroup == null;
 
-	protected Canvas m_canvas = null;
+	private bool IsExistCanvasGroup => m_canvasGroup == null;
 
 	public bool IsOpen => gameObject.activeSelf;
 	public abstract bool IsHidden { get; }
@@ -173,7 +172,7 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 		if(!m_canvasGroup)
 		{
-			m_canvasGroup = gameObject.GetComponent<CanvasGroup>();
+			m_canvasGroup = GetComponent<CanvasGroup>();
 		}
 	}
 }

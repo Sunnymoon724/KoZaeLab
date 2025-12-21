@@ -34,6 +34,11 @@
       "displayName": "ReuseScrollRectTest",
       "description": "ReuseScrollRect Test",
       "path": "Samples~/ReuseScrollRectTest"
+    },
+    {
+      "displayName": "TaskSequenceTest",
+      "description": "TaskSequence Test",
+      "path": "Samples~/TaskSequenceTest"
     }
   ]
 }

@@ -37,7 +37,7 @@ namespace KZLib.KZSample
 
 				if(Application.isPlaying)
 				{
-					_SetEntryList();
+					_SetEntryInfoList();
 				}
 			}
 		}
@@ -59,7 +59,7 @@ namespace KZLib.KZSample
 
 				if(Application.isPlaying)
 				{
-					_SetEntryList();
+					_SetEntryInfoList();
 				}
 			}
 		}
@@ -70,10 +70,10 @@ namespace KZLib.KZSample
 
 		private void Start()
 		{
-			_SetEntryList();
+			_SetEntryInfoList();
 		}
 
-		private void _SetEntryList()
+		private void _SetEntryInfoList()
 		{
 			var count = EntryInfoCount;
 
@@ -86,7 +86,7 @@ namespace KZLib.KZSample
 				m_orderList.Add(i);
 			}
 
-			m_focusScroller.SetEntryList(m_entryInfoList,CenterIndex);
+			m_focusScroller.SetEntryInfoList(m_entryInfoList,CenterIndex);
 		}
 	}
 }

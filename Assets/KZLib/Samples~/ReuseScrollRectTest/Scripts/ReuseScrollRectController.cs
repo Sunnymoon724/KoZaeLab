@@ -111,12 +111,12 @@ namespace KZLib.KZSample
 
 			if(m_verticalScrollRect.gameObject.activeInHierarchy)
 			{
-				m_verticalScrollRect.SetEntryList(m_entryInfoList);
+				m_verticalScrollRect.SetEntryInfoList(m_entryInfoList);
 			}
 
 			if(m_horizontalScrollRect.gameObject.activeInHierarchy)
 			{
-				m_horizontalScrollRect.SetEntryList(m_entryInfoList);
+				m_horizontalScrollRect.SetEntryInfoList(m_entryInfoList);
 			}
 		}
 	}

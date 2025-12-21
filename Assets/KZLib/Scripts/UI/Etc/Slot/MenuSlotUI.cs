@@ -6,10 +6,10 @@ public class MenuSlotUI : SlotUI
 	protected override bool UseGizmos => true;
 	protected override string GizmosText => m_menuText ?? string.Empty;
 
-	public override void SetEntry(IEntryInfo entryInfo)
+	public override void SetEntryInfo(IEntryInfo entryInfo)
 	{
 		m_menuText = entryInfo.Name;
 
-		base.SetEntry(entryInfo);
+		base.SetEntryInfo(entryInfo);
 	}
 }

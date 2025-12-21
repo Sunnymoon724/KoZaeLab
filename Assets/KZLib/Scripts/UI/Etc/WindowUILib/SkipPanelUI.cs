@@ -6,7 +6,7 @@ using KZLib;
 
 public class SkipPanelUI : WindowUI2D
 {
-	public record SkipParam(Action OnClicked);
+	public record Param(Action OnClicked);
 
 	[SerializeField,ValidateInput(nameof(IsValidShowDuration),"0 is not defined.",InfoMessageType.Error),PropertyTooltip("Negative numbers represent infinity, and zero doesn't work.")]
 	private float m_skipShowDuration = 0.0f;
@@ -30,7 +30,7 @@ public class SkipPanelUI : WindowUI2D
 	{
 		base.Open(param);
 
-		if(param is SkipParam skipParam)
+		if(param is Param skipParam)
 		{
 			m_onClickedTrigger = skipParam.OnClicked;
 		}

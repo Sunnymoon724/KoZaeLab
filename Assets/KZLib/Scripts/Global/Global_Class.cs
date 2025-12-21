@@ -18,26 +18,26 @@ public record NetworkPacketInfo(int Code,string Message,bool IsEncrypted);
 
 public record UnitStateInfo(Enum PreState,Enum CurState);
 
-#region UITag
-public class CommonUITag : CustomTag
+#region UINameTag
+public class CommonUINameTag : CustomTag
 {
-	public static readonly CommonUITag HudPanelUI					= new(nameof(HudPanelUI));
+	public static readonly CommonUINameTag HudPanelUI					= new(nameof(HudPanelUI));
 
-	public static readonly CommonUITag CommonTransitionPanelUI		= new(nameof(CommonTransitionPanelUI));
+	public static readonly CommonUINameTag CommonTransitionPanelUI		= new(nameof(CommonTransitionPanelUI));
 
-	public static readonly CommonUITag VideoPanelUI					= new(nameof(VideoPanelUI));
-	public static readonly CommonUITag SubtitlePanelUI				= new(nameof(SubtitlePanelUI));
-	public static readonly CommonUITag SkipPanelUI					= new(nameof(SkipPanelUI));
+	public static readonly CommonUINameTag VideoPanelUI					= new(nameof(VideoPanelUI));
+	public static readonly CommonUINameTag SubtitlePanelUI				= new(nameof(SubtitlePanelUI));
+	public static readonly CommonUINameTag SkipPanelUI					= new(nameof(SkipPanelUI));
 
-	public static readonly CommonUITag DialogBoxPopupUI				= new(nameof(DialogBoxPopupUI));
+	public static readonly CommonUINameTag DialogBoxPopupUI				= new(nameof(DialogBoxPopupUI));
 
-	public static readonly CommonUITag DownloadPanelUI				= new(nameof(DownloadPanelUI));
+	public static readonly CommonUINameTag DownloadPanelUI				= new(nameof(DownloadPanelUI));
 
-	public static readonly CommonUITag LoadingPanelUI				= new(nameof(LoadingPanelUI));
+	public static readonly CommonUINameTag LoadingPanelUI				= new(nameof(LoadingPanelUI));
 
-	public CommonUITag(string name) : base(name) { }
+	public CommonUINameTag(string name) : base(name) { }
 }
-#endregion UITag
+#endregion UINameTag
 
 #region NoticeTag
 public class CommonNoticeTag : CustomTag
@@ -59,6 +59,17 @@ public class EmptyNoticeInfo
 	private EmptyNoticeInfo() { }
 }
 #endregion NoticeTag
+
+#region UIMenuTag
+public class CommonUIMenuTag : CustomTag
+{
+	public static readonly CommonUIMenuTag Exit		= new(nameof(Exit));
+	public static readonly CommonUIMenuTag Option	= new(nameof(Option));
+	public static readonly CommonUIMenuTag Tutorial	= new(nameof(Tutorial));
+
+	public CommonUIMenuTag(string name) : base(name) { }
+}
+#endregion UIMenuTag
 
 #region EntryInfo
 public interface IEntryInfo

@@ -6,6 +6,8 @@ using Sirenix.OdinInspector;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using System;
+using System.Collections;
+
 
 #if UNITY_EDITOR
 
@@ -175,7 +177,7 @@ namespace KZLib
 
 		private readonly List<string> m_stateNameList = new();
 
-		private IEnumerable<string> StateNameGroup
+		private IEnumerable StateNameGroup
 		{
 			get
 			{

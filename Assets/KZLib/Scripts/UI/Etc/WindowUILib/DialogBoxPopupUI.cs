@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DialogBoxPopupUI : WindowUI2D
 {
-	public record DialogParam(string Title,string Message,params DialogEntryInfo[] EntryInfoArray);
+	public record Param(string Title,string Message,params DialogEntryInfo[] EntryInfoArray);
 
 	[SerializeField]
 	private TMP_Text m_titleText = null;
@@ -19,7 +19,7 @@ public class DialogBoxPopupUI : WindowUI2D
 	{
 		base.Open(param);
 
-		if(param is not DialogParam dialogParam)
+		if(param is not Param dialogParam)
 		{
 			return;
 		}

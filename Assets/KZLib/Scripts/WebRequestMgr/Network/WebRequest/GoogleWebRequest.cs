@@ -6,6 +6,8 @@ namespace KZLib.KZNetwork
 {
 	public abstract class GoogleWebRequest : BaseWebRequest
 	{
+		// protected const string URL = @"https://script.google.com/macros/s/AKfycbwloic4is9JujQIh041RarXfsTrCyeKFk4P9a-jrBANVgsOEr4BeHmGuZAcP3kKuX2d/exec";
+
 		protected GoogleWebRequest(string name,string uri,string method) : base(name,uri,method) { }
 	}
 

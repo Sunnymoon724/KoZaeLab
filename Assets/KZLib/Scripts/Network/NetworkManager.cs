@@ -12,6 +12,8 @@ namespace KZLib.KZNetwork
 {
 	public partial class NetworkManager : Singleton<NetworkManager>
 	{
+		private const string c_TitleScene = "TitleScene";
+
 		private bool m_disposed = false;
 
 		private bool m_isRequesting = false;
@@ -161,7 +163,7 @@ namespace KZLib.KZNetwork
 		
 		private void _ChangeTitleScene()
 		{
-			SceneStateManager.In.ChangeSceneWithLoading(Global.TITLE_SCENE,UINameType.CommonTransitionPanelUI);
+			SceneStateManager.In.ChangeSceneWithLoading(c_TitleScene,UINameType.CommonTransitionPanelUI);
 		}
 #endif
 

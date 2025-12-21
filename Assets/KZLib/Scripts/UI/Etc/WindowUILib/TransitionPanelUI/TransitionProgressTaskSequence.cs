@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace TransitionPanel
 {
-	public class TransitionProgressTask : ProgressTask
+	public class TransitionProgressTaskSequence : ProgressTaskSequence
 	{
 		private enum TransitionType { None, Material };
 
@@ -41,7 +41,7 @@ namespace TransitionPanel
 
 				m_image.material = IsFade ? null : CurrentMaterial;
 
-				SetProgress(Progress);
+				_SetProgress(Progress);
 			}
 		}
 
@@ -57,7 +57,7 @@ namespace TransitionPanel
 			}
 		}
 
-		protected override void SetProgress(float progress)
+		protected override void _SetProgress(float progress)
 		{
 			if(IsFade)
 			{

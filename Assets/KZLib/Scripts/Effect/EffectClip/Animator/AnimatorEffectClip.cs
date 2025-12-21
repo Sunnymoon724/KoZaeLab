@@ -4,19 +4,13 @@ using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using System;
 
-#if UNITY_EDITOR
-
-using UnityEditor.Animations;
-
-#endif
-
 [RequireComponent(typeof(Animator))]
 public class AnimatorEffectClip : EffectClip
 {
 	[SerializeField,HideInInspector]
 	private string m_animationName = null;
 
-	public record AnimatorEffectParam(string Name,Action<bool> OnComplete = null) : EffectParam(OnComplete);
+	public new record Param(string Name,Action<bool> OnComplete = null) : EffectClip.Param(OnComplete);
 
 	protected override bool IsEnableDuration => false;
 
@@ -56,11 +50,11 @@ public class AnimatorEffectClip : EffectClip
 		m_ignoreTimeScale = m_animator.updateMode == AnimatorUpdateMode.UnscaledTime;
 	}
 
-	public override void SetEffect(EffectParam _param)
+	public override void SetEffect(EffectClip.Param effectParam)
 	{
-		base.SetEffect(_param);
+		base.SetEffect(effectParam);
 
-		if(_param is not AnimatorEffectParam param)
+		if(effectParam is not Param param)
 		{
 			return;
 		}
@@ -86,7 +80,7 @@ public class AnimatorEffectClip : EffectClip
 
 		await CommonUtility.WaitForConditionAsync(_WaitForAnimation,SetTime,m_ignoreTimeScale,m_tokenSource.Token);
 	}
-	
+
 #if UNITY_EDITOR
 	private readonly List<string> m_stateNameList = new();
 

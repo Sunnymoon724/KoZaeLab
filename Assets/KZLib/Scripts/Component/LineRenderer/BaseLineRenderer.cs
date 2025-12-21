@@ -25,10 +25,10 @@ public abstract class BaseLineRenderer : BaseComponent
 		}
 	}
 
-	public void SetPointArray(Vector3[] pointArray)
+	public void SetPointArray(Vector3[] positionArray)
 	{
-		m_lineRenderer.positionCount = pointArray.Length;
-		m_lineRenderer.SetPositions(pointArray);
+		m_lineRenderer.positionCount = positionArray.Length;
+		m_lineRenderer.SetPositions(positionArray);
 	}
 
 	public Mesh BakeMesh()

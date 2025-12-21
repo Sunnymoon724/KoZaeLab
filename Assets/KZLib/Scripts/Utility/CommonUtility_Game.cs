@@ -236,7 +236,7 @@ public static partial class CommonUtility
 	{
 		var templateFilePath = FindTemplateFilePath(fileName);
 
-		return templateFilePath.StartsWith(Global.ASSETS_TEXT) ? Path.GetFullPath(templateFilePath) : Path.Combine(Global.PROJECT_PATH,templateFilePath);
+		return templateFilePath.StartsWith("Assets") ? Path.GetFullPath(templateFilePath) : Path.Combine(Global.PROJECT_PATH,templateFilePath);
 	}
 #endif
 }

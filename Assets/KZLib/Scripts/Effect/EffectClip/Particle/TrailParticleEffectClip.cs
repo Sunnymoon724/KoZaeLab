@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TrailParticleEffectClip : ParticleEffectClip
 {
-	public record TrailParticleEffectParam(Color? StartColor = null,Action<bool> OnComplete = null) : ParticleEffectParam(StartColor,OnComplete);
+	public new record Param(Color? StartColor = null,Action<bool> OnComplete = null) : ParticleEffectClip.Param(StartColor,OnComplete);
 
 	protected override float Duration => -1.0f;
 	protected override bool IsLoop => false;
