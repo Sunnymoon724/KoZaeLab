@@ -70,7 +70,7 @@ namespace KZLib.KZMenu
 			{
 				var asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
 
-				void _Traverse(Transform child)
+				void _Recursive(Transform child)
 				{
 					foreach(var component in child.GetComponents<Component>())
 					{
@@ -83,7 +83,7 @@ namespace KZLib.KZMenu
 					}
 				}
 
-				asset.transform.TraverseChildren(_Traverse);
+				asset.transform.RecursiveChildren(_Recursive);
 			}
 
 			if(textList.Count == 0)
@@ -117,7 +117,7 @@ namespace KZLib.KZMenu
 			{
 				var asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
 
-				void _Traverse(Transform child)
+				void _Recursive(Transform child)
 				{
 					var filter = child.GetComponent<MeshFilter>();
 
@@ -129,7 +129,7 @@ namespace KZLib.KZMenu
 					textListDict.AddOrCreate($"<b> <a href=\"{assetPath}\">{asset.name}</a> </b>",child.FindHierarchy());
 				}
 
-				asset.transform.TraverseChildren(_Traverse);
+				asset.transform.RecursiveChildren(_Recursive);
 			}
 
 			if(textListDict.Count == 0)
@@ -174,6 +174,29 @@ namespace KZLib.KZMenu
 
 		[MenuItem("KZMenu/Option/Add PlayFab Module",true,MenuOrder.Option.MODULE)]
 		private static bool _IsEnablePlayFabModule()
+		{
+#if KZLIB_PLAY_FAB
+			return false;
+#else
+			return true;
+#endif
+		}
+		
+		[MenuItem("KZMenu/Option/Add InAppPurchase Module",false,MenuOrder.Option.MODULE)]
+		private static void _OnAddInAppPurchaseModule()
+		{
+			if(!CommonUtility.DisplayCheck("Add in app purchase module","Add in app purchase module?"))
+			{
+				return;
+			}
+
+			var targetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
+
+			CommonUtility.AddDefineSymbol("KZLIB_IN_APP_PURCHASE",NamedBuildTarget.FromBuildTargetGroup(targetGroup));
+		}
+
+		[MenuItem("KZMenu/Option/Add InAppPurchase Module",true,MenuOrder.Option.MODULE)]
+		private static bool _IsEnableInAppPurchaseModule()
 		{
 #if KZLIB_PLAY_FAB
 			return false;

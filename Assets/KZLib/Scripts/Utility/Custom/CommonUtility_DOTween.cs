@@ -1,5 +1,6 @@
 using System;
 using DG.Tweening;
+using KZLib;
 
 // https://dotween.demigiant.com/
 public static partial class CommonUtility
@@ -21,9 +22,9 @@ public static partial class CommonUtility
 			return start;
 		}
 
-		void _Update(float x)
+		void _Update(float value)
 		{
-			onUpdate(x);
+			onUpdate(value);
 		}
 
 		var tween = DOTween.To(_Initialize,_Update,finish,duration);
@@ -61,7 +62,9 @@ public static partial class CommonUtility
 
 	private static string _GetTag(string prefix)
 	{
-		return $"{prefix}_{DateTime.Now:mm:ss}";
+		var currentTime = GameTimeManager.In.GetCurrentTime(true);
+
+		return $"{prefix}_{currentTime:mm:ss}";
 	}
 
 	public static void KillTween(Tween tween,bool complete = false)

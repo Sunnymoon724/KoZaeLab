@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public static class CameraExtension
 {
@@ -286,6 +287,16 @@ public static class CameraExtension
 		{
 			positionArray[i] = camera.WorldToScreenPoint(positionArray[i])/factor;
 		}
+	}
+
+	public static bool IsInsideViewport(this Camera camera,Vector2 position)
+	{
+		if(!_IsValid(camera))
+		{
+			return false;
+		}
+
+		return camera.pixelRect.Contains(position);
 	}
 
 	private static bool _IsValid(Camera camera)

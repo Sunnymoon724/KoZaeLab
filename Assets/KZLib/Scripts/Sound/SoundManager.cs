@@ -25,7 +25,7 @@ namespace KZLib
 
 			var optionCfg = ConfigManager.In.Access<OptionConfig>();
 
-			optionCfg.OnSoundVolumeChanged.Subscribe(_OnChangeSoundOption).RegisterTo(destroyCancellationToken);
+			optionCfg.OnChangedSoundVolume.Subscribe(_OnChangeSoundOption).RegisterTo(destroyCancellationToken);
 
 			_OnChangeSoundOption(optionCfg.CurrentSound);
 		}

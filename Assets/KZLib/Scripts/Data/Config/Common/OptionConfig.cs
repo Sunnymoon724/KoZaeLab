@@ -9,7 +9,7 @@ namespace KZLib.KZData
 	/// <summary>
 	/// OptionConfig is only used to store by PlayerPrefs.
 	/// </summary>
-	public class OptionConfig : IConfig, IDisposable
+	public class OptionConfig : IConfig,IDisposable
 	{
 		private SoundVolume m_masterVolume = SoundVolume.max;
 		private SoundVolume m_musicVolume = SoundVolume.max;
@@ -36,22 +36,24 @@ namespace KZLib.KZData
 		public SystemLanguage CurrentLanguage => m_language;
 
 		private readonly Subject<SoundProfile> m_soundProfileSubject = new();
-		public Observable<SoundProfile> OnSoundVolumeChanged => m_soundProfileSubject;
+		public Observable<SoundProfile> OnChangedSoundVolume => m_soundProfileSubject;
 
 		private readonly Subject<ScreenResolution> m_screenResolutionSubject = new();
-		public Observable<ScreenResolution> OnResolutionChanged => m_screenResolutionSubject;
+		public Observable<ScreenResolution> OnChangedResolution => m_screenResolutionSubject;
 
 		private readonly Subject<int> m_frameRateSubject = new();
-		public Observable<int> OnFrameRateChanged => m_frameRateSubject;
+		public Observable<int> OnChangedFrameRate => m_frameRateSubject;
 
 		private readonly Subject<long> m_graphicQualitySubject = new();
-		public Observable<long> OnGraphicQualityChanged => m_graphicQualitySubject;
+		public Observable<long> OnChangedGraphicQuality => m_graphicQualitySubject;
 
 		private readonly Subject<bool> m_useVibrationSubject = new();
-		public Observable<bool> OnUseVibrationChanged => m_useVibrationSubject;
+		public Observable<bool> OnChangedUseVibration => m_useVibrationSubject;
 
 		private readonly Subject<SystemLanguage> m_languageSubject = new();
-		public Observable<SystemLanguage> OnLanguageChanged => m_languageSubject;
+		public Observable<SystemLanguage> OnChangedLanguage => m_languageSubject;
+
+		private bool m_disposed = false;
 
 		public OptionConfig()
 		{
@@ -61,16 +63,35 @@ namespace KZLib.KZData
 			}
 		}
 
+		~OptionConfig()
+		{
+			_Dispose(false);
+		}
+
 		public void Dispose()
 		{
-			m_soundProfileSubject.Dispose();
-			m_screenResolutionSubject.Dispose();
-			m_frameRateSubject.Dispose();
-			m_graphicQualitySubject.Dispose();
-			m_useVibrationSubject.Dispose();
-			m_languageSubject.Dispose();
-
+			_Dispose(true);
 			GC.SuppressFinalize(this);
+		}
+
+		private void _Dispose(bool disposing)
+		{
+			if(m_disposed)
+			{
+				return;
+			}
+
+			if(disposing)
+			{
+				m_soundProfileSubject.Dispose();
+				m_screenResolutionSubject.Dispose();
+				m_frameRateSubject.Dispose();
+				m_graphicQualitySubject.Dispose();
+				m_useVibrationSubject.Dispose();
+				m_languageSubject.Dispose();
+			}
+
+			m_disposed = true;
 		}
 
 		public bool TryReload()

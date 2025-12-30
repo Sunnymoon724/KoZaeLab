@@ -39,7 +39,7 @@ namespace KZLib.KZDevelop
 		private readonly List<OrderSortInfo> m_orderList = new();
 
 		[BoxGroup("Viewer",ShowLabel = false,Order = 99),SerializeField,KZRichText]
-		private int m_focusIndex = -1;
+		private int m_focusIndex = Global.INVALID_INDEX;
 
 		private GameObjectUIPool<FocusSlotUI> m_slotUIPool = null;
 
@@ -49,7 +49,7 @@ namespace KZLib.KZDevelop
 		private bool IsCircularMode => m_circularMode && m_entryInfoList.Count != 1;
 
 		private readonly Subject<IEntryInfo> m_focusSubject = new();
-		public Observable<IEntryInfo> OnFocusChanged => m_focusSubject;
+		public Observable<IEntryInfo> OnChangedFocus => m_focusSubject;
 
 		public IEntryInfo FocusEntryInfo => m_entryInfoList.TryGetValueByIndex(m_focusIndex,out var info) ? info : null;
 

@@ -25,7 +25,7 @@ public class VideoPanelUI : WindowUI2D
 	private CancellationTokenSource m_tokenSource = null;
 
 	private readonly Subject<float> m_videoTimeSubject = new();
-	public Observable<float> OnVideoTimeChanged => m_videoTimeSubject;
+	public Observable<float> OnChangedVideoTime => m_videoTimeSubject;
 
 	public override void Open(object param)
 	{

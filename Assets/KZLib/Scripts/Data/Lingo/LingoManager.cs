@@ -19,7 +19,7 @@ namespace KZLib.KZData
 		private SystemLanguage m_currentLanguage = SystemLanguage.English;
 
 		private readonly Subject<Unit> m_lingoSubject = new();
-		public Observable<Unit> OnLanguageChanged => m_lingoSubject;
+		public Observable<Unit> OnChangedLanguage => m_lingoSubject;
 
 		public SystemLanguage CurrentLanguage => m_currentLanguage;
 
@@ -54,7 +54,7 @@ namespace KZLib.KZData
 
 			var optionCfg = ConfigManager.In.Access<OptionConfig>();
 
-			optionCfg.OnLanguageChanged.Subscribe(_OnChangeLanguage).AddTo(m_disposable);
+			optionCfg.OnChangedLanguage.Subscribe(_OnChangeLanguage).AddTo(m_disposable);
 
 			_OnChangeLanguage(optionCfg.CurrentLanguage);
 

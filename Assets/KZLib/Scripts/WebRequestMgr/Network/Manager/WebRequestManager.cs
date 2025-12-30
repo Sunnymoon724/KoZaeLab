@@ -13,7 +13,7 @@ namespace KZLib.KZNetwork
 		private bool m_disposed = false;
 
 		private readonly Subject<string> m_networkErrorSubject = new();
-		public Observable<string> OnNetworkErrorShown => m_networkErrorSubject;
+		public Observable<string> OnShownNetworkError => m_networkErrorSubject;
 
 		protected override void Release(bool disposing)
 		{
@@ -76,9 +76,10 @@ namespace KZLib.KZNetwork
 		private void _WriteDump(ResponseInfo responseInfo,DumpInfo dumpInfo,long responseTime)
 		{
 			var dumpBuilder = new StringBuilder();
+			var currentTime = GameTimeManager.In.GetCurrentTime(true);
 
 			dumpBuilder.Append("================= [Web Request Dump] =================\n\n");
-			dumpBuilder.Append($"[TIME]\n{DateTime.Now:yyyy\\/MM\\/dd\\ HH:mm:ss}\n\n");
+			dumpBuilder.Append($"[TIME]\n{currentTime:yyyy\\/MM\\/dd\\ HH:mm:ss}\n\n");
 			dumpBuilder.Append($"[FULL URL]\n{dumpInfo.Uri.AbsoluteUri}\n\n");
 			dumpBuilder.Append($"[REQUEST]\n");
 			dumpBuilder.Append($"[REQUEST METHOD]\n{dumpInfo.Method}\n\n");

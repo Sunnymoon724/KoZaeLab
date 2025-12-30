@@ -43,7 +43,7 @@ namespace KZLib.KZDevelop
 
 							Undo.RecordObject(m_pathCreator,"Add Anchor");
 
-							if(m_selectedHandleIndex == -1)
+							if(m_selectedHandleIndex == Global.INVALID_INDEX)
 							{
 								m_pathCreator.AddAnchor(newPosition);
 							}

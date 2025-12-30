@@ -8,7 +8,6 @@ namespace KZLib.KZData
 	{
 		public bool IsCheckProto { get; private set; } = true; // 
 		public bool IsOfflineMode { get; private set; } = false; // 오프라인 모드
-		public DateTime ServerStartTime { get; private set; } = DateTime.Now; // 
 		public List<string> BindDebugBtnList { get; private set; } = new(); // 
 		public List<string> AutoCmdList { get; private set; } = new(); // 
 		public bool IsSkipHeroSpawnAni { get; private set; } = false; // 

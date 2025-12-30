@@ -11,6 +11,8 @@ EditorBuildSettings:
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: e3b6b483f9912e142957595983e019d0,
       type: 2}
+    com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f,
+      type: 2}
     com.unity.localization.settings: {fileID: 11400000, guid: 3031b6a1cf6d2f044bc893fa6968ac05,
       type: 2}
     com.willykc.templ: {fileID: 11400000, guid: e274758ee56781a4ead8d4c077c66e99,

@@ -8,8 +8,8 @@ public class SpinImageUI : BaseImageUI,IDragHandler
 	[SerializeField] private float m_speed = 1.0f;
 	[SerializeField] private bool m_lockVertical = false;
 
-	private readonly Subject<Unit> m_imageSpinSubject = new();
-	public Observable<Unit> OnImageSpin => m_imageSpinSubject;
+	private readonly Subject<Unit> m_imageSubject = new();
+	public Observable<Unit> OnSpinedImage => m_imageSubject;
 
 	public void SetTarget(Transform target)
 	{
@@ -32,6 +32,6 @@ public class SpinImageUI : BaseImageUI,IDragHandler
 
 		m_target.localRotation = Quaternion.Euler(0.0f,-0.5f*delta.x*m_speed,-0.5f*delta.y*m_speed)*m_target.localRotation;
 
-		m_imageSpinSubject.OnNext(Unit.Default);
+		m_imageSubject.OnNext(Unit.Default);
 	}
 }

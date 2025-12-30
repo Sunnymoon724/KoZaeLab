@@ -1,0 +1,23 @@
+{
+    "name": "KZInAppPurchase",
+    "rootNamespace": "",
+    "references": [
+        "KZLib",
+        "Unity.Purchasing",
+        "UniTask",
+        "Unity.Purchasing.Security"
+    ],
+    "includePlatforms": [
+        "Android",
+        "Editor",
+        "iOS"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

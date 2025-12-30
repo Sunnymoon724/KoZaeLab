@@ -87,7 +87,7 @@ namespace KZLib.KZDevelop
 		}
 
 		private readonly Subject<Unit> m_pathSubject = new();
-		public Observable<Unit> OnPathChanged => m_pathSubject;
+		public Observable<Unit> OnChangedPath => m_pathSubject;
 
 		public void SetDirty()
 		{

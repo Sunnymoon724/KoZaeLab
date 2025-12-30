@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using KZLib.KZData;
 using System.Collections;
+using MessagePipe;
 
 
 #if UNITY_EDITOR
@@ -151,6 +152,8 @@ namespace KZLib
 		private bool IsIncludeTitleName => !SceneNameList.Contains(c_TitleScene);
 
 		protected CancellationTokenSource m_tokenSource = null;
+		
+		private ResolutionMonitor m_resolutionMonitor = null;
 
 		protected virtual void Awake()
 		{
@@ -197,6 +200,8 @@ namespace KZLib
 			_InitializeObject(stringBuilder);
 
 			LogSvc.System.I(stringBuilder.ToString());
+
+			m_resolutionMonitor = new ResolutionMonitor();
 
 			await _StartMainAsync();
 		}
@@ -341,6 +346,7 @@ namespace KZLib
 			}
 #endif
 		}
+
 #if UNITY_EDITOR
 		private async UniTask _RefreshGame()
 		{
@@ -349,6 +355,25 @@ namespace KZLib
 			await _StartMainAsync();
 		}
 #endif
+
+		private void OnApplicationFocus( bool focus )
+		{
+			if (focus)
+			{
+				LogSvc.System.I("Move to foreground");
+
+				m_resolutionMonitor?.StartResolutionDetection();
+			}
+			else
+			{
+				LogSvc.System.I("Move to background");
+
+				m_resolutionMonitor?.StopResolutionDetection();
+			}
+
+			GlobalMessagePipe.GetPublisher<CommonNoticeTag,bool>().Publish(CommonNoticeTag.ChangedApplicationFocus,focus);
+		}
+
 		private readonly List<string> m_sceneNameList = new();
 		private List<string> SceneNameList => SceneNameGroup as List<string>;
 

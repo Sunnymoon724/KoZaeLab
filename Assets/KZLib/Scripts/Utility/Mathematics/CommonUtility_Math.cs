@@ -31,12 +31,22 @@ public static partial class CommonUtility
 	#region Clamp
 	public static int LoopClamp(int index,int size)
 	{
-		return size < 1 ? 0 : index < 0 ? size-1+(index+1)%size : index%size;
+		if(size <= 0)
+		{
+			throw new ArgumentOutOfRangeException("size must be greater than zero.");
+		}
+
+		return (index%size+size)%size;
 	}
 
 	public static float LoopClamp(float index,int size)
 	{
-		return size < 1 ? 0 : index < 0.0f ? size-1+(index+1)%size : index%size;
+		if(size <= 0)
+		{
+			throw new ArgumentOutOfRangeException("size must be greater than zero.");
+		}
+
+		return (index%size+size)%size;
 	}
 
 	public static TCompare Clamp<TCompare>(TCompare value,TCompare minValue,TCompare maxValue) where TCompare : IComparable<TCompare>

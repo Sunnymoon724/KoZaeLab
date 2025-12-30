@@ -48,25 +48,25 @@ public static partial class CommonUtility
 
 		var layerProperty = serialized.FindProperty("layers");
 		var layerCount = layerProperty.arraySize;
-		var index = -1;
+		var index = Global.INVALID_INDEX;
 		
 		for(var i=8;i<layerCount;i++)
 		{
 			var value = layerProperty.GetArrayElementAtIndex(i).stringValue;
 
-			if(index == -1 && value.IsEmpty())
+			if(index == Global.INVALID_INDEX && value.IsEmpty())
 			{
 				index = i;
 			}			
 			else if(value.IsEqual(layerName))
 			{
-				index = -1;
+				index = Global.INVALID_INDEX;
 
 				break;
 			}
 		}
 		
-		if(index != -1)
+		if(index != Global.INVALID_INDEX)
 		{
 			var property = layerProperty.GetArrayElementAtIndex(index);
 			property.stringValue = layerName;

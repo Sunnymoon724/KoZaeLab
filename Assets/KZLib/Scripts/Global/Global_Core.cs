@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using UnityEngine;
 
+#region General
 public static partial class Global
 {
 	//? General
@@ -21,7 +22,19 @@ public static partial class Global
 
 	public const string DISABLE_HEX_COLOR = "#808080FF";
 	public const string WRONG_HEX_COLOR = "#FFC300FF";
+
+	public const float PERCENT_HUNDRED = 0.01f;
+	public const float PERCENT_THOUSAND = 0.001f;
+	public const float PERCENT_10THOUSAND = 0.0001f;
 }
+#endregion General
+
+// #region Time
+// public static partial class Global
+// {
+	
+// }
+// #endregion Time
 
 #region Path
 public static partial class Global

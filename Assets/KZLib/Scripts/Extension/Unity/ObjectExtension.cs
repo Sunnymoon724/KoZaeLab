@@ -18,26 +18,26 @@ public static class ObjectExtension
 		return instance;
 	}
 
-	public static void DestroyObject(this Object origin)
+	public static void DestroyObject(this Object target)
 	{
-		if(!_IsValid(origin,false))
+		if(!_IsValid(target,false))
 		{
 			return;
 		}
 
 		if(Application.isPlaying)
 		{
-			Object.Destroy(origin);
+			Object.Destroy(target);
 		}
 		else
 		{
-			Object.DestroyImmediate(origin);
+			Object.DestroyImmediate(target);
 		}
 	}
 
-	public static byte[] ToByte(this Object origin)
+	public static byte[] ToByte(this Object target)
 	{
-		if(!_IsValid(origin,true))
+		if(!_IsValid(target,true))
 		{
 			return null;
 		}
@@ -45,7 +45,7 @@ public static class ObjectExtension
 		using var stream = new MemoryStream();
 		var binary = new BinaryFormatter();
 
-		binary.Serialize(stream,origin);
+		binary.Serialize(stream,target);
 
 		return stream.ToArray();
 	}

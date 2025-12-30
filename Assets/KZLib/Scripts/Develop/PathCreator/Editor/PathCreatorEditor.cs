@@ -36,7 +36,7 @@ namespace KZLib.KZDevelop
 
 			m_pathCreator = target as PathCreator;
 
-			m_pathCreator.OnPathChanged.Subscribe(_OnResetState).AddTo(m_disposable);
+			m_pathCreator.OnChangedPath.Subscribe(_OnResetState).AddTo(m_disposable);
 
 			Undo.undoRedoPerformed -= _OnUndoRedo;
 			Undo.undoRedoPerformed += _OnUndoRedo;

@@ -165,7 +165,7 @@ public static class Vector2Extension
 
 	public static (Vector2 Point,int Index) CalculateClosestPoint(this Vector2 point,params Vector2[] pointArray)
 	{
-		var index = -1;
+		var index = Global.INVALID_INDEX;
 		var closestPoint = Vector2.zero;
 		var closestDistance = float.MaxValue;
 

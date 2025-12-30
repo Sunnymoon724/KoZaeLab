@@ -9,6 +9,7 @@ using System.Xml;
 using KZLib.KZData;
 using Newtonsoft.Json;
 using UnityEngine;
+
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
@@ -131,7 +132,7 @@ public static class StringExtension
 		var count = 0;
 		var index = text.IndexOf(character);
 
-		while(index != -1)
+		while(index != Global.INVALID_INDEX)
 		{
 			count++;
 			index = text.IndexOf(character,index+1);
@@ -150,15 +151,15 @@ public static class StringExtension
 			return -1;
 		}
 
-		var index = -1;
+		var index = Global.INVALID_INDEX;
 
 		for(var i=0;i<order;i++)
 		{
 			index = text.IndexOf(character,index+1);
 
-			if(index == -1)
+			if(index == Global.INVALID_INDEX)
 			{
-				return -1;
+				return Global.INVALID_INDEX;
 			}
 		}
 		return index;
@@ -278,6 +279,18 @@ public static class StringExtension
 			return value;
 		}
 
+		var lower = text.ToLower();
+
+		if(lower.IsEqual("t") || lower.IsEqual("1") || lower.IsEqual("yes") || lower.IsEqual("y"))
+		{
+			return true;
+		}
+
+		if(lower.IsEqual("f") || lower.IsEqual("0") || lower.IsEqual("no") || lower.IsEqual("n"))
+		{
+			return false;
+		}
+
 		LogSvc.System.W($"Failed to convert {text} into bool");
 
 		return false;
@@ -392,9 +405,11 @@ public static class StringExtension
 	#endregion Convert Number
 
 	#region Convert DateTime
-	public static DateTime ToDateTime(this string text,CultureInfo cultureInfo = null, DateTimeStyles dateTimeStyles = DateTimeStyles.AdjustToUniversal)
+	public static DateTime ToDateTime(this string text,CultureInfo cultureInfo = null,DateTimeStyles dateTimeStyles = DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal)
 	{
-		if(!text.IsEmpty() && DateTime.TryParseExact(text,"yyyy-MM-dd HH:mm",cultureInfo ?? CultureInfo.CreateSpecificCulture("ko-KR"),dateTimeStyles,out var value))
+		var defaultCulture = cultureInfo ?? CultureInfo.InvariantCulture;
+
+		if(!text.IsEmpty() && DateTime.TryParseExact(text,"yyyy-MM-dd HH:mm",defaultCulture,dateTimeStyles,out var value))
 		{
 			return value;
 		}
@@ -704,7 +719,7 @@ public static class StringExtension
 		var layer = LayerMask.NameToLayer(layerName);
 
 #if UNITY_EDITOR
-		if(layer == -1 && isAutoCreate)
+		if(layer == Global.INVALID_INDEX && isAutoCreate)
 		{
 			CommonUtility.AddLayer(layerName);
 

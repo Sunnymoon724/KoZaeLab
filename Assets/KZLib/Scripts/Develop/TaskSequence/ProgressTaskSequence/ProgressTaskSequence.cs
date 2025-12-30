@@ -38,7 +38,7 @@ namespace KZLib.KZDevelop
 		protected bool m_IgnoreTimeScale = false;
 
 		private readonly Subject<float> m_progressChangeSubject = new();
-		public Observable<float> OnProgressChanged => m_progressChangeSubject;
+		public Observable<float> OnChangedProgress => m_progressChangeSubject;
 
 		protected abstract void _SetProgress(float progress);
 

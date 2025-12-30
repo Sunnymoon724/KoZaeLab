@@ -8,6 +8,11 @@ public static class DateTimeExtension
 		return new int[] { dateTime.Year,dateTime.Month,dateTime.Day,dateTime.Hour,dateTime.Minute,dateTime.Second, };
 	}
 
+	public static long ToLong(this DateTime dateTime)
+	{
+		return new DateTimeOffset(dateTime.ToUniversalTime()).ToUnixTimeMilliseconds();
+	}
+
 	/// <summary>
 	/// -> 00:00
 	/// </summary>

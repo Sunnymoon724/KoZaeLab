@@ -62,14 +62,14 @@ public class ProgressImageUI : BaseImageUI
 	{
 		base.Release();
 
-		CommonUtility.KillTween(m_tween);
+		_KillTween();
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
 
-		CommonUtility.KillTween(m_tween);
+		_KillTween();
 	}
 
     public void SetRange(float minValue,float maxValue)
@@ -80,20 +80,25 @@ public class ProgressImageUI : BaseImageUI
 		CurrentValue = m_minValue;
 	}
 
-	public void SetValue(float _value)
+	public void SetValue(float value)
 	{
-		CurrentValue = _value;
+		CurrentValue = value;
 	}
 
 	public void SetValueDuration(float value,float duration,Action onComplete = null)
 	{
-		CommonUtility.KillTween(m_tween);
+		_KillTween();
 
 		var amount = value/m_maxValue;
 
 		m_tween = CommonUtility.SetTweenProgress(CurrentValue,value,duration,null,onComplete);
 
 		m_tween.Play();
+	}
+
+	private void _KillTween()
+	{
+		CommonUtility.KillTween(m_tween);
 	}
 
 	protected override void Reset() 

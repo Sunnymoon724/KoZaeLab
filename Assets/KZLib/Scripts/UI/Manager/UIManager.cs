@@ -11,8 +11,8 @@ namespace KZLib
 		//? Canvas List
 		private readonly List<RepositoryUI> m_repositoryList = new();
 
-		[SerializeField] private RepositoryUI2D m_repository2D = null;
-		[SerializeField] private RepositoryUI3D m_repository3D = null;
+		[SerializeField] private RepositoryUI2D m_repository2D = null; // camera -> overlay
+		[SerializeField] private RepositoryUI3D m_repository3D = null; // camera -> world space
 
 
 		[ShowInInspector,ListDrawerSettings(ShowFoldout = false),ReadOnly]
@@ -49,6 +49,11 @@ namespace KZLib
 			{
 				m_repository3D.SetCamera(camera);
 			}
+		}
+
+		public Camera Get3DCamera()
+		{
+			return m_repository3D != null ? m_repository3D.CanvasCamera : null;
 		}
 
 		#region Register

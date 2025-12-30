@@ -26,6 +26,8 @@ namespace KZLib
 		{
 			base.Release();
 
+			m_cacheResolver.Dispose();
+
 			ClearAllEffectClip();
 		}
 
@@ -104,7 +106,6 @@ namespace KZLib
 			}
 
 			m_playingList.Clear();
-			m_cacheResolver.Dispose();
 		}
 
 		private void _StoreEffectClip(EffectClip effectClip)

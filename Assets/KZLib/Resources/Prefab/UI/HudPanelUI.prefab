@@ -796,7 +796,6 @@ GameObject:
   - component: {fileID: 1569897157265256944}
   - component: {fileID: 3636073765262753836}
   - component: {fileID: 5767377766304202725}
-  - component: {fileID: 8159943620430996521}
   m_Layer: 5
   m_Name: ToggleGroup
   m_TagString: Untagged
@@ -859,34 +858,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 408311507856658695}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
+  m_Script: {fileID: 11500000, guid: 439147e723bd1ff498bb8ebb726edab3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_AllowSwitchOff: 1
---- !u!114 &8159943620430996521
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 408311507856658695}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b07bb816a81366443b0bab30c393fbeb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
-  m_toggleGroup: {fileID: 5767377766304202725}
-  m_startIndex: -1
-  m_toggleUIList: []
+  m_startToggleName: None
 --- !u!1 &532320591015834737
 GameObject:
   m_ObjectHideFlags: 0
@@ -9255,7 +9231,6 @@ MonoBehaviour:
   m_pooling: 1
   m_layerType: 0
   m_popUpTransform: {fileID: 0}
-  m_adjustRect: {fileID: 4259471444437858031}
   m_priorityType: 4
 --- !u!223 &5659943223283456368
 Canvas:

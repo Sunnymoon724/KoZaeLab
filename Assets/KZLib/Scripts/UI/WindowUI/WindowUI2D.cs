@@ -23,9 +23,6 @@ public abstract class WindowUI2D : WindowUI
 	private bool IsPopup => LayerType == UILayerType.PopUp;
 
 	[VerticalGroup("UI/General",Order = 0),SerializeField]
-	protected RectTransform m_adjustRect = null;
-
-	[VerticalGroup("UI/General",Order = 0),SerializeField]
 	private UIPriorityType m_priorityType = UIPriorityType.Middle;
 	public override UIPriorityType PriorityType => m_priorityType;
 
@@ -40,10 +37,6 @@ public abstract class WindowUI2D : WindowUI
 	protected override void Initialize()
 	{
 		base.Initialize();
-
-#if UNITY_ANDROID || UNITY_IOS
-		_CheckSafeArea();
-#endif
 
 		if(LayerType == UILayerType.PopUp && m_popUpTransform)
 		{
@@ -75,60 +68,5 @@ public abstract class WindowUI2D : WindowUI
 	public void AddLink(WindowUI2D windowUI2D)
 	{
 		m_linkedHashSet.Add(windowUI2D);
-	}
-
-	protected virtual void Update()
-	{
-#if UNITY_ANDROID || UNITY_IOS
-		_CheckSafeArea();
-#endif
-	}
-
-#if UNITY_ANDROID || UNITY_IOS
-	private void _CheckSafeArea()
-	{
-		if(!m_adjustRect)
-		{
-			return;
-		}
-
-		var safeArea = Screen.safeArea;
-
-		if(safeArea == m_safeArea)
-		{
-			return;
-		}
-
-		m_safeArea = safeArea;
-
-		if(Screen.width <= 0 || Screen.height <= 0)
-		{
-			return;
-		}
-
-		var anchorMin = safeArea.position;
-		var anchorMax = safeArea.position+safeArea.size;
-
-		anchorMin.x /= Screen.width;
-		anchorMin.y /= Screen.height;
-		anchorMax.x /= Screen.width;
-		anchorMax.y /= Screen.height;
-
-		if(anchorMin.x >= 0 && anchorMin.y >= 0 && anchorMax.x >= 0 && anchorMax.y >= 0)
-		{
-			m_adjustRect.anchorMin = anchorMin;
-			m_adjustRect.anchorMax = anchorMax;
-		}
-	}
-#endif
-
-	protected override void Reset()
-	{
-		base.Reset();
-
-		if(!m_adjustRect)
-		{
-			m_adjustRect = UIRectTransform;
-		}
 	}
 }

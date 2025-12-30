@@ -102,12 +102,12 @@ namespace KZLib.KZDevelop
 		private float ViewportSize => m_vertical ? m_viewport.rect.height : m_viewport.rect.width;
 
 		private readonly Subject<Unit> m_dragStartSubject = new();
-		public Observable<Unit> OnDragStarted => m_dragStartSubject;
+		public Observable<Unit> OnStartedDrag => m_dragStartSubject;
 
 		private readonly Subject<float> m_dragEndSubject = new();
-		public Observable<float> OnDragFinished => m_dragEndSubject;
+		public Observable<float> OnFinishedDrag => m_dragEndSubject;
 
-		public void OnPointerDown(PointerEventData eventData)
+		void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
 		{
 			if(!m_useDrag || eventData.button != PointerEventData.InputButton.Left)
 			{
@@ -119,7 +119,7 @@ namespace KZLib.KZDevelop
 			m_scrollInfo.Reset();
 		}
 
-		public void OnPointerUp(PointerEventData eventData)
+		void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
 		{
 			if(!m_useDrag || eventData.button != PointerEventData.InputButton.Left)
 			{
@@ -136,7 +136,7 @@ namespace KZLib.KZDevelop
 			m_hold = false;
 		}
 
-		public void OnScroll(PointerEventData eventData)
+		void IScrollHandler.OnScroll(PointerEventData eventData)
 		{
 			if(!m_useDrag)
 			{
@@ -164,7 +164,7 @@ namespace KZLib.KZDevelop
 			_RefreshLocation(location,false);
 		}
 
-		public void OnBeginDrag(PointerEventData eventData)
+		void IBeginDragHandler.OnBeginDrag(PointerEventData eventData)
 		{
 			if(!m_useDrag || eventData.button != PointerEventData.InputButton.Left)
 			{
@@ -182,7 +182,7 @@ namespace KZLib.KZDevelop
 			m_dragStartSubject.OnNext(Unit.Default);
 		}
 
-		public void OnDrag(PointerEventData eventData)
+		void IDragHandler.OnDrag(PointerEventData eventData)
 		{
 			if(!m_useDrag || eventData.button != PointerEventData.InputButton.Left || !m_dragging)
 			{
@@ -211,7 +211,7 @@ namespace KZLib.KZDevelop
 			_RefreshLocation(location,false);
 		}
 
-		public void OnEndDrag(PointerEventData eventData)
+		void IEndDragHandler.OnEndDrag(PointerEventData eventData)
 		{
 			if(!m_useDrag || eventData.button != PointerEventData.InputButton.Left)
 			{

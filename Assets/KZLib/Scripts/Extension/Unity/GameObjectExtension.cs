@@ -66,7 +66,7 @@ public static class GameObjectExtension
 			child.gameObject.EnsureActive(value);
 		}
 
-		gameObject.transform.TraverseChildren(_SetActive);
+		gameObject.transform.RecursiveChildren(_SetActive);
 	}
 
 	public static void SetAllLayer(this GameObject gameObject,int layer)
@@ -83,7 +83,7 @@ public static class GameObjectExtension
 			child.gameObject.layer = layer;
 		}
 
-		gameObject.transform.TraverseChildren(_SetLayer);
+		gameObject.transform.RecursiveChildren(_SetLayer);
 	}
 
 	public static void SetAllLayer(this GameObject gameObject,string layerName)

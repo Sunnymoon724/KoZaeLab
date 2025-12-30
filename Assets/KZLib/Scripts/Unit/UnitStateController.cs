@@ -20,7 +20,7 @@ namespace KZLib
 		protected TEnum m_stateType = default;
 
 		private readonly Subject<UnitStateInfo> m_unitStateSubject = new();
-		public Observable<UnitStateInfo> OnUnitStateChanged => m_unitStateSubject;
+		public Observable<UnitStateInfo> OnChangedUnitState => m_unitStateSubject;
 
 		protected abstract bool _CanChange(TEnum newStateTag,bool isForce);
 

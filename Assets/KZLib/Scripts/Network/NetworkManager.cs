@@ -12,7 +12,7 @@ namespace KZLib.KZNetwork
 {
 	public partial class NetworkManager : Singleton<NetworkManager>
 	{
-		private const string c_TitleScene = "TitleScene";
+		private const string c_titleScene = "TitleScene";
 
 		private bool m_disposed = false;
 
@@ -24,6 +24,8 @@ namespace KZLib.KZNetwork
 		private string m_publicKey = null;
 #endif
 		public bool HasAccountToken => m_accountCredential.HasAccountToken;
+
+		public string AccountId => m_accountCredential.AccountId;
 
 		protected override void Initialize()
 		{
@@ -160,10 +162,10 @@ namespace KZLib.KZNetwork
 
 			return isSuccess;
 		}
-		
+
 		private void _ChangeTitleScene()
 		{
-			SceneStateManager.In.ChangeSceneWithLoading(c_TitleScene,UINameType.CommonTransitionPanelUI);
+			SceneStateManager.In.ChangeSceneWithLoading(c_titleScene,UINameType.CommonTransitionPanelUI);
 		}
 #endif
 
@@ -211,9 +213,10 @@ namespace KZLib.KZNetwork
 		private void _WriteDump(string requestMethodName,string requestText,bool responseResult,string responseText,long responseTime)
 		{
 			var dumpBuilder = new StringBuilder();
+			var currentTime = GameTimeManager.In.GetCurrentTime(true);
 
 			dumpBuilder.Append("================= [Network Dump] =================\n\n");
-			dumpBuilder.Append($"[TIME]\n{DateTime.Now:yyyy\\/MM\\/dd\\ HH:mm:ss}\n\n");
+			dumpBuilder.Append($"[TIME]\n{currentTime:yyyy\\/MM\\/dd\\ HH:mm:ss}\n\n");
 			dumpBuilder.Append($"[REQUEST]\n");
 			dumpBuilder.Append($"[REQUEST]\n{requestMethodName}\n");
 

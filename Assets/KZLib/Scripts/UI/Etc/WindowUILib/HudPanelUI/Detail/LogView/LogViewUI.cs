@@ -104,7 +104,7 @@ namespace HudPanel
 		{
 			base.OnEnable();
 
-			void _UpdateLogScroll(MessageInfo messageInfo)
+			void _RefreshLogScroll(MessageInfo messageInfo)
 			{
 				var entryInfo = _CreateLogEntryInfo(messageInfo);
 
@@ -114,7 +114,7 @@ namespace HudPanel
 				}
 			}
 
-			m_subscription = GlobalMessagePipe.GetSubscriber<CommonNoticeTag,MessageInfo>().Subscribe(CommonNoticeTag.DisplayLog,_UpdateLogScroll);
+			m_subscription = GlobalMessagePipe.GetSubscriber<CommonNoticeTag,MessageInfo>().Subscribe(CommonNoticeTag.DisplayLog,_RefreshLogScroll);
 
 			_SetScrollRect();
 		}

@@ -29,7 +29,7 @@ namespace KZLib
 
 			var optionCfg = ConfigManager.In.Access<OptionConfig>();
 
-			optionCfg.OnGraphicQualityChanged.Subscribe(_OnChangeFarClipPlane).AddTo(m_disposable);
+			optionCfg.OnChangedGraphicQuality.Subscribe(_OnChangeFarClipPlane).AddTo(m_disposable);
 
 			_OnChangeFarClipPlane(optionCfg.CurrentGraphicQuality);
 		}
@@ -79,21 +79,11 @@ namespace KZLib
 
 				cameraList.Add(subCamera);
 			}
-
-			if(UIManager.HasInstance)
-			{
-				UIManager.In.Set3DCamera(newCamera);
-			}
 		}
 
 		public void DetachCamera()
 		{
 			m_mainCamera = null;
-
-			if(UIManager.HasInstance)
-			{
-				UIManager.In.Set3DCamera(null);
-			}
 		}
 
 		private void _OnChangeFarClipPlane(long graphicQuality)

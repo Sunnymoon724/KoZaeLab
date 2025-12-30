@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using KZLib.KZUtility;
 using System.Text;
 using UnityEngine;
-using System;
 using MessagePipe;
 using Microsoft.Extensions.DependencyInjection;
+using KZLib;
 
 #if UNITY_EDITOR
 
@@ -26,23 +26,26 @@ using Debug = UnityEngine.Debug;
 
 public class LogSvc
 {
-	public static readonly LogChannel None = new("None");
+	public static readonly LogChannel None = new(nameof(None));
 
-	public static readonly LogChannel Scene = new("Scene");
-	public static readonly LogChannel System = new("System");
-	public static readonly LogChannel Build = new("Build");
+	public static readonly LogChannel Scene = new(nameof(Scene));
+	public static readonly LogChannel System = new(nameof(System));
+	public static readonly LogChannel Build = new(nameof(Build));
 
-	public static readonly LogChannel Network = new("Network");
-	public static readonly LogChannel Server = new("Server");
-	public static readonly LogChannel Client = new("Client");
+	public static readonly LogChannel Network = new(nameof(Network));
+	public static readonly LogChannel Server = new(nameof(Server));
+	public static readonly LogChannel Client = new(nameof(Client));
 
-	public static readonly LogChannel UI = new("UI");
-	public static readonly LogChannel FX = new("FX");
+	public static readonly LogChannel UI = new(nameof(UI));
+	public static readonly LogChannel FX = new(nameof(FX));
 
-	public static readonly LogChannel Game = new("Game");
-	public static readonly LogChannel Editor = new("Editor");
+	public static readonly LogChannel Game = new(nameof(Game));
+	public static readonly LogChannel Editor = new(nameof(Editor));
 
-	public static readonly LogChannel Test = new("Test");
+
+	public static readonly LogChannel External = new(nameof(External));
+
+	public static readonly LogChannel Test = new(nameof(Test));
 }
 
 public class LogChannel
@@ -189,7 +192,8 @@ public class LogChannel
 
 	private static void _HandleLogMessage(string condition,string stackTrace,LogType logType)
 	{
-		var header = $"<{_ConvertType(logType)}> {DateTime.Now:MM/dd HH:mm:ss}";
+		var currentTime = GameTimeManager.In.GetCurrentTime(true);
+		var header = $"<{_ConvertType(logType)}> {currentTime:MM/dd HH:mm:ss}";
 		var body = string.Empty;
 
 		if(logType == LogType.Exception)
@@ -207,7 +211,7 @@ public class LogChannel
 
 			var index = stackTraceArray.IndexOf(_FindIndex);
 
-			if(index == -1)
+			if(index == Global.INVALID_INDEX)
 			{
 				body = condition;
 			}

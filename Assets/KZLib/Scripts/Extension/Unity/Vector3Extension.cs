@@ -238,9 +238,14 @@ public static class Vector3Extension
 		return new Color(vector.x/255.0f,vector.y/255.0f,vector.z/255.0f,1.0f);
 	}
 
+	public static float ToAngle(this Vector3 vector)
+	{
+		return Mathf.Atan2( vector.y, vector.x ) * Mathf.Rad2Deg;
+	}
+
 	public static (Vector3 Position,int Index) CalculateGetClosestPosition(this Vector3 position,params Vector3[] positionArray)
 	{
-		var index = -1;
+		var index = Global.INVALID_INDEX;
 		var closestPosition = Vector3.zero;
 		var closestDistance = float.MaxValue;
 

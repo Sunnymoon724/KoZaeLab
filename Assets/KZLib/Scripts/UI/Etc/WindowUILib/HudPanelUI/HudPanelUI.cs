@@ -23,10 +23,8 @@ public class HudPanelUI : WindowUI2D
 	[SerializeField,ListDrawerSettings(ShowFoldout = false)]
 	private List<IHudUI> m_hudUIList = new();
 
-	protected override void Update()
+	private void Update()
 	{
-		base.Update();
-
 		m_deltaTime += Time.deltaTime;
 		m_frameCount++;
 

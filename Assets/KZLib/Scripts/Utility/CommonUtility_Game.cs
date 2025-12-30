@@ -53,45 +53,6 @@ public static partial class CommonUtility
 		}
 	}
 
-	public static long GetCurrentTimeToMilliSecond()
-	{
-		return DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
-	}
-
-	/// <summary>
-	/// Get New Week Monday
-	/// </summary>
-	public static DateTime FindNewWeekMonday()
-	{
-		//? Calculate next Monday.
-		var today = DateTime.Today;
-
-		for(var i=1;i<8;i++)
-		{
-			today = DateTime.Today.AddDays(i);
-
-			if(today.DayOfWeek == DayOfWeek.Monday)
-			{
-				break;
-			}
-		}
-
-		return today;
-	}
-
-	public static TimeSpan GetRemainTime()
-	{
-		return GetNextDay().Date-DateTime.Now;
-	}
-
-	/// <summary>
-	/// Get Next Day -> 12:00
-	/// </summary>
-	public static DateTime GetNextDay()
-	{
-		return DateTime.Today.AddDays(1);
-	}
-
 	public static void PauseGame()
 	{
 		Time.timeScale = 0.0f;
@@ -162,6 +123,8 @@ public static partial class CommonUtility
 		_ReleaseSingleton<WebRequestManager>();
 
 		_ReleaseSingleton<VibrationManager>();
+
+		_ReleaseSingleton<TimelineManager>();
 
 #if KZLIB_PLAY_FAB
 		_ReleaseSingleton<PlayFabManager>();

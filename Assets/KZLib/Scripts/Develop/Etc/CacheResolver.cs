@@ -6,12 +6,12 @@ using System.Threading;
 
 namespace KZLib.KZDevelop
 {
-	public class CacheResolver<TCache>: IDisposable
+	public sealed class CacheResolver<TCache>: IDisposable
 	{
 		private record CacheInfo
 		{
 			public TCache Cache { get; }
-			public bool IsOverdue => m_duration < DateTime.Now.Ticks;
+			public bool IsOverdue => m_duration < GameTimeManager.In.GetCurrentTime(true).Ticks;
 
 			private long m_duration = 0L;
 
@@ -20,11 +20,11 @@ namespace KZLib.KZDevelop
 				Cache = cache;
 				m_duration = duration;
 			}
-			
+
 			public void UpdateDuration(long duration)
-            {
-                m_duration = duration;
-            }
+			{
+				m_duration = duration;
+			}
 		}
 
 		private readonly Dictionary<string,List<CacheInfo>> m_cacheInfoListDict = new();
@@ -34,6 +34,8 @@ namespace KZLib.KZDevelop
 
 		private readonly float m_updatePeriod = 0.0f;
 		private readonly float m_deleteTime = 0.0f;
+
+		private bool m_disposed = false;
 
 		public CacheResolver(float deleteTime = 60.0f,float updatePeriod = 30.0f)
 		{
@@ -46,15 +48,34 @@ namespace KZLib.KZDevelop
 			_LoopProcessAsync().Forget();
 		}
 
+		~CacheResolver()
+		{
+			_Dispose(false);
+		}
+
 		public void Dispose()
 		{
-			m_tokenSource?.Cancel(); 
-			m_tokenSource?.Dispose(); 
-
-			m_cacheInfoListDict.Clear();
-			m_removeList.Clear();
-
+			_Dispose(true);
 			GC.SuppressFinalize(this);
+		}
+
+		private void _Dispose(bool disposing)
+		{
+			if(m_disposed)
+			{
+				return;
+			}
+
+			if(disposing)
+			{
+				m_tokenSource?.Cancel(); 
+				m_tokenSource?.Dispose(); 
+
+				m_cacheInfoListDict.Clear();
+				m_removeList.Clear();
+			}
+
+			m_disposed = true;
 		}
 
 		public bool TryGetCache(string key,out TCache cache)
@@ -81,7 +102,8 @@ namespace KZLib.KZDevelop
 
 		public void StoreCache(string key,TCache cache,bool updateDuration)
 		{
-			long newDuration = DateTime.Now.AddSeconds(m_deleteTime).Ticks;
+			var currentTime = GameTimeManager.In.GetCurrentTime(true);
+			var newDuration = currentTime.AddSeconds(m_deleteTime).Ticks;
 
 			if(!m_cacheInfoListDict.TryGetValue(key,out var cacheInfoList))
 			{

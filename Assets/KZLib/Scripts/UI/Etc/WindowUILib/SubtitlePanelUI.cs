@@ -107,7 +107,7 @@ public class SubtitlePanelUI : WindowUI2D
 
 	public void LinkVideo(VideoPanelUI videoPanel)
 	{
-		videoPanel.OnVideoTimeChanged.Subscribe(_SetSubtitle).RegisterTo(destroyCancellationToken);
+		videoPanel.OnChangedVideoTime.Subscribe(_SetSubtitle).RegisterTo(destroyCancellationToken);
 	}
 
 	private void _SetSubtitle(float time)
@@ -124,7 +124,7 @@ public class SubtitlePanelUI : WindowUI2D
 
 		var index = m_subtitleList.FindIndex(_FindIndex);
 
-		if(index == -1)
+		if(index == Global.INVALID_INDEX)
 		{
 			return;
 		}

@@ -8,13 +8,13 @@ public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDr
 	private Canvas m_canvas = null;
 
 	private readonly Subject<Unit> m_dragStartSubject = new();
-	public Observable<Unit> OnDragStarted => m_dragStartSubject;
+	public Observable<Unit> OnStartedDrag => m_dragStartSubject;
 
 	private readonly Subject<Unit> m_dragChangeSubject = new();
-	public Observable<Unit> OnDragChanged => m_dragChangeSubject;
+	public Observable<Unit> OnChangedDrag => m_dragChangeSubject;
 
 	private readonly Subject<Unit> m_dragFinishSubject = new();
-	public Observable<Unit> OnDragFinished => m_dragFinishSubject;
+	public Observable<Unit> OnFinishedDrag => m_dragFinishSubject;
 
 	protected override void Initialize()
 	{

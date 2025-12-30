@@ -27,7 +27,7 @@ public class LocalizeTextUI : BaseTextUI
 	{
 		base.OnEnable();
 
-		LingoManager.In.OnLanguageChanged.Subscribe(_OnChangedLanguage).RegisterTo(destroyCancellationToken);
+		LingoManager.In.OnChangedLanguage.Subscribe(_OnChangedLanguage).RegisterTo(destroyCancellationToken);
 	}
 
 	protected override void OnDisable()

@@ -231,7 +231,7 @@ public static partial class TransformExtension
 		return childArray;
 	}
 
-	public static Transform FindChildRecursive(this Transform origin,string name)
+	public static Transform RecursiveFindChild(this Transform origin,string name)
 	{
 		if(!_IsValid(origin))
 		{
@@ -322,7 +322,7 @@ public static partial class TransformExtension
 		return origin;
 	}
 
-	public static void TraverseChildren(this Transform origin,Action<Transform> onAction)
+	public static void RecursiveChildren(this Transform origin,Action<Transform> onAction)
 	{
 		if(!_IsValid(origin))
 		{

@@ -44,7 +44,7 @@ namespace KZLib
 		{
 			var optionCfg = ConfigManager.In.Access<OptionConfig>();
 
-			optionCfg.OnUseVibrationChanged.Subscribe(_OnChangeUseVibration).AddTo(m_disposable);
+			optionCfg.OnChangedUseVibration.Subscribe(_OnChangeUseVibration).AddTo(m_disposable);
 
 			_OnChangeUseVibration(optionCfg.UseVibration);
 

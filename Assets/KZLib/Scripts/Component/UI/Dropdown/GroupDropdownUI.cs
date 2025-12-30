@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(TMP_Dropdown))]
-public class DropdownGroupUI : BaseDropdownUI
+public class GroupDropdownUI : BaseDropdownUI
 {
 	[SerializeField] private Button m_prevButton = null;
 	[SerializeField] private Button m_nextButton = null;

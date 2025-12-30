@@ -18,7 +18,7 @@ namespace KZLib
 			public float TimeScale { get; private set; }
 
 			public bool IsPaused => TimeScale == 0f;
-			
+
 			private readonly List<TimerInfo> m_timerInfoList = new();
 			private readonly List<TimerInfo> m_pendingTimerInfoList = new();
 
@@ -52,7 +52,7 @@ namespace KZLib
 					m_pendingTimerInfoList.Clear();
 				}
 			}
-			
+
 			public void Reset()
 			{
 				ElapsedTime = 0.0f;
@@ -75,19 +75,25 @@ namespace KZLib
 				m_pendingTimerInfoList.Clear();
 			}
 		}
-		
-		private readonly Dictionary<string,GameTime> m_timeDict = new();
+
+		private readonly Dictionary<string,GameTime> m_gameTimeDict = new();
 		private CancellationTokenSource m_tokenSource = null;
 		private bool m_disposed = false;
+
+		public DateTime ServerTime { get; private set; }
+		private TimeSpan m_timeDifference = TimeSpan.Zero;
 
 		/// <summary>
 		/// 초기화
 		/// </summary>
 		protected override void Initialize()
 		{
+			ServerTime = DateTime.UtcNow;
+			m_timeDifference = TimeSpan.Zero;
+
 			m_tokenSource = new CancellationTokenSource();
 
-			UpdateAsync().Forget();
+			_UpdateAsync().Forget();
 		}
 
 		protected override void Release(bool disposing)
@@ -99,8 +105,8 @@ namespace KZLib
 
 			if(disposing)
 			{
-				m_timeDict.Clear();
-				
+				m_gameTimeDict.Clear();
+
 				CommonUtility.KillTokenSource(ref m_tokenSource);
 			}
 
@@ -108,26 +114,34 @@ namespace KZLib
 
 			base.Release(disposing);
 		}
-		
+
 		public bool HasTime(string name)
 		{
-			return m_timeDict.ContainsKey(name);
+			return m_gameTimeDict.ContainsKey(name);
 		}
 
-		public void AddTime(string name)
+		public bool AddTime(string name)
 		{
 			if(!HasTime(name))
 			{
-				m_timeDict.Add(name,new GameTime());
+				m_gameTimeDict.Add(name,new GameTime());
+
+				return true;
 			}
+
+			return false;
 		}
-		
-		public void RemoveTime(string name)
+
+		public bool RemoveTime(string name)
 		{
 			if(HasTime(name))
 			{
-				m_timeDict.Remove(name);
+				m_gameTimeDict.Remove(name);
+
+				return true;
 			}
+
+			return false;
 		}
 
 		public void Pause(string name)
@@ -177,21 +191,16 @@ namespace KZLib
 
 		private GameTime _GetGameTime(string name)
 		{
-			if(m_timeDict.TryGetValue(name,out var gameTime))
-			{
-				return gameTime;
-			}
-
-			return null;
+			return m_gameTimeDict.TryGetValue(name,out var gameTime) ? gameTime : null;
 		}
 
-		private async UniTaskVoid UpdateAsync()
+		private async UniTaskVoid _UpdateAsync()
 		{
 			try
 			{
 				while(true)
 				{
-					foreach(var time in m_timeDict.Values)
+					foreach(var time in m_gameTimeDict.Values)
 					{
 						time.Update();
 					}
@@ -201,5 +210,67 @@ namespace KZLib
 			}
 			catch(OperationCanceledException) { }
 		}
+
+		public void SyncServerTime(long newServerTimestamp)
+		{
+			var newServerTime = newServerTimestamp.ToDateTime(false);
+
+			SyncServerTime(newServerTime);
+		}
+
+		public void SyncServerTime(DateTime newServerTime)
+		{
+			m_timeDifference = DateTime.UtcNow-newServerTime;
+
+			ServerTime = newServerTime;
+		}
+
+		public DateTime GetCurrentTime(bool isLocal = true)
+		{
+			var currentTime = DateTime.UtcNow-m_timeDifference;
+
+			return isLocal ? currentTime.ToLocalTime() : currentTime;
+		}
+
+		// /// <summary>
+		// /// Compare the current time with the target time. Passed : onTimePassed / Remaining : onTimeRemaining
+		// /// </summary>
+		// public void CheckTimeCondition(DateTime dateTime,bool isLocal,Action onTimePassed,Action onTimeRemaining)
+		// {
+		// 	if(GetCurrentTime(isLocal) >= dateTime)
+		// 	{
+		// 		onTimePassed?.Invoke();
+		// 	}
+		// 	else
+		// 	{
+		// 		onTimeRemaining?.Invoke();
+		// 	}
+		// }
+
+		// /// <summary>
+		// /// Gets the next day of the week and time after the current time.
+		// /// </summary>
+		// public DateTime GetTargetDate(HashSet<DayOfWeek> dayHashSet,int hour,bool isLocal)
+		// {
+		// 	var dateTime = GetCurrentTime(isLocal);
+
+		// 	if(dayHashSet.Contains(dateTime.DayOfWeek) && dateTime.Hour < hour)
+		// 	{
+		// 		dateTime = dateTime.AddHours(hour-dateTime.Hour);
+
+		// 		return dateTime;
+		// 	}
+
+		// 	dateTime = dateTime.AddDays(1);
+
+		// 	while(!dayHashSet.Contains(dateTime.DayOfWeek))
+		// 	{
+		// 		dateTime = dateTime.AddDays(1);
+		// 	}
+
+		// 	dateTime = dateTime.AddHours(hour-dateTime.Hour);
+
+		// 	return dateTime;
+		// }
 	}
 }

@@ -82,15 +82,15 @@ namespace KZLib.KZData
 			return config;
 		}
 
-		public void Revoke<TConfig>()
-		{
-			var key = typeof(TConfig).Name;
+		// public void Revoke<TConfig>()
+		// {
+		// 	var key = typeof(TConfig).Name;
 
-			if(m_configDict.ContainsKey(key))
-			{
-				m_configDict.Remove(key);
-			}
-		}
+		// 	if(m_configDict.ContainsKey(key))
+		// 	{
+		// 		m_configDict.Remove(key);
+		// 	}
+		// }
 
 		private IConfig _Create(string name,Type type)
 		{

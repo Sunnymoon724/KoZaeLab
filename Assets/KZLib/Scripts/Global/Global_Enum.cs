@@ -62,3 +62,24 @@ public enum ResponseType
 	Config,
 	Game,
 }
+
+// [Flags]
+// public enum ContentsStateType
+// {
+// 	None				= 0,
+
+// 	Unlocked 			= 1 << 0,
+// 	Locked_Condition	= 1 << 1,
+// 	Locked_Settling		= 1 << 2,
+// 	Locked_Period		= 1 << 3,
+// 	Locked_Server		= 1 << 4,
+
+// 	Is_Unlocked			= Unlocked,
+// 	Is_Locked			= Locked_Condition | Locked_Settling | Locked_Period | Locked_Server,
+// }
+
+public enum NetworkStateType
+{
+	Success = 0,
+	Fail = 1,
+}

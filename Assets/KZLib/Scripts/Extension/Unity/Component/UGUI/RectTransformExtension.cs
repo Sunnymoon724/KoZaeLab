@@ -1,7 +1,29 @@
+using KZLib;
 using UnityEngine;
 
 public static partial class RectTransformExtension
 {
+	public static Vector2 WorldToCanvasLocalPosition(this RectTransform rectTransform,Vector2 point,Camera uiCamera)
+	{
+		var screen = RectTransformUtility.WorldToScreenPoint(uiCamera,point);
+
+		return GetLocalCanvasPositionFromScreenPosition(rectTransform,screen,uiCamera);
+	}
+
+	public static Vector2 GetLocalCanvasPositionFromScreenPosition(this RectTransform rectTransform,Vector2 screenPoint,Camera camera)
+	{
+		RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform,screenPoint,camera,out var point);
+
+		return point;
+	}
+
+	public static Vector2 ConvertWorldPositionToCanvasPosition(this RectTransform rectTransform,Vector3 position,Camera worldCamera, Camera uiCamera )
+	{
+		var point = worldCamera.WorldToScreenPoint(position);
+
+		return GetLocalCanvasPositionFromScreenPosition(rectTransform,point,uiCamera);
+	}
+
 	public static Rect CalculateWorldRect(this RectTransform rectTransform)
 	{
 		if(!_IsValid(rectTransform))

@@ -56,7 +56,7 @@ namespace KZLib.KZData
 
 			m_protoDict.Clear();
 
-			var start = DateTime.Now;
+			var start = GameTimeManager.In.GetCurrentTime(true);
 
 			if(!_TryGetTextAsset(out var textAssetArray))
 			{
@@ -98,7 +98,7 @@ namespace KZLib.KZData
 
 			stopwatch.Stop();
 
-			LogSvc.System.I($"Proto Load Complete [Count : {textAssetArray.Length} / Duration : {(DateTime.Now-start).TotalSeconds}]");
+			LogSvc.System.I($"Proto Load Complete [Count : {textAssetArray.Length} / Duration : {(GameTimeManager.In.GetCurrentTime(true)-start).TotalSeconds}]");
 
 			m_isLoaded = true;
 

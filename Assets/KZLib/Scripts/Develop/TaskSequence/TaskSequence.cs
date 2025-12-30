@@ -24,10 +24,10 @@ namespace KZLib.KZDevelop
 		public bool IsPlaying => m_tokenSource != null;
 
 		private readonly Subject<Unit> m_startTaskSubject = new();
-		public Observable<Unit> OnTaskStarted => m_startTaskSubject;
+		public Observable<Unit> OnStartedTask => m_startTaskSubject;
 
 		private readonly Subject<Unit> m_finishTaskSubject = new();
-		public Observable<Unit> OnTaskFinished => m_finishTaskSubject;
+		public Observable<Unit> OnFinishedTask => m_finishTaskSubject;
 
 		protected CancellationTokenSource m_tokenSource = null;
 
