@@ -64,9 +64,9 @@ public class MenuToolBarUI : BaseComponentUI
 
 	private void _OnChangeCommon()
 	{
-		foreach(var menuInfo in m_menuInfoList)
+		for(var i=0;i<m_menuInfoList.Count;i++)
 		{
-			menuInfo.SetCommon(m_useCommonIcon,m_useCommonSound);
+			m_menuInfoList[i].SetCommon(m_useCommonIcon,m_useCommonSound);
 		}
 	}
 
@@ -78,9 +78,11 @@ public class MenuToolBarUI : BaseComponentUI
 	public void SetMenu(params Param[] menuParamArray)
 	{
 		var entryInfoList = new List<IEntryInfo>();
-		
-		foreach(var menuParam in menuParamArray)
+
+		for(var i=0;i<menuParamArray.Length;i++)
 		{
+			var menuParam = menuParamArray[i];
+
 			bool _FindMenuInfo(MenuInfo menuInfo)
 			{
 				return menuInfo.MenuType.Equals(menuParam.MenuType);

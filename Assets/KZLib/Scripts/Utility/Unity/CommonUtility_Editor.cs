@@ -9,6 +9,8 @@ using UnityEditor.SceneManagement;
 using UnityEditorInternal;
 using UnityEngine;
 
+using Object = UnityEngine.Object;
+
 public static partial class CommonUtility
 {
 	#region Tag & Layer
@@ -113,14 +115,14 @@ public static partial class CommonUtility
 
 			var defineSymbolHashSet = new HashSet<string>(defineSymbolText.Split(';'));
 
-			foreach(var oldDefineSymbol in oldDefineSymbolArray)
+			for(var i=0;i<oldDefineSymbolArray.Length;i++)
 			{
-				defineSymbolHashSet.Remove(oldDefineSymbol);
+				defineSymbolHashSet.Add(oldDefineSymbolArray[i]);
 			}
 
-			foreach(var newDefineSymbol in newDefineSymbolArray)
+			for(var i=0;i<newDefineSymbolArray.Length;i++)
 			{
-				defineSymbolHashSet.Add(newDefineSymbol);
+				defineSymbolHashSet.Add(newDefineSymbolArray[i]);
 			}
 
 			PlayerSettings.SetScriptingDefineSymbols(target,string.Join(";",defineSymbolHashSet));
@@ -147,19 +149,19 @@ public static partial class CommonUtility
 	#region DisplayDialog
 	public static void DisplayError(Exception exception)
 	{
-		EditorUtility.DisplayDialog("Error",exception.Message,"Ok","");
+		EditorUtility.DisplayDialog("Error",exception.Message,"Ok");
 
 		throw exception;
 	}
 
 	public static void DisplayInfo(string message)
 	{
-		EditorUtility.DisplayDialog("Info",message,"Ok","");
+		EditorUtility.DisplayDialog("Info",message,"Ok");
 	}
 
-	public static bool DisplayCheckBeforeExecute(string name)
+	public static bool DisplayCheckBeforeExecute(string message)
 	{
-		return DisplayCheck($"Execute {name}",$"Execute {name}?");
+		return DisplayCheck($"{message}",$"{message}?");
 	}
 
 	public static bool DisplayCheck(string title,string message)
@@ -242,10 +244,10 @@ public static partial class CommonUtility
 		var filterArray = new List<string>();
 
 		var excelExtensionArray = new string[] { ".xls", ".xlsx", ".xlsm" };
-
-		foreach(var extension in excelExtensionArray)
+		
+		for(var i=0;i<excelExtensionArray.Length;i++)
 		{
-			filterArray.Add($"*{extension}");
+			filterArray.Add($"*{excelExtensionArray[i]}");
 		}
 
 		return FindFilePathInPanel("Find excel file",string.Join(';',filterArray));
@@ -285,6 +287,12 @@ public static partial class CommonUtility
 		}
 
 		EditorSceneManager.OpenScene(scenePath);
+	}
+
+	public static void SaveAsset()
+	{
+		AssetDatabase.SaveAssets();
+		AssetDatabase.Refresh();
 	}
 }
 #endif

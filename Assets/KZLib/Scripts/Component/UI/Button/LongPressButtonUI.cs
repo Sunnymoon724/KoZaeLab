@@ -47,7 +47,7 @@ public class LongPressButtonUI : BaseButtonUI,IPointerDownHandler,IPointerUpHand
 
 		CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
-		_DetectLongTouchAsync().Forget();
+		_DetectLongTouchAsync(m_tokenSource.Token).Forget();
 	}
 
 	void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
@@ -73,16 +73,12 @@ public class LongPressButtonUI : BaseButtonUI,IPointerDownHandler,IPointerUpHand
 		}
 	}
 
-	private async UniTaskVoid _DetectLongTouchAsync()
+	private async UniTaskVoid _DetectLongTouchAsync(CancellationToken token)
 	{
-		try
-		{
-			await UniTask.Delay(TimeSpan.FromSeconds(m_longPressDuration), cancellationToken : m_tokenSource.Token );
+		await UniTask.Delay(TimeSpan.FromSeconds(m_longPressDuration), cancellationToken : token).SuppressCancellationThrow();
 
-			m_isLongPressed = true;
+		m_isLongPressed = true;
 
-			m_onPressedLong?.Invoke(true);
-		}
-		catch(OperationCanceledException) { }
+		m_onPressedLong?.Invoke(true);
 	}
 }

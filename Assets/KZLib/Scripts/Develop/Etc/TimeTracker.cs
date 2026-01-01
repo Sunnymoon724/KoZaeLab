@@ -85,9 +85,11 @@ namespace KZLib.KZDevelop
 		{
 			CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
+			var token = m_tokenSource.Token;
+
 			TimeSpan remainingTime;
 
-			while(true) 
+			while(!token.IsCancellationRequested) 
 			{
 				remainingTime = _GetRemainingTime(dateTime);
 
@@ -98,20 +100,15 @@ namespace KZLib.KZDevelop
 
 				onRefresh?.Invoke(remainingTime);
 
-				try
-				{
-					await UniTask.Delay(1000,true,cancellationToken: m_tokenSource.Token);
-				}
-				catch(OperationCanceledException)
-				{
-					return;
-				}
+				await UniTask.Delay(1000,true,cancellationToken: token).SuppressCancellationThrow();
 			}
 
-			remainingTime = _GetRemainingTime(dateTime);
-
-			onRefresh?.Invoke(remainingTime);
-			onComplete?.Invoke();
+			if(!token.IsCancellationRequested)
+			{
+				remainingTime = _GetRemainingTime(dateTime);
+				onRefresh?.Invoke(remainingTime);
+				onComplete?.Invoke();
+			}
 		}
 
 		private TimeSpan _GetRemainingTime(DateTime dateTime)

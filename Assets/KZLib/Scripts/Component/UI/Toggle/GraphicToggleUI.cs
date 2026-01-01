@@ -9,7 +9,7 @@ public class GraphicToggleUI : BaseToggleUI
 	[Serializable]
 	protected class GraphicChild : ToggleChild
 	{
-		[Flags] 
+		[Flags]
 		private enum GraphicType { None = 0, Color = 1<<0, Material = 1<<1, All = -1 }
 
 		[HorizontalGroup("0",Order = 0),SerializeField]

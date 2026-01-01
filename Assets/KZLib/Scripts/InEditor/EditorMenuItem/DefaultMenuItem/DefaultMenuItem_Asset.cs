@@ -38,11 +38,11 @@ namespace KZLib.KZMenu
 			var pathGroup = CommonUtility.FindAssetPathGroup();
 			var totalCount = pathGroup.Count();
 			var index = 0;
-			var dependantDict = new Dictionary<string,string[]>();
+			var dependantListDict = new Dictionary<string,string[]>();
 
 			foreach(var path in pathGroup)
 			{
-				dependantDict[path] = AssetDatabase.GetDependencies(path,false);
+				dependantListDict[path] = AssetDatabase.GetDependencies(path,false);
 
 				if(CommonUtility.DisplayCancelableProgressBar("Asset finder load",$"Loading asset finder [{index}/{totalCount}]",index++,totalCount))
 				{
@@ -54,10 +54,14 @@ namespace KZLib.KZMenu
 
 			s_assetPathDict = new Dictionary<string,List<string>>();
 
-			foreach(var pair in dependantDict)
+			foreach(var pair in dependantListDict)
 			{
-				foreach(var dependant in pair.Value)
+				var dependantList =  pair.Value;
+
+				for(var i=0;i<dependantList.Length;i++)
 				{
+					var dependant = dependantList[i];
+
 					if(!s_assetPathDict.ContainsKey(dependant))
 					{
 						s_assetPathDict.Add(dependant,new List<string>());
@@ -97,7 +101,7 @@ namespace KZLib.KZMenu
 			var script = selection as MonoScript;
 			var asset = ScriptableObject.CreateInstance(script.GetClass());
 
-			CommonUtility.SaveAsset(assetPath,asset,true);
+			CommonUtility.CreateAsset(assetPath,asset,true);
 		}
 
 		[MenuItem("Assets/KZSubMenu/Script/Create ScriptableObject",true,MenuOrder.Asset.SCRIPT)]

@@ -165,12 +165,16 @@ namespace KZLib.KZDevelop
 			var nameHashSet = new HashSet<string>();
 			var orderHashSet = new HashSet<long>();
 
-			foreach(var qualityList in PresetDict.Values)
+			foreach(var pair in PresetDict)
 			{
-				foreach(var quality in qualityList)
+				var infoPresetList = pair.Value;
+				
+				for(int i=0;i<infoPresetList.Count;i++)
 				{
-					nameHashSet.Add(quality.Name);
-					orderHashSet.Add(quality.Order);
+					var infoPreset = infoPresetList[i];
+
+					nameHashSet.Add(infoPreset.Name);
+					orderHashSet.Add(infoPreset.Order);
 				}
 			}
 
@@ -241,14 +245,16 @@ namespace KZLib.KZDevelop
 				return infoA.Flag.CompareTo(infoB.Flag);
 			}
 
-			foreach(var presetPair in PresetDict)
+			foreach(var pair in PresetDict)
 			{
-				foreach(var preset in presetPair.Value)
+				var infoPresetList = pair.Value;
+
+				for(var i=0;i<infoPresetList.Count;i++)
 				{
-					graphicsQuality = graphicsQuality.AddFlag(preset.Flag);
+					graphicsQuality = graphicsQuality.AddFlag(infoPresetList[i].Flag);
 				}
 
-				presetPair.Value.Sort(_Compare);
+				infoPresetList.Sort(_Compare);
 			}
 		}
 
@@ -277,13 +283,17 @@ namespace KZLib.KZDevelop
 
 		public string FindValue(long graphicQuality,string optionName)
 		{
-			foreach(var qualityList in PresetDict.Values)
+			foreach(var pair in PresetDict)
 			{
-				foreach(var quality in qualityList)
+				var infoPresetList = pair.Value;
+
+				for(var i=0;i<infoPresetList.Count;i++)
 				{
-					if(string.Equals(quality.Name,optionName))
+					var infoPreset = infoPresetList[i];
+
+					if(string.Equals(infoPreset.Name,optionName))
 					{
-						return quality.GetValue(graphicQuality);
+						return infoPreset.GetValue(graphicQuality);
 					}
 				}
 			}

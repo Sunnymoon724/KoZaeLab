@@ -223,21 +223,20 @@ public static class AnimatorExtension
 			}
 		}
 
-		return null;
+		return Array.Empty<AnimationClip>();
 	}
 
 	public static bool IsExistAnimationClip(this Animator animator,string clipName)
 	{
 		var clipArray = animator.GetAnimationClipArray();
 
-		if(clipArray != null)
+		for(var i=0;i<clipArray.Length;i++)
 		{
-			foreach(var clip in clipArray)
+			var clip = clipArray[i];
+
+			if(clipName.IsEqual(clip.name))
 			{
-				if(clipName.IsEqual(clip.name))
-				{
-					return true;
-				}
+				return true;
 			}
 		}
 
@@ -248,14 +247,13 @@ public static class AnimatorExtension
 	{
 		var clipArray = animator.GetAnimationClipArray();
 
-		if(clipArray != null)
+		for(var i=0;i<clipArray.Length;i++)
 		{
-			foreach(var clip in clipArray)
+			var clip = clipArray[i];
+
+			if(clipName.IsEqual(clip.name))
 			{
-				if(clipName.IsEqual(clip.name))
-				{
-					return clip.length;
-				}
+				return clip.length;
 			}
 		}
 
@@ -292,11 +290,13 @@ public static class AnimatorExtension
 
 		if(_IsValid(animator))
 		{
-			foreach(var layer in controller.layers)
+			for(var i=0;i<controller.layers.Length;i++)
 			{
-				foreach(var child in layer.stateMachine.states)
+				var animatorStateArray = controller.layers[i].stateMachine.states;
+
+				for(var j=0;j<animatorStateArray.Length;j++)
 				{
-					yield return child.state.name;
+					yield return animatorStateArray[j].state.name;
 				}
 			}
 		}

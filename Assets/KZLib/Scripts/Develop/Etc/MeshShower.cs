@@ -38,12 +38,13 @@ namespace KZLib.KZDevelop
 				foreach(var pair in textListDict)
 				{
 					builder.Clear();
-
 					builder.Append($"{pair.Key}\n");
 
-					foreach(var path in pair.Value)
+					var textList = pair.Value;
+
+					for(var i=0;i<textList.Count;i++)
 					{
-						builder.Append($" -[{path}]\n");
+						builder.Append($" -[{textList[i]}]\n");
 					}
 
 					builder.AppendLine();

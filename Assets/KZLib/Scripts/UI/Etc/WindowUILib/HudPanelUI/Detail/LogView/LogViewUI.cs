@@ -5,6 +5,7 @@ using MessagePipe;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.SmartFormat.Utilities;
 using UnityEngine.UI;
 
 namespace HudPanel
@@ -85,9 +86,9 @@ namespace HudPanel
 
 			m_inputField.text = string.Empty;
 
-			foreach(var hudLogInfo in m_hudLogInfoDict.Values)
+			foreach(var pair in m_hudLogInfoDict)
 			{
-				hudLogInfo.Initialize(_SetScrollRect);
+				pair.Value.Initialize(_SetScrollRect);
 			}
 
 			void _ChangeValue(string text)
@@ -130,9 +131,9 @@ namespace HudPanel
 		{
 			var entryInfoList = new List<IEntryInfo>();
 
-			foreach(var hudLogInfo in m_hudLogInfoDict.Values)
+			foreach(var pair in m_hudLogInfoDict)
 			{
-				hudLogInfo.ResetCount();
+				pair.Value.ResetCount();
 			}
 
 			foreach(var message in LogChannel.LogMessageInfoGroup)

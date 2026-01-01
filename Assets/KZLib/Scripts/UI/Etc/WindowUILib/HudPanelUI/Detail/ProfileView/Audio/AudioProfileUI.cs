@@ -5,14 +5,16 @@ namespace HudPanel
 {
 	public class AudioProfileUI : BaseComponentUI
 	{
-		private const int c_spectrum_size = 512;
+		private const int c_spectrumSize = 512;
 
-		[SerializeField] private TMP_Text m_decibelText = null;
-		[SerializeField] private AudioGraphImageUI m_audioGraphImageUI = null;
+		[SerializeField]
+		private TMP_Text m_decibelText = null;
+		[SerializeField]
+		private AudioGraphImageUI m_audioGraphImageUI = null;
 
 		private AudioListener m_audioListener = null;
 
-		private readonly float[] m_spectrumArray = new float[c_spectrum_size];
+		private readonly float[] m_spectrumArray = new float[c_spectrumSize];
 
 		private float m_maxDecibel = 0.0f;
 

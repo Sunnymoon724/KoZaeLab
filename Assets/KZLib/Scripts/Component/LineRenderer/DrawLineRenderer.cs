@@ -52,7 +52,7 @@ public class DrawLineRenderer : BaseLineRenderer
 			_DrawLine(progress,positionArray);
 		}
 
-		await CommonUtility.ExecuteProgressAsync(0.0f,positionArray.Length-1,duration,_Progress,ignoreTimescale,null,m_tokenSource.Token);
+		await CommonUtility.ExecuteProgressAsync(0.0f,positionArray.Length-1,duration,_Progress,ignoreTimescale,null,m_tokenSource.Token).SuppressCancellationThrow();
 
 #if UNITY_EDITOR
 		m_startGizmo = false;

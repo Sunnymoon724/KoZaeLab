@@ -4,9 +4,11 @@ namespace UnityEngine.UI
 	[RequireComponent(typeof(CanvasRenderer))]
 	public partial class UIShape : MaskableGraphic
 	{
-		[SerializeField] private int m_polygonSideCount = 3;
+		[SerializeField]
+		private int m_polygonSideCount = 3;
 
-		[SerializeField] private float[] m_polygonVertexDistanceArray = new float[] { 1,1,1, };
+		[SerializeField]
+		private float[] m_polygonVertexDistanceArray = new float[] { 1,1,1, };
 
 		private void _DrawPolygon(VertexHelper vertexHelper,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius)
 		{

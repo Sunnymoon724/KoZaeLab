@@ -52,6 +52,6 @@ public class TrailRendererEffectClip : EffectClip
 			return false;
 		}
 
-		await CommonUtility.WaitForConditionAsync(_WaitForTrailRenderer,SetTime,m_ignoreTimeScale,m_tokenSource.Token);
+		await CommonUtility.WaitForConditionAsync(_WaitForTrailRenderer,SetTime,m_ignoreTimeScale,m_tokenSource.Token).SuppressCancellationThrow();
 	}
 }

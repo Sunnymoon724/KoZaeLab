@@ -4,8 +4,9 @@
 // 	[RequireComponent(typeof(CanvasRenderer))]
 // 	public partial class UIShape : MaskableGraphic
 // 	{
-// 		[SerializeField] private float m_rectangleRadius = 0.0f;
-		
+// 		[SerializeField]
+//		private float m_rectangleRadius = 0.0f;
+//
 // 		private void _DrawRectangle(VertexHelper vertexHelper,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius)
 // 		{
 // 			float maxRadius = Mathf.Min(currentRadius.x,currentRadius.y)/2.0f;

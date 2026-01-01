@@ -26,11 +26,13 @@ namespace KZLib
 					continue;
 				}
 
-				var interfaceArray = type.GetInterfaces();
+				var interfaceTypeArray = type.GetInterfaces();
 				var flag = false;
 
-				foreach(var interfaceType in interfaceArray)
+				for(var i=0;i<interfaceTypeArray.Length;i++)
 				{
+					var interfaceType = interfaceTypeArray[i];
+	
 					if(interfaceType == contextType || !contextType.IsAssignableFrom(interfaceType))
 					{
 						continue;

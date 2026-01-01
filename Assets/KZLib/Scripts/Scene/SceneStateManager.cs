@@ -215,7 +215,7 @@ namespace KZLib
 				var count = (float) onPlayTaskArray.Length;
 				var percent = 0.0f;
 
-				foreach(var task in onPlayTaskArray)
+				for(var i=0;i<onPlayTaskArray.Length;i++)
 				{
 					void _UpdateProgress(float progress)
 					{
@@ -224,7 +224,7 @@ namespace KZLib
 						panel.SetLoadingProgress(percent);
 					}
 
-					await task.Invoke(_UpdateProgress);
+					await onPlayTaskArray[i].Invoke(_UpdateProgress);
 				}
 
 				// darker
@@ -234,9 +234,9 @@ namespace KZLib
 			}
 			else
 			{
-				foreach(var task in onPlayTaskArray)
+				for(var i=0;i<onPlayTaskArray.Length;i++)
 				{
-					await task.Invoke(null);
+					await onPlayTaskArray[i].Invoke(null);
 				}
 			}
 

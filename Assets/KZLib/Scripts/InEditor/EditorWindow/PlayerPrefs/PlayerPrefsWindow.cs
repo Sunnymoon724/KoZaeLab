@@ -95,7 +95,7 @@ namespace KZLib.KZWindow
 
 		private void _OnRemoveInfo(int index)
 		{
-			if(!CommonUtility.DisplayCheck("Remove playerPrefs","Are you sure?"))
+			if(!CommonUtility.DisplayCheckBeforeExecute("Remove this playerPrefs"))
 			{
 				return;
 			}
@@ -154,7 +154,7 @@ namespace KZLib.KZWindow
 		[VerticalGroup("2",Order = 2),Button("Delete All",ButtonHeight = 30),ShowIf(nameof(IsExistInfo))]
 		protected void OnDeleteAll()
 		{
-			if(!CommonUtility.DisplayCheck("Delete all playerPrefs","Are you sure?"))
+			if(!CommonUtility.DisplayCheckBeforeExecute("Delete all playerPrefs"))
 			{
 				return;
 			}
@@ -172,8 +172,10 @@ namespace KZLib.KZWindow
 
 			m_playerPrefsInfoList.Clear();
 
-			foreach(var key in keyArray)
+			for(var i=0;i<keyArray.Length;i++)
 			{
+				var key = keyArray[i];
+
 				if(!m_isShowSystem)
 				{
 					if(key.StartsWith("unity.") || key.Equals("UnityGraphicsQuality") || key.Equals("AddressablesRuntimeDataPath"))

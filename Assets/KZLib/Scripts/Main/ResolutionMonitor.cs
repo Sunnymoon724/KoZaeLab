@@ -21,7 +21,7 @@ public class ResolutionMonitor
 
 		_SetScreen(false);
 	
-		_CheckResolutionDetectionAsync().Forget();
+		_CheckResolutionDetectionAsync(m_tokenSource.Token).Forget();
 	}
 
 	public void StopResolutionDetection()
@@ -39,13 +39,11 @@ public class ResolutionMonitor
 		}
 	}
 
-	private async UniTaskVoid _CheckResolutionDetectionAsync()
+	private async UniTaskVoid _CheckResolutionDetectionAsync(CancellationToken token)
 	{
-		var token = m_tokenSource.Token;
-
 		while(!token.IsCancellationRequested)
 		{
-			await UniTask.WaitForEndOfFrame(token);
+			await UniTask.WaitForEndOfFrame(token).SuppressCancellationThrow();
 
 			if(token.IsCancellationRequested)
 			{
@@ -57,7 +55,7 @@ public class ResolutionMonitor
 				_SetScreen(true);
 			}
 
-			await UniTask.Delay(TimeSpan.FromSeconds(0.1f),DelayType.Realtime,cancellationToken: token);
+			await UniTask.Delay(TimeSpan.FromSeconds(0.1f),DelayType.Realtime,cancellationToken: token).SuppressCancellationThrow();
 		}
 	}
 }

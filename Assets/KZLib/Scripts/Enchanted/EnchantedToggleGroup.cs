@@ -106,9 +106,11 @@ public class EnchantedToggleGroup : ToggleGroup
 			if(m_toggleNameList.IsNullOrEmpty())
 			{
 				m_toggleNameList.AddNotOverlap(NoneToggleName);
-				
-				foreach(var toggle in m_Toggles)
+
+				for(var i=0;i<m_Toggles.Count;i++)
 				{
+					var toggle = m_Toggles[i];
+
 					if(!toggle.TryGetComponent<BaseToggleUI>(out var _))
 					{
 						continue;

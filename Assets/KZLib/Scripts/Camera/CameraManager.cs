@@ -70,8 +70,10 @@ namespace KZLib
 			var mainCameraData = m_mainCamera.GetUniversalAdditionalCameraData();
 			var cameraList = mainCameraData.cameraStack;
 
-			foreach(var subCamera in m_subCameraDict.Keys)
+			foreach(var pair in m_subCameraDict)
 			{
+				var subCamera = pair.Key;
+
 				if(cameraList.Contains(subCamera))
 				{
 					continue;
@@ -148,13 +150,13 @@ namespace KZLib
 
 			foreach(var pair in m_subCameraDict)
 			{
-				var cam = pair.Key;
-				var info = pair.Value;
+				var subCamera = pair.Key;
+				var cameraInfo = pair.Value;
 
-				cam.depth = info.Depth;
-				cam.clearFlags = info.ClearFlag;
+				subCamera.depth = cameraInfo.Depth;
+				subCamera.clearFlags = cameraInfo.ClearFlag;
 
-				mainCameraData.cameraStack.RemoveSafe(cam);
+				mainCameraData.cameraStack.RemoveSafe(subCamera);
 			}
 
 			m_subCameraDict.Clear();

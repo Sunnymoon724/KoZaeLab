@@ -10,7 +10,7 @@ namespace LoadingPanel
 	}
 }
 
-public class LoadingPanelUI : WindowUI2D
+public class LoadingPanelUI : BasePanelUI
 {
 	[SerializeField]
 	private List<ILoadingUI> m_loadingList = new();

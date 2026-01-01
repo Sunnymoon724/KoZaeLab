@@ -89,8 +89,12 @@ namespace KZLib
 
 			m_motionEventDict.Clear();
 
-			foreach(var motionEvent in motionPrt.EventArray)
+			var motionEventArray = motionPrt.EventArray;
+
+			for(var i=0;i<motionEventArray.Length;i++)
 			{
+				var motionEvent = motionEventArray[i];
+				
 				m_motionEventDict.Add(motionEvent.Order,motionEvent);
 			}
 

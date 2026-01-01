@@ -91,9 +91,9 @@ namespace KZLib
 			ServerTime = DateTime.UtcNow;
 			m_timeDifference = TimeSpan.Zero;
 
-			m_tokenSource = new CancellationTokenSource();
+			CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
-			_UpdateAsync().Forget();
+			_UpdateAsync(m_tokenSource.Token).Forget();
 		}
 
 		protected override void Release(bool disposing)
@@ -194,21 +194,17 @@ namespace KZLib
 			return m_gameTimeDict.TryGetValue(name,out var gameTime) ? gameTime : null;
 		}
 
-		private async UniTaskVoid _UpdateAsync()
+		private async UniTaskVoid _UpdateAsync(CancellationToken token)
 		{
-			try
+			while(!token.IsCancellationRequested)
 			{
-				while(true)
+				foreach(var pair in m_gameTimeDict)
 				{
-					foreach(var time in m_gameTimeDict.Values)
-					{
-						time.Update();
-					}
-
-					await UniTask.Yield(cancellationToken: m_tokenSource.Token);
+					pair.Value.Update();
 				}
+
+				await UniTask.Yield(cancellationToken: token).SuppressCancellationThrow();
 			}
-			catch(OperationCanceledException) { }
 		}
 
 		public void SyncServerTime(long newServerTimestamp)

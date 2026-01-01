@@ -21,7 +21,7 @@ namespace KZLib.KZDevelop
 		[VerticalGroup("General/0",Order = 0),SerializeField,PropertyTooltip("-1 is infinite loop / 0 is not working")]
 		protected int m_loopCount = 1;
 
-		public bool IsPlaying => m_tokenSource != null;
+		public bool IsPlaying => m_isPlaying;
 
 		private readonly Subject<Unit> m_startTaskSubject = new();
 		public Observable<Unit> OnStartedTask => m_startTaskSubject;
@@ -29,6 +29,7 @@ namespace KZLib.KZDevelop
 		private readonly Subject<Unit> m_finishTaskSubject = new();
 		public Observable<Unit> OnFinishedTask => m_finishTaskSubject;
 
+		private bool m_isPlaying = false;
 		protected CancellationTokenSource m_tokenSource = null;
 
 		protected override void Initialize()
@@ -79,6 +80,8 @@ namespace KZLib.KZDevelop
 
 			CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
+			m_isPlaying = true;
+
 			_StartSequence();
 
 			async UniTask _PlayAsync()
@@ -86,9 +89,11 @@ namespace KZLib.KZDevelop
 				await _DoPlaySequenceAsync(sequenceParam);
 			}
 
-			await CommonUtility.LoopUniTaskAsync(_PlayAsync,m_loopCount,m_tokenSource.Token);
+			await CommonUtility.LoopUniTaskAsync(_PlayAsync,m_loopCount,m_tokenSource.Token).SuppressCancellationThrow();
 
 			_FinishSequence();
+
+			m_isPlaying = false;
 
 			CommonUtility.KillTokenSource(ref m_tokenSource);
 		}

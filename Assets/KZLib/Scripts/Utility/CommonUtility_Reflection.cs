@@ -16,9 +16,11 @@ public static partial class CommonUtility
 			return type;
 		}
 
-		foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
+		var assemblyArray = AppDomain.CurrentDomain.GetAssemblies();
+
+		for(var i=0;i<assemblyArray.Length;i++)
 		{
-			type = assembly.GetType(fullName);
+			type = assemblyArray[i].GetType(fullName);
 
 			if(type != null)
 			{
@@ -33,10 +35,16 @@ public static partial class CommonUtility
 
 	public static IEnumerable<Type> FindTypeGroup(string namespaceName)
 	{
-		foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
+		var assemblyArray = AppDomain.CurrentDomain.GetAssemblies();
+
+		for(var i=0;i<assemblyArray.Length;i++)
 		{
-			foreach(var type in assembly.GetTypes())
+			var typeArray = assemblyArray[i].GetTypes();
+
+			for(var j=0;j<typeArray.Length;j++)
 			{
+				var type = typeArray[i];
+
 				if(type.Namespace.IsEqual(namespaceName))
 				{
 					yield return type;
@@ -47,9 +55,11 @@ public static partial class CommonUtility
 
 	public static IEnumerable<Type> FindDerivedTypeGroup(Type type)
 	{
-		foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
+		var assemblyArray = AppDomain.CurrentDomain.GetAssemblies();
+
+		for(var i=0;i<assemblyArray.Length;i++)
 		{
-			foreach(var derivedType in FindDerivedTypeGroup(type,assembly))
+			foreach(var derivedType in FindDerivedTypeGroup(type,assemblyArray[i]))
 			{
 				yield return derivedType;
 			}
@@ -101,14 +111,12 @@ public static partial class CommonUtility
 
 		if(attributeProvider.IsDefined(attributeType,inherit))
 		{
-			foreach(var attribute in attributeProvider.GetCustomAttributes(attributeType,inherit))
+			var attributeArray = attributeProvider.GetCustomAttributes(attributeType,inherit);
+
+			for(var i=0;i<attributeArray.Length;i++)
 			{
-				yield return attribute as TAttribute;
+				yield return attributeArray[i] as TAttribute;
 			}
-		}
-		else
-		{
-			yield break;
 		}
 	}
 

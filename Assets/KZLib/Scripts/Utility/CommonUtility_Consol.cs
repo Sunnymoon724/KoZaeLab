@@ -26,9 +26,11 @@ public static partial class CommonUtility
 
 		process.WaitForExit();
 
-		foreach(var line in output.Split('\n'))
+		var lineArray = output.Split('\n');
+		
+		for(var i=0;i<lineArray.Length;i++)
 		{
-			LogSvc.Editor.I($"Output : {line}");
+			LogSvc.Editor.I($"Output : {lineArray[i]}");
 		}
 
 		if(!error.IsEmpty())

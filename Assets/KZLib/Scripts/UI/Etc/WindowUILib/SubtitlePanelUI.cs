@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine;
 using R3;
 
-public class SubtitlePanelUI : WindowUI2D
+public class SubtitlePanelUI : BasePanelUI
 {
 	public record Param(string SubtitlePath);
 
@@ -34,7 +34,8 @@ public class SubtitlePanelUI : WindowUI2D
 	}
 	#endregion Subtitle Info
 
-	[SerializeField] private TMP_Text m_subtitleText = null;
+	[SerializeField]
+	private TMP_Text m_subtitleText = null;
 
 	private readonly List<SubtitleInfo> m_subtitleList = new();
 

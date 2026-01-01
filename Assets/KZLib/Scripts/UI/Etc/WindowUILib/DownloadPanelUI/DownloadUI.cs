@@ -6,10 +6,14 @@ namespace DownloadPanel
 {
 	public class DownloadUI : MonoBehaviour
 	{
-		[SerializeField] private Image m_progressImage = null;
-		[SerializeField] private TMP_Text m_downloadedSizeText = null;
-		[SerializeField] private TMP_Text m_totalSizeText = null;
-		[SerializeField] private TMP_Text m_progressText = null;
+		[SerializeField]
+		private Image m_progressImage = null;
+		[SerializeField]
+		private TMP_Text m_downloadedSizeText = null;
+		[SerializeField]
+		private TMP_Text m_totalSizeText = null;
+		[SerializeField]
+		private TMP_Text m_progressText = null;
 
 		public virtual void Initialize()
 		{

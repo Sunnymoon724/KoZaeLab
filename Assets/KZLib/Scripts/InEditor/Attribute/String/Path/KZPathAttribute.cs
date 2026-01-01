@@ -98,9 +98,9 @@ namespace KZLib.KZAttribute
 			var rect = _DrawPrefixLabel(label);
 
 			//? Add other buttons
-			foreach(var onClicked in m_onClickedList)
+			for(var i=0;i<m_onClickedList.Count;i++)
 			{
-				rect = onClicked(rect,isValid);
+				rect = m_onClickedList[i](rect,isValid);
 			}
 
 			EditorGUI.LabelField(rect,ValueEntry.SmartValue,_GetValidationStyle(isValid,Global.WRONG_HEX_COLOR));

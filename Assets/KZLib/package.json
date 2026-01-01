@@ -38,6 +38,16 @@
       "displayName": "TaskSequenceTest",
       "description": "TaskSequence Test",
       "path": "Samples~/TaskSequenceTest"
+    },
+    {
+      "displayName": "ToggleTest",
+      "description": "Toggle Test",
+      "path": "Samples~/ToggleTest"
+    },
+    {
+      "displayName": "VibrationTest",
+      "description": "Vibration Test",
+      "path": "Samples~/VibrationTest"
     }
   ]
 }

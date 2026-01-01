@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using KZLib.KZData;
 using KZLib.KZUtility;
 using Newtonsoft.Json.Linq;
+using Sirenix.Utilities;
 
 namespace KZLib.KZNetwork
 {
@@ -291,10 +292,9 @@ namespace KZLib.KZNetwork
 		{
 			try
 			{
-				foreach(var data in dataList)
+				for(var i=0;i<dataList.Count;i++)
 				{
-					var jObject = JObject.Parse(data);
-
+					var jObject = JObject.Parse(dataList[i]);
 					var dataName = jObject["name"].ToString();
 
 					if(name.IsEqual(dataName))

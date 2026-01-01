@@ -35,20 +35,22 @@ public abstract class BaseMesh : BaseComponent
 		m_meshRenderer.SetPropertyBlock(PropertyBlock);
 	}
 
-	protected long CalculateMeshIndexCount(params MeshFilter[] filterArray)
+	protected long CalculateMeshIndexCount(params MeshFilter[] meshFilterArray)
 	{
 		var count = 0L;
 
-		foreach(var filter in filterArray)
+		for(var i=0;i<meshFilterArray.Length;i++)
 		{
-			if(filter == null || filter.sharedMesh == null)
+			var meshFilter = meshFilterArray[i];
+
+			if(meshFilter == null || meshFilter.sharedMesh == null)
 			{
 				continue;
 			}
 
-			for(var i=0;i<filter.sharedMesh.subMeshCount;i++)
+			for(var j=0;j<meshFilter.sharedMesh.subMeshCount;j++)
 			{
-				count += filter.sharedMesh.GetIndexCount(i);
+				count += meshFilter.sharedMesh.GetIndexCount(j);
 			}
 		}
 
@@ -59,16 +61,18 @@ public abstract class BaseMesh : BaseComponent
 	{
 		var count = 0L;
 
-		foreach(var mesh in meshArray)
+		for(var i=0;i<meshArray.Length;i++)
 		{
+			var mesh = meshArray[i];
+
 			if(mesh == null)
 			{
 				continue;
 			}
 
-			for(var i=0;i<mesh.subMeshCount;i++)
+			for(var j=0;j<mesh.subMeshCount;j++)
 			{
-				count += mesh.GetIndexCount(i);
+				count += mesh.GetIndexCount(j);
 			}
 		}
 

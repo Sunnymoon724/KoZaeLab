@@ -29,13 +29,13 @@ namespace KZLib
 
 		protected override void Initialize()
 		{
-			m_tokenSource = new();
+			CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
 			var gameCfg = ConfigManager.In.Access<GameConfig>();
 
 			m_useServerResource = !gameCfg.IsLocalResource;
 
-			_LoopProcessAsync().Forget();
+			_LoopProcessAsync(m_tokenSource.Token).Forget();
 		}
 
 		protected override void Release(bool disposing)
@@ -59,11 +59,11 @@ namespace KZLib
 			base.Release(disposing);
 		}
 
-		private async UniTaskVoid _LoopProcessAsync()
+		private async UniTaskVoid _LoopProcessAsync(CancellationToken token)
 		{
-			while(true)
+			while(!token.IsCancellationRequested) 
 			{
-				await UniTask.Delay(TimeSpan.FromSeconds(c_updatePeriod),true,cancellationToken : m_tokenSource.Token);
+				await UniTask.Delay(TimeSpan.FromSeconds(c_updatePeriod),true,cancellationToken : token).SuppressCancellationThrow();
 
 				// Set Loading Queue
 				if(m_loadingInfoQueue.Count > 0)

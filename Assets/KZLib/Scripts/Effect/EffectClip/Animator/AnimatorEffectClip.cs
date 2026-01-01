@@ -78,7 +78,7 @@ public class AnimatorEffectClip : EffectClip
 			return m_animator.IsAnimationFinished(AnimationName);
 		}
 
-		await CommonUtility.WaitForConditionAsync(_WaitForAnimation,SetTime,m_ignoreTimeScale,m_tokenSource.Token);
+		await CommonUtility.WaitForConditionAsync(_WaitForAnimation,SetTime,m_ignoreTimeScale,m_tokenSource.Token).SuppressCancellationThrow();
 	}
 
 #if UNITY_EDITOR

@@ -21,6 +21,8 @@ public abstract class RepositoryUI : BaseComponentUI
 	//? Current Opened Window List
 	[SerializeField,ListDrawerSettings(IsReadOnly = true)]
 	protected List<WindowUI> m_openedWindowList = new();
+	public IEnumerable<WindowUI> OpenedWindowGroup => m_openedWindowList;
+	public WindowUI TopOpenedWindow => m_openedWindowList.Count != 0 ? m_openedWindowList[0] : null;
 
 	protected abstract bool IsValid(WindowUI windowUI);
 	public abstract void Add(WindowUI windowUI);
@@ -107,8 +109,10 @@ public abstract class RepositoryUI : BaseComponentUI
             UINameType.HudPanelUI,
         };
 
-		foreach(var window in m_openedWindowList)
+		for(var i=0;i<m_openedWindowList.Count;i++)
 		{
+			var window = m_openedWindowList[i];
+
 			if(window == null || !includeNameTypeHashSet.Contains(window.NameType) || excludeNameTypeHashSet.Contains(window.NameType))
 			{
 				continue;
@@ -139,29 +143,14 @@ public abstract class RepositoryUI : BaseComponentUI
 			return;
 		}
 
-		if(isHidden)
-		{
-			window.Hide();
-		}
-		else
-		{
-			window.Show();
-		}
+		window.Hide(isHidden);
 	}
 
-	public void BlockInput()
+	public void BlockInput(bool isBlocked)
 	{
-		foreach(var window in m_openedWindowList)
+		for(var i=0;i<m_openedWindowList.Count;i++)
 		{
-			window.BlockInput();
-		}
-	}
-
-	public void AllowInput()
-	{
-		foreach(var window in m_openedWindowList)
-		{
-			window.AllowInput();
+			m_openedWindowList[i].BlockInput(isBlocked);
 		}
 	}
 

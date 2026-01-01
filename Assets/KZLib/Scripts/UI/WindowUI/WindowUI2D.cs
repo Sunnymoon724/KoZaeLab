@@ -1,13 +1,10 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
-using KZLib;
 using Sirenix.OdinInspector;
 using DG.Tweening;
 
 public abstract class WindowUI2D : WindowUI
 {
-	public override bool IsHidden => m_canvasGroup.alpha == 0 && IsInputBlocked;
-	public override bool IsInputBlocked => !m_canvasGroup.interactable && !m_canvasGroup.blocksRaycasts;
+	public override bool IsBlocked => m_blocked;
 
 	[BoxGroup("UI",Order = -10)]
 	[VerticalGroup("UI/General",Order = 0),SerializeField]
@@ -15,58 +12,84 @@ public abstract class WindowUI2D : WindowUI
 	public override bool IsPooling => m_pooling;
 
 	[VerticalGroup("UI/General",Order = 0),SerializeField]
-	private UILayerType m_layerType = UILayerType.Panel;
-	public override UILayerType LayerType => m_layerType;
-
-	[VerticalGroup("UI/General",Order = 0),SerializeField,ShowIf(nameof(IsPopup))]
-	private Transform m_popUpTransform = null;
-	private bool IsPopup => LayerType == UILayerType.PopUp;
-
-	[VerticalGroup("UI/General",Order = 0),SerializeField]
 	private UIPriorityType m_priorityType = UIPriorityType.Middle;
 	public override UIPriorityType PriorityType => m_priorityType;
 
-	private readonly HashSet<WindowUI2D> m_linkedHashSet = new();
-
 	public override bool Is3D => false;
 
-#if UNITY_ANDROID || UNITY_IOS
-	private Rect m_safeArea = new(0.0f,0.0f,0.0f,0.0f);
-#endif
+	protected Sequence m_openSequence = null;
+	protected Sequence m_closeSequence = null;
 
-	protected override void Initialize()
-	{
-		base.Initialize();
-
-		if(LayerType == UILayerType.PopUp && m_popUpTransform)
-		{
-			AddSequence(ref m_openSequence,m_popUpTransform.DOScale(0.5f,0.2f).From().SetEase(Ease.OutBack,2.0f));
-		}
-	}
+	private bool m_blocked = false;
 
 	public override void Open(object param)
 	{
 		base.Open(param);
 
-		m_openSequence?.Restart();
+		if(m_openSequence != null)
+		{
+			m_openSequence.OnComplete(_OnOpenSequenceComplete);
+			m_openSequence.Restart();
+		}
 	}
 
 	public override void Close()
 	{
-		foreach(var baseUI in m_linkedHashSet)
+		if(m_closeSequence != null)
 		{
-			UIManager.In.Close(baseUI.NameType);
+			m_openSequence.OnComplete(_OnCloseSequenceComplete);
+			m_closeSequence.Restart();
 		}
+		else
+		{
+			base.Close();
+		}
+	}
 
-		m_linkedHashSet.Clear();
+	protected void AddSequence(ref Sequence sequence,Tween tween)
+	{
+		if(sequence == null)
+		{
+			sequence = DOTween.Sequence().SetAutoKill(false);
+			sequence.Append(tween);
+			sequence.SetUpdate(true);
+			sequence.Pause();
+		}
+		else
+		{
+			sequence.Join(tween);
+		}
+	}
 
-		m_closeSequence?.Restart();
+	protected virtual void _OnOpenSequenceComplete() { }
 
+	protected virtual void _OnCloseSequenceComplete()
+	{
 		base.Close();
 	}
 
-	public void AddLink(WindowUI2D windowUI2D)
+	public virtual void PressBackButton()
 	{
-		m_linkedHashSet.Add(windowUI2D);
+		SelfClose();
+	}
+
+	public override void BlockInput(bool isBlocked)
+	{
+		if(isBlocked)
+		{
+			LogSvc.UI.I($"{NameType} input is blocked");
+
+			_SetCanvasGroupState(1,false,false);
+
+			m_blocked = true;
+		}
+		else
+		{
+			LogSvc.UI.I($"{NameType} input is allowed");
+
+			_SetCanvasGroupState(1,true,true);
+
+			m_blocked = false;
+		}
 	}
 }

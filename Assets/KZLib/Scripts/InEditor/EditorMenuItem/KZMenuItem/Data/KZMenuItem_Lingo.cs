@@ -34,7 +34,7 @@ namespace KZLib.KZMenu
 			{
 				localizationSettings = ScriptableObject.CreateInstance<LocalizationSettings>();
 
-				CommonUtility.SaveAsset(Path.Combine("Localization","LocalizationSettings.asset"),localizationSettings,true);
+				CommonUtility.CreateAsset(Path.Combine("Localization","LocalizationSettings.asset"),localizationSettings,true);
 
 				EditorBuildSettings.AddConfigObject("com.unity.localization.settings",localizationSettings,true);
 			}
@@ -63,7 +63,7 @@ namespace KZLib.KZMenu
 
 						identifierHashSet.Add(locale.Identifier);
 
-						CommonUtility.SaveAsset(assetPath,locale,false);
+						CommonUtility.CreateAsset(assetPath,locale,false);
 					}
 
 					var tableNameHashSet = new HashSet<string>();
@@ -114,26 +114,33 @@ namespace KZLib.KZMenu
 					}
 
 					var removeList = new List<string>();
+					var stringTableList = LocalizationEditorSettings.GetStringTableCollections();
 
-					foreach(var stringTable in LocalizationEditorSettings.GetStringTableCollections())
+					for(var i=0;i<stringTableList.Count;i++)
 					{
+						var stringTable = stringTableList[i];
+
 						if(!tableNameHashSet.Contains(stringTable.name))
 						{
 							removeList.Add(stringTable.name);
 						}
 					}
 
-					foreach(var assetTable in LocalizationEditorSettings.GetAssetTableCollections())
+					var assetTableList = LocalizationEditorSettings.GetAssetTableCollections();
+
+					for(var i=0;i<assetTableList.Count;i++)
 					{
+						var assetTable = assetTableList[i];
+
 						if(!tableNameHashSet.Contains(assetTable.name))
 						{
 							removeList.Add(assetTable.name);
 						}
 					}
 
-					foreach(var remove in removeList)
+					for(var i=0;i<removeList.Count;i++)
 					{
-						var sheetName = remove.Replace("Table","");
+						var sheetName = removeList[i].Replace("Table","");
 						var folderPath = Path.Combine("Assets","Localization",fileName,sheetName);
 
 						FileUtility.DeleteFolder(FileUtility.GetAbsolutePath(folderPath,true),true);
@@ -172,17 +179,20 @@ namespace KZLib.KZMenu
 				}
 
 				key = $"{sheetName.ToLower()}_{key}";
+				
+				var stringTableList = collection.StringTables;
 
-				foreach(var table in collection.StringTables)
+				for(var i=0;i<stringTableList.Count;i++)
 				{
-					var language = table.LocaleIdentifier.CultureInfo.EnglishName;
+					var stringTable = stringTableList[i];
+					var language = stringTable.LocaleIdentifier.CultureInfo.EnglishName;
 					var text = _GetValueByLanguage(language,schemeArray,pair.Value);
 
-					var tableEntry = table.GetEntry(key);
+					var tableEntry = stringTable.GetEntry(key);
 
 					if(tableEntry == null)
 					{
-						tableEntry = table.AddEntry(key,text);
+						tableEntry = stringTable.AddEntry(key,text);
 					}
 					else
 					{
@@ -191,7 +201,7 @@ namespace KZLib.KZMenu
 
 					tableEntry.IsSmart = text.Contains("{0}");
 
-					EditorUtility.SetDirty(table);
+					EditorUtility.SetDirty(stringTable);
 				}
 
 				keyHashSet.Add(pair.Key);
@@ -199,7 +209,7 @@ namespace KZLib.KZMenu
 
 			_CheckUnusedKeys(collection.SharedData,keyHashSet);
 
-			AssetDatabase.SaveAssets();
+			CommonUtility.SaveAsset();
 		}
 
 		private static void _ApplyAssetTableCollection(AssetTableCollection collection,string sheetName,Dictionary<string,string[]> lingoDict)
@@ -223,31 +233,34 @@ namespace KZLib.KZMenu
 					continue;
 				}
 
-				foreach(var table in collection.AssetTables)
+				var assetTableList = collection.AssetTables;
+
+				for(var i=0;i<assetTableList.Count;i++)
 				{
-					var language = table.LocaleIdentifier.CultureInfo.EnglishName;
+					var assetTable = assetTableList[i];
+					var language = assetTable.LocaleIdentifier.CultureInfo.EnglishName;
 					var path = _GetValueByLanguage(language,schemeArray,pair.Value);
 
 					var assetPath = RouteManager.In.GetOrCreateRoute(path).AssetPath;
-					var guid = _CreateAddressableGuid(assetPath,language,table.LocaleIdentifier.Code);
+					var guid = _CreateAddressableGuid(assetPath,language,assetTable.LocaleIdentifier.Code);
 
 					if(guid.IsEmpty())
 					{
 						continue;
 					}
 
-					var tableEntry = table.GetEntry(key);
+					var tableEntry = assetTable.GetEntry(key);
 
 					if(tableEntry == null)
 					{
-						table.AddEntry(key,guid);
+						assetTable.AddEntry(key,guid);
 					}
 					else
 					{
 						tableEntry.Guid = guid;
 					}
 
-					EditorUtility.SetDirty(table);
+					EditorUtility.SetDirty(assetTable);
 				}
 
 				keyHashSet.Add(pair.Key);
@@ -255,7 +268,7 @@ namespace KZLib.KZMenu
 
 			_CheckUnusedKeys(collection.SharedData,keyHashSet);
 
-			AssetDatabase.SaveAssets();
+			CommonUtility.SaveAsset();
 		}
 
 		private static TCollection _GetOrCreateLocalizationTableCollection<TCollection>(string sheetName,string fileName,Func<TableReference,TCollection> onGetCollection,Func<string,string,TCollection> onCreateCollection)
@@ -271,7 +284,7 @@ namespace KZLib.KZMenu
 
 				collection = onCreateCollection(tableName,folderPath);
 
-				AssetDatabase.SaveAssets();
+				CommonUtility.SaveAsset();
 			}
 
 			return collection;
@@ -280,25 +293,25 @@ namespace KZLib.KZMenu
 		private static void _SyncStringTableCollection(StringTableCollection collection,HashSet<LocaleIdentifier> identifierHashSet)
 		{
 			var existingIdentifierHashSet = new HashSet<LocaleIdentifier>();
-
-			foreach(var table in collection.StringTables)
-			{
-				existingIdentifierHashSet.Add(table.LocaleIdentifier);
-			}
-
 			var removeList = new List<StringTable>();
 
-			foreach(var table in collection.StringTables)
+			var stringTableList = collection.StringTables;
+
+			for(var i=0;i<stringTableList.Count;i++)
 			{
-				if(!identifierHashSet.Contains(table.LocaleIdentifier))
+				var stringTable = stringTableList[i];
+
+				existingIdentifierHashSet.Add(stringTable.LocaleIdentifier);
+
+				if(!identifierHashSet.Contains(stringTable.LocaleIdentifier))
 				{
-					removeList.Add(table);
+					removeList.Add(stringTable);
 				}
 			}
 
-			foreach(var remove in removeList)
+			for(var i=0;i<removeList.Count;i++)
 			{
-				collection.RemoveTable(remove);
+				collection.RemoveTable(removeList[i]);
 			}
 
 			foreach(var identifier in identifierHashSet)
@@ -313,25 +326,25 @@ namespace KZLib.KZMenu
 		private static void _SyncAssetTableCollection(AssetTableCollection collection,HashSet<LocaleIdentifier> identifierHashSet)
 		{
 			var existingIdentifierHashSet = new HashSet<LocaleIdentifier>();
-
-			foreach(var table in collection.AssetTables)
-			{
-				existingIdentifierHashSet.Add(table.LocaleIdentifier);
-			}
-
 			var removeList = new List<AssetTable>();
 
-			foreach(var table in collection.AssetTables)
+			var assetTableList = collection.AssetTables;
+
+			for(var i=0;i<assetTableList.Count;i++)
 			{
-				if(!identifierHashSet.Contains(table.LocaleIdentifier))
+				var assetTable = assetTableList[i];
+
+				existingIdentifierHashSet.Add(assetTable.LocaleIdentifier);
+
+				if(!identifierHashSet.Contains(assetTable.LocaleIdentifier))
 				{
-					removeList.Add(table);
+					removeList.Add(assetTable);
 				}
 			}
 
-			foreach(var remove in removeList)
+			for(var i=0;i<removeList.Count;i++)
 			{
-				collection.RemoveTable(remove);
+				collection.RemoveTable(removeList[i]);
 			}
 
 			foreach(var identifier in identifierHashSet)

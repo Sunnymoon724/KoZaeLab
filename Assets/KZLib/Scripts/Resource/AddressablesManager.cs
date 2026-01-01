@@ -126,13 +126,14 @@ namespace KZLib
 
 			var locationInfoList = new List<LocationInfo>();
 
-			foreach(var label in labelArray)
+			for(var i=0;i<labelArray.Length;i++)
 			{
+				var label = labelArray[i];
 				var locationList = await CommonUtility.LoadHandleSafeAsync(Addressables.LoadResourceLocationsAsync(label));
-				
-				foreach(var location in locationList)
+
+				for(var j=0;j<locationList.Count;j++)
                 {
-                    locationInfoList.Add(new LocationInfo(location,label));
+					locationInfoList.Add(new LocationInfo(locationList[j],label));
                 }
 			}
 
@@ -164,8 +165,10 @@ namespace KZLib
 			{
 				var assetInfo = pair.Value;
 
-				foreach(var label in labelArray)
+				for(var i=0;i<labelArray.Length;i++)
 				{
+					var label = labelArray[i];
+
 					if(assetInfo.Label.IsEqual(label))
 					{
 						keyList.Add(label);
@@ -173,8 +176,10 @@ namespace KZLib
 				}
 			}
 
-			foreach(var key in keyList)
+			for(var i=0;i<keyList.Count;i++)
 			{
+				var key = keyList[i];
+
 				Addressables.Release(m_assetInfoDict[key].Asset);
 
 				m_assetInfoDict.Remove(key);

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class DialogBoxPopupUI : WindowUI2D
+public class DialogBoxPopupUI : BasePopupUI
 {
 	public record Param(string Title,string Message,params DialogEntryInfo[] EntryInfoArray);
 
@@ -32,9 +32,12 @@ public class DialogBoxPopupUI : WindowUI2D
 		m_messageText.SetSafeTextMeshPro(dialogParam.Message);
 
 		var entryInfoList = new List<IEntryInfo>();
+		var entryInfoArray = dialogParam.EntryInfoArray;
 
-		foreach(var entryInfo in dialogParam.EntryInfoArray)
+		for(var i=0;i<entryInfoArray.Length;i++)
 		{
+			var entryInfo = entryInfoArray[i];
+
 			if(entryInfo.OnClicked == null)
 			{
 				LogSvc.UI.E($"{entryInfo.Name} is null");

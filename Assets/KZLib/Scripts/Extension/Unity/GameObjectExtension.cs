@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using KZLib;
+using TMPro;
 using UnityEngine;
 
 public static class GameObjectExtension
@@ -11,9 +12,11 @@ public static class GameObjectExtension
 			return;
 		}
 
-		foreach(var renderer in gameObject.GetComponentsInChildren<Renderer>())
+		var rendererArray = gameObject.GetComponentsInChildren<Renderer>();
+
+		for(var i=0;i<rendererArray.Length;i++)
 		{
-			renderer.enabled = false;
+			rendererArray[i].enabled = false;
 		}
 	}
 
@@ -159,26 +162,34 @@ public static class GameObjectExtension
 		}
 
 
-		foreach(var graphic in gameObject.GetComponentsInChildren<TMPro.TMP_Text>(true))
+		var textGraphicArray = gameObject.GetComponentsInChildren<TMP_Text>(true);
+
+		for(var i=0;i<textGraphicArray.Length;i++)
 		{
-			if(!graphic.fontMaterial)
+			var textGraphic = textGraphicArray[i];
+
+			if(!textGraphic.fontMaterial)
 			{
 				continue;
 			}
 
-			graphic.fontMaterial.shader = ShaderManager.In.FindShader(graphic.fontMaterial.shader.name);
+			textGraphic.fontMaterial.shader = ShaderManager.In.FindShader(textGraphic.fontMaterial.shader.name);
 		}
 
-		foreach(var renderer in gameObject.GetComponentsInChildren<Renderer>(true))
+		var rendererArray = gameObject.GetComponentsInChildren<Renderer>(true);
+
+		for(var i=0;i<rendererArray.Length;i++)
 		{
-			if(renderer.materials == null)
+			var materialArray = rendererArray[i].materials;
+
+			if(materialArray == null)
 			{
 				continue;
 			}
 
-			for(var i=0;i<renderer.materials.Length;i++)
+			for(var j=0;i<materialArray.Length;j++)
 			{
-				renderer.materials[i].shader = ShaderManager.In.FindShader(renderer.materials[i].shader.name);
+				materialArray[j].shader = ShaderManager.In.FindShader(materialArray[j].shader.name);
 			}
 		}
 	}
@@ -209,10 +220,11 @@ public static class GameObjectExtension
 		}
 
 		var mesh = gameObject.GetComponent<SkinnedMeshRenderer>().sharedMesh;
+		var vertexArray = mesh.vertices;
 
-		for(var i=0;i<mesh.vertices.Length;i++)
+		for(var i=0;i<vertexArray.Length;i++)
 		{
-			mesh.vertices[i] = new Vector3(mesh.vertices[i].x+100f,mesh.vertices[i].y,mesh.vertices[i].z);
+			vertexArray[i] = new Vector3(vertexArray[i].x+100f,vertexArray[i].y,vertexArray[i].z);
 		}
 
 		var verticesList = new List<Vector3>();
@@ -222,13 +234,16 @@ public static class GameObjectExtension
 		var tangentList = new List<Vector4>();
 		var boneWeightList = new List<BoneWeight>();
 		var bindposeList = new List<Matrix4x4>();
+		
+		var normalArray = mesh.normals;
+		var tangentArray = mesh.tangents;
 
-		for(var i=0;i<mesh.vertices.Length;i++)
+		for(var i=0;i<vertexArray.Length;i++)
 		{
-			verticesList.Add(mesh.vertices[i]);
-			normalList.Add(mesh.normals[i]);
+			verticesList.Add(vertexArray[i]);
+			normalList.Add(normalArray[i]);
 			uvList.Add(mesh.uv[i]);
-			tangentList.Add(mesh.tangents[i]);
+			tangentList.Add(tangentArray[i]);
 		}
 
 		for(var i=mesh.triangles.Length-1;i>=0;i--)

@@ -26,9 +26,9 @@ namespace KZLib.KZInAppPurchase
 		private enum PurchaseResultType { Unknown, Success, Fail, }
 		private record PurchaseResultInfo(PurchaseResultType Type,string TransactionID,PurchaseFailureReason FailureReason);
 #endif
-		private const float CONST_RETRY_PERIOD = 2;
-		private const int CONST_MAX_RETRY_COUNT = 5;
-		private const int CONST_MAX_TRY_FETCH_COUNT = 50;
+		private const float c_retryPeriod = 2;
+		private const int c_maxRetryCount = 5;
+		private const int c_maxFetchCount = 50;
 
 		private const float CONST_TIME_OUT = 10.0f;
 
@@ -116,17 +116,17 @@ namespace KZLib.KZInAppPurchase
 
 			CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
-			_SetInAppPurchaseAsync(skuList).Forget();
+			_SetInAppPurchaseAsync(skuList,m_tokenSource.Token).Forget();
 		}
 
-		private async UniTaskVoid _SetInAppPurchaseAsync(List<string> skuList)
+		private async UniTaskVoid _SetInAppPurchaseAsync(List<string> skuList,CancellationToken token)
 		{
 			var logBuilder = new StringBuilder();
 
-			for(var i=1;i<=CONST_MAX_RETRY_COUNT;i++)
+			for(var i=1;i<=c_maxRetryCount;i++)
 			{
 				var connectTask = m_storeController.Connect();
-				var timeoutTask = UniTask.Delay(TimeSpan.FromSeconds(CONST_TIME_OUT),cancellationToken: m_tokenSource.Token);
+				var timeoutTask = UniTask.Delay(TimeSpan.FromSeconds(CONST_TIME_OUT),cancellationToken: token);
 
 				var (winArgumentIndex,_,_) = await UniTask.WhenAny(connectTask.AsUniTask().SuppressCancellationThrow(),timeoutTask.SuppressCancellationThrow());
 
@@ -134,18 +134,18 @@ namespace KZLib.KZInAppPurchase
 				{
 					LogSvc.External.I("[IAP] Initialize succeeded");
 
-					await _FetchProductAsync(skuList);
+					await _FetchProductAsync(skuList,token);
 
 					return;
 				}
 
 				var exception = connectTask.Exception?.InnerException ?? connectTask.Exception ?? new Exception("Unknown error");
 
-				LogSvc.External.E($"[IAP] Initialize failed.. Retrying in {CONST_RETRY_PERIOD} seconds.. [{i}/{CONST_MAX_RETRY_COUNT}]");
+				LogSvc.External.E($"[IAP] Initialize failed.. Retrying in {c_retryPeriod} seconds.. [{i}/{c_maxRetryCount}]");
 
 				logBuilder.Append($"Exception {i}: {exception.Message}");
 
-				await UniTask.Delay(TimeSpan.FromSeconds(CONST_RETRY_PERIOD),cancellationToken: m_tokenSource.Token).SuppressCancellationThrow();
+				await UniTask.Delay(TimeSpan.FromSeconds(c_retryPeriod),cancellationToken: token).SuppressCancellationThrow();
 			}
 
 			LogSvc.External.E($"[IAP] Initialize failed.. Max retry attempts reached.");
@@ -159,7 +159,7 @@ namespace KZLib.KZInAppPurchase
 #endif
 		}
 
-		private async UniTask _FetchProductAsync(List<string> skuList)
+		private async UniTask _FetchProductAsync(List<string> skuList,CancellationToken token)
 		{
 #if !UNITY_EDITOR
 			if(_IsCurrentStoreSupportedByValidator())
@@ -183,7 +183,7 @@ namespace KZLib.KZInAppPurchase
 
 			while(m_fetchingProductList.Count > 0)
 			{
-				var fetchCount = Mathf.Min(m_fetchingProductList.Count,CONST_MAX_TRY_FETCH_COUNT);
+				var fetchCount = Mathf.Min(m_fetchingProductList.Count,c_maxFetchCount);
 				var fetchList = m_fetchingProductList.GetRange(0,fetchCount);
 
 				LogSvc.External.I($"[IAP] {fetchCount} products fetching started.");
@@ -198,7 +198,7 @@ namespace KZLib.KZInAppPurchase
 					return (m_fetchSuccessHashSet.Count+m_fetchFailCount)>=fetchCount;
 				}
 
-				await UniTask.WaitUntil(_FinishFetch,cancellationToken: m_tokenSource.Token).SuppressCancellationThrow();
+				await UniTask.WaitUntil(_FinishFetch,cancellationToken: token).SuppressCancellationThrow();
 
 				if(m_fetchSuccessHashSet.Count != 0)
 				{
@@ -216,7 +216,7 @@ namespace KZLib.KZInAppPurchase
 				{
 					attempt++;
 
-					if(attempt >= CONST_MAX_RETRY_COUNT)
+					if(attempt >= c_maxRetryCount)
 					{
 						LogSvc.External.E($"[IAP] Fetching failed.. Max retry attempts reached: {attempt}");
 
@@ -224,7 +224,7 @@ namespace KZLib.KZInAppPurchase
 					}
 					else
 					{
-						LogSvc.External.E($"[IAP] Fetching failed without success.. Retrying.. ({attempt}/{CONST_MAX_RETRY_COUNT})");
+						LogSvc.External.E($"[IAP] Fetching failed without success.. Retrying.. ({attempt}/{c_maxRetryCount})");
 					}
 				}
 			}
@@ -332,9 +332,13 @@ namespace KZLib.KZInAppPurchase
 			LogSvc.External.I( $"[IAP] Checking pending orders" );
 
 #if !UNITY_EDITOR
-			foreach(var order in orders.PendingOrders)
+			var pendingOrderArray = orders.PendingOrders;
+
+			for(var i=0;i<pendingOrderArray.Count;i++)
 			{
-				var product = _GetFirstProductInOrder(order);
+				var pendingOrder = pendingOrderArray[i];
+
+				var product = _GetFirstProductInOrder(pendingOrder);
 
 				if(product == null)
 				{
@@ -342,10 +346,10 @@ namespace KZLib.KZInAppPurchase
 				}
 
 				var sku = product.definition.id;
-				
+
 				LogSvc.External.I( $"[IAP] Detected pending purchase: {sku} - attempting recovery (external)" );
 
-				_PurchaseUnfinishedProductAsync(order,sku).Forget();
+				_PurchaseUnfinishedProductAsync(pendingOrder,sku).Forget();
 			}
 #endif
 		}

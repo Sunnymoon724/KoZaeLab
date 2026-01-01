@@ -43,8 +43,10 @@ namespace KZLib
 			m_bgmSource.volume = m_bgmVolume.level;
 			m_bgmSource.mute = m_bgmVolume.mute;
 
-			foreach(var source in m_sfxList)
+			for(var i=0;i<m_sfxList.Count;i++)
 			{
+				var source = m_sfxList[i];
+
 				source.volume = m_sfxVolume.level;
 				source.mute = m_sfxVolume.mute;
 			}

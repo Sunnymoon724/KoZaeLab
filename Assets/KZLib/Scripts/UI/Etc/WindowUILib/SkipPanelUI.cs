@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using Sirenix.OdinInspector;
 using KZLib;
 
-public class SkipPanelUI : WindowUI2D
+public class SkipPanelUI : BasePanelUI
 {
 	public record Param(Action OnClicked);
 

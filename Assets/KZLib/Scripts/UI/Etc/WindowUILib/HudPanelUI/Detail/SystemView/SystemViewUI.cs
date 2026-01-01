@@ -5,21 +5,34 @@ namespace HudPanel
 {
 	public class SystemViewUI : BaseComponentUI
 	{
-		[SerializeField] private TMP_Text m_operatingSystemText = null;
-		[SerializeField] private TMP_Text m_deviceModelText = null;
-		[SerializeField] private TMP_Text m_memorySizeText = null;
-		[SerializeField] private TMP_Text m_processorTypeText = null;
-		[SerializeField] private TMP_Text m_processorCountText = null;
+		[SerializeField]
+		private TMP_Text m_operatingSystemText = null;
+		[SerializeField]
+		private TMP_Text m_deviceModelText = null;
+		[SerializeField]
+		private TMP_Text m_memorySizeText = null;
+		[SerializeField]
+		private TMP_Text m_processorTypeText = null;
+		[SerializeField]
+		private TMP_Text m_processorCountText = null;
 
-		[SerializeField] private TMP_Text m_graphicDeviceNameText = null;
-		[SerializeField] private TMP_Text m_graphicDeviceVenderText = null;
-		[SerializeField] private TMP_Text m_graphicDeviceVersionText = null;
-		[SerializeField] private TMP_Text m_graphicMemorySizeText = null;
-		[SerializeField] private TMP_Text m_graphicTextureSizeText = null;
-		[SerializeField] private TMP_Text m_graphicShaderLevelText = null;
+		[SerializeField]
+		private TMP_Text m_graphicDeviceNameText = null;
+		[SerializeField]
+		private TMP_Text m_graphicDeviceVenderText = null;
+		[SerializeField]
+		private TMP_Text m_graphicDeviceVersionText = null;
+		[SerializeField]
+		private TMP_Text m_graphicMemorySizeText = null;
+		[SerializeField]
+		private TMP_Text m_graphicTextureSizeText = null;
+		[SerializeField]
+		private TMP_Text m_graphicShaderLevelText = null;
 
-		[SerializeField] private TMP_Text m_screenResolutionText = null;
-		[SerializeField] private TMP_Text m_windowResolutionText = null;
+		[SerializeField]
+		private TMP_Text m_screenResolutionText = null;
+		[SerializeField]
+		private TMP_Text m_windowResolutionText = null;
 
 		protected override void Initialize()
 		{

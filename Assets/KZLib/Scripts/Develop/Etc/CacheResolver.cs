@@ -30,7 +30,7 @@ namespace KZLib.KZDevelop
 		private readonly Dictionary<string,List<CacheInfo>> m_cacheInfoListDict = new();
 		private readonly List<string> m_removeList = new();
 
-		private readonly CancellationTokenSource m_tokenSource = null;
+		private CancellationTokenSource m_tokenSource = null;
 
 		private readonly float m_updatePeriod = 0.0f;
 		private readonly float m_deleteTime = 0.0f;
@@ -39,13 +39,13 @@ namespace KZLib.KZDevelop
 
 		public CacheResolver(float deleteTime = 60.0f,float updatePeriod = 30.0f)
 		{
-			m_tokenSource = new();
+			CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
 			m_deleteTime = deleteTime;
 
 			m_updatePeriod = updatePeriod;
 
-			_LoopProcessAsync().Forget();
+			_LoopProcessAsync(m_tokenSource.Token).Forget();
 		}
 
 		~CacheResolver()
@@ -68,8 +68,7 @@ namespace KZLib.KZDevelop
 
 			if(disposing)
 			{
-				m_tokenSource?.Cancel(); 
-				m_tokenSource?.Dispose(); 
+				CommonUtility.KillTokenSource(ref m_tokenSource);
 
 				m_cacheInfoListDict.Clear();
 				m_removeList.Clear();
@@ -100,7 +99,7 @@ namespace KZLib.KZDevelop
 			return false;
 		}
 
-		public void StoreCache(string key,TCache cache,bool updateDuration)
+		public void StoreCache(string key,TCache cache,bool isUpdate)
 		{
 			var currentTime = GameTimeManager.In.GetCurrentTime(true);
 			var newDuration = currentTime.AddSeconds(m_deleteTime).Ticks;
@@ -111,22 +110,22 @@ namespace KZLib.KZDevelop
 
 				m_cacheInfoListDict.Add(key,cacheInfoList);
 			}
-			else if(updateDuration)
+			else if(isUpdate)
 			{
-				foreach(var cacheInfo in cacheInfoList)
+				for(var i=0;i<cacheInfoList.Count;i++)
 				{
-					cacheInfo.UpdateDuration(newDuration);
+					cacheInfoList[i].UpdateDuration(newDuration);
 				}
 			}
 
 			cacheInfoList.Add(new CacheInfo(cache,newDuration));
 		}
 
-		private async UniTaskVoid _LoopProcessAsync()
+		private async UniTaskVoid _LoopProcessAsync(CancellationToken token)
 		{
-			while(true)
+			while(!token.IsCancellationRequested)
 			{
-				await UniTask.Delay(TimeSpan.FromSeconds(m_updatePeriod),true,cancellationToken : m_tokenSource.Token);
+				await UniTask.Delay(TimeSpan.FromSeconds(m_updatePeriod),true,cancellationToken : token).SuppressCancellationThrow();
 
 				m_removeList.Clear();
 
@@ -145,9 +144,9 @@ namespace KZLib.KZDevelop
 					}
 				}
 
-				foreach(var remove in m_removeList)
+				for(var i=0;i<m_removeList.Count;i++)
 				{
-					m_cacheInfoListDict.RemoveSafe(remove);
+					m_cacheInfoListDict.RemoveSafe(m_removeList[i]);
 				}
 			}
 		}

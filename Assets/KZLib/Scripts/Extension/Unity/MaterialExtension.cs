@@ -28,13 +28,14 @@ public static class MaterialExtension
 			return;
 		}
 
-		foreach(var renderer in rendererArray)
+		for(var i=0;i<rendererArray.Length;i++)
 		{
+			var renderer = rendererArray[i];
 			var materialArray = renderer.materials;
 
-			for(var i=0;i<materialArray.Length;i++ )
+			for(var j=0;j<materialArray.Length;j++)
 			{
-				materialArray[i] = material;
+				materialArray[j] = material;
 			}
 
 			renderer.materials = materialArray;

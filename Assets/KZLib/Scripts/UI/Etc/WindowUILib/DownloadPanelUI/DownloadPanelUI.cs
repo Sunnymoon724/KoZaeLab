@@ -1,9 +1,10 @@
 using DownloadPanel;
 using UnityEngine;
 
-public class DownloadPanelUI : WindowUI2D
+public class DownloadPanelUI : BasePanelUI
 {
-	[SerializeField] private DownloadUI m_downloadUI = null;
+	[SerializeField]
+	private DownloadUI m_downloadUI = null;
 
 	protected override void Initialize()
 	{

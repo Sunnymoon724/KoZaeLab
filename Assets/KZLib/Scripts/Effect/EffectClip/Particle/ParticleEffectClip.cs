@@ -50,9 +50,9 @@ public class ParticleEffectClip : EffectClip
 		{
 			_SetColor(m_mainParticle.main,param.StartColor.Value);
 
-			foreach(var particle in m_subParticleList)
+			for(var i=0;i<m_subParticleList.Count;i++)
 			{
-				_SetColor(particle.main,param.StartColor.Value);
+				_SetColor(m_subParticleList[i].main,param.StartColor.Value);
 			}
 		}
 	}
@@ -64,7 +64,7 @@ public class ParticleEffectClip : EffectClip
 			return !m_mainParticle.isPlaying;
 		}
 
-		await CommonUtility.WaitForConditionAsync(_WaitForParticle,SetTime,m_ignoreTimeScale,m_tokenSource.Token);
+		await CommonUtility.WaitForConditionAsync(_WaitForParticle,SetTime,m_ignoreTimeScale,m_tokenSource.Token).SuppressCancellationThrow();
 	}
 
 	private void _SetColor(ParticleSystem.MainModule mainModule,Color color)

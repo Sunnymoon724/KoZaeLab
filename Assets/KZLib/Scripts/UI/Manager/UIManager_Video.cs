@@ -36,7 +36,7 @@ namespace KZLib
 
 			var videoPanel = Open(UINameType.VideoPanelUI) as VideoPanelUI;
 
-			videoPanel.Hide();
+			videoPanel.Hide(true);
 
 			async UniTask _PlayTaskAsync()
 			{
@@ -63,7 +63,7 @@ namespace KZLib
 
 		private async UniTask _PrepareVideoAsync(VideoPanelUI videoPanel,VideoInfo videoInfo)
 		{
-			videoPanel.Show();
+			videoPanel.Hide(false);
 
 			await videoPanel.PrepareVideoAsync(videoInfo);
 		}

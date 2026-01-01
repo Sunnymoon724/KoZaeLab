@@ -7,12 +7,16 @@ namespace UnityEngine.UI
 		private enum ShapeType { Ellipse, Polygon, } // Rectangle, }
 		private enum FillType { None, Matched, Solid, }
 		
-		[SerializeField] private ShapeType m_shapeType = ShapeType.Ellipse;
-		[SerializeField] private float m_outlineSize = 1.0f;
+		[SerializeField]
+		private ShapeType m_shapeType = ShapeType.Ellipse;
+		[SerializeField]
+		private float m_outlineSize = 1.0f;
 
-		[SerializeField] private FillType m_fillType = FillType.Solid;
+		[SerializeField]
+		private FillType m_fillType = FillType.Solid;
 
-		[SerializeField] private Color m_fillColor = Color.white;
+		[SerializeField]
+		private Color m_fillColor = Color.white;
 
 		private bool IsEllipse => m_shapeType == ShapeType.Ellipse;
 		private bool IsPolygon => m_shapeType == ShapeType.Polygon;

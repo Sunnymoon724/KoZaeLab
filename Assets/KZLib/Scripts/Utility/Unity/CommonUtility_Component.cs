@@ -14,9 +14,12 @@ public static partial class CommonUtility
 	{
 		var componentType = component.GetType();
 		var componentObject = gameObject.AddComponent(componentType);
-
-		foreach(var field in componentType.GetFields())
+		var fieldArray = componentType.GetFields();
+		
+		for(var i=0;i<fieldArray.Length;i++)
 		{
+			var field = fieldArray[i];
+
 			field.SetValue(componentObject,field.GetValue(component));
 		}
 
@@ -34,10 +37,11 @@ public static partial class CommonUtility
 		foreach(var assetPath in FindAssetPathGroup("t:prefab"))
 		{
 			var asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+			var componentArray = asset.GetComponentsInChildren<TComponent>(true);
 
-			foreach(var component in asset.GetComponentsInChildren<TComponent>(true))
+			for(var i=0;i<componentArray.Length;i++)
 			{
-				yield return component;
+				yield return componentArray[i];
 			}
 		}
 	}
@@ -45,12 +49,16 @@ public static partial class CommonUtility
 	public static IEnumerable<TComponent> FindComponentGroupInActiveScene<TComponent>() where TComponent : Component
 	{
 		var activeScene = SceneManager.GetActiveScene();
-
-		foreach(var rootGameObject in activeScene.GetRootGameObjects())
+		
+		var rootGameObjectArray = activeScene.GetRootGameObjects();
+		
+		for(var i=0;i<rootGameObjectArray.Length;i++)
 		{
-			foreach(var component in rootGameObject.GetComponentsInChildren<TComponent>(true))
+			var componentArray = rootGameObjectArray[i].GetComponentsInChildren<TComponent>(true);
+
+			for(var j=0;j<componentArray.Length;j++)
 			{
-				yield return component;
+				yield return componentArray[j];
 			}
 		}
 	}

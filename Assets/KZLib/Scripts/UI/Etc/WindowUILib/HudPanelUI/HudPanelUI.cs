@@ -13,9 +13,9 @@ namespace HudPanel
 	}
 }
 
-public class HudPanelUI : WindowUI2D
+public class HudPanelUI : BasePanelUI
 {
-	private const float c_frame_update_period = 0.25f;
+	private const float c_frameUpdatePeriod = 0.25f;
 
 	private float m_deltaTime = 0.0f;
 	private int m_frameCount = 0;
@@ -28,10 +28,12 @@ public class HudPanelUI : WindowUI2D
 		m_deltaTime += Time.deltaTime;
 		m_frameCount++;
 
-		if(m_deltaTime > c_frame_update_period)
+		if(m_deltaTime > c_frameUpdatePeriod)
 		{
-			foreach(var hudUI in m_hudUIList)
+			for(var i=0;i<m_hudUIList.Count;i++)
 			{
+				var hudUI = m_hudUIList[i];
+
 				if(hudUI.IsActive)
 				{
 					hudUI.Refresh(m_deltaTime,m_frameCount);

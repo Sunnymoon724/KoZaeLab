@@ -37,10 +37,11 @@ namespace KZLib.KZWindow
 				foreach(var assetPath in CommonUtility.FindAssetPathGroup("t:prefab"))
 				{
 					var asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+					var meshFilterArray = asset.GetComponentsInChildren<MeshFilter>(true);
 
-					foreach(var meshFilter in asset.GetComponentsInChildren<MeshFilter>(true))
+					for(var i=0;i<meshFilterArray.Length;i++)
 					{
-						if(meshFilter.sharedMesh == m_selectionMesh)
+						if(meshFilterArray[i].sharedMesh == m_selectionMesh)
 						{
 							m_prefabList.AddNotOverlap(new Prefab(asset,assetPath,value,m_replaceMesh,IsValidReplace));
 						}
@@ -78,9 +79,9 @@ namespace KZLib.KZWindow
 
 				var isValidReplace = SelectionMesh && SelectionMesh != ReplaceMesh;
 
-				foreach(var prefab in prefabList)
+				for(var i=0;i<prefabList.Count;i++)
 				{
-					m_prefabList.AddNotOverlap(new Prefab(prefab,value,isValidReplace));
+					m_prefabList.AddNotOverlap(new Prefab(prefabList[i],value,isValidReplace));
 				}
 			}
 		}
@@ -94,9 +95,9 @@ namespace KZLib.KZWindow
 		[VerticalGroup("Find Mesh/3",Order = 3),ShowIf(nameof(HasPrefab)),EnableIf(nameof(IsValidReplace))]
 		protected void OnMeshToolBar()
 		{
-			foreach(var prefab in m_prefabList)
+			for(var i=0;i<m_prefabList.Count;i++)
 			{
-				prefab.OnChangeMesh();
+				m_prefabList[i].OnChangeMesh();
 			}
 		}
 
@@ -114,8 +115,12 @@ namespace KZLib.KZWindow
 			{
 				var changed = false;
 
-				foreach(var meshFilter in m_prefab.GetComponentsInChildren<MeshFilter>(true))
+				var meshFilterArray = m_prefab.GetComponentsInChildren<MeshFilter>(true);
+				
+				for(var i=0;i<meshFilterArray.Length;i++)
 				{
+					var meshFilter = meshFilterArray[i];
+
 					if(meshFilter.sharedMesh != m_selectionMesh)
 					{
 						continue;

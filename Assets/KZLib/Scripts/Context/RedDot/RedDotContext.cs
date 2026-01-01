@@ -71,8 +71,12 @@ namespace KZLib
 
 		public RedDotContext()
 		{
-			foreach(var redDotTag in CustomTag.CollectCustomTagList<RedDotTag>(true))
+			var redDotTagList = CustomTag.CollectCustomTagList<RedDotTag>(true);
+
+			for(var i=0;i<redDotTagList.Count;i++)
 			{
+				var redDotTag = redDotTagList[i];
+
 				if(!_IsValid(redDotTag))
 				{
 					continue;
@@ -306,9 +310,9 @@ namespace KZLib
 
 			int removedCount = 0;
 
-			foreach(string contentId in contentIdGroup)
+			foreach(var contentId in contentIdGroup)
 			{
-				if(newContentsHashSet.Remove( contentId ))
+				if(newContentsHashSet.Remove(contentId))
 				{
 					removedCount++;
 				}

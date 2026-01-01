@@ -6,7 +6,8 @@ namespace KZLib
 {
 	public class UnitAgentController : SerializedMonoBehaviour
 	{
-		[SerializeField] private NavMeshAgent m_navMeshAgent = null;
+		[SerializeField]
+		private NavMeshAgent m_navMeshAgent = null;
 
 		public float AttackRange => m_navMeshAgent.stoppingDistance;
 

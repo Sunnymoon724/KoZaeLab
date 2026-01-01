@@ -9,15 +9,17 @@ using System.Threading;
 using KZLib.KZData;
 using R3;
 
-public class VideoPanelUI : WindowUI2D
+public class VideoPanelUI : BasePanelUI
 {
-	[SerializeField] private RawImage m_screenImage = null;
-	[SerializeField] private VideoPlayer m_videoPlayer = null;
-	[SerializeField] private AspectRatioFitter m_aspectRatio = null;
+	[SerializeField]
+	private RawImage m_screenImage = null;
+	[SerializeField]
+	private VideoPlayer m_videoPlayer = null;
+	[SerializeField]
+	private AspectRatioFitter m_aspectRatio = null;
 
-	public TimeSpan Duration => TimeSpan.FromSeconds(m_videoPlayer.frameCount/m_videoPlayer.frameRate);
-
-	public float Time => m_videoPlayer.frame/m_videoPlayer.frameRate;
+	public TimeSpan Duration => IsPrepared ? TimeSpan.FromSeconds(m_videoPlayer.frameCount/m_videoPlayer.frameRate) : TimeSpan.Zero;
+	public float Time => IsPrepared ? m_videoPlayer.frame/m_videoPlayer.frameRate : 0.0f;
 
 	public bool IsPlaying => m_videoPlayer != null && m_videoPlayer.isPlaying;
 	public bool IsPrepared => m_videoPlayer != null && m_videoPlayer.isPrepared;
@@ -32,8 +34,6 @@ public class VideoPanelUI : WindowUI2D
 		base.Open(param);
 
 		m_screenImage.color = Color.black;
-
-		m_videoPlayer.targetCamera = m_canvas.worldCamera;
 
 		m_videoPlayer.errorReceived += _ReceiveError;
 		m_videoPlayer.loopPointReached += _IsVideoEnd;
@@ -115,7 +115,7 @@ public class VideoPanelUI : WindowUI2D
 	{
 		bool _IsPrepared()
 		{
-			return IsPlaying;
+			return IsPrepared;
 		}
 
 		await UniTask.WaitUntil(_IsPrepared);
@@ -144,25 +144,26 @@ public class VideoPanelUI : WindowUI2D
 
 		CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
-		_UpdateVideoStateAsync().Forget();
+		_UpdateVideoStateAsync(m_tokenSource.Token).Forget();
 	}
 
 	public void Stop()
 	{
 		m_videoPlayer.Stop();
 
+		m_screenImage.texture = null;
+		m_screenImage.color = Color.black;
+
 		CommonUtility.KillTokenSource(ref m_tokenSource);
 	}
 
-	private async UniTask _UpdateVideoStateAsync()
+	private async UniTaskVoid _UpdateVideoStateAsync(CancellationToken token)
 	{
-		while(m_videoPlayer.isPlaying)
+		while(m_videoPlayer.isPlaying && !token.IsCancellationRequested)
 		{
-			m_tokenSource.Token.ThrowIfCancellationRequested();
-
 			m_videoTimeSubject.OnNext(Time);
 
-			await UniTask.Delay(100,cancellationToken: m_tokenSource.Token);
+			await UniTask.Delay(100,cancellationToken: token).SuppressCancellationThrow();
 		}
 	}
 

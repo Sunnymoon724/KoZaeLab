@@ -6,8 +6,10 @@ using UnityEngine;
 
 public class RedDotUI : BaseComponentUI
 {
-	[SerializeField] private List<GameObject> m_redDotList = new();
-	[SerializeField] private RedDotTag m_redDotTag = RedDotTag.NONE;
+	[SerializeField]
+	private List<GameObject> m_redDotList = new();
+	[SerializeField]
+	private RedDotTag m_redDotTag = RedDotTag.NONE;
 
 	private IDisposable m_subscription = null;
 

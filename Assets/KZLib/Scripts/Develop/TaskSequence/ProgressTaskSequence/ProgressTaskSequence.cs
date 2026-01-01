@@ -52,7 +52,6 @@ namespace KZLib.KZDevelop
 		protected async override UniTask _DoPlaySequenceAsync(TaskSequence.Param sequenceParam)
 		{
 			var progressParam = sequenceParam == null ? new Param() : sequenceParam as Param;
-
 			var duration = progressParam.Duration ?? Duration;
 
 			if(duration <= 0.0f)
@@ -71,7 +70,7 @@ namespace KZLib.KZDevelop
 				Progress = progress;
 			}
 
-			await CommonUtility.ExecuteProgressAsync(start,finish,duration,_Progress,m_IgnoreTimeScale,null,m_tokenSource.Token);
+			await CommonUtility.ExecuteProgressAsync(start,finish,duration,_Progress,m_IgnoreTimeScale,null,m_tokenSource.Token).SuppressCancellationThrow();
 		}
 	}
 }

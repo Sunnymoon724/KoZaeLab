@@ -4,9 +4,12 @@ using UnityEngine.EventSystems;
 
 public class SpinImageUI : BaseImageUI,IDragHandler
 {
-	[SerializeField] private Transform m_target = null;
-	[SerializeField] private float m_speed = 1.0f;
-	[SerializeField] private bool m_lockVertical = false;
+	[SerializeField]
+	private Transform m_target = null;
+	[SerializeField]
+	private float m_speed = 1.0f;
+	[SerializeField]
+	private bool m_lockVertical = false;
 
 	private readonly Subject<Unit> m_imageSubject = new();
 	public Observable<Unit> OnSpinedImage => m_imageSubject;

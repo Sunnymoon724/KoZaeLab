@@ -3,6 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using KZLib.KZUtility;
 using KZLib.KZData;
+using KZLib.KZDevelop;
 
 namespace KZLib
 {
@@ -11,8 +12,10 @@ namespace KZLib
 		//? Canvas List
 		private readonly List<RepositoryUI> m_repositoryList = new();
 
-		[SerializeField] private RepositoryUI2D m_repository2D = null; // camera -> overlay
-		[SerializeField] private RepositoryUI3D m_repository3D = null; // camera -> world space
+		[SerializeField]
+		private RepositoryUI2D m_repository2D = null; // camera -> overlay
+		[SerializeField]
+		private RepositoryUI3D m_repository3D = null; // camera -> world space
 
 
 		[ShowInInspector,ListDrawerSettings(ShowFoldout = false),ReadOnly]
@@ -143,15 +146,9 @@ namespace KZLib
 			{
 				window = Register(nameType,false);
 
-				if(window.Is3D)
-				{
-					m_repository3D.Add(window);
-				}
-				else
-				{
-					m_repository2D.Add(window);
-				}
+				var repository = _GetRepository(window.Is3D);
 
+				repository.Add(window);
 				window.Open(param);
 			}
 
@@ -175,36 +172,43 @@ namespace KZLib
 			}
 		}
 
-		public void Close(WindowUI windowUI,bool isRelease = false)
+		public void Close(WindowUI window,bool isRelease = false)
 		{
-			var release = (isRelease || !windowUI.IsPooling) && !m_dontReleaseHashSet.Contains(windowUI.NameType);
+			if(!window)
+			{
+				return;
+			}
+
+			var release = (isRelease || !window.IsPooling) && !m_dontReleaseHashSet.Contains(window.NameType);
 
 			if(release)
 			{
-				m_registerWindowDict.Remove(windowUI.NameType);
+				m_registerWindowDict.Remove(window.NameType);
 			}
 
-			windowUI.Close();
+			window.Close();
 
-			if(windowUI.Is3D)
-			{
-				m_repository3D.Remove(windowUI,release);
-			}
-			else
-			{
-				m_repository2D.Remove(windowUI,release);
-			}
+			var repository = _GetRepository(window.Is3D);
+
+			repository.Remove(window,release);
 		}
 
-		public void CloseAllOpened(bool isRelease,bool isExcludeClose)
+		public void CloseAllOpenedIn3D(bool isRelease = false)
 		{
-			foreach(var (_,window) in m_registerWindowDict)
-			{
-				if(isExcludeClose)
-				{
-					continue;
-				}
+			_CloseAllOpened(true,isRelease);
+		}
 
+		public void CloseAllOpenedIn2D(bool isRelease = false)
+		{
+			_CloseAllOpened(false,isRelease);
+		}
+
+		private void _CloseAllOpened(bool is3D,bool isRelease = false)
+		{
+			var repository = _GetRepository(is3D);
+
+			foreach(var window in repository.OpenedWindowGroup)
+			{
 				Close(window,isRelease);
 			}
 		}
@@ -263,9 +267,9 @@ namespace KZLib
 
 		private WindowUI _FindOpened(UINameType nameType)
 		{
-			foreach(var repository in m_repositoryList)
+			for(var i=0;i<m_repositoryList.Count;i++)
 			{
-				var window = repository.FindOpenedUI(nameType);
+				var window = m_repositoryList[i].FindOpenedUI(nameType);
 
 				if(window != null)
 				{
@@ -277,22 +281,28 @@ namespace KZLib
 		}
 		#endregion Find
 
-		#region Block Input
-		public void BlockInput()
+		public void BlockInput(bool isBlocked)
 		{
-			foreach(var repository in m_repositoryList)
+			for(var i=0;i<m_repositoryList.Count;i++)
 			{
-				repository.BlockInput();
+				m_repositoryList[i].BlockInput(isBlocked);
 			}
 		}
 
-		public void AllowInput()
+		public void PressBackButton()
 		{
-			foreach(var repository in m_repositoryList)
+			var repository = _GetRepository(false);
+			var window = repository.TopOpenedWindow as WindowUI2D;
+
+			if(window != null)
 			{
-				repository.AllowInput();
+				window.PressBackButton();
 			}
 		}
-		#endregion Block Input
+
+		private RepositoryUI _GetRepository(bool is3D)
+		{
+			return is3D ? m_repository3D : m_repository2D;
+		}
 	}
 }

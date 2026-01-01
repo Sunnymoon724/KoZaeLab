@@ -13,7 +13,7 @@ namespace KZLib.KZData
 	{
 		private const double c_frameTime = 1.0/30.0d; // 30 fps (0.0333s)
 		private const int c_delayTime = 1; // 1ms
-		private const int c_InvalidNumber = 0;
+		private const int c_invalidNumber = 0;
 
 		private bool m_disposed = false;
 		private bool m_isLoaded = false;
@@ -138,7 +138,7 @@ namespace KZLib.KZData
 
 		public IProto GetProto(int num,Type protoType)
 		{
-			if(num <= c_InvalidNumber)
+			if(num <= c_invalidNumber)
 			{
 				LogSvc.System.E($"{num} is not valid. [type : {protoType}]");
 
@@ -174,18 +174,18 @@ namespace KZLib.KZData
 		{
 			if(m_protoDict.TryGetValue(protoType,out var protoDict))
 			{
-				foreach(var proto in protoDict.Values)
+				foreach(var pair in protoDict)
 				{
-					yield return proto;
+					yield return pair.Value;
 				}
 			}
 		}
 
 		public IEnumerable<Type> FindProtoTypeGroup()
 		{
-			foreach(var protoType in m_protoDict.Keys)
+			foreach(var pair in m_protoDict)
 			{
-				yield return protoType;
+				yield return pair.Key;
 			}
 		}
 
@@ -221,11 +221,11 @@ namespace KZLib.KZData
 
 				var protoDict = new Dictionary<int,IProto>();
 
-				foreach(var result in resultArray)
+				for(var i=0;i<resultArray.Length;i++)
 				{
-					var proto = result as IProto ?? throw new InvalidOperationException($"{protoTypeName} is not exist.");
+					var proto = resultArray[i] as IProto ?? throw new InvalidOperationException($"{protoTypeName} is not exist.");
 
-					if(proto.Num == c_InvalidNumber)
+					if(proto.Num == c_invalidNumber)
 					{
 						throw new ArgumentException($"Num is zero in {proto}.");
 					}

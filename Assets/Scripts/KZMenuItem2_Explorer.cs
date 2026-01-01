@@ -5,7 +5,7 @@ using UnityEditor;
 
 namespace KZLib.KZMenu
 {
-	public static class KZMenuItem2
+	public static partial class KZMenuItem2
 	{
 		private class MenuOrder
 		{
@@ -14,6 +14,7 @@ namespace KZLib.KZMenu
 				private const int DEFAULT			= 1 * Global.MENU_ORDER_MAIN_SPACE;
 
 				public const int LIBRARY			= DEFAULT + 1 * Global.MENU_ORDER_SUB_SPACE;
+				public const int VENDER				= DEFAULT + 2 * Global.MENU_ORDER_SUB_SPACE;
 			}
 		}
 

@@ -49,13 +49,15 @@ namespace KZLib.KZDevelop
 				RandomUtility.Randomize(m_indexList);
 			}
 
+			var token = m_tokenSource.Token;
+
 			for(var i=0;i<m_indexList.Count;i++)
 			{
 				_SetIndex(m_indexList[i]);
 
-				await UniTask.WaitForSeconds(m_showDuration,cancellationToken : m_tokenSource.Token);
+				await UniTask.WaitForSeconds(m_showDuration,cancellationToken : token).SuppressCancellationThrow();
 
-				if(m_tokenSource.IsCancellationRequested)
+				if(token.IsCancellationRequested)
 				{
 					return;
 				}

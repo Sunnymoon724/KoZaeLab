@@ -33,7 +33,9 @@ public class PatternRawImageUI : BaseRawImageUI
 
 		if(Application.isPlaying)
         {
-            _ScrollPatternAsync().Forget();
+			CommonUtility.RecycleTokenSource(ref m_tokenSource);
+
+            _ScrollPatternAsync(m_tokenSource.Token).Forget();
         }
 	}
 
@@ -98,11 +100,8 @@ public class PatternRawImageUI : BaseRawImageUI
 		m_rawImage.uvRect = scrollRect;
 	}
 
-	private async UniTaskVoid _ScrollPatternAsync()
+	private async UniTaskVoid _ScrollPatternAsync(CancellationToken token)
 	{
-		CommonUtility.RecycleTokenSource(ref m_tokenSource);
-		var token = m_tokenSource.Token;
-
 		var scrollRect = m_rawImage.uvRect;
 
 		while(!token.IsCancellationRequested)
@@ -122,7 +121,7 @@ public class PatternRawImageUI : BaseRawImageUI
 
 			m_rawImage.uvRect = scrollRect;
 
-			await UniTask.Yield(token);
+			await UniTask.Yield(token).SuppressCancellationThrow();
 		}
 	}
 

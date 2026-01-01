@@ -7,8 +7,10 @@ using UnityEngine.UI;
 [RequireComponent(typeof(TMP_Dropdown))]
 public class GroupDropdownUI : BaseDropdownUI
 {
-	[SerializeField] private Button m_prevButton = null;
-	[SerializeField] private Button m_nextButton = null;
+	[SerializeField]
+	private Button m_prevButton = null;
+	[SerializeField]
+	private Button m_nextButton = null;
 
 	public string GetCurrentText => GetCurrentOptionData.text;
 	public Sprite GetCurrentSprite => GetCurrentOptionData.image;

@@ -106,8 +106,11 @@ namespace KZLib.KZData
 
 		public bool TryLoadPlayerPrefs()
 		{
-			foreach(var fieldInfo in typeof(OptionConfig).GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
+			var fieldInfoArray = typeof(OptionConfig).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+
+			for(var i=0;i<fieldInfoArray.Length;i++)
 			{
+				var fieldInfo = fieldInfoArray[i];
 				var fieldType = fieldInfo.FieldType;
 				var nameKey = fieldInfo.Name;
 

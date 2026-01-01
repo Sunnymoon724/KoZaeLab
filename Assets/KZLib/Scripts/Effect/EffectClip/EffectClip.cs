@@ -49,7 +49,9 @@ public abstract class EffectClip : BaseComponent
 	{
 		base.OnEnable();
 
-		PlayEffectAsync().Forget();
+		CommonUtility.RecycleTokenSource(ref m_tokenSource);
+
+		_PlayEffectAsync(m_tokenSource.Token).Forget();
 	}
 
 	protected override void OnDisable()
@@ -67,10 +69,8 @@ public abstract class EffectClip : BaseComponent
 		}
 	}
 
-	protected async UniTask PlayEffectAsync()
+	protected async UniTask _PlayEffectAsync(CancellationToken token)
 	{
-		CommonUtility.RecycleTokenSource(ref m_tokenSource);
-
 		m_currentTime = 0.0f;
 
 		if(!IsPlayable)
@@ -83,7 +83,7 @@ public abstract class EffectClip : BaseComponent
 		}
 
 		var count = IsLoop ? -1 : 1;
-		
+
 		async UniTask _PlayTaskAsync()
 		{
 			m_currentTime = 0.0f;
@@ -93,11 +93,9 @@ public abstract class EffectClip : BaseComponent
 			m_currentTime = Duration;
 		}
 
-		await CommonUtility.LoopUniTaskAsync(_PlayTaskAsync,count,m_tokenSource.Token);
+		await CommonUtility.LoopUniTaskAsync(_PlayTaskAsync,count,token).SuppressCancellationThrow();
 
 		EndEffect(true);
-
-		CommonUtility.KillTokenSource(ref m_tokenSource);
 	}
 
 	protected abstract UniTask _ExecuteEffectAsync();

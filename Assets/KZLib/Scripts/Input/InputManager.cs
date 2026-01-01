@@ -1,73 +1,83 @@
 using System.Collections.Generic;
+using KZLib.KZAttribute;
 using KZLib.KZUtility;
+using Sirenix.OdinInspector;
+using UnityEngine;
 
 namespace KZLib
 {
-	public class InputManager : Singleton<InputManager>
+	public class InputManager : LoadSingletonMB<InputManager>
 	{
-		private bool m_disposed = false;
-		private bool m_block = false;
+		[SerializeField,HideInInspector]
+		private bool m_blocked = false;
 
-		public bool IsBlocked => m_block;
+		[VerticalGroup("0",Order = 0),ShowInInspector,KZIsValid("Yes","No")]
+		public bool IsBlocked => m_blocked;
 
-		private readonly List<InputController> m_inputConList = new();
+		private readonly List<InputController> m_activeConList = new();
 
-		protected override void Release(bool disposing)
+		protected override void Initialize()
 		{
-			if(m_disposed)
-			{
-				return;
-			}
+			base.Initialize();
+		}
 
-			if(disposing)
-			{
-				m_inputConList.Clear();
-			}
+		protected override void Release()
+		{
+			base.Release();
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			m_activeConList.Clear();
 		}
 
 		public void AddInputCon(InputController controller)
 		{
-			if(m_inputConList.Contains(controller))
-			{
-				return;
-			}
-
-			m_inputConList.Add(controller);
+			m_activeConList.AddNotOverlap(controller);
 
 			controller.BlockInput(IsBlocked);
 		}
 
 		public void RemoveInputCon(InputController controller)
 		{
-			m_inputConList.RemoveSafe(controller);
+			m_activeConList.RemoveSafe(controller);
 		}
+
+		// public void ActivateTopController()
+		// {
+		// 	static int _FindMax(InputController controller)
+		// 	{
+		// 		return controller.Priority;
+		// 	}
+
+		// 	var maxIndex = m_activeConList.FindMaxIndex(_FindMax);
+			
+		// 	if(maxIndex != Global.INVALID_INDEX)
+		// 	{
+		// 		ActivateOnlyOneController(m_activeConList[maxIndex]);
+		// 	}
+		// }
+
+		// public void ActivateOnlyOneController(InputController controller)
+		// {
+		// 	if(m_activeConList.Count == 0)
+		// 	{
+		// 		return;
+		// 	}
+
+		// 	for(var i=0;i<m_activeConList.Count;i++)
+		// 	{
+		// 		var activeCon = m_activeConList[i];
+
+		// 		activeCon.BlockInput(activeCon != controller); 
+		// 	}
+		// }
 
 		public void BlockInput(bool isBlocked)
 		{
-			if(isBlocked)
-			{
-				CommonUtility.LockInput();
-			}
-			else
-			{
-				CommonUtility.UnLockInput();
-			}
+			m_blocked = isBlocked;
 
-			foreach(var controller in m_inputConList)
+			for(var i=0;i<m_activeConList.Count;i++)
 			{
-				controller.BlockInput(isBlocked);
+				m_activeConList[i].BlockInput(isBlocked);
 			}
-
-			if(TouchManager.HasInstance)
-			{
-				TouchManager.In.BlockInput(isBlocked);
-			}
-
-			m_block = isBlocked;
 		}
 	}
 }

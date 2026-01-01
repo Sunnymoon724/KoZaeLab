@@ -1,0 +1,46 @@
+{
+    "version": 1,
+    "name": "MobileInputAction",
+    "maps": [
+        {
+            "name": "MobileActionMap",
+            "id": "046ec989-41b3-479a-9a26-a23ae3162f23",
+            "actions": [
+                {
+                    "name": "AndroidBackButton",
+                    "type": "Button",
+                    "id": "d83a63ec-f4fa-4860-b2bb-fe3c4a83834c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "2606163e-bd14-4a78-9e33-cd5efc4ff49a",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AndroidBackButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "eddf9bd6-7af6-4d6c-9cc0-f5540ddf2f1f",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AndroidBackButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

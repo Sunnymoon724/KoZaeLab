@@ -57,41 +57,41 @@ namespace KZLib.KZNetwork
 	{
 		private const string c_postDiscordWebHook = "Post DiscordWebHook";
 
-		public static PostDiscordWebHookWebRequest Create(string uri,string content,IEnumerable<MessageInfo> messageGroup = null,byte[] file = null)
+		public static PostDiscordWebHookWebRequest Create(string uri,string content,IEnumerable<MessageInfo> totalMessageInfoGroup = null,byte[] file = null)
 		{
 			if(uri.IsEmpty())
 			{
 				return null;
 			}
 
-			if(messageGroup.IsNullOrEmpty())
+			if(totalMessageInfoGroup.IsNullOrEmpty())
 			{
 				return new PostDiscordWebHookWebRequest(c_postDiscordWebHook,uri,content,null,file);
 			}
 
 			//? Fields max count = 1024 -> device message
-			var messageInfoQueue = new Queue<MessageInfo>();
+			var newMessageInfoQueue = new Queue<MessageInfo>();
 			var maxSize = c_fileMaxSize;
 			var logCount = 0;
 
-			foreach(var message in messageGroup)
+			foreach(var totalMessageInfo in totalMessageInfoGroup)
 			{
-				var header = message.Header;
-				var body = message.Body;
+				var header = totalMessageInfo.Header;
+				var body = totalMessageInfo.Body;
 				var index = 0;
 
 				while(index < body.Length)
 				{
 					var text = body.Substring(index,Mathf.Min(body.Length-index,maxSize));
 
-					messageInfoQueue.Enqueue(new MessageInfo(header,text));
+					newMessageInfoQueue.Enqueue(new MessageInfo(header,text));
 					logCount += header.Length+text.Length;
 
 					while(logCount >= c_embedMaxTextSize)
 					{
-						var messageInfo = messageInfoQueue.Dequeue();
+						var newMessageInfo = newMessageInfoQueue.Dequeue();
 
-						logCount -= messageInfo.Header.Length+messageInfo.Body.Length;
+						logCount -= newMessageInfo.Header.Length+newMessageInfo.Body.Length;
 					}
 
 					index += body.Length;
@@ -102,9 +102,9 @@ namespace KZLib.KZNetwork
 			var embedQueue = new CircularQueue<object>(c_embedMaxCount);
 			var fieldList = new List<object>(c_fileMaxCount);
 
-			foreach(var messageInfo in messageInfoQueue)
+			foreach(var newMessageInfo in newMessageInfoQueue)
 			{
-				fieldList.Add(new {name = messageInfo.Header,value = messageInfo.Body});
+				fieldList.Add(new {name = newMessageInfo.Header,value = newMessageInfo.Body});
 
 				if(fieldList.Count == c_fileMaxCount)
 				{

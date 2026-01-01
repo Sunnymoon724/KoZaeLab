@@ -125,9 +125,9 @@ public class ReuseScrollRectUI : BaseComponentUI
 	{
 		m_entryInfoList.Clear();
 
-		foreach(var (_,slotUI) in m_slotDict)
+		foreach(var pair in m_slotDict)
 		{
-			m_slotUIPool.Put(slotUI);
+			m_slotUIPool.Put(pair.Value);
 		}
 
 		m_slotDict.Clear();

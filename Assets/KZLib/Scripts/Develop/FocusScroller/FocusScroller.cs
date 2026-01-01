@@ -157,7 +157,7 @@ namespace KZLib.KZDevelop
 
 			if(m_orderMode)
 			{
-				static int _Sort(OrderSortInfo infoA, OrderSortInfo infoB)
+				static int _Sort(OrderSortInfo infoA,OrderSortInfo infoB)
 				{
 					var valueA = Math.Abs(infoA.Location-0.5f);
 					var valueB = Math.Abs(infoB.Location-0.5f);
@@ -167,9 +167,9 @@ namespace KZLib.KZDevelop
 
 				m_orderList.Sort(_Sort);
 
-				foreach(var pair in m_orderList)
+				for(var i=0;i<m_orderList.Count;i++)
 				{
-					pair.Target.SetAsLastSibling();
+					m_orderList[i].Target.SetAsLastSibling();
 				}
 			}
 		}

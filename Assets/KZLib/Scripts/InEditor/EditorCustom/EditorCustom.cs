@@ -368,16 +368,18 @@ namespace KZLib.Tet
 
 		public static void ResetCustom()
 		{
-			if(CommonUtility.DisplayCheck("Hierarchy Custom Reset","Hierarchy Custom Reset?"))
+			if(!CommonUtility.DisplayCheckBeforeExecute("Hierarchy custom reset"))
 			{
-				EditorPrefs.DeleteKey(c_editorText);
-
-				s_customInfo = null;
-
-				_Initialize();
-
-				CommonUtility.DisplayInfo("Hierarchy Custom Reset Complete");
+				return;
 			}
+
+			EditorPrefs.DeleteKey(c_editorText);
+
+			s_customInfo = null;
+
+			_Initialize();
+
+			CommonUtility.DisplayInfo("Hierarchy custom reset complete");
 		}
 	}
 }

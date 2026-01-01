@@ -383,9 +383,11 @@ namespace KZLib
 			{
 				if(m_sceneNameList.IsNullOrEmpty())
 				{
-					foreach(var scene in EditorBuildSettings.scenes)
+					var sceneArray = EditorBuildSettings.scenes;
+
+					for(var i=0;i<sceneArray.Length;i++)
 					{
-						var sceneName = Path.GetFileNameWithoutExtension(scene.path);
+						var sceneName = Path.GetFileNameWithoutExtension(sceneArray[i].path);
 
 						if(sceneName == "MainScene")
 						{

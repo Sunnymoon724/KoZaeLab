@@ -14,9 +14,9 @@ public static class CharExtension
 
 	public static bool IsEqualLetter(this char character,params char[] characterArray)
 	{
-		foreach(var letter in characterArray)
+		for(var i=0;i<characterArray.Length;i++)
 		{
-			if(letter == character)
+			if(characterArray[i] == character)
 			{
 				return true;
 			}

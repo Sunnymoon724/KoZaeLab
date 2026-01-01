@@ -13,7 +13,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Option/Delete All Manager",false,MenuOrder.Option.DELETE)]
 		private static void _OnDeleteAllManager()
 		{
-			if(!CommonUtility.DisplayCheck("Delete all manager","Delete all manager?"))
+			if(!CommonUtility.DisplayCheckBeforeExecute("Delete all manager"))
 			{
 				return;
 			}
@@ -28,7 +28,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Option/Delete Empty Folder",false,MenuOrder.Option.DELETE)]
 		private static void _OnDeleteAllEmptyFolder()
 		{
-			if(!CommonUtility.DisplayCheck("Delete all empty folder","Delete all empty folder?"))
+			if(!CommonUtility.DisplayCheckBeforeExecute("Delete all empty folder"))
 			{
 				return;
 			}
@@ -46,7 +46,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Option/Unload Unused Assets Immediate",false,MenuOrder.Option.DELETE)]
 		private static void _OnUnloadUnusedAssets()
 		{
-			if(!CommonUtility.DisplayCheck("Unload unused assets","Unload unused assets?"))
+			if(!CommonUtility.DisplayCheckBeforeExecute("Unload unused assets"))
 			{
 				return;
 			}
@@ -59,7 +59,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Option/Find Missing Component",false,MenuOrder.Option.FIND)]
 		private static void _OnFindMissingComponent()
 		{
-			if(!CommonUtility.DisplayCheck("Find missing component","Find missing component?"))
+			if(!CommonUtility.DisplayCheckBeforeExecute("Find missing component"))
 			{
 				return;
 			}
@@ -72,9 +72,11 @@ namespace KZLib.KZMenu
 
 				void _Recursive(Transform child)
 				{
-					foreach(var component in child.GetComponents<Component>())
+					var componentArray = child.GetComponents<Component>();
+
+					for(var i=0;i<componentArray.Length;i++)
 					{
-						if(component)
+						if(componentArray[i])
 						{
 							continue;
 						}
@@ -94,9 +96,9 @@ namespace KZLib.KZMenu
 			{
 				LogSvc.Editor.I("Missing component list");
 
-				foreach(var text in textList)
+				for(var i=0;i<textList.Count;i++)
 				{
-					LogSvc.Editor.I(text);
+					LogSvc.Editor.I(textList[i]);
 				}
 			}
 		}
@@ -104,7 +106,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Option/Find Missing MeshFilter",false,MenuOrder.Option.FIND)]
 		private static void _OnFindMissingMeshFilter()
 		{
-			if(!CommonUtility.DisplayCheck("Find missing meshFilter","Find missing meshFilter?"))
+			if(!CommonUtility.DisplayCheckBeforeExecute("Find missing meshFilter"))
 			{
 				return;
 			}
@@ -144,12 +146,13 @@ namespace KZLib.KZMenu
 				foreach(var pair in textListDict)
 				{
 					builder.Clear();
-
 					builder.Append($"{pair.Key}\n");
 
-					foreach(var path in pair.Value)
+					var pathList = pair.Value;
+
+					for(var i=0;i<pathList.Count;i++)
 					{
-						builder.Append($" -[{path}]\n");
+						builder.Append($" -[{pathList[i]}]\n");
 					}
 
 					builder.AppendLine();
@@ -162,7 +165,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Option/Add PlayFab Module",false,MenuOrder.Option.MODULE)]
 		private static void _OnAddPlayFabModule()
 		{
-			if(!CommonUtility.DisplayCheck("Add playFab module","Add playFab module?"))
+			if(!CommonUtility.DisplayCheckBeforeExecute("Add playFab module"))
 			{
 				return;
 			}
@@ -185,7 +188,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Option/Add InAppPurchase Module",false,MenuOrder.Option.MODULE)]
 		private static void _OnAddInAppPurchaseModule()
 		{
-			if(!CommonUtility.DisplayCheck("Add in app purchase module","Add in app purchase module?"))
+			if(!CommonUtility.DisplayCheckBeforeExecute("Add in app purchase module"))
 			{
 				return;
 			}

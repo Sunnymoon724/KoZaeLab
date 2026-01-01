@@ -36,20 +36,16 @@ public static partial class CommonUtility
 		_SetInput(false);
 	}
 	
-	private static void _SetInput(bool isLock)
+	private static void _SetInput(bool isBlocked)
 	{
-		// TODO Check Input
+		if(InputManager.HasInstance)
+		{
+			InputManager.In.BlockInput(isBlocked);
+		}
 
 		if(UIManager.HasInstance)
 		{
-			if(isLock)
-			{
-				UIManager.In.BlockInput();
-			}
-			else
-			{
-				UIManager.In.AllowInput();
-			}
+			UIManager.In.BlockInput(isBlocked);
 		}
 	}
 
@@ -92,7 +88,7 @@ public static partial class CommonUtility
 		_ReleaseSingletonMB<SceneStateManager>();
 		_ReleaseSingletonMB<UIManager>();
 
-		_ReleaseSingletonMB<TouchManager>();
+		_ReleaseSingletonMB<InputManager>();
 
 		_ReleaseSingletonMB<EffectManager>();
 		_ReleaseSingletonMB<SoundManager>();
@@ -109,7 +105,6 @@ public static partial class CommonUtility
 		_ReleaseSingleton<AddressablesManager>();
 
 		_ReleaseSingleton<CameraManager>();
-		_ReleaseSingleton<InputManager>();
 
 		_ReleaseSingleton<RouteManager>();
 

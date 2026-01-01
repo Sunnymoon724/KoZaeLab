@@ -19,9 +19,11 @@ public static partial class CommonUtility
 
 	public static IEnumerable<string> FindAssetPathGroup(string filter = null,string[] searchInFolderArray = null)
 	{
-		foreach(var guid in _FindAssetArray(filter,searchInFolderArray))
+		var guidArray = _FindAssetArray(filter,searchInFolderArray);
+
+		for(var i=0;i<guidArray.Length;i++)
 		{
-			var path = AssetDatabase.GUIDToAssetPath(guid);
+			var path = AssetDatabase.GUIDToAssetPath(guidArray[i]);
 
 			if(!path.IsEmpty())
 			{
@@ -65,7 +67,7 @@ public static partial class CommonUtility
 		return AssetDatabase.FindAssets(filter,searchInFolderArray);
 	}
 
-	public static void SaveAsset(string path,Object asset,bool isOverride)
+	public static void CreateAsset(string path,Object asset,bool isOverride)
 	{
 		if(path.IsEmpty() || !asset)
 		{
@@ -94,8 +96,7 @@ public static partial class CommonUtility
 		AssetDatabase.CreateAsset(asset,assetPath);
 
 		EditorUtility.SetDirty(asset);
-		AssetDatabase.SaveAssets();
-		AssetDatabase.Refresh();
+		SaveAsset();
 
 		LogSvc.System.I($"{asset.name} is saved in {path}.");
 	}

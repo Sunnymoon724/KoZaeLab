@@ -15,7 +15,8 @@ namespace KZLib
 		protected CancellationTokenSource m_tokenSource = null;
 		private readonly Dictionary<TEnum,Func<CancellationToken,IUnitStateParam,UniTask<TEnum>>> m_stateFuncDict = new();
 
-		[ShowInInspector] public TEnum StateType => m_stateType;
+		[ShowInInspector]
+		public TEnum StateType => m_stateType;
 
 		protected TEnum m_stateType = default;
 

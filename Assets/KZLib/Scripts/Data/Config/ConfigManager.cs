@@ -32,9 +32,9 @@ namespace KZLib.KZData
 
 			if(disposing)
 			{
-				foreach(var config in m_configDict.Values)
+				foreach(var pair in m_configDict)
 				{
-					if(config is IDisposable disposable)
+					if(pair.Value is IDisposable disposable)
 					{
 						disposable.Dispose();
 					}
@@ -175,9 +175,9 @@ namespace KZLib.KZData
 
 		public static bool IsDefaultConfig(string filePath)
 		{
-			foreach(var type in s_defaultConfigArray)
+			for(var i=0;i<s_defaultConfigArray.Length;i++)
 			{
-				var name = type.Name.Replace("Config","");
+				var name = s_defaultConfigArray[i].Name.Replace("Config","");
 
 				if(filePath.Contains(name))
 				{

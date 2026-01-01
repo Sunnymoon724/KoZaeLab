@@ -3,21 +3,25 @@ using Sirenix.OdinInspector;
 
 public class ObserveCamera : BaseComponent
 {
-	[SerializeField] private float m_backDistance = 5.0f;
-	[SerializeField] private float m_height = 1.0f;
-	[SerializeField] private float m_rotateSpeed = 0.5f;
-	[SerializeField] private GameObject m_target = null;
+	[SerializeField]
+	private float m_backDistance = 5.0f;
+	[SerializeField]
+	private float m_height = 1.0f;
+	[SerializeField]
+	private float m_rotateSpeed = 0.5f;
+	[SerializeField]
+	private GameObject m_target = null;
 
 	[ShowInInspector,ReadOnly]
 	private Vector2 m_rotate = Vector2.zero;
 
 	private Vector3 m_mousePosition = Vector2.zero;
-	
+
 	protected override void Initialize()
 	{
 		m_rotate.y = transform.rotation.eulerAngles.y;
 	}
-	
+
 	private void Update()
 	{
 		if(!m_target)

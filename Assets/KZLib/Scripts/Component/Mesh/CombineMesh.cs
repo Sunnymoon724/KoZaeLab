@@ -4,16 +4,16 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter)),RequireComponent(typeof(MeshRenderer))]
 public class CombineMesh : BaseMesh
 {
-	public void CombineMeshFilter(MeshFilter[] filterArray)
+	public void CombineMeshFilter(MeshFilter[] meshFilterArray)
 	{
-		if(filterArray == null || filterArray.Length == 0)
+		if(meshFilterArray == null || meshFilterArray.Length == 0)
 		{
 			return;
 		}
 
 		_InitializeMesh();
 
-		var count = CalculateMeshIndexCount(filterArray);
+		var count = CalculateMeshIndexCount(meshFilterArray);
 
 		if(!IsValidMeshIndexCount(count))
 		{
@@ -24,16 +24,18 @@ public class CombineMesh : BaseMesh
 
 		var instanceList = new List<CombineInstance>();
 
-		foreach(var filter in filterArray)
+		for(var i=0;i<meshFilterArray.Length;i++)
 		{
-			if(filter == null || filter.sharedMesh == null)
+			var meshFilter = meshFilterArray[i];
+
+			if(meshFilter == null || meshFilter.sharedMesh == null)
 			{
 				continue;
 			}
 
-			var instance = new CombineInstance { mesh = filter.sharedMesh, transform = filter.transform.localToWorldMatrix, };
+			var instance = new CombineInstance { mesh = meshFilter.sharedMesh, transform = meshFilter.transform.localToWorldMatrix, };
 
-			filter.gameObject.SetActive(false);
+			meshFilter.gameObject.SetActive(false);
 
 			instanceList.Add(instance);
 		}
@@ -41,16 +43,16 @@ public class CombineMesh : BaseMesh
 		_SetMesh(instanceList.ToArray());
 	}
 
-	public void CombineMeshFilter(Mesh[] _meshArray)
+	public void CombineMeshFilter(Mesh[] meshArray)
 	{
-		if(_meshArray == null || _meshArray.Length == 0)
+		if(meshArray == null || meshArray.Length == 0)
 		{
 			return;
 		}
 
 		_InitializeMesh();
 
-		var count = CalculateMeshIndexCount(_meshArray);
+		var count = CalculateMeshIndexCount(meshArray);
 
 		if(!IsValidMeshIndexCount(count))
 		{
@@ -62,8 +64,10 @@ public class CombineMesh : BaseMesh
 
 		var instanceList = new List<CombineInstance>();
 
-		foreach(var mesh in _meshArray)
+		for(var i=0;i<meshArray.Length;i++)
 		{
+			var mesh = meshArray[i];
+
 			if(mesh == null)
 			{
 				continue;
@@ -77,21 +81,21 @@ public class CombineMesh : BaseMesh
 		_SetMesh(instanceList.ToArray());
 	}
 
-	public bool AppendMesh(params MeshFilter[] filterArray)
+	public bool AppendMesh(params MeshFilter[] meshFilterArray)
 	{
-		if(filterArray == null)
+		if(meshFilterArray == null)
 		{
 			return true;
 		}
 
 		if(m_meshFilter.sharedMesh == null)
 		{
-			if(filterArray.Length == 1)
+			if(meshFilterArray.Length == 1)
 			{
-				m_meshFilter.sharedMesh = filterArray[0].sharedMesh;
+				m_meshFilter.sharedMesh = meshFilterArray[0].sharedMesh;
 				m_meshFilter.sharedMesh.name = m_meshFilter.gameObject.name;
 
-				filterArray[0].gameObject.SetActive(false);
+				meshFilterArray[0].gameObject.SetActive(false);
 
 				return true;
 			}
@@ -99,7 +103,7 @@ public class CombineMesh : BaseMesh
 			m_meshFilter.sharedMesh = new Mesh { name = m_meshFilter.gameObject.name };
 		}
 
-		var count = CalculateMeshIndexCount(m_meshFilter)+CalculateMeshIndexCount(filterArray);
+		var count = CalculateMeshIndexCount(m_meshFilter)+CalculateMeshIndexCount(meshFilterArray);
 
 		if(!IsValidMeshIndexCount(count))
 		{
@@ -108,16 +112,18 @@ public class CombineMesh : BaseMesh
 
 		var instanceList = new List<CombineInstance> { new() { mesh = m_meshFilter.sharedMesh, transform = Matrix4x4.identity, } };
 
-		foreach(var filter in filterArray)
+		for(var i=0;i<meshFilterArray.Length;i++)
 		{
-			if(filter == null || filter.sharedMesh == null)
+			var meshFilter = meshFilterArray[i];
+
+			if(meshFilter == null || meshFilter.sharedMesh == null)
 			{
 				continue;
 			}
 
-			var instance = new CombineInstance { mesh = filter.sharedMesh, transform = filter.transform.localToWorldMatrix, };
+			var instance = new CombineInstance { mesh = meshFilter.sharedMesh, transform = meshFilter.transform.localToWorldMatrix, };
 
-			filter.gameObject.SetActive(false);
+			meshFilter.gameObject.SetActive(false);
 
 			instanceList.Add(instance);
 		}
@@ -156,8 +162,10 @@ public class CombineMesh : BaseMesh
 
 		var instanceList = new List<CombineInstance> { new() { mesh = m_meshFilter.sharedMesh, transform = Matrix4x4.identity, } };
 
-		foreach(var mesh in meshArray)
+		for(var i=0;i<meshArray.Length;i++)
 		{
+			var mesh = meshArray[i];
+
 			if(mesh == null)
 			{
 				continue;

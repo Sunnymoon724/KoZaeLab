@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class ListSlotUI : SlotUI
 {
-	[SerializeField] private ReuseGridLayoutGroupUI m_gridLayout = null;
+	[SerializeField]
+	private ReuseGridLayoutGroupUI m_gridLayout = null;
 
 	protected override bool UseImage => false;
 	protected override bool UseButton => false;

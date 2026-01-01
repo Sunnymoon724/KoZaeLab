@@ -26,7 +26,6 @@ namespace KZLib
 			_CreateRouteFile();
 
 			var textAsset = Resources.Load<TextAsset>(m_routePath);
-
 			var deserializer = new DeserializerBuilder().Build();
 
 			foreach(var pair in deserializer.Deserialize<Dictionary<string,string>>(textAsset.text))

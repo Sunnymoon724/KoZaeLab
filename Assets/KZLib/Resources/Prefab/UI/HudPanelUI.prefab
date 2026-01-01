@@ -9142,8 +9142,6 @@ GameObject:
   - component: {fileID: 4259471444437858031}
   - component: {fileID: 738941898800091609}
   - component: {fileID: 7440871291700695180}
-  - component: {fileID: 5659943223283456368}
-  - component: {fileID: 7427825026908949055}
   m_Layer: 5
   m_Name: HudPanelUI
   m_TagString: Untagged
@@ -9226,52 +9224,9 @@ MonoBehaviour:
       Entry: 8
       Data: 
   m_sortingLayerOrder: 0
-  m_canvas: {fileID: 5659943223283456368}
   m_canvasGroup: {fileID: 738941898800091609}
   m_pooling: 1
-  m_layerType: 0
-  m_popUpTransform: {fileID: 0}
   m_priorityType: 4
---- !u!223 &5659943223283456368
-Canvas:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4582253882050708188}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_RenderMode: 2
-  m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
-  m_PixelPerfect: 0
-  m_ReceivesEvents: 1
-  m_OverrideSorting: 1
-  m_OverridePixelPerfect: 0
-  m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 25
-  m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
-  m_SortingOrder: 1000
-  m_TargetDisplay: 0
---- !u!114 &7427825026908949055
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4582253882050708188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
-  m_BlockingMask:
-    serializedVersion: 2
-    m_Bits: 55
 --- !u!1 &4608074531388231667
 GameObject:
   m_ObjectHideFlags: 0

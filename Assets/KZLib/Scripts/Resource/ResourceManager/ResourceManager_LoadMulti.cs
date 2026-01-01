@@ -28,9 +28,9 @@ namespace KZLib
 			{
 				var gameObjectArray = _GetResourceArray<GameObject>(folderPath);
 
-				foreach(var gameObject in gameObjectArray)
+				for(var i=0;i<gameObjectArray.Length;i++)
 				{
-					gameObject.transform.SetParent(parent);
+					gameObjectArray[i].transform.SetParent(parent);
 				}
 
 				return gameObjectArray;

@@ -14,7 +14,7 @@ namespace KZLib.KZNetwork
 			PostBugReportWebRequestAsync(messageGroup,file).Forget();
 		}
 
-		public async UniTask PostBugReportWebRequestAsync(IEnumerable<MessageInfo> messageGroup,byte[] file)
+		public async UniTask PostBugReportWebRequestAsync(IEnumerable<MessageInfo> messageInfoGroup,byte[] file)
 		{
 			var serviceCfg = ConfigManager.In.Access<ServiceConfig>();
 			var postHashSet = new HashSet<string>(serviceCfg.BugReportPostList);
@@ -22,7 +22,7 @@ namespace KZLib.KZNetwork
 
 			if(postHashSet.Contains("Discord"))
 			{
-				taskList.Add(PostDiscordWebHookAsync("Bug Report",messageGroup,file));
+				taskList.Add(PostDiscordWebHookAsync("Bug Report",messageInfoGroup,file));
 			}
 
 			var stringBuilder = new StringBuilder();
@@ -31,10 +31,10 @@ namespace KZLib.KZNetwork
 			{
 				var listName = string.Empty;
 
-				foreach(var message in messageGroup)
+				foreach(var messageInfo in messageInfoGroup)
 				{
-					stringBuilder.AppendFormat("**{0}**\n{1}\n\n",message.Header,message.Body);
-					listName = message.Body;
+					stringBuilder.AppendFormat("**{0}**\n{1}\n\n",messageInfo.Header,messageInfo.Body);
+					listName = messageInfo.Body;
 				}
 
 				listName = listName.Replace("\n","");

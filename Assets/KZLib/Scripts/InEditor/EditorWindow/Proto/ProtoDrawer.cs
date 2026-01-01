@@ -6,6 +6,7 @@ using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities.Editor;
 using System.Reflection;
 using Sirenix.OdinInspector;
+using System.Text;
 
 public class ProtoDrawer : OdinValueDrawer<IProto>
 {
@@ -31,10 +32,12 @@ public class ProtoDrawer : OdinValueDrawer<IProto>
 	private void _CopyAllPropertiesToClipboard(IProto proto)
 	{
 		var propertyArray = proto.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-		var stringBuilder = new System.Text.StringBuilder();
+		var stringBuilder = new StringBuilder();
 
-		foreach(var property in propertyArray)
+		for(var i=0;i<propertyArray.Length;i++)
 		{
+			var property = propertyArray[i];
+
 			if(!property.CanRead || !property.GetMethod.IsPublic)
 			{
 				continue;

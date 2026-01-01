@@ -6,7 +6,8 @@ namespace UnityEngine.UI
 	{
 		private const int c_pivotResolution = 54;
 
-		[SerializeField] private float m_ellipseAngle = 360.0f;
+		[SerializeField]
+		private float m_ellipseAngle = 360.0f;
 
 		private void _DrawEllipse(VertexHelper vertexHelper,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius)
 		{

@@ -1,51 +1,73 @@
 using System.Collections.Generic;
+using KZLib.KZAttribute;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace KZLib
 {
-	public class InputController : BaseComponent
+	public abstract class InputController : BaseComponent
 	{
-		private bool m_block = false;
+		[SerializeField,HideInInspector]
+		private bool m_blocked = false;
 
-		public bool IsBlocked => m_block;
+		[VerticalGroup("0",Order = 0),ShowInInspector,KZIsValid("Yes","No")]
+		public bool IsBlocked => m_blocked;
 
 		[SerializeField]
 		private InputActionAsset m_inputActionAsset = null;
-		protected Dictionary<string,InputAction> m_inputActionDict = new();
+
+		[SerializeField]
+		private int m_priority = 0;
+		public int Priority => m_priority;
+
+		private readonly Dictionary<string,InputAction> m_inputActionDict = new();
+
+		protected abstract void SubscribeInputAction();
+		protected abstract void UnsubscribeInputAction();
 
 		protected override void Initialize()
 		{
 			base.Initialize();
 
 			InputManager.In.AddInputCon(this);
-
-			foreach(var actionMap in m_inputActionAsset.actionMaps)
+			
+			var actionMapArray = m_inputActionAsset.actionMaps;
+			
+			for(var i=0;i<actionMapArray.Count;i++)
 			{
-				foreach(var inputAction in actionMap.actions)
+				var inputActionArray = actionMapArray[i].actions;
+
+				for(var j=0;j<inputActionArray.Count;j++)
 				{
+					var inputAction = inputActionArray[j];
+
 					m_inputActionDict.Add(inputAction.name,inputAction);
 				}
 			}
+
+			SubscribeInputAction();
 		}
 
 		protected override void OnEnable()
 		{
 			base.OnEnable();
 
-			SetEnable(true);
+			_SetEnable(true);
 		}
 
 		protected override void OnDisable()
 		{
 			base.OnDisable();
 
-			SetEnable(false);
+			_SetEnable(false);
 		}
 
 		protected override void Release()
 		{
 			base.Release();
+
+			UnsubscribeInputAction();
 
 			if(InputManager.HasInstance)
 			{
@@ -53,26 +75,31 @@ namespace KZLib
 			}
 		}
 
-		protected void SetEnable(bool enable)
+		private void _SetEnable(bool enable)
 		{
-			foreach(var inputAction in m_inputActionDict.Values)
+			foreach(var pair in m_inputActionDict)
 			{
 				if(enable)
 				{
-					inputAction.Enable();
+					pair.Value.Enable();
 				}
 				else
 				{
-					inputAction.Disable();
+					pair.Value.Disable();
 				}
 			}
 		}
 
 		public void BlockInput(bool isBlocked)
 		{
-			m_block = isBlocked;
+			m_blocked = isBlocked;
 
-			SetEnable(!isBlocked);
+			_SetEnable(!isBlocked);
+		}
+
+		protected InputAction _TryGetInputAction(string inputActionName)
+		{
+			return m_inputActionDict.TryGetValue(inputActionName,out var inputAction) ? inputAction : null;
 		}
 	}
 }

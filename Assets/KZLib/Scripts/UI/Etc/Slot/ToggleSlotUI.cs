@@ -8,11 +8,11 @@ public class ToggleSlotUI : SlotUI
 	[FoldoutGroup("Toggle",Order = 3),SerializeField,ListDrawerSettings(DraggableItems = false)]
 	private List<BaseToggleUI> m_childList = new();
 
-	public IReadOnlyCollection<BaseToggleUI> ChildCollection => m_childList.AsReadOnly();
+	public IEnumerable<BaseToggleUI> ChildGroup => m_childList;
 
 	public virtual void SetToggle(bool isOn)
 	{
-		foreach(var child in ChildCollection)
+		foreach(var child in ChildGroup)
 		{
 			child.Set(isOn,true);
 		}
@@ -22,7 +22,7 @@ public class ToggleSlotUI : SlotUI
 	{
 		void _Clicked(IEntryInfo info)
 		{
-			foreach(var child in ChildCollection)
+			foreach(var child in ChildGroup)
 			{
 				child.Toggle();
 			}

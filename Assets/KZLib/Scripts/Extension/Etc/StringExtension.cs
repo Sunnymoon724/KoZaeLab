@@ -67,9 +67,11 @@ public static class StringExtension
 		}
 
 		var characterSet = new HashSet<char>(characterArray);
-		
-		foreach(var character in text)
+
+		for(var i=0;i<text.Length;i++)
 		{
+			var character = text[i];
+
 			if(characterSet.Contains(character))
 			{
 				return true;
