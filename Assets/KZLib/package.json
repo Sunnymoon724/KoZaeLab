@@ -40,14 +40,5 @@
       "description": "TaskSequence Test",
       "path": "Samples~/TaskSequenceTest"
     }
-  ],
-  "scopedRegistries": [
-    {
-      "name": "OpenUPM",
-      "url": "https://package.openupm.com",
-      "scopes": [
-        "com.cysharp.unitask"
-      ]
-    }
   ]
 }
