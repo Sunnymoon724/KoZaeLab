@@ -30,10 +30,8 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 <br></br>
 * **Odin Inspector** https://assetstore.unity.com/packages/tools/utilities/odin-inspector-and-serializer-89041
 <br></br>
-* **UniTask** https://github.com/Cysharp/UniTask.git
-```
-https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
-```
+
+**선택사항**
 * **PlayFab** https://github.com/PlayFab/UnitySDK
 
 
