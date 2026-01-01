@@ -19,13 +19,6 @@
       },
       "hash": "04c1ca72cde82318e11eb1281dc4c3d314a2e68c"
     },
-    "com.cysharp.unitask": {
-      "version": "2.5.10",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://package.openupm.com"
-    },
     "com.github-glitchenzo.nugetforunity": {
       "version": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
       "depth": 0,

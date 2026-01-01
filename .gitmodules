@@ -1,0 +1,3 @@
+[submodule "Assets/KZLib/Plugins/Submodule/SoftMaskForUGUI"]
+	path = Assets/KZLib/Plugins/Submodule/SoftMaskForUGUI
+	url = https://github.com/mob-sakai/SoftMaskForUGUI
