@@ -92,7 +92,7 @@ public class VideoPanelUI : BasePanelUI
 
 		if(videoInfo.IsExistSubtitle)
 		{
-			var subtitlePanel = UIManager.In.Open(UINameType.SubtitlePanelUI,new SubtitlePanelUI.Param(videoInfo.SubtitlePath)) as SubtitlePanelUI;
+			var subtitlePanel = UIManager.In.Open(CommonUINameTag.SubtitlePanelUI,new SubtitlePanelUI.Param(videoInfo.SubtitlePath)) as SubtitlePanelUI;
 
 			AddLink(subtitlePanel);
 
@@ -101,7 +101,7 @@ public class VideoPanelUI : BasePanelUI
 
 		if(videoInfo.CanSkip)
 		{
-			var skipPanel = UIManager.In.Open(UINameType.SkipPanelUI,new SkipPanelUI.Param(Stop)) as SkipPanelUI;
+			var skipPanel = UIManager.In.Open(CommonUINameTag.SkipPanelUI,new SkipPanelUI.Param(Stop)) as SkipPanelUI;
 
 			AddLink(skipPanel);
 		}

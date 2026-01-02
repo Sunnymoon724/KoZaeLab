@@ -2,8 +2,6 @@ using System;
 
 public static class LongExtension
 {
-	private static readonly DateTime s_epochTime = new(1970,1,1,0,0,0,0,DateTimeKind.Utc);
-
 	public static long Sign(this long number)
 	{
 		return number < 0L ? -1L : number > 0L ? 1L : 0L;
@@ -26,7 +24,7 @@ public static class LongExtension
 
 	public static DateTime ToDateTime(this long timeStamp,bool isLocal)
 	{
-		var dateTime = s_epochTime.AddMilliseconds(timeStamp);
+		var dateTime = DateTime.UnixEpoch.AddMilliseconds(timeStamp);
 
 		return isLocal ? dateTime.ToLocalTime() : dateTime;
 	}

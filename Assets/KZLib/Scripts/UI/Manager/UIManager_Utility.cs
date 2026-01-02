@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Linq;
-using KZLib.KZData;
 using KZLib.KZUtility;
 
 namespace KZLib
 {
 	public partial class UIManager : LoadSingletonMB<UIManager>
 	{
-		private static readonly UINameType[] s_definedTagArray = new UINameType[] { UINameType.CommonTransitionPanelUI, UINameType.HudPanelUI, UINameType.VideoPanelUI  };
+		private static readonly CommonUINameTag[] s_definedTagArray = new CommonUINameTag[] { CommonUINameTag.CommonTransitionPanelUI, CommonUINameTag.HudPanelUI, CommonUINameTag.VideoPanelUI  };
 
-		private string _GetUIPath(UINameType nameType)
+		private string _GetUIPath(CommonUINameTag nameTag)
 		{
-			return $"{(_IsDefinedUI(nameType) ? "Resources/Prefab/UI" : m_prefabPath)}/{nameType}.prefab";
+			return $"{(_IsDefinedUI(nameTag) ? "Resources/Prefab/UI" : m_prefabPath)}/{nameTag}.prefab";
 		}
 
-		private bool _IsDefinedUI(UINameType nameType)
+		private bool _IsDefinedUI(CommonUINameTag nameTag)
 		{
-			return s_definedTagArray.Contains(nameType);
+			return s_definedTagArray.Contains(nameTag);
 		}
 	}
 }

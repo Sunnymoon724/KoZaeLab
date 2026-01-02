@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using DG.Tweening;
 using KZLib;
-using KZLib.KZData;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -23,7 +21,7 @@ public interface IWindowUI
 	WindowUIType WindowType { get; }
 	UIPriorityType PriorityType { get; }
 
-	UINameType NameType { get; }
+	CommonUINameTag NameTag { get; }
 
 	bool IsPooling { get; }
 
@@ -54,28 +52,28 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 	public abstract void BlockInput(bool isBlocked);
 
-	private UINameType? m_nameType = null;
-	public UINameType NameType
+	private CommonUINameTag m_nameTag = null;
+	public CommonUINameTag NameTag
 	{
 		get
 		{
-			if(!m_nameType.HasValue)
+			if(m_nameTag == null)
 			{
 				var typeName = GetType().Name;
 
-				if(typeName.TryToEnum<UINameType>(out var nameType))
+				if(typeName.TryToCustomTag<CommonUINameTag>(out var nameTag))
 				{
-					m_nameType = nameType;
+					m_nameTag = nameTag;
 				}
 				else
 				{
-					LogSvc.UI.E($"{typeName} is not defined UINameType");
+					LogSvc.UI.E($"{typeName} is not defined UINameTag");
 
-					m_nameType = UINameType.None;
+					m_nameTag = CommonUINameTag.None;
 				}
 			}
 
-			return m_nameType.Value;
+			return m_nameTag;
 		}
 	}
 
@@ -100,7 +98,7 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 	public virtual void Open(object param)
 	{
-		LogSvc.UI.I($"{NameType} is opened");
+		LogSvc.UI.I($"{NameTag} is opened");
 
 		gameObject.EnsureActive(true);
 	}
@@ -109,7 +107,7 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 	{
 		foreach(var window in m_linkedHashSet)
 		{
-			UIManager.In.Close(window.NameType);
+			UIManager.In.Close(window.NameTag);
 		}
 
 		m_linkedHashSet.Clear();
@@ -118,7 +116,7 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 		gameObject.EnsureActive(false);
 
-		LogSvc.UI.I($"{NameType} is closed");
+		LogSvc.UI.I($"{NameTag} is closed");
 	}
 
 	protected override void Release() { }
@@ -127,13 +125,13 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 	{
 		if(isHidden)
 		{
-			LogSvc.UI.I($"{NameType} is hidden");
+			LogSvc.UI.I($"{NameTag} is hidden");
 
 			_SetCanvasGroupState(0,false,false);
 		}
 		else
 		{
-			LogSvc.UI.I($"{NameType} is shown");
+			LogSvc.UI.I($"{NameTag} is shown");
 
 			_SetCanvasGroupState(1,true,true);
 		}
@@ -148,7 +146,7 @@ public abstract class WindowUI : BaseComponentUI,IWindowUI
 
 	protected virtual void SelfClose()
 	{
-		UIManager.In.Close(NameType);
+		UIManager.In.Close(NameTag);
 	}
 
 	public void AddLink(WindowUI2D windowUI2D)

@@ -3,7 +3,6 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using KZLib.KZUtility;
 using KZLib.KZData;
-using KZLib.KZDevelop;
 
 namespace KZLib
 {
@@ -19,10 +18,10 @@ namespace KZLib
 
 
 		[ShowInInspector,ListDrawerSettings(ShowFoldout = false),ReadOnly]
-		private readonly HashSet<UINameType> m_dontReleaseHashSet = new();
+		private readonly HashSet<CommonUINameTag> m_dontReleaseHashSet = new();
 
 		[ShowInInspector,DictionaryDrawerSettings(IsReadOnly = true,DisplayMode = DictionaryDisplayOptions.Foldout),ReadOnly]
-		private readonly Dictionary<UINameType,WindowUI> m_registerWindowDict = new();
+		private readonly Dictionary<CommonUINameTag,WindowUI> m_registerWindowDict = new();
 
 		private string m_prefabPath = null;
 
@@ -63,13 +62,13 @@ namespace KZLib
 		/// <summary>
 		/// Register -> Not open
 		/// </summary>
-		public WindowUI Register(UINameType nameType,bool isActive = true)
+		public WindowUI Register(CommonUINameTag nameTag,bool isActive = true)
 		{
-			if(!m_registerWindowDict.TryGetValue(nameType,out var window))
+			if(!m_registerWindowDict.TryGetValue(nameTag,out var window))
 			{
-				window = _MakeUI(nameType);
+				window = _MakeUI(nameTag);
 
-				m_registerWindowDict.Add(nameType,window);
+				m_registerWindowDict.Add(nameTag,window);
 
 				if(isActive)
 				{
@@ -82,13 +81,13 @@ namespace KZLib
 			return window;
 		}
 
-		private WindowUI _MakeUI(UINameType nameType)
+		private WindowUI _MakeUI(CommonUINameTag nameTag)
 		{
-			var prefab = ResourceManager.In.GetObject(_GetUIPath(nameType));
+			var prefab = ResourceManager.In.GetObject(_GetUIPath(nameTag));
 
 			if(!prefab)
 			{
-				LogSvc.UI.E($"{nameType} is not exist.");
+				LogSvc.UI.E($"{nameTag} is not exist.");
 
 				return null;
 			}
@@ -97,54 +96,54 @@ namespace KZLib
 			{
 				prefab.DestroyObject();
 
-				LogSvc.UI.E($"Component is not exist in {nameType}.");
+				LogSvc.UI.E($"Component is not exist in {nameTag}.");
 
 				return null;
 			}
 
-			if(window.NameType != nameType)
+			if(window.NameTag != nameTag)
 			{
 				prefab.DestroyObject();
 
-				LogSvc.UI.E($"UI nameType is not matched. [{window.NameType} != {nameType}]");
+				LogSvc.UI.E($"UI nameTag is not matched. [{window.NameTag} != {nameTag}]");
 
 				return null;
 			}
 
 			transform.SetUIChild(prefab.transform);
 
-			if(_IsDefinedUI(nameType))
+			if(_IsDefinedUI(nameTag))
 			{
-				RegisterDontRelease(nameType);
+				RegisterDontRelease(nameTag);
 			}
 
 			return window;
 		}
 
-		public void RegisterDontRelease(UINameType nameType)
+		public void RegisterDontRelease(CommonUINameTag nameTag)
 		{
-			m_dontReleaseHashSet.AddNotOverlap(nameType);
+			m_dontReleaseHashSet.AddNotOverlap(nameTag);
 		}
 		#endregion Register
 
 		#region Open
-		public void DelayOpen(UINameType nameType,object param,float delayTime)
+		public void DelayOpen(CommonUINameTag nameTag,object param,float delayTime)
 		{
 			void _Open()
 			{
-				Open(nameType,param);
+				Open(nameTag,param);
 			}
 
 			CommonUtility.DelayAction(_Open,delayTime);
 		}
 
-		public IWindowUI Open(UINameType nameType,object param = null)
+		public IWindowUI Open(CommonUINameTag nameTag,object param = null)
 		{
-			var window = _FindOpened(nameType);
+			var window = _FindOpened(nameTag);
 
 			if(window == null)
 			{
-				window = Register(nameType,false);
+				window = Register(nameTag,false);
 
 				var repository = _GetRepository(window.Is3D);
 
@@ -155,16 +154,16 @@ namespace KZLib
 			return window;
 		}
 
-		public bool IsOpened(UINameType nameType)
+		public bool IsOpened(CommonUINameTag nameTag)
 		{
-			return _FindOpened(nameType) != null;
+			return _FindOpened(nameTag) != null;
 		}
 		#endregion Open
 
 		#region Close
-		public void Close(UINameType nameType,bool isRelease = false)
+		public void Close(CommonUINameTag nameTag,bool isRelease = false)
 		{
-			var window = _FindOpened(nameType);
+			var window = _FindOpened(nameTag);
 
 			if(window != null)
 			{
@@ -179,11 +178,11 @@ namespace KZLib
 				return;
 			}
 
-			var release = (isRelease || !window.IsPooling) && !m_dontReleaseHashSet.Contains(window.NameType);
+			var release = (isRelease || !window.IsPooling) && !m_dontReleaseHashSet.Contains(window.NameTag);
 
 			if(release)
 			{
-				m_registerWindowDict.Remove(window.NameType);
+				m_registerWindowDict.Remove(window.NameTag);
 			}
 
 			window.Close();
@@ -214,62 +213,44 @@ namespace KZLib
 		}
 		#endregion Close
 
-		#region Show
-		public void Show(UINameType nameType)
-		{
-			for(var i=0;i<m_repositoryList.Count;i++)
-			{
-				m_repositoryList[i].Show(nameType);
-			}
-		}
-
-		public void ShowAllGroup(IEnumerable<UINameType> includeNameTypeGroup = null,IEnumerable<UINameType> excludeNameTypeGroup = null)
-		{
-			for(var i=0;i<m_repositoryList.Count;i++)
-			{
-				m_repositoryList[i].ShowAllGroup(includeNameTypeGroup,excludeNameTypeGroup);
-			}
-		}
-		#endregion Show
-
 		#region Hide
-		public void Hide(UINameType nameType)
+		public void Hide(CommonUINameTag nameTag,bool isHidden)
 		{
 			for(var i=0;i<m_repositoryList.Count;i++)
 			{
-				m_repositoryList[i].Hide(nameType);
+				m_repositoryList[i].Hide(nameTag,isHidden);
 			}
 		}
 
-		public void HideAllGroup(IEnumerable<UINameType> includeNameTypeGroup = null,IEnumerable<UINameType> excludeNameTypeGroup = null)
+		public void HideAllGroup(bool isHidden,IEnumerable<CommonUINameTag> includeNameTagGroup = null,IEnumerable<CommonUINameTag> excludeNameTagGroup = null)
 		{
 			for(var i=0;i<m_repositoryList.Count;i++)
 			{
-				m_repositoryList[i].HideAllGroup(includeNameTypeGroup,excludeNameTypeGroup);
+				m_repositoryList[i].HideAllGroup(isHidden,includeNameTagGroup,excludeNameTagGroup);
 			}
 		}
 
-		public bool? IsHidden(UINameType nameType)
+		public bool? IsHidden(CommonUINameTag nameTag)
 		{
-			var window = _FindOpened(nameType);
+			var window = _FindOpened(nameTag);
 
 			return window == null ? null : window.IsHidden;
 		}
 		#endregion Hide
 
 		#region Find
-		public TNameType Find<TNameType>(UINameType nameType) where TNameType : class,IWindowUI
+		public TNameTag Find<TNameTag>(CommonUINameTag nameTag) where TNameTag : class,IWindowUI
 		{
-			var window = _FindOpened(nameType);
+			var window = _FindOpened(nameTag);
 
-			return (window != null) ? window as TNameType : null;
+			return (window != null) ? window as TNameTag : null;
 		}
 
-		private WindowUI _FindOpened(UINameType nameType)
+		private WindowUI _FindOpened(CommonUINameTag nameTag)
 		{
 			for(var i=0;i<m_repositoryList.Count;i++)
 			{
-				var window = m_repositoryList[i].FindOpenedUI(nameType);
+				var window = m_repositoryList[i].FindOpenedUI(nameTag);
 
 				if(window != null)
 				{

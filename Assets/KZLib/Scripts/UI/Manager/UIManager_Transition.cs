@@ -1,62 +1,61 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
-using KZLib.KZData;
 using KZLib.KZUtility;
 
 namespace KZLib
 {
 	public partial class UIManager : LoadSingletonMB<UIManager>
 	{
-		public void PlayTransitionOutIn(UINameType transitionNameType,Func<UniTask> onPlayTask)
+		public void PlayTransitionOutIn(CommonUINameTag transitionNameTag,Func<UniTask> onPlayTask)
 		{
-			_PlayTransitionOutInAsync(transitionNameType,onPlayTask).Forget();
+			_PlayTransitionOutInAsync(transitionNameTag,onPlayTask).Forget();
 		}
 
-		public void PlayTransitionOutIn(UINameType transitionNameType,Action onPlayAction)
+		public void PlayTransitionOutIn(CommonUINameTag transitionNameTag,Action onPlayAction)
 		{
-			_PlayTransitionOutInAsync(transitionNameType,onPlayAction).Forget();
+			_PlayTransitionOutInAsync(transitionNameTag,onPlayAction).Forget();
 		}
 
-		private async UniTask _PlayTransitionOutInAsync(UINameType transitionNameType,Func<UniTask> onPlayTask)
+		private async UniTask _PlayTransitionOutInAsync(CommonUINameTag transitionNameTag,Func<UniTask> onPlayTask)
 		{
 			// darker
-			await PlayTransitionOutAsync(transitionNameType,false);
+			await PlayTransitionOutAsync(transitionNameTag,false);
 
 			await onPlayTask.Invoke();
 
 			// brighter
-			await PlayTransitionInAsync(transitionNameType,true);
+			await PlayTransitionInAsync(transitionNameTag,true);
 		}
 
-		private async UniTask _PlayTransitionOutInAsync(UINameType transitionNameType,Action onPlayAction)
+		private async UniTask _PlayTransitionOutInAsync(CommonUINameTag transitionNameTag,Action onPlayAction)
 		{
 			// darker
-			await PlayTransitionOutAsync(transitionNameType,false);
+			await PlayTransitionOutAsync(transitionNameTag,false);
 
 			onPlayAction.Invoke();
 
 			// brighter
-			await PlayTransitionInAsync(transitionNameType,true);
+			await PlayTransitionInAsync(transitionNameTag,true);
 		}
 
-		public async UniTask PlayTransitionInAsync(UINameType transitionNameType,bool isAutoHide = true)
+		public async UniTask PlayTransitionInAsync(CommonUINameTag transitionNameTag,bool isAutoHide = true)
 		{
-			await _PlayTransitionAsync(transitionNameType,isAutoHide,true);
+			await _PlayTransitionAsync(transitionNameTag,isAutoHide,true);
 		}
 
-		public async UniTask PlayTransitionOutAsync(UINameType transitionNameType,bool isAutoHide = true)
+		public async UniTask PlayTransitionOutAsync(CommonUINameTag transitionNameTag,bool isAutoHide = true)
 		{
-			await _PlayTransitionAsync(transitionNameType,isAutoHide,false);
+			await _PlayTransitionAsync(transitionNameTag,isAutoHide,false);
 		}
 
-		private async UniTask _PlayTransitionAsync(UINameType transitionNameType,bool isAutoHide,bool isReverse)
+		private async UniTask _PlayTransitionAsync(CommonUINameTag transitionNameTag,bool isAutoHide,bool isReverse)
 		{
-			if(transitionNameType == UINameType.None)
+			if(transitionNameTag == CommonUINameTag.None)
 			{
 				return;
 			}
 
-			var panel = Open(transitionNameType) as TransitionPanelUI;
+			var panel = Open(transitionNameTag) as TransitionPanelUI;
 
 			if(panel == null)
 			{

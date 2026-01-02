@@ -75,7 +75,7 @@ namespace KZLib
 				
 				if(m_useSkip)
 				{
-					UIManager.In.Close(UINameType.SkipPanelUI);
+					UIManager.In.Close(CommonUINameTag.SkipPanelUI);
 				}
 
 				m_playingCutScene = false;
@@ -91,7 +91,7 @@ namespace KZLib
 
 			if(useSkip)
 			{
-				UIManager.In.Open(UINameType.SkipPanelUI,new SkipPanelUI.Param(Stop));
+				UIManager.In.Open(CommonUINameTag.SkipPanelUI,new SkipPanelUI.Param(Stop));
 			}
 
 			_PlayCutScene();

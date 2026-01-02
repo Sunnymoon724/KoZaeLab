@@ -9,21 +9,21 @@ namespace KZLib
 	{
 		public async UniTask PlayLoadingAsync(Func<UniTask> onPlayTask)
 		{
-			var loadingPanelUI = Open(UINameType.LoadingPanelUI) as LoadingPanelUI;
+			var loadingPanelUI = Open(CommonUINameTag.LoadingPanelUI) as LoadingPanelUI;
 
 			await onPlayTask();
 
 			Close(loadingPanelUI);
 		}
 
-		public async UniTask PlayLoadingIncludeTransitionAsync(UINameType transitionNameType,Func<UniTask> onPlayTask)
+		public async UniTask PlayLoadingIncludeTransitionAsync(CommonUINameTag transitionNameTag,Func<UniTask> onPlayTask)
 		{
 			async UniTask _PlayTaskAsync()
 			{
 				await PlayLoadingAsync(onPlayTask);
 			}
 
-			await _PlayTransitionOutInAsync(transitionNameType,_PlayTaskAsync);
+			await _PlayTransitionOutInAsync(transitionNameTag,_PlayTaskAsync);
 		}
 	}
 }

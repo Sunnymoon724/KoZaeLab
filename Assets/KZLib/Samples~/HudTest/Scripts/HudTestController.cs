@@ -9,7 +9,7 @@ namespace KZLib.KZSample
 	{
 		private void Start()
 		{
-			UIManager.In.Open(UINameType.HudPanelUI);
+			UIManager.In.Open(CommonUINameTag.HudPanelUI);
 
 			LoopTextAsync().Forget();
 		}

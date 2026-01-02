@@ -63,25 +63,25 @@ public abstract class RepositoryUI : BaseComponentUI
 		}
 	}
 
-	public WindowUI FindOpenedUI(UINameType nameType)
+	public WindowUI FindOpenedUI(CommonUINameTag nameTag)
 	{
 		bool _FindOpened(WindowUI openedWindow)
 		{
-			return openedWindow.NameType == nameType;
+			return openedWindow.NameTag == nameTag;
 		}
 
 		return m_openedWindowList.Find(_FindOpened);
 	}
 
-	public void RemoveAll(IEnumerable<UINameType> excludeNameTypeGroup,bool isRelease)
+	public void RemoveAll(IEnumerable<CommonUINameTag> excludeNameTagGroup,bool isRelease)
 	{
-		var nameTypeHashSet = new HashSet<UINameType>(excludeNameTypeGroup ?? Enumerable.Empty<UINameType>());
+		var nameTagHashSet = new HashSet<CommonUINameTag>(excludeNameTagGroup ?? Enumerable.Empty<CommonUINameTag>());
 
 		for(var i=m_openedWindowList.Count-1;i>=0;i--)
 		{
 			var window = m_openedWindowList[i];
 
-			if(nameTypeHashSet.Contains(window.NameType))
+			if(nameTagHashSet.Contains(window.NameTag))
 			{
 				continue;
 			}
@@ -90,53 +90,36 @@ public abstract class RepositoryUI : BaseComponentUI
 		}
 	}
 
-	public void ShowAllGroup(IEnumerable<UINameType> includeNameTypeGroup = null,IEnumerable<UINameType> excludeNameTypeGroup = null)
+	public void HideAllGroup(bool isHidden,IEnumerable<CommonUINameTag> includeNameTagGroup = null,IEnumerable<CommonUINameTag> excludeNameTagGroup = null)
 	{
-		_SetVisibleGroup(false,includeNameTypeGroup,excludeNameTypeGroup);
-	}
-
-	public void HideAllGroup(IEnumerable<UINameType> includeNameTypeGroup = null,IEnumerable<UINameType> excludeNameTypeGroup = null)
-	{
-		_SetVisibleGroup(true,includeNameTypeGroup,excludeNameTypeGroup);
-	}
-
-	private void _SetVisibleGroup(bool isHidden,IEnumerable<UINameType> includeNameTypeGroup = null,IEnumerable<UINameType> excludeNameTypeGroup = null)
-	{
-		var includeNameTypeHashSet = new HashSet<UINameType>(includeNameTypeGroup ?? Enumerable.Empty<UINameType>());
-		var excludeNameTypeHashSet = new HashSet<UINameType>(excludeNameTypeGroup ?? Enumerable.Empty<UINameType>())
-        {
-            UINameType.CommonTransitionPanelUI,
-            UINameType.HudPanelUI,
-        };
+		var includeNameTagHashSet = new HashSet<CommonUINameTag>(includeNameTagGroup ?? Enumerable.Empty<CommonUINameTag>());
+		var excludeNameTagHashSet = new HashSet<CommonUINameTag>(excludeNameTagGroup ?? Enumerable.Empty<CommonUINameTag>())
+		{
+			CommonUINameTag.CommonTransitionPanelUI,
+			CommonUINameTag.HudPanelUI,
+		};
 
 		for(var i=0;i<m_openedWindowList.Count;i++)
 		{
 			var window = m_openedWindowList[i];
 
-			if(window == null || !includeNameTypeHashSet.Contains(window.NameType) || excludeNameTypeHashSet.Contains(window.NameType))
+			if(window == null || !includeNameTagHashSet.Contains(window.NameTag) || excludeNameTagHashSet.Contains(window.NameTag))
 			{
 				continue;
 			}
 
-			_SetVisible(window,isHidden);
+			_Hide(window,isHidden);
 		}
 	}
 
-	public void Show(UINameType nameType)
+	public void Hide(CommonUINameTag nameTag,bool isHidden)
 	{
-		var window = FindOpenedUI(nameType);
+		var window = FindOpenedUI(nameTag);
 
-		_SetVisible(window,false);
+		_Hide(window,isHidden);
 	}
 
-	public void Hide(UINameType nameType)
-	{
-		var window = FindOpenedUI(nameType);
-
-		_SetVisible(window,true);
-	}
-
-	private void _SetVisible(WindowUI window,bool isHidden)
+	private void _Hide(WindowUI window,bool isHidden)
 	{
 		if(window == null || window.IsIgnoreHide || window.IsHidden == isHidden)
 		{

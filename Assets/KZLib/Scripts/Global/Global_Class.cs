@@ -21,6 +21,8 @@ public record UnitStateInfo(Enum PreState,Enum CurState);
 #region UINameTag
 public class CommonUINameTag : CustomTag
 {
+	public static readonly CommonUINameTag None							= new(nameof(None));
+
 	public static readonly CommonUINameTag HudPanelUI					= new(nameof(HudPanelUI));
 
 	public static readonly CommonUINameTag CommonTransitionPanelUI		= new(nameof(CommonTransitionPanelUI));

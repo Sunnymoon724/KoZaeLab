@@ -165,7 +165,7 @@ namespace KZLib.KZNetwork
 
 		private void _ChangeTitleScene()
 		{
-			SceneStateManager.In.ChangeSceneWithLoading(c_titleScene,UINameType.CommonTransitionPanelUI);
+			SceneStateManager.In.ChangeSceneWithLoading(c_titleScene,CommonUINameTag.CommonTransitionPanelUI);
 		}
 #endif
 

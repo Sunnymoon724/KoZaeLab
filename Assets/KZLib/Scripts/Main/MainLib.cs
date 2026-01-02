@@ -175,12 +175,12 @@ namespace KZLib
 #if UNITY_EDITOR
 			if(gameCfg.UseHeadUpDisplay)
 			{
-				UIManager.In.Open(UINameType.HudPanelUI);
+				UIManager.In.Open(CommonUINameTag.HudPanelUI);
 			}
 #else
 			if(Debug.isDebugBuild && gameCfg.UseHeadUpDisplay)
 			{
-				UIManager.In.Open(UINameType.HudPanelUI);
+				UIManager.In.Open(CommonUINameTag.HudPanelUI);
 			}
 #endif
 
@@ -215,7 +215,7 @@ namespace KZLib
 #if UNITY_EDITOR
 				await _InitializeTestMode(m_tokenSource.Token);
 
-				SceneStateManager.In.AddSceneNoLoading(StartSceneName,UINameType.None);
+				SceneStateManager.In.AddSceneNoLoading(StartSceneName,CommonUINameTag.None);
 #else
 				throw new Exception("This cannot be tested outside of the editor mode.");
 #endif
@@ -224,7 +224,7 @@ namespace KZLib
 			{
 				await _InitializeNormalMode(m_tokenSource.Token);
 
-				SceneStateManager.In.AddSceneNoLoading(StartSceneName,UINameType.None);
+				SceneStateManager.In.AddSceneNoLoading(StartSceneName,CommonUINameTag.None);
 			}
 		}
 
@@ -321,13 +321,13 @@ namespace KZLib
 #if UNITY_EDITOR
 			if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C))
 			{
-				if(UIManager.In.IsOpened(UINameType.HudPanelUI))
+				if(UIManager.In.IsOpened(CommonUINameTag.HudPanelUI))
 				{
-					UIManager.In.Close(UINameType.HudPanelUI);
+					UIManager.In.Close(CommonUINameTag.HudPanelUI);
 				}
 				else
 				{
-					UIManager.In.Open(UINameType.HudPanelUI);
+					UIManager.In.Open(CommonUINameTag.HudPanelUI);
 				}
 			}
 
@@ -350,7 +350,7 @@ namespace KZLib
 #if UNITY_EDITOR
 		private async UniTask _RefreshGame()
 		{
-			await SceneStateManager.In.RemoveSceneNoLoadingAsync(UINameType.None);
+			await SceneStateManager.In.RemoveSceneNoLoadingAsync(CommonUINameTag.None);
 
 			await _StartMainAsync();
 		}

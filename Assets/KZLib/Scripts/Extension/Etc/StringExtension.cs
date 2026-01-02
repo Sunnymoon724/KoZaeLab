@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using KZLib.KZData;
+using KZLib.KZUtility;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -198,21 +199,21 @@ public static class StringExtension
 	#endregion Compare
 
 	#region Convert Enum
-	public static bool IsEnumDefined<TEnum>(this string text)
+	public static bool IsEnumDefined<TEnum>(this string text) where TEnum : struct
 	{
 		return Enum.IsDefined(typeof(TEnum),text);
 	}
 
 	public static TEnum ToEnum<TEnum>(this string text) where TEnum : struct
 	{
-		if(!text.IsEmpty() && Enum.TryParse(text,true,out TEnum value))
+		var result = text.TryToEnum<TEnum>(out var value);
+
+		if(!result)
 		{
-			return value;
+			LogSvc.System.W($"Failed to convert {text} into Enum");
 		}
 
-		LogSvc.System.W($"Failed to convert {text} into Enum");
-
-		return default;
+		return value;
 	}
 
 	public static bool TryToEnum<TEnum>(this string text,out TEnum value) where TEnum : struct
@@ -228,40 +229,75 @@ public static class StringExtension
 	}
 	#endregion Convert Enum
 
+	#region Convert CustomTag
+	public static bool IsCustomTagDefined<TCustomTag>(this string text) where TCustomTag : CustomTag
+	{
+		return CustomTag.IsDefined<TCustomTag>(text);
+	}
+
+	public static TCustomTag ToCustomTag<TCustomTag>(this string text) where TCustomTag : CustomTag
+	{
+		var result = text.TryToCustomTag<TCustomTag>(out var value);
+
+		if(!result)
+		{
+			LogSvc.System.W($"Failed to convert {text} into CustomTag");
+		}
+
+		return value;
+	}
+
+	public static bool TryToCustomTag<TCustomTag>(this string text,out TCustomTag value) where TCustomTag : CustomTag
+	{
+		if(!text.IsEmpty() && CustomTag.TryParse(text,out value))
+		{
+			return true;
+		}
+
+		value = null;
+
+		return false;
+	}
+	#endregion Convert CustomTag
+
 	#region Convert Color
 	/// <summary>
 	/// HexCode to Color
 	/// </summary>
 	public static Color ToColor(this string hexCode)
 	{
+		var result = hexCode.TryToColor(out var value);
+
+		if(!result)
+		{
+			LogSvc.System.W($"Failed to convert {hexCode} into color");
+		}
+
+		return value;
+	}
+
+	public static bool TryToColor(this string hexCode,out Color value)
+	{
 		if(hexCode.Length == 7)
 		{
 			hexCode = $"{hexCode}FF";
 		}
 
-		if(s_hexColorDict.TryGetValue(hexCode,out var color))
+		if(s_hexColorDict.TryGetValue(hexCode,out value))
 		{
-			return color;
+			return true;
 		}
 
-		if(ColorUtility.TryParseHtmlString(hexCode,out color))
+		if(ColorUtility.TryParseHtmlString(hexCode,out value))
 		{
-			s_hexColorDict.Add(hexCode,color);
+			s_hexColorDict.Add(hexCode,value);
 
-			return color;
+			return true;
 		}
 
-		LogSvc.System.W($"Failed to convert {hexCode} into color");
+		value = Color.clear;
 
-		return Color.clear;
-	}
-
-	/// <summary>
-	/// Add richText
-	/// </summary>
-	public static string ToColorText(this string text,string color)
-	{
-		return $"<color=#{color}>{text}</color>";
+		return false;
 	}
 
 	/// <summary>
@@ -269,14 +305,34 @@ public static class StringExtension
 	/// </summary>
 	public static string ToColorText(this string text,Color color)
 	{
-		return ToColorText(ColorUtility.ToHtmlStringRGBA(color),text);
+		return ToColorText(color.ToHexCode(),text);
+	}
+
+	/// <summary>
+	/// Add richText
+	/// </summary>
+	public static string ToColorText(this string text,string hexCode)
+	{
+		return $"<color=#{hexCode}>{text}</color>";
 	}
 	#endregion Convert Color
 
 	#region Convert Bool
 	public static bool ToBool(this string text)
 	{
-		if(!text.IsEmpty() && bool.TryParse(text,out var value))
+		var result = text.TryToBool(out var value);
+
+		if(!result)
+		{
+			LogSvc.System.W($"Failed to convert {text} into bool");
+		}
+
+		return value;
+	}
+
+	public static bool TryToBool(this string text,out bool value)
+	{
+		if(!text.IsEmpty() && bool.TryParse(text,out value))
 		{
 			return value;
 		}
@@ -285,15 +341,19 @@ public static class StringExtension
 
 		if(lower.IsEqual("t") || lower.IsEqual("1") || lower.IsEqual("yes") || lower.IsEqual("y"))
 		{
+			value = true;
+
 			return true;
 		}
 
 		if(lower.IsEqual("f") || lower.IsEqual("0") || lower.IsEqual("no") || lower.IsEqual("n"))
 		{
-			return false;
+			value = false;
+
+			return true;
 		}
 
-		LogSvc.System.W($"Failed to convert {text} into bool");
+		value = false;
 
 		return false;
 	}
@@ -302,186 +362,284 @@ public static class StringExtension
 	#region Convert Number
 	public static BigInteger ToBigInteger(this string text)
 	{
-		if(!text.IsEmpty() && BigInteger.TryParse(text,out var value))
+		var result = TryToBigInteger(text,out var value);
+
+		if(!result)
 		{
-			return value;
+			LogSvc.System.W($"Failed to convert {text} into BigInteger");
 		}
 
-		LogSvc.System.W($"Failed to convert {text} into BigInteger");
+		return value;
+	}
 
-		return default;
+	public static bool TryToBigInteger(this string text,out BigInteger bigInteger)
+	{
+		if(!text.IsEmpty() && BigInteger.TryParse(text,out bigInteger))
+		{
+			return true;
+		}
+
+		bigInteger = BigInteger.Zero;
+
+		return false;
 	}
 
 	public static int ToInt(this string text)
 	{
+		var result = text.TryToInt(out var value);
+
+		if(!result)
+		{
+			LogSvc.System.W($"Failed to convert {text} into int");
+		}
+
+		return value;
+	}
+
+	public static bool TryToInt(this string text,out int value)
+	{
 		if(!text.IsEmpty())
 		{
 			if(text.StartsWith("0x",StringComparison.OrdinalIgnoreCase))
 			{
-				return text.ToHexInt();
+				value = text.ToHexInt();
+
+				return true;
 			}
 
-			if(int.TryParse(text,out var value))
+			if(int.TryParse(text,out value))
 			{
-				return value;
+				return true;
 			}
 		}
 
-		LogSvc.System.W($"Failed to convert {text} into int");
+		value = 0;
 
-		return default;
+		return false;
 	}
 
 	public static float ToFloat(this string text)
 	{
-		if(!text.IsEmpty() && float.TryParse(text,out var value))
+		var result = text.TryToFloat(out var value);
+
+		if(!result)
 		{
-			return value;
+			LogSvc.System.W($"Failed to convert {text} into float");
 		}
 
-		LogSvc.System.W($"Failed to convert {text} into float");
+		return value;
+	}
 
-		return default;
+	public static bool TryToFloat(this string text,out float value)
+	{
+		if(!text.IsEmpty() && float.TryParse(text,out value))
+		{
+			return true;
+		}
+
+		value = 0.0f;
+
+		return false;
 	}
 
 	public static double ToDouble(this string text)
 	{
-		if(!text.IsEmpty() && double.TryParse(text,out var value))
+		var result = text.TryToDouble(out var value);
+
+		if(!result)
 		{
-			return value;
+			LogSvc.System.W($"Failed to convert {text} into double");
 		}
 
-		LogSvc.System.W($"Failed to convert {text} into double");
+		return value;
+	}
 
-		return default;
+	public static bool TryToDouble(this string text,out double value)
+	{
+		if(!text.IsEmpty() && double.TryParse(text,out value))
+		{
+			return true;
+		}
+
+		value = 0.0d;
+
+		return false;
 	}
 
 	public static byte ToByte(this string text)
+	{
+		var result = text.TryToByte(out var value);
+
+		if(!result)
+		{
+			LogSvc.System.W($"Failed to convert {text} into byte");
+		}
+
+		return value;
+	}
+
+	public static bool TryToByte(this string text,out byte value)
 	{
 		if(!text.IsEmpty())
 		{
 			if(text.StartsWith("0x",StringComparison.OrdinalIgnoreCase))
 			{
-				return Convert.ToByte(text,16);
+				value = Convert.ToByte(text,16);
+
+				return true;
 			}
 
-			if(byte.TryParse(text,out var value))
+			if(byte.TryParse(text,out value))
 			{
-				return value;
+				return true;
 			}
 		}
 
-		LogSvc.System.W($"Failed to convert {text} into byte");
+		value = 0x00;
 
-		return default;
+		return false;
 	}
 
-	public static int ToHexInt(this string hexText)
+	public static int ToHexInt(this string text)
 	{
-		if(!hexText.IsEmpty() && int.TryParse(hexText,NumberStyles.HexNumber,CultureInfo.CurrentCulture,out var value))
+		var result = text.TryToByte(out var value);
+
+		if(!result)
 		{
-			return value;
+			LogSvc.System.W($"Failed to convert {text} into int");
 		}
 
-		LogSvc.System.W($"Failed to convert {hexText} into int");
-
-		return default;
+		return value;
 	}
 
-	public static float ToHexFloat(string hexText)
+	public static bool TryToHexInt(this string text,out int value)
 	{
-		if(!hexText.IsEmpty() && uint.TryParse(hexText,NumberStyles.AllowHexSpecifier,CultureInfo.CurrentCulture,out var value))
+		if(!text.IsEmpty() && int.TryParse(text,NumberStyles.HexNumber,CultureInfo.CurrentCulture,out value))
 		{
-			return BitConverter.ToSingle(BitConverter.GetBytes(value),0);
+			return true;
 		}
 
-		LogSvc.System.W($"Failed to convert {hexText} into float");
+		value = 0;
 
-		return default;
+		return false;
 	}
 
-	private static float _GetNumberInArray(string[] textArray,int index)
+	public static float ToHexFloat(string text)
 	{
-		return textArray.ContainsIndex(index) ? textArray[index].ToFloat() : 0.0f;
+		var result = text.TryToByte(out var value);
+
+		if(!result)
+		{
+			LogSvc.System.W($"Failed to convert {text} into float");
+		}
+
+		return value;
+	}
+
+	public static bool TryToHexFloat(this string text,out float value)
+	{
+		if(!text.IsEmpty() && uint.TryParse(text,NumberStyles.AllowHexSpecifier,CultureInfo.CurrentCulture,out var integer))
+		{
+			value = BitConverter.ToSingle(BitConverter.GetBytes(integer),0);
+
+			return true;
+		}
+
+		value = 0.0f;
+
+		return false;
 	}
 	#endregion Convert Number
 
 	#region Convert DateTime
 	public static DateTime ToDateTime(this string text,CultureInfo cultureInfo = null,DateTimeStyles dateTimeStyles = DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal)
 	{
-		var defaultCulture = cultureInfo ?? CultureInfo.InvariantCulture;
+		var result = text.TryToDateTime(out var value,cultureInfo,dateTimeStyles);
 
-		if(!text.IsEmpty() && DateTime.TryParseExact(text,"yyyy-MM-dd HH:mm",defaultCulture,dateTimeStyles,out var value))
+		if(!result)
 		{
-			return value;
+			LogSvc.System.W($"Failed to convert {text} into DateTime");
 		}
 
-		LogSvc.System.W($"Failed to convert {text} into DateTime");
+		return value;
+	}
 
-		return default;
+	public static bool TryToDateTime(this string text,out DateTime value,CultureInfo cultureInfo = null,DateTimeStyles dateTimeStyles = DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal)
+	{
+		var defaultCulture = cultureInfo ?? CultureInfo.InvariantCulture;
+
+		if(!text.IsEmpty() && DateTime.TryParseExact(text,"yyyy-MM-dd HH:mm",defaultCulture,dateTimeStyles,out value))
+		{
+			return true;
+		}
+
+		value = DateTime.MinValue;
+
+		return false;
 	}
 	#endregion Convert DateTime
 
 	#region Convert Vector
 	public static Vector2 ToVector2(this string text)
 	{
-		if(!text.IsEmpty() && text.TryToVector2(out var value))
+		var result = text.TryToVector2(out var value);
+
+		if(!result)
 		{
-			return value;
+			LogSvc.System.W($"Failed to convert {text} into Vector2");
 		}
 
-		LogSvc.System.W($"Failed to convert {text} into Vector2");
-
-		return default;
+		return value;
 	}
 
-	public static bool TryToVector2(this string text,out Vector2 vector)
+	public static bool TryToVector2(this string text,out Vector2 value)
 	{
-		vector = default;
-
-		var vectorArray = _ConvertVectorArray(text);		
-
-		if(vectorArray.IsNullOrEmpty())
+		if(!text.IsEmpty())
 		{
-			return false;
+			var vectorArray = _ConvertVectorArray(text);
+
+			if(!vectorArray.IsNullOrEmpty())
+			{
+				value = new Vector2(_GetNumberInArray(vectorArray,0),_GetNumberInArray(vectorArray,1));
+
+				return true;
+			}
 		}
 
-		vector = new Vector2(_GetNumberInArray(vectorArray,0),_GetNumberInArray(vectorArray,1));
+		value = Vector2.zero;
 
-		return true;
+		return false;
 	}
 
 	public static Vector3 ToVector3(this string text)
 	{
-		if(!text.IsEmpty() && text.TryToVector3(out var value))
+		var result = text.TryToVector3(out var value);
+
+		if(!result)
 		{
-			return value;
+			LogSvc.System.W($"Failed to convert {text} into Vector3");
 		}
 
-		LogSvc.System.W($"Failed to convert {text} into Vector3");
-
-		return default;
+		return value;
 	}
 
-	public static bool TryToVector3(this string text,out Vector3 vector)
+	public static bool TryToVector3(this string text,out Vector3 value)
 	{
-		vector = default;
-
-		var vectorArray = _ConvertVectorArray(text);
-
-		if(vectorArray.IsNullOrEmpty())
+		if(!text.IsEmpty())
 		{
-			return false;
+			var vectorArray = _ConvertVectorArray(text);
+
+			if(!vectorArray.IsNullOrEmpty())
+			{
+				value = new Vector3(_GetNumberInArray(vectorArray,0),_GetNumberInArray(vectorArray,1),_GetNumberInArray(vectorArray,2));
+
+				return true;
+			}
 		}
 
-		vector = new Vector3(_GetNumberInArray(vectorArray,0),_GetNumberInArray(vectorArray,1),_GetNumberInArray(vectorArray,2));
+		value = Vector3.zero;
 
-		return true;
-	}
-
-	private static string[] _ConvertVectorArray(string text)
-	{
-		return text.IsEmpty() ? null : text.TrimParentheses().Split(',');
+		return false;
 	}
 	#endregion Convert Vector
 
@@ -745,5 +903,15 @@ public static class StringExtension
 		xml.Load(stream);
 
 		return JsonConvert.SerializeXmlNode(xml);
+	}
+
+	private static float _GetNumberInArray(string[] textArray,int index)
+	{
+		return textArray.ContainsIndex(index) ? textArray[index].ToFloat() : 0.0f;
+	}
+
+	private static string[] _ConvertVectorArray(string text)
+	{
+		return text.IsEmpty() ? null : text.TrimParentheses().Split(',');
 	}
 }
