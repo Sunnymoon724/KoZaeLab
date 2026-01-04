@@ -11,7 +11,8 @@
         "Unity.RenderPipelines.Universal.Runtime",
         "Unity.Localization",
         "Unity.Localization.Editor",
-        "PlayFab"
+        "PlayFab",
+        "Coffee.UIEffect"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,4 +1,5 @@
 using System;
+using Coffee.UIEffects;
 using KZLib;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -16,6 +17,8 @@ public class SlotUI : BaseComponentUI
 	#region IMAGE
 	[BoxGroup("Image",Order = c_imageOrder),SerializeField,ShowIf(nameof(UseImage))]
 	protected Image m_image = null;
+	[BoxGroup("Image",Order = c_imageOrder),SerializeField,ShowIf(nameof(UseImage))]
+	protected UIEffect m_imageEffect = null;
 
 	protected virtual bool UseImage => true;
 	#endregion IMAGE
