@@ -91,8 +91,10 @@ namespace KZLib.KZSample
 
 		private readonly List<IEntryInfo> m_entryInfoList = new();
 
-		private void Start()
+		protected override void Start()
 		{
+			base.Start();
+
 			_SetEntryList();
 		}
 

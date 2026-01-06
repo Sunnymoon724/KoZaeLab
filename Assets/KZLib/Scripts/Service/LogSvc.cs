@@ -256,7 +256,7 @@ public class LogChannel
 	{
 		m_sendLock = true;
 
-		await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
+		await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate).SuppressCancellationThrow();
 
 		var texture = CommonUtility.GetScreenShot();
 
@@ -264,7 +264,7 @@ public class LogChannel
 
 		//? Send once and wait for 30 seconds -> If sent too frequently, it can cause a load.
 
-		await UniTask.Delay(TimeSpan.FromSeconds(c_coolTimeTimer));
+		await UniTask.Delay(TimeSpan.FromSeconds(c_coolTimeTimer)).SuppressCancellationThrow();
 
 		m_sendLock = false;
 	}

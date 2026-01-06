@@ -4,6 +4,8 @@ using UnityEngine.UI;
 using KZLib.KZAttribute;
 using DG.Tweening;
 using System;
+using Cysharp.Threading.Tasks;
+using System.Threading;
 
 public class ProgressImageUI : BaseImageUI
 {
@@ -85,15 +87,16 @@ public class ProgressImageUI : BaseImageUI
 		CurrentValue = value;
 	}
 
-	public void SetValueDuration(float value,float duration,Action onComplete = null)
+	public async UniTask SetValueDurationAsync(float value,float duration,bool ignoreTimescale,AnimationCurve animationCurve,CancellationToken token)
 	{
-		_KillTween();
-
 		var amount = value/m_maxValue;
 
-		m_tween = CommonUtility.SetTweenProgress(CurrentValue,value,duration,null,onComplete);
+		void _SetValue(float progress)
+		{
+			CurrentValue = progress;
+		}
 
-		m_tween.Play();
+		await CommonUtility.ExecuteProgressAsync(CurrentValue,amount,duration,_SetValue,ignoreTimescale,animationCurve,token);
 	}
 
 	private void _KillTween()

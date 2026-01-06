@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 62884378}
   - component: {fileID: 62884380}
   - component: {fileID: 62884379}
+  - component: {fileID: 62884381}
   m_Layer: 5
   m_Name: Image_0
   m_TagString: Untagged
@@ -169,8 +170,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -194,6 +195,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 62884377}
   m_CullTransparentMesh: 0
+--- !u!114 &62884381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 62884377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4d1a0053dfc24b1088887a96deff766, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KZLib::GraphicToggleMount
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  m_isOn: 0
+  m_inverseSelf: 0
+  m_graphic: {fileID: 62884379}
+  m_graphicType: 1
+  m_enableColor: {r: 1, g: 1, b: 1, a: 1}
+  m_disableColor: {r: 1, g: 0, b: 0, a: 1}
+  m_enableMaterial: {fileID: 0}
+  m_disableMaterial: {fileID: 0}
 --- !u!1 &182618205
 GameObject:
   m_ObjectHideFlags: 0
@@ -511,7 +541,7 @@ GameObject:
   - component: {fileID: 673687440}
   - component: {fileID: 673687439}
   - component: {fileID: 673687438}
-  - component: {fileID: 673687437}
+  - component: {fileID: 673687441}
   m_Layer: 5
   m_Name: ToggleImage_0
   m_TagString: Untagged
@@ -539,37 +569,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &673687437
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 673687435}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4d1a0053dfc24b1088887a96deff766, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
-  m_toggle: {fileID: 673687438}
-  m_childList:
-  - m_isOn: 0
-    m_inverseSelf: 0
-    m_graphic: {fileID: 713993492}
-    m_graphicType: 1
-    m_enableColor: {r: 1, g: 1, b: 1, a: 1}
-    m_disableColor: {r: 1, g: 0, b: 0, a: 1}
-    m_enableMaterial: {fileID: 0}
-    m_disableMaterial: {fileID: 0}
 --- !u!114 &673687438
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -656,6 +655,30 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 673687435}
   m_CullTransparentMesh: 0
+--- !u!114 &673687441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673687435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccebc2c6e7cc48744902a4b9f878412e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KZLib::ManageToggleUI
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  m_toggle: {fileID: 673687438}
+  m_toggleMountList:
+  - {fileID: 713993494}
 --- !u!1 &713993490
 GameObject:
   m_ObjectHideFlags: 0
@@ -667,6 +690,7 @@ GameObject:
   - component: {fileID: 713993491}
   - component: {fileID: 713993493}
   - component: {fileID: 713993492}
+  - component: {fileID: 713993494}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -731,6 +755,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 713993490}
   m_CullTransparentMesh: 0
+--- !u!114 &713993494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 713993490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4d1a0053dfc24b1088887a96deff766, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KZLib::GraphicToggleMount
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  m_isOn: 0
+  m_inverseSelf: 0
+  m_graphic: {fileID: 713993492}
+  m_graphicType: 1
+  m_enableColor: {r: 1, g: 1, b: 1, a: 1}
+  m_disableColor: {r: 1, g: 0, b: 0, a: 1}
+  m_enableMaterial: {fileID: 0}
+  m_disableMaterial: {fileID: 0}
 --- !u!1 &1117352408
 GameObject:
   m_ObjectHideFlags: 0
@@ -845,6 +898,7 @@ GameObject:
   - component: {fileID: 1366477189}
   - component: {fileID: 1366477191}
   - component: {fileID: 1366477190}
+  - component: {fileID: 1366477192}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -909,6 +963,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1366477188}
   m_CullTransparentMesh: 0
+--- !u!114 &1366477192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1366477188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4d1a0053dfc24b1088887a96deff766, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KZLib::GraphicToggleMount
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  m_isOn: 0
+  m_inverseSelf: 0
+  m_graphic: {fileID: 1366477190}
+  m_graphicType: 1
+  m_enableColor: {r: 1, g: 1, b: 1, a: 1}
+  m_disableColor: {r: 1, g: 0, b: 0, a: 1}
+  m_enableMaterial: {fileID: 0}
+  m_disableMaterial: {fileID: 0}
 --- !u!1 &1531917599
 GameObject:
   m_ObjectHideFlags: 0
@@ -920,6 +1003,7 @@ GameObject:
   - component: {fileID: 1531917600}
   - component: {fileID: 1531917602}
   - component: {fileID: 1531917601}
+  - component: {fileID: 1531917603}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -984,6 +1068,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1531917599}
   m_CullTransparentMesh: 0
+--- !u!114 &1531917603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1531917599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4d1a0053dfc24b1088887a96deff766, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KZLib::GraphicToggleMount
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  m_isOn: 0
+  m_inverseSelf: 0
+  m_graphic: {fileID: 1531917601}
+  m_graphicType: 1
+  m_enableColor: {r: 1, g: 1, b: 1, a: 1}
+  m_disableColor: {r: 1, g: 0, b: 0, a: 1}
+  m_enableMaterial: {fileID: 0}
+  m_disableMaterial: {fileID: 0}
 --- !u!1 &1686951164
 GameObject:
   m_ObjectHideFlags: 0
@@ -996,7 +1109,7 @@ GameObject:
   - component: {fileID: 1686951169}
   - component: {fileID: 1686951168}
   - component: {fileID: 1686951167}
-  - component: {fileID: 1686951166}
+  - component: {fileID: 1686951170}
   m_Layer: 5
   m_Name: ToggleImage_2
   m_TagString: Untagged
@@ -1024,37 +1137,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1686951166
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1686951164}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4d1a0053dfc24b1088887a96deff766, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
-  m_toggle: {fileID: 1686951167}
-  m_childList:
-  - m_isOn: 0
-    m_inverseSelf: 0
-    m_graphic: {fileID: 1366477190}
-    m_graphicType: 1
-    m_enableColor: {r: 1, g: 1, b: 1, a: 1}
-    m_disableColor: {r: 1, g: 0, b: 0, a: 1}
-    m_enableMaterial: {fileID: 0}
-    m_disableMaterial: {fileID: 0}
 --- !u!114 &1686951167
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1141,6 +1223,30 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1686951164}
   m_CullTransparentMesh: 0
+--- !u!114 &1686951170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1686951164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccebc2c6e7cc48744902a4b9f878412e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KZLib::ManageToggleUI
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  m_toggle: {fileID: 1686951167}
+  m_toggleMountList:
+  - {fileID: 1366477192}
 --- !u!1 &1725059328
 GameObject:
   m_ObjectHideFlags: 0
@@ -1153,7 +1259,7 @@ GameObject:
   - component: {fileID: 1725059331}
   - component: {fileID: 1725059330}
   - component: {fileID: 1725059333}
-  - component: {fileID: 1725059329}
+  - component: {fileID: 1725059334}
   m_Layer: 5
   m_Name: ToggleImage
   m_TagString: Untagged
@@ -1161,45 +1267,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1725059329
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1725059328}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4d1a0053dfc24b1088887a96deff766, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
-  m_toggle: {fileID: 1725059333}
-  m_childList:
-  - m_isOn: 0
-    m_inverseSelf: 0
-    m_graphic: {fileID: 62884379}
-    m_graphicType: 1
-    m_enableColor: {r: 1, g: 0, b: 0, a: 1}
-    m_disableColor: {r: 1, g: 1, b: 1, a: 1}
-    m_enableMaterial: {fileID: 0}
-    m_disableMaterial: {fileID: 0}
-  - m_isOn: 0
-    m_inverseSelf: 1
-    m_graphic: {fileID: 1877899265}
-    m_graphicType: 1
-    m_enableColor: {r: 1, g: 0, b: 0, a: 1}
-    m_disableColor: {r: 1, g: 1, b: 1, a: 1}
-    m_enableMaterial: {fileID: 0}
-    m_disableMaterial: {fileID: 0}
 --- !u!114 &1725059330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1308,6 +1375,31 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &1725059334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1725059328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccebc2c6e7cc48744902a4b9f878412e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KZLib::ManageToggleUI
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  m_toggle: {fileID: 1725059333}
+  m_toggleMountList:
+  - {fileID: 62884381}
+  - {fileID: 1877899267}
 --- !u!1 &1836546001
 GameObject:
   m_ObjectHideFlags: 0
@@ -1320,7 +1412,7 @@ GameObject:
   - component: {fileID: 1836546006}
   - component: {fileID: 1836546005}
   - component: {fileID: 1836546004}
-  - component: {fileID: 1836546003}
+  - component: {fileID: 1836546007}
   m_Layer: 5
   m_Name: ToggleImage_1
   m_TagString: Untagged
@@ -1348,37 +1440,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1836546003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1836546001}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4d1a0053dfc24b1088887a96deff766, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
-  m_toggle: {fileID: 1836546004}
-  m_childList:
-  - m_isOn: 0
-    m_inverseSelf: 0
-    m_graphic: {fileID: 1531917601}
-    m_graphicType: 1
-    m_enableColor: {r: 1, g: 1, b: 1, a: 1}
-    m_disableColor: {r: 1, g: 0, b: 0, a: 1}
-    m_enableMaterial: {fileID: 0}
-    m_disableMaterial: {fileID: 0}
 --- !u!114 &1836546004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1465,6 +1526,30 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1836546001}
   m_CullTransparentMesh: 0
+--- !u!114 &1836546007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1836546001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccebc2c6e7cc48744902a4b9f878412e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KZLib::ManageToggleUI
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  m_toggle: {fileID: 1836546004}
+  m_toggleMountList:
+  - {fileID: 1531917603}
 --- !u!1 &1877899263
 GameObject:
   m_ObjectHideFlags: 0
@@ -1476,6 +1561,7 @@ GameObject:
   - component: {fileID: 1877899264}
   - component: {fileID: 1877899266}
   - component: {fileID: 1877899265}
+  - component: {fileID: 1877899267}
   m_Layer: 5
   m_Name: Image_1
   m_TagString: Untagged
@@ -1515,8 +1601,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
-  m_RaycastTarget: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1540,6 +1626,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1877899263}
   m_CullTransparentMesh: 0
+--- !u!114 &1877899267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877899263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4d1a0053dfc24b1088887a96deff766, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KZLib::GraphicToggleMount
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  m_isOn: 0
+  m_inverseSelf: 1
+  m_graphic: {fileID: 1877899265}
+  m_graphicType: 1
+  m_enableColor: {r: 1, g: 1, b: 1, a: 1}
+  m_disableColor: {r: 1, g: 0, b: 0, a: 1}
+  m_enableMaterial: {fileID: 0}
+  m_disableMaterial: {fileID: 0}
 --- !u!1 &2120020881
 GameObject:
   m_ObjectHideFlags: 0

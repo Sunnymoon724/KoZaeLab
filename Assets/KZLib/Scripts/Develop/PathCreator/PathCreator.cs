@@ -117,7 +117,7 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		[VerticalGroup("2",Order = 2),ShowInInspector,LabelText(nameof(ResolutionLabel)),MinValue("$MinResolution")]
+		[VerticalGroup("2",Order = 2),ShowInInspector,LabelText(nameof(ResolutionLabel)),MinValue(nameof(MinResolution))]
 		public float Resolution
 		{
 			get => m_resolution;

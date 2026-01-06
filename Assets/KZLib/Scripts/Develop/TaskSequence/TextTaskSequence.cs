@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
@@ -55,7 +56,7 @@ namespace KZLib.KZDevelop
 			{
 				_SetIndex(m_indexList[i]);
 
-				await UniTask.WaitForSeconds(m_showDuration,cancellationToken : token).SuppressCancellationThrow();
+				await UniTask.Delay(TimeSpan.FromSeconds(m_showDuration),cancellationToken : token).SuppressCancellationThrow();
 
 				if(token.IsCancellationRequested)
 				{

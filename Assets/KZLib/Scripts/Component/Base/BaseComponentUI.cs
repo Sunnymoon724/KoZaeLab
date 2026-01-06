@@ -3,15 +3,15 @@ using UnityEngine;
 [RequireComponent(typeof(RectTransform))]
 public abstract class BaseComponentUI : BaseComponent
 {
-	protected RectTransform m_rectTransform = null;
+	protected RectTransform m_currentRect = null;
 
-	public RectTransform UIRectTransform
+	public RectTransform CurrentRect
 	{
 		get
 		{
 			_InitializeRectTransform();
 
-			return m_rectTransform;
+			return m_currentRect;
 		}
 	}
 
@@ -24,9 +24,9 @@ public abstract class BaseComponentUI : BaseComponent
 
 	private void _InitializeRectTransform()
 	{
-		if(!m_rectTransform)
+		if(!m_currentRect)
 		{
-			m_rectTransform = GetComponent<RectTransform>();
+			m_currentRect = GetComponent<RectTransform>();
 		}
 	}
 }

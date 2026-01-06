@@ -3,6 +3,9 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.UI;
 using KZLib.KZDevelop;
+using System;
+
+using Object = UnityEngine.Object;
 
 namespace KZLib.KZMenu
 {
@@ -13,16 +16,7 @@ namespace KZLib.KZMenu
 		[MenuItem("GameObject/UI/Empty Panel",false,MenuOrder.GameObject.UI)]
 		private static void _OnCreateEmptyPanel()
 		{
-			Undo.IncrementCurrentGroup();
-
-			var group = Undo.GetCurrentGroup();
-			var panel = _CreatePanel("EmptyPanel",true);
-
-			Undo.RegisterCreatedObjectUndo(panel,"Create EmptyPanel");
-
-			_LinkCanvas(panel);
-
-			Undo.CollapseUndoOperations(group);
+			_OnCreateUI("EmptyPanel",true,null);
 		}
 		#endregion Empty Panel
 
@@ -30,20 +24,36 @@ namespace KZLib.KZMenu
 		[MenuItem("GameObject/UI/Shape",false,MenuOrder.GameObject.UI)]
 		private static void _OnCreateShape()
 		{
+			_OnCreateUI("Shape",false,typeof(ShapeUI));
+		}
+		#endregion UIShape
+
+		// #region UILine
+		// [MenuItem("GameObject/UI/Line",false,MenuOrder.GameObject.UI)]
+		// private static void _OnCreateLine()
+		// {
+		// 	_OnCreateUI("Line",false,typeof(UILine));
+		// }
+		// #endregion UILine
+
+		private static void _OnCreateUI(string componentName,bool isExpand,Type componentType)
+		{
 			Undo.IncrementCurrentGroup();
 
 			var group = Undo.GetCurrentGroup();
-			var shape = _CreatePanel("Shape");
+			var panel = _CreatePanel(componentName,isExpand);
 
-			shape.AddComponent<UIShape>();
+			if(componentType != null)
+			{
+				panel.AddComponent(componentType);
+			}
 
-			Undo.RegisterCreatedObjectUndo(shape,"Create Shape");
+			Undo.RegisterCreatedObjectUndo(panel,$"Create {componentName}");
 
-			_LinkCanvas(shape);
+			_LinkCanvas(panel);
 
 			Undo.CollapseUndoOperations(group);
 		}
-		#endregion UIShape
 
 		#region Focus Scroller
 		[MenuItem("GameObject/UI/Focus Scroller",false,MenuOrder.GameObject.UI)]

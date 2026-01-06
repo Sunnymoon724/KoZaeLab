@@ -46,8 +46,8 @@ public class SafeAreaChecker : BaseComponentUI
 
 		if(anchorMin.x >= 0 && anchorMin.y >= 0 && anchorMax.x >= 0 && anchorMax.y >= 0)
 		{
-			m_rectTransform.anchorMin = anchorMin;
-			m_rectTransform.anchorMax = anchorMax;
+			m_currentRect.anchorMin = anchorMin;
+			m_currentRect.anchorMax = anchorMax;
 		}
 	}
 

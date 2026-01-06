@@ -19,6 +19,8 @@ namespace KZLib
 
 		protected override void Initialize()
 		{
+			base.Initialize();
+
 			m_effectPath = ConfigManager.In.Access<GameConfig>().FXPrefabPath;
 		}
 

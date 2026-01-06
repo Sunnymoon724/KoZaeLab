@@ -11,7 +11,7 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 	[SerializeField]
 	private Transform m_storage = null;
 	[SerializeField]
-	private SlotUI m_pivot = null;
+	private Slot m_pivot = null;
 
 	[SerializeField]
 	private GridLayoutGroup m_gridLayoutGroup = null;
@@ -20,17 +20,17 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 	private int m_poolCapacity = 1;
 
 	[SerializeField,ReadOnly]
-	private List<SlotUI> m_slotList = new();
+	private List<Slot> m_slotList = new();
 
 	private readonly List<IEntryInfo> m_entryInfoList = new();
 
-	private GameObjectUIPool<SlotUI> m_slotUIPool = null;
+	private GameObjectUIPool<Slot> m_slotUIPool = null;
 
 	protected override void Initialize()
 	{
 		base.Initialize();
 
-		m_slotUIPool = new GameObjectUIPool<SlotUI>(m_pivot,m_storage,m_poolCapacity);
+		m_slotUIPool = new GameObjectUIPool<Slot>(m_pivot,m_storage,m_poolCapacity);
 
 		m_pivot.gameObject.EnsureActive(false);
 		m_storage.SetUIChild(m_pivot.transform);
@@ -64,7 +64,7 @@ public class ReuseGridLayoutGroupUI : BaseComponentUI
 		}
 	}
 
-	private SlotUI _GetOrCreateSlot()
+	private Slot _GetOrCreateSlot()
 	{
 		var slot = m_slotUIPool.GetOrCreate(m_gridLayoutGroup.transform);
 

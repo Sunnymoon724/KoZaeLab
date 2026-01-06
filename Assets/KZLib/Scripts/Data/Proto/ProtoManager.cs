@@ -92,7 +92,7 @@ namespace KZLib.KZData
 				{
 					accumulatedTime = 0.0d;
 
-					await UniTask.Delay(c_delayTime,cancellationToken : token);
+					await UniTask.Delay(c_delayTime,cancellationToken : token).SuppressCancellationThrow();
 				}
 			}
 

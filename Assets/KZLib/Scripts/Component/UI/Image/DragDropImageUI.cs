@@ -30,7 +30,7 @@ public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDr
 			throw new NullReferenceException("Canvas is null");
 		}
 
-		UIRectTransform.anchoredPosition += eventData.delta/m_canvas.scaleFactor;
+		CurrentRect.anchoredPosition += eventData.delta/m_canvas.scaleFactor;
 
 		m_dragChangeSubject.OnNext(Unit.Default);
 	}

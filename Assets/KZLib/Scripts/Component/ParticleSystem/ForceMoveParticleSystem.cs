@@ -23,8 +23,10 @@
 			m_startTime = Time.time;
 		}
 
-		private void Start()
+		protected override void Start()
 		{
+			base.Start();
+
 			m_startTime = Time.time;
 		}
 

@@ -5,12 +5,12 @@ public class RepositoryUI2D : RepositoryUI
 {
 	private readonly Dictionary<UIPriorityType,Transform> m_repositoryDict = new();
 
-	protected override bool IsValid(WindowUI window)
+	protected override bool IsValid(Window window)
 	{
-		return window != null && !window.Is3D && window is WindowUI2D;
+		return window != null && !window.Is3D && window is Window2D;
 	}
 
-	public override void Add(WindowUI window)
+	public override void Add(Window window)
 	{
 		if(!IsValid(window))
 		{

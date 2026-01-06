@@ -9,7 +9,7 @@ namespace KZLib
 	{
 		public async UniTask PlayLoadingAsync(Func<UniTask> onPlayTask)
 		{
-			var loadingPanelUI = Open(CommonUINameTag.LoadingPanelUI) as LoadingPanelUI;
+			var loadingPanelUI = Open(CommonUINameTag.LoadingPanel) as LoadingPanel;
 
 			await onPlayTask();
 

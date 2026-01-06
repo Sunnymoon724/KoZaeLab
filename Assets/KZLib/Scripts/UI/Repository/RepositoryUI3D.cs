@@ -9,12 +9,12 @@ public class RepositoryUI3D : RepositoryUI
 		m_canvas.worldCamera = camera;
 	}
 
-	protected override bool IsValid(WindowUI window)
+	protected override bool IsValid(Window window)
 	{
-		return window != null && window.Is3D && window is WindowUI3D;
+		return window != null && window.Is3D && window is Window3D;
 	}
 
-	public override void Add(WindowUI window)
+	public override void Add(Window window)
 	{
 		if(!IsValid(window))
 		{

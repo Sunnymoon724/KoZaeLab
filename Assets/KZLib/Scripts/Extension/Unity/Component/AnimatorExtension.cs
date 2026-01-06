@@ -95,17 +95,17 @@ public static class AnimatorExtension
 		onComplete?.Invoke();
 	}
 
-	public static async UniTask PlayAndWaitAsync(this Animator animator,string animationName,int layer = 0,CancellationToken cancellationToken = default)
+	public static async UniTask PlayAndWaitAsync(this Animator animator,string animationName,int layer = 0,CancellationToken token = default)
 	{
 		if(!_IsValid(animator))
 		{
 			return;
 		}
 
-		await PlayAndWaitAsync(animator,Animator.StringToHash(animationName),layer,cancellationToken);
+		await PlayAndWaitAsync(animator,Animator.StringToHash(animationName),layer,token);
 	}
 
-	public static async UniTask PlayAndWaitAsync(this Animator animator,int animationHashName,int layer = 0,CancellationToken cancellationToken = default)
+	public static async UniTask PlayAndWaitAsync(this Animator animator,int animationHashName,int layer = 0,CancellationToken token = default)
 	{
 		if(!_IsValid(animator))
 		{
@@ -114,20 +114,20 @@ public static class AnimatorExtension
 
 		animator.Play(animationHashName,layer);
 
-		await WaitForAnimationFinishAsync(animator,animationHashName,layer,cancellationToken);
+		await WaitForAnimationFinishAsync(animator,animationHashName,layer,token);
 	}
 
-	public static async UniTask WaitForAnimationFinishAsync(this Animator animator,string animationName,int layer = 0,CancellationToken cancellationToken = default)
+	public static async UniTask WaitForAnimationFinishAsync(this Animator animator,string animationName,int layer = 0,CancellationToken token = default)
 	{
 		if(!_IsValid(animator))
 		{
 			return;
 		}
 
-		await WaitForAnimationFinishAsync(animator,Animator.StringToHash(animationName),layer,cancellationToken);
+		await WaitForAnimationFinishAsync(animator,Animator.StringToHash(animationName),layer,token);
 	}
 
-	public static async UniTask WaitForAnimationFinishAsync(this Animator animator,int animationHashName,int layer = 0,CancellationToken cancellationToken = default)
+	public static async UniTask WaitForAnimationFinishAsync(this Animator animator,int animationHashName,int layer = 0,CancellationToken token = default)
 	{
 		if(!_IsValid(animator))
 		{
@@ -139,7 +139,7 @@ public static class AnimatorExtension
 			return IsAnimationFinished(animator,animationHashName,layer);
 		}
 
-		await UniTask.WaitUntil(_IsAnimationFinished,cancellationToken : cancellationToken);
+		await UniTask.WaitUntil(_IsAnimationFinished,cancellationToken : token).SuppressCancellationThrow();
 	}
 
 	public static bool IsAnimationFinished(this Animator animator,string animationName,int layer = 0)
@@ -164,17 +164,17 @@ public static class AnimatorExtension
 		return stateInfo.shortNameHash == animationHashName && stateInfo.normalizedTime >= 0.99f;
 	}
 
-	public static async UniTask WaitForAnimationStartAsync(this Animator animator,string animationName,int layer = 0,CancellationToken cancellationToken = default)
+	public static async UniTask WaitForAnimationStartAsync(this Animator animator,string animationName,int layer = 0,CancellationToken token = default)
 	{
 		if(!_IsValid(animator))
 		{
 			return;
 		}
 
-		await WaitForAnimationStartAsync(animator,Animator.StringToHash(animationName),layer,cancellationToken);
+		await WaitForAnimationStartAsync(animator,Animator.StringToHash(animationName),layer,token);
 	}
 
-	public static async UniTask WaitForAnimationStartAsync(this Animator animator,int animationHashName,int layer = 0,CancellationToken cancellationToken = default)
+	public static async UniTask WaitForAnimationStartAsync(this Animator animator,int animationHashName,int layer = 0,CancellationToken token = default)
 	{
 		if(!_IsValid(animator))
 		{
@@ -186,7 +186,7 @@ public static class AnimatorExtension
 			return HasAnimationStarted(animator,animationHashName,layer);
 		}
 
-		await UniTask.WaitUntil(_HasAnimationStarted,cancellationToken : cancellationToken);
+		await UniTask.WaitUntil(_HasAnimationStarted,cancellationToken : token).SuppressCancellationThrow();
 	}
 
 	public static bool HasAnimationStarted(this Animator animator,string animationName,int layer = 0)

@@ -179,22 +179,18 @@ namespace KZLib.KZDevelop
 
 			var length = m_handleList.Count;
 
-			//? 앵커 이후 설정
 			if(index%3 == 0)
 			{
-				// 이전 컨트롤 점
 				if(index+1 < length || IsClosed)
 				{
 					m_handleList[CommonUtility.LoopClamp(index+1,length)] += deltaMove;
 				}
 
-				// 이후 컨트롤 점
 				if(index-1 >= 0 || IsClosed)
 				{
 					m_handleList[CommonUtility.LoopClamp(index-1,length)] += deltaMove;
 				}
 			}
-			//? 반대쪽 컨트롤 설정
 			else if(!isFree)
 			{
 				var nextPointIsAnchor = (index+1)%3 == 0;

@@ -23,19 +23,19 @@ public class CommonUINameTag : CustomTag
 {
 	public static readonly CommonUINameTag None							= new(nameof(None));
 
-	public static readonly CommonUINameTag HudPanelUI					= new(nameof(HudPanelUI));
+	public static readonly CommonUINameTag DebugOverlayPanel			= new(nameof(DebugOverlayPanel));
 
-	public static readonly CommonUINameTag CommonTransitionPanelUI		= new(nameof(CommonTransitionPanelUI));
+	public static readonly CommonUINameTag CommonTransitionPanel		= new(nameof(CommonTransitionPanel));
 
-	public static readonly CommonUINameTag VideoPanelUI					= new(nameof(VideoPanelUI));
-	public static readonly CommonUINameTag SubtitlePanelUI				= new(nameof(SubtitlePanelUI));
-	public static readonly CommonUINameTag SkipPanelUI					= new(nameof(SkipPanelUI));
+	public static readonly CommonUINameTag VideoPanel					= new(nameof(VideoPanel));
+	public static readonly CommonUINameTag SubtitlePanel				= new(nameof(SubtitlePanel));
+	public static readonly CommonUINameTag SkipPanel					= new(nameof(SkipPanel));
 
-	public static readonly CommonUINameTag DialogBoxPopupUI				= new(nameof(DialogBoxPopupUI));
+	public static readonly CommonUINameTag DialogBoxPopup				= new(nameof(DialogBoxPopup));
 
-	public static readonly CommonUINameTag DownloadPanelUI				= new(nameof(DownloadPanelUI));
+	public static readonly CommonUINameTag DownloadPanel				= new(nameof(DownloadPanel));
 
-	public static readonly CommonUINameTag LoadingPanelUI				= new(nameof(LoadingPanelUI));
+	public static readonly CommonUINameTag LoadingPanel					= new(nameof(LoadingPanel));
 
 	public CommonUINameTag(string name) : base(name) { }
 }

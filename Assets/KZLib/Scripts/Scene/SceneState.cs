@@ -30,8 +30,6 @@ namespace KZLib
 			while(operation.progress < 0.9f)
 			{
 				onUpdateProgress?.Invoke(operation.progress*0.5f);
-
-				await UniTask.Yield();
 			}
 
 			operation.allowSceneActivation = true;
@@ -80,8 +78,6 @@ namespace KZLib
 			while(!operation.isDone)
 			{
 				onUpdateProgress?.Invoke(0.5f+operation.progress*0.5f);
-
-				await UniTask.Yield();
 			}
 
 			onUpdateProgress?.Invoke(1.0f);

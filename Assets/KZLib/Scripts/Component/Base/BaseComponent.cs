@@ -1,6 +1,7 @@
 using UnityEngine;
 using Sirenix.OdinInspector;
 using System;
+
 using Object = UnityEngine.Object;
 
 #if UNITY_EDITOR
@@ -29,6 +30,8 @@ public abstract class BaseComponent : SerializedMonoBehaviour
 
 	protected virtual void OnEnable() { }
 	protected virtual void OnDisable() { }
+
+	protected virtual void Start() { }
 
 	protected virtual void Reset() { }
 

@@ -42,7 +42,7 @@ namespace KZLib.KZNetwork
 				taskList.Add(PostTrelloListInCardAsync("Bug Report",listName,SystemInfo.deviceUniqueIdentifier,stringBuilder.ToString(),file));
 			}
 
-			await UniTask.WhenAll(taskList);
+			await UniTask.WhenAll(taskList).SuppressCancellationThrow();
 		}
 	}
 }

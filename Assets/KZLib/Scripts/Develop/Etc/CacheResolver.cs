@@ -1,4 +1,3 @@
-using UnityEngine;
 using System.Collections.Generic;
 using System;
 using Cysharp.Threading.Tasks;
@@ -123,10 +122,8 @@ namespace KZLib.KZDevelop
 
 		private async UniTaskVoid _LoopProcessAsync(CancellationToken token)
 		{
-			while(!token.IsCancellationRequested)
+			void _CheckCache()
 			{
-				await UniTask.Delay(TimeSpan.FromSeconds(m_updatePeriod),true,cancellationToken : token).SuppressCancellationThrow();
-
 				m_removeList.Clear();
 
 				foreach(var pair in m_cacheInfoListDict)
@@ -149,6 +146,8 @@ namespace KZLib.KZDevelop
 					m_cacheInfoListDict.RemoveSafe(m_removeList[i]);
 				}
 			}
+
+			await CommonUtility.LoopActionAndWaitForSecondAsync(_CheckCache,m_updatePeriod,true,-1,token);
 		}
 	}
 }

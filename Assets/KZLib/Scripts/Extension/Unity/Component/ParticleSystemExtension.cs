@@ -16,7 +16,7 @@ public static class ParticleSystemExtension
 		await particleSystem.WaitForParticleAsync();
 	}
 
-	public static async UniTask WaitForParticleAsync(this ParticleSystem particleSystem,CancellationToken cancellationToken = default)
+	public static async UniTask WaitForParticleAsync(this ParticleSystem particleSystem,CancellationToken token = default)
 	{
 		if(!_IsValid(particleSystem))
 		{
@@ -28,7 +28,7 @@ public static class ParticleSystemExtension
 			return particleSystem.isPlaying;
 		}
 
-		await UniTask.WaitWhile(_IsParticlePlaying,cancellationToken : cancellationToken);
+		await UniTask.WaitWhile(_IsParticlePlaying,cancellationToken : token).SuppressCancellationThrow();
 	}
 
 	private static bool _IsValid(ParticleSystem particleSystem)

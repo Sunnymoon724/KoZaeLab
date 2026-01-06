@@ -100,7 +100,7 @@ namespace KZLib.KZDevelop
 
 				onRefresh?.Invoke(remainingTime);
 
-				await UniTask.Delay(1000,true,cancellationToken: token).SuppressCancellationThrow();
+				await UniTask.Delay(TimeSpan.FromSeconds(1.0f),true,cancellationToken: token).SuppressCancellationThrow();
 			}
 
 			if(!token.IsCancellationRequested)

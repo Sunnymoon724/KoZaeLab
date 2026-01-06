@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using KZLib.KZDevelop;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace KZLib.KZSample
 {
@@ -68,8 +68,10 @@ namespace KZLib.KZSample
 
 		private readonly List<IEntryInfo> m_entryInfoList = new();
 
-		private void Start()
+		protected override void Start()
 		{
+			base.Start();
+
 			_SetEntryInfoList();
 		}
 

@@ -207,7 +207,7 @@ namespace KZLib
 
 			if(isLoading)
 			{
-				var panel = UIManager.In.Open(CommonUINameTag.LoadingPanelUI) as LoadingPanelUI;
+				var panel = UIManager.In.Open(CommonUINameTag.LoadingPanel) as LoadingPanel;
 
 				// brighter
 				await UIManager.In.PlayTransitionInAsync(transitionNameTag,false);
@@ -230,7 +230,7 @@ namespace KZLib
 				// darker
 				await UIManager.In.PlayTransitionOutAsync(transitionNameTag,false);
 
-				UIManager.In.Close(CommonUINameTag.LoadingPanelUI);
+				UIManager.In.Close(CommonUINameTag.LoadingPanel);
 			}
 			else
 			{

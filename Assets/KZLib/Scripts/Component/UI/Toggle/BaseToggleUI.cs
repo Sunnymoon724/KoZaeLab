@@ -1,74 +1,32 @@
 using UnityEngine;
 using Sirenix.OdinInspector;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using System;
 using KZLib.KZAttribute;
 
 [RequireComponent(typeof(Toggle))]
 public abstract class BaseToggleUI : BaseComponentUI
 {
-	[Serializable]
-	protected abstract class ToggleChild
-	{
-		[SerializeField,HideInInspector]
-		private bool m_isOn = false;
-		[SerializeField,HideInInspector]
-		private bool m_inverseSelf = false;
-
-		[HorizontalGroup("3",Order = 3),ShowInInspector,ToggleLeft]
-		public bool IsOn
-		{
-			get => m_isOn;
-			set
-			{
-				m_isOn = value;
-
-				Set();
-			}
-		}
-
-		[HorizontalGroup("3",Order = 3),ShowInInspector,ToggleLeft]
-		public bool InverseSelf
-		{
-			get => m_inverseSelf;
-			set
-			{
-				m_inverseSelf = value;
-
-				Set();
-			}
-		}
-
-		protected bool IsOnNow => m_inverseSelf ? !IsOn : IsOn;
-
-		protected abstract void Set();
-	}
-
 	[VerticalGroup("0",Order = 0),SerializeField]
 	protected Toggle m_toggle = null;
 
 	[VerticalGroup("0",Order = 0),ShowInInspector,KZIsValid("O","X")]
 	public bool IsOn => m_toggle != null && m_toggle.isOn;
 
-	protected abstract IEnumerable<ToggleChild> ToggleChildGroup { get; }
-
-	protected override void Initialize()
+	protected override void OnEnable()
 	{
-		base.Initialize();
+		base.OnEnable();
 
 		m_toggle.onValueChanged.AddAction(_OnClickedToggle);
-
-		_OnClickedToggle(m_toggle.isOn);
 	}
 
-	private void _OnClickedToggle(bool isToggle)
+	protected override void OnDisable()
 	{
-		foreach(var child in ToggleChildGroup)
-		{
-			child.IsOn = isToggle;
-		}
+		base.OnDisable();
+
+		m_toggle.onValueChanged.RemoveAction(_OnClickedToggle);
 	}
+
+	protected abstract void _OnClickedToggle(bool isToggle);
 
 	public void Toggle()
 	{

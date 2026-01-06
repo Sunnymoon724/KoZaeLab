@@ -48,7 +48,7 @@ public static class ImageExtension
 			image.color = Color.Lerp(prevColor,nextColor,progress);
 		}
 
-		await CommonUtility.ExecuteProgressAsync(0.0f,1.0f,duration,_ProgressColor);
+		await CommonUtility.ExecuteProgressAsync(0.0f,1.0f,duration,_ProgressColor,false,null,default);
 	}
 
 	private static bool _IsValid(Image image)

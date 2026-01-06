@@ -79,8 +79,8 @@ public class MagnetImageUI : BaseImageUI
 			throw new InvalidOperationException($"Target is null or direction is none {Target} or {m_direction}");
 		}
 
-		var space = Space*UIRectTransform.lossyScale.x;
-		var pivotSize = UIRectTransform.CalculateWorldSize();
+		var space = Space*CurrentRect.lossyScale.x;
+		var pivotSize = CurrentRect.CalculateWorldSize();
 		var position = Target.position;
 
 		var size = new Vector2((targetSize.x+pivotSize.x)/2.0f+space,(targetSize.y+pivotSize.y)/2.0f+space);
@@ -103,7 +103,7 @@ public class MagnetImageUI : BaseImageUI
 			position += Vector3.right*size.x;
 		}
 
-		UIRectTransform.position = position;
+		CurrentRect.position = position;
 	}
 
 	private bool _CanMove(DirectionType directionType)

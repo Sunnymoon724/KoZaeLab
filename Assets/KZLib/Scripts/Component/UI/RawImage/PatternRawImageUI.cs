@@ -6,7 +6,7 @@ using UnityEngine;
 public class PatternRawImageUI : BaseRawImageUI
 {
 	private enum TilingPatternType { MANUAL, CHILD, SELF, }
-	
+
 	[SerializeField,Range(-1.0f,1.0f)]
 	private float m_scrollSpeedX = 0.0f;
 
@@ -15,10 +15,14 @@ public class PatternRawImageUI : BaseRawImageUI
 
 	[SerializeField]
 	private TilingPatternType m_tilingType = TilingPatternType.MANUAL;
+
 	[SerializeField,ShowIf(nameof(IsChildPatternType))]
 	private float m_childValue = 1.0f;
 	[SerializeField,ShowIf(nameof(IsSelfPatternType))]
 	private float m_selfValue = 1.0f;
+
+	[SerializeField]
+	private bool m_ignoreTimescale = false;
 
 	private bool IsSelfPatternType => m_tilingType == TilingPatternType.SELF;
 	private bool IsChildPatternType => m_tilingType == TilingPatternType.CHILD;
@@ -104,10 +108,10 @@ public class PatternRawImageUI : BaseRawImageUI
 	{
 		var scrollRect = m_rawImage.uvRect;
 
-		while(!token.IsCancellationRequested)
+		void _UpdatePattern(float deltaTime)
 		{
-			scrollRect.x += Time.unscaledDeltaTime * m_scrollSpeedX;
-			scrollRect.y += Time.unscaledDeltaTime * m_scrollSpeedY;
+			scrollRect.x += deltaTime * m_scrollSpeedX;
+			scrollRect.y += deltaTime * m_scrollSpeedY;
 
 			if(Mathf.Abs(scrollRect.x) >= 1.0f)
 			{
@@ -120,9 +124,9 @@ public class PatternRawImageUI : BaseRawImageUI
 			}
 
 			m_rawImage.uvRect = scrollRect;
-
-			await UniTask.Yield(token).SuppressCancellationThrow();
 		}
+
+		await CommonUtility.LoopUpdateAndWaitForFrameAsync(_UpdatePattern,m_ignoreTimescale,-1,token);
 	}
 
 	protected override void Reset()

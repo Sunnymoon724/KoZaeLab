@@ -6,7 +6,7 @@ namespace KZLib
 {
 	public partial class UIManager : LoadSingletonMB<UIManager>
 	{
-		private static readonly CommonUINameTag[] s_definedTagArray = new CommonUINameTag[] { CommonUINameTag.CommonTransitionPanelUI, CommonUINameTag.HudPanelUI, CommonUINameTag.VideoPanelUI  };
+		private static readonly CommonUINameTag[] s_definedTagArray = new CommonUINameTag[] { CommonUINameTag.CommonTransitionPanel, CommonUINameTag.DebugOverlayPanel, CommonUINameTag.VideoPanel  };
 
 		private string _GetUIPath(CommonUINameTag nameTag)
 		{

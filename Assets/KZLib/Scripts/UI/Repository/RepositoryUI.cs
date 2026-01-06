@@ -20,12 +20,12 @@ public abstract class RepositoryUI : BaseComponentUI
 
 	//? Current Opened Window List
 	[SerializeField,ListDrawerSettings(IsReadOnly = true)]
-	protected List<WindowUI> m_openedWindowList = new();
-	public IEnumerable<WindowUI> OpenedWindowGroup => m_openedWindowList;
-	public WindowUI TopOpenedWindow => m_openedWindowList.Count != 0 ? m_openedWindowList[0] : null;
+	protected List<Window> m_openedWindowList = new();
+	public IEnumerable<Window> OpenedWindowGroup => m_openedWindowList;
+	public Window TopOpenedWindow => m_openedWindowList.Count != 0 ? m_openedWindowList[0] : null;
 
-	protected abstract bool IsValid(WindowUI windowUI);
-	public abstract void Add(WindowUI windowUI);
+	protected abstract bool IsValid(Window windowUI);
+	public abstract void Add(Window windowUI);
 
 	protected override void Release()
 	{
@@ -36,7 +36,7 @@ public abstract class RepositoryUI : BaseComponentUI
 		m_openedWindowList.Clear();
 	}
 
-	protected void _Add(WindowUI window)
+	protected void _Add(Window window)
 	{
 		window.transform.SetAsLastSibling();
 
@@ -45,7 +45,7 @@ public abstract class RepositoryUI : BaseComponentUI
 		m_openedWindowList.AddNotOverlap(window);
 	}
 
-	public void Remove(WindowUI windowUI,bool isRelease)
+	public void Remove(Window windowUI,bool isRelease)
 	{
 		if(!IsValid(windowUI))
 		{
@@ -63,9 +63,9 @@ public abstract class RepositoryUI : BaseComponentUI
 		}
 	}
 
-	public WindowUI FindOpenedUI(CommonUINameTag nameTag)
+	public Window FindOpenedUI(CommonUINameTag nameTag)
 	{
-		bool _FindOpened(WindowUI openedWindow)
+		bool _FindOpened(Window openedWindow)
 		{
 			return openedWindow.NameTag == nameTag;
 		}
@@ -95,8 +95,8 @@ public abstract class RepositoryUI : BaseComponentUI
 		var includeNameTagHashSet = new HashSet<CommonUINameTag>(includeNameTagGroup ?? Enumerable.Empty<CommonUINameTag>());
 		var excludeNameTagHashSet = new HashSet<CommonUINameTag>(excludeNameTagGroup ?? Enumerable.Empty<CommonUINameTag>())
 		{
-			CommonUINameTag.CommonTransitionPanelUI,
-			CommonUINameTag.HudPanelUI,
+			CommonUINameTag.CommonTransitionPanel,
+			CommonUINameTag.DebugOverlayPanel,
 		};
 
 		for(var i=0;i<m_openedWindowList.Count;i++)
@@ -119,7 +119,7 @@ public abstract class RepositoryUI : BaseComponentUI
 		_Hide(window,isHidden);
 	}
 
-	private void _Hide(WindowUI window,bool isHidden)
+	private void _Hide(Window window,bool isHidden)
 	{
 		if(window == null || window.IsIgnoreHide || window.IsHidden == isHidden)
 		{

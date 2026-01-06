@@ -21,7 +21,7 @@ namespace KZLib
 		private readonly HashSet<CommonUINameTag> m_dontReleaseHashSet = new();
 
 		[ShowInInspector,DictionaryDrawerSettings(IsReadOnly = true,DisplayMode = DictionaryDisplayOptions.Foldout),ReadOnly]
-		private readonly Dictionary<CommonUINameTag,WindowUI> m_registerWindowDict = new();
+		private readonly Dictionary<CommonUINameTag,Window> m_registerWindowDict = new();
 
 		private string m_prefabPath = null;
 
@@ -62,7 +62,7 @@ namespace KZLib
 		/// <summary>
 		/// Register -> Not open
 		/// </summary>
-		public WindowUI Register(CommonUINameTag nameTag,bool isActive = true)
+		public Window Register(CommonUINameTag nameTag,bool isActive = true)
 		{
 			if(!m_registerWindowDict.TryGetValue(nameTag,out var window))
 			{
@@ -81,7 +81,7 @@ namespace KZLib
 			return window;
 		}
 
-		private WindowUI _MakeUI(CommonUINameTag nameTag)
+		private Window _MakeUI(CommonUINameTag nameTag)
 		{
 			var prefab = ResourceManager.In.GetObject(_GetUIPath(nameTag));
 
@@ -92,7 +92,7 @@ namespace KZLib
 				return null;
 			}
 
-			if(!prefab.TryGetComponent<WindowUI>(out var window))
+			if(!prefab.TryGetComponent<Window>(out var window))
 			{
 				prefab.DestroyObject();
 
@@ -137,7 +137,7 @@ namespace KZLib
 			CommonUtility.DelayAction(_Open,delayTime);
 		}
 
-		public IWindowUI Open(CommonUINameTag nameTag,object param = null)
+		public IWindow Open(CommonUINameTag nameTag,object param = null)
 		{
 			var window = _FindOpened(nameTag);
 
@@ -171,7 +171,7 @@ namespace KZLib
 			}
 		}
 
-		public void Close(WindowUI window,bool isRelease = false)
+		public void Close(Window window,bool isRelease = false)
 		{
 			if(!window)
 			{
@@ -239,14 +239,12 @@ namespace KZLib
 		#endregion Hide
 
 		#region Find
-		public TNameTag Find<TNameTag>(CommonUINameTag nameTag) where TNameTag : class,IWindowUI
+		public IWindow Find(CommonUINameTag nameTag)
 		{
-			var window = _FindOpened(nameTag);
-
-			return (window != null) ? window as TNameTag : null;
+			return _FindOpened(nameTag);
 		}
 
-		private WindowUI _FindOpened(CommonUINameTag nameTag)
+		private Window _FindOpened(CommonUINameTag nameTag)
 		{
 			for(var i=0;i<m_repositoryList.Count;i++)
 			{
@@ -273,7 +271,7 @@ namespace KZLib
 		public void PressBackButton()
 		{
 			var repository = _GetRepository(false);
-			var window = repository.TopOpenedWindow as WindowUI2D;
+			var window = repository.TopOpenedWindow as Window2D;
 
 			if(window != null)
 			{

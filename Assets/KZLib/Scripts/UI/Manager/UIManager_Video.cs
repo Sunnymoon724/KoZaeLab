@@ -1,6 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
+using KZLib.KZData.Video;
 using KZLib.KZUtility;
-using VideoPanel;
 
 namespace KZLib
 {
@@ -33,7 +33,7 @@ namespace KZLib
 
 			SoundManager.In.PauseBGMSound();
 
-			var videoPanel = Open(CommonUINameTag.VideoPanelUI) as VideoPanelUI;
+			var videoPanel = Open(CommonUINameTag.VideoPanel) as VideoPanel;
 
 			videoPanel.Hide(true);
 
@@ -60,7 +60,7 @@ namespace KZLib
 			SoundManager.In.ResumeBGMSound();
 		}
 
-		private async UniTask _PrepareVideoAsync(VideoPanelUI videoPanel,VideoInfo videoInfo)
+		private async UniTask _PrepareVideoAsync(VideoPanel videoPanel,VideoInfo videoInfo)
 		{
 			videoPanel.Hide(false);
 

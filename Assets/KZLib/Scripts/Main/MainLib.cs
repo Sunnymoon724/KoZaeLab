@@ -175,12 +175,12 @@ namespace KZLib
 #if UNITY_EDITOR
 			if(gameCfg.UseHeadUpDisplay)
 			{
-				UIManager.In.Open(CommonUINameTag.HudPanelUI);
+				DebugOverlayManager.In.ShowOverlay();
 			}
 #else
 			if(Debug.isDebugBuild && gameCfg.UseHeadUpDisplay)
 			{
-				UIManager.In.Open(CommonUINameTag.HudPanelUI);
+				DebugOverlayManager.In.ShowOverlay();
 			}
 #endif
 
@@ -321,14 +321,7 @@ namespace KZLib
 #if UNITY_EDITOR
 			if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C))
 			{
-				if(UIManager.In.IsOpened(CommonUINameTag.HudPanelUI))
-				{
-					UIManager.In.Close(CommonUINameTag.HudPanelUI);
-				}
-				else
-				{
-					UIManager.In.Open(CommonUINameTag.HudPanelUI);
-				}
+				DebugOverlayManager.In.ToggleOverlay();
 			}
 
 			//? Create Exception

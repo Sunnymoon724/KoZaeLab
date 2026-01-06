@@ -1,6 +1,6 @@
 using System;
 
-public enum WindowUIType { Panel, PopUp, World };
+public enum WindowType { Panel, PopUp, World };
 
 public enum UIPriorityType
 {

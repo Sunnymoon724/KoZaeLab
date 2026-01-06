@@ -29,7 +29,7 @@ namespace KZLib.KZDevelop
 
 				if(m_delayTime > 0.0f)
 				{
-					await UniTask.WaitForSeconds(m_delayTime);
+					await UniTask.Delay(TimeSpan.FromSeconds(m_delayTime)).SuppressCancellationThrow();
 				}
 
 				if(m_sequenceList.Count == 1)
@@ -52,7 +52,7 @@ namespace KZLib.KZDevelop
 						taskList.Add(sequence.PlaySequenceAsync(sequenceParam));
 					}
 
-					await UniTask.WhenAll(taskList);
+					await UniTask.WhenAll(taskList).SuppressCancellationThrow();
 				}
 			}
 

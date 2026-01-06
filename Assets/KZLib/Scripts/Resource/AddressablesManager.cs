@@ -49,8 +49,6 @@ namespace KZLib
 				var status = handle.GetDownloadStatus();
 
 				onUpdateProgress?.Invoke(status.Percent,status.DownloadedBytes,status.TotalBytes);
-
-				await UniTask.Yield();
 			}
 
 			var result = handle.Status == AsyncOperationStatus.Succeeded;

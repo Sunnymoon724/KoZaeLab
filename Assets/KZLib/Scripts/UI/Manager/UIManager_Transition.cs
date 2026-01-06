@@ -55,7 +55,7 @@ namespace KZLib
 				return;
 			}
 
-			var panel = Open(transitionNameTag) as TransitionPanelUI;
+			var panel = Open(transitionNameTag) as TransitionPanel;
 
 			if(panel == null)
 			{

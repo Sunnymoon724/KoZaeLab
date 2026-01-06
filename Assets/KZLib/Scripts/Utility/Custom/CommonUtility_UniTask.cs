@@ -46,25 +46,39 @@ public static partial class CommonUtility
 		await _LoopPlayAsync(onPlayTask,count,token);
 	}
 
-	public static async UniTask LoopActionNWaitForSecondAsync(Action onAction,float second,bool ignoreTimeScale,int count,CancellationToken token)
+	public static async UniTask LoopActionAndWaitForSecondAsync(Action onAction,float second,bool ignoreTimeScale,int count,CancellationToken token)
 	{
 		async UniTask _PlayAndDelayAsync()
 		{
 			onAction();
 
-			await UniTask.Delay(TimeSpan.FromSeconds(second),ignoreTimeScale,cancellationToken : token);
+			await UniTask.Delay(TimeSpan.FromSeconds(second),ignoreTimeScale,cancellationToken : token).SuppressCancellationThrow();
 		}
 
 		await _LoopPlayAsync(_PlayAndDelayAsync,count,token);
 	}
 
-	public static async UniTask LoopActionNWaitForFrameAsync(Action onAction,int count,CancellationToken token)
+	public static async UniTask LoopActionAndWaitForFrameAsync(Action onAction,int count,CancellationToken token)
 	{
 		async UniTask _PlayAndWaitAsync()
 		{
 			onAction();
 
-			await UniTask.Yield(token);
+			await UniTask.Yield(token).SuppressCancellationThrow();
+		}
+
+		await _LoopPlayAsync(_PlayAndWaitAsync,count,token);
+	}
+
+	public static async UniTask LoopUpdateAndWaitForFrameAsync(Action<float> onUpdate,bool ignoreTimescale,int count,CancellationToken token)
+	{
+		async UniTask _PlayAndWaitAsync()
+		{
+			var deltaTime = _GetDeltaTime(ignoreTimescale);
+
+			onUpdate(deltaTime);
+
+			await UniTask.Yield(token).SuppressCancellationThrow();
 		}
 
 		await _LoopPlayAsync(_PlayAndWaitAsync,count,token);
@@ -96,12 +110,12 @@ public static partial class CommonUtility
 	/// <summary>
 	/// Wait time or condition
 	/// </summary>
-	public static async UniTask WaitForSecondsOrConditionAsync(float duration,Func<bool> onCondition,bool ignoreTimescale = false,CancellationToken token = default)
+	public static async UniTask WaitForSecondsOrConditionAsync(float duration,Func<bool> onCondition,bool ignoreTimescale,CancellationToken token)
 	{
-		await UniTask.WhenAny(UniTask.Delay(TimeSpan.FromSeconds(duration),ignoreTimescale,cancellationToken : token),UniTask.WaitUntil(onCondition,cancellationToken : token));
+		await UniTask.WhenAny(UniTask.Delay(TimeSpan.FromSeconds(duration),ignoreTimescale,cancellationToken : token),UniTask.WaitUntil(onCondition,cancellationToken : token)).SuppressCancellationThrow();
 	}
 
-	public static async UniTask WaitForConditionAsync(Func<bool> onCondition,Action<float> onTimeUpdate,bool ignoreTimescale = false,CancellationToken token = default)
+	public static async UniTask WaitForConditionAsync(Func<bool> onCondition,Action<float> onUpdate,bool ignoreTimescale,CancellationToken token)
 	{
 		if(onCondition == null)
 		{
@@ -110,74 +124,14 @@ public static partial class CommonUtility
 
 		var elapsedTime = 0.0f;
 
-		var condition = onCondition();
-
-		while(!condition)
+		if (onCondition())
 		{
-			if(token.IsCancellationRequested)
-			{
-				return;
-			}
+			onUpdate?.Invoke(elapsedTime);
 
-			onTimeUpdate?.Invoke(elapsedTime);
-
-			await UniTask.Yield();
-
-			var deltaTime = _GetDeltaTime(ignoreTimescale);
-
-			if(deltaTime > 0.0f)
-			{
-				elapsedTime += deltaTime;
-			}
-		}
-
-		onTimeUpdate?.Invoke(elapsedTime);
-	}
-
-	public static async UniTask ExecuteProgressAsync(float start,float finish,float duration,Action<float> onProgress,bool ignoreTimescale = false,AnimationCurve _curve = null,CancellationToken token = default)
-	{
-		if(duration == 0.0f)
-		{
 			return;
 		}
 
-		var curve = _curve ?? GetEaseCurve(EaseType.Linear);
-		var elapsedTime = 0.0f;
-
-		while(duration < 0.0f || elapsedTime < duration)
-		{
-			if(token.IsCancellationRequested)
-			{
-				return;
-			}
-
-			var progress = duration > 0.0f ? Mathf.Clamp01(elapsedTime/duration) : 1.0f;
-
-			onProgress?.Invoke((finish-start)*curve.Evaluate(progress)+start);
-
-			await UniTask.Yield(token);
-
-			var deltaTime = _GetDeltaTime(ignoreTimescale);
-
-			if(deltaTime > 0.0f)
-			{
-				elapsedTime += deltaTime;
-			}
-		}
-
-		onProgress?.Invoke(finish);
-	}
-
-	public static async UniTask ExecutePeriodAsync(float duration,float period,Action<float> onUpdate,Action onComplete,bool ignoreTimescale = false,CancellationToken token = default)
-	{
-		if(duration == 0.0f)
-		{
-			return;
-		}
-
-		var elapsedTime = 0.0f;
-
-		while(duration < 0.0f || elapsedTime < duration)
+		while(!onCondition())
 		{
 			if(token.IsCancellationRequested)
 			{
@@ -186,12 +140,86 @@ public static partial class CommonUtility
 
 			onUpdate?.Invoke(elapsedTime);
 
-			await UniTask.WaitForSeconds(period,ignoreTimescale);
+			await UniTask.Yield(token).SuppressCancellationThrow();
 
-			elapsedTime += period;
+			var deltaTime = _GetDeltaTime(ignoreTimescale);
+
+			if(deltaTime > 0.0f)
+			{
+				elapsedTime += deltaTime;
+			}
 		}
 
-		onComplete?.Invoke();
+		onUpdate?.Invoke(elapsedTime);
+	}
+
+	public static async UniTask ExecuteProgressAsync(float start,float finish,float duration,Action<float> onProgress,bool ignoreTimescale,AnimationCurve animationCurve,CancellationToken token)
+	{
+		if(duration <= 0.0f)
+		{
+			return;
+		}
+
+		var curve = animationCurve ?? GetEaseCurve(EaseType.Linear);
+		var elapsedTime = 0.0f;
+
+		onProgress?.Invoke(start);
+
+		while(elapsedTime < duration)
+		{
+			if(token.IsCancellationRequested)
+			{
+				return;
+			}
+
+			var deltaTime = _GetDeltaTime(ignoreTimescale);
+
+			elapsedTime = Mathf.Min(elapsedTime+deltaTime,duration);
+
+			var progress = elapsedTime/duration;
+			var value = Mathf.Lerp(start,finish,curve.Evaluate(progress));
+
+			onProgress?.Invoke(value);
+
+			await UniTask.Yield(token).SuppressCancellationThrow();
+		}
+
+		onProgress?.Invoke(finish);
+	}
+
+	public static async UniTask ExecutePeriodAsync(float duration,float period,Action<float> onUpdate,bool ignoreTimescale,CancellationToken token)
+	{
+		if(duration <= 0.0f || period <= 0.0f)
+		{
+			return;
+		}
+
+		var elapsed = 0.0f;
+
+		while(elapsed < duration)
+		{
+			if(token.IsCancellationRequested)
+			{
+				return;
+			}
+
+			var nextInterval = Mathf.Min(period,duration-elapsed);
+
+			var canceled = await UniTask.Delay(TimeSpan.FromSeconds(nextInterval), ignoreTimescale, cancellationToken: token).SuppressCancellationThrow();
+
+			if(canceled)
+			{
+				return;
+			}
+
+			elapsed += nextInterval;
+			onUpdate?.Invoke(elapsed);
+
+			if(duration.Approximately(elapsed))
+			{
+				break;
+			}
+		}
 	}
 
 	private static float _GetDeltaTime(bool ignoreTimescale)
@@ -207,7 +235,7 @@ public static partial class CommonUtility
 		{
 			throw handle.OperationException;
 		}
-		
+
 		var result = handle.Result;
 
 		handle.Release();

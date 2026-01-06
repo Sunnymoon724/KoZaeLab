@@ -15,9 +15,9 @@
   },
   "samples": [
     {
-      "displayName": "HudTest",
-      "description": "Hud Test",
-      "path": "Samples~/HudTest"
+      "displayName": "DebugOverlayTest",
+      "description": "DebugOverlay Test",
+      "path": "Samples~/DebugOverlayTest"
     },
     {
       "displayName": "MainTest",

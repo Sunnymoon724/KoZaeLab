@@ -28,17 +28,17 @@ public class ReuseScrollRectUI : BaseComponentUI
 	private int m_poolCapacity = 1;
 
 	[SerializeField]
-	private SlotUI m_pivot = null;
+	private Slot m_pivot = null;
 
 	[SerializeField,ReadOnly]
-	private Dictionary<int,SlotUI> m_slotDict = new();
+	private Dictionary<int,Slot> m_slotDict = new();
 
 	private float m_slotSize = 0.0f;
 	private float m_slotPivot = 0.0f;
 
 	private readonly List<IEntryInfo> m_entryInfoList = new();
 
-	private GameObjectUIPool<SlotUI> m_slotUIPool = null;
+	private GameObjectUIPool<Slot> m_slotUIPool = null;
 
 	private int m_headIndex = 0;
 	private int m_tailIndex = 0;
@@ -61,7 +61,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 			return;
 		}
 
-		m_slotUIPool = new GameObjectUIPool<SlotUI>(m_pivot,m_scrollRect.viewport,m_poolCapacity);
+		m_slotUIPool = new GameObjectUIPool<Slot>(m_pivot,m_scrollRect.viewport,m_poolCapacity);
 
 		m_pivot.gameObject.EnsureActive(false);
 		m_scrollRect.viewport.transform.SetUIChild(m_pivot.transform);
@@ -75,7 +75,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 		if(IsVertical)
 		{
-			m_slotSize = m_pivot.UIRectTransform.rect.height;
+			m_slotSize = m_pivot.CurrentRect.rect.height;
 			m_slotPivot = m_slotSize*m_scrollRect.content.pivot.y-m_slotSize-m_padding;
 
 			m_scrollRect.content.anchorMin = new Vector2(content.anchorMin.x,1.0f);
@@ -83,7 +83,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 		}
 		else
 		{
-			m_slotSize = m_pivot.UIRectTransform.rect.width;
+			m_slotSize = m_pivot.CurrentRect.rect.width;
 			m_slotPivot = m_slotSize*m_scrollRect.content.pivot.x+m_padding;
 
 			m_scrollRect.content.anchorMin = new Vector2(0.0f,content.anchorMin.y);
@@ -290,7 +290,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 				currentSlot.SetEntryInfo(m_entryInfoList[i]);
 			}
 
-			_SetSlotLocation(currentSlot.UIRectTransform,i);
+			_SetSlotLocation(currentSlot.CurrentRect,i);
 
 			slotLocation += size;
 		}
