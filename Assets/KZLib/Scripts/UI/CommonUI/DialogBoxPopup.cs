@@ -13,7 +13,7 @@ public class DialogBoxPopup : BasePopup
 	private TMP_Text m_messageText = null;
 
 	[SerializeField]
-	private ReuseGridLayoutGroupUI m_gridLayout = null;
+	private ReuseGridLayoutGroup m_gridLayout = null;
 
 	public override void Open(object param)
 	{

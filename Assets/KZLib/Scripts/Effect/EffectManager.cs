@@ -70,7 +70,7 @@ namespace KZLib
 		{
 			var effectClip = PlayEffect(name,position,null,effectParam);
 
-			parent.SetUIChild(effectClip.transform);
+			parent.SetChild(effectClip.transform,false);
 
 			return effectClip;
 		}

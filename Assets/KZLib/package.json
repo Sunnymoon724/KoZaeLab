@@ -15,39 +15,50 @@
   },
   "samples": [
     {
-      "displayName": "DebugOverlayTest",
-      "description": "DebugOverlay Test",
-      "path": "Samples~/DebugOverlayTest"
+      "displayName": "DebugOverlaySample",
+      "description": "DebugOverlay Sample",
+      "path": "Samples~/DebugOverlaySample"
+    },
+
+    {
+      "displayName": "MainSample",
+      "description": "Main Sample",
+      "path": "Samples~/MainSample"
+    },
+
+    {
+      "displayName": "FocusScrollerSample",
+      "description": "FocusScroller Sample",
+      "path": "Samples~/FocusScrollerSample"
     },
     {
-      "displayName": "MainTest",
-      "description": "Main Test",
-      "path": "Samples~/MainTest"
+      "displayName": "AccordionSample",
+      "description": "Accordion Sample",
+      "path": "Samples~/AccordionSample"
     },
+
     {
-      "displayName": "FocusScrollerTest",
-      "description": "FocusScroller Test",
-      "path": "Samples~/FocusScrollerTest"
+      "displayName": "ToggleSample",
+      "description": "Toggle Sample",
+      "path": "Samples~/ToggleSample"
     },
+
     {
-      "displayName": "ReuseScrollRectTest",
-      "description": "ReuseScrollRect Test",
-      "path": "Samples~/ReuseScrollRectTest"
+      "displayName": "ReuseScrollRectSample",
+      "description": "ReuseScrollRect Sample",
+      "path": "Samples~/ReuseScrollRectSample"
     },
+
     {
-      "displayName": "TaskSequenceTest",
-      "description": "TaskSequence Test",
-      "path": "Samples~/TaskSequenceTest"
+      "displayName": "TaskSequenceSample",
+      "description": "TaskSequence Sample",
+      "path": "Samples~/TaskSequenceSample"
     },
+
     {
-      "displayName": "ToggleTest",
-      "description": "Toggle Test",
-      "path": "Samples~/ToggleTest"
-    },
-    {
-      "displayName": "VibrationTest",
-      "description": "Vibration Test",
-      "path": "Samples~/VibrationTest"
+      "displayName": "VibrationSample",
+      "description": "Vibration Sample",
+      "path": "Samples~/VibrationSample"
     }
   ]
 }

@@ -53,23 +53,23 @@ namespace UnityEngine.UI
 		}
 		#endregion Scroll Info
 
-		[BoxGroup("General/Movement",ShowLabel = false,Order = 10)]
-		[VerticalGroup("General/Movement/0",Order = 0),SerializeField]
+		[Space(10)]
+		[SerializeField]
 		private float m_elasticity = 0.1f;
-		[VerticalGroup("General/Movement/0",Order = 0),SerializeField]
+		[SerializeField]
 		private float m_sensitivity = 1.0f;
-		[VerticalGroup("General/Movement/0",Order = 0),SerializeField]
+		[SerializeField]
 		private float m_decelerationRate = 0.03f;
-		[VerticalGroup("General/Movement/0",Order = 0),SerializeField]
+		[SerializeField]
 		private bool m_inertia = true;
 
-		[VerticalGroup("General/Movement/1",Order = 1),SerializeField]
+		[SerializeField]
 		private bool m_magnetMode = false;
-		[VerticalGroup("General/Movement/1",Order = 1),SerializeField,ShowIf(nameof(m_magnetMode))]
+		[SerializeField,ShowIf(nameof(m_magnetMode))]
 		private float m_magnetVelocity = 0.5f;
-		[VerticalGroup("General/Movement/1",Order = 1),SerializeField,ShowIf(nameof(m_magnetMode))]
+		[SerializeField,ShowIf(nameof(m_magnetMode))]
 		private float m_magnetDuration = 0.3f;
-		[VerticalGroup("General/Movement/1",Order = 1),SerializeField,ShowIf(nameof(m_magnetMode))]
+		[SerializeField,ShowIf(nameof(m_magnetMode))]
 		private EaseType m_magnetEasing = EaseType.InOutCubic;
 
 		private bool m_dragging = true;

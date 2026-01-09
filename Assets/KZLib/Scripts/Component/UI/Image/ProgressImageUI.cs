@@ -2,8 +2,6 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 using KZLib.KZAttribute;
-using DG.Tweening;
-using System;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 
@@ -51,27 +49,11 @@ public class ProgressImageUI : BaseImageUI
 
 	public float CurrentProgress => (CurrentValue-m_minValue)/(m_maxValue-m_minValue);
 
-	private Tween m_tween = null;
-
 	protected override void Initialize()
 	{
 		base.Initialize();
 
 		SetValue(m_minValue);
-	}
-
-	protected override void Release()
-	{
-		base.Release();
-
-		_KillTween();
-	}
-
-	protected override void OnDisable()
-	{
-		base.OnDisable();
-
-		_KillTween();
 	}
 
     public void SetRange(float minValue,float maxValue)
@@ -97,11 +79,6 @@ public class ProgressImageUI : BaseImageUI
 		}
 
 		await CommonUtility.ExecuteProgressAsync(CurrentValue,amount,duration,_SetValue,ignoreTimescale,animationCurve,token);
-	}
-
-	private void _KillTween()
-	{
-		CommonUtility.KillTween(m_tween);
 	}
 
 	protected override void Reset() 

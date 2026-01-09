@@ -128,28 +128,13 @@ public static partial class TransformExtension
 		return AddChildren(origin,nameArray);
 	}
 
-	public static void SetChild(this Transform origin,Transform child,bool isSameLayer = true)
+	public static void SetChild(this Transform origin,Transform child,bool worldPositionStays = true,bool isSameLayer = true)
 	{
 		if(!_IsValid(origin))
 		{
 			return;
 		}
 
-		_SetChild(origin,child,true,isSameLayer);
-	}
-
-	public static void SetUIChild(this Transform origin,Transform child,bool isSameLayer = true)
-	{
-		if(!_IsValid(origin))
-		{
-			return;
-		}
-
-		_SetChild(origin,child,false,isSameLayer);
-	}
-
-	private static void _SetChild(Transform origin,Transform child,bool worldPositionStays,bool isSameLayer)
-	{
 		if(!_IsValid(origin))
 		{
 			return;
@@ -163,6 +148,16 @@ public static partial class TransformExtension
 		}
 	}
 
+	// public static void SetUIChild(this Transform origin,Transform child,bool worldPositionStays,bool isSameLayer = true)
+	// {
+	// 	if(!_IsValid(origin))
+	// 	{
+	// 		return;
+	// 	}
+
+	// 	_SetChild(origin,child,false,isSameLayer);
+	// }
+
 	private static Transform _AddChildInside(Transform origin,GameObject prefab,bool worldPositionStays,bool isSameLayer)
 	{
 		if(!_IsValid(origin))
@@ -172,7 +167,7 @@ public static partial class TransformExtension
 
 		var child = prefab.CopyObject() as GameObject;
 
-		_SetChild(origin,child.transform,worldPositionStays,isSameLayer);
+		SetChild(origin,child.transform,worldPositionStays,isSameLayer);
 
 		return child.transform;
 	}

@@ -21,7 +21,7 @@ public class RepositoryUI3D : RepositoryUI
 			return;
 		}
 
-		transform.SetUIChild(window.transform);
+		transform.SetChild(window.transform,false);
 
 		_Add(window);
 	}

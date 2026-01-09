@@ -10,7 +10,9 @@ namespace KZLib.KZDevelop
 	{
 		private readonly Transform m_storage = null;
 
-		public GameObjectPool(TComponent pivot,Transform storage,int capacity) : base(_CopyObject,pivot,capacity,false)
+		private readonly bool m_worldPositionStays = true;
+
+		public GameObjectPool(TComponent pivot,Transform storage,int capacity,bool worldPositionStays) : base(_CopyObject,pivot,capacity,false)
 		{
 			if(!pivot)
 			{
@@ -23,6 +25,7 @@ namespace KZLib.KZDevelop
 			}
 
 			m_storage = storage;
+			m_worldPositionStays = worldPositionStays;
 
 			_Fill(capacity);
 		}
@@ -32,14 +35,14 @@ namespace KZLib.KZDevelop
 			return pivot.CopyObject() as TComponent;
 		}
 
-		protected virtual void SetChild(Transform parent,Transform child)
+		protected void _SetChild(Transform parent,Transform child)
 		{
-			parent.SetChild(child);
+			parent.SetChild(child,m_worldPositionStays);
 		}
 
 		public override void Put(TComponent item)
 		{
-			SetChild(m_storage,item.transform);
+			_SetChild(m_storage,item.transform);
 
 			item.gameObject.EnsureActive(false);
 
@@ -57,7 +60,7 @@ namespace KZLib.KZDevelop
 
 			if(parent)
 			{
-				SetChild(parent,item.transform);
+				_SetChild(parent,item.transform);
 			}
 
 			item.gameObject.EnsureActive(true);

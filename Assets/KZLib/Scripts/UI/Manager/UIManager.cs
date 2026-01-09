@@ -110,7 +110,7 @@ namespace KZLib
 				return null;
 			}
 
-			transform.SetUIChild(prefab.transform);
+			transform.SetChild(prefab.transform,false);
 
 			if(_IsDefinedUI(nameTag))
 			{

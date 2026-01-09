@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class EnchantedToggleGroup : ToggleGroup
 {
 	private const string NoneToggleName = "None";
-	
+
 	[PropertySpace(10)]
 	[SerializeField,ValueDropdown(nameof(ToggleNameGroup))]
 	private string m_startToggleName = null;
@@ -20,12 +20,14 @@ public class EnchantedToggleGroup : ToggleGroup
 	protected override void Start()
 	{
 		_Initialize();
+
 		base.Start();
 	}
 
 	protected override void OnEnable()
 	{
 		_Initialize();
+
 		base.OnEnable();
 	}
 

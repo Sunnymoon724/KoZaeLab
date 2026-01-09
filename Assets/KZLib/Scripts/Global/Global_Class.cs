@@ -120,5 +120,10 @@ public record ListEntryInfo : EntryInfo
 	}
 }
 
+public record AccordionEntryInfo : EntryInfo
+{
+	public AccordionEntryInfo(string name,string description) : base(name,description,null) { }
+}
+
 public record DialogEntryInfo(string Name,Action<IEntryInfo> OnClicked) : EntryInfo(Name,OnClicked);
 #endregion EntryInfo

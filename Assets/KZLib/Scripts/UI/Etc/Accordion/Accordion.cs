@@ -1,57 +1,190 @@
-﻿
+﻿using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using Sirenix.OdinInspector;
+using TMPro;
+using UnityEngine.EventSystems;
+
 namespace UnityEngine.UI
 {
-    [RequireComponent(typeof(HorizontalOrVerticalLayoutGroup),typeof(ContentSizeFitter),typeof(ToggleGroup))]
-	public class Accordion : MonoBehaviour
+	public class Accordion : BaseComponentUI,IPointerClickHandler
 	{
-		private bool m_expandVertical = true;
-		[HideInInspector]
-		public bool ExpandVerticval => m_expandVertical;
+		[SerializeField,ReadOnly]
+		private bool m_isOn = false;
+		public bool IsOn => m_isOn;
 
-		public enum Transition
+		[SerializeField]
+		private RectTransform m_titleRect;
+		[SerializeField]
+		private TMP_Text m_titleText = null;
+		[SerializeField]
+		private TMP_Text m_descriptionText = null;
+
+		[SerializeField]
+		private LayoutElement m_layoutElement = null;
+
+		private CancellationTokenSource m_tokenSource = null;
+
+		private float m_duration;
+		private bool m_vertical;
+		private Action<Accordion> m_onClicked;
+
+		private float _TitleSize => m_vertical ? m_titleRect.rect.height : m_titleRect.rect.width;
+		private float _CurrentSize => m_vertical ? CurrentRect.rect.height : CurrentRect.rect.width;
+
+		public void SetEntryInfo(IEntryInfo entryInfo,float duration,bool isVertical,Action<Accordion> onClicked)
 		{
-			Instant,
-			Tween
+			if(m_titleText)
+			{
+				m_titleText.SetSafeTextMeshPro(entryInfo.Name);
+			}
+
+			if(m_descriptionText)
+			{
+				m_descriptionText.SetSafeTextMeshPro(entryInfo.Description);
+			}
+
+			m_duration = duration;
+			m_vertical = isVertical;
+
+			m_onClicked = onClicked;
 		}
-		
-		[SerializeField] private Transition m_Transition = Transition.Instant;
-		[SerializeField] private float m_TransitionDuration = 0.3f;
-		
-		/// <summary>
-		/// Gets or sets the transition.
-		/// </summary>
-		/// <value>The transition.</value>
-		public Transition transition
+
+		public void SetState(bool state)
 		{
-			get { return this.m_Transition; }
-			set { this.m_Transition = value; }
+			if(!m_titleRect)
+			{
+				LogSvc.UI.W("header is null");
+
+				return;
+			}
+
+			if(m_isOn == state)
+			{
+				return;
+			}
+
+			m_isOn = state;
+
+			if(m_duration != 0.0f)
+			{
+				CommonUtility.RecycleTokenSource(ref m_tokenSource);
+
+				if(m_isOn)
+				{
+					var headerSize = _TitleSize;
+					var expandedSize = _GetExpandedSize();
+
+					_SetLayoutSizeAsync(headerSize,expandedSize,m_tokenSource.Token).Forget();
+				}
+				else
+				{
+					var currentSize = _CurrentSize;
+					var headerSize = _TitleSize;
+
+					_SetLayoutSizeAsync(currentSize,headerSize,m_tokenSource.Token).Forget();
+				}
+			}
+			else
+			{
+				if(m_isOn)
+				{
+					_SetLayoutSize(-1.0f);
+				}
+				else
+				{
+					var headerSize = _TitleSize;
+
+					_SetLayoutSize(headerSize);
+				}
+			}
 		}
-		
-		/// <summary>
-		/// Gets or sets the duration of the transition.
-		/// </summary>
-		/// <value>The duration of the transition.</value>
-		public float transitionDuration
+
+		private void _SetLayoutSize(float size)
 		{
-			get { return this.m_TransitionDuration; }
-			set { this.m_TransitionDuration = value; }
+			if(m_vertical)
+			{
+				m_layoutElement.preferredHeight = size;
+			}
+			else
+			{
+				m_layoutElement.preferredWidth = size;
+			}
 		}
 
-        private void Awake()
-        {
-			m_expandVertical = GetComponent<HorizontalLayoutGroup>() ? false : true;
-			var group = GetComponent<ToggleGroup>();
+		private float _GetExpandedSize()
+		{
+			if(m_vertical)
+			{
+				var originalHeight = m_layoutElement.preferredHeight;
+
+				m_layoutElement.preferredHeight = -1f;
+
+				var expandedHeight = LayoutUtility.GetPreferredHeight(CurrentRect);
+
+				m_layoutElement.preferredHeight = originalHeight;
+
+				return expandedHeight;
+			}
+			else
+			{
+				var originalWidth = m_layoutElement.preferredWidth;
+
+				m_layoutElement.preferredWidth = -1f;
+
+				var expandedWidth = LayoutUtility.GetPreferredWidth(CurrentRect);
+
+				m_layoutElement.preferredWidth = originalWidth;
+
+				return expandedWidth;
+			}
 		}
 
-#if UNITY_EDITOR
+		private async UniTask _SetLayoutSizeAsync(float start,float finish,CancellationToken token)
+		{
+			if(m_vertical)
+			{
+				void _ProgressHeight(float height)
+				{
+					m_layoutElement.preferredHeight = height;
+				}
 
-        private void OnValidate()
-        {
-            if (!GetComponent<HorizontalLayoutGroup>() && !GetComponent<VerticalLayoutGroup>())
-            {
-				Debug.LogError("Accordion requires either a Horizontal or Vertical Layout group to place children");
-            }
-        }
-#endif
+				await CommonUtility.ExecuteProgressAsync(start,finish,m_duration,_ProgressHeight,false,null,token);
+			}
+			else
+			{
+				void _ProgressWidth(float width)
+				{
+					m_layoutElement.preferredWidth = width;
+				}
+
+				await CommonUtility.ExecuteProgressAsync(start,finish,m_duration,_ProgressWidth,false,null,token);
+			}
+		}
+
+		void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
+		{
+			if(eventData.button != PointerEventData.InputButton.Left)
+			{
+				return;
+			}
+
+			if(!isActiveAndEnabled)
+			{
+				return;
+			}
+
+			m_onClicked?.Invoke(this);
+		}
+
+		protected override void Reset()
+		{
+			base.Reset();
+
+			if(!m_layoutElement)
+			{
+				m_layoutElement = GetComponent<LayoutElement>();
+			}
+		}
 	}
 }

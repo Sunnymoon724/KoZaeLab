@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(ScrollRect))]
-public class ReuseScrollRectUI : BaseComponentUI
+public class ReuseScrollRectUI : BaseComponent
 {
 	private enum ScrollToType { Top, Center, Bottom, }
 
@@ -38,7 +38,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 	private readonly List<IEntryInfo> m_entryInfoList = new();
 
-	private GameObjectUIPool<Slot> m_slotUIPool = null;
+	private GameObjectPool<Slot> m_slotPool = null;
 
 	private int m_headIndex = 0;
 	private int m_tailIndex = 0;
@@ -61,10 +61,10 @@ public class ReuseScrollRectUI : BaseComponentUI
 			return;
 		}
 
-		m_slotUIPool = new GameObjectUIPool<Slot>(m_pivot,m_scrollRect.viewport,m_poolCapacity);
+		m_slotPool = new GameObjectPool<Slot>(m_pivot,m_scrollRect.viewport,m_poolCapacity,false);
 
 		m_pivot.gameObject.EnsureActive(false);
-		m_scrollRect.viewport.transform.SetUIChild(m_pivot.transform);
+		m_scrollRect.viewport.transform.SetChild(m_pivot.transform,false);
 
 		var content = m_scrollRect.content;
 
@@ -127,7 +127,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 		foreach(var pair in m_slotDict)
 		{
-			m_slotUIPool.Put(pair.Value);
+			m_slotPool.Put(pair.Value);
 		}
 
 		m_slotDict.Clear();
@@ -273,7 +273,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 
 			if(!m_slotDict.ContainsKey(i))
 			{
-				var newSlot = m_slotUIPool.GetOrCreate(m_scrollRect.content);
+				var newSlot = m_slotPool.GetOrCreate(m_scrollRect.content);
 
 				newSlot.gameObject.name = $"Slot_{i}";
 				newSlot.gameObject.EnsureActive(true);
@@ -305,7 +305,7 @@ public class ReuseScrollRectUI : BaseComponentUI
 				continue;
 			}
 
-			m_slotUIPool.Put(m_slotDict[i]);
+			m_slotPool.Put(m_slotDict[i]);
 
 			m_slotDict.Remove(i);
 		}

@@ -19,7 +19,7 @@ public class RepositoryUI2D : RepositoryUI
 
 		var repository = _GetRepository(window.PriorityType);
 
-		repository.SetUIChild(window.transform);
+		repository.SetChild(window.transform,false);
 
 		_Add(window);
 	}

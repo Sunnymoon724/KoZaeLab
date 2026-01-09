@@ -76,7 +76,7 @@ namespace KZLib.KZMenu
 
 			viewport.AddComponent<Image>();
 			viewport.AddComponent<Mask>();
-			scroller.transform.SetUIChild(viewport.transform);
+			scroller.transform.SetChild(viewport.transform,false);
 
 			var content = _CreatePanel("Content",true);
 
@@ -84,7 +84,7 @@ namespace KZLib.KZMenu
 
 			content.GetComponent<RectTransform>().pivot = new Vector2(0.0f,1.0f);
 
-			viewport.transform.SetUIChild(content.transform);
+			viewport.transform.SetChild(content.transform,false);
 
 			scroller.AddComponent<FocusScroller>();
 
@@ -113,13 +113,13 @@ namespace KZLib.KZMenu
 
 			if(selected)
 			{
-				selected.transform.SetUIChild(child.transform);
+				selected.transform.SetChild(child.transform,false);
 			}
 			else
 			{
 				var canvas = _FindCanvas();
 
-				canvas.transform.SetUIChild(child.transform);
+				canvas.transform.SetChild(child.transform,false);
 			}
 
 			Selection.activeObject = child;
@@ -144,7 +144,7 @@ namespace KZLib.KZMenu
 
 				if(selected)
 				{
-					selected.transform.SetUIChild(panel.transform);
+					selected.transform.SetChild(panel.transform,false);
 				}
 			}
 

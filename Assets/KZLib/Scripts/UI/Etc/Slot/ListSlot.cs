@@ -4,7 +4,7 @@ namespace UnityEngine.UI
 	public class ListSlot : Slot
 	{
 		[SerializeField]
-		private ReuseGridLayoutGroupUI m_gridLayout = null;
+		private ReuseGridLayoutGroup m_gridLayout = null;
 
 		protected override bool UseImage => false;
 		protected override bool UseButton => false;

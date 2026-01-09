@@ -49,7 +49,7 @@ public class MenuToolBarUI : BaseComponentUI
 	public record Param(CommonUIMenuTag MenuType,Action<IEntryInfo> OnClicked);
 
 	[HorizontalGroup("0",Order = 0),SerializeField]
-	private ReuseGridLayoutGroupUI m_gridLayout = null;
+	private ReuseGridLayoutGroup m_gridLayout = null;
 	[HorizontalGroup("1",Order = 1),SerializeField,ToggleLeft,OnValueChanged(nameof(_OnChangeCommon))]
 	private bool m_useCommonIcon = false;
 	[HorizontalGroup("1",Order = 1),SerializeField,HideLabel,ShowIf(nameof(m_useCommonIcon))]
