@@ -5,34 +5,28 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceLocations;
 using KZLib.KZUtility;
+
 using Object = UnityEngine.Object;
 
 namespace KZLib
 {
 	public class AddressablesManager : Singleton<AddressablesManager>
 	{
-		private bool m_disposed = false;
-
 		private record AssetInfo(Object Asset,string Label);
 		private record LocationInfo(IResourceLocation Location,string Label);
 
 		private readonly Dictionary<string,AssetInfo> m_assetInfoDict = new();
 
-		protected override void Release(bool disposing)
-		{
-			if(m_disposed)
-			{
-				return;
-			}
+		private AddressablesManager() { }
 
+		protected override void _Release(bool disposing)
+		{
 			if(disposing)
 			{
 				m_assetInfoDict.Clear();
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		public async UniTask<long> GetDownloadAssetSizeAsync(string label)

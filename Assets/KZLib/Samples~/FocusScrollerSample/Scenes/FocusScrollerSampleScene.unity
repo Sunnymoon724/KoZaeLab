@@ -819,15 +819,15 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   m_viewport: {fileID: 1533726423}
-  m_slotUI: {fileID: 234818354}
+  m_slot: {fileID: 234818354}
   m_circularMode: 1
   m_orderMode: 0
   m_slotSpace: 0.2
   m_vertical: 0
-  m_useDrag: 1
   m_poolCapacity: 1
   m_focusIndex: -1
   m_currentLocation: 0
+  m_useDrag: 1
   m_elasticity: 0.1
   m_sensitivity: 1
   m_decelerationRate: 0.03
@@ -836,6 +836,8 @@ MonoBehaviour:
   m_magnetVelocity: 0.5
   m_magnetDuration: 0.3
   m_magnetEasing: 15
+  m_useNavigator: 0
+  m_navigator: {fileID: 0}
 --- !u!1 &1978028153
 GameObject:
   m_ObjectHideFlags: 0

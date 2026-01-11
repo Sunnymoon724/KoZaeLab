@@ -5,16 +5,15 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using KZLib.KZUtility;
 using KZLib.KZData;
-using Object = UnityEngine.Object;
 using KZLib.KZDevelop;
+
+using Object = UnityEngine.Object;
 
 namespace KZLib
 {
 	public partial class ResourceManager : Singleton<ResourceManager>
 	{
 		private record LoadingResourceInfo(string ResourcePath,bool IsFilePath,Transform Parent);
-
-		private bool m_disposed = false;
 
 		private const float c_updatePeriod = 0.1f;
 		private const string c_Resources = "Resources";
@@ -27,7 +26,9 @@ namespace KZLib
 
 		private bool m_useServerResource = false;
 
-		protected override void Initialize()
+		private ResourceManager() { }
+
+		protected override void _Initialize()
 		{
 			CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
@@ -38,13 +39,8 @@ namespace KZLib
 			_LoopProcessAsync(m_tokenSource.Token).Forget();
 		}
 
-		protected override void Release(bool disposing)
+		protected override void _Release(bool disposing)
 		{
-			if(m_disposed)
-			{
-				return;
-			}
-
 			CommonUtility.KillTokenSource(ref m_tokenSource);
 
 			if(disposing)
@@ -54,9 +50,7 @@ namespace KZLib
 				m_cacheResolver.Dispose();
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		private async UniTaskVoid _LoopProcessAsync(CancellationToken token)

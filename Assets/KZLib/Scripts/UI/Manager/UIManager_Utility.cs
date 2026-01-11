@@ -4,16 +4,16 @@ using KZLib.KZUtility;
 
 namespace KZLib
 {
-	public partial class UIManager : LoadSingletonMB<UIManager>
+	public partial class UIManager : SingletonMB<UIManager>
 	{
 		private static readonly CommonUINameTag[] s_definedTagArray = new CommonUINameTag[] { CommonUINameTag.CommonTransitionPanel, CommonUINameTag.DebugOverlayPanel, CommonUINameTag.VideoPanel  };
 
-		private string _GetUIPath(CommonUINameTag nameTag)
+		private string _GetPrefabPath(CommonUINameTag nameTag)
 		{
-			return $"{(_IsDefinedUI(nameTag) ? "Resources/Prefab/UI" : m_prefabPath)}/{nameTag}.prefab";
+			return $"{(_IsDefinedWindow(nameTag) ? "Resources/Prefab/UI" : m_prefabPath)}/{nameTag}.prefab";
 		}
 
-		private bool _IsDefinedUI(CommonUINameTag nameTag)
+		private bool _IsDefinedWindow(CommonUINameTag nameTag)
 		{
 			return s_definedTagArray.Contains(nameTag);
 		}

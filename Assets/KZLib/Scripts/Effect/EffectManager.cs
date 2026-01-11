@@ -8,7 +8,8 @@ using KZLib.KZDevelop;
 
 namespace KZLib
 {
-	public class EffectManager : AutoSingletonMB<EffectManager>
+	[SingletonConfig(AutoCreate = true,DontDestroy = true)]
+	public class EffectManager : SingletonMB<EffectManager>
 	{
 		private string m_effectPath = null;
 
@@ -17,16 +18,16 @@ namespace KZLib
 
 		private readonly CacheResolver<EffectClip> m_cacheResolver = new();
 
-		protected override void Initialize()
+		protected override void _Initialize()
 		{
-			base.Initialize();
+			base._Initialize();
 
 			m_effectPath = ConfigManager.In.Access<GameConfig>().FXPrefabPath;
 		}
 
-		protected override void Release()
+		protected override void _Release()
 		{
-			base.Release();
+			base._Release();
 
 			m_cacheResolver.Dispose();
 

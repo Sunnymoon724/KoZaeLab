@@ -7,9 +7,9 @@ public abstract class BaseCamera : BaseComponent
 	[SerializeField]
 	protected Camera m_camera = null;
 
-	protected override void Initialize()
+	protected override void _Initialize()
 	{
-		base.Initialize();
+		base._Initialize();
 
 		if(CameraManager.HasInstance)
 		{
@@ -17,9 +17,9 @@ public abstract class BaseCamera : BaseComponent
 		}
 	}
 
-	protected override void Release()
+	protected override void _Release()
 	{
-		base.Release();
+		base._Release();
 
 		if(CameraManager.HasInstance)
 		{

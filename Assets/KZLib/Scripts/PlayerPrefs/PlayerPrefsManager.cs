@@ -14,28 +14,23 @@ namespace KZLib
 	{
 		private readonly Dictionary<string,string> m_cacheDict = new();
 
-		private bool m_disposed = false;
+		private PlayerPrefsManager() { }
 
-		protected override void Initialize()
+		protected override void _Initialize()
 		{
+			base._Initialize();
+
 			m_cacheDict.Clear();
 		}
 
-		protected override void Release(bool disposing)
+		protected override void _Release(bool disposing)
 		{
-			if(m_disposed)
-			{
-				return;
-			}
-
 			if(disposing)
 			{
 				m_cacheDict.Clear();
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		public bool HasKey(string key)

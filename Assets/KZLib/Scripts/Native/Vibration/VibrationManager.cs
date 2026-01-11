@@ -19,7 +19,6 @@ namespace KZLib
 	public class VibrationManager : Singleton<VibrationManager>
 	{
 		private readonly CompositeDisposable m_disposable = new();
-		private bool m_disposed = false;
 
 		private bool m_useVibration = true;
 
@@ -40,8 +39,12 @@ namespace KZLib
 		private AndroidJavaObject m_activity = null;
 #endif
 
-		protected override void Initialize()
+		private VibrationManager() { }
+
+		protected override void _Initialize()
 		{
+			base._Initialize();
+
 			var optionCfg = ConfigManager.In.Access<OptionConfig>();
 
 			optionCfg.OnChangedUseVibration.Subscribe(_OnChangeUseVibration).AddTo(m_disposable);
@@ -58,21 +61,14 @@ namespace KZLib
 #endif
 		}
 
-		protected override void Release(bool disposing)
+		protected override void _Release(bool disposing)
 		{
-			if(m_disposed)
-			{
-				return;
-			}
-
 			if(disposing)
 			{
 				m_disposable.Dispose();
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		private void _OnChangeUseVibration(bool useVibration)

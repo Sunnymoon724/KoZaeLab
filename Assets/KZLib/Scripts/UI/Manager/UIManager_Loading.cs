@@ -5,7 +5,7 @@ using KZLib.KZUtility;
 
 namespace KZLib
 {
-	public partial class UIManager : LoadSingletonMB<UIManager>
+	public partial class UIManager : SingletonMB<UIManager>
 	{
 		public async UniTask PlayLoadingAsync(Func<UniTask> onPlayTask)
 		{

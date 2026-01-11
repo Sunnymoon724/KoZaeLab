@@ -12,10 +12,10 @@ namespace KZLib.KZSample.Component
 		}
 
 		[VerticalGroup("0",Order = 0),SerializeField]
-		private ReuseScrollRectUI m_verticalScrollRect = null;
+		private ReuseScrollRect m_verticalScrollRect = null;
 
 		[VerticalGroup("0",Order = 0),SerializeField]
-		private ReuseScrollRectUI m_horizontalScrollRect = null;
+		private ReuseScrollRect m_horizontalScrollRect = null;
 
 		[SerializeField,HideInInspector]
 		private int m_entryInfoCount = 10;

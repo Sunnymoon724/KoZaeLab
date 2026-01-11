@@ -55,9 +55,9 @@ public class MagnetImageUI : BaseImageUI
 
 	private bool IsValidTarget => Target && m_direction != DirectionType.None;
 
-	protected override void Initialize()
+	protected override void _Initialize()
 	{
-		base.Initialize();
+		base._Initialize();
 
 		if(IsValidTarget)
 		{

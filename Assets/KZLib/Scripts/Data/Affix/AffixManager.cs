@@ -6,26 +6,19 @@ namespace KZLib
 {
 	public class AffixManager : Singleton<AffixManager>
 	{
-		private bool m_disposed = false;
-
 		//? Type / Affix
 		private readonly Dictionary<string,IAffix> m_affixDict = new();
 
-		protected override void Release(bool disposing)
-		{
-			if(m_disposed)
-			{
-				return;
-			}
+		private AffixManager() { }
 
+		protected override void _Release(bool disposing)
+		{
 			if(disposing)
 			{
 				m_affixDict.Clear();
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		public TAffix Set<TAffix>(TAffix newAfx) where TAffix : class,IAffix

@@ -18,14 +18,14 @@ namespace KZLib
 
 		private readonly Dictionary<Camera,CameraStoreInfo> m_subCameraDict = new();
 
-		private bool m_disposed = false;
-
 		private float m_farFactor = 1.0f;
 		private float m_originalFarClipPlane = 0.0f;
 
-		protected override void Initialize()
+		private CameraManager() { }
+
+		protected override void _Initialize()
 		{
-			base.Initialize();
+			base._Initialize();
 
 			var optionCfg = ConfigManager.In.Access<OptionConfig>();
 
@@ -34,21 +34,14 @@ namespace KZLib
 			_OnChangeFarClipPlane(optionCfg.CurrentGraphicQuality);
 		}
 
-		protected override void Release(bool disposing)
+		protected override void _Release(bool disposing)
 		{
-			if(m_disposed)
-			{
-				return;
-			}
-
 			if(disposing)
 			{
 				m_disposable.Dispose();
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		public void AttachCamera(Camera newCamera)

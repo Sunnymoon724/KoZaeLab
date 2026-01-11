@@ -26,9 +26,9 @@ public class ShaderImageUI : BaseImageUI
 		}
 	}
 
-	protected override void Initialize()
+	protected override void _Initialize()
 	{
-		base.Initialize();
+		base._Initialize();
 
 		if(m_image && !m_image.material && Shader)
 		{
@@ -36,9 +36,9 @@ public class ShaderImageUI : BaseImageUI
 		}
 	}
 
-	protected override void Release()
+	protected override void _Release()
 	{
-		base.Release();
+		base._Release();
 
 		if(m_image && m_image.material)
 		{

@@ -13,9 +13,9 @@ public class GraphImageUI : ShaderImageUI
 
 	protected bool IsValidGraph => m_graphLength <= 0;
 
-	protected override void Initialize()
+	protected override void _Initialize()
 	{
-		base.Initialize();
+		base._Initialize();
 
 		if(IsValidGraph)
 		{

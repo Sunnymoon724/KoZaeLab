@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace KZLib
 {
-	public partial class SoundManager : LoadSingletonMB<SoundManager>
+	public partial class SoundManager : SingletonMB<SoundManager>
 	{
 		/// <summary>
 		/// 배경음

@@ -32,9 +32,9 @@ namespace KZLib.KZDevelop
 		private bool m_isPlaying = false;
 		protected CancellationTokenSource m_tokenSource = null;
 
-		protected override void Initialize()
+		protected override void _Initialize()
 		{
-			base.Initialize();
+			base._Initialize();
 
 			if(m_skipButton)
 			{

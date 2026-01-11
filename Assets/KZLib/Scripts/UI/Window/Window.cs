@@ -18,8 +18,8 @@ public interface IWindow
 
 	bool Is3D { get; }
 
-	WindowType WindowType { get; }
-	UIPriorityType PriorityType { get; }
+	WindowPrefabType WindowType { get; }
+	WindowPriorityType PriorityType { get; }
 
 	CommonUINameTag NameTag { get; }
 
@@ -29,7 +29,7 @@ public interface IWindow
 }
 
 [RequireComponent(typeof(CanvasGroup))]
-public abstract class Window : BaseComponentUI,IWindow
+public abstract class Window : BaseComponent,IWindow
 {
 	[InfoBox("CanvasGroup is null",InfoMessageType.Error,nameof(IsExistCanvasGroup))]
 	[VerticalGroup("CanvasGroup",Order = -25),SerializeField]
@@ -47,8 +47,8 @@ public abstract class Window : BaseComponentUI,IWindow
 
 	public abstract bool IsPooling  { get; }
 
-	public abstract WindowType WindowType { get; }
-	public abstract UIPriorityType PriorityType { get; }
+	public abstract WindowPrefabType WindowType { get; }
+	public abstract WindowPriorityType PriorityType { get; }
 
 	public abstract void BlockInput(bool isBlocked);
 
@@ -89,9 +89,9 @@ public abstract class Window : BaseComponentUI,IWindow
 		m_canvas = canvas;
 	}
 
-	protected override void Initialize()
+	protected override void _Initialize()
 	{
-		base.Initialize();
+		base._Initialize();
 
 		_SetCanvasGroupState(1,true,true);
 	}
@@ -119,7 +119,7 @@ public abstract class Window : BaseComponentUI,IWindow
 		LogSvc.UI.I($"{NameTag} is closed");
 	}
 
-	protected override void Release() { }
+	protected override void _Release() { }
 
 	public virtual void Hide(bool isHidden)
 	{

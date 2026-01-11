@@ -12,14 +12,14 @@ public class AudioButtonUI : BaseButtonUI
 	[SerializeField,HideIf(nameof(m_pathMode))]
 	private AudioClip m_audioClip = null;
 
-	protected override void Initialize()
+	protected override void _Initialize()
 	{
 		if(m_pathMode)
 		{
 			m_audioClip = ResourceManager.In.GetAudioClip(m_audioPath);
 		}
 
-		base.Initialize();
+		base._Initialize();
 	}
 
 	protected override void _OnClickedButton()

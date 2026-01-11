@@ -12,8 +12,8 @@ public abstract class Window2D : Window
 	public override bool IsPooling => m_pooling;
 
 	[VerticalGroup("UI/General",Order = 0),SerializeField]
-	private UIPriorityType m_priorityType = UIPriorityType.Middle;
-	public override UIPriorityType PriorityType => m_priorityType;
+	private WindowPriorityType m_priorityType = WindowPriorityType.Middle;
+	public override WindowPriorityType PriorityType => m_priorityType;
 
 	public override bool Is3D => false;
 

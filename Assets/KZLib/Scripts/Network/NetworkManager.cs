@@ -14,8 +14,6 @@ namespace KZLib.KZNetwork
 	{
 		private const string c_titleScene = "TitleScene";
 
-		private bool m_disposed = false;
-
 		private bool m_isRequesting = false;
 		public bool IsRequesting => m_isRequesting;
 
@@ -27,9 +25,11 @@ namespace KZLib.KZNetwork
 
 		public string AccountId => m_accountCredential.AccountId;
 
-		protected override void Initialize()
+		private NetworkManager() { }
+
+		protected override void _Initialize()
 		{
-			base.Initialize();
+			base._Initialize();
 
 #if KZLIB_PLAY_FAB
 			m_accountCredential = new PlayFabAccountCredential();
@@ -38,21 +38,14 @@ namespace KZLib.KZNetwork
 #endif
 		}
 
-		protected override void Release(bool disposing)
+		protected override void _Release(bool disposing)
 		{
-			if(m_disposed)
-			{
-				return;
-			}
-
 			if(disposing)
 			{
 				
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		public async UniTask<bool> RequestToServerAsync(string functionName,object parameter,bool touchBlock,CommonNoticeTag noticeTag)

@@ -8,14 +8,14 @@ namespace KZLib
 
 	public class ContextManager : Singleton<ContextManager>
 	{
-		private bool m_disposed = false;
-
 		private readonly Dictionary<string,Type> m_contextTypeDict = new();
 		private readonly Dictionary<string,IContext> m_contextDict = new();
 
-		protected override void Initialize()
+		private ContextManager() { }
+
+		protected override void _Initialize()
 		{
-			base.Initialize();
+			base._Initialize();
 
 			var contextType = typeof(IContext);
 
@@ -58,21 +58,14 @@ namespace KZLib
 			}
 		}
 
-		protected override void Release(bool disposing)
+		protected override void _Release(bool disposing)
 		{
-			if(m_disposed)
-			{
-				return;
-			}
-
 			if(disposing)
 			{
 				m_contextDict.Clear();
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		/// <summary>
@@ -105,10 +98,10 @@ namespace KZLib
 			
 			if(contextType != null)
 			{
-				return null;
+				return Activator.CreateInstance(contextType) as IContext;
 			}
 
-			return Activator.CreateInstance(contextType) as IContext;
+			return null;
 		} 
 	}
 }

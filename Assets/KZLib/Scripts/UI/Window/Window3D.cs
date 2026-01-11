@@ -8,8 +8,8 @@ public abstract class Window3D : Window
 	public override bool Is3D => true;
 
 	public override bool IsPooling => true;
-	public override WindowType WindowType => WindowType.Panel;
-	public override UIPriorityType PriorityType => UIPriorityType.Middle;
+	public override WindowPrefabType WindowType => WindowPrefabType.Panel;
+	public override WindowPriorityType PriorityType => WindowPriorityType.Middle;
 
 	public override void Open(object param)
 	{

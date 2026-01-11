@@ -7,8 +7,6 @@ namespace KZLib
 {
 	public class ShaderManager : Singleton<ShaderManager>
 	{
-		private bool m_disposed = false;
-
 		private readonly Dictionary<string,Shader> m_ShaderDict = new();
 
 		private Material m_grayscale = null;
@@ -60,13 +58,10 @@ namespace KZLib
 			}
 		}
 
-		protected override void Release(bool disposing)
-		{
-			if(m_disposed)
-			{
-				return;
-			}
+		private ShaderManager() { }
 
+		protected override void _Release(bool disposing)
+		{
 			if(disposing)
 			{
 				m_ShaderDict.Clear();
@@ -87,9 +82,7 @@ namespace KZLib
 				}
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		public Shader FindShader(string shaderName)

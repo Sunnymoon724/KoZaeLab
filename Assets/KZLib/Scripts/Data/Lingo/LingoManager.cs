@@ -4,8 +4,9 @@ using UnityEngine.Localization.Settings;
 using Cysharp.Threading.Tasks;
 using UnityEngine.Localization;
 using System.Threading;
-using Object = UnityEngine.Object;
 using R3;
+
+using Object = UnityEngine.Object;
 
 namespace KZLib.KZData
 {
@@ -13,7 +14,6 @@ namespace KZLib.KZData
 	{
 		private readonly CompositeDisposable m_disposable = new();
 
-		private bool m_disposed = false;
 		private bool m_isLoaded = false;
 
 		private SystemLanguage m_currentLanguage = SystemLanguage.English;
@@ -23,13 +23,10 @@ namespace KZLib.KZData
 
 		public SystemLanguage CurrentLanguage => m_currentLanguage;
 
-		protected override void Release(bool disposing)
-		{
-			if(m_disposed)
-			{
-				return;
-			}
+		private LingoManager() { }
 
+		protected override void _Release(bool disposing)
+		{
 			if(disposing)
 			{
 				m_disposable.Dispose();
@@ -38,9 +35,7 @@ namespace KZLib.KZData
 				m_isLoaded = false;
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 		
 		public async UniTask<bool> TryLoadAsync(CancellationToken token)

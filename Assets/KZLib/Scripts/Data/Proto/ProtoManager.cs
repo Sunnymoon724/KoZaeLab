@@ -15,7 +15,6 @@ namespace KZLib.KZData
 		private const int c_delayTime = 1; // 1ms
 		private const int c_invalidNumber = 0;
 
-		private bool m_disposed = false;
 		private bool m_isLoaded = false;
 
 		//? Type / Num / Proto
@@ -23,21 +22,16 @@ namespace KZLib.KZData
 
 		private readonly Dictionary<int,Vector4[]> m_colorVectorDict = new();
 
-		protected override void Release(bool disposing)
-		{
-			if(m_disposed)
-			{
-				return;
-			}
+		private ProtoManager() { }
 
+		protected override void _Release(bool disposing)
+		{
 			if(disposing)
 			{
 				_ClearProto();
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		private void _ClearProto()

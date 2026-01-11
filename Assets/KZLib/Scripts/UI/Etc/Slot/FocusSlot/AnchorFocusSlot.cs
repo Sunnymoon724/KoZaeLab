@@ -2,6 +2,7 @@ using Sirenix.OdinInspector;
 
 namespace UnityEngine.UI
 {
+	[RequireComponent(typeof(RectTransform))]
 	public abstract class AnchorFocusSlot : FocusSlot
 	{
 		[VerticalGroup("Focus/0",Order = 0),SerializeField]
@@ -37,10 +38,11 @@ namespace UnityEngine.UI
 
 			var cached = Gizmos.color;
 			var cubeSize = CubeSize;
+			var rectTransform = GetComponent<RectTransform>();
 
 			if(m_vertical)
 			{
-				var height = CurrentRect.rect.height*(2.0f*m_anchorValue+1.0f)/2.0f;
+				var height = rectTransform.rect.height*(2.0f*m_anchorValue+1.0f)/2.0f;
 
 				Gizmos.color = Color.red;
 
@@ -49,7 +51,7 @@ namespace UnityEngine.UI
 			}
 			else
 			{
-				var width = CurrentRect.rect.width*(2.0f*m_anchorValue+1.0f)/2.0f;
+				var width = rectTransform.rect.width*(2.0f*m_anchorValue+1.0f)/2.0f;
 
 				Gizmos.color = Color.red;
 

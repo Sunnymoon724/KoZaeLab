@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public abstract class BasePopup : Window2D
 {
-	public override WindowType WindowType => WindowType.PopUp;
+	public override WindowPrefabType WindowType => WindowPrefabType.PopUp;
 
 	[VerticalGroup("UI/General",Order = 0),SerializeField]
 	private Transform m_popUpTransform = null;
@@ -13,9 +13,9 @@ public abstract class BasePopup : Window2D
 	[VerticalGroup("UI/General",Order = 0),SerializeField]
 	private Button m_closeButton = null;
 
-	protected override void Initialize()
+	protected override void _Initialize()
 	{
-		base.Initialize();
+		base._Initialize();
 
 		if(m_popUpTransform)
 		{
@@ -28,9 +28,9 @@ public abstract class BasePopup : Window2D
 		}
 	}
 
-	protected override void Release()
+	protected override void _Release()
 	{
-		base.Release();
+		base._Release();
 
 		if(m_closeButton)
 		{

@@ -13,13 +13,13 @@ namespace KZLib
 
 		private readonly Dictionary<string,string> m_defaultPathDict = new();
 
-		private bool m_disposed = false;
-
 		private string m_routePath = "";
 
-		protected override void Initialize()
+		private RouteManager() { }
+
+		protected override void _Initialize()
 		{
-			base.Initialize();
+			base._Initialize();
 
 			m_routePath = Path.Combine("Text","Setting","Route");
 
@@ -34,22 +34,15 @@ namespace KZLib
 			}
 		}
 
-		protected override void Release(bool disposing)
+		protected override void _Release(bool disposing)
 		{
-			if(m_disposed)
-			{
-				return;
-			}
-
 			if(disposing)
 			{
 				m_defaultPathDict.Clear();
 				m_routeDict.Clear();
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		private void _CreateRouteFile()

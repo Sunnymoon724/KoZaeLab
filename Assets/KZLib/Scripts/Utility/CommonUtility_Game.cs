@@ -131,15 +131,15 @@ public static partial class CommonUtility
 		ColorExtension.ClearCache();
 	}
 
-	private static void _ReleaseSingletonMB<TBehaviour>() where TBehaviour : AutoSingletonMB<TBehaviour>
+	private static void _ReleaseSingletonMB<TBehaviour>() where TBehaviour : SingletonMB<TBehaviour>
 	{
-		if(AutoSingletonMB<TBehaviour>.HasInstance)
+		if(SingletonMB<TBehaviour>.HasInstance)
 		{
-			AutoSingletonMB<TBehaviour>.In.gameObject.DestroyObject();
+			SingletonMB<TBehaviour>.In.gameObject.DestroyObject();
 		}
 	}
 
-	private static void _ReleaseSingleton<TClass>() where TClass : Singleton<TClass>,new()
+	private static void _ReleaseSingleton<TClass>() where TClass : Singleton<TClass>
 	{
 		if(Singleton<TClass>.HasInstance)
 		{

@@ -4,7 +4,7 @@ using KZLib;
 using MessagePipe;
 using UnityEngine;
 
-public class BadgeUI : BaseComponentUI
+public class BadgeUI : BaseComponent
 {
 	[SerializeField]
 	private List<GameObject> m_badgeList = new();

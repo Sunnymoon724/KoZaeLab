@@ -78,16 +78,16 @@ namespace KZLib
 
 		private readonly Dictionary<string,GameTime> m_gameTimeDict = new();
 		private CancellationTokenSource m_tokenSource = null;
-		private bool m_disposed = false;
 
 		public DateTime ServerTime { get; private set; }
 		private TimeSpan m_timeDifference = TimeSpan.Zero;
 
-		/// <summary>
-		/// 초기화
-		/// </summary>
-		protected override void Initialize()
+		private GameTimeManager() { }
+
+		protected override void _Initialize()
 		{
+			base._Initialize();
+
 			ServerTime = DateTime.UtcNow;
 			m_timeDifference = TimeSpan.Zero;
 
@@ -96,13 +96,8 @@ namespace KZLib
 			_UpdateAsync(m_tokenSource.Token).Forget();
 		}
 
-		protected override void Release(bool disposing)
+		protected override void _Release(bool disposing)
 		{
-			if(m_disposed)
-			{
-				return;
-			}
-
 			if(disposing)
 			{
 				m_gameTimeDict.Clear();
@@ -110,9 +105,7 @@ namespace KZLib
 				CommonUtility.KillTokenSource(ref m_tokenSource);
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		public bool HasTime(string name)

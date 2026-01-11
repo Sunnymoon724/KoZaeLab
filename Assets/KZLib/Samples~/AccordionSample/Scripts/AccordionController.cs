@@ -10,7 +10,7 @@ namespace KZLib.KZSample.UI
 	public class AccordionController : BaseComponent
 	{
 		[VerticalGroup("0",Order = 0),SerializeField]
-		private AccordionGroup m_accordionGroup = null;
+		private Accordion m_accordionGroup = null;
 
 		[SerializeField,HideInInspector]
 		private int m_entryInfoCount = 3;

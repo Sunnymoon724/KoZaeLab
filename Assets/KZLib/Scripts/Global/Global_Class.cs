@@ -54,8 +54,6 @@ public class CommonNoticeTag : CustomTag
 	public static readonly CommonNoticeTag ChangedApplicationFocus		= new(nameof(ChangedApplicationFocus));
 	public static readonly CommonNoticeTag ChangedDeviceResolution		= new(nameof(ChangedDeviceResolution));
 
-	// public static readonly CommonNoticeTag ChangedRedDotState			= new(nameof(ACTION_INGAME_REFRESH_UI_RED_DOT));
-
 	public CommonNoticeTag(string name) : base(name) { }
 }
 

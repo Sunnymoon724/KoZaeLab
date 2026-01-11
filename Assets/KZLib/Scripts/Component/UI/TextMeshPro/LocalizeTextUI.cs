@@ -16,9 +16,9 @@ public class LocalizeTextUI : BaseTextUI
 
 	private bool IsValidKey => !m_key.IsEmpty();
 
-	protected override void Initialize()
+	protected override void _Initialize()
 	{
-		base.Initialize();
+		base._Initialize();
 
 		_OnChangedLanguage(Unit.Default);
 	}

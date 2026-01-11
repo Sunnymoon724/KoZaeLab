@@ -15,9 +15,9 @@
 		private float m_startTime = 0.0f;
 		private ParticleSystem.Particle[] m_particleArray = null;
 
-		protected override void Initialize()
+		protected override void _Initialize()
 		{
-			base.Initialize();
+			base._Initialize();
 
 			m_mainModule = m_particleSystem.main;
 			m_startTime = Time.time;

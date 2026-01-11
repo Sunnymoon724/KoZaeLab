@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace KZLib
 {
-	public partial class SoundManager : LoadSingletonMB<SoundManager>
+	public partial class SoundManager : SingletonMB<SoundManager>
 	{
 		private const int c_sfxCount = 10;
 

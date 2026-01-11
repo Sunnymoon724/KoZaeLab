@@ -6,7 +6,6 @@ using Cysharp.Threading.Tasks;
 using KZLib.KZUtility;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-using KZLib.KZData;
 
 #if UNITY_EDITOR
 
@@ -16,7 +15,8 @@ using UnityEditor;
 
 namespace KZLib
 {
-	public class SceneStateManager : AutoSingletonMB<SceneStateManager>
+	[SingletonConfig(AutoCreate = true,DontDestroy = true)]
+	public class SceneStateManager : SingletonMB<SceneStateManager>
 	{
 		private const float c_unloadMinTime = 300.0f;
 
@@ -41,14 +41,18 @@ namespace KZLib
 
 		private float m_lastUnloadTime = 0.0f;
 
-		protected override void Initialize()
+		protected override void _Initialize()
 		{
+			base._Initialize();
+
 			Application.lowMemory += _OnLowMemory;
 			SceneManager.sceneLoaded += _OnUnloadSceneAssetBundle;
 		}
 
-		protected override void Release()
+		protected override void _Release()
 		{
+			base._Release();
+
 			Application.lowMemory -= _OnLowMemory;
 			SceneManager.sceneLoaded -= _OnUnloadSceneAssetBundle;
 

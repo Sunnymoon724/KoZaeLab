@@ -12,23 +12,16 @@ namespace KZLib
 {
 	public partial class PlayFabManager : Singleton<PlayFabManager>
 	{
-		private bool m_disposed = false;
+		private PlayFabManager() { }
 
-		protected override void Release(bool disposing)
+		protected override void _Release(bool disposing)
 		{
-			if(m_disposed)
-			{
-				return;
-			}
-
 			if(disposing)
 			{
 				
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		private async UniTask<PlayFabPacketInfo> _ExecuteAsync(PlayFabRequestCommon request,Action<PlayFabRequestCommon,Action<PlayFabResultCommon>,Action<PlayFabError>> onSendPacket,Func<PlayFabResultCommon,NetworkPacketInfo> onCreateNetworkPacket)

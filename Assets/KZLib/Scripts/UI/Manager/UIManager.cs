@@ -6,15 +6,16 @@ using KZLib.KZData;
 
 namespace KZLib
 {
-	public partial class UIManager : LoadSingletonMB<UIManager>
+	[SingletonConfig(AutoCreate = true,PrefabPath = "Prefab/UIManager",DontDestroy = true)]
+	public partial class UIManager : SingletonMB<UIManager>
 	{
 		//? Canvas List
-		private readonly List<RepositoryUI> m_repositoryList = new();
+		private readonly List<Repository> m_repositoryList = new();
 
 		[SerializeField]
-		private RepositoryUI2D m_repository2D = null; // camera -> overlay
+		private Repository2D m_repository2D = null; // camera -> overlay
 		[SerializeField]
-		private RepositoryUI3D m_repository3D = null; // camera -> world space
+		private Repository3D m_repository3D = null; // camera -> world space
 
 
 		[ShowInInspector,ListDrawerSettings(ShowFoldout = false),ReadOnly]
@@ -25,8 +26,10 @@ namespace KZLib
 
 		private string m_prefabPath = null;
 
-		protected override void Initialize()
+		protected override void _Initialize()
 		{
+			base._Initialize();
+
 			if(m_repository2D)
 			{
 				m_repositoryList.Add(m_repository2D);
@@ -40,8 +43,10 @@ namespace KZLib
 			m_prefabPath = ConfigManager.In.Access<GameConfig>().UIPrefabPath;
 		}
 
-		protected override void Release()
+		protected override void _Release()
 		{
+			base._Release();
+
 			m_dontReleaseHashSet.Clear();
 		}
 
@@ -62,28 +67,23 @@ namespace KZLib
 		/// <summary>
 		/// Register -> Not open
 		/// </summary>
-		public Window Register(CommonUINameTag nameTag,bool isActive = true)
+		public Window Register(CommonUINameTag nameTag)
 		{
 			if(!m_registerWindowDict.TryGetValue(nameTag,out var window))
 			{
-				window = _MakeUI(nameTag);
+				window = _MakeWindow(nameTag);
 
 				m_registerWindowDict.Add(nameTag,window);
 
-				if(isActive)
-				{
-					var behaviour = window as MonoBehaviour;
-
-					behaviour.gameObject.EnsureActive(false);
-				}
+				window.gameObject.EnsureActive(false);
 			}
 
 			return window;
 		}
 
-		private Window _MakeUI(CommonUINameTag nameTag)
+		private Window _MakeWindow(CommonUINameTag nameTag)
 		{
-			var prefab = ResourceManager.In.GetObject(_GetUIPath(nameTag));
+			var prefab = ResourceManager.In.GetObject(_GetPrefabPath(nameTag));
 
 			if(!prefab)
 			{
@@ -110,9 +110,11 @@ namespace KZLib
 				return null;
 			}
 
-			transform.SetChild(prefab.transform,false);
+			var storage = GetStorage(false);
 
-			if(_IsDefinedUI(nameTag))
+			storage.SetChild(prefab.transform,false);
+
+			if(_IsDefinedWindow(nameTag))
 			{
 				RegisterDontRelease(nameTag);
 			}
@@ -143,7 +145,7 @@ namespace KZLib
 
 			if(window == null)
 			{
-				window = Register(nameTag,false);
+				window = Register(nameTag);
 
 				var repository = _GetRepository(window.Is3D);
 
@@ -206,7 +208,7 @@ namespace KZLib
 		{
 			var repository = _GetRepository(is3D);
 
-			foreach(var window in repository.OpenedWindowGroup)
+			foreach(var window in repository.WindowGroup)
 			{
 				Close(window,isRelease);
 			}
@@ -248,7 +250,7 @@ namespace KZLib
 		{
 			for(var i=0;i<m_repositoryList.Count;i++)
 			{
-				var window = m_repositoryList[i].FindOpenedUI(nameTag);
+				var window = m_repositoryList[i].FindOpenedWindow(nameTag);
 
 				if(window != null)
 				{
@@ -271,7 +273,7 @@ namespace KZLib
 		public void PressBackButton()
 		{
 			var repository = _GetRepository(false);
-			var window = repository.TopOpenedWindow as Window2D;
+			var window = repository.TopWindow as Window2D;
 
 			if(window != null)
 			{
@@ -279,9 +281,16 @@ namespace KZLib
 			}
 		}
 
-		private RepositoryUI _GetRepository(bool is3D)
+		private Repository _GetRepository(bool is3D)
 		{
 			return is3D ? m_repository3D : m_repository2D;
+		}
+
+		public Transform GetStorage(bool is3D)
+		{
+			var repository = _GetRepository(is3D);
+
+			return repository.Storage;
 		}
 	}
 }

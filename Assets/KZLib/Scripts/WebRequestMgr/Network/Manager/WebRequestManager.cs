@@ -10,26 +10,19 @@ namespace KZLib.KZNetwork
 {
 	public partial class WebRequestManager : Singleton<WebRequestManager>
 	{
-		private bool m_disposed = false;
-
 		private readonly Subject<string> m_networkErrorSubject = new();
 		public Observable<string> OnShownNetworkError => m_networkErrorSubject;
 
-		protected override void Release(bool disposing)
-		{
-			if(m_disposed)
-			{
-				return;
-			}
+		private WebRequestManager() { }
 
+		protected override void _Release(bool disposing)
+		{
 			if(disposing)
 			{
 				m_networkErrorSubject.Dispose();
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		public void SendNetworkError(string message)

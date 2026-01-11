@@ -30,9 +30,7 @@ namespace KZLib.KZInAppPurchase
 		private const int c_maxRetryCount = 5;
 		private const int c_maxFetchCount = 50;
 
-		private const float CONST_TIME_OUT = 10.0f;
-
-		private bool m_disposed = false;
+		private const float c_timeOut = 10.0f;
 
 		private StoreController m_storeController = null;
 
@@ -61,9 +59,11 @@ namespace KZLib.KZInAppPurchase
 		private readonly Subject<Unit> m_unfinishedProductPurchasedSubject = new();
 		public Observable<Unit> OnPurchasedUnfinishedProduct => m_unfinishedProductPurchasedSubject;
 
-		protected override void Initialize()
+		private InAppPurchaseManager() { }
+
+		protected override void _Initialize()
 		{
-			base.Initialize();
+			base._Initialize();
 
 			m_storeController = UnityIAPServices.StoreController();
 
@@ -73,13 +73,8 @@ namespace KZLib.KZInAppPurchase
 			m_fetchFailHashSet = new HashSet<string>();
 		}
 
-		protected override void Release(bool disposing)
+		protected override void _Release(bool disposing)
 		{
-			if(m_disposed)
-			{
-				return;
-			}
-
 			if(disposing)
 			{
 				m_storeController = null;
@@ -94,9 +89,7 @@ namespace KZLib.KZInAppPurchase
 #endif
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		public void SetInAppPurchase(List<string> skuList,Func<string,string> onConvertToSkuFromPid)
@@ -126,7 +119,7 @@ namespace KZLib.KZInAppPurchase
 			for(var i=1;i<=c_maxRetryCount;i++)
 			{
 				var connectTask = m_storeController.Connect();
-				var timeoutTask = UniTask.Delay(TimeSpan.FromSeconds(CONST_TIME_OUT),cancellationToken: token);
+				var timeoutTask = UniTask.Delay(TimeSpan.FromSeconds(c_timeOut),cancellationToken: token);
 
 				var (winArgumentIndex,_,_) = await UniTask.WhenAny(connectTask.AsUniTask().SuppressCancellationThrow(),timeoutTask.SuppressCancellationThrow());
 

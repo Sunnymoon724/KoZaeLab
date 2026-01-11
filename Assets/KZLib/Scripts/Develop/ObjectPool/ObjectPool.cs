@@ -6,8 +6,10 @@ namespace KZLib.KZDevelop
 	/// <summary>
 	/// Manage pool of Objects.
 	/// </summary>
-	public class ObjectPool<TObject>where TObject : class
+	public class ObjectPool<TObject> : IDisposable where TObject : class
 	{
+		private bool m_disposed = false;
+
 		private readonly Queue<TObject> m_poolQueue = null;
 		private readonly TObject m_pivot = null;
 		private readonly Func<TObject,TObject> m_createFunc = null;
@@ -24,6 +26,36 @@ namespace KZLib.KZDevelop
 			{
 				_Fill(capacity);
 			}
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+
+			GC.SuppressFinalize(this); 
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if(m_disposed)
+			{
+				return;
+			}
+
+			if(disposing)
+			{
+				static void _Clear(TObject @object)
+				{
+					if(@object is IDisposable disposable)
+					{
+						disposable.Dispose();
+					}
+				}
+
+				Clear(_Clear);
+			}
+
+			m_disposed = true;
 		}
 
 		protected void _Fill(int capacity)

@@ -6,7 +6,8 @@ using TMPro;
 
 namespace UnityEngine.UI
 {
-	public class Slot : BaseComponentUI
+	[RequireComponent(typeof(RectTransform))]
+	public class Slot : BaseComponent
 	{
 		protected override bool UseGizmos => true;
 
@@ -58,7 +59,7 @@ namespace UnityEngine.UI
 			}
 		}
 
-		private void _OnClicked()
+		protected virtual void _OnClicked()
 		{
 			m_onClicked?.Invoke(CurrentEntryInfo);
 

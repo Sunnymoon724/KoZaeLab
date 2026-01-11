@@ -26,9 +26,9 @@ namespace KZLib
 		protected abstract void SubscribeInputAction();
 		protected abstract void UnsubscribeInputAction();
 
-		protected override void Initialize()
+		protected override void _Initialize()
 		{
-			base.Initialize();
+			base._Initialize();
 
 			InputManager.In.AddInputCon(this);
 			
@@ -63,9 +63,9 @@ namespace KZLib
 			_SetEnable(false);
 		}
 
-		protected override void Release()
+		protected override void _Release()
 		{
-			base.Release();
+			base._Release();
 
 			UnsubscribeInputAction();
 

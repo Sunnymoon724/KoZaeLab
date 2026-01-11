@@ -26,9 +26,9 @@ public class ReuseGridLayoutGroup : BaseComponent
 
 	private GameObjectPool<Slot> m_slotPool = null;
 
-	protected override void Initialize()
+	protected override void _Initialize()
 	{
-		base.Initialize();
+		base._Initialize();
 
 		m_slotPool = new GameObjectPool<Slot>(m_pivot,m_storage,m_poolCapacity,false);
 

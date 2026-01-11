@@ -17,7 +17,7 @@ public class ObserveCamera : BaseComponent
 
 	private Vector3 m_mousePosition = Vector2.zero;
 
-	protected override void Initialize()
+	protected override void _Initialize()
 	{
 		m_rotate.y = transform.rotation.eulerAngles.y;
 	}

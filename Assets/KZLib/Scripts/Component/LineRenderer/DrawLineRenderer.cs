@@ -21,9 +21,9 @@ public class DrawLineRenderer : BaseLineRenderer
 		_KillRenderer();
 	}
 
-	protected override void Release()
+	protected override void _Release()
 	{
-		base.Release();
+		base._Release();
 
 		_KillRenderer();
 	}

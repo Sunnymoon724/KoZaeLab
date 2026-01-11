@@ -6,7 +6,8 @@ using UnityEngine;
 
 namespace KZLib
 {
-	public class InputManager : LoadSingletonMB<InputManager>
+	[SingletonConfig(AutoCreate = true,PrefabPath = "Prefab/InputManager",DontDestroy = true)]
+	public class InputManager : SingletonMB<InputManager>
 	{
 		[SerializeField,HideInInspector]
 		private bool m_blocked = false;
@@ -16,14 +17,14 @@ namespace KZLib
 
 		private readonly List<InputController> m_activeConList = new();
 
-		protected override void Initialize()
-		{
-			base.Initialize();
-		}
+		// protected override void _Initialize()
+		// {
+		// 	base._Initialize();
+		// }
 
-		protected override void Release()
+		protected override void _Release()
 		{
-			base.Release();
+			base._Release();
 
 			m_activeConList.Clear();
 		}

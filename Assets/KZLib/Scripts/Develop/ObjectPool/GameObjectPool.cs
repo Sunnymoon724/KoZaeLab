@@ -30,6 +30,24 @@ namespace KZLib.KZDevelop
 			_Fill(capacity);
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			if(disposing)
+			{
+				static void _Clear(TComponent component)
+				{
+					if(component != null && component.gameObject != null)
+					{
+						component.DestroyObject();
+					}
+				}
+
+				Clear(_Clear);
+			}
+
+			base.Dispose(disposing); 
+		}
+
 		private static TComponent _CopyObject(TComponent pivot) 
 		{
 			return pivot.CopyObject() as TComponent;
@@ -37,7 +55,10 @@ namespace KZLib.KZDevelop
 
 		protected void _SetChild(Transform parent,Transform child)
 		{
-			parent.SetChild(child,m_worldPositionStays);
+			if(parent)
+			{
+				parent.SetChild(child,m_worldPositionStays);
+			}
 		}
 
 		public override void Put(TComponent item)

@@ -130,12 +130,7 @@ public static partial class TransformExtension
 
 	public static void SetChild(this Transform origin,Transform child,bool worldPositionStays = true,bool isSameLayer = true)
 	{
-		if(!_IsValid(origin))
-		{
-			return;
-		}
-
-		if(!_IsValid(origin))
+		if(!_IsValid(origin) || !_IsValid(child))
 		{
 			return;
 		}

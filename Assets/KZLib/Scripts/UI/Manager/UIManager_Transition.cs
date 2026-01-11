@@ -4,7 +4,7 @@ using KZLib.KZUtility;
 
 namespace KZLib
 {
-	public partial class UIManager : LoadSingletonMB<UIManager>
+	public partial class UIManager : SingletonMB<UIManager>
 	{
 		public void PlayTransitionOutIn(CommonUINameTag transitionNameTag,Func<UniTask> onPlayTask)
 		{

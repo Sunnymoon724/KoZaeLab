@@ -5,22 +5,26 @@ using UnityEngine;
 using R3;
 
 [RequireComponent(typeof(RectTransform))]
-public class SafeAreaChecker : BaseComponentUI
+public class SafeAreaChecker : BaseComponent
 {
+	[SerializeField]
+	private RectTransform m_rectTransform = null;
+
 	private IDisposable m_subscription = null;
 
-	protected override void Initialize()
+	protected override void _Initialize()
 	{
-		base.Initialize();
+		base._Initialize();
 
+		m_rectTransform = GetComponent<RectTransform>();
 		m_subscription = GlobalMessagePipe.GetSubscriber<CommonNoticeTag,Unit>().Subscribe(CommonNoticeTag.ChangedDeviceResolution,ApplyResolution);
 
 		ApplyResolution(Unit.Default);
 	}
 	
-	protected override void Release()
+	protected override void _Release()
 	{
-		base.Release();
+		base._Release();
 
 		m_subscription?.Dispose();
 	}
@@ -46,10 +50,19 @@ public class SafeAreaChecker : BaseComponentUI
 
 		if(anchorMin.x >= 0 && anchorMin.y >= 0 && anchorMax.x >= 0 && anchorMax.y >= 0)
 		{
-			m_currentRect.anchorMin = anchorMin;
-			m_currentRect.anchorMax = anchorMax;
+			m_rectTransform.anchorMin = anchorMin;
+			m_rectTransform.anchorMax = anchorMax;
 		}
 	}
 
+	protected override void Reset()
+	{
+		base.Reset();
+		
+		if(!m_rectTransform)
+		{
+			m_rectTransform = GetComponent<RectTransform>();
+		}
+	}
 }
 #endif

@@ -17,16 +17,16 @@ public abstract class BaseComponent : SerializedMonoBehaviour
 
 	protected void Awake()
 	{
-		Initialize();
+		_Initialize();
 	}
 
 	protected void OnDestroy()
 	{
-		Release();
+		_Release();
 	}
 
-	protected virtual void Initialize() { }
-	protected virtual void Release() { }
+	protected virtual void _Initialize() { }
+	protected virtual void _Release() { }
 
 	protected virtual void OnEnable() { }
 	protected virtual void OnDisable() { }

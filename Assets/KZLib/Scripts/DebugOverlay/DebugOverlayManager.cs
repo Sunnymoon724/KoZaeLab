@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace KZLib
 {
-	public class DebugOverlayManager : AutoSingletonMB<DebugOverlayManager>
+	[SingletonConfig(AutoCreate = true,DontDestroy = true)]
+	public class DebugOverlayManager : SingletonMB<DebugOverlayManager>
 	{
 		private const float c_updatePeriod = 0.25f;
 
@@ -25,14 +26,9 @@ namespace KZLib
 			}
 		}
 
-		protected override void Initialize()
+		protected override void _Release()
 		{
-			base.Initialize();
-		}
-
-		protected override void Release()
-		{
-			base.Release();
+			base._Release();
 
 			if(UIManager.HasInstance)
 			{

@@ -1,8 +1,8 @@
 using System;
 
-public enum WindowType { Panel, PopUp, World };
+public enum WindowPrefabType { Panel, PopUp, World };
 
-public enum UIPriorityType
+public enum WindowPriorityType
 {
 	Backmost,		//
 	Back,			//

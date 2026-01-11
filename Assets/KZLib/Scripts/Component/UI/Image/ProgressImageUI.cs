@@ -49,9 +49,9 @@ public class ProgressImageUI : BaseImageUI
 
 	public float CurrentProgress => (CurrentValue-m_minValue)/(m_maxValue-m_minValue);
 
-	protected override void Initialize()
+	protected override void _Initialize()
 	{
-		base.Initialize();
+		base._Initialize();
 
 		SetValue(m_minValue);
 	}

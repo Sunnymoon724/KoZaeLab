@@ -13,9 +13,9 @@ public class AdjustDragThreshold : BaseComponent
 	private const int c_reference_dpi = 100;
 	private const float c_reference_pixel_drag = 5.0f;
 
-	protected override void Initialize()
+	protected override void _Initialize()
 	{
-		base.Initialize();
+		base._Initialize();
 
 		if(m_runOnAwake)
 		{

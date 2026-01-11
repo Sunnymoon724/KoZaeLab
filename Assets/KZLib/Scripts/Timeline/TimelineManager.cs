@@ -8,8 +8,6 @@ namespace KZLib
 {
 	public class TimelineManager : Singleton<TimelineManager>
 	{
-		private bool m_disposed = false;
-
 		private PlayableDirector m_director = null;
 		private GameObject m_cutSceneObject = null;
 
@@ -23,21 +21,16 @@ namespace KZLib
 		public bool IsPlayingCutScene => m_playingCutScene;
 		public double DirectorTime => m_director != null ? m_director.time : -1.0;
 
-		protected override void Release(bool disposing)
-		{
-			if(m_disposed)
-			{
-				return;
-			}
+		private TimelineManager() { }
 
+		protected override void _Release(bool disposing)
+		{
 			if(disposing)
 			{
 				_RemoveCutScene();
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		public void LoadCutScene(string cutScenePath,bool useSkip)

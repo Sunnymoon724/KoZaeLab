@@ -10,26 +10,21 @@ namespace KZLib.KZData
 	{
 		private const string c_editorYaml = "Editor.yaml";
 
-		private bool m_disposed = false;
-
 		private readonly Dictionary<string,IConfig> m_configDict = new();
 
 		private readonly static Type[] s_defaultConfigArray = new Type[] { typeof(GameConfig),typeof(OptionConfig),typeof(ServiceConfig),typeof(EditorConfig) };
 
-		protected override void Initialize()
+		private ConfigManager() { }
+
+		protected override void _Initialize()
 		{
-			base.Initialize();
+			base._Initialize();
 
 			_Access(typeof(GameConfig));
 		}
 
-		protected override void Release(bool disposing)
+		protected override void _Release(bool disposing)
 		{
-			if(m_disposed)
-			{
-				return;
-			}
-
 			if(disposing)
 			{
 				foreach(var pair in m_configDict)
@@ -43,9 +38,7 @@ namespace KZLib.KZData
 				m_configDict.Clear();
 			}
 
-			m_disposed = true;
-
-			base.Release(disposing);
+			base._Release(disposing);
 		}
 
 		/// <summary>

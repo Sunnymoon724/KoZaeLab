@@ -7,12 +7,15 @@ using R3;
 namespace KZLib
 {
     [RequireComponent(typeof(AudioSource))]
-    public partial class SoundManager : LoadSingletonMB<SoundManager>
+	[SingletonConfig(AutoCreate = true,PrefabPath = "Prefab/SoundManager",DontDestroy = true)]
+    public partial class SoundManager : SingletonMB<SoundManager>
 	{
 		private IDisposable m_soundSubscription;
 
-		protected override void Initialize()
+		protected override void _Initialize()
 		{
+			base._Initialize();
+
 			if(m_bgmSource)
 			{
 				m_bgmSource = GetComponent<AudioSource>();
@@ -30,8 +33,10 @@ namespace KZLib
 			_OnChangeSoundOption(optionCfg.CurrentSound);
 		}
 
-		protected override void Release()
+		protected override void _Release()
 		{
+			base._Release();
+
 			m_sfxList.Clear();
 		}
 

@@ -15,9 +15,9 @@ namespace KZLib.KZDevelop
 		[SerializeField,ValueDropdown(nameof(StateNameGroup))]
 		private string m_animationName = null;
 
-		protected override void Initialize()
+		protected override void _Initialize()
 		{
-			base.Initialize();
+			base._Initialize();
 
 			m_animator.speed = 0.0f;
 			m_animator.Play(m_animationName,0,0.0f);
