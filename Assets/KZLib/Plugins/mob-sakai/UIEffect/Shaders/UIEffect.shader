@@ -74,7 +74,7 @@ Shader "Hidden/UI/Default (UIEffect)"
             #pragma shader_feature_fragment _ SOFTMASK_EDITOR
             #pragma shader_feature_local_fragment _ SOFTMASKABLE
             #if SOFTMASKABLE
-            #include "Packages/com.coffee.softmask-for-ugui/Shaders/SoftMask.cginc"
+            #include "../../SoftMaskForUGUI/Shaders/SoftMask.cginc"
             #endif
             // ==== SOFTMASKABLE END ====
 
@@ -157,7 +157,7 @@ Shader "Hidden/UI/Default (UIEffect)"
                 return color;
             }
 
-            #include "Packages/com.coffee.ui-effect/Shaders/UIEffect.cginc"
+            #include "UIEffect.cginc"
             // ==== UIEFFECT END ====
 
             half4 frag(v2f IN) : SV_Target
