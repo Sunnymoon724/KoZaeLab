@@ -31,7 +31,7 @@ namespace KZLib.KZNetwork
 
 		public void GetGoogleSheet(string sheetName,int sheetOrder,Action<string> onAction)
 		{
-			GetGoogleSheetAsync(sheetName,sheetOrder).ContinueWith(onAction);
+			GetGoogleSheetAsync(sheetName,sheetOrder).ContinueWith(onAction).Forget();
 		}
 
 		public async UniTask<string> GetGoogleSheetAsync(string sheetName,int sheetOrder)
@@ -75,7 +75,7 @@ namespace KZLib.KZNetwork
 
 		public void GetGoogleDriveEntry(string folderName,Action<List<string>> onAction)
 		{
-			GetGoogleDriveEntryAsync(folderName).ContinueWith(onAction);
+			GetGoogleDriveEntryAsync(folderName).ContinueWith(onAction).Forget();
 		}
 
 		public async UniTask<List<string>> GetGoogleDriveEntryAsync(string folderName)

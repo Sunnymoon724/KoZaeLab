@@ -4,7 +4,6 @@ using Cysharp.Threading.Tasks;
 using KZLib.KZData;
 using KZLib.KZUtility;
 using Newtonsoft.Json.Linq;
-using Sirenix.Utilities;
 
 namespace KZLib.KZNetwork
 {
@@ -12,12 +11,12 @@ namespace KZLib.KZNetwork
 	{
 		public void GetTrelloBoard(Action<List<string>> onAction)
 		{
-			GetTrelloBoardAsync().ContinueWith(onAction);
+			GetTrelloBoardAsync().ContinueWith(onAction).Forget();
 		}
 
 		public void GetTrelloBoard(string trelloKey,Action<List<string>> onAction)
 		{
-			GetTrelloBoardAsync(trelloKey).ContinueWith(onAction);
+			GetTrelloBoardAsync(trelloKey).ContinueWith(onAction).Forget();
 		}
 
 		public async UniTask<List<string>> GetTrelloBoardAsync()
@@ -43,12 +42,12 @@ namespace KZLib.KZNetwork
 
 		public void GetTrelloList(string boardId,Action<List<string>> onAction)
 		{
-			GetTrelloListAsync(boardId).ContinueWith(onAction);
+			GetTrelloListAsync(boardId).ContinueWith(onAction).Forget();
 		}
 
 		public void GetTrelloList(string coreKey,string boardId,Action<List<string>> onAction)
 		{
-			GetTrelloListAsync(coreKey,boardId).ContinueWith(onAction);
+			GetTrelloListAsync(coreKey,boardId).ContinueWith(onAction).Forget();
 		}
 
 		public async UniTask<List<string>> GetTrelloListAsync(string boardId)
@@ -81,12 +80,12 @@ namespace KZLib.KZNetwork
 
 		public void GetTrelloCard(string listId,Action<List<string>> onAction)
 		{
-			GetTrelloCardAsync(listId).ContinueWith(onAction);
+			GetTrelloCardAsync(listId).ContinueWith(onAction).Forget();
 		}
 
 		public void GetTrelloCard(string trelloKey,string listId,Action<List<string>> onAction)
 		{
-			GetTrelloCardAsync(trelloKey,listId).ContinueWith(onAction);
+			GetTrelloCardAsync(trelloKey,listId).ContinueWith(onAction).Forget();
 		}
 
 		public async UniTask<List<string>> GetTrelloCardAsync(string listId)
