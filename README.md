@@ -1,11 +1,13 @@
 # KoZae's Code Lab
 
 A research lab focused on developing various codes into a reusable library.
-
+<br>
 The library requires the following Unity Assets: **DotweenPro** and **Odin Inspector** to function.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blueviolet.svg)](https://github.com/Sunnymoon724/KoZaeLab/blob/master/LICENSE)
 [![Unity Version](https://img.shields.io/badge/Unity-6.3%20or%20later-important)](https://unity3d.com/)
+
+***
 
 ## 🧭Table of Contents
 * [Getting Started](#getting-started)
@@ -56,7 +58,7 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 
 <a id="third-party-attributions"></a>
 ## 🤝 Third Party Attributions
-Please refer to the following file for the source and licensing information of all third-party libraries and code used in this library.
+Please refer to the following file for the source and licensing information of all third party libraries and code used in this library.
 [**ATTRIBUTIONS.md**](ATTRIBUTIONS.md)
 
 ***
