@@ -136,11 +136,11 @@ namespace KZLib.KZWindow
 
 					if(result)
 					{
-						LogSvc.Editor.I($"{m_prefab.name} is changed. and saved to {m_filePath}.");
+						LogChannel.Editor.I($"{m_prefab.name} is changed. and saved to {m_filePath}.");
 					}
 					else
 					{
-						LogSvc.Editor.W($"{m_prefab.name} try to change and save. but not saved to {m_filePath}.");
+						LogChannel.Editor.W($"{m_prefab.name} try to change and save. but not saved to {m_filePath}.");
 					}
 				}
 			}

@@ -44,7 +44,7 @@ public class MagnetImageUI : BaseImageUI
 		{
 			if(this == value)
 			{
-				LogSvc.UI.W("Target is not self.");
+				LogChannel.UI.W("Target is not self.");
 
 				return;
 			}
@@ -127,7 +127,7 @@ public class MagnetImageUI : BaseImageUI
 				return DirectionType.None;
 
 			default:
-				LogSvc.UI.E($"{directionType} is not DirectionType.");
+				LogChannel.UI.E($"{directionType} is not DirectionType.");
 				return DirectionType.None;
 		}
 	}

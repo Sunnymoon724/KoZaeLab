@@ -56,7 +56,7 @@ public class SubtitlePanel : BasePanel
 
 			if(!textAsset)
 			{
-				LogSvc.System.E($"Subtitle path is wrong. [{subtitlePath}]");
+				LogChannel.System.E($"Subtitle path is wrong. [{subtitlePath}]");
 
 				return;
 			}
@@ -65,7 +65,7 @@ public class SubtitlePanel : BasePanel
 
 			if(subtitleText.IsEmpty())
 			{
-				LogSvc.System.E($"Subtitle is empty");
+				LogChannel.System.E($"Subtitle is empty");
 
 				return;
 			}

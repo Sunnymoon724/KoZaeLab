@@ -45,7 +45,7 @@ namespace KZLib.KZMenu
 			{
 				if(!FileUtility.IsExcelFile(lingoFilePath))
 				{
-					LogSvc.System.W($"{lingoFilePath} is not exist. -> generate failed");
+					LogChannel.System.W($"{lingoFilePath} is not exist. -> generate failed");
 
 					continue;
 				}
@@ -107,7 +107,7 @@ namespace KZLib.KZMenu
 							}
 						default:
 							{
-								LogSvc.System.W($"Excel file name must be String or Asset.");
+								LogChannel.System.W($"Excel file name must be String or Asset.");
 
 								break;
 							}
@@ -148,7 +148,7 @@ namespace KZLib.KZMenu
 				}
 				catch(Exception exception)
 				{
-					LogSvc.System.E(exception);
+					LogChannel.System.E(exception);
 
 					return;
 				}
@@ -164,7 +164,7 @@ namespace KZLib.KZMenu
 
 			if(schemeArray == null)
 			{
-				LogSvc.System.E($"{c_key} is not found in {sheetName}");
+				LogChannel.System.E($"{c_key} is not found in {sheetName}");
 
 				return;
 			}
@@ -219,7 +219,7 @@ namespace KZLib.KZMenu
 
 			if(schemeArray == null)
 			{
-				LogSvc.System.E($"{c_key} is not found in {sheetName}");
+				LogChannel.System.E($"{c_key} is not found in {sheetName}");
 
 				return;
 			}

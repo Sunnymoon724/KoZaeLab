@@ -70,7 +70,7 @@ namespace KZLib.KZData
 
 				if(newLocal == null)
 				{
-					LogSvc.System.E("Localization is not include English locale");
+					LogChannel.System.E("Localization is not include English locale");
 
 					return;
 				}
@@ -93,7 +93,7 @@ namespace KZLib.KZData
 
 			if(localizedText == key)
 			{
-				LogSvc.System.W($"{key} is not exist in localization.");
+				LogChannel.System.W($"{key} is not exist in localization.");
 
 				return key;
 			}

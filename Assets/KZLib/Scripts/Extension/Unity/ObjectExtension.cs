@@ -56,7 +56,7 @@ public static class ObjectExtension
 		{
 			if(isShowLog)
 			{
-				LogSvc.System.E("Object is null");
+				LogChannel.System.E("Object is null");
 			}
 
 			return false;

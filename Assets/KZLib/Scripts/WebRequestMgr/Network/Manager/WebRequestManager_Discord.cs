@@ -28,7 +28,7 @@ namespace KZLib.KZNetwork
 		{
 			if(link.IsEmpty())
 			{
-				LogSvc.Network.E("Link is empty");
+				LogChannel.Network.E("Link is empty");
 
 				return;
 			}

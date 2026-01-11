@@ -9,7 +9,7 @@ public class LinkButtonUI : BaseButtonUI
 	{
 		if(m_linkPath.IsEmpty())
 		{
-			LogSvc.System.I("Link is empty");
+			LogChannel.System.I("Link is empty");
 
 			return;
 		}

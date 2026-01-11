@@ -29,7 +29,7 @@ namespace KZLib.KZSample.Develop
 
 		private async UniTaskVoid PlayTestAsync()
 		{
-			LogSvc.Test.I("Schedule test start");
+			LogChannel.Test.I("Schedule test start");
 
 			m_stopwatch.Start();
 
@@ -37,7 +37,7 @@ namespace KZLib.KZSample.Develop
 
 			m_stopwatch.Stop();
 
-			LogSvc.Test.I($"Schedule test stop [duration: {m_stopwatch.ElapsedMilliseconds/1000.0f}s]");
+			LogChannel.Test.I($"Schedule test stop [duration: {m_stopwatch.ElapsedMilliseconds/1000.0f}s]");
 		}
 	}
 }

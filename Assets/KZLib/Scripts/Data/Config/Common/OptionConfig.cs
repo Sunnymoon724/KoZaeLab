@@ -151,7 +151,7 @@ namespace KZLib.KZData
 				case TypeCode.Object when type == typeof(ScreenResolution):
 					return _TryParseScreenResolutionValue(name,text,out value);
 				default:
-					LogSvc.System.E($"Not supported propertyType ({type}), name ({name})");
+					LogChannel.System.E($"Not supported propertyType ({type}), name ({name})");
 
 					return false;
 			}
@@ -163,7 +163,7 @@ namespace KZLib.KZData
 			{
 				value = string.Empty;
 
-				LogSvc.System.E($"{name} parse failed from {text}.");
+				LogChannel.System.E($"{name} parse failed from {text}.");
 
 				return false;
 			}
@@ -179,7 +179,7 @@ namespace KZLib.KZData
 			{
 				value = 0;
 
-				LogSvc.System.E($"{name} parse failed from {text}.");
+				LogChannel.System.E($"{name} parse failed from {text}.");
 
 				return false;
 			}
@@ -195,7 +195,7 @@ namespace KZLib.KZData
 			{
 				value = false;
 
-				LogSvc.System.E($"{name} parse failed from {text}.");
+				LogChannel.System.E($"{name} parse failed from {text}.");
 
 				return false;
 			}
@@ -211,7 +211,7 @@ namespace KZLib.KZData
 			{
 				value = 0.0f;
 
-				LogSvc.System.E($"{name} parse failed from {text}.");
+				LogChannel.System.E($"{name} parse failed from {text}.");
 
 				return false;
 			}
@@ -227,7 +227,7 @@ namespace KZLib.KZData
 			{
 				value = default;
 
-				LogSvc.System.E($"{name} parse failed from {text}.");
+				LogChannel.System.E($"{name} parse failed from {text}.");
 
 				return false;
 			}
@@ -243,7 +243,7 @@ namespace KZLib.KZData
 			{
 				value = SoundVolume.zero;
 
-				LogSvc.System.E($"{name} parse failed from {text}.");
+				LogChannel.System.E($"{name} parse failed from {text}.");
 
 				return false;
 			}
@@ -259,7 +259,7 @@ namespace KZLib.KZData
 			{
 				value = ScreenResolution.hd;
 
-				LogSvc.System.E($"{name} parse failed from {text}.");
+				LogChannel.System.E($"{name} parse failed from {text}.");
 
 				return false;
 			}

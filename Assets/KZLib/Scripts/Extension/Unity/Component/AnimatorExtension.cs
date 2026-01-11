@@ -307,7 +307,7 @@ public static class AnimatorExtension
 	{
 		if(!animator)
 		{
-			LogSvc.System.E("Animator is null");
+			LogChannel.System.E("Animator is null");
 
 			return false;
 		}

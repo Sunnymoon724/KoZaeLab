@@ -46,7 +46,7 @@ public static class MaterialExtension
 	{
 		if(!material)
 		{
-			LogSvc.System.E("Material is null");
+			LogChannel.System.E("Material is null");
 
 			return false;
 		}

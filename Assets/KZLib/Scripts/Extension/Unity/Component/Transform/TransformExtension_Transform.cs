@@ -146,7 +146,7 @@ public static partial class TransformExtension
 
 		if(!camera)
 		{
-			LogSvc.System.E("Camera is null.");
+			LogChannel.System.E("Camera is null.");
 
 			return default;
 		}
@@ -173,7 +173,7 @@ public static partial class TransformExtension
 
 		if(!_camera)
 		{
-			LogSvc.System.E("Camera is null.");
+			LogChannel.System.E("Camera is null.");
 
 			return Vector3.zero;
 		}

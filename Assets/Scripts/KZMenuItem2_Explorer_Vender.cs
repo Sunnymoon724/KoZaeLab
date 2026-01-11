@@ -79,7 +79,7 @@ namespace KZLib.KZMenu
 
 				if(!versionResultInfo.Result)
 				{
-					LogSvc.Editor.E($"{displayName} is error - {versionResultInfo.Text}");
+					LogChannel.Editor.E($"{displayName} is error - {versionResultInfo.Text}");
 
 					errorCount++;
 
@@ -91,7 +91,7 @@ namespace KZLib.KZMenu
 
 				if(!gitHubResultInfo.Result)
 				{
-					LogSvc.Editor.E($"{displayName} is error - {gitHubResultInfo.Text}");
+					LogChannel.Editor.E($"{displayName} is error - {gitHubResultInfo.Text}");
 
 					errorCount++;
 
@@ -105,14 +105,14 @@ namespace KZLib.KZMenu
 				{
 					if(new Version(latestVersion).CompareTo(new Version(localVersion)) > 0)
 					{
-						LogSvc.Editor.W($"{displayName} is need to update - [Local:{localVersion} / Latest:{latestVersion}] - <a href=\"https://github.com/{repositoryName}\">{displayName}</a>");
+						LogChannel.Editor.W($"{displayName} is need to update - [Local:{localVersion} / Latest:{latestVersion}] - <a href=\"https://github.com/{repositoryName}\">{displayName}</a>");
 
 						updatedCount++;
 					}
 				}
 				catch(Exception exception)
 				{
-					LogSvc.Editor.E($"{displayName} is error - {exception.Message}");
+					LogChannel.Editor.E($"{displayName} is error - {exception.Message}");
 				}
 			}
 			

@@ -90,15 +90,15 @@ namespace KZLib.KZMenu
 
 			if(textList.Count == 0)
 			{
-				LogSvc.Editor.I("Missing component is not found.");
+				LogChannel.Editor.I("Missing component is not found.");
 			}
 			else
 			{
-				LogSvc.Editor.I("Missing component list");
+				LogChannel.Editor.I("Missing component list");
 
 				for(var i=0;i<textList.Count;i++)
 				{
-					LogSvc.Editor.I(textList[i]);
+					LogChannel.Editor.I(textList[i]);
 				}
 			}
 		}
@@ -136,11 +136,11 @@ namespace KZLib.KZMenu
 
 			if(textListDict.Count == 0)
 			{
-				LogSvc.Editor.I("Missing meshFilter is not found.");
+				LogChannel.Editor.I("Missing meshFilter is not found.");
 			}
 			else
 			{
-				LogSvc.Editor.I("Missing meshFilter list");
+				LogChannel.Editor.I("Missing meshFilter list");
 				var builder = new StringBuilder();
 
 				foreach(var pair in textListDict)
@@ -157,7 +157,7 @@ namespace KZLib.KZMenu
 
 					builder.AppendLine();
 
-					LogSvc.Editor.I(builder.ToString());
+					LogChannel.Editor.I(builder.ToString());
 				}
 			}
 		}
@@ -213,13 +213,13 @@ namespace KZLib.KZMenu
 		{
 			if(Application.internetReachability != NetworkReachability.NotReachable)
 			{
-				LogSvc.Editor.I($"Network is connected. [status : {Application.internetReachability}]");
+				LogChannel.Editor.I($"Network is connected. [status : {Application.internetReachability}]");
 
 				return;
 			}
 			else
 			{
-				LogSvc.Editor.W($"Network is not connected.");
+				LogChannel.Editor.W($"Network is not connected.");
 			}
 		}
 	}

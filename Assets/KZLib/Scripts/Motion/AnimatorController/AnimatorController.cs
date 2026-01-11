@@ -58,7 +58,7 @@
 
 // 		private void OnPlayEvent(string text)
 // 		{
-// 			Logger.Build.W(text);
+// 			LogChannel.Build.W(text);
 // 		}
 
 

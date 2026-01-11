@@ -81,7 +81,7 @@ public class VideoPanel : BasePanel
 
 			if(!videoClip)
 			{
-				LogSvc.System.E($"Video path is wrong. [{videoInfo.VideoPath}]");
+				LogChannel.System.E($"Video path is wrong. [{videoInfo.VideoPath}]");
 
 				return;
 			}

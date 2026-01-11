@@ -75,7 +75,7 @@ public abstract class EffectClip : BaseComponent
 
 		if(!IsPlayable)
 		{
-			LogSvc.FX.W($"{gameObject.name} duration is 0.");
+			LogChannel.FX.W($"{gameObject.name} duration is 0.");
 
 			EndEffect(false);
 

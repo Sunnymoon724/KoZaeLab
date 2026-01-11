@@ -27,11 +27,11 @@ namespace KZLib.KZDevelop
 
 			if(textListDict.Count == 0)
 			{
-				LogSvc.Editor.I("MeshFilter is not found.");
+				LogChannel.Editor.I("MeshFilter is not found.");
 			}
 			else
 			{
-				LogSvc.Editor.I("MeshFilter list");
+				LogChannel.Editor.I("MeshFilter list");
 
 				var builder = new StringBuilder();
 
@@ -49,7 +49,7 @@ namespace KZLib.KZDevelop
 
 					builder.AppendLine();
 
-					LogSvc.Editor.I(builder.ToString());
+					LogChannel.Editor.I(builder.ToString());
 				}
 			}
 		}

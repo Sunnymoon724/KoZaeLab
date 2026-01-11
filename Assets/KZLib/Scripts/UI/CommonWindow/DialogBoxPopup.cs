@@ -40,7 +40,7 @@ public class DialogBoxPopup : BasePopup
 
 			if(entryInfo.OnClicked == null)
 			{
-				LogSvc.UI.E($"{entryInfo.Name} is null");
+				LogChannel.UI.E($"{entryInfo.Name} is null");
 
 				return;
 			}

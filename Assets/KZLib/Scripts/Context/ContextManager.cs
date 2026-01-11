@@ -81,7 +81,7 @@ namespace KZLib
 
 				if(context == null)
 				{
-					LogSvc.System.E($"{key}context is not exist.");
+					LogChannel.System.E($"{key}context is not exist.");
 
 					return null;
 				}

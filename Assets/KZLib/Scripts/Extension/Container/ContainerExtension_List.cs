@@ -26,7 +26,7 @@ public static partial class ContainerExtension
 
 		if(!list.Contains(value))
 		{
-			LogSvc.System.E($"List does not include {value}");
+			LogChannel.System.E($"List does not include {value}");
 
 			return default;
 		}
@@ -67,7 +67,7 @@ public static partial class ContainerExtension
 
 		if(!list.ContainsIndex(index1) || !list.ContainsIndex(index2))
 		{
-			LogSvc.System.E($"Sources does not include {index1} or {index2}");
+			LogChannel.System.E($"Sources does not include {index1} or {index2}");
 
 			return;
 		}

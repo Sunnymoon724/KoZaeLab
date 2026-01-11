@@ -22,8 +22,6 @@ namespace KZLib.KZMenu
 		private static void _OnOpenLibraryProject()
 		{
 			var solutionPath = Path.Combine(Global.PROJECT_PARENT_PATH,"KoZaeLibrary");
-			
-			LogSvc.Build.I(solutionPath);
 
 			Process.Start(new ProcessStartInfo
 			{

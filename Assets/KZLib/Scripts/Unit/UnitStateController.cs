@@ -52,7 +52,7 @@ namespace KZLib
 			{
 				if(!m_stateFuncDict.TryGetValue(curState, out var stateFunc))
 				{
-					LogSvc.System.E($"{curState} state not found");
+					LogChannel.System.E($"{curState} state not found");
 
 					return;
 				}
@@ -63,7 +63,7 @@ namespace KZLib
 
 				_ReadyState();
 
-				LogSvc.System.I($"{name} is entered {curState}");
+				LogChannel.System.I($"{name} is entered {curState}");
 
 				var nextState = await stateFunc.Invoke(m_tokenSource.Token,param);
 

@@ -18,7 +18,7 @@ public static partial class CommonUtility
 	{
 		if(!camera)
 		{
-			LogSvc.System.E("Camera is null");
+			LogChannel.System.E("Camera is null");
 
 			return null;
 		}
@@ -46,7 +46,7 @@ public static partial class CommonUtility
 	{
 		if(width == 0 || height == 0)
 		{
-			LogSvc.System.E($"Size is below zero {width} or {height}");
+			LogChannel.System.E($"Size is below zero {width} or {height}");
 
 			return null;
 		}

@@ -40,7 +40,7 @@ namespace UnityEngine.UI
 		{
 			if(!m_titleRect)
 			{
-				LogSvc.UI.W("header is null");
+				LogChannel.UI.W("header is null");
 
 				return;
 			}

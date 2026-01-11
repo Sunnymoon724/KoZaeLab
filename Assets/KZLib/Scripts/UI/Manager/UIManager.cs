@@ -87,7 +87,7 @@ namespace KZLib
 
 			if(!prefab)
 			{
-				LogSvc.UI.E($"{nameTag} is not exist.");
+				LogChannel.UI.E($"{nameTag} is not exist.");
 
 				return null;
 			}
@@ -96,7 +96,7 @@ namespace KZLib
 			{
 				prefab.DestroyObject();
 
-				LogSvc.UI.E($"Component is not exist in {nameTag}.");
+				LogChannel.UI.E($"Component is not exist in {nameTag}.");
 
 				return null;
 			}
@@ -105,7 +105,7 @@ namespace KZLib
 			{
 				prefab.DestroyObject();
 
-				LogSvc.UI.E($"UI nameTag is not matched. [{window.NameTag} != {nameTag}]");
+				LogChannel.UI.E($"UI nameTag is not matched. [{window.NameTag} != {nameTag}]");
 
 				return null;
 			}

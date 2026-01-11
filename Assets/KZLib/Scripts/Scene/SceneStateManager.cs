@@ -256,27 +256,27 @@ namespace KZLib
 		{
 			if(sceneName.IsEmpty())
 			{
-				LogSvc.System.E("Scene name is empty.");
+				LogChannel.System.E("Scene name is empty.");
 
 				return;
 			}
 
 			onUpdateProgress?.Invoke(0.0f);
 
-			LogSvc.System.I($"{sceneName} create start.");
+			LogChannel.System.I($"{sceneName} create start.");
 
 			var sceneType = Type.GetType($"{sceneName}, Assembly-CSharp");
 
 			if(sceneType == null)
 			{
-				LogSvc.System.E($"{sceneName} is not exists.");
+				LogChannel.System.E($"{sceneName} is not exists.");
 
 				return;
 			}
 
 			if(Activator.CreateInstance(sceneType) is not SceneState sceneState)
 			{
-				LogSvc.System.E($"{sceneName} create failed.");
+				LogChannel.System.E($"{sceneName} create failed.");
 
 				return;
 			}
@@ -290,7 +290,7 @@ namespace KZLib
 
 			await sceneState.InitializeAsync(_UpdateProgress);
 
-			LogSvc.System.I($"{sceneName} create end.");
+			LogChannel.System.I($"{sceneName} create end.");
 
 			onUpdateProgress?.Invoke(1.0f);
 		}
@@ -306,7 +306,7 @@ namespace KZLib
 
 			onUpdateProgress?.Invoke(0.0f);
 
-			LogSvc.System.I($"{current.SceneName} destroy start.");
+			LogChannel.System.I($"{current.SceneName} destroy start.");
 
 			// remove current scene
 			m_sceneStateStack.Pop();
@@ -328,7 +328,7 @@ namespace KZLib
 #if UNITY_EDITOR
 			EditorUtility.UnloadUnusedAssetsImmediate(true);
 #endif
-			LogSvc.System.I($"{current.SceneName} destroy end.");
+			LogChannel.System.I($"{current.SceneName} destroy end.");
 
 			_OnLowMemory();
 

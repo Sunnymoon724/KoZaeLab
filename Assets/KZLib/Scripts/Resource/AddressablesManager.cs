@@ -43,6 +43,8 @@ namespace KZLib
 				var status = handle.GetDownloadStatus();
 
 				onUpdateProgress?.Invoke(status.Percent,status.DownloadedBytes,status.TotalBytes);
+
+				await UniTask.Yield();
 			}
 
 			var result = handle.Status == AsyncOperationStatus.Succeeded;
@@ -63,7 +65,7 @@ namespace KZLib
 			{
 				if(!errorLog.IsEmpty())
 				{
-					LogSvc.System.E(errorLog);
+					LogChannel.System.E(errorLog);
 				}
 
 				return false;
@@ -74,7 +76,7 @@ namespace KZLib
 		{
 			if(!m_assetInfoDict.TryGetValue(path,out var result))
 			{
-				LogSvc.System.E($"Asset is not exist. [{path}]");
+				LogChannel.System.E($"Asset is not exist. [{path}]");
 
 				return null;
 			}
@@ -99,7 +101,7 @@ namespace KZLib
 
 			if(objectList.IsNullOrEmpty())
 			{
-				LogSvc.System.E($"Asset is not exist. [{path}]");
+				LogChannel.System.E($"Asset is not exist. [{path}]");
 
 				return Array.Empty<TObject>();
 			}
@@ -111,7 +113,7 @@ namespace KZLib
 		{
 			if(labelArray.IsNullOrEmpty())
 			{
-				LogSvc.System.E($"LabelArray is null or empty.");
+				LogChannel.System.E($"LabelArray is null or empty.");
 
 				return;
 			}

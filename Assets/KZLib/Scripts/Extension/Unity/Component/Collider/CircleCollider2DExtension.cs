@@ -45,7 +45,7 @@ public static class CircleCollider2DExtension
 	{
 		if(!circleCollider2D)
 		{
-			LogSvc.System.E("CircleCollider2D is null");
+			LogChannel.System.E("CircleCollider2D is null");
 
 			return false;
 		}

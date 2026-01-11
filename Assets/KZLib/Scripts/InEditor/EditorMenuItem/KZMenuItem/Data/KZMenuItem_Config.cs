@@ -23,7 +23,7 @@ namespace KZLib.KZMenu
 			{
 				if(!FileUtility.IsExcelFile(configFilePath))
 				{
-					LogSvc.System.W($"{configFilePath} is not exist. -> generate failed");
+					LogChannel.System.W($"{configFilePath} is not exist. -> generate failed");
 
 					continue;
 				}
@@ -34,18 +34,18 @@ namespace KZLib.KZMenu
 
 					if(ConfigManager.IsDefaultConfig(fileName))
 					{
-						LogSvc.System.W($"{fileName} is default config. -> generate failed");
+						LogChannel.System.W($"{fileName} is default config. -> generate failed");
 
 						continue;
 					}
 
 					ConfigGenerator.GenerateConfig(configFilePath,outputRoute.AbsolutePath,templateFilePath);
 
-					LogSvc.System.I($"{fileName} is generated.");
+					LogChannel.System.I($"{fileName} is generated.");
 				}
 				catch(Exception exception)
 				{
-					LogSvc.System.E(exception);
+					LogChannel.System.E(exception);
 
 					return;
 				}
@@ -164,7 +164,7 @@ namespace KZLib.KZMenu
 			}
 			catch(Exception exception)
 			{
-				LogSvc.System.E(exception);
+				LogChannel.System.E(exception);
 
 				return;
 			}
@@ -193,7 +193,7 @@ namespace KZLib.KZMenu
 			}
 			catch(Exception exception)
 			{
-				LogSvc.System.E(exception);
+				LogChannel.System.E(exception);
 
 				return;
 			}

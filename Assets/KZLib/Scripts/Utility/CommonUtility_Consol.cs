@@ -30,14 +30,14 @@ public static partial class CommonUtility
 		
 		for(var i=0;i<lineArray.Length;i++)
 		{
-			LogSvc.Editor.I($"Output : {lineArray[i]}");
+			LogChannel.Editor.I($"Output : {lineArray[i]}");
 		}
 
 		if(!error.IsEmpty())
 		{
 			errorLog = error;
 
-			LogSvc.Editor.E($"Error : {error.CP949ToUTF8()}");
+			LogChannel.Editor.E($"Error : {error.CP949ToUTF8()}");
 
 			return false;
 		}

@@ -39,7 +39,7 @@ public static class MonoBehaviourExtension
 	{
 		if(!behaviour)
 		{
-			LogSvc.System.E("MonoBehaviour is null");
+			LogChannel.System.E("MonoBehaviour is null");
 
 			return false;
 		}

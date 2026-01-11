@@ -108,7 +108,7 @@ namespace KZLib.KZNetwork
 
 			if(!isSuccess)
 			{
-				LogSvc.Network.E($"Respond Error : {code}");
+				LogChannel.Network.E($"Respond Error : {code}");
 
 				var errorPrt = ProtoManager.In.GetProto<NetworkErrorProto>(code);
 
@@ -188,7 +188,7 @@ namespace KZLib.KZNetwork
 			}
 			catch(Exception _ex)
 			{
-				LogSvc.Network.E($"Convert is fail : {_ex.Message}");
+				LogChannel.Network.E($"Convert is fail : {_ex.Message}");
 			}
 		}
 		

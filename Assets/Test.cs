@@ -9,7 +9,7 @@ public class Test : MonoBehaviour
     {
         Debug.Log(Application.targetFrameRate);
         
-        LogSvc.Build.I(Application.targetFrameRate);
+        LogChannel.Build.I(Application.targetFrameRate);
     }
 }
 #endif

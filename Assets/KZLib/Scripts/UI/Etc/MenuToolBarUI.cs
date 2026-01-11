@@ -92,7 +92,7 @@ public class MenuToolBarUI : BaseComponentUI
 
 			if(menuInfo == null)
 			{
-				LogSvc.UI.E($"{menuParam.MenuType} is not registered.");
+				LogChannel.UI.E($"{menuParam.MenuType} is not registered.");
 
 				continue;
 			}

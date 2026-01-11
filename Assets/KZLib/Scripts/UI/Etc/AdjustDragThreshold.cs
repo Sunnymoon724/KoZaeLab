@@ -27,7 +27,7 @@ public class AdjustDragThreshold : BaseComponent
 	{
 		if(!m_eventSystem)
 		{
-			LogSvc.System.E("EventSystem is null");
+			LogChannel.System.E("EventSystem is null");
 
 			return;
 		}

@@ -106,7 +106,7 @@ namespace KZLib.KZWindow
 
 			m_playerPrefsInfoList.Remove(info);
 
-			LogSvc.Editor.I($"{info.Key} is removed");
+			LogChannel.Editor.I($"{info.Key} is removed");
 		}
 
 		private void _OnRefreshInfo()
@@ -161,7 +161,7 @@ namespace KZLib.KZWindow
 
 			PlayerPrefsManager.In.Clear();
 
-			LogSvc.Editor.I($"PlayerPrefs is deleted");
+			LogChannel.Editor.I($"PlayerPrefs is deleted");
 
 			m_playerPrefsInfoList.Clear();
 		}

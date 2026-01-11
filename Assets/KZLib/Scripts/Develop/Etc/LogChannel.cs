@@ -24,17 +24,20 @@ using KZLib.KZNetwork;
 
 using Debug = UnityEngine.Debug;
 
-public class LogSvc
+public partial class LogChannel
 {
 	public static readonly LogChannel None = new(nameof(None));
+
 
 	public static readonly LogChannel Scene = new(nameof(Scene));
 	public static readonly LogChannel System = new(nameof(System));
 	public static readonly LogChannel Build = new(nameof(Build));
 
+
 	public static readonly LogChannel Network = new(nameof(Network));
 	public static readonly LogChannel Server = new(nameof(Server));
 	public static readonly LogChannel Client = new(nameof(Client));
+
 
 	public static readonly LogChannel UI = new(nameof(UI));
 	public static readonly LogChannel FX = new(nameof(FX));
@@ -46,108 +49,104 @@ public class LogSvc
 	public static readonly LogChannel External = new(nameof(External));
 
 	public static readonly LogChannel Test = new(nameof(Test));
-}
 
-public class LogChannel
-{
-	private const int c_maxLogCount = 100;
+	internal readonly string m_logTag;
 
-	private static readonly HashSet<string> s_logHashSet = new();
-	private static readonly CircularQueue<MessageInfo> m_logMessageInfoQueue = new(c_maxLogCount);
-
-	public static IEnumerable<MessageInfo> LogMessageInfoGroup => m_logMessageInfoQueue;
-
-	private readonly string m_logTag;
-
-#if !UNITY_EDITOR
-		private const int c_coolTimeTimer = 30; // 30s
-		private static bool m_sendLock = false;
-#endif
-
-	public LogChannel(string logTag)
+	private LogChannel(string logTag)
 	{
 		m_logTag = logTag;
 	}
-	
+
+	private static readonly HashSet<string> s_logHashSet = new();
+
+	internal static HashSet<string> LogHashSet => s_logHashSet;
+}
+
+public static class LogChannelExtension
+{
+#if !UNITY_EDITOR
+	private static readonly Regex s_fileNameExtractor = new(@"([^\\\/]+)(?=\.[^.\\\/]+$)",RegexOptions.Compiled);
+#endif
+
 	#region I : Info Log
-	public void I(object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void I(this LogChannel channel,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		_Log(message,LogType.Log,false,memberName,filePath,lineNum);
+		_Log(channel,message,LogType.Log,false,memberName,filePath,lineNum);
 	}
 
-	public void IOnce(object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void IOnce(this LogChannel channel,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		_Log(message,LogType.Log,true,memberName,filePath,lineNum);
+		_Log(channel,message,LogType.Log,true,memberName,filePath,lineNum);
 	}
 	#endregion I : Info Log
 
 	#region W : Warning Log
-	public void W(object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void W(this LogChannel channel,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		_Log(message,LogType.Warning,false,memberName,filePath,lineNum);
+		_Log(channel,message,LogType.Warning,false,memberName,filePath,lineNum);
 	}
 
-	public void WOnce(object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void WOnce(this LogChannel channel,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		_Log(message,LogType.Warning,true,memberName,filePath,lineNum);
+		_Log(channel,message,LogType.Warning,true,memberName,filePath,lineNum);
 	}
 	#endregion W : Warning Log
 	
 	#region E : Error Log
-	public void E(object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void E(this LogChannel channel,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		_Log(message,LogType.Error,false,memberName,filePath,lineNum);
+		_Log(channel,message,LogType.Error,false,memberName,filePath,lineNum);
 	}
 
-	public void EOnce(object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void EOnce(this LogChannel channel,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
-		_Log(message,LogType.Error,true,memberName,filePath,lineNum);
+		_Log(channel,message,LogType.Error,true,memberName,filePath,lineNum);
 	}
 	#endregion E : Error Log
 
 	#region A : Assert Log
-	public void A(bool condition,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	public static void A(this LogChannel channel,bool condition,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
 		if(condition)
 		{
 			return;
 		}
 
-		_Log(message,LogType.Assert,false,memberName,filePath,lineNum);
+		_Log(channel,message,LogType.Assert,false,memberName,filePath,lineNum);
 	}
 	#endregion A : Assert Log
-	
-	private void _Log(object message,LogType logType,bool once,string memberName,string filePath,int lineNum)
-	{
-		var text = _CreateLog(message,memberName,filePath,lineNum);
 
-		if(once && !s_logHashSet.Add(text))
+	private static void _Log(LogChannel channel,object message,LogType logType,bool once,string memberName,string filePath,int lineNum)
+	{
+		var log = _CreateLog(channel,message,memberName,filePath,lineNum);
+
+		if(once && !LogChannel.LogHashSet.Add(log))
 		{
 			return;
 		}
 
 #if UNITY_EDITOR || DEBUG
-		switch (logType)
+		switch(logType)
 		{
 			case LogType.Warning:
-				Debug.LogWarning(text);
+				Debug.LogWarning(log);
 				break;
 			case LogType.Error:
 			case LogType.Assert:
-				Debug.LogError(text);
+				Debug.LogError(log);
 				break;
 			default:
-				Debug.Log(text);
+				Debug.Log(log);
 				break;
 		}
 #endif
 	}
 
-	private string _CreateLog(object message,string memberName,string filePath,int lineNum)
+	private static string _CreateLog(LogChannel logger,object message,string memberName,string filePath,int lineNum)
 	{
 		var builder = new StringBuilder();
 
-		builder.Append($"[<b>{m_logTag}</b>] {message}");
+		builder.Append($"[<b>{logger.m_logTag}</b>] {message}");
 
 #if !UNITY_EDITOR
 		if(!memberName.IsEmpty() || !filePath.IsEmpty())
@@ -175,6 +174,20 @@ public class LogChannel
 
 		return builder.ToString();
 	}
+}
+
+public partial class LogChannel
+{
+	private const int c_maxLogCount = 100;
+
+	private static readonly CircularQueue<MessageInfo> s_logMessageInfoQueue = new(c_maxLogCount);
+
+	public static IEnumerable<MessageInfo> LogMessageInfoGroup => s_logMessageInfoQueue;
+
+#if !UNITY_EDITOR
+		private const int c_coolTimeTimer = 30; // 30s
+		private static bool m_sendLock = false;
+#endif
 
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 	private static void _Initialize()
@@ -225,9 +238,10 @@ public class LogChannel
 
 		var message = new MessageInfo(header,body);
 
-		m_logMessageInfoQueue.Enqueue(message);
+		s_logMessageInfoQueue.Enqueue(message);
 
 		GlobalMessagePipe.GetPublisher<CommonNoticeTag,MessageInfo>().Publish(CommonNoticeTag.DisplayLog,message);
+
 #if !UNITY_EDITOR
 		if(!m_sendLock && (logType == LogType.Exception))
 		{
@@ -245,10 +259,10 @@ public class LogChannel
 			_ => "Info",
 		};
 	}
-	
+
 	public static void ClearLogMessageInfo()
 	{
-		m_logMessageInfoQueue.Clear();
+		s_logMessageInfoQueue.Clear();
 	}
 
 #if !UNITY_EDITOR
@@ -263,20 +277,22 @@ public class LogChannel
 		await WebRequestManager.In.PostBugReportWebRequestAsync(m_logMessageInfoQueue,texture.EncodeToPNG());
 
 		//? Send once and wait for 30 seconds -> If sent too frequently, it can cause a load.
-
 		await UniTask.Delay(TimeSpan.FromSeconds(c_coolTimeTimer)).SuppressCancellationThrow();
 
 		m_sendLock = false;
 	}
 #endif
+}
 
+public partial class LogChannel
+{
 #if UNITY_EDITOR
 	[OnOpenAsset(0)]
-	protected static bool _OnOpenDebugLog(int instance,int _)
+	internal static bool _OnOpenDebugLog(int instance,int _)
 	{
 		var objectName = EditorUtility.EntityIdToObject(instance).name;
 
-		if(objectName.IsEmpty() || !objectName.IsEqual(nameof(LogSvc)))
+		if(objectName.IsEmpty() || !objectName.IsEqual(nameof(LogChannel)))
 		{
 			return false;
 		}
@@ -294,11 +310,11 @@ public class LogChannel
 		{
 			var content = textMatch.Groups[1].Value;
 
-			if(!content.Contains(nameof(LogSvc)))
+			if(!_IsLogChannelFrame(content))
 			{
 				break;
 			}
-			
+
 			textMatch = textMatch.NextMatch();
 		}
 
@@ -317,6 +333,11 @@ public class LogChannel
 		InternalEditorUtility.OpenFileAtLineExternal(FileUtility.GetAbsolutePath(pathArray[0], true), lineNumber);
 
 		return true;
+	}
+
+	private static bool _IsLogChannelFrame(string content)
+	{
+		return content.Contains(nameof(LogChannel)) || content.Contains(nameof(LogChannelExtension));
 	}
 
 	private static string _FindStackTrace()

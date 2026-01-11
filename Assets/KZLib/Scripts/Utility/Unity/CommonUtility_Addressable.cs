@@ -18,7 +18,7 @@ public static partial class CommonUtility
 	{
 		if(assetPath.IsEmpty())
 		{
-			LogSvc.System.E($"{assetPath} is null or empty.");
+			LogChannel.System.E($"{assetPath} is null or empty.");
 
 			assetEntry = null;
 
@@ -50,7 +50,7 @@ public static partial class CommonUtility
 		{
 			if(assetPath.IsEmpty())
 			{
-				LogSvc.System.E($"{assetPath} is null or empty.");
+				LogChannel.System.E($"{assetPath} is null or empty.");
 
 				return false;
 			}
@@ -64,7 +64,7 @@ public static partial class CommonUtility
 
 			if(guid.IsEmpty())
 			{
-				LogSvc.System.E($"{assetPath} is not exist.");
+				LogChannel.System.E($"{assetPath} is not exist.");
 
 				return false;
 			}
@@ -100,7 +100,7 @@ public static partial class CommonUtility
 
 		if(guid.IsEmpty())
 		{
-			LogSvc.System.E($"{assetPath} is not exist.");
+			LogChannel.System.E($"{assetPath} is not exist.");
 
 			return false;
 		}
@@ -109,7 +109,7 @@ public static partial class CommonUtility
 
 		if(assetEntry == null)
 		{
-			LogSvc.System.E($"Asset at {assetPath} is not addressable.");
+			LogChannel.System.E($"Asset at {assetPath} is not addressable.");
 
 			return false;
 		}
@@ -120,7 +120,7 @@ public static partial class CommonUtility
 
 			if(newGroup == null)
 			{
-				LogSvc.System.E($"{newGroupName} is not exist.");
+				LogChannel.System.E($"{newGroupName} is not exist.");
 
 				return false;
 			}
@@ -214,7 +214,7 @@ public static partial class CommonUtility
 
 		if(settings == null)
 		{
-			LogSvc.System.E("AddressableAssetSettings is null. create first.");
+			LogChannel.System.E("AddressableAssetSettings is null. create first.");
 		}
 
 		return settings;

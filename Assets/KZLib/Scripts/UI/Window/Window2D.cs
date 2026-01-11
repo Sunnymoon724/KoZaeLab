@@ -77,7 +77,7 @@ public abstract class Window2D : Window
 	{
 		if(isBlocked)
 		{
-			LogSvc.UI.I($"{NameTag} input is blocked");
+			LogChannel.UI.I($"{NameTag} input is blocked");
 
 			_SetCanvasGroupState(1,false,false);
 
@@ -85,7 +85,7 @@ public abstract class Window2D : Window
 		}
 		else
 		{
-			LogSvc.UI.I($"{NameTag} input is allowed");
+			LogChannel.UI.I($"{NameTag} input is allowed");
 
 			_SetCanvasGroupState(1,true,true);
 

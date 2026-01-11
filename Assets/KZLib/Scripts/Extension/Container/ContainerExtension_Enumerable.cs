@@ -278,7 +278,7 @@ public static partial class ContainerExtension
 	{
 		if(enumerable == null)
 		{
-			LogSvc.System.E("Enumerable is null");
+			LogChannel.System.E("Enumerable is null");
 
 			return false;
 		}

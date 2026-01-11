@@ -34,7 +34,7 @@ namespace KZLib.KZNetwork
 		{
 			if(webRequest == null)
 			{
-				LogSvc.Network.E("WebRequest is null");
+				LogChannel.Network.E("WebRequest is null");
 
 				return null;
 			}
@@ -53,11 +53,11 @@ namespace KZLib.KZNetwork
 
 			if(responseInfo.Result)
 			{
-				LogSvc.Network.I($"{webRequest.Name} is Success");
+				LogChannel.Network.I($"{webRequest.Name} is Success");
 			}
 			else
 			{
-				LogSvc.Network.E($"{webRequest.Name} is Failed");
+				LogChannel.Network.E($"{webRequest.Name} is Failed");
 
 				m_networkErrorSubject.OnNext(responseInfo.Error);
 			}

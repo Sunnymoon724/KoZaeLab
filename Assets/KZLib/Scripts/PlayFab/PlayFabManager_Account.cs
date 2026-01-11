@@ -157,7 +157,7 @@ namespace KZLib
 
 			return await _ExecuteAsync(request,onSendPacket,_CreatePacket);
 #else
-			LogSvc.System.W("editor is not supported");
+			LogChannel.System.W("editor is not supported");
 
 			await UniTask.Yield();
 

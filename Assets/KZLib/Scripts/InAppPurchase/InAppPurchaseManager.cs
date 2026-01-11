@@ -125,7 +125,7 @@ namespace KZLib.KZInAppPurchase
 
 				if(winArgumentIndex == 0)
 				{
-					LogSvc.External.I("[IAP] Initialize succeeded");
+					LogChannel.External.I("[IAP] Initialize succeeded");
 
 					await _FetchProductAsync(skuList,token);
 
@@ -134,14 +134,14 @@ namespace KZLib.KZInAppPurchase
 
 				var exception = connectTask.Exception?.InnerException ?? connectTask.Exception ?? new Exception("Unknown error");
 
-				LogSvc.External.E($"[IAP] Initialize failed.. Retrying in {c_retryPeriod} seconds.. [{i}/{c_maxRetryCount}]");
+				LogChannel.External.E($"[IAP] Initialize failed.. Retrying in {c_retryPeriod} seconds.. [{i}/{c_maxRetryCount}]");
 
 				logBuilder.Append($"Exception {i}: {exception.Message}");
 
 				await UniTask.Delay(TimeSpan.FromSeconds(c_retryPeriod),cancellationToken: token).SuppressCancellationThrow();
 			}
 
-			LogSvc.External.E($"[IAP] Initialize failed.. Max retry attempts reached.");
+			LogChannel.External.E($"[IAP] Initialize failed.. Max retry attempts reached.");
 
 #if !UNITY_EDITOR
 			m_resultSendSubject.OnNext(JsonConvert.SerializeObject(new Dictionary<string,string>()
@@ -179,7 +179,7 @@ namespace KZLib.KZInAppPurchase
 				var fetchCount = Mathf.Min(m_fetchingProductList.Count,c_maxFetchCount);
 				var fetchList = m_fetchingProductList.GetRange(0,fetchCount);
 
-				LogSvc.External.I($"[IAP] {fetchCount} products fetching started.");
+				LogChannel.External.I($"[IAP] {fetchCount} products fetching started.");
 
 				m_fetchFailCount = 0;
 				m_fetchSuccessHashSet.Clear();
@@ -211,13 +211,13 @@ namespace KZLib.KZInAppPurchase
 
 					if(attempt >= c_maxRetryCount)
 					{
-						LogSvc.External.E($"[IAP] Fetching failed.. Max retry attempts reached: {attempt}");
+						LogChannel.External.E($"[IAP] Fetching failed.. Max retry attempts reached: {attempt}");
 
 						break;
 					}
 					else
 					{
-						LogSvc.External.E($"[IAP] Fetching failed without success.. Retrying.. ({attempt}/{c_maxRetryCount})");
+						LogChannel.External.E($"[IAP] Fetching failed without success.. Retrying.. ({attempt}/{c_maxRetryCount})");
 					}
 				}
 			}
@@ -243,7 +243,7 @@ namespace KZLib.KZInAppPurchase
 
 			if(product == null)
 			{
-				LogSvc.External.E( "[IAP] No product info." );
+				LogChannel.External.E( "[IAP] No product info." );
 
 				return;
 			}
@@ -251,7 +251,7 @@ namespace KZLib.KZInAppPurchase
 			// 자체 검증
 			if(!_IsValidPurchase())
 			{
-				LogSvc.External.E("[IAP] Unsupported purchase method.");
+				LogChannel.External.E("[IAP] Unsupported purchase method.");
 
 				return;
 			}
@@ -267,7 +267,7 @@ namespace KZLib.KZInAppPurchase
 
 			if(product == null)
 			{
-				LogSvc.External.E("[IAP] No product info.");
+				LogChannel.External.E("[IAP] No product info.");
 
 				return;
 			}
@@ -275,7 +275,7 @@ namespace KZLib.KZInAppPurchase
 			var sku = product.definition.id;
 			var failureReason = order.FailureReason;
 
-			LogSvc.External.E( $"[IAP] Purchase failed: {sku}, Reason: {failureReason} - {order.Details}" );
+			LogChannel.External.E( $"[IAP] Purchase failed: {sku}, Reason: {failureReason} - {order.Details}" );
 
 			if(failureReason != PurchaseFailureReason.UserCancelled)
 			{
@@ -293,7 +293,7 @@ namespace KZLib.KZInAppPurchase
 
 		private void _OnStoreDisconnected(StoreConnectionFailureDescription description)
 		{
-			LogSvc.External.E( $"[IAP] Store disconnected. ({description.Message})" );
+			LogChannel.External.E( $"[IAP] Store disconnected. ({description.Message})" );
 		}
 
 		private void _OnProductsFetchFailed(ProductFetchFailed fetchFailed)
@@ -305,14 +305,14 @@ namespace KZLib.KZInAppPurchase
 				m_fetchFailHashSet.Add(productList[ i ].id);
 			}
 
-			LogSvc.External.E( $"[IAP] Product fetch failed - Count: {productList.Count} Reason: {fetchFailed.FailureReason}" );
+			LogChannel.External.E( $"[IAP] Product fetch failed - Count: {productList.Count} Reason: {fetchFailed.FailureReason}" );
 
 			m_fetchFailCount = productList.Count;
 		}
 
 		private void _OnProductsFetched(List<Product> productList)
 		{
-			LogSvc.External.I( $"[IAP] Product fetch succeeded - Count: {productList.Count}" );
+			LogChannel.External.I( $"[IAP] Product fetch succeeded - Count: {productList.Count}" );
 
 			for(var i=0;i<productList.Count;i++)
 			{
@@ -322,7 +322,7 @@ namespace KZLib.KZInAppPurchase
 
 		private void _OnPurchasesFetched(Orders orders)
 		{
-			LogSvc.External.I( $"[IAP] Checking pending orders" );
+			LogChannel.External.I( $"[IAP] Checking pending orders" );
 
 #if !UNITY_EDITOR
 			var pendingOrderArray = orders.PendingOrders;
@@ -340,7 +340,7 @@ namespace KZLib.KZInAppPurchase
 
 				var sku = product.definition.id;
 
-				LogSvc.External.I( $"[IAP] Detected pending purchase: {sku} - attempting recovery (external)" );
+				LogChannel.External.I( $"[IAP] Detected pending purchase: {sku} - attempting recovery (external)" );
 
 				_PurchaseUnfinishedProductAsync(pendingOrder,sku).Forget();
 			}
@@ -351,7 +351,7 @@ namespace KZLib.KZInAppPurchase
 		{
 			if(m_lastPurchaseProductId.IsEqual(productId))
 			{
-				LogSvc.External.W($"[IAP] {productId} is already purchased.");
+				LogChannel.External.W($"[IAP] {productId} is already purchased.");
 
 				return InAppPurchaseResultType.AlreadyPurchased;
 			}
@@ -363,7 +363,7 @@ namespace KZLib.KZInAppPurchase
 #if !UNITY_EDITOR
 			if(m_storeController == null)
 			{
-				LogSvc.External.E("[IAP] StoreController is null");
+				LogChannel.External.E("[IAP] StoreController is null");
 
 				InputManager.In.BlockInput(false);
 
@@ -376,7 +376,7 @@ namespace KZLib.KZInAppPurchase
 
 			if(product == null)
 			{
-				LogSvc.External.W($"[IAP] {sku} is not found -> fetch start" );
+				LogChannel.External.W($"[IAP] {sku} is not found -> fetch start" );
 
 				CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
@@ -396,7 +396,7 @@ namespace KZLib.KZInAppPurchase
 
 				if(product == null)
 				{
-					LogSvc.External.E($"[IAP] {sku} is not found after fetch.");
+					LogChannel.External.E($"[IAP] {sku} is not found after fetch.");
 
 					m_lastPurchaseProductId = string.Empty;
 
@@ -449,7 +449,7 @@ namespace KZLib.KZInAppPurchase
 
 			if(pendingOrder == null)
 			{
-				LogSvc.External.E("[IAP] PendingOrder is null after purchase.");
+				LogChannel.External.E("[IAP] PendingOrder is null after purchase.");
 
 				m_lastPurchaseProductId = string.Empty;
 
@@ -512,7 +512,7 @@ namespace KZLib.KZInAppPurchase
 				}
 				else
 				{
-					LogSvc.External.E( "[IAP] GooglePlayStoreExtendedService is null" );
+					LogChannel.External.E( "[IAP] GooglePlayStoreExtendedService is null" );
 				}
 #endif
 			m_storeController.PurchaseProduct(product);
@@ -522,12 +522,12 @@ namespace KZLib.KZInAppPurchase
 		{
 			if(m_storeController == null)
 			{
-				LogSvc.External.E("[IAP] StoreController is null during confirm purchase.");
+				LogChannel.External.E("[IAP] StoreController is null during confirm purchase.");
 
 				return InAppPurchaseResultType.StoreControllerNotInitialized;
 			}
 
-			LogSvc.External.I("[IAP] Confirming purchase.");
+			LogChannel.External.I("[IAP] Confirming purchase.");
 
 			m_storeController.ConfirmPurchase(pendingOrder);
 
@@ -569,7 +569,7 @@ namespace KZLib.KZInAppPurchase
 					{
 						if(validReceipt is GooglePlayReceipt googleReceipt)
 						{
-							LogSvc.External.I($"[IAP] Token {googleReceipt.purchaseToken} / sku {googleReceipt.productID}");
+							LogChannel.External.I($"[IAP] Token {googleReceipt.purchaseToken} / sku {googleReceipt.productID}");
 
 							return googleReceipt.purchaseToken;
 						}
@@ -577,7 +577,7 @@ namespace KZLib.KZInAppPurchase
 				}
 				catch(Exception exception)
 				{
-					LogSvc.External.E($"[IAP] receipt validation failed: {exception.Message}");
+					LogChannel.External.E($"[IAP] receipt validation failed: {exception.Message}");
 				}
 			}
 

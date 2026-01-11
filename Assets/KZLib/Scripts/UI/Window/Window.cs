@@ -67,7 +67,7 @@ public abstract class Window : BaseComponent,IWindow
 				}
 				else
 				{
-					LogSvc.UI.E($"{typeName} is not defined UINameTag");
+					LogChannel.UI.E($"{typeName} is not defined UINameTag");
 
 					m_nameTag = CommonUINameTag.None;
 				}
@@ -98,7 +98,7 @@ public abstract class Window : BaseComponent,IWindow
 
 	public virtual void Open(object param)
 	{
-		LogSvc.UI.I($"{NameTag} is opened");
+		LogChannel.UI.I($"{NameTag} is opened");
 
 		gameObject.EnsureActive(true);
 	}
@@ -116,7 +116,7 @@ public abstract class Window : BaseComponent,IWindow
 
 		gameObject.EnsureActive(false);
 
-		LogSvc.UI.I($"{NameTag} is closed");
+		LogChannel.UI.I($"{NameTag} is closed");
 	}
 
 	protected override void _Release() { }
@@ -125,13 +125,13 @@ public abstract class Window : BaseComponent,IWindow
 	{
 		if(isHidden)
 		{
-			LogSvc.UI.I($"{NameTag} is hidden");
+			LogChannel.UI.I($"{NameTag} is hidden");
 
 			_SetCanvasGroupState(0,false,false);
 		}
 		else
 		{
-			LogSvc.UI.I($"{NameTag} is shown");
+			LogChannel.UI.I($"{NameTag} is shown");
 
 			_SetCanvasGroupState(1,true,true);
 		}

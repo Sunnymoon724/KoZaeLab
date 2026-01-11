@@ -60,7 +60,7 @@ namespace KZLib.KZData
 			var accumulatedTime = 0.0d;
 			var stopwatch = new Stopwatch();
 
-			LogSvc.System.I("Proto Load Start");
+			LogChannel.System.I("Proto Load Start");
 
 			for(var i=0;i<textAssetArray.Length;i++)
 			{
@@ -68,7 +68,7 @@ namespace KZLib.KZData
 
 				if(textAsset == null)
 				{
-					LogSvc.System.W($"TextAsset is null in {i}");
+					LogChannel.System.W($"TextAsset is null in {i}");
 
 					continue;
 				}
@@ -92,7 +92,7 @@ namespace KZLib.KZData
 
 			stopwatch.Stop();
 
-			LogSvc.System.I($"Proto Load Complete [Count : {textAssetArray.Length} / Duration : {(GameTimeManager.In.GetCurrentTime(true)-start).TotalSeconds}]");
+			LogChannel.System.I($"Proto Load Complete [Count : {textAssetArray.Length} / Duration : {(GameTimeManager.In.GetCurrentTime(true)-start).TotalSeconds}]");
 
 			m_isLoaded = true;
 
@@ -119,7 +119,7 @@ namespace KZLib.KZData
 
 			if(proto == null)
 			{
-				LogSvc.System.W($"Proto not found for {protoType.Name} with num {num}.");
+				LogChannel.System.W($"Proto not found for {protoType.Name} with num {num}.");
 			}
 
 			return proto != null;
@@ -134,21 +134,21 @@ namespace KZLib.KZData
 		{
 			if(num <= c_invalidNumber)
 			{
-				LogSvc.System.E($"{num} is not valid. [type : {protoType}]");
+				LogChannel.System.E($"{num} is not valid. [type : {protoType}]");
 
 				return null;
 			}
 
 			if(!m_protoDict.TryGetValue(protoType, out var protoDict))
 			{
-				LogSvc.System.E($"{protoType.Name} is not exist.");
+				LogChannel.System.E($"{protoType.Name} is not exist.");
 
 				return null;
 			}
 
 			if(!protoDict.TryGetValue(num, out var proto))
 			{
-				LogSvc.System.E($"{protoType.Name} is not include {num}.");
+				LogChannel.System.E($"{protoType.Name} is not include {num}.");
 
 				return null;
 			}
@@ -238,7 +238,7 @@ namespace KZLib.KZData
 			}
 			catch(Exception exception)
 			{
-				LogSvc.System.E($"Load failed. [Exception : {exception.Message}]");
+				LogChannel.System.E($"Load failed. [Exception : {exception.Message}]");
 
 				return false;
 			}
@@ -272,7 +272,7 @@ namespace KZLib.KZData
 
 				if(textAsset == null)
 				{
-					LogSvc.System.W($"TextAsset is null in {i}");
+					LogChannel.System.W($"TextAsset is null in {i}");
 
 					continue;
 				}
@@ -294,7 +294,7 @@ namespace KZLib.KZData
 
 			if(textAssetArray.IsNullOrEmpty())
 			{
-				LogSvc.System.E("Load failed, textAsset is null.");
+				LogChannel.System.E("Load failed, textAsset is null.");
 
 				return false;
 			}

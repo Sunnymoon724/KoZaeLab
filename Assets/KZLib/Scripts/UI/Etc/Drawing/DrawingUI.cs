@@ -17,7 +17,7 @@ namespace UnityEngine.UI
 
 			if(vertexCount > c_maxVertexCount)
 			{
-				LogSvc.UI.E($"Vertices count({vertexCount}) is greater than {c_maxVertexCount}. please reduce the number of points to draw.");
+				LogChannel.UI.E($"Vertices count({vertexCount}) is greater than {c_maxVertexCount}. please reduce the number of points to draw.");
 
 				vertexHelper.Clear();
 			}
