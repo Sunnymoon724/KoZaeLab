@@ -37,7 +37,7 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 * **DotweenPro**: [Asset Store Link](https://assetstore.unity.com/packages/tools/visual-scripting/dotween-pro-32416)
 * **Odin Inspector**: [Asset Store Link](https://assetstore.unity3d.com/packages/tools/utilities/odin-inspector-and-serializer-89041)
 
-### Included Third-Party Libraries
+### Included Third Party Libraries
 > This library internally includes the following code and does not require separate installation.
 * **UniTask**
 * **ParticleEffectForUGUI**, **SoftMaskForUGUI**, **UIEffect**
