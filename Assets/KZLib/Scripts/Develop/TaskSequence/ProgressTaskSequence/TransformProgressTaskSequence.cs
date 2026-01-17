@@ -41,9 +41,9 @@ namespace KZLib.KZDevelop
 		{
 			if(IsPosition)
 			{
-				if(transform.TryGetComponent<RectTransform>(out var rectTransform))
+				if(transform.TryGetComponent<RectTransform>(out var rectTrans))
 				{
-					rectTransform.anchoredPosition = Vector3.Lerp(m_lowPosition,m_highPosition,m_positionCurve.Evaluate(progress));
+					rectTrans.anchoredPosition = Vector3.Lerp(m_lowPosition,m_highPosition,m_positionCurve.Evaluate(progress));
 				}
 				else
 				{

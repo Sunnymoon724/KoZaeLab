@@ -9,17 +9,18 @@ namespace KZLib.KZDevelop
 		private bool m_disposed = false;
 
 		private readonly Transform m_content = null;
-		private readonly Action<TItem,UData> m_onSetData = null;
+		private readonly Action<TItem,UData> m_onBindData = null;
 
 		private readonly List<TItem> m_itemList = new();
 		private readonly GameObjectPool<TItem> m_objectPool = null;
 
 		public IEnumerable<TItem> ItemGroup => m_itemList;
+		public int ItemCount => m_itemList.Count;
 
-		public GameObjectPoolBinder(TItem pivot,Transform content,Action<TItem,UData> onSetData,Transform storage = null,int capacity = 1)
+		public GameObjectPoolBinder(TItem pivot,Transform content,Action<TItem,UData> onBindData,Transform storage = null,int capacity = 1)
 		{
 			m_content = content;
-			m_onSetData = onSetData ?? throw new ArgumentNullException("Binding action must not be null.");
+			m_onBindData = onBindData ?? throw new ArgumentNullException("Binding action must not be null.");
 
 			var currentStorage = storage == null ? UIManager.In.GetStorage(false) : storage;
 
@@ -51,7 +52,7 @@ namespace KZLib.KZDevelop
 			m_disposed = true;
 		}
 
-		public bool TrySetData( UData data )
+		public bool TrySetData(UData data)
 		{
 			return TrySetDataList(new List<UData>() { data } );
 		}
@@ -82,22 +83,22 @@ namespace KZLib.KZDevelop
 				var data = dataList[i];
 				var item = m_itemList[index];
 
-				m_onSetData.Invoke(item,data);
+				m_onBindData.Invoke(item,data);
 
 				index++;
 			}
 
-			_PutLeftObject(index);
+			_PutRemainingObject(index);
 
 			return true;
 		}
 
 		public void Clear()
 		{
-			_PutLeftObject(0);
+			_PutRemainingObject(0);
 		}
 
-		private void _PutLeftObject(int index)
+		private void _PutRemainingObject(int index)
 		{
 			for(var i=m_itemList.Count-1;i>=index;i--)
 			{
@@ -108,9 +109,34 @@ namespace KZLib.KZDevelop
 			}
 		}
 
-		public TItem FindItemByIndex(int index)
+		public TItem GetItemByIndex(int index)
 		{
 			return m_itemList.ContainsIndex(index) ? m_itemList[index] : null;
+		}
+
+		public TItem GetNearItem(TItem target,int count,bool canLoop)
+		{
+			if(!m_itemList.Contains(target))
+			{
+				return null;
+			}
+
+			if(count == 0)
+			{
+				return target;
+			}
+
+			return m_itemList.FindNext(target,count,canLoop);
+		}
+
+		public int FindIndex(TItem target)
+		{
+			if(!m_itemList.Contains(target))
+			{
+				return -1;
+			}
+
+			return m_itemList.IndexOf(target);
 		}
 	}
 }

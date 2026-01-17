@@ -204,16 +204,16 @@ public static class Vector2Extension
 	// 	return (_start+direction*distance,distance);
 	// }
 
-	public static Vector3 TransformInputBasedOnCanvasType(this Vector2 point,RectTransform rectTransform)
+	public static Vector3 TransformInputBasedOnCanvasType(this Vector2 point,RectTransform rectTrans)
 	{
-		var canvas = rectTransform.FindParentCanvas();
+		var canvas = rectTrans.FindParentCanvas();
 
 		if(point == Vector2.zero || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
 		{
 			return point;
 		}
 
-		RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform,point,canvas.GetEventCamera(),out var movePos);
+		RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTrans,point,canvas.GetEventCamera(),out var movePos);
 
 		return canvas.transform.TransformPoint(movePos);
 	}

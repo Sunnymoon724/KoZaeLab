@@ -68,7 +68,7 @@ namespace UnityEngine.UI
 			m_entryInfoList.Clear();
 			m_slotList.Clear();
 
-			_InitializeNavigator();
+			// _InitializeNavigator();
 		}
 
 		public void SetEntryInfoList(List<IEntryInfo> entryInfoList,int index = -1)
@@ -82,7 +82,7 @@ namespace UnityEngine.UI
 				m_entryInfoList.AddRange(entryInfoList);
 			}
 
-			_AddNavigatorState(m_entryInfoList.Count);
+			// _AddNavigatorState(m_entryInfoList.Count);
 
 			_RefreshLocation(focusIndex,true);
 			RefreshIndex(focusIndex);
@@ -92,7 +92,7 @@ namespace UnityEngine.UI
 		{
 			m_focusIndex = CommonUtility.LoopClamp(index,m_entryInfoList.Count);
 
-			_RefreshNavigatorState();
+			// _RefreshNavigatorState();
 
 			m_focusSubject.OnNext(m_entryInfoList[m_focusIndex]);
 		}

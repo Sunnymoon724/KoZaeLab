@@ -63,17 +63,17 @@ public class PatternRawImageUI : BaseRawImageUI
 		{
 			case TilingPatternType.CHILD:
 				{
-					var rectTransform = transform.parent.GetComponent<RectTransform>();
+					var parentRectTrans = transform.parent.GetComponent<RectTransform>();
 
-					_SetPatternRect(rectTransform,m_childValue);
+					_SetPatternRect(parentRectTrans,m_childValue);
 
 					break;
 				}
 			case TilingPatternType.SELF:
 				{
-					var rectTransform = transform.GetComponent<RectTransform>();
+					var currentRectTrans = transform.GetComponent<RectTransform>();
 
-					_SetPatternRect(rectTransform,m_selfValue);
+					_SetPatternRect(currentRectTrans,m_selfValue);
 
 					break;
 				}
@@ -85,13 +85,13 @@ public class PatternRawImageUI : BaseRawImageUI
 		}
 	}
 
-	private void _SetPatternRect(RectTransform rectTransform,float value)
+	private void _SetPatternRect(RectTransform rectTrans,float value)
 	{
 		var texture = m_rawImage.texture;
 		var scrollRect = m_rawImage.uvRect;
 
-		var rectWidth = rectTransform.rect.width;
-		var rectHeight = rectTransform.rect.height;
+		var rectWidth = rectTrans.rect.width;
+		var rectHeight = rectTrans.rect.height;
 
 		var textureWidth = texture.width;
 		var textureHeight = texture.height;

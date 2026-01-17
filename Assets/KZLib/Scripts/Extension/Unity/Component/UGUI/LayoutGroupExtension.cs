@@ -37,34 +37,34 @@ public static class LayoutGroupExtension
 		}
 	}
 
-	private static void _RecursiveMarkForRebuild(RectTransform rectTransform)
+	private static void _RecursiveMarkForRebuild(RectTransform rectTrans)
 	{
-		for(var i=0;i<rectTransform.childCount;i++)
+		for(var i=0;i<rectTrans.childCount;i++)
 		{
-			var childRectTransform = rectTransform.GetChild(i) as RectTransform;
+			var childRectTrans = rectTrans.GetChild(i).GetComponent<RectTransform>();
 
-			if(childRectTransform)
+			if(childRectTrans)
 			{
-				_RecursiveMarkForRebuild(childRectTransform);
+				_RecursiveMarkForRebuild(childRectTrans);
 			}
 		}
 
-		LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
+		LayoutRebuilder.MarkLayoutForRebuild(rectTrans);
 	}
 
-	private static void _RecursiveLayoutRebuild(RectTransform rectTransform)
+	private static void _RecursiveLayoutRebuild(RectTransform rectTrans)
 	{
-		for(var i=0;i<rectTransform.childCount;i++)
+		for(var i=0;i<rectTrans.childCount;i++)
 		{
-			var childRectTransform = rectTransform.GetChild(i) as RectTransform;
+			var childRectTrans = rectTrans.GetChild(i).GetComponent<RectTransform>();
 
-			if(childRectTransform)
+			if(childRectTrans)
 			{
-				_RecursiveLayoutRebuild(childRectTransform);
+				_RecursiveLayoutRebuild(childRectTrans);
 			}
 		}
 
-		LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
+		LayoutRebuilder.ForceRebuildLayoutImmediate(rectTrans);
 	}
 
 	private static bool _IsValid(LayoutGroup layoutGroup)

@@ -17,7 +17,7 @@ public static partial class ContainerExtension
 		return true;
 	}
 
-	public static TValue FindNext<TValue>(this IList<TValue> list,TValue value,int count)
+	public static TValue FindNext<TValue>(this IList<TValue> list,TValue value,int count,bool canLoop)
 	{
 		if(!_IsValid(list))
 		{
@@ -31,7 +31,16 @@ public static partial class ContainerExtension
 			return default;
 		}
 
-		var index = list.IndexOf(value)+count;
+		var index = list.IndexOf(value);
+
+		if(canLoop)
+		{
+			index = CommonUtility.LoopClamp(index+count,list.Count);
+		}
+		else
+		{
+			index += count;
+		}
 
 		return list.ContainsIndex(index) ? list[index] : default;
 	}

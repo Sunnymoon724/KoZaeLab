@@ -39,6 +39,8 @@ public class SubtitlePanel : BasePanel
 
 	private readonly List<SubtitleInfo> m_subtitleList = new();
 
+	private IDisposable m_subscription = null;
+
 	public override void Open(object param)
 	{
 		base.Open(param);
@@ -106,9 +108,16 @@ public class SubtitlePanel : BasePanel
 		}
 	}
 
+	public override void Close()
+	{
+		base.Close();
+
+		m_subscription?.Dispose();
+	}
+
 	public void LinkVideo(VideoPanel videoPanel)
 	{
-		videoPanel.OnChangedVideoTime.Subscribe(_SetSubtitle).RegisterTo(destroyCancellationToken);
+		m_subscription ??= videoPanel.OnChangedVideoTime.Subscribe(_SetSubtitle);
 	}
 
 	private void _SetSubtitle(float time)

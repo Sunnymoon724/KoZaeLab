@@ -48,7 +48,7 @@ namespace KZLib.KZDevelop
 		{
 			base.OnDisable();
 
-			m_disposable.Dispose(); 
+			m_disposable?.Dispose(); 
 
 			Undo.undoRedoPerformed -= _OnUndoRedo;
 

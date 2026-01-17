@@ -1,3 +1,4 @@
+using System;
 using KZLib.KZData;
 using R3;
 using Sirenix.OdinInspector;
@@ -7,6 +8,8 @@ public class LocalizeTextUI : BaseTextUI
 {
 	[SerializeField]
 	private string m_key = null;
+
+	private IDisposable m_subscription = null;
 
 	[Button("Execute Localize"),EnableIf(nameof(IsValidKey))]
 	protected void _ExecuteLocalize()
@@ -27,12 +30,14 @@ public class LocalizeTextUI : BaseTextUI
 	{
 		base.OnEnable();
 
-		LingoManager.In.OnChangedLanguage.Subscribe(_OnChangedLanguage).RegisterTo(destroyCancellationToken);
+		m_subscription = LingoManager.In.OnChangedLanguage.Subscribe(_OnChangedLanguage);
 	}
 
 	protected override void OnDisable()
 	{
 		base.OnDisable();
+
+		m_subscription?.Dispose();
 	}
 
 	private void _OnChangedLanguage(Unit _)

@@ -20,8 +20,8 @@ namespace KZLib
 
 		private SerializedProperty m_fillTypeProperty = null;
 		private SerializedProperty m_fillColorProperty = null;
-		
-		private RectTransform m_rectTransform;
+
+		private RectTransform m_rectTrans = null;
 
 		protected override void OnEnable()
 		{
@@ -44,7 +44,7 @@ namespace KZLib
 			m_fillTypeProperty = m_serializedObject.FindProperty("m_fillType");
 			m_fillColorProperty = m_serializedObject.FindProperty("m_fillColor");
 
-			m_rectTransform = m_shape.GetComponent<RectTransform>();
+			m_rectTrans = m_shape.GetComponent<RectTransform>();
 		}
 
 		public override void OnInspectorGUI()

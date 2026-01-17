@@ -37,7 +37,6 @@ public class ReuseScrollRect : BaseComponent
 	private float m_slotPivot = 0.0f;
 
 	private readonly List<IEntryInfo> m_entryInfoList = new();
-
 	private GameObjectPool<Slot> m_slotPool = null;
 
 	private int m_headIndex = 0;
@@ -62,34 +61,34 @@ public class ReuseScrollRect : BaseComponent
 		}
 
 		m_slotPool = new GameObjectPool<Slot>(m_pivot,m_scrollRect.viewport,m_poolCapacity,false);
+		
+		var content = m_scrollRect.content;
+		var viewport = m_scrollRect.viewport;
 
 		m_pivot.gameObject.EnsureActive(false);
-		m_scrollRect.viewport.transform.SetChild(m_pivot.transform,false);
+		viewport.transform.SetChild(m_pivot.transform,false);
 
-		var content = m_scrollRect.content;
+		viewport.pivot = new Vector2(0.0f,1.0f);
 
-		m_scrollRect.content.pivot = Vector2.up;
-		m_scrollRect.content.anchoredPosition = Vector2.zero;
+		m_slotSize = m_pivot.GetSlotSize(IsVertical);
 
-		m_scrollRect.viewport.pivot = Vector2.up;
-
-		var pivotRectTransform = m_pivot.GetComponent<RectTransform>();
+		content.pivot = new Vector2(0.0f,1.0f);
+		content.anchoredPosition = new Vector2(0.0f,0.0f);
 
 		if(IsVertical)
 		{
-			m_slotSize = pivotRectTransform.rect.height;
-			m_slotPivot = m_slotSize*m_scrollRect.content.pivot.y-m_slotSize-m_padding;
+			
+			m_slotPivot = m_slotSize*content.pivot.y-m_slotSize-m_padding;
 
-			m_scrollRect.content.anchorMin = new Vector2(content.anchorMin.x,1.0f);
-			m_scrollRect.content.anchorMax = new Vector2(content.anchorMax.x,1.0f);
+			content.anchorMin = new Vector2(content.anchorMin.x,1.0f);
+			content.anchorMax = new Vector2(content.anchorMax.x,1.0f);
 		}
 		else
 		{
-			m_slotSize = pivotRectTransform.rect.width;
-			m_slotPivot = m_slotSize*m_scrollRect.content.pivot.x+m_padding;
+			m_slotPivot = m_slotSize*content.pivot.x+m_padding;
 
-			m_scrollRect.content.anchorMin = new Vector2(0.0f,content.anchorMin.y);
-			m_scrollRect.content.anchorMax = new Vector2(0.0f,content.anchorMax.y);
+			content.anchorMin = new Vector2(0.0f,content.anchorMin.y);
+			content.anchorMax = new Vector2(0.0f,content.anchorMax.y);
 		}
 
 		m_entryInfoList.Clear();
@@ -228,7 +227,9 @@ public class ReuseScrollRect : BaseComponent
 	{
 		_EnsureInitialized();
 
-		m_scrollRect.content.anchoredPosition = IsVertical ? new Vector2(m_scrollRect.content.anchoredPosition.x,location) : new Vector2(-location,m_scrollRect.content.anchoredPosition.y);
+		var content = m_scrollRect.content;
+
+		content.anchoredPosition = IsVertical ? new Vector2(content.anchoredPosition.x,location) : new Vector2(-location,content.anchoredPosition.y);
 	}
 
 	private void _OnScrollChanged(Vector2 location)
@@ -292,8 +293,8 @@ public class ReuseScrollRect : BaseComponent
 				currentSlot.SetEntryInfo(m_entryInfoList[i]);
 			}
 
-			var slotRectTransform = currentSlot.GetComponent<RectTransform>();
-			slotRectTransform.anchoredPosition = _GetSlotLocation(i);
+			var rectTransform = currentSlot.GetComponent<RectTransform>();
+			rectTransform.anchoredPosition = _GetSlotLocation(i);
 
 			slotLocation += size;
 		}
@@ -316,7 +317,9 @@ public class ReuseScrollRect : BaseComponent
 
 	private float _GetViewportSize()
 	{
-		return IsVertical ? m_scrollRect.viewport.rect.height : m_scrollRect.viewport.rect.width;
+		var rect = m_scrollRect.viewport.rect;
+
+		return IsVertical ? rect.height : rect.width;
 	}
 
 	public void SetEntryInfoList(List<IEntryInfo> entryInfoList,int? index = null)
@@ -351,15 +354,18 @@ public class ReuseScrollRect : BaseComponent
 
 	private float _GetContentLocation()
 	{
-		return IsVertical ? m_scrollRect.content.anchoredPosition.y : -m_scrollRect.content.anchoredPosition.x;
+		var anchoredPosition = m_scrollRect.content.anchoredPosition;
+
+		return IsVertical ? anchoredPosition.y : -anchoredPosition.x;
 	}
 
 	private int _FindShowHeadIndex()
 	{
+		var infoCount = m_entryInfoList.Count;
 		var contentLocation = _GetContentLocation();
 		var location = 0.0f;
 
-		for(var i=0;i<m_entryInfoList.Count;i++)
+		for(var i=0;i<infoCount;i++)
 		{
 			if(contentLocation <= location + m_slotSize)
 			{
@@ -369,17 +375,18 @@ public class ReuseScrollRect : BaseComponent
 			location += m_slotSize + m_space;
 		}
 
-		return m_entryInfoList.Count;
+		return infoCount;
 	}
 
 	private int _FindShowTailIndex()
 	{
+		var infoCount = m_entryInfoList.Count;
 		var contentLocation = _GetContentLocation();
 		var viewportSize = _GetViewportSize();
 		var space = m_slotSize+m_space;
 		var location = 0.0f;
 
-		for(var i=0;i<m_entryInfoList.Count;i++)
+		for(var i=0;i<infoCount;i++)
 		{
 			if(location-contentLocation>=viewportSize)
 			{
@@ -389,19 +396,23 @@ public class ReuseScrollRect : BaseComponent
 			location += space;
 		}
 
-		return m_entryInfoList.Count;
+		return infoCount;
 	}
 
 	private float _GetContentSize()
 	{
-		return IsVertical ? m_scrollRect.content.rect.height : m_scrollRect.content.rect.width;
+		var rect = m_scrollRect.content.rect;
+
+		return IsVertical ? rect.height : rect.width;
 	}
 
 	private void _ResizeContent()
 	{
-		var size = m_entryInfoList.Count == 0 ? 0.0f : m_entryInfoList.Count*m_slotSize+(m_entryInfoList.Count-1)*m_space+m_padding*2.0f;
+		var infoCount = m_entryInfoList.Count;
+		var contentSize = infoCount == 0 ? 0.0f : infoCount*m_slotSize+(infoCount-1)*m_space+m_padding*2.0f;
+		var content = m_scrollRect.content;
 
-		m_scrollRect.content.sizeDelta = IsVertical ? new Vector2(m_scrollRect.content.sizeDelta.x,size) : new Vector2(size,m_scrollRect.content.sizeDelta.y);
+		content.sizeDelta = IsVertical ? new Vector2(content.sizeDelta.x,contentSize) : new Vector2(contentSize,content.sizeDelta.y);
 	}
 
 	private Vector2 _GetSlotLocation(int index)

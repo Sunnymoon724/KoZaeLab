@@ -1,9 +1,8 @@
-﻿LastCheckTimestamp: 1767305366
+﻿LastCheckTimestamp: 1768636269
 RepositoryInfoDict:
   UniTask:
     GitHubRepositoryName: Cysharp/UniTask
     LocalPackageJsonPath: Assets/KZLib/Plugins/Cysharp/UniTask/package.json
-
   UIEffect:
     GitHubRepositoryName: mob-sakai/UIEffect
     LocalPackageJsonPath: Assets/KZLib/Plugins/mob-sakai/UIEffect/package.json

@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 
 namespace UnityEngine.UI
 {
-	[RequireComponent(typeof(LayoutElement),typeof(RectTransform))]
+	[RequireComponent(typeof(LayoutElement))]
 	public class AccordionSlot : Slot
 	{
 		[SerializeField,ReadOnly]
@@ -13,18 +13,18 @@ namespace UnityEngine.UI
 		public bool IsOn => m_isOn;
 
 		[SerializeField]
-		private RectTransform m_titleRect = null;
+		private RectTransform m_titleRectTrans = null;
 
 		[SerializeField]
 		private LayoutElement m_layoutElement = null;
 
 		private CancellationTokenSource m_tokenSource = null;
 
-		private float m_duration;
-		private bool m_vertical;
-		private Action<AccordionSlot> m_onClicked;
+		private float m_duration = 0.0f;
+		private bool m_vertical = false;
+		private Action<AccordionSlot> m_onClicked = null;
 
-		private float _TitleSize => m_vertical ? m_titleRect.rect.height : m_titleRect.rect.width;
+		private float _TitleSize => m_vertical ? m_titleRectTrans.rect.height : m_titleRectTrans.rect.width;
 
 		public void SetEntryInfo(IEntryInfo entryInfo,float duration,bool isVertical,Action<AccordionSlot> onClicked)
 		{
@@ -38,9 +38,9 @@ namespace UnityEngine.UI
 
 		public void SetState(bool state)
 		{
-			if(!m_titleRect)
+			if(!m_titleRectTrans)
 			{
-				LogChannel.UI.W("header is null");
+				LogChannel.UI.W("title is null");
 
 				return;
 			}
@@ -58,19 +58,17 @@ namespace UnityEngine.UI
 
 				if(m_isOn)
 				{
-					var headerSize = _TitleSize;
+					var titleSize = _TitleSize;
 					var expandedSize = _GetExpandedSize();
 
-					_SetLayoutSizeAsync(headerSize,expandedSize,m_tokenSource.Token).Forget();
+					_SetLayoutSizeAsync(titleSize,expandedSize,m_tokenSource.Token).Forget();
 				}
 				else
 				{
-					var rectTransform = GetComponent<RectTransform>();
+					var currentSize = GetSlotSize(m_vertical);
+					var titleSize = _TitleSize;
 
-					var currentSize = m_vertical ? rectTransform.rect.height : rectTransform.rect.width;
-					var headerSize = _TitleSize;
-
-					_SetLayoutSizeAsync(currentSize,headerSize,m_tokenSource.Token).Forget();
+					_SetLayoutSizeAsync(currentSize,titleSize,m_tokenSource.Token).Forget();
 				}
 			}
 			else
@@ -81,9 +79,9 @@ namespace UnityEngine.UI
 				}
 				else
 				{
-					var headerSize = _TitleSize;
+					var titleSize = _TitleSize;
 
-					_SetLayoutSize(headerSize);
+					_SetLayoutSize(titleSize);
 				}
 			}
 		}
@@ -102,15 +100,13 @@ namespace UnityEngine.UI
 
 		private float _GetExpandedSize()
 		{
-			var rectTransform = GetComponent<RectTransform>();
-
 			if(m_vertical)
 			{
 				var originalHeight = m_layoutElement.preferredHeight;
 
 				m_layoutElement.preferredHeight = -1f;
 
-				var expandedHeight = LayoutUtility.GetPreferredHeight(rectTransform);
+				var expandedHeight = LayoutUtility.GetPreferredHeight(RectTrans);
 
 				m_layoutElement.preferredHeight = originalHeight;
 
@@ -122,7 +118,7 @@ namespace UnityEngine.UI
 
 				m_layoutElement.preferredWidth = -1f;
 
-				var expandedWidth = LayoutUtility.GetPreferredWidth(rectTransform);
+				var expandedWidth = LayoutUtility.GetPreferredWidth(RectTrans);
 
 				m_layoutElement.preferredWidth = originalWidth;
 

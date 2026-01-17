@@ -20,13 +20,13 @@ namespace KZLib.KZMenu
 		}
 		#endregion Empty Panel
 
-		#region UIShape
+		#region Shape
 		[MenuItem("GameObject/UI/Shape",false,MenuOrder.GameObject.UI)]
 		private static void _OnCreateShape()
 		{
 			_OnCreateUI("Shape",false,typeof(ShapeUI));
 		}
-		#endregion UIShape
+		#endregion Shape
 
 		// #region UILine
 		// [MenuItem("GameObject/UI/Line",false,MenuOrder.GameObject.UI)]
@@ -55,53 +55,51 @@ namespace KZLib.KZMenu
 			Undo.CollapseUndoOperations(group);
 		}
 
-		#region Focus Scroller
-		[MenuItem("GameObject/UI/Focus Scroller",false,MenuOrder.GameObject.UI)]
-		private static void _OnCreateFocusScroller()
+		#region Carousel
+		[MenuItem("GameObject/UI/Carousel",false,MenuOrder.GameObject.UI)]
+		private static void _OnCreateCarousel()
 		{
 			Undo.IncrementCurrentGroup();
 
 			var group = Undo.GetCurrentGroup();
-			var scroller = _CreatePanel("Scroller",false);
+			var carouselPanel = _CreatePanel("Carousel",false);
 
-			Undo.RegisterCreatedObjectUndo(scroller,"Create Scroller");
+			Undo.RegisterCreatedObjectUndo(carouselPanel,"Create Carousel");
 
-			scroller.AddComponent<Image>();
+			var viewportPanel = _CreatePanel("Viewport");
 
-			var viewport = _CreatePanel("Viewport",true);
+			Undo.RegisterCreatedObjectUndo(viewportPanel,"Create Viewport");
 
-			Undo.RegisterCreatedObjectUndo(viewport,"Create Viewport");
+			viewportPanel.AddComponent<Image>();
 
-			viewport.GetComponent<RectTransform>().pivot = new Vector2(0.0f,1.0f);
+			var viewportMask = viewportPanel.AddComponent<Mask>();
+			viewportMask.showMaskGraphic = false;
 
-			viewport.AddComponent<Image>();
-			viewport.AddComponent<Mask>();
-			scroller.transform.SetChild(viewport.transform,false);
+			carouselPanel.transform.SetChild(viewportPanel.transform,false);
 
-			var content = _CreatePanel("Content",true);
+			var contentPanel = _CreatePanel("Content",true);
 
-			Undo.RegisterCreatedObjectUndo(content,"Create Content");
+			Undo.RegisterCreatedObjectUndo(contentPanel,"Create Content");
 
-			content.GetComponent<RectTransform>().pivot = new Vector2(0.0f,1.0f);
+			viewportPanel.transform.SetChild(contentPanel.transform,false);
 
-			viewport.transform.SetChild(content.transform,false);
+			var carousel = carouselPanel.AddComponent<Carousel>();
+			carousel.SetScrollRect();
 
-			scroller.AddComponent<FocusScroller>();
-
-			_LinkCanvas(scroller);
+			_LinkCanvas(carouselPanel);
 
 			Undo.CollapseUndoOperations(group);
 		}
-		#endregion Focus Scroller
+		#endregion Carousel
 
 		private static GameObject _CreatePanel(string name,bool isExpand = false)
 		{
 			var panel = new GameObject(name);
-			var rect = panel.AddComponent<RectTransform>();
+			var rectTrans = panel.AddComponent<RectTransform>();
 
 			if(isExpand)
 			{
-				rect.ExpandAnchorSize();
+				rectTrans.ExpandAnchorSize();
 			}
 
 			return panel;

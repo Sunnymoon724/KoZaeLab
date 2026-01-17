@@ -39,6 +39,27 @@ namespace UnityEngine.UI
 
 		protected IEntryInfo CurrentEntryInfo { get; private set; }
 
+		private RectTransform m_rectTrans = null;
+
+		protected RectTransform RectTrans
+		{
+			get
+			{
+				if(!m_rectTrans)
+				{
+					m_rectTrans = GetComponent<RectTransform>();
+				}
+
+				return m_rectTrans;
+			}
+		}
+
+		public Vector2 AnchoredPosition
+		{
+			get => RectTrans.anchoredPosition;
+			set => RectTrans.anchoredPosition = value;
+		}
+
 		protected override void OnEnable()
 		{
 			base.OnEnable();
@@ -125,6 +146,13 @@ namespace UnityEngine.UI
 			{
 				m_onClicked = onClicked;
 			}
+		}
+
+		public float GetSlotSize(bool isVertical)
+		{
+			var rect = RectTrans.rect;
+
+			return isVertical ? rect.height : rect.width;
 		}
 	}
 }

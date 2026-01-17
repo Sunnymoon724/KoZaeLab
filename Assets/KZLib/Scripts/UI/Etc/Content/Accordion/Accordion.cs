@@ -26,16 +26,27 @@ namespace UnityEngine.UI
 		[BoxGroup("0",ShowLabel = false,Order = 99),SerializeField,KZRichText]
 		private int m_currentIndex = 0;
 
+		private bool m_initialize = false;
 		private GameObjectPoolBinder<AccordionSlot,IEntryInfo> m_poolBinder = null;
 
 		private readonly Subject<int> m_accordionSubject = new();
 		public Observable<int> OnChangedIndex => m_accordionSubject;
 
-		public AccordionSlot CurrentAccordion => m_poolBinder.FindItemByIndex(m_currentIndex);
+		public AccordionSlot CurrentAccordion => m_poolBinder.GetItemByIndex(m_currentIndex);
 
 		protected override void _Initialize()
 		{
 			base._Initialize();
+
+			_EnsureInitialized();
+		}
+
+		private void _EnsureInitialized()
+		{
+			if(m_initialize)
+			{
+				return;
+			}
 
 			void _OnClicked(AccordionSlot accordion)
 			{
@@ -51,12 +62,14 @@ namespace UnityEngine.UI
 
 			var duration = m_useTransition ? m_transitionDuration : 0.0f;
 
-			void _SetAccordion(AccordionSlot slot,IEntryInfo entryInfo)
+			void _BindSlot(AccordionSlot slot,IEntryInfo entryInfo)
 			{
 				slot.SetEntryInfo(entryInfo,duration,m_isVertical,_OnClicked);
 			}
 
-			m_poolBinder = new GameObjectPoolBinder<AccordionSlot,IEntryInfo>(m_slot,transform,_SetAccordion);
+			m_poolBinder = new GameObjectPoolBinder<AccordionSlot,IEntryInfo>(m_slot,transform,_BindSlot);
+
+			m_initialize = true;
 		}
 
 		protected override void _Release()
@@ -68,6 +81,8 @@ namespace UnityEngine.UI
 
 		public void SetEntryInfoList(List<IEntryInfo> entryInfoList,int index = -1)
 		{
+			_EnsureInitialized();
+
 			if(!m_poolBinder.TrySetDataList(entryInfoList))
 			{
 				return;
@@ -76,6 +91,11 @@ namespace UnityEngine.UI
 			m_startIndex = index != -1 ? Mathf.Clamp(index,0,entryInfoList.Count) : -1;
 
 			SetAccordionOn(m_startIndex,false);
+		}
+
+		public void Clear()
+		{
+			m_poolBinder.Clear();
 		}
 
 		public void SetAccordionOn(AccordionSlot target,bool sendCallback = true)
@@ -90,14 +110,14 @@ namespace UnityEngine.UI
 
 		public void SetAccordionOn(int index,bool sendCallback = true)
 		{
-			var accordion = m_poolBinder.FindItemByIndex(index);
+			var target = m_poolBinder.GetItemByIndex(index);
 
-			if(accordion == null)
+			if(target == null)
 			{
 				return;
 			}
 
-			_SetAccordion(accordion,sendCallback);
+			_SetAccordion(target,sendCallback);
 		}
 
 		public void SetAllAccordionOff(bool sendCallback)
@@ -107,14 +127,16 @@ namespace UnityEngine.UI
 
 		private void _SetAccordion(AccordionSlot target,bool sendCallback)
 		{
+			_EnsureInitialized();
+
 			var targetIndex = -1;
 			var currentIndex = 0;
 
-			foreach(var item in m_poolBinder.ItemGroup)
+			foreach(var slot in m_poolBinder.ItemGroup)
 			{
-				item.SetState(target != null && item == target);
+				slot.SetState(target != null && slot == target);
 
-				if(item == target)
+				if(slot == target)
 				{
 					targetIndex = currentIndex;
 				}

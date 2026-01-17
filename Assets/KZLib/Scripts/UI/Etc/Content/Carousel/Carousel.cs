@@ -1,263 +1,366 @@
-// using UnityEngine.EventSystems;
-// using System.Collections;
-// using System.Collections.Generic;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using KZLib.KZDevelop;
+using R3;
+using Sirenix.OdinInspector;
+using System;
 
-// namespace UnityEngine.UI
-// {
-// 	public class Carousel : BaseComponent,IBeginDragHandler,IEndDragHandler,IDragHandler
-// 	{
-// 		[SerializeField] private ScrollRect scrollRect;
-// 		[SerializeField] private Transform transformContent;
-// 		[SerializeField] private float scrollSpeed;
-// 		[SerializeField] private float threshold;
-// 		[SerializeField] private float delayTime;
-// 		[SerializeField] private float intervalTime;
+namespace UnityEngine.UI
+{
+	[RequireComponent(typeof(ScrollRect))]
+	public class Carousel : BaseComponent,IBeginDragHandler,IEndDragHandler
+	{
+		[SerializeField]
+		ScrollRect m_scrollRect = null;
 
-// 		[SerializeField]
-// 		private CarouselNavigator m_navigator = null;
+		[ShowInInspector,ReadOnly]
+		private bool IsVertical => m_scrollRect != null && m_scrollRect.vertical;
 
-// 		[SerializeField]
-// 		private Transform m_storage = null;
+		[SerializeField]
+		private float m_space = 0.0f;
 
-// 		private int mMaxCount;
-// 		private int mPreviousIndex;
-// 		private int mCurrentIndex;
-// 		private float[] mPositionArray;
-// 		private bool mCanDrag;
-// 		private bool mIsDragging;
+		[SerializeField]
+		private Slot m_slot = null;
+		[SerializeField]
+		private float m_snapDuration = 0.1f;
 
-// 		private IEnumerator mEnumerator;
-// 		private GameObjectPoolBinder<CarouselNavigator,bool> m_poolBinder = null;
+		[SerializeField]
+		private bool m_useAutoScroll = false;
+		[SerializeField,ShowIf(nameof(m_useAutoScroll))]
+		private float m_autoScrollInterval = 2.0f;
+		[SerializeField,ShowIf(nameof(m_useAutoScroll))]
+		private float m_autoScrollDuration = 1.0f;
 
-// 		protected override void _Initialize()
-// 		{
-// 			base._Initialize();
+		private float m_slotStep = 0.0f;
 
-// 			static void _SetNavigator(CarouselNavigator navigator,bool selected)
-// 			{
-// 				navigator.SetNavigator(selected);
-// 			}
+		private bool m_initialize = false;
+		private GameObjectPoolBinder<Slot,IEntryInfo> m_poolBinder = null;
 
-// 			m_poolBinder = new GameObjectPoolBinder<CarouselNavigator,bool>(m_navigator,transform,_SetNavigator);
-// 		}
+		private Slot m_centerSlot = null;
 
-// 		public void SetEntryInfoList(List<IEntryInfo> entryInfoList,int index = 0)
-// 		{
-// 			var focusIndex = index != -1 ? Mathf.Clamp(index,0,entryInfoList.Count) : 0;
+		private float LoopBoundary => m_poolBinder == null ? 0.0f : m_slotStep*m_poolBinder.ItemCount*0.5f;
 
-// 			_SetNavigatorList(entryInfoList,index);
-// 		}
+		private readonly Subject<Slot> m_carouselSlotSubject = new();
+		public Observable<Slot> OnChangedSlot => m_carouselSlotSubject;
 
-// 		private void _SetNavigatorList(List<IEntryInfo> entryInfoList,int index)
-// 		{
-// 			if(!m_poolBinder.TrySetDataList(entryInfoList))
-// 			{
-// 				return;
-// 			}
+		private readonly Subject<int> m_carouselIndexSubject = new();
+		public Observable<int> OnChangedIndex => m_carouselIndexSubject;
 
-// 			m_startIndex = index != -1 ? Mathf.Clamp(index,0,entryInfoList.Count) : -1;
+		private CancellationTokenSource m_snapTokenSource = null;
+		private CancellationTokenSource m_autoScrollTokenSource = null;
 
-// 			SetAccordionOn(m_startIndex,false);
-// 		}
+		protected override void _Initialize()
+		{
+			base._Initialize();
 
-// 		public void SetCount( int _count )
-// 		{
-// 			mCanDrag = true;
+			_EnsureInitialized();
+		}
 
-// 			if( _count == 0 || _count == 1 )
-// 			{
-// 				HideAll();
+		private void _EnsureInitialized()
+		{
+			if(m_initialize)
+			{
+				return;
+			}
 
-// 				return;
-// 			}
+			SetScrollRect();
 
-// 			mPositionArray = new float[ _count ];
+			var slotSize = m_slot.GetSlotSize(IsVertical);
 
-// 			for( int i = 0; i < _count; i++ )
-// 			{
-// 				mPositionArray[ i ] = ( float )i / ( _count - 1 );
-// 			}
+			m_slotStep = slotSize+m_space;
 
-// 			mMaxCount = _count - 2;
-// 			mIsDragging = false;
-// 			mCurrentIndex = 1;
-// 			mPreviousIndex = 1;
+			static void _BindSlot(Slot slot,IEntryInfo entryInfo)
+			{
+				slot.SetEntryInfo(entryInfo);
+			}
 
-// 			string prefabName = nameof( CGCellRollingNavigator );
+			m_poolBinder = new GameObjectPoolBinder<Slot,IEntryInfo>(m_slot,m_scrollRect.content,_BindSlot);
 
-// 			GameObject prefab = CNResourceManager.Instance.GetPrefab( prefabName );
+			m_initialize = true;
+		}
 
-// 			if( prefab == null )
-// 			{
-// 				Log.logError( $"{prefabName}의 이름을 가진 프리펩은 없습니다." );
+		protected override void OnEnable()
+		{
+			base.OnEnable();
 
-// 				HideAll();
+			m_scrollRect.onValueChanged.AddAction(_RefreshScroll);
 
-// 				return;
-// 			}
+			if(m_useAutoScroll)
+			{
+				_StartAutoScroll();
+			}
+		}
 
-// 			int toCreate = mMaxCount - mNavigatorList.Count;
+		protected override void OnDisable()
+		{
+			base.OnDisable();
 
-// 			for( int i = 0; i < toCreate; i++ )
-// 			{
-// 				CGCellRollingNavigator navigator = Instantiate( prefab, transformContent ).GetComponent<CGCellRollingNavigator>();
-// 				mNavigatorList.Add( navigator );
-// 			}
+			m_scrollRect.onValueChanged.RemoveAction(_RefreshScroll);
 
-// 			for( int i = 0; i < mNavigatorList.Count; i++ )
-// 			{
-// 				CGCellRollingNavigator navigator = mNavigatorList[ i ];
+			_KillAllTokenSource();
+		}
 
-// 				if( i < mMaxCount )
-// 				{
-// 					navigator.gameObject.SetActive( true );
-// 				}
-// 				else
-// 				{
-// 					navigator.gameObject.SetActive( false );
-// 				}
-// 			}
+		protected override void _Release()
+		{
+			base._Release();
 
-// 			stopEnumerator();
+			_KillAllTokenSource();
+		}
 
-// 			StartCoroutine( mEnumerator = IE_SmoothMove( scrollRect.horizontalNormalizedPosition, mPositionArray[ mCurrentIndex ], 0.0f ) );
-// 		}
+		private void _KillAllTokenSource()
+		{
+			CommonUtility.KillTokenSource(ref m_snapTokenSource);
+			CommonUtility.KillTokenSource(ref m_autoScrollTokenSource);
+		}
 
-// 		public void OnBeginDrag( PointerEventData _eventData )
-// 		{
-// 			if( !mCanDrag )
-// 			{
-// 				return;
-// 			}
+		public void SetEntryInfoList(List<IEntryInfo> entryInfoList,int index = -1)
+		{
+			_EnsureInitialized();
 
-// 			mIsDragging = true;
+			if(!m_poolBinder.TrySetDataList(entryInfoList))
+			{
+				return;
+			}
 
-// 			stopEnumerator();
-// 		}
+			var pivot = 0;
 
-// 		public void OnDrag( PointerEventData _eventData )
-// 		{
-// 			if( !mCanDrag || !mIsDragging )
-// 			{
-// 				return;
-// 			}
+			foreach(var slot in m_poolBinder.ItemGroup)
+			{
+				var location = m_slotStep*pivot++;
 
-// 			float min = ( mCurrentIndex > 0 ) ? mPositionArray[ mCurrentIndex - 1 ] : mPositionArray[ mCurrentIndex ];
-// 			float max = ( mCurrentIndex < mPositionArray.Length - 1 ) ? mPositionArray[ mCurrentIndex + 1 ] : mPositionArray[ mCurrentIndex ];
+				slot.AnchoredPosition = IsVertical ? new Vector2(0.0f,-location) : new Vector2(location,0.0f);
+			}
 
-// 			scrollRect.horizontalNormalizedPosition = Mathf.Clamp( scrollRect.horizontalNormalizedPosition, min, max );
-// 		}
+			var focusIndex = index != -1 ? Mathf.Clamp(index,0,entryInfoList.Count) : 0;
 
-// 		public void OnEndDrag( PointerEventData _eventData )
-// 		{
-// 			if( !mCanDrag || !mIsDragging )
-// 			{
-// 				return;
-// 			}
+			SetTargetIndexImmediate(focusIndex);
+		}
 
-// 			mIsDragging = false;
+		public void Clear()
+		{
+			_KillAllTokenSource();
 
-// 			float delta = _eventData.pressPosition.x - _eventData.position.x;
+			m_poolBinder.Clear();
+		}
 
-// 			mPreviousIndex = mCurrentIndex;
+		public void SetTargetIndexImmediate(int index)
+		{
+			var target = m_poolBinder.GetItemByIndex(index);
 
-// 			if( Mathf.Abs( delta ) > threshold )
-// 			{
-// 				if( delta > 0 && mCurrentIndex < mPositionArray.Length - 1 )
-// 				{
-// 					mCurrentIndex++;
-// 				}
-// 				else if( delta < 0 && mCurrentIndex > 0 )
-// 				{
-// 					mCurrentIndex--;
-// 				}
-// 			}
+			if(target == null)
+			{
+				return;
+			}
 
-// 			stopEnumerator();
+			m_centerSlot = target;
 
-// 			StartCoroutine( mEnumerator = IE_SmoothMove( scrollRect.horizontalNormalizedPosition, mPositionArray[ mCurrentIndex ], 0.3f ) );
-// 		}
+			var content = m_scrollRect.content;
 
-// 		private IEnumerator IE_SmoothMove( float _from, float _to, float _duration )
-// 		{
-// 			if( _duration != 0.0f )
-// 			{
-// 				float time = 0.0f;
+			if(IsVertical)
+			{
+				content.anchoredPosition = new Vector2(0.0f,index*m_slotStep);
+			}
+			else
+			{
+				content.anchoredPosition = new Vector2(-(index*m_slotStep),0.0f);
+			}
 
-// 				while( time < _duration )
-// 				{
-// 					time += Time.deltaTime;
-// 					scrollRect.horizontalNormalizedPosition = Mathf.Lerp( _from, _to, time / _duration );
+			_RefreshSlotList();
 
-// 					yield return null;
-// 				}
-// 			}
-// 			else
-// 			{
-// 				// ui 갱신용
-// 				yield return null;
-// 			}
+			if(m_useAutoScroll)
+			{
+				_StartAutoScroll();
+			}
+		}
 
-// 			scrollRect.horizontalNormalizedPosition = _to;
+		private void _RefreshScroll(Vector2 _)
+		{
+			_RefreshSlotList();
+		}
 
-// 			// 순환 처리
-// 			if( mCurrentIndex == 0 )
-// 			{
-// 				mCurrentIndex = mMaxCount;
-// 				scrollRect.horizontalNormalizedPosition = mPositionArray[ mCurrentIndex ];
-// 			}
-// 			else if( mCurrentIndex == mPositionArray.Length - 1 )
-// 			{
-// 				mCurrentIndex = 1;
-// 				scrollRect.horizontalNormalizedPosition = mPositionArray[ mCurrentIndex ];
-// 			}
+		private void _RefreshSlotList()
+		{
+			var totalSize = m_poolBinder.ItemCount*m_slotStep;
+			var pivot = (IsVertical ? Vector2.up : Vector2.right)*totalSize;
 
-// 			_SetNavigator(mCurrentIndex - 1);
+			foreach(var slot in m_poolBinder.ItemGroup)
+			{
+				var location = _GetAxisLocation(slot.AnchoredPosition)+_GetAxisLocation(m_scrollRect.content.anchoredPosition);
 
-// 			mEnumerator = null;
+				if(location < -LoopBoundary)
+				{
+					slot.AnchoredPosition += pivot;
+				}
+				else if(location > LoopBoundary)
+				{
+					slot.AnchoredPosition -= pivot;
+				}
+			}
+		}
 
-// 			yield return StartCoroutine( mEnumerator = IE_AutoScroll() );
-// 		}
+		private float _GetAxisLocation(Vector2 location)
+		{
+			return IsVertical ? location.y : location.x;
+		}
 
-// 		private void stopEnumerator()
-// 		{
-// 			if( mEnumerator != null )
-// 			{
-// 				StopCoroutine( mEnumerator );
+		void IBeginDragHandler.OnBeginDrag(PointerEventData eventData)
+		{
+			m_scrollRect.velocity = Vector2.zero;
 
-// 				mEnumerator = null;
-// 			}
-// 		}
+			_KillAllTokenSource();
+		}
 
-// 		private IEnumerator IE_AutoScroll()
-// 		{
-// 			yield return new WaitForSeconds( intervalTime );
+		void IEndDragHandler.OnEndDrag(PointerEventData eventData)
+		{
+			CommonUtility.RecycleTokenSource(ref m_snapTokenSource);
 
-// 			mPreviousIndex = mCurrentIndex;
-// 			mCurrentIndex++;
+			m_scrollRect.velocity = Vector2.zero;
 
-// 			int nextIndex = Mathf.Min( mCurrentIndex, mPositionArray.Length - 1 );
+			var closestSlot = _FindClosestSlot();
 
-// 			mEnumerator = null;
+			if(closestSlot == null)
+			{
+				return;
+			}
 
-// 			yield return StartCoroutine( mEnumerator = IE_SmoothMove( scrollRect.horizontalNormalizedPosition, mPositionArray[ nextIndex ], 0.3f ) );
-// 		}
+			_SnapAsync(closestSlot,m_snapDuration,m_snapTokenSource.Token).Forget();
+		}
 
-// 		public void HideAll()
-// 		{
-// 			mCanDrag = false;
+		private async UniTask _SnapAsync(Slot target,float duration,CancellationToken token)
+		{
+			var content = m_scrollRect.content;
+			var viewport = m_scrollRect.viewport;
 
-// 			m_poolBinder.Clear();
-// 		}
+            var offset = viewport.InverseTransformPoint(viewport.TransformPoint(viewport.rect.center))-viewport.InverseTransformPoint(target.transform.position);
 
-// 		private void _SetNavigator(int index)
-// 		{
-// 			var navigator = m_poolBinder.FindItemByIndex(index);
+			var delta = IsVertical ? offset.y : offset.x;
 
-// 			foreach(var item in m_poolBinder.ItemGroup)
-// 			{
-// 				item.SetNavigator(navigator != null && item == navigator);
-// 			}
-// 		}
-// 	}
-// }
+			var start = content.anchoredPosition;
+            var finish = start+(IsVertical ? new Vector2(0.0f,delta) : new Vector2(delta,0.0f));
+
+			void _ScrollContent(float time)
+			{
+				content.anchoredPosition = Vector2.Lerp(start,finish,time);
+			}
+
+			await CommonUtility.ExecuteProgressAsync(0.0f,1.0f,duration,_ScrollContent,false,null,token);
+
+			m_centerSlot = target;
+
+			m_carouselSlotSubject.OnNext(target);
+			m_carouselIndexSubject.OnNext(m_poolBinder.FindIndex(target));
+
+			if(m_useAutoScroll)
+			{
+				_StartAutoScroll();
+			}
+		}
+
+		private Slot _FindClosestSlot()
+		{
+			if(m_poolBinder.ItemCount == 0)
+			{
+				return null;
+			}
+
+			var viewport = m_scrollRect.viewport;
+			var center = IsVertical ? viewport.position.y : viewport.position.x;
+
+			var closest = m_poolBinder.GetItemByIndex(0);
+			var minimum = float.MaxValue;
+
+			foreach(var slot in m_poolBinder.ItemGroup)
+			{
+				var position = IsVertical ? slot.transform.position.y : slot.transform.position.x;
+				var distance = Mathf.Abs(position-center);
+
+				if(distance < minimum)
+				{
+					minimum = distance;
+					closest = slot;
+				}
+			}
+
+			return closest;
+		}
+
+		private void _StartAutoScroll()
+		{
+			if(m_poolBinder != null && m_poolBinder.ItemCount < 2)
+			{
+				return;
+			}
+
+			CommonUtility.RecycleTokenSource(ref m_autoScrollTokenSource);
+
+			if(m_centerSlot == null)
+			{
+				return;
+			}
+
+			_AutoScrollAsync(m_autoScrollTokenSource.Token).Forget();
+		}
+
+		private async UniTaskVoid _AutoScrollAsync(CancellationToken token)
+		{
+			async UniTask _PlayTaskAsync()
+			{
+				await UniTask.Delay(TimeSpan.FromSeconds(m_autoScrollInterval), cancellationToken: token);
+
+				var nextSlot = m_poolBinder.GetNearItem(m_centerSlot,1,true);
+
+				CommonUtility.RecycleTokenSource(ref m_snapTokenSource);
+
+				await _SnapAsync(nextSlot,m_autoScrollDuration,m_snapTokenSource.Token);
+			}
+
+			await CommonUtility.LoopUniTaskAsync(_PlayTaskAsync,-1,token).SuppressCancellationThrow();
+		}
+
+		protected override void Reset()
+		{
+			base.Reset();
+
+			if(!m_scrollRect)
+			{
+				m_scrollRect = GetComponent<ScrollRect>();
+			}
+
+			if(!m_scrollRect.viewport)
+			{
+				m_scrollRect.viewport = m_scrollRect.transform.Find("Viewport").GetComponent<RectTransform>();
+			}
+
+			if(!m_scrollRect.content)
+			{
+				m_scrollRect.content = m_scrollRect.transform.Find("Viewport/Content").GetComponent<RectTransform>();
+			}
+		}
+
+		public void SetScrollRect()
+		{
+			m_scrollRect.movementType = ScrollRect.MovementType.Unrestricted;
+
+			var content = m_scrollRect.content;
+			var viewport = m_scrollRect.viewport;
+
+			viewport.pivot = new Vector2(0.5f,0.5f);
+			viewport.ExpandAnchorSize();
+
+			if(IsVertical)
+			{
+				content.pivot = new Vector2(0.0f,0.5f);
+				content.anchorMin = new Vector2(0.0f,0.0f);
+				content.anchorMax = new Vector2(0.0f,1.0f);
+			}
+			else
+			{
+				content.pivot = new Vector2(0.5f,1.0f);
+				content.anchorMin = new Vector2(0.0f,1.0f);
+				content.anchorMax = new Vector2(1.0f,1.0f);
+			}
+		}
+	}
+}

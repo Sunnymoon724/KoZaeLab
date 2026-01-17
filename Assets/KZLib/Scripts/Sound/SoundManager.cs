@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using KZLib.KZUtility;
 using KZLib.KZData;
-using System;
 using R3;
 
 namespace KZLib
@@ -10,8 +9,6 @@ namespace KZLib
 	[SingletonConfig(AutoCreate = true,PrefabPath = "Prefab/SoundManager",DontDestroy = true)]
     public partial class SoundManager : SingletonMB<SoundManager>
 	{
-		private IDisposable m_soundSubscription;
-
 		protected override void _Initialize()
 		{
 			base._Initialize();

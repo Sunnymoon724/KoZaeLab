@@ -274,14 +274,14 @@ public static class CameraExtension
 	/// <summary>
 	/// Transform the screen space corners of the rect transform.
 	/// </summary>
-	public static void TransformCornersToScreen(this Camera camera,RectTransform transform,Vector3[] positionArray,float factor = 1.0f)
+	public static void TransformCornersToScreen(this Camera camera,RectTransform rectTrans,Vector3[] positionArray,float factor = 1.0f)
 	{
 		if(!_IsValid(camera))
 		{
 			return;
 		}
 
-		transform.GetWorldCorners(positionArray);
+		rectTrans.GetWorldCorners(positionArray);
 
 		for(var i=0;i<4;i++)
 		{

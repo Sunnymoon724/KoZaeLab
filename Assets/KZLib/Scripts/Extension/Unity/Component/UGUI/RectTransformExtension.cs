@@ -1,182 +1,183 @@
-using KZLib;
 using UnityEngine;
 
 public static partial class RectTransformExtension
 {
-	public static Vector2 WorldToCanvasLocalPosition(this RectTransform rectTransform,Vector2 point,Camera uiCamera)
+	public static Vector2 WorldToCanvasLocalPosition(this RectTransform rectTrans,Vector2 point,Camera uiCamera)
 	{
 		var screen = RectTransformUtility.WorldToScreenPoint(uiCamera,point);
 
-		return GetLocalCanvasPositionFromScreenPosition(rectTransform,screen,uiCamera);
+		return GetLocalCanvasPositionFromScreenPosition(rectTrans,screen,uiCamera);
 	}
 
-	public static Vector2 GetLocalCanvasPositionFromScreenPosition(this RectTransform rectTransform,Vector2 screenPoint,Camera camera)
+	public static Vector2 GetLocalCanvasPositionFromScreenPosition(this RectTransform rectTrans,Vector2 screenPoint,Camera camera)
 	{
-		RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform,screenPoint,camera,out var point);
+		RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTrans,screenPoint,camera,out var point);
 
 		return point;
 	}
 
-	public static Vector2 ConvertWorldPositionToCanvasPosition(this RectTransform rectTransform,Vector3 position,Camera worldCamera, Camera uiCamera )
+	public static Vector2 ConvertWorldPositionToCanvasPosition(this RectTransform rectTrans,Vector3 position,Camera worldCamera, Camera uiCamera )
 	{
 		var point = worldCamera.WorldToScreenPoint(position);
 
-		return GetLocalCanvasPositionFromScreenPosition(rectTransform,point,uiCamera);
+		return GetLocalCanvasPositionFromScreenPosition(rectTrans,point,uiCamera);
 	}
 
-	public static Rect CalculateWorldRect(this RectTransform rectTransform)
+	public static Rect CalculateWorldRect(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return default;
 		}
 
-		var cornerArray = _GetCornerArray(rectTransform);
+		var cornerArray = _GetCornerArray(rectTrans);
 
 		return new Rect(cornerArray[0],new Vector2(Vector3.Distance(cornerArray[0],cornerArray[1]),Vector3.Distance(cornerArray[1],cornerArray[2])));
 	}
 
-	public static Vector2 CalculateWorldCenter(this RectTransform rectTransform)
+	public static Vector2 CalculateWorldCenter(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return default;
 		}
 
-		var cornerArray = _GetCornerArray(rectTransform);
+		var cornerArray = _GetCornerArray(rectTrans);
 
 		return new Vector2((cornerArray[0].x+cornerArray[3].x)/2.0f,(cornerArray[0].y+cornerArray[1].y)/2.0f);
 	}
 
-	public static Vector2 CalculateWorldSize(this RectTransform rectTransform)
+	public static Vector2 CalculateWorldSize(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return default;
 		}
 
-		var cornerArray = _GetCornerArray(rectTransform);
+		var cornerArray = _GetCornerArray(rectTrans);
 
 		return new Vector2(Vector3.Distance(cornerArray[1],cornerArray[2]),Vector3.Distance(cornerArray[0],cornerArray[1]));
 	}
 
-	public static float CalculateWorldLeft(this RectTransform rectTransform)
+	public static float CalculateWorldLeft(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return default;
 		}
 
-		var cornerArray = _GetCornerArray(rectTransform);
+		var cornerArray = _GetCornerArray(rectTrans);
 
 		return cornerArray[0].x;
 	}
 
-	public static float CalculateWorldRight(this RectTransform rectTransform)
+	public static float CalculateWorldRight(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return default;
 		}
 
-		var cornerArray = _GetCornerArray(rectTransform);
+		var cornerArray = _GetCornerArray(rectTrans);
 
 		return cornerArray[2].x;
 	}
 
-	public static float CalculateWorldTop(this RectTransform rectTransform)
+	public static float CalculateWorldTop(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return default;
 		}
 
-		var cornerArray = _GetCornerArray(rectTransform);
+		var cornerArray = _GetCornerArray(rectTrans);
 
 		return cornerArray[1].y;
 	}
 
-	public static float CalculateWorldBottom(this RectTransform rectTransform)
+	public static float CalculateWorldBottom(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return default;
 		}
 
-		var cornerArray = _GetCornerArray(rectTransform);
+		var cornerArray = _GetCornerArray(rectTrans);
 
 		return cornerArray[0].y;
 	}
 
-	public static Vector2 CalculateWorldTopLeft(this RectTransform rectTransform)
+	public static Vector2 CalculateWorldTopLeft(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return default;
 		}
 
-		var cornerArray = _GetCornerArray(rectTransform);
+		var cornerArray = _GetCornerArray(rectTrans);
 
 		return new Vector2(cornerArray[0].x,cornerArray[1].y);
 	}
 
-	public static Vector2 CalculateWorldTopRight(this RectTransform rectTransform)
+	public static Vector2 CalculateWorldTopRight(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return default;
 		}
 
-		var cornerArray = _GetCornerArray(rectTransform);
+		var cornerArray = _GetCornerArray(rectTrans);
 
 		return new Vector2(cornerArray[2].x,cornerArray[1].y);
 	}
 
-	public static Vector2 CalculateWorldBottomLeft(this RectTransform rectTransform)
+	public static Vector2 CalculateWorldBottomLeft(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return default;
 		}
 
-		var cornerArray = _GetCornerArray(rectTransform);
+		var cornerArray = _GetCornerArray(rectTrans);
 
 		return new Vector2(cornerArray[0].x, cornerArray[0].y);
 	}
 
-	public static Vector2 CalculateWorldBottomRight(this RectTransform rectTransform)
+	public static Vector2 CalculateWorldBottomRight(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return default;
 		}
 
-		var cornerArray = _GetCornerArray(rectTransform);
+		var cornerArray = _GetCornerArray(rectTrans);
 
 		return new Vector2(cornerArray[2].x,cornerArray[0].y);
 	}
 
-	public static Rect ToScreenSpace(this RectTransform rectTransform) 
+	public static Rect ToScreenSpace(this RectTransform rectTrans) 
 	{
-		var size = Vector2.Scale(rectTransform.rect.size,rectTransform.lossyScale);
-		var rect = new Rect(rectTransform.position.x,Screen.height-rectTransform.position.y,size.x,size.y);
+		var size = Vector2.Scale(rectTrans.rect.size,rectTrans.lossyScale);
+		var rect = new Rect(rectTrans.position.x,Screen.height-rectTrans.position.y,size.x,size.y);
 
-		rect.x -= rectTransform.pivot.x*size.x;
-		rect.y -= (1.0f-rectTransform.pivot.y)*size.y;
+		rect.x -= rectTrans.pivot.x*size.x;
+		rect.y -= (1.0f-rectTrans.pivot.y)*size.y;
 
 		return rect;
 	}
 
-	public static Rect CalculateScreenRect(this RectTransform rectTransform)
+	public static Rect CalculateScreenRect(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return default;
 		}
 
-		var worldRect = rectTransform.CalculateWorldRect();
-		var canvas = rectTransform.GetComponentInParent<Canvas>();
-		var canvasRect = canvas.GetComponent<RectTransform>().CalculateWorldRect();
+		var worldRect = rectTrans.CalculateWorldRect();
+
+		var canvas = rectTrans.GetComponentInParent<Canvas>();
+		var canvasRectTrans = canvas.GetComponent<RectTransform>();
+		var canvasRect = canvasRectTrans.CalculateWorldRect();
 
 		var screenWidth = Screen.width;
 		var screenHeight = Screen.height;
@@ -186,14 +187,14 @@ public static partial class RectTransformExtension
 		return new Rect(screenWidth*((worldRect.x-canvasRect.x)/canvasRect.size.x),screenHeight*((-canvasRect.y+worldRect.y)/canvasRect.size.y),size.x,size.y);
 	}
 
-	public static Rect CalculateCanvasRect(this RectTransform rectTransform)
+	public static Rect CalculateCanvasRect(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return default;
 		}
 
-		var canvas = rectTransform.FindParentCanvas();
+		var canvas = rectTrans.FindParentCanvas();
 
 		if(canvas == null)
 		{
@@ -202,7 +203,7 @@ public static partial class RectTransformExtension
 			return default;
 		}
 
-		var worldCornerArray = _GetCornerArray(rectTransform);
+		var worldCornerArray = _GetCornerArray(rectTrans);
 		var localCornerArray = new Vector3[worldCornerArray.Length];
 
 		for(var i=0;i<worldCornerArray.Length;i++)
@@ -218,15 +219,15 @@ public static partial class RectTransformExtension
 		return new Rect(x,y,width,height);
 	}
 
-	public static Canvas FindParentCanvas(this RectTransform rectTransform)
+	public static Canvas FindParentCanvas(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return null;
 		}
 
-		var canvas = rectTransform.GetComponentInParent<Canvas>();
-		var parent = rectTransform.parent;
+		var canvas = rectTrans.GetComponentInParent<Canvas>();
+		var parent = rectTrans.parent;
 		var idx = 0;
 
 		while(!canvas && parent && idx < 50)
@@ -239,199 +240,199 @@ public static partial class RectTransformExtension
 		return canvas;
 	}
 
-	private static Vector3[] _GetCornerArray(RectTransform rectTransform)
+	private static Vector3[] _GetCornerArray(RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return null;
 		}
 
 		var cornerArray = new Vector3[4];
 
-		rectTransform.GetWorldCorners(cornerArray);
+		rectTrans.GetWorldCorners(cornerArray);
 
 		return cornerArray;
 	}
 
-	public static void ExpandAnchorSize(this RectTransform rectTransform)
+	public static void ExpandAnchorSize(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.anchorMin = Vector2.zero;
-		rectTransform.anchorMax = Vector2.one;
-		rectTransform.sizeDelta = Vector2.zero;
+		rectTrans.anchorMin = Vector2.zero;
+		rectTrans.anchorMax = Vector2.one;
+		rectTrans.sizeDelta = Vector2.zero;
 	}
 
-	public static void ResetTransform(this RectTransform rectTransform)
+	public static void ResetTransform(this RectTransform rectTrans)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.anchorMin = Vector2.zero;
-		rectTransform.anchorMax = Vector2.one;
-		rectTransform.offsetMin = Vector2.zero;
-		rectTransform.offsetMax = Vector2.zero;
+		rectTrans.anchorMin = Vector2.zero;
+		rectTrans.anchorMax = Vector2.one;
+		rectTrans.offsetMin = Vector2.zero;
+		rectTrans.offsetMax = Vector2.zero;
 	}
 
-	public static void SetAnchoredPosition(this RectTransform rectTransform,Vector2 point)
+	public static void SetAnchoredPosition(this RectTransform rectTrans,Vector2 point)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.anchoredPosition = point;
+		rectTrans.anchoredPosition = point;
 	}
 
-	public static void SetAnchoredPositionX(this RectTransform rectTransform,float x)
+	public static void SetAnchoredPositionX(this RectTransform rectTrans,float x)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.SetAnchoredPosition(new(x,rectTransform.anchoredPosition.y));
+		rectTrans.SetAnchoredPosition(new(x,rectTrans.anchoredPosition.y));
 	}
 
-	public static void SetAnchoredPositionY(this RectTransform rectTransform,float y)
+	public static void SetAnchoredPositionY(this RectTransform rectTrans,float y)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.SetAnchoredPosition(new(rectTransform.anchoredPosition.x,y));
+		rectTrans.SetAnchoredPosition(new(rectTrans.anchoredPosition.x,y));
 	}
 
-	public static void SetSizeDelta(this RectTransform rectTransform,Vector2 sizeDelta)
+	public static void SetSizeDelta(this RectTransform rectTrans,Vector2 sizeDelta)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.sizeDelta = sizeDelta;
+		rectTrans.sizeDelta = sizeDelta;
 	}
 
-	public static void SetWidth(this RectTransform rectTransform,float width)
+	public static void SetWidth(this RectTransform rectTrans,float width)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.SetSizeDelta(new(width,rectTransform.sizeDelta.y));
+		rectTrans.SetSizeDelta(new(width,rectTrans.sizeDelta.y));
 	}
 
-	public static void SetHeight(this RectTransform rectTransform,float height)
+	public static void SetHeight(this RectTransform rectTrans,float height)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.SetSizeDelta(new(rectTransform.sizeDelta.x,height));
+		rectTrans.SetSizeDelta(new(rectTrans.sizeDelta.x,height));
 	}
 
-	public static void SetLeftAnchorOffset(this RectTransform rectTransform,float left)
+	public static void SetLeftAnchorOffset(this RectTransform rectTrans,float left)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.anchorMin = new Vector2(left,rectTransform.anchorMin.y);
+		rectTrans.anchorMin = new Vector2(left,rectTrans.anchorMin.y);
 	}
 
-	public static void SetRightAnchorOffset(this RectTransform rectTransform,float right)
+	public static void SetRightAnchorOffset(this RectTransform rectTrans,float right)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.anchorMax = new Vector2(1.0f-right,rectTransform.anchorMax.y);
+		rectTrans.anchorMax = new Vector2(1.0f-right,rectTrans.anchorMax.y);
 	}
 
-	public static void SetTopAnchorOffset(this RectTransform rectTransform,float top)
+	public static void SetTopAnchorOffset(this RectTransform rectTrans,float top)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.anchorMax = new Vector2(rectTransform.anchorMax.x,1.0f-top);
+		rectTrans.anchorMax = new Vector2(rectTrans.anchorMax.x,1.0f-top);
 	}
 
-	public static void SetBottomAnchorOffset(this RectTransform rectTransform,float bottom)
+	public static void SetBottomAnchorOffset(this RectTransform rectTrans,float bottom)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.anchorMin = new Vector2(rectTransform.anchorMin.x,bottom);
+		rectTrans.anchorMin = new Vector2(rectTrans.anchorMin.x,bottom);
 	}
 
-	public static void SetAnchorOffset(this RectTransform rectTransform,float left,float top,float right,float bottom)
+	public static void SetAnchorOffset(this RectTransform rectTrans,float left,float top,float right,float bottom)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.anchorMin = new Vector2(left,bottom);
-		rectTransform.anchorMax = new Vector2(1.0f-right,1.0f-top);
+		rectTrans.anchorMin = new Vector2(left,bottom);
+		rectTrans.anchorMax = new Vector2(1.0f-right,1.0f-top);
 	}
 
-	public static void SetLeft(this RectTransform rectTransform,float left)
+	public static void SetLeft(this RectTransform rectTrans,float left)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.offsetMin = new Vector2(left,rectTransform.offsetMin.y);
+		rectTrans.offsetMin = new Vector2(left,rectTrans.offsetMin.y);
 	}
 	
-	public static void SetRight(this RectTransform rectTransform,float right)
+	public static void SetRight(this RectTransform rectTrans,float right)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.offsetMax = new Vector2(-right,rectTransform.offsetMax.y);
+		rectTrans.offsetMax = new Vector2(-right,rectTrans.offsetMax.y);
 	}
 
-	public static void SetTop(this RectTransform rectTransform,float top)
+	public static void SetTop(this RectTransform rectTrans,float top)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.offsetMax = new Vector2(rectTransform.offsetMax.x,-top);
+		rectTrans.offsetMax = new Vector2(rectTrans.offsetMax.x,-top);
 	}
 
-	public static void SetBottom(this RectTransform rectTransform,float bottom)
+	public static void SetBottom(this RectTransform rectTrans,float bottom)
 	{
-		if(!_IsValid(rectTransform))
+		if(!_IsValid(rectTrans))
 		{
 			return;
 		}
 
-		rectTransform.offsetMin = new Vector2(rectTransform.offsetMin.x,bottom);
+		rectTrans.offsetMin = new Vector2(rectTrans.offsetMin.x,bottom);
 	}
 
-	private static bool _IsValid(RectTransform rectTransform)
+	private static bool _IsValid(RectTransform rectTrans)
 	{
-		if(!rectTransform)
+		if(!rectTrans)
 		{
 			LogChannel.System.E("RectTransform is null.");
 

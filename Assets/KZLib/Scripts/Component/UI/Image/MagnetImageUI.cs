@@ -64,7 +64,7 @@ public class MagnetImageUI : BaseImageUI
 			throw new InvalidOperationException($"Target is null or direction is none {Target} or {m_direction}");
 		}
 
-		Observable.EveryUpdate().Select(_CalculateSize).DistinctUntilChanged().Subscribe(_OnChangedImage);
+		Observable.EveryUpdate().Select(_CalculateSize).DistinctUntilChanged().Subscribe(_OnChangedImage).RegisterTo(destroyCancellationToken);
 	}
 	
 	private Vector2 _CalculateSize(Unit _)

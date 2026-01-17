@@ -29,7 +29,7 @@ namespace KZLib.KZData
 		{
 			if(disposing)
 			{
-				m_disposable.Dispose();
+				m_disposable?.Dispose();
 				m_lingoSubject.Dispose();
 
 				m_isLoaded = false;

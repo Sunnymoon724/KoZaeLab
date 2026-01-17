@@ -163,8 +163,6 @@ public static partial class CommonUtility
 		var curve = animationCurve ?? GetEaseCurve(EaseType.Linear);
 		var elapsedTime = 0.0f;
 
-		onProgress?.Invoke(start);
-
 		while(elapsedTime < duration)
 		{
 			if(token.IsCancellationRequested)
@@ -172,16 +170,15 @@ public static partial class CommonUtility
 				return;
 			}
 
-			var deltaTime = _GetDeltaTime(ignoreTimescale);
-
-			elapsedTime = Mathf.Min(elapsedTime+deltaTime,duration);
-
-			var progress = elapsedTime/duration;
-			var value = Mathf.Lerp(start,finish,curve.Evaluate(progress));
+			var progress = elapsedTime / duration;
+			var value = Mathf.Lerp(start, finish, curve.Evaluate(progress));
 
 			onProgress?.Invoke(value);
 
 			await UniTask.Yield(token).SuppressCancellationThrow();
+
+			var deltaTime = _GetDeltaTime(ignoreTimescale);
+			elapsedTime += deltaTime;
 		}
 
 		onProgress?.Invoke(finish);

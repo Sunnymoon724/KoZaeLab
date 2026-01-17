@@ -22,15 +22,22 @@ public abstract class BasePopup : Window2D
 			AddSequence(ref m_openSequence,m_popUpTransform.DOScale(0.5f,0.2f).From().SetEase(Ease.OutBack,2.0f));
 		}
 
+		
+	}
+
+	protected override void OnEnable()
+	{
+		base.OnEnable();
+
 		if(m_closeButton)
 		{
 			m_closeButton.onClick.AddAction(Close);
 		}
 	}
 
-	protected override void _Release()
+	protected override void OnDisable()
 	{
-		base._Release();
+		base.OnDisable();
 
 		if(m_closeButton)
 		{
