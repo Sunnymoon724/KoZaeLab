@@ -7,6 +7,7 @@ using Cysharp.Threading.Tasks;
 using System.Threading;
 using System;
 using System.Collections;
+using UnityEngine.UI;
 
 
 #if UNITY_EDITOR
@@ -41,7 +42,7 @@ namespace KZLib
 
 			m_animator.Play(stateName,layer,normalizedTime);
 		}
-		
+
 		public void PlayAnimationInTime(string stateName,int layer,float duration)
 		{
 			if(!m_animator)
@@ -106,15 +107,15 @@ namespace KZLib
 			await m_animator.WaitForAnimationFinishAsync(stateName,layer,cancellationToken);
 		}
 
-		protected void OnPlayEffect(int order)
+		protected void _OnPlayEffect(int order)
 		{
 			if(m_motionEventDict.TryGetValue(order,out var motionEvent))
 			{
-				PlayMotionEvent(motionEvent);
+				_PlayMotionEvent(motionEvent);
 			}
 		}
 
-		protected virtual void PlayMotionEvent(MotionEvent motionEvent) { }
+		protected virtual void _PlayMotionEvent(MotionEvent motionEvent) { }
 
 		protected void Reset()
 		{
@@ -140,8 +141,8 @@ namespace KZLib
 				return;
 			}
 
-			EditorApplication.update -= _UpdateInEditor;
-			EditorApplication.update += _UpdateInEditor;
+			EditorApplication.update -= _OnUpdateInEditor;
+			EditorApplication.update += _OnUpdateInEditor;
 
 			m_animator.Play(m_stateName);
 
@@ -154,10 +155,10 @@ namespace KZLib
 		{
 			m_isPlaying = false;
 
-			EditorApplication.update -= _UpdateInEditor;
+			EditorApplication.update -= _OnUpdateInEditor;
 		}
 
-		private void _UpdateInEditor()
+		private void _OnUpdateInEditor()
 		{
 			if(!m_animator)
 			{
@@ -176,6 +177,7 @@ namespace KZLib
 			m_lastTime = currentTime;
 
 			m_animator.Update(deltaTime);
+
 			SceneView.RepaintAll();
 		}
 

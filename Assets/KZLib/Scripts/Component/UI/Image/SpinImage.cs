@@ -2,7 +2,7 @@ using R3;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class SpinImageUI : BaseImageUI,IDragHandler
+public class SpinImage : BaseImage,IDragHandler
 {
 	[SerializeField]
 	private Transform m_target = null;

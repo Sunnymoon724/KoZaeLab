@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-public class ShiftGraphImageUI : GraphImageUI
+public class ShiftGraphImage : GraphImage
 {
-	public void UpdateGraph(float value)
+	public void RefreshGraph(float value)
 	{
 		if(IsValidGraph)
 		{

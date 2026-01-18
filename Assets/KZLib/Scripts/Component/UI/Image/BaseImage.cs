@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Image))]
-public abstract class BaseImageUI : BaseComponentUI
+public abstract class BaseImage : BaseComponent
 {
 	[SerializeField]
 	protected Image m_image = null;

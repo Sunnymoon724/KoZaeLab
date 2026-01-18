@@ -1,13 +1,13 @@
 ﻿using System;
 using UnityEngine;
 
-public class GraphImageUI : ShaderImageUI
+public class GraphImage : ShaderImage
 {
 	[SerializeField]
 	protected int m_graphLength = 0;
 
 	[SerializeField]
-	protected bool m_resetEnable = true;
+	private bool m_resetEnable = true;
 
 	protected float[] m_graphArray = null;
 
@@ -41,9 +41,9 @@ public class GraphImageUI : ShaderImageUI
 	{
 		base.Reset();
 
-		if(!m_shader)
+		if(!m_materialShader)
 		{
-			m_shader = Shader.Find("KZLib/GraphTexture");
+			m_materialShader = Shader.Find("KZLib/GraphTexture");
 		}
 	}
 
@@ -59,7 +59,7 @@ public class GraphImageUI : ShaderImageUI
 		SetGraphArray();
 	}
 
-	public virtual void UpdateGraph(float[] valueArray)
+	public virtual void RefreshGraph(float[] valueArray)
 	{
 		if(IsValidGraph)
 		{

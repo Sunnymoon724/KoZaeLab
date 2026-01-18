@@ -5,6 +5,7 @@ using UnityEngine;
 public static partial class Global
 {
 	//? General
+	public const float ZERO_ANGLE = 0.0f;
 	public const float HALF_ANGLE = 180.0f;
 	public const float FULL_ANGLE = 360.0f;
 
@@ -26,6 +27,9 @@ public static partial class Global
 	public const float PERCENT_HUNDRED = 0.01f;
 	public const float PERCENT_THOUSAND = 0.001f;
 	public const float PERCENT_10THOUSAND = 0.0001f;
+
+	public const int MIN_POLYGON_COUNT = 3;
+	public const int MAX_POLYGON_COUNT = 36;
 }
 #endregion General
 

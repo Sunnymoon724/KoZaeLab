@@ -3,7 +3,8 @@ using R3;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class MagnetImageUI : BaseImageUI
+[RequireComponent(typeof(RectTransform))]
+public class MagnetImage : BaseImage
 {
 	[Flags]
 	private enum DirectionType { None = 0x00, Top = 0x01, Left = 0x02, Right = 0x04, Bottom = 0x08, }
@@ -55,6 +56,8 @@ public class MagnetImageUI : BaseImageUI
 
 	private bool IsValidTarget => Target && m_direction != DirectionType.None;
 
+	private RectTransform m_rectTrans = null;
+
 	protected override void _Initialize()
 	{
 		base._Initialize();
@@ -63,6 +66,8 @@ public class MagnetImageUI : BaseImageUI
 		{
 			throw new InvalidOperationException($"Target is null or direction is none {Target} or {m_direction}");
 		}
+
+		m_rectTrans = GetComponent<RectTransform>();
 
 		Observable.EveryUpdate().Select(_CalculateSize).DistinctUntilChanged().Subscribe(_OnChangedImage).RegisterTo(destroyCancellationToken);
 	}
@@ -79,8 +84,8 @@ public class MagnetImageUI : BaseImageUI
 			throw new InvalidOperationException($"Target is null or direction is none {Target} or {m_direction}");
 		}
 
-		var space = Space*CurrentRect.lossyScale.x;
-		var pivotSize = CurrentRect.CalculateWorldSize();
+		var space = Space*m_rectTrans.lossyScale.x;
+		var pivotSize = m_rectTrans.CalculateWorldSize();
 		var position = Target.position;
 
 		var size = new Vector2((targetSize.x+pivotSize.x)/2.0f+space,(targetSize.y+pivotSize.y)/2.0f+space);
@@ -103,7 +108,7 @@ public class MagnetImageUI : BaseImageUI
 			position += Vector3.right*size.x;
 		}
 
-		CurrentRect.position = position;
+		m_rectTrans.position = position;
 	}
 
 	private bool _CanMove(DirectionType directionType)

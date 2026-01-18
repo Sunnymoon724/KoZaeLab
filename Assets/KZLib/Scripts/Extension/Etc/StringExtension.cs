@@ -278,21 +278,24 @@ public static class StringExtension
 
 	public static bool TryToColor(this string hexCode,out Color value)
 	{
-		if(hexCode.Length == 7)
+		if(!hexCode.IsEmpty())
 		{
-			hexCode = $"{hexCode}FF";
-		}
+			if(hexCode.Length == 7)
+			{
+				hexCode = $"{hexCode}FF";
+			}
 
-		if(s_hexColorDict.TryGetValue(hexCode,out value))
-		{
-			return true;
-		}
+			if(s_hexColorDict.TryGetValue(hexCode,out value))
+			{
+				return true;
+			}
 
-		if(ColorUtility.TryParseHtmlString(hexCode,out value))
-		{
-			s_hexColorDict.Add(hexCode,value);
+			if(ColorUtility.TryParseHtmlString(hexCode,out value))
+			{
+				s_hexColorDict.Add(hexCode,value);
 
-			return true;
+				return true;
+			}
 		}
 
 		value = Color.clear;

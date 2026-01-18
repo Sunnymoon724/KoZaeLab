@@ -1,15 +1,14 @@
 
 using UnityEngine;
 
-[ExecuteInEditMode]
 [RequireComponent(typeof(ParticleSystem))]
 public abstract class BaseParticleSystem : BaseComponent
 {
 	[SerializeField]
 	protected ParticleSystem m_particleSystem = null;
 
-	protected ParticleSystem.MainModule m_mainModule;
-	
+	protected ParticleSystem.MainModule m_mainModule = default;
+
 	protected override void Reset()
 	{
 		base.Reset();

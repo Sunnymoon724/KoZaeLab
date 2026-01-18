@@ -1,22 +1,21 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
-using KZLib.KZAttribute;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 
-public class ProgressImageUI : BaseImageUI
+public class ProgressImage : BaseImage
 {
 	[SerializeField,HideInInspector]
 	private float m_currentValue = 1.0f;
 
-	[SerializeField,KZMaxClamp(nameof(m_maxValue))]
+	[SerializeField]
 	private float m_minValue = 0.0f;
 
-	[SerializeField,KZMinClamp(nameof(m_minValue))]
+	[SerializeField]
 	private float m_maxValue = 1.0f;
 
-	[BoxGroup("Value",Order = 2),ShowInInspector,PropertyRange(nameof(m_minValue),nameof(m_maxValue))]
+	[BoxGroup("Value",Order = 10),ShowInInspector,PropertyRange(nameof(m_minValue),nameof(m_maxValue))]
 	public float CurrentValue
 	{
 		get => m_currentValue;
@@ -41,7 +40,7 @@ public class ProgressImageUI : BaseImageUI
 		}
 	}
 
-	[BoxGroup("Option",Order = 1)]
+	[BoxGroup("Option",Order = 20)]
 	[HorizontalGroup("Option/0"),SerializeField,ToggleLeft]
 	private bool m_useGradient = false;
 	[HorizontalGroup("Option/0"),HideLabel,SerializeField,ShowIf(nameof(m_useGradient))]

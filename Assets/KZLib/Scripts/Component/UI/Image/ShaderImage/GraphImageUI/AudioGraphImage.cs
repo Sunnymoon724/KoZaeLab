@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-public class AudioGraphImageUI : GraphImageUI
+public class AudioGraphImage : GraphImage
 {
-	public override void UpdateGraph(float[] valueArray)
+	public override void RefreshGraph(float[] valueArray)
 	{
 		if(IsValidGraph)
 		{

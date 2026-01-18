@@ -1,27 +1,27 @@
 ﻿using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class ShaderImageUI : BaseImageUI
+public class ShaderImage : BaseImage
 {
 	[SerializeField,HideInInspector]
-	protected Shader m_shader = null;
+	protected Shader m_materialShader = null;
 
 	[ShowInInspector]
-	protected Shader Shader
+	protected Shader MaterialShader
 	{
-		get => m_shader;
+		get => m_materialShader;
 		set
 		{
-			if(m_shader == value)
+			if(m_materialShader == value)
 			{
 				return;
 			}
 
-			m_shader = value;
+			m_materialShader = value;
 
 			if(m_image)
 			{
-				m_image.material = m_shader != null ? new Material(m_shader) : null;
+				m_image.material = m_materialShader != null ? new Material(m_materialShader) : null;
 			}
 		}
 	}
@@ -30,9 +30,9 @@ public class ShaderImageUI : BaseImageUI
 	{
 		base._Initialize();
 
-		if(m_image && !m_image.material && Shader)
+		if(m_image && !m_image.material && MaterialShader)
 		{
-			m_image.material = new Material(Shader);
+			m_image.material = new Material(MaterialShader);
 		}
 	}
 

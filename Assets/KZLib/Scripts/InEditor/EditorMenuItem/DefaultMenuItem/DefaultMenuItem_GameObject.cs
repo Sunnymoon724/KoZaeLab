@@ -24,7 +24,7 @@ namespace KZLib.KZMenu
 		[MenuItem("GameObject/UI/Shape",false,MenuOrder.GameObject.UI)]
 		private static void _OnCreateShape()
 		{
-			_OnCreateUI("Shape",false,typeof(ShapeUI));
+			_OnCreateUI("Shape",false,typeof(ShapeDrawing));
 		}
 		#endregion Shape
 

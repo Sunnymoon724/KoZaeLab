@@ -1,7 +1,6 @@
 ﻿
 // namespace UnityEngine.UI
 // {
-// 	[RequireComponent(typeof(CanvasRenderer))]
 // 	public partial class UIShape : MaskableGraphic
 // 	{
 // 		[SerializeField]

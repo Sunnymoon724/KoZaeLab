@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using KZLib.KZDevelop;
+using KZLib.KZEditor;
 using KZLib.KZWindow;
 using UnityEditor;
 
@@ -17,7 +18,7 @@ namespace KZLib.KZMenu
 		[MenuItem("KZMenu/Window/Open Editor Custom Window",false,MenuOrder.Display.CUSTOM)]
 		private static void _OnOpenEditorCustomWindow()
 		{
-			EditorWindow.GetWindow<EditorCustomWindow>().Show();
+			EditorCustom.ShowCustom();
 		}
 
 		[MenuItem("KZMenu/Window/Open PlayerPrefs Window",false,MenuOrder.Display.CUSTOM)]
@@ -31,10 +32,10 @@ namespace KZLib.KZMenu
 		{
 			var instance = GraphicQualityOption.In;
 
-			var viewer = EditorWindow.GetWindow<ScriptableObjectWindow>("Graphic Quality Option");
+			var window = EditorWindow.GetWindow<ScriptableObjectWindow>("Graphic Quality Option");
 
-			viewer.SetResource(instance);
-			viewer.Show();
+			window.SetResource(instance);
+			window.Show();
 		}
 
 		[MenuItem("KZMenu/Window/Open Network Test Window",false,MenuOrder.Display.TEST)]

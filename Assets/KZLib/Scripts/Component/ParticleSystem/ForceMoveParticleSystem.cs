@@ -1,6 +1,5 @@
 	using UnityEngine;
 
-	[ExecuteInEditMode]
 	public class ForceMoveParticleSystem : BaseParticleSystem
 	{
 		[SerializeField]
@@ -46,7 +45,7 @@
 
 			var count = m_particleSystem.GetParticles(m_particleArray);
 			var force = m_forceCurve.Evaluate((Time.time-m_startTime)/m_forceLifeTime)*Time.deltaTime*m_force;
-		
+
 			var position = Vector3.zero;
 
 			if(m_mainModule.simulationSpace == ParticleSystemSimulationSpace.Local)

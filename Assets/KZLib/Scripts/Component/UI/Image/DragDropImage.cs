@@ -3,7 +3,8 @@ using R3;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDragHandler
+[RequireComponent(typeof(RectTransform))]
+public class DragDropImage : BaseImage,IDragHandler,IBeginDragHandler,IEndDragHandler
 {
 	private Canvas m_canvas = null;
 
@@ -16,11 +17,14 @@ public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDr
 	private readonly Subject<Unit> m_dragFinishSubject = new();
 	public Observable<Unit> OnFinishedDrag => m_dragFinishSubject;
 
+	private RectTransform m_rectTrans = null;
+
 	protected override void _Initialize()
 	{
 		base._Initialize();
 
 		m_canvas = GetComponentInParent<Canvas>();
+		m_rectTrans = GetComponent<RectTransform>();
 	}
 
 	void IDragHandler.OnDrag(PointerEventData eventData)
@@ -30,7 +34,7 @@ public class DragDropImageUI : BaseImageUI,IDragHandler,IBeginDragHandler,IEndDr
 			throw new NullReferenceException("Canvas is null");
 		}
 
-		CurrentRect.anchoredPosition += eventData.delta/m_canvas.scaleFactor;
+		m_rectTrans.anchoredPosition += eventData.delta/m_canvas.scaleFactor;
 
 		m_dragChangeSubject.OnNext(Unit.Default);
 	}

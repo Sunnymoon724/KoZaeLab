@@ -21,7 +21,9 @@ namespace KZLib.KZAttribute
 		{
 			var rect = _DrawPrefixLabel(label);
 
-			var color = ValueEntry.SmartValue.ToColor();
+			var hexCode = ValueEntry.SmartValue;
+
+			var color = hexCode.IsEmpty() ? Color.white : hexCode.ToColor();
 			var result = EditorGUI.ColorField(rect,color);
 
 			if(color != result)

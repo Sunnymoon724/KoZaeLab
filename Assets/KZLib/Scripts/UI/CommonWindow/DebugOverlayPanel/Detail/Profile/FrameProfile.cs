@@ -14,7 +14,7 @@ namespace KZLib.KZWidget.Debug
 		private FrameMonitor m_averageFrameMonitor = null;
 
 		[SerializeField]
-		private ShiftGraphImageUI m_frameGraph = null;
+		private ShiftGraphImage m_frameGraph = null;
 
 		private int m_minFrameRate = int.MaxValue;
 		private int m_maxFrameRate = 0;
@@ -37,7 +37,7 @@ namespace KZLib.KZWidget.Debug
 			m_minimumFrameMonitor.SetFrame(m_minFrameRate,m_minFrameTime);
 			m_averageFrameMonitor.SetFrame((m_maxFrameRate-m_minFrameRate)/2,(m_maxFrameTime-m_minFrameTime)/2.0f);
 
-			m_frameGraph.UpdateGraph(frameRate);
+			m_frameGraph.RefreshGraph(frameRate);
 		}
 	}
 }

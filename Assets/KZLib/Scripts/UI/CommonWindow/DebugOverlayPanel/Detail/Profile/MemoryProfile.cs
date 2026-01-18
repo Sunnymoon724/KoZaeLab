@@ -19,11 +19,11 @@ namespace KZLib.KZWidget.Debug
 		private MemoryMonitor m_monoUsed = null;
 
 		[SerializeField]
-		private ShiftGraphImageUI m_reservedGraph = null;
+		private ShiftGraphImage m_reservedGraph = null;
 		[SerializeField]
-		private ShiftGraphImageUI m_allocatedGraph = null;
+		private ShiftGraphImage m_allocatedGraph = null;
 		[SerializeField]
-		private ShiftGraphImageUI m_monoGraph = null;
+		private ShiftGraphImage m_monoGraph = null;
 
 		public void Refresh()
 		{
@@ -39,9 +39,9 @@ namespace KZLib.KZWidget.Debug
 			m_monoHeap.SetMemory(Profiler.GetMonoHeapSizeLong());
 			m_monoUsed.SetMemory(mono);
 
-			m_reservedGraph.UpdateGraph(reserved);
-			m_allocatedGraph.UpdateGraph(allocated);
-			m_monoGraph.UpdateGraph(mono);
+			m_reservedGraph.RefreshGraph(reserved);
+			m_allocatedGraph.RefreshGraph(allocated);
+			m_monoGraph.RefreshGraph(mono);
 		}
 	}
 }

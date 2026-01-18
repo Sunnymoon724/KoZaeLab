@@ -10,7 +10,7 @@ namespace KZLib.KZWidget.Debug
 		[SerializeField]
 		private TMP_Text m_decibelText = null;
 		[SerializeField]
-		private AudioGraphImageUI m_audioGraphImageUI = null;
+		private AudioGraphImage m_audioGraphImageUI = null;
 
 		private readonly float[] m_spectrumArray = new float[c_spectrumSize];
 		private float m_maxDecibel = 0.0f;
@@ -55,7 +55,7 @@ namespace KZLib.KZWidget.Debug
 
 			m_decibelText.SetSafeTextMeshPro($"{m_maxDecibel}");
 
-			m_audioGraphImageUI.UpdateGraph(m_spectrumArray);
+			m_audioGraphImageUI.RefreshGraph(m_spectrumArray);
 		}
 	}
 }
