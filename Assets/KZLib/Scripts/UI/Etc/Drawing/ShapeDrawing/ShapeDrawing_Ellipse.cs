@@ -7,7 +7,7 @@ namespace UnityEngine.UI
 
 		[SerializeField]
 		private float m_ellipseAngle = Global.FULL_ANGLE;
-		private float EllipseAngle
+		internal float EllipseAngle
 		{
 			get => m_ellipseAngle;
 			set

@@ -3,12 +3,12 @@ namespace UnityEngine.UI
 {
 	public partial class ShapeDrawing : GraphicDrawing
 	{
-		private enum ShapePrimitiveType { Ellipse, Polygon, } // Rectangle, }
-		private enum ShapeFillType { None, Matched, Solid, }
+		internal enum ShapePrimitiveType { Ellipse, Polygon, } // Rectangle, }
+		internal enum ShapeFillType { None, Matched, Solid, }
 
 		[SerializeField]
 		private ShapePrimitiveType m_primitiveType = ShapePrimitiveType.Ellipse;
-		private ShapePrimitiveType PrimitiveType
+		internal ShapePrimitiveType PrimitiveType
 		{
 			get => m_primitiveType;
 			set
@@ -33,7 +33,7 @@ namespace UnityEngine.UI
 
 		[SerializeField]
 		private float m_outlineThickness = 1.0f;
-		private float OutlineThickness
+		internal float OutlineThickness
 		{
 			get => m_outlineThickness;
 			set
@@ -58,7 +58,7 @@ namespace UnityEngine.UI
 
 		[SerializeField]
 		private Color m_outlineColor = Color.white;
-		private Color OutlineColor
+		internal Color OutlineColor
 		{
 			get => m_outlineColor;
 			set
@@ -83,7 +83,7 @@ namespace UnityEngine.UI
 
 		[SerializeField]
 		private ShapeFillType m_fillType = ShapeFillType.Solid;
-		private ShapeFillType FillType
+		internal ShapeFillType FillType
 		{
 			get => m_fillType;
 			set
@@ -108,7 +108,7 @@ namespace UnityEngine.UI
 
 		[SerializeField]
 		private Color m_fillColor = Color.white;
-		private Color FillColor
+		internal Color FillColor
 		{
 			get => m_fillColor;
 			set
@@ -131,15 +131,23 @@ namespace UnityEngine.UI
 			}
 		}
 
+		[SerializeField]
+		private Vector2 m_radius = Vector2.zero;
+		internal Vector2 Radius
+		{
+			get => m_radius;
+			private set => m_radius = value;
+		}
+
 		protected override void _PopulateMesh(VertexHelper vertexHelper)
 		{
 			var rect = GetPixelAdjustedRect();
 
-			var currentRadius = new Vector2(rect.width/2.0f,rect.height/2.0f);
+			Radius = new Vector2(rect.width/2.0f,rect.height/2.0f);
 			var centerPoint = rect.center;
-			var innerRadius = new Vector2(currentRadius.x-OutlineThickness,currentRadius.y-OutlineThickness);
+			var innerRadius = new Vector2(Radius.x-OutlineThickness,Radius.y-OutlineThickness);
 
-			_DrawShape(vertexHelper,centerPoint,currentRadius,innerRadius);
+			_DrawShape(vertexHelper,centerPoint,Radius,innerRadius);
 		}
 
 		private void _DrawShape(VertexHelper vertexHelper,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius)
@@ -201,7 +209,7 @@ namespace UnityEngine.UI
 
 			for(var i=0;i<=segmentCount;i++)
 			{
-				var distance = useDistance ? m_polygonVertexDistanceArray[i%segmentCount] : 1.0f;
+				var distance = useDistance ? GetPolygonVertexDistance(i%segmentCount) : 1.0f;
 
 				var cos = Mathf.Cos(segmentAngle*i)*distance;
 				var sin = Mathf.Sin(segmentAngle*i)*distance;
@@ -222,7 +230,7 @@ namespace UnityEngine.UI
 
 			for(var i=0;i<=segmentCount;i++)
 			{
-				var distanceRatio = useDistance ? m_polygonVertexDistanceArray[i%segmentCount] : 1.0f;
+				var distanceRatio = useDistance ? GetPolygonVertexDistance(i%segmentCount) : 1.0f;
 
 				var cosAngle = Mathf.Cos(segmentAngle*i)*distanceRatio;
 				var sinAngle = Mathf.Sin(segmentAngle*i)*distanceRatio;

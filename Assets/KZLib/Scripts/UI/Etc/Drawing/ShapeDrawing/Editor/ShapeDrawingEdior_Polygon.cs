@@ -1,47 +1,48 @@
 ﻿#if UNITY_EDITOR
-using System.Reflection;
-using Sirenix.OdinInspector.Editor;
 using UnityEditor;
+using UnityEngine;
 
 namespace KZLib
 {
-	public partial class ShapeDrawingEditor : OdinEditor
+	public partial class ShapeDrawingEditor : GraphicDrawingEditor
 	{
-		private SerializedProperty m_polygonSideCountProperty = null;
-		private PropertyInfo m_polygonSideCountInfo = null;
-
 		private bool m_polygonArrayFoldout = false;
-		private SerializedProperty m_polygonVertexDistanceArrayProperty = null;
-
-		private void _SetPolygon()
-		{
-			m_polygonSideCountProperty = m_serializedObject.FindProperty("m_polygonSideCount");
-			m_polygonSideCountInfo = target.GetType().GetProperty("PolygonSideCount",BindingFlags.NonPublic | BindingFlags.Instance);
-
-			m_polygonVertexDistanceArrayProperty = m_serializedObject.FindProperty("m_polygonVertexDistanceArray");
-		}
 
 		private void _DrawPolygon()
 		{
 			_DrawPolygonSideCount();
 
-			_CheckPolygonVertexArray();
+			var vertexDistanceCount = m_shapeDrawing.PolygonVertexDistanceCount;
 
-			if(m_polygonVertexDistanceArrayProperty.arraySize > 0)
+			if(vertexDistanceCount < 1)
 			{
-				m_polygonArrayFoldout = EditorGUILayout.Foldout(m_polygonArrayFoldout,"Vertex Distance Array");
+				return;
+			}
 
-				if(m_polygonArrayFoldout)
+			m_polygonArrayFoldout = EditorGUILayout.Foldout(m_polygonArrayFoldout,"Vertex Distance Array");
+
+			if(m_polygonArrayFoldout)
+			{
+				EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+
+				for(var i=0;i<vertexDistanceCount;i++)
 				{
-					EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+					EditorGUI.BeginChangeCheck();
 
-					for(var i=0;i<m_polygonVertexDistanceArrayProperty.arraySize;i++)
+					var vertexName = $"Vertex {i+1}";
+					var oldDistance = m_shapeDrawing.GetPolygonVertexDistance(i);
+
+					var newDistance = EditorGUILayout.Slider(vertexName,oldDistance,0.0f,1.0f);
+
+					if(EditorGUI.EndChangeCheck())
 					{
-						_DrawPolygonVertexDistance(i);
-					}
+						Undo.RecordObject(m_shapeDrawing,$"Change {vertexName} Distance");
 
-					EditorGUILayout.EndVertical();
+						m_shapeDrawing.SetPolygonVertexDistance(i,newDistance);
+					}
 				}
+
+				EditorGUILayout.EndVertical();
 			}
 		}
 
@@ -49,60 +50,79 @@ namespace KZLib
 		{
 			EditorGUI.BeginChangeCheck();
 
-			var newSideCount = EditorGUILayout.IntSlider("Side Count",m_polygonSideCountProperty.intValue,Global.MIN_POLYGON_COUNT,Global.MAX_POLYGON_COUNT);
+			var newSideCount = EditorGUILayout.IntSlider("Side Count",m_shapeDrawing.PolygonSideCount,Global.MIN_POLYGON_COUNT,Global.MAX_POLYGON_COUNT);
 
 			if(EditorGUI.EndChangeCheck())
 			{
 				Undo.RecordObject(m_shapeDrawing,"Change Side Count");
 
-				m_polygonSideCountInfo.SetValue(target,newSideCount);
+				m_shapeDrawing.PolygonSideCount = newSideCount;
 
 				m_serializedObject.Update();
 			}
 		}
 
-		private void _CheckPolygonVertexArray()
+		protected override void _DragMouse(int index,Vector3 position)
 		{
-			var sideCount = m_polygonSideCountProperty.intValue;
-			var arrayCount = m_polygonVertexDistanceArrayProperty.arraySize;
+			Undo.RecordObject(m_shapeDrawing,"Move Handle");
 
-			if(arrayCount < sideCount)
+			if(index == 0)
 			{
-				for(var i=arrayCount;i<sideCount;i++)
-				{
-					m_polygonVertexDistanceArrayProperty.arraySize++;
-
-					var element = m_polygonVertexDistanceArrayProperty.GetArrayElementAtIndex(i);
-
-					element.floatValue = 1;
-				}
+				CurrentTransform.position = position;
 			}
 			else
 			{
-				var difference = arrayCount-sideCount;
+				var centerPosition = CurrentTransform.position;
+				var angle = m_shapeDrawing.PolygonSegmentAngle;
+				var controlPosition = _GetPolygonVertexPosition(centerPosition,angle,m_shapeDrawing.Radius,index-1,1.0f);
 
-				for(var i=0;i<difference;i++)
-				{
-					m_polygonVertexDistanceArrayProperty.arraySize--;
-				}
+				var controlDistance = Vector3.Distance(centerPosition,controlPosition);
+				var newDistance = Vector3.Distance(centerPosition,position);
+
+				var ratio = controlDistance == 0.0f ? 0.0f : Mathf.Clamp01(newDistance/controlDistance);
+
+				m_shapeDrawing.SetPolygonVertexDistance(index-1,ratio);
+			}
+
+			Repaint();
+		}
+
+		protected override void _UpdateAnchorPositionList()
+		{
+			var anchorPosition = CurrentTransform.position;
+
+			_AddOrUpdateHandlePosition(0,anchorPosition,true);
+		}
+
+		protected override void _UpdateControlPositionList()
+		{
+			var vertexDistanceCount = m_shapeDrawing.PolygonVertexDistanceCount;
+			var anchorPosition = CurrentTransform.position;
+			var angle = m_shapeDrawing.PolygonSegmentAngle;
+
+			for(var i=0;i<vertexDistanceCount;i++)
+			{
+				var distance = m_shapeDrawing.GetPolygonVertexDistance(i);
+				var controlPosition = _GetPolygonVertexPosition(anchorPosition,angle,m_shapeDrawing.Radius,i,distance);
+
+				_AddOrUpdateHandlePosition(i+1,controlPosition,false);
 			}
 		}
 
-		private void _DrawPolygonVertexDistance(int index)
+		protected override Vector3 _ConvertToMousePosition(Vector3 mousePosition)
 		{
-			var distanceProperty = m_polygonVertexDistanceArrayProperty.GetArrayElementAtIndex(index);
+			var ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+			var position = ray.GetPoint(10.0f);
 
-			EditorGUI.BeginChangeCheck();
+			return new Vector3(position.x,position.y);
+		}
 
-			var vertexName = $"Vertex {index+1}";
-			var newDistance = EditorGUILayout.Slider(vertexName,distanceProperty.floatValue,0.0f,1.0f);
+		private Vector3 _GetPolygonVertexPosition(Vector2 center,float angle,Vector2 radius,int index,float distance)
+		{
+			var cos = Mathf.Cos(angle*index)*distance;
+			var sin = Mathf.Sin(angle*index)*distance;
 
-			if(EditorGUI.EndChangeCheck())
-			{
-				Undo.RecordObject(m_shapeDrawing,$"Change {vertexName} Distance");
-
-				distanceProperty.floatValue = newDistance;
-			}
+			return new Vector3(center.x+cos*radius.x,center.y+sin*radius.y);
 		}
 	}
 }

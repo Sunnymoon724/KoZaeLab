@@ -195,7 +195,7 @@ namespace KZLib.KZDevelop
 					return;
 				}
 
-				Resolution = Vector3.Distance(m_centerPosition,convertPosition)/m_vertexDistanceList[index-1];
+				Resolution = Vector3.Distance(m_centerPosition,convertPosition)/divide;
 			}
 
 			SetDirty();
