@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace KZLib.KZMenu
+namespace KZLib.EditorInternal.Menus
 {
 	public static partial class KZMenuItem
 	{

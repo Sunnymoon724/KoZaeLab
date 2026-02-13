@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Video;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using System.IO;
 
 using Object = UnityEngine.Object;

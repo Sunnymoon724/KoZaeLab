@@ -1,5 +1,10 @@
-﻿
-namespace UnityEngine.UI
+﻿using System;
+using System.Collections.Generic;
+using KZLib.Utilities;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace KZLib.UI
 {
 	public partial class ShapeDrawing : GraphicDrawing
 	{
@@ -139,11 +144,57 @@ namespace UnityEngine.UI
 			private set => m_radius = value;
 		}
 
+		private class ShapeCatalog : StrategyCatalog<ShapeDrawing,ShapePrimitiveType,ShapeStrategy>
+		{
+			public ShapeCatalog(ShapeDrawing owner) : base(owner) { }
+
+			protected override Dictionary<ShapePrimitiveType,ShapeStrategy> _BindStrategy()
+			{
+				int _CalculateExpectedVertices_Ellipse_Inner(ShapeFillType fillType,Color fillColor,float outlineThickness,Color outlineColor)
+				{
+					return m_owner._CalculateExpectedVertices_Ellipse(m_owner.EllipseAngle,fillType,fillColor,outlineThickness,outlineColor);
+				}
+
+				int _CalculateExpectedVertices_Polygon_Inner(ShapeFillType fillType,Color fillColor,float outlineThickness,Color outlineColor)
+				{
+					return m_owner._GetExpectedVertices_Polygon(m_owner.PolygonSideCount,fillType,fillColor,outlineThickness,outlineColor);
+				}
+
+				return new()
+				{
+					[ShapePrimitiveType.Ellipse] = new(m_owner._DrawShape_Ellipse,_CalculateExpectedVertices_Ellipse_Inner),
+					[ShapePrimitiveType.Polygon] = new(m_owner._DrawShape_Polygon,_CalculateExpectedVertices_Polygon_Inner),
+				};
+			}
+		}
+
+		private readonly struct ShapeStrategy
+		{
+			public readonly Action<VertexHelper,Vector2,Vector2,Vector2> Draw;
+			public readonly Func<ShapeFillType,Color,float,Color,int> GetVertexCount;
+
+			public ShapeStrategy(Action<VertexHelper,Vector2,Vector2,Vector2> draw,Func<ShapeFillType,Color,float,Color,int> getVertexCount)
+			{
+				Draw = draw;
+				GetVertexCount = getVertexCount;
+			}
+		}
+
+		private ShapeCatalog m_shapeCatalog = null;
+
+		private bool _TryGetStrategy(ShapePrimitiveType primitiveType,out ShapeStrategy strategy)
+		{
+			m_shapeCatalog ??= new ShapeCatalog(this);
+
+			return m_shapeCatalog.TryGetStrategy(primitiveType,out strategy);
+		}
+
 		protected override void _PopulateMesh(VertexHelper vertexHelper)
 		{
 			var rect = GetPixelAdjustedRect();
 
 			Radius = new Vector2(rect.width/2.0f,rect.height/2.0f);
+
 			var centerPoint = rect.center;
 			var innerRadius = new Vector2(Radius.x-OutlineThickness,Radius.y-OutlineThickness);
 
@@ -152,20 +203,9 @@ namespace UnityEngine.UI
 
 		private void _DrawShape(VertexHelper vertexHelper,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius)
 		{
-			switch(PrimitiveType)
+			if(_TryGetStrategy(PrimitiveType,out var strategy))
 			{
-				case ShapePrimitiveType.Ellipse:
-					_DrawEllipse(vertexHelper,centerPoint,currentRadius,innerRadius);
-					break;
-				case ShapePrimitiveType.Polygon:
-					_DrawPolygon(vertexHelper,centerPoint,currentRadius,innerRadius);
-					break;
-				// case ShapeType.Rectangle:
-				// 	_DrawRectangle(vertexHelper,centerPoint,currentRadius,innerRadius);
-				// 	break;
-				default:
-					LogChannel.System.E($"{PrimitiveType} is not supported.");
-					break;
+				strategy.Draw(vertexHelper,centerPoint,currentRadius,innerRadius);
 			}
 		}
 
@@ -191,17 +231,17 @@ namespace UnityEngine.UI
 			//? Draw Fill
 			if(_ShouldDrawByFill(FillType,realFillColor))
 			{
-				_DrawPolygonWithFill(vertexHelper,segmentCount,segmentAngle,centerPoint,innerRadius,realFillColor,useDistance);
+				_DrawShapeWithFill(vertexHelper,segmentCount,segmentAngle,centerPoint,innerRadius,realFillColor,useDistance);
 			}
 
 			//? Draw Outline
 			if(_ShouldDrawByOutline(OutlineThickness,OutlineColor))
 			{
-				_DrawPolygonWithOutline(vertexHelper,segmentCount,segmentAngle,centerPoint,currentRadius,innerRadius,useDistance);
+				_DrawShapeWithOutline(vertexHelper,segmentCount,segmentAngle,centerPoint,currentRadius,innerRadius,useDistance);
 			}
 		}
 
-		private void _DrawPolygonWithFill(VertexHelper vertexHelper,int segmentCount,float segmentAngle,Vector2 centerPoint,Vector2 currentRadius,Color drawColor,bool useDistance)
+		private void _DrawShapeWithFill(VertexHelper vertexHelper,int segmentCount,float segmentAngle,Vector2 centerPoint,Vector2 currentRadius,Color drawColor,bool useDistance)
 		{
 			var count = vertexHelper.currentVertCount;
 
@@ -223,7 +263,7 @@ namespace UnityEngine.UI
 			}
 		}
 
-		private void _DrawPolygonWithOutline(VertexHelper vertexHelper,int segmentCount,float segmentAngle,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius,bool useDistance)
+		private void _DrawShapeWithOutline(VertexHelper vertexHelper,int segmentCount,float segmentAngle,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius,bool useDistance)
 		{
 			// Outline use only base color
 			var count = vertexHelper.currentVertCount;
@@ -253,22 +293,10 @@ namespace UnityEngine.UI
 
 		private int _GetTotalExpectedVertices(ShapePrimitiveType primitiveType,ShapeFillType fillType,Color fillColor,float outlineThickness,Color outlineColor)
 		{
-			switch(primitiveType)
-			{
-				case ShapePrimitiveType.Ellipse:
-					return _GetExpectedVerticesInEllipse(EllipseAngle,fillType,fillColor,outlineThickness,outlineColor);
-				case ShapePrimitiveType.Polygon:
-					return _GetExpectedVerticesInPolygon(PolygonSideCount,fillType,fillColor,outlineThickness,outlineColor);
-				// case ShapeType.Rectangle:
-				// 	return _DrawRectangle(vertexHelper,centerPoint,currentRadius,innerRadius);
-				// 	break;
-				default:
-					LogChannel.System.E($"{PrimitiveType} is not supported.");
-					return 0;
-			}
+			return _TryGetStrategy(primitiveType,out var strategy) ? strategy.GetVertexCount(fillType,fillColor,outlineThickness,outlineColor) : 0;
 		}
 
-		private int _GetExpectedVerticesInCommonShape(int sideCount,ShapeFillType fillType,Color fillColor,float outlineThickness,Color outlineColor)
+		private int _CalculateExpectedVertices_Shape(int sideCount,ShapeFillType fillType,Color fillColor,float outlineThickness,Color outlineColor)
 		{
 			var count = 0;
 			var realFillColor = _GetFillColor(fillType,fillColor,outlineColor);
@@ -276,19 +304,19 @@ namespace UnityEngine.UI
 			//? Draw Fill
 			if(_ShouldDrawByFill(fillType,realFillColor))
 			{
-				count += _GetExpectedVerticesInPolygonWithFill(sideCount);
+				count += _CalculateExpectedVertices_PolygonWithFill(sideCount);
 			}
 
 			//? Draw Outline
 			if(_ShouldDrawByOutline(outlineThickness,outlineColor))
 			{
-				count += _GetExpectedVerticesInPolygonWithOutline(sideCount);
+				count += _CalculateExpectedVertices_PolygonWithOutline(sideCount);
 			}
 
 			return count;
 		}
 
-		private int _GetExpectedVerticesInPolygonWithFill(int segmentCount)
+		private int _CalculateExpectedVertices_PolygonWithFill(int segmentCount)
 		{
 			var count = 1;
 
@@ -297,7 +325,7 @@ namespace UnityEngine.UI
 			return count;
 		}
 
-		private int _GetExpectedVerticesInPolygonWithOutline(int segmentCount)
+		private int _CalculateExpectedVertices_PolygonWithOutline(int segmentCount)
 		{
 			var count = 0;
 

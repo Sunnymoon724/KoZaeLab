@@ -1,6 +1,6 @@
 using UnityEngine;
-using KZLib.KZAttribute;
-using KZLib.KZData;
+using KZLib.Attributes;
+using KZLib.Data;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using Cysharp.Threading.Tasks;

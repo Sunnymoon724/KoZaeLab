@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 
 namespace KZLib
 {

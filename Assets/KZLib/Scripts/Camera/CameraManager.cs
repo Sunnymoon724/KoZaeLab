@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using KZLib.KZUtility;
-using KZLib.KZDevelop;
-using KZLib.KZData;
+using KZLib.Utilities;
+using KZLib.Development;
+using KZLib.Data;
 using UnityEngine.Rendering.Universal;
 using R3;
 

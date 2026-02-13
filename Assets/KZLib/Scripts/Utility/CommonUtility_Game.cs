@@ -1,10 +1,10 @@
 using System;
 using KZLib;
 using UnityEngine;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using System.IO;
-using KZLib.KZData;
-using KZLib.KZNetwork;
+using KZLib.Data;
+using KZLib.Networking;
 
 #if UNITY_EDITOR
 

@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using System;
 
-namespace KZLib.KZWindow
+namespace KZLib.Windows
 {
 	public partial class NetworkTestWindow : OdinEditorWindow
 	{

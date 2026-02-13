@@ -1,6 +1,6 @@
 using System;
-using KZLib.KZData;
-using KZLib.KZUtility;
+using KZLib.Data;
+using KZLib.Utilities;
 using UnityEngine;
 using UnityEngine.Playables;
 

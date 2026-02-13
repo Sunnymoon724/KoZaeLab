@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	public abstract class TaskSequence : BaseComponent
 	{

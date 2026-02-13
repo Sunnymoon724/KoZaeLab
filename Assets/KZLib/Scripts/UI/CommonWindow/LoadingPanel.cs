@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using KZLib.KZWidget;
+using KZLib.UI.Widgets;
 using UnityEngine;
 
-namespace KZLib.KZWidget
+namespace KZLib.UI.Widgets
 {
 	public interface ILoadingWidget
 	{

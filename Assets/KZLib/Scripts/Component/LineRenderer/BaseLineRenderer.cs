@@ -25,7 +25,7 @@ public abstract class BaseLineRenderer : BaseComponent
 		}
 	}
 
-	public void SetPointArray(Vector3[] positionArray)
+	public void SetPositionArray(Vector3[] positionArray)
 	{
 		m_lineRenderer.positionCount = positionArray.Length;
 		m_lineRenderer.SetPositions(positionArray);

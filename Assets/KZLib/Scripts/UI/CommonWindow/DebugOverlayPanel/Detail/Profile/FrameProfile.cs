@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KZLib.KZWidget.Debug
+namespace KZLib.UI.Widgets.Debug
 {
 	public class FrameProfile : BaseComponent,IPeriodicOverlay
 	{

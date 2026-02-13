@@ -4,10 +4,10 @@ using System.Diagnostics;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using MemoryPack;
 
-namespace KZLib.KZData
+namespace KZLib.Data
 {
 	public class ProtoManager : Singleton<ProtoManager>
 	{
@@ -204,7 +204,7 @@ namespace KZLib.KZData
 					throw new InvalidCastException($"{protoName} is empty.");
 				}
 
-				var protoTypeName = $"KZLib.KZData.{protoName}Proto";
+				var protoTypeName = $"KZLib.Data.{protoName}Proto";
 				var protoType = CommonUtility.FindType(protoTypeName) ?? throw new InvalidOperationException($"{protoTypeName} is not exist.");
 				var deserialize = MemoryPackSerializer.Deserialize(protoType.MakeArrayType(),textAsset.bytes);
 

@@ -1,5 +1,7 @@
-﻿
-namespace UnityEngine.UI
+﻿using UnityEngine;
+using UnityEngine.UI;
+
+namespace KZLib.UI
 {
 	public partial class ShapeDrawing : GraphicDrawing
 	{
@@ -17,7 +19,7 @@ namespace UnityEngine.UI
 					return;
 				}
 
-				var vertexCount = _GetExpectedVerticesInEllipse(value,FillType,FillColor,OutlineThickness,OutlineColor);
+				var vertexCount = _CalculateExpectedVertices_Ellipse(value,FillType,FillColor,OutlineThickness,OutlineColor);
 
 				if(!_IsValidVertex(vertexCount))
 				{
@@ -30,22 +32,22 @@ namespace UnityEngine.UI
 			}
 		}
 
-		private void _DrawEllipse(VertexHelper vertexHelper,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius)
+		private void _DrawShape_Ellipse(VertexHelper vertexHelper,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius)
 		{
-			var segmentCount = _GetSegmentCountInEllipse(EllipseAngle);
-			var segmentAngle = 2.0f*Mathf.PI/c_pivotResolution;
+			var segmentCount = _GetSegmentCount_Ellipse(EllipseAngle);
+			var segmentAngle = EllipseAngle*Mathf.Deg2Rad/segmentCount;
 
 			_DrawCommonShape(vertexHelper,segmentCount,segmentAngle,centerPoint,currentRadius,innerRadius,false);
 		}
 
-		private int _GetExpectedVerticesInEllipse(float angle,ShapeFillType fillType,Color fillColor,float outlineThickness,Color outlineColor)
+		private int _CalculateExpectedVertices_Ellipse(float angle,ShapeFillType fillType,Color fillColor,float outlineThickness,Color outlineColor)
 		{
-			var segmentCount = _GetSegmentCountInEllipse(angle);
+			var segmentCount = _GetSegmentCount_Ellipse(angle);
 
-			return _GetExpectedVerticesInCommonShape(segmentCount,fillType,fillColor,outlineThickness,outlineColor);
+			return _CalculateExpectedVertices_Shape(segmentCount,fillType,fillColor,outlineThickness,outlineColor);
 		}
 
-		private int _GetSegmentCountInEllipse(float angle)
+		private int _GetSegmentCount_Ellipse(float angle)
 		{
 			angle = Mathf.Clamp(angle,Global.ZERO_ANGLE,Global.FULL_ANGLE);
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KZLib.KZData.Video
+namespace KZLib.Data.Video
 {
 	public record VideoInfo
 	{

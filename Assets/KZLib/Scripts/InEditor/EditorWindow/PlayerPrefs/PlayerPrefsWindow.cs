@@ -4,12 +4,12 @@ using Sirenix.OdinInspector.Editor;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-using KZLib.KZAttribute;
-using KZLib.KZTool;
+using KZLib.Attributes;
+using KZLib.ToolKits;
 using UnityEditor;
 using Sirenix.Utilities.Editor;
 
-namespace KZLib.KZWindow
+namespace KZLib.Windows
 {
 	public class PlayerPrefsWindow : OdinEditorWindow
 	{

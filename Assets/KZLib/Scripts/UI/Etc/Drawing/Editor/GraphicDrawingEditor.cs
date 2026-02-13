@@ -4,35 +4,38 @@ using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace KZLib
+namespace KZLib.UI
 {
 	public abstract class GraphicDrawingEditor : OdinEditor
 	{
-		protected class HandleInfo
+		#region KnotInfo
+		private class KnotInfo
 		{
-			public bool IsAnchor { get; init; }
+			public KnotType Type { get; init; }
 			public Vector3 Position { get; set; }
 
-			public HandleInfo(Vector3 position,bool isAnchor)
+			public KnotInfo(Vector3 position,KnotType knotType)
 			{
 				Position = position;
-				IsAnchor = isAnchor;
+				Type = knotType;
 			}
 		}
+		#endregion KnotInfo
 
-		private int m_selectedHandleIndex = Global.INVALID_INDEX;
-		private int m_dragHandleIndex = Global.INVALID_INDEX;
-		private int m_mouseOverHandleIndex = Global.INVALID_INDEX;
-
-		protected bool m_raycastPadding = false;
-
+		protected bool m_isRaycastPaddingExpanded = false;
 		protected SerializedObject m_serializedObject = null;
 
-		private readonly Dictionary<int,HandleInfo> m_handleInfoDict = new();
-		private readonly HashSet<int> m_handleIndexHashSet = new();
-		private readonly List<int> m_handleIndexRemoveList = new();
+		private bool m_isEditing = false;
+		private Tool m_previousTool = Tool.None;
 
-		protected abstract SpaceType CurrentSpaceType { get; }
+		protected int m_mouseOverKnotIndex = Global.INVALID_INDEX;
+		protected int m_selectedKnotIndex = Global.INVALID_INDEX;
+		protected int m_dragKnotIndex = Global.INVALID_INDEX;
+
+		private readonly Dictionary<int,KnotInfo> m_knotInfoDict = new();
+		private readonly HashSet<int> m_knotIndexHashSet = new();
+		private readonly List<int> m_knotIndexRemoveList = new();
+
 		protected abstract Transform CurrentTransform { get; }
 
 		protected override void OnEnable()
@@ -49,93 +52,146 @@ namespace KZLib
 
 		protected abstract void _DoEnable();
 		protected abstract void _DoInspectorGUI();
-		protected abstract bool _IsShowHandle();
-		protected abstract void _UpdateAnchorPositionList();
-		protected abstract void _UpdateControlPositionList();
+		protected abstract bool _CanShowKnot();
+		protected abstract void _DoUpdateKnotList();
+		protected abstract void _ChangeKnotPosition(int index,Vector3 newPosition);
+		protected abstract Vector3[] _GetWorldCornerArray();
+		protected abstract Vector3 _ConvertToMousePosition(Vector3 mousePosition);
 
 		public override void OnInspectorGUI()
 		{
 			m_serializedObject.Update();
 
+			GUI.enabled = false;
+
+			EditorGUILayout.ObjectField("Script",MonoScript.FromMonoBehaviour(target as MonoBehaviour),typeof(MonoScript),false);
+
+			GUI.enabled = true;
+
 			_DoInspectorGUI();
+
+			if(GUILayout.Toggle(m_isEditing,"Edit Drawing","Button",GUILayout.Height(40.0f)))
+			{
+				if(!m_isEditing)
+				{
+					_StartEditing();
+				}
+
+				_SetEditingDescription();
+			}
+			else
+			{
+				if(m_isEditing)
+				{
+					_StopEditing(true);
+				}
+			}
 
 			m_serializedObject.ApplyModifiedProperties();
 		}
 
+		private void _StartEditing()
+		{
+			m_isEditing = true;
+
+			m_previousTool = Tools.current;
+			Tools.current = Tool.None;
+
+			Repaint();
+		}
+
+		protected void _StopEditing(bool restoreTool)
+		{
+			m_isEditing = false;
+
+			if(restoreTool)
+			{
+				Tools.current = m_previousTool;
+			}
+
+			Repaint();
+		}
+
+		protected virtual void _SetEditingDescription()
+		{
+			var labelStyle = new GUIStyle(GUI.skin.label)
+			{
+				wordWrap = true,
+				fontStyle = FontStyle.Bold,
+				alignment = TextAnchor.MiddleCenter,
+			};
+
+			labelStyle.normal.textColor = Color.green;
+
+			EditorGUILayout.LabelField("Edit Mode Activated",labelStyle);
+		}
+
 		protected void _SceneGUI()
 		{
-			if(!_IsShowHandle())
+			_DrawBorder();
+
+			if(Tools.current != Tool.None)
+			{
+				_StopEditing(false);
+
+				return;
+			}
+
+			if(!m_isEditing || !_CanShowKnot())
 			{
 				return;
 			}
 
-			var currentEvent = Event.current;
-
 			using var check = new EditorGUI.ChangeCheckScope();
 
-			if(currentEvent.type != EventType.Repaint && currentEvent.type != EventType.Layout)
+			var curEvt = Event.current;
+			var evtType = curEvt.type;
+
+			if(evtType != EventType.Repaint && evtType != EventType.Layout)
 			{
-				ProcessHandleInput(currentEvent);
+				if(curEvt.button == 0)
+				{
+					_SetInput(curEvt);
+				}
 			}
 
-			_DrawHandle();
+			_UpdateKnotInfoList();
 
-			if(currentEvent.type == EventType.Layout)
+			if(evtType == EventType.Repaint)
 			{
-				HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
+				_DrawKnot();
+			}
+
+			if(evtType == EventType.Layout)
+			{
+				HandleUtility.AddDefaultControl(0);
 			}
 
 			if(check.changed)
 			{
-				Undo.RecordObject(target,"Changed Handle");
+				Undo.RecordObject(target,"Changed Knot");
 
 				EditorUtility.SetDirty(target);
 				EditorApplication.QueuePlayerLoopUpdate();
+
+				Repaint();
 			}
 		}
 
-		private void ProcessHandleInput(Event currentEvent)
+		protected int _FindMouseOverKnotInfoIndex()
 		{
-			_UpdatePositionList();
-
-			m_mouseOverHandleIndex = _GetMouseOverIndex();
-
-			switch(currentEvent.type)
+			foreach(var pair in m_knotInfoDict)
 			{
-				case EventType.MouseDown:
-					{
-						_ClickDownMouse();
-						break;
-					}
-				case EventType.MouseDrag when m_dragHandleIndex != Global.INVALID_INDEX:
-					{
-						if(!m_handleInfoDict.TryGetValue(m_dragHandleIndex,out var handleInfo))
-						{
-							return;
-						}
+				var knotInfo = pair.Value;
 
-						var currentPosition = handleInfo.Position;
-						var newPosition = _ConvertToMousePosition(currentEvent.mousePosition);
+				if(knotInfo.Type == KnotType.Fixed)
+				{
+					continue;
+				}
 
-						if(currentPosition != newPosition)
-						{
-							_DragMouse(m_dragHandleIndex,newPosition);
-						}
-						break;
-					}
-				case EventType.MouseUp:
-					{
-						_ClickUpMouse();
-						break;
-					}
-			}
-		}
+				var isMajor = knotInfo.Type == KnotType.Major;
 
-		protected int _GetMouseOverIndex()
-		{
-			foreach(var pair in m_handleInfoDict)
-			{
-				if(KZHandleKit.IsMouseOverHandle(pair.Value.Position))
+				if(KZKnotKit.IsMouseOverHandle(isMajor,knotInfo.Position))
 				{
 					return pair.Key;
 				}
@@ -144,73 +200,168 @@ namespace KZLib
 			return Global.INVALID_INDEX;
 		}
 
-		protected virtual void _ClickDownMouse()
+		protected virtual void _DrawKnot()
 		{
-			m_selectedHandleIndex = m_mouseOverHandleIndex;
-
-			if(m_mouseOverHandleIndex != Global.INVALID_INDEX)
+			foreach(var pair in m_knotInfoDict)
 			{
-				m_dragHandleIndex = m_selectedHandleIndex;
-			}
-		}
+				var index = pair.Key;
+				var knotInfo = pair.Value;
 
-		protected virtual void _DragMouse(int index,Vector3 position) { }
-
-		protected virtual void _ClickUpMouse()
-		{
-			m_dragHandleIndex = -1;
-		}
-
-		protected abstract Vector3 _ConvertToMousePosition(Vector3 mousePosition);
-
-		protected virtual void _DrawHandle()
-		{
-			_UpdatePositionList();
-
-			foreach(var pair in m_handleInfoDict)
-			{
-				var handleInfo = pair.Value;
-				var isMouseOver = m_mouseOverHandleIndex == pair.Key;
-				var isSelected = m_selectedHandleIndex == pair.Key;
-
-				KZHandleKit.DrawHandlePosition(pair.Key,handleInfo.Position,isMouseOver,isSelected,handleInfo.IsAnchor);
-			}
-		}
-
-		private void _UpdatePositionList()
-		{
-			m_handleIndexHashSet.Clear();
-			m_handleIndexRemoveList.Clear();
-
-			_UpdateAnchorPositionList();
-			_UpdateControlPositionList();
-
-			foreach(var key in m_handleInfoDict.Keys)
-			{
-				if(!m_handleIndexHashSet.Contains(key))
+				switch(knotInfo.Type)
 				{
-					m_handleIndexRemoveList.Add(key);
+					case KnotType.Fixed:
+					{
+						KZKnotKit.DrawFixedKnot(index,knotInfo.Position);
+						break;
+					}
+					case KnotType.Major:
+					case KnotType.Minor:
+					{
+						var isMouseOver = index == m_mouseOverKnotIndex;
+						var isSelected = index == m_selectedKnotIndex;
+						var isMajor = knotInfo.Type == KnotType.Major;
+						
+						KZKnotKit.DrawControlKnot(index,knotInfo.Position,isMouseOver,isSelected,isMajor);
+						break;
+					}
+				}
+			}
+		}
+
+		private void _SetInput(Event currentEvent)
+		{
+			var mousePosition = _ConvertToMousePosition(currentEvent.mousePosition);
+			var shouldConsume = false;
+
+			switch(currentEvent.type)
+			{
+				case EventType.MouseDown:
+				{
+					if(m_mouseOverKnotIndex == Global.INVALID_INDEX && !_IsInsideRect(mousePosition))
+					{
+						_StopEditing(true);
+					}
+					else
+					{
+						_SetMouseDown(mousePosition);
+					}
+					shouldConsume = true;
+					break;
+				}
+				case EventType.MouseDrag when m_dragKnotIndex != Global.INVALID_INDEX:
+				{
+					_SetMouseDrag(mousePosition);
+					shouldConsume = true;
+					break;
+				}
+				case EventType.MouseUp:
+				{
+					_SetMouseUp(mousePosition);
+					shouldConsume = true;
+					break;
+				}
+				case EventType.MouseMove:
+				{
+					var overIndex = _FindMouseOverKnotInfoIndex();
+
+					if(m_mouseOverKnotIndex != overIndex)
+					{
+						m_mouseOverKnotIndex = overIndex;
+						Repaint();
+					}
+					break;
 				}
 			}
 
-			foreach(var key in m_handleIndexRemoveList)
+			if(shouldConsume)
 			{
-				m_handleInfoDict.Remove(key);
+				currentEvent.Use();
+				Repaint(); 
 			}
 		}
 
-		protected void _AddOrUpdateHandlePosition(int index,Vector3 position,bool isAnchor)
+		protected virtual void _SetMouseDown(Vector3 _)
 		{
-			if(m_handleInfoDict.TryGetValue(index,out var handleInfo))
+			m_selectedKnotIndex = m_mouseOverKnotIndex;
+
+			if(m_mouseOverKnotIndex != Global.INVALID_INDEX)
 			{
-				handleInfo.Position = position;
+				m_dragKnotIndex = m_selectedKnotIndex;
+			}
+		}
+
+		protected virtual void _SetMouseDrag(Vector3 mousePosition)
+		{
+			var knotInfo = m_knotInfoDict[m_dragKnotIndex];
+
+			var curPosition = knotInfo.Position;
+			var newPosition = mousePosition;
+
+			if(curPosition != newPosition)
+			{
+				_ChangeKnotPosition(m_dragKnotIndex,newPosition);
+
+				Repaint();
+			}
+		}
+
+		protected virtual void _SetMouseUp(Vector3 _)
+		{
+			m_dragKnotIndex = Global.INVALID_INDEX;
+		}
+
+		protected bool _IsInsideRect(Vector3 mousePosition)
+		{
+			var rectTrans = CurrentTransform.GetComponent<RectTransform>();
+			var localPos = rectTrans.InverseTransformPoint(mousePosition);
+
+			return rectTrans.rect.Contains(localPos);
+		}
+
+		private void _UpdateKnotInfoList()
+		{
+			m_knotIndexHashSet.Clear();
+			m_knotIndexRemoveList.Clear();
+
+			_DoUpdateKnotList();
+
+			foreach(var pair in m_knotInfoDict)
+			{
+				if(m_knotIndexHashSet.Contains(pair.Key))
+				{
+					continue;
+				}
+
+				m_knotIndexRemoveList.Add(pair.Key);
+			}
+
+			for(var i=0;i<m_knotIndexRemoveList.Count;i++)
+			{
+				m_knotInfoDict.Remove(m_knotIndexRemoveList[i]);
+			}
+		}
+
+		private void _DrawBorder()
+		{
+			var cornerArray = _GetWorldCornerArray();
+
+			cornerArray[4] = cornerArray[0];
+
+			KZKnotKit.DrawBorderLine(cornerArray,2.0f,m_isEditing);
+		}
+
+		protected void _AddOrUpdateKnotInfo(int index,Vector3 position,KnotType knotType)
+		{
+			if(m_knotInfoDict.TryGetValue(index,out var knotInfo))
+			{
+				knotInfo.Position = position;
 			}
 			else
 			{
-				m_handleInfoDict.Add(index,new HandleInfo(position,isAnchor));
+				m_knotInfoDict.Add(index,new KnotInfo(position,knotType));
 			}
 
-			m_handleIndexHashSet.Add(index);
+			m_knotIndexHashSet.Add(index);
 		}
 	}
 }

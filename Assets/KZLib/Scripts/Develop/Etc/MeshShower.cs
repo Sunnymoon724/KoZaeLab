@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using System.Text;
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	public class MeshNameShower : MonoBehaviour
 	{

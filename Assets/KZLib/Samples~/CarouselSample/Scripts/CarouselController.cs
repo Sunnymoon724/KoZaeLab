@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace KZLib.KZSample.UI
+namespace KZLib.Samples.UI
 {
 	public class CarouselController : BaseComponent
 	{

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using UnityEditor.Build;
 
-namespace KZLib.KZMenu
+namespace KZLib.EditorInternal.Menus
 {
 	public static partial class KZMenuItem
 	{

@@ -4,7 +4,7 @@ using UnityEngine;
 using Sirenix.OdinInspector.Editor;
 using R3;
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	[CustomEditor(typeof(PathCreator))]
 	public partial class PathCreatorEditor : OdinEditor

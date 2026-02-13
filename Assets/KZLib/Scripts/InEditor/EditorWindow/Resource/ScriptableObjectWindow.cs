@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace KZLib.KZWindow
+namespace KZLib.Windows
 {
 	public class ScriptableObjectWindow : ResourceWindow<ScriptableObject>
 	{

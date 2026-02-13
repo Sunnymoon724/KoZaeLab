@@ -1,12 +1,12 @@
 #if UNITY_EDITOR
 using System;
 using System.IO;
-using KZLib.KZData;
-using KZLib.KZTool;
-using KZLib.KZUtility;
+using KZLib.Data;
+using KZLib.ToolKits;
+using KZLib.Utilities;
 using UnityEditor;
 
-namespace KZLib.KZMenu
+namespace KZLib.EditorInternal.Menus
 {
 	public static partial class KZMenuItem
 	{

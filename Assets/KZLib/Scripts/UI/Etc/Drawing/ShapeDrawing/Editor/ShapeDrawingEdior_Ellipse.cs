@@ -1,13 +1,44 @@
 ﻿#if UNITY_EDITOR
 using UnityEditor;
+using UnityEngine;
 
-namespace KZLib
+namespace KZLib.UI
 {
 	public partial class ShapeDrawingEditor : GraphicDrawingEditor
 	{
-		private void _DrawEllipse()
+		private bool _CanShowKnot_Ellipse()
+		{
+			return true;
+		}
+
+		private void _Draw_Ellipse()
 		{
 			_DrawEllipseAngle();
+		}
+
+		private void _UpdateKnotList_Ellipse(Vector3 position,Quaternion rotation)
+		{
+			var fixedEdgePos = _GetEdgePosition(0.0f);
+			var fixedPos = position+rotation*fixedEdgePos;
+
+			_AddOrUpdateKnotInfo(1,fixedPos,KnotType.Fixed);
+
+			var majorEdgePos = _GetEdgePosition(m_shapeDrawing.EllipseAngle*Mathf.Deg2Rad);
+			var majorPos = position+rotation*majorEdgePos;
+
+			_AddOrUpdateKnotInfo(2,majorPos,KnotType.Major);
+		}
+
+		private void _ChangeKnotPosition_Ellipse(int index,Vector3 localPosition)
+		{
+			var angle = Mathf.Atan2(localPosition.y,localPosition.x)*Mathf.Rad2Deg;
+
+			if(angle < 0.0f)
+			{
+				angle += 360f;
+			}
+
+			m_shapeDrawing.EllipseAngle = angle;
 		}
 
 		private void _DrawEllipseAngle()

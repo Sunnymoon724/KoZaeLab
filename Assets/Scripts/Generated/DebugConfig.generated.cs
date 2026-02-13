@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace KZLib.KZData
+namespace KZLib.Data
 {
 	public partial class DebugConfig : IConfig
 	{

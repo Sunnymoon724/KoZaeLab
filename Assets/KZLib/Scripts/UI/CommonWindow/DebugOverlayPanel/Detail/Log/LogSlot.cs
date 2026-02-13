@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace KZLib.KZWidget.Debug
+namespace KZLib.UI.Widgets.Debug
 {
 	public class LogSlot : Slot
 	{

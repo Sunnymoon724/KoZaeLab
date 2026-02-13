@@ -11,7 +11,7 @@ using UnityEditor;
 
 #endif
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	public enum PathDrawMode { Curve, Polygon };
 

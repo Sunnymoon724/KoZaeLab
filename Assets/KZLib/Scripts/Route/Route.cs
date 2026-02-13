@@ -1,7 +1,7 @@
 ﻿using System.IO;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 
-namespace KZLib.KZData
+namespace KZLib.Data
 {
 	/// <summary>
 	/// project folder path

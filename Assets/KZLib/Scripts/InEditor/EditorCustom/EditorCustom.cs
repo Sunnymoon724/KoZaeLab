@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
-using KZLib.KZAttribute;
+using KZLib.Attributes;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
@@ -10,7 +10,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace KZLib.KZEditor
+namespace KZLib.EditorInternal
 {
 	[Serializable]
 	public static class EditorCustom

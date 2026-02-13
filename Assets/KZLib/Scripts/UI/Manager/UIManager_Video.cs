@@ -1,6 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
-using KZLib.KZData.Video;
-using KZLib.KZUtility;
+using KZLib.Data.Video;
+using KZLib.Utilities;
 
 namespace KZLib
 {

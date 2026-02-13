@@ -83,3 +83,5 @@ public enum NetworkStateType
 	Success = 0,
 	Fail = 1,
 }
+
+public enum KnotType { Fixed, Major, Minor };

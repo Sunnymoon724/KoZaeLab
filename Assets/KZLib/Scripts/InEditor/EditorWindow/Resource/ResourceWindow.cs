@@ -3,7 +3,7 @@ using Sirenix.OdinInspector.Editor;
 
 using Object = UnityEngine.Object;
 
-namespace KZLib.KZWindow
+namespace KZLib.Windows
 {
 	public abstract class ResourceWindow<TResource> : OdinEditorWindow where TResource : Object
 	{

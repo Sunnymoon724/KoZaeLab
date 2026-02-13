@@ -1,11 +1,11 @@
 #if UNITY_EDITOR
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
-using KZLib.KZAttribute;
-using KZLib.KZEditor;
+using KZLib.Attributes;
+using KZLib.EditorInternal;
 using System.Collections.Generic;
 
-namespace KZLib.KZWindow
+namespace KZLib.Windows
 {
 	public class EditorCustomWindow : OdinEditorWindow
 	{

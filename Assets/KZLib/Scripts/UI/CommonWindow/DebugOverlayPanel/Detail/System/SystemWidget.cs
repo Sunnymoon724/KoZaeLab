@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace KZLib.KZWidget
+namespace KZLib.UI.Widgets
 {
 	public class SystemWidget : BaseComponent
 	{

@@ -1,4 +1,4 @@
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using UnityEngine;
 
 namespace KZLib

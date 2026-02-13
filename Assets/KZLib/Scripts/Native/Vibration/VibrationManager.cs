@@ -10,8 +10,8 @@ using UnityEngine;
 #endif
 
 using UnityEngine;
-using KZLib.KZUtility;
-using KZLib.KZData;
+using KZLib.Utilities;
+using KZLib.Data;
 using R3;
 
 namespace KZLib

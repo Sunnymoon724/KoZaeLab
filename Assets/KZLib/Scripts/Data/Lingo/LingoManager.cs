@@ -1,4 +1,4 @@
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
 using Cysharp.Threading.Tasks;
@@ -8,7 +8,7 @@ using R3;
 
 using Object = UnityEngine.Object;
 
-namespace KZLib.KZData
+namespace KZLib.Data
 {
 	public class LingoManager : Singleton<LingoManager>
 	{

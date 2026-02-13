@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 
 #if UNITY_EDITOR
 

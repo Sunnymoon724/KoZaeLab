@@ -1,7 +1,7 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	public abstract class VisualProgressTaskSequence : ProgressTaskSequence
 	{

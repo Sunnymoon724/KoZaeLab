@@ -3,7 +3,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	public sealed class CacheResolver<TCache>: IDisposable
 	{

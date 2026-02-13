@@ -8,7 +8,7 @@ using UnityEditor;
 
 #endif
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	public partial class PathCreator : BaseComponent
 	{

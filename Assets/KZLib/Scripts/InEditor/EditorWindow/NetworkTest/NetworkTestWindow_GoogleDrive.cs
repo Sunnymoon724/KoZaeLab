@@ -1,12 +1,12 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
-using KZLib.KZNetwork;
+using KZLib.Networking;
 using Newtonsoft.Json.Linq;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEngine;
 
-namespace KZLib.KZWindow
+namespace KZLib.Windows
 {
 	public partial class NetworkTestWindow : OdinEditorWindow
 	{

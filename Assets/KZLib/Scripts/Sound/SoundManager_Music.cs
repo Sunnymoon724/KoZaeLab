@@ -1,5 +1,5 @@
-using KZLib.KZData;
-using KZLib.KZUtility;
+using KZLib.Data;
+using KZLib.Utilities;
 using UnityEngine;
 
 namespace KZLib

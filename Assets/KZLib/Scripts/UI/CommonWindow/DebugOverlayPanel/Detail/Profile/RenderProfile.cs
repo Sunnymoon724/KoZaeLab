@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace KZLib.KZWidget.Debug
+namespace KZLib.UI.Widgets.Debug
 {
 	public class RenderProfile : BaseComponent,IImmediateOverlay
 	{

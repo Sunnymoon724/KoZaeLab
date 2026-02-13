@@ -1,10 +1,10 @@
 using System.Diagnostics;
 using Cysharp.Threading.Tasks;
-using KZLib.KZDevelop;
+using KZLib.Development;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace KZLib.KZSample.Develop
+namespace KZLib.Samples.Develop
 {
 	public class TaskSequenceController : BaseComponent
 	{

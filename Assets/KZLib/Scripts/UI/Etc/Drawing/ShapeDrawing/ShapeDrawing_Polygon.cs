@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace UnityEngine.UI
+namespace KZLib.UI
 {
 	public partial class ShapeDrawing : GraphicDrawing
 	{
@@ -16,7 +18,7 @@ namespace UnityEngine.UI
 					return;
 				}
 
-				var vertexCount = _GetExpectedVerticesInPolygon(value,FillType,FillColor,OutlineThickness,OutlineColor);
+				var vertexCount = _GetExpectedVertices_Polygon(value,FillType,FillColor,OutlineThickness,OutlineColor);
 
 				if(!_IsValidVertex(vertexCount))
 				{
@@ -64,14 +66,14 @@ namespace UnityEngine.UI
 
 		internal float PolygonSegmentAngle => 2.0f*Mathf.PI/PolygonSideCount;
 
-		private void _DrawPolygon(VertexHelper vertexHelper,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius)
+		private void _DrawShape_Polygon(VertexHelper vertexHelper,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius)
 		{
 			_DrawCommonShape(vertexHelper,PolygonSideCount,PolygonSegmentAngle,centerPoint,currentRadius,innerRadius,true);
 		}
 
-		private int _GetExpectedVerticesInPolygon(int sideCount,ShapeFillType fillType,Color fillColor,float outlineThickness,Color outlineColor)
+		private int _GetExpectedVertices_Polygon(int sideCount,ShapeFillType fillType,Color fillColor,float outlineThickness,Color outlineColor)
 		{
-			return _GetExpectedVerticesInCommonShape(sideCount,fillType,fillColor,outlineThickness,outlineColor);
+			return _CalculateExpectedVertices_Shape(sideCount,fillType,fillColor,outlineThickness,outlineColor);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-using KZLib.KZWidget;
+using KZLib.UI.Widgets;
 using UnityEngine;
 
 public class DownloadPanel : BasePanel

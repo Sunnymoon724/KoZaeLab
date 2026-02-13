@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using UnityEngine;
 
-namespace KZLib.KZWindow
+namespace KZLib.Windows
 {
 	public class TextureWindow : ResourceWindow<Texture2D>
 	{

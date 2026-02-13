@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using KZLib.KZWidget.Debug;
+using KZLib.UI.Widgets.Debug;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace KZLib.KZWidget.Debug
+namespace KZLib.UI.Widgets.Debug
 {
 	public interface IImmediateOverlay
 	{

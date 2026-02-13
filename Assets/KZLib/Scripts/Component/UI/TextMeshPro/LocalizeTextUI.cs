@@ -1,5 +1,5 @@
 using System;
-using KZLib.KZData;
+using KZLib.Data;
 using R3;
 using Sirenix.OdinInspector;
 using UnityEngine;

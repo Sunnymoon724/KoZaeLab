@@ -9,7 +9,7 @@ using UnityEditor.iOS.Xcode;
 
 #endif
 
-namespace KZLib.KZBuild
+namespace KZLib.Build
 {
 	public static class KZPostProcessBuild
 	{

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace KZLib.KZSample.Component
+namespace KZLib.Samples.Component
 {
 	public class ReuseScrollRectController : BaseComponent
 	{

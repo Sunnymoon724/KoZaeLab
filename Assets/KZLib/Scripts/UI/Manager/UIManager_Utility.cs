@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 
 namespace KZLib
 {

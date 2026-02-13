@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Text;
 using Cysharp.Threading.Tasks;
-using KZLib.KZData;
-using KZLib.KZUtility;
+using KZLib.Data;
+using KZLib.Utilities;
 using UnityEngine;
 
-namespace KZLib.KZNetwork
+namespace KZLib.Networking
 {
 	public partial class WebRequestManager : Singleton<WebRequestManager>
 	{

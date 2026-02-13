@@ -1,6 +1,6 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 
 namespace KZLib
 {

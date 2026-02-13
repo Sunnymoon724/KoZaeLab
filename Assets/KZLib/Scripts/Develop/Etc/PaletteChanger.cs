@@ -1,11 +1,11 @@
 using UnityEngine;
-using KZLib.KZData;
+using KZLib.Data;
 using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
 using System;
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	public class PaletteChanger : MonoBehaviour
 	{

@@ -1,12 +1,12 @@
 #if UNITY_EDITOR
 using System;
-using KZLib.KZAttribute;
-using KZLib.KZUtility;
+using KZLib.Attributes;
+using KZLib.Utilities;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEngine;
 
-namespace KZLib.KZWindow
+namespace KZLib.Windows
 {
 	public class PixelEditorWindow : OdinEditorWindow
 	{

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Cysharp.Threading.Tasks;
-using KZLib.KZData;
-using KZLib.KZUtility;
+using KZLib.Data;
+using KZLib.Utilities;
 using MessagePipe;
 using Newtonsoft.Json;
 
-namespace KZLib.KZNetwork
+namespace KZLib.Networking
 {
 	public partial class NetworkManager : Singleton<NetworkManager>
 	{

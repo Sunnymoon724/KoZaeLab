@@ -1,8 +1,8 @@
 #if UNITY_EDITOR
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using UnityEditor;
 
-namespace KZLib.KZMenu
+namespace KZLib.EditorInternal.Menus
 {
 	public static partial class KZMenuItem
 	{

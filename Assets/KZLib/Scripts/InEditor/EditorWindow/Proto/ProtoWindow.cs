@@ -5,11 +5,11 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using KZLib.KZAttribute;
-using KZLib.KZData;
+using KZLib.Attributes;
+using KZLib.Data;
 using System.Collections;
 
-namespace KZLib.KZWindow
+namespace KZLib.Windows
 {
 	public class ProtoWindow : OdinEditorWindow
 	{

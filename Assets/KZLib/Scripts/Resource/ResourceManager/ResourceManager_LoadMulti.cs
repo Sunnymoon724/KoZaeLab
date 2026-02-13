@@ -2,7 +2,7 @@
 using UnityEngine.Video;
 using System;
 using System.Linq;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using System.IO;
 using Object = UnityEngine.Object;
 

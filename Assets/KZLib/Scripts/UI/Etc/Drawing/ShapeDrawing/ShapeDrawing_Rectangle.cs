@@ -1,5 +1,5 @@
 ﻿
-// namespace UnityEngine.UI
+// namespace KZLib.UI
 // {
 // 	public partial class UIShape : MaskableGraphic
 // 	{

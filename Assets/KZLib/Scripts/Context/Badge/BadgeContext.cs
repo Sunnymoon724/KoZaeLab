@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using MessagePipe;
 
 public class BadgeTag : CustomTag

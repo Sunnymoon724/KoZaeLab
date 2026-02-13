@@ -4,7 +4,7 @@ using Sirenix.OdinInspector;
 using System.Diagnostics;
 
 using Object = UnityEngine.Object;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 
 
 #if UNITY_EDITOR
@@ -14,7 +14,7 @@ using Sirenix.OdinInspector.Editor;
 
 #endif
 
-namespace KZLib.KZAttribute
+namespace KZLib.Attributes
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property,AllowMultiple = false,Inherited = true)]
 	[Conditional("UNITY_EDITOR")]

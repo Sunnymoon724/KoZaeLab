@@ -1,14 +1,14 @@
 #if KZLIB_IN_APP_PURCHASE
 using System;
 using System.Collections.Generic;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using UnityEngine;
 using UnityEngine.Purchasing;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using R3;
 using System.Text;
-using KZLib.KZNetwork;
+using KZLib.Networking;
 
 #if !UNITY_EDITOR
 
@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 
 #endif
 
-namespace KZLib.KZInAppPurchase
+namespace KZLib.Purchasing
 {
 	public class InAppPurchaseManager : Singleton<InAppPurchaseManager>
 	{

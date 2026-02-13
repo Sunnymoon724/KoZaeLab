@@ -4,8 +4,8 @@ using System;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
-using KZLib.KZTool;
-using KZLib.KZUtility;
+using KZLib.ToolKits;
+using KZLib.Utilities;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEditor.AddressableAssets.Settings;
@@ -14,7 +14,7 @@ using System.IO;
 using UnityEditor.Localization;
 using System.Collections.Generic;
 
-namespace KZLib.KZMenu
+namespace KZLib.EditorInternal.Menus
 {
 	public static partial class KZMenuItem
 	{

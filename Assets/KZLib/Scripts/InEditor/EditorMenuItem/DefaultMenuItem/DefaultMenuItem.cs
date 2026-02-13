@@ -1,6 +1,6 @@
 #if UNITY_EDITOR
 
-namespace KZLib.KZMenu
+namespace KZLib.EditorInternal.Menus
 {
 	public static partial class DefaultMenuItem
 	{

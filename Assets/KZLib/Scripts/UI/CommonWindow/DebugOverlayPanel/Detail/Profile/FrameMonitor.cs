@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-namespace KZLib.KZWidget.Debug
+namespace KZLib.UI.Widgets.Debug
 {
 	public class FrameMonitor : BaseComponent
 	{

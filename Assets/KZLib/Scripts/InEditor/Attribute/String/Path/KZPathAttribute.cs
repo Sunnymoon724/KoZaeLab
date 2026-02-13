@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 
 
 #if UNITY_EDITOR
@@ -13,7 +13,7 @@ using Sirenix.Utilities.Editor;
 
 #endif
 
-namespace KZLib.KZAttribute
+namespace KZLib.Attributes
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property,AllowMultiple = false,Inherited = true)]
 	[Conditional("UNITY_EDITOR")]

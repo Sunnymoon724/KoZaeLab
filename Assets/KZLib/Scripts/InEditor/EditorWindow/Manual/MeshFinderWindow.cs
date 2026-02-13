@@ -5,7 +5,7 @@ using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace KZLib.KZWindow
+namespace KZLib.Windows
 {
 	public class MeshFinderWindow : OdinEditorWindow
 	{

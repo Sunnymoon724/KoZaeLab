@@ -1,10 +1,10 @@
 #if UNITY_EDITOR
-using KZLib.KZDevelop;
-using KZLib.KZEditor;
-using KZLib.KZWindow;
+using KZLib.Development;
+using KZLib.EditorInternal;
+using KZLib.Windows;
 using UnityEditor;
 
-namespace KZLib.KZMenu
+namespace KZLib.EditorInternal.Menus
 {
 	public static partial class KZMenuItem
 	{

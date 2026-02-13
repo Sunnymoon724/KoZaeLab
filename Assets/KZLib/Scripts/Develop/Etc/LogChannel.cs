@@ -1,11 +1,12 @@
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using System.Text;
 using UnityEngine;
 using MessagePipe;
 using Microsoft.Extensions.DependencyInjection;
 using KZLib;
+using KZLib.Collections.Generic;
 
 #if UNITY_EDITOR
 
@@ -18,7 +19,7 @@ using System.Text.RegularExpressions;
 #else
 
 using Cysharp.Threading.Tasks;
-using KZLib.KZNetwork;
+using KZLib.Networking;
 
 #endif
 

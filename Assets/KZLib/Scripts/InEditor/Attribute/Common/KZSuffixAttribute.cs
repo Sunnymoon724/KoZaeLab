@@ -8,7 +8,7 @@ using UnityEditor;
 
 #endif
 
-namespace KZLib.KZAttribute
+namespace KZLib.Attributes
 {
 	/// <summary>
 	/// For suffix

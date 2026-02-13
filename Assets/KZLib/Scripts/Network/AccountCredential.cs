@@ -1,5 +1,5 @@
 
-namespace KZLib.KZNetwork
+namespace KZLib.Networking
 {
 	public abstract class AccountCredential
 	{

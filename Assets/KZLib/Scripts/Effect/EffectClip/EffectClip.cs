@@ -2,7 +2,7 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 using System;
-using KZLib.KZAttribute;
+using KZLib.Attributes;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 

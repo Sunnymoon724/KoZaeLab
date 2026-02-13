@@ -1,7 +1,7 @@
 using UnityEngine;
 using Sirenix.OdinInspector;
 using UnityEngine.UI;
-using KZLib.KZAttribute;
+using KZLib.Attributes;
 
 [RequireComponent(typeof(Toggle))]
 public abstract class BaseToggleUI : BaseComponentUI

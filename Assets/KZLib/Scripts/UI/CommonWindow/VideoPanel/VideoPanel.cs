@@ -6,7 +6,7 @@ using UnityEngine.Video;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using R3;
-using KZLib.KZData.Video;
+using KZLib.Data.Video;
 
 public class VideoPanel : BasePanel
 {

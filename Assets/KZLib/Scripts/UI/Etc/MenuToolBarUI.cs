@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using Sirenix.OdinInspector;
 using UnityEngine;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	/// <summary>
 	/// Manage pool of GameObjects.

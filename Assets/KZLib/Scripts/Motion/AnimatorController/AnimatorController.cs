@@ -1,5 +1,5 @@
 ﻿// using UnityEngine;
-// using KZLib.KZAttribute;
+// using KZLib.Attributes;
 
 
 // namespace KZLib

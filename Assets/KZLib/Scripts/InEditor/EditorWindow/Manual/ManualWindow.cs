@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using Sirenix.OdinInspector.Editor;
 
-namespace KZLib.KZWindow
+namespace KZLib.Windows
 {
 	public class ManualWindow : OdinMenuEditorWindow
 	{

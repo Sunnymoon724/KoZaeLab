@@ -4,12 +4,12 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using System.Text;
 using Newtonsoft.Json;
-using KZLib.KZAttribute;
+using KZLib.Attributes;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using System.Collections.Generic;
 using System.IO;
-using KZLib.KZData;
+using KZLib.Data;
 using System.Collections;
 using MessagePipe;
 

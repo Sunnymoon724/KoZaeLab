@@ -6,8 +6,8 @@ using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using KZLib.KZData;
-using KZLib.KZUtility;
+using KZLib.Data;
+using KZLib.Utilities;
 using Newtonsoft.Json;
 using UnityEngine;
 

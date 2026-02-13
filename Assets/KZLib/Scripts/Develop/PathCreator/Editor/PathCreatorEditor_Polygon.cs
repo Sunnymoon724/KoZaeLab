@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using Sirenix.OdinInspector.Editor;
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	public partial class PathCreatorEditor : OdinEditor
 	{

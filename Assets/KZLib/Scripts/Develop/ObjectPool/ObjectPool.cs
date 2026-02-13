@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	/// <summary>
 	/// Manage pool of Objects.

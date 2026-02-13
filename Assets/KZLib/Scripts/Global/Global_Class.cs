@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using UnityEngine;
 using System.Collections.Generic;
 

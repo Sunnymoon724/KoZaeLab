@@ -1,7 +1,7 @@
 #if KZLIB_PLAY_FAB
 using System;
 using Cysharp.Threading.Tasks;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using Newtonsoft.Json;
 using PlayFab;
 using PlayFab.ClientModels;

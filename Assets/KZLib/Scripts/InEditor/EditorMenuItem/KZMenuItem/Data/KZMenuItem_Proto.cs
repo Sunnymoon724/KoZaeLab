@@ -1,9 +1,9 @@
 #if UNITY_EDITOR
 using System.IO;
-using KZLib.KZWindow;
+using KZLib.Windows;
 using UnityEditor;
 
-namespace KZLib.KZMenu
+namespace KZLib.EditorInternal.Menus
 {
 	public static partial class KZMenuItem
 	{

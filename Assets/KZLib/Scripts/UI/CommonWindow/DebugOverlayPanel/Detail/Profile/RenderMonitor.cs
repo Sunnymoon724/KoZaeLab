@@ -2,7 +2,7 @@
 using Unity.Profiling;
 using TMPro;
 
-namespace KZLib.KZWidget.Debug
+namespace KZLib.UI.Widgets.Debug
 {
 	public class RenderMonitor : BaseComponent
 	{

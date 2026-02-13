@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
-using KZLib.KZData;
-using KZLib.KZUtility;
+using KZLib.Data;
+using KZLib.Utilities;
 using UnityEngine;
 using YamlDotNet.Serialization;
 

@@ -1,4 +1,4 @@
-﻿// using KZLib.KZAttribute;
+﻿// using KZLib.Attributes;
 // using Sirenix.OdinInspector;
 // using UnityEngine;
 

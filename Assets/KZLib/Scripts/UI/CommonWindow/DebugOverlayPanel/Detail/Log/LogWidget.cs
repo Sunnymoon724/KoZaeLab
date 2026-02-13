@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using KZLib.KZNetwork;
+using KZLib.Networking;
 using MessagePipe;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace KZLib.KZWidget.Debug
+namespace KZLib.UI.Widgets.Debug
 {
 	public class LogWidget : BaseComponent
 	{

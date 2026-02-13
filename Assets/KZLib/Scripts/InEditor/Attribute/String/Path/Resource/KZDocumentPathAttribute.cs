@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using Sirenix.OdinInspector;
 
-namespace KZLib.KZAttribute
+namespace KZLib.Attributes
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property,AllowMultiple = false,Inherited = true)]
 	[Conditional("UNITY_EDITOR")]

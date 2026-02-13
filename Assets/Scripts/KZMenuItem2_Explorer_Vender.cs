@@ -3,13 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Cysharp.Threading.Tasks;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEngine.Networking;
 using YamlDotNet.Serialization;
 
-namespace KZLib.KZMenu
+namespace KZLib.EditorInternal.Menus
 {
 	public static partial class KZMenuItem2
 	{

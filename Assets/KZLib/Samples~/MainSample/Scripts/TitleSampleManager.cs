@@ -1,6 +1,6 @@
-using KZLib.KZUtility;
+using KZLib.Utilities;
 
-namespace KZLib.KZSample.Main
+namespace KZLib.Samples.Main
 {
 	[SingletonConfig(AutoCreate = false,DontDestroy = false)]
 	public class TitleSampleManager : SingletonMB<TitleSampleManager>

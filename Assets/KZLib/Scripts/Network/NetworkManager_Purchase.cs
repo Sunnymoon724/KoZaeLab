@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 
-namespace KZLib.KZNetwork
+namespace KZLib.Networking
 {
 	public partial class NetworkManager : Singleton<NetworkManager>
 	{

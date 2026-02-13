@@ -1,5 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
-using KZLib.KZDevelop;
+using KZLib.Development;
 using UnityEngine;
 
 public class TransitionPanel : BasePanel

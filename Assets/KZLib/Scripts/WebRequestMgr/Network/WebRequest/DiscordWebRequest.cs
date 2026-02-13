@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+using KZLib.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace KZLib.KZNetwork
+namespace KZLib.Networking
 {
 	//? https://discohook.org/ -> webhook test link
 

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Profiling;
 
-namespace KZLib.KZWidget.Debug
+namespace KZLib.UI.Widgets.Debug
 {
 	public class MemoryProfile : BaseComponent,IImmediateOverlay
 	{

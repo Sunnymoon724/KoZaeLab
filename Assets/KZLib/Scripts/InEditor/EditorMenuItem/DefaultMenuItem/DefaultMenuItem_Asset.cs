@@ -2,12 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using KZLib.KZUtility;
-using KZLib.KZWindow;
+using KZLib.Utilities;
+using KZLib.Windows;
 using UnityEditor;
 using UnityEngine;
 
-namespace KZLib.KZMenu
+namespace KZLib.EditorInternal.Menus
 {
 	public static partial class DefaultMenuItem
 	{

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using UnityEngine;
 
 namespace KZLib

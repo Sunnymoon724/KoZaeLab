@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.SceneManagement;

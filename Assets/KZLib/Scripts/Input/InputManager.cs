@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using KZLib.KZAttribute;
-using KZLib.KZUtility;
+using KZLib.Attributes;
+using KZLib.Utilities;
 using Sirenix.OdinInspector;
 using UnityEngine;
 

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using UnityEditor;
 
-namespace KZLib.KZMenu
+namespace KZLib.EditorInternal.Menus
 {
 	public static partial class KZMenuItem2
 	{

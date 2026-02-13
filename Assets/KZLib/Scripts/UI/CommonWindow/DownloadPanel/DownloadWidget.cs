@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace KZLib.KZWidget
+namespace KZLib.UI.Widgets
 {
 	public class DownloadWidget : BaseComponent
 	{

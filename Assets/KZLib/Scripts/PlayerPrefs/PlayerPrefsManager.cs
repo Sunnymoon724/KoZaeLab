@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using Newtonsoft.Json;
 using System;
 using UnityEngine;
-using KZLib.KZData;
+using KZLib.Data;
 
 namespace KZLib
 {

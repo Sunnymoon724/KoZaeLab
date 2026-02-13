@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace KZLib.KZData.Transition
+namespace KZLib.Data.Transition
 {
 	public record TransitionInfo
 	{

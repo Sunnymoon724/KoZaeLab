@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using KZLib.KZAttribute;
+using KZLib.Attributes;
 
 #if UNITY_EDITOR
 
@@ -13,7 +13,7 @@ using Sirenix.OdinInspector.Editor;
 
 #endif
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	public class GraphicQualityOption : SingletonSO<GraphicQualityOption>
 	{

@@ -1,5 +1,5 @@
 using Cysharp.Threading.Tasks;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 
 #if KZLIB_PLAY_FAB
 
@@ -8,7 +8,7 @@ using PlayFab.ClientModels;
 
 #endif
 
-namespace KZLib.KZNetwork
+namespace KZLib.Networking
 {
 	public partial class NetworkManager : Singleton<NetworkManager>
 	{

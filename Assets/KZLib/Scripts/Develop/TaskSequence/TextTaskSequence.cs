@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	public class TextTaskSequence : TaskSequence
 	{

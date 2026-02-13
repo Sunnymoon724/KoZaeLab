@@ -1,9 +1,9 @@
 using System;
-using KZLib.KZAttribute;
+using KZLib.Attributes;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 

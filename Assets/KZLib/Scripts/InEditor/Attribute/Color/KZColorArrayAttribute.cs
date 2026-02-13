@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using System.Diagnostics;
 
-namespace KZLib.KZAttribute
+namespace KZLib.Attributes
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property,AllowMultiple = false,Inherited = true)]
 	[Conditional("UNITY_EDITOR")]

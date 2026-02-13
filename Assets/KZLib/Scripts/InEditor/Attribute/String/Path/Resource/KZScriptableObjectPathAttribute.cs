@@ -5,12 +5,12 @@ using System.Diagnostics;
 
 #if UNITY_EDITOR
 
-using KZLib.KZWindow;
+using KZLib.Windows;
 using UnityEditor;
 
 #endif
 
-namespace KZLib.KZAttribute
+namespace KZLib.Attributes
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property,AllowMultiple = false,Inherited = true)]
 	[Conditional("UNITY_EDITOR")]

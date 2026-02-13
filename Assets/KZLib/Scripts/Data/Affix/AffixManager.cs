@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using KZLib.KZUtility;
-using KZLib.KZData;
+using KZLib.Utilities;
+using KZLib.Data;
 
 namespace KZLib
 {

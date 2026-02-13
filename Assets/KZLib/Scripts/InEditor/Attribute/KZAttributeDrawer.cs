@@ -10,7 +10,9 @@ using Sirenix.Utilities.Editor;
 
 #endif
 
-namespace KZLib.KZAttribute
+using Attribute = System.Attribute;
+
+namespace KZLib.Attributes
 {
 #if UNITY_EDITOR
 	public abstract class KZAttributeDrawer<TAttribute,TValue> : OdinAttributeDrawer<TAttribute,TValue> where TAttribute : Attribute

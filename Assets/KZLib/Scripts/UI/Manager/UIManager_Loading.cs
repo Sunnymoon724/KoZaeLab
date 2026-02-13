@@ -1,7 +1,7 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
-using KZLib.KZData;
-using KZLib.KZUtility;
+using KZLib.Data;
+using KZLib.Utilities;
 
 namespace KZLib
 {

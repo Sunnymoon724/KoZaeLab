@@ -2,7 +2,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	public sealed class TimeTracker : IDisposable
 	{

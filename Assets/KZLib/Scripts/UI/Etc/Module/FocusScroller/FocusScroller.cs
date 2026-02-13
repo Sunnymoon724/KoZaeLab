@@ -2,9 +2,9 @@ using System;
 using Sirenix.OdinInspector;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
-using KZLib.KZAttribute;
+using KZLib.Attributes;
 using R3;
-using KZLib.KZDevelop;
+using KZLib.Development;
 
 namespace UnityEngine.UI
 {

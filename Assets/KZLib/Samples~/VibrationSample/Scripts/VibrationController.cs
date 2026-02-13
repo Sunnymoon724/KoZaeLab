@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace KZLib.KZSample.Native
+namespace KZLib.Samples.Native
 {
 	public class VibrationController : MonoBehaviour
 	{

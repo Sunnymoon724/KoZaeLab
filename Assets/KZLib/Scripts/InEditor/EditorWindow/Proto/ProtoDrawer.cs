@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
-using KZLib.KZData;
+using KZLib.Data;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities.Editor;
 using System.Reflection;

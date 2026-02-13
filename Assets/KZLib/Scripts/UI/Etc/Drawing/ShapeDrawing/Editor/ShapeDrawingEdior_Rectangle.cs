@@ -4,7 +4,7 @@
 // using UnityEngine;
 // using UnityEngine.UI;
 
-// namespace KZLib
+// namespace KZLib.UI
 // {
 // 	public partial class UIShapeEditor : OdinEditor
 // 	{

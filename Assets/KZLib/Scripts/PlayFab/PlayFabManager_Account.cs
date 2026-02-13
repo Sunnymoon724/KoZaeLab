@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 using Cysharp.Threading.Tasks;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using PlayFab;
 using PlayFab.ClientModels;
 using PlayFab.SharedModels;

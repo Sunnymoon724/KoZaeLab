@@ -1,5 +1,7 @@
-﻿
-namespace UnityEngine.UI
+﻿using UnityEngine;
+using UnityEngine.UI;
+
+namespace KZLib.UI
 {
 	[RequireComponent(typeof(CanvasRenderer))]
 	public abstract class GraphicDrawing : MaskableGraphic

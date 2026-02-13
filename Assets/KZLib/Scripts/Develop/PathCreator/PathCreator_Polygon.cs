@@ -9,7 +9,7 @@ using Sirenix.Utilities.Editor;
 
 #endif
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	public partial class PathCreator : BaseComponent
 	{

@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.ShortcutManagement;
 using UnityEngine;
 
-namespace KZLib.KZEditor
+namespace KZLib.EditorInternal
 {
 	public class KZShortCut
 	{

@@ -1,7 +1,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 
-namespace KZLib.KZSample.Main
+namespace KZLib.Samples.Main
 {
 	public class Main : BaseMain
 	{

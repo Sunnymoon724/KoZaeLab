@@ -2,7 +2,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace KZLib.KZSample.Develop
+namespace KZLib.Samples.Develop
 {
     public class DebugOverlayController : MonoBehaviour
 	{

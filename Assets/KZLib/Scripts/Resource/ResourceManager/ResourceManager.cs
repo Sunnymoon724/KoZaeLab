@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using KZLib.KZUtility;
-using KZLib.KZData;
-using KZLib.KZDevelop;
+using KZLib.Utilities;
+using KZLib.Data;
+using KZLib.Development;
 
 using Object = UnityEngine.Object;
 

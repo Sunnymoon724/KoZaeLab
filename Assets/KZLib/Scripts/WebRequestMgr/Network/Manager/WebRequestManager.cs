@@ -3,10 +3,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Cysharp.Threading.Tasks;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 using R3;
 
-namespace KZLib.KZNetwork
+namespace KZLib.Networking
 {
 	public partial class WebRequestManager : Singleton<WebRequestManager>
 	{

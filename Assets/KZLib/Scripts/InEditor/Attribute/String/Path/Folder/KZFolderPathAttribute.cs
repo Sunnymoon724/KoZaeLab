@@ -2,9 +2,9 @@ using System;
 using UnityEngine;
 using System.Diagnostics;
 using Sirenix.OdinInspector;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 
-namespace KZLib.KZAttribute
+namespace KZLib.Attributes
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property,AllowMultiple = false,Inherited = true)]
 	[Conditional("UNITY_EDITOR")]

@@ -1,12 +1,12 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
-using KZLib.KZAttribute;
+using KZLib.Attributes;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace KZLib.KZWindow
+namespace KZLib.Windows
 {
 	public class EasingGraphWindow : OdinEditorWindow
 	{

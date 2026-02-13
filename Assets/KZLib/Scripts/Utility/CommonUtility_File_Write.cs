@@ -1,5 +1,5 @@
 #if UNITY_EDITOR
-using KZLib.KZUtility;
+using KZLib.Utilities;
 
 public static partial class CommonUtility
 {

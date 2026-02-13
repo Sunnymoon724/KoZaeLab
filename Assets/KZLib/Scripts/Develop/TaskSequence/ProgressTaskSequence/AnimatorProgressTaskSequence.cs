@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	[RequireComponent(typeof(Animator))]
 	public class AnimatorProgressTaskSequence : ProgressTaskSequence

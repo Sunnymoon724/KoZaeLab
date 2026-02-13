@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using KZLib.KZUtility;
-using KZLib.KZData;
-using KZLib.KZDevelop;
+using KZLib.Utilities;
+using KZLib.Data;
+using KZLib.Development;
 
 namespace KZLib
 {

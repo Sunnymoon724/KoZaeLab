@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine.Networking;
 using System.Text;
 
-namespace KZLib.KZNetwork
+namespace KZLib.Networking
 {
 	public record ResponseInfo(bool Result,long Code,string Content,string Error);
 	public record DumpInfo(Uri Uri,string Method,string Payload,string ContentType);

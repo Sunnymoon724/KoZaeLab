@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace KZLib.KZData
+namespace KZLib.Data
 {
 	/// <summary>
 	/// EditorConfig is test data in editor.

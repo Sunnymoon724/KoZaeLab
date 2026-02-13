@@ -2,127 +2,96 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace KZLib
+namespace KZLib.UI
 {
 	public partial class ShapeDrawingEditor : GraphicDrawingEditor
 	{
-		private bool m_polygonArrayFoldout = false;
+		private bool m_isPolygonArrayExpanded = false;
 
-		private void _DrawPolygon()
+		private bool _CanShowKnot_Polygon()
+		{
+			return m_shapeDrawing.PolygonVertexDistanceCount >= Global.MIN_POLYGON_COUNT;
+		}
+
+		private void _Draw_Polygon()
 		{
 			_DrawPolygonSideCount();
 
-			var vertexDistanceCount = m_shapeDrawing.PolygonVertexDistanceCount;
+			var vertexDistCnt = m_shapeDrawing.PolygonVertexDistanceCount;
 
-			if(vertexDistanceCount < 1)
+			if(vertexDistCnt < 1)
 			{
 				return;
 			}
 
-			m_polygonArrayFoldout = EditorGUILayout.Foldout(m_polygonArrayFoldout,"Vertex Distance Array");
+			m_isPolygonArrayExpanded = EditorGUILayout.Foldout(m_isPolygonArrayExpanded,"Vertex Distance Array");
 
-			if(m_polygonArrayFoldout)
+			if(m_isPolygonArrayExpanded)
 			{
-				EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+				EditorGUI.indentLevel++;
 
-				for(var i=0;i<vertexDistanceCount;i++)
+				for(var i=0;i<vertexDistCnt;i++)
 				{
 					EditorGUI.BeginChangeCheck();
 
 					var vertexName = $"Vertex {i+1}";
-					var oldDistance = m_shapeDrawing.GetPolygonVertexDistance(i);
 
-					var newDistance = EditorGUILayout.Slider(vertexName,oldDistance,0.0f,1.0f);
+					var oldDist = m_shapeDrawing.GetPolygonVertexDistance(i);
+					var newDist = EditorGUILayout.Slider(vertexName,oldDist,0.0f,1.0f);
 
 					if(EditorGUI.EndChangeCheck())
 					{
 						Undo.RecordObject(m_shapeDrawing,$"Change {vertexName} Distance");
 
-						m_shapeDrawing.SetPolygonVertexDistance(i,newDistance);
+						m_shapeDrawing.SetPolygonVertexDistance(i,newDist);
+
+						EditorUtility.SetDirty(m_shapeDrawing);
 					}
 				}
 
-				EditorGUILayout.EndVertical();
+				EditorGUI.indentLevel--;
 			}
+		}
+
+		private void _UpdateKnotList_Polygon(Vector3 position,Quaternion rotation)
+		{
+			for(var i=0;i<m_shapeDrawing.PolygonVertexDistanceCount;i++)
+			{
+				var edgePos = _GetPolygonEdgePosition(i);
+				var localPos = edgePos*m_shapeDrawing.GetPolygonVertexDistance(i);
+				var controlPos = position+rotation*localPos;
+
+				_AddOrUpdateKnotInfo(i+1,controlPos,KnotType.Major);
+			}
+		}
+
+		private void _ChangeKnotPosition_Polygon(int index,Vector3 localPosition)
+		{
+			var edgePos = _GetPolygonEdgePosition(index-1);
+			var projectedDist = Vector3.Dot(localPosition,edgePos.normalized);
+			var ratio = Mathf.Clamp01(projectedDist/edgePos.magnitude);
+			m_shapeDrawing.SetPolygonVertexDistance(index-1,ratio);
 		}
 
 		private void _DrawPolygonSideCount()
 		{
 			EditorGUI.BeginChangeCheck();
 
-			var newSideCount = EditorGUILayout.IntSlider("Side Count",m_shapeDrawing.PolygonSideCount,Global.MIN_POLYGON_COUNT,Global.MAX_POLYGON_COUNT);
+			var newSideCnt = EditorGUILayout.IntSlider("Side Count",m_shapeDrawing.PolygonSideCount,Global.MIN_POLYGON_COUNT,Global.MAX_POLYGON_COUNT);
 
 			if(EditorGUI.EndChangeCheck())
 			{
 				Undo.RecordObject(m_shapeDrawing,"Change Side Count");
 
-				m_shapeDrawing.PolygonSideCount = newSideCount;
+				m_shapeDrawing.PolygonSideCount = newSideCnt;
 
 				m_serializedObject.Update();
 			}
 		}
 
-		protected override void _DragMouse(int index,Vector3 position)
+		private Vector3 _GetPolygonEdgePosition(int index)
 		{
-			Undo.RecordObject(m_shapeDrawing,"Move Handle");
-
-			if(index == 0)
-			{
-				CurrentTransform.position = position;
-			}
-			else
-			{
-				var centerPosition = CurrentTransform.position;
-				var angle = m_shapeDrawing.PolygonSegmentAngle;
-				var controlPosition = _GetPolygonVertexPosition(centerPosition,angle,m_shapeDrawing.Radius,index-1,1.0f);
-
-				var controlDistance = Vector3.Distance(centerPosition,controlPosition);
-				var newDistance = Vector3.Distance(centerPosition,position);
-
-				var ratio = controlDistance == 0.0f ? 0.0f : Mathf.Clamp01(newDistance/controlDistance);
-
-				m_shapeDrawing.SetPolygonVertexDistance(index-1,ratio);
-			}
-
-			Repaint();
-		}
-
-		protected override void _UpdateAnchorPositionList()
-		{
-			var anchorPosition = CurrentTransform.position;
-
-			_AddOrUpdateHandlePosition(0,anchorPosition,true);
-		}
-
-		protected override void _UpdateControlPositionList()
-		{
-			var vertexDistanceCount = m_shapeDrawing.PolygonVertexDistanceCount;
-			var anchorPosition = CurrentTransform.position;
-			var angle = m_shapeDrawing.PolygonSegmentAngle;
-
-			for(var i=0;i<vertexDistanceCount;i++)
-			{
-				var distance = m_shapeDrawing.GetPolygonVertexDistance(i);
-				var controlPosition = _GetPolygonVertexPosition(anchorPosition,angle,m_shapeDrawing.Radius,i,distance);
-
-				_AddOrUpdateHandlePosition(i+1,controlPosition,false);
-			}
-		}
-
-		protected override Vector3 _ConvertToMousePosition(Vector3 mousePosition)
-		{
-			var ray = HandleUtility.GUIPointToWorldRay(mousePosition);
-			var position = ray.GetPoint(10.0f);
-
-			return new Vector3(position.x,position.y);
-		}
-
-		private Vector3 _GetPolygonVertexPosition(Vector2 center,float angle,Vector2 radius,int index,float distance)
-		{
-			var cos = Mathf.Cos(angle*index)*distance;
-			var sin = Mathf.Sin(angle*index)*distance;
-
-			return new Vector3(center.x+cos*radius.x,center.y+sin*radius.y);
+			return _GetEdgePosition(m_shapeDrawing.PolygonSegmentAngle*index);
 		}
 	}
 }

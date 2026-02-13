@@ -3,7 +3,7 @@ using R3;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace KZLib.KZDevelop
+namespace KZLib.Development
 {
 	public abstract class ProgressTaskSequence : TaskSequence
 	{

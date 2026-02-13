@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceLocations;
-using KZLib.KZUtility;
+using KZLib.Utilities;
 
 using Object = UnityEngine.Object;
 
