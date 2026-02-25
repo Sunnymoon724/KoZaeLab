@@ -46,17 +46,17 @@ namespace KZLib.EditorInternal.Menus
 
 		private static void _OpenFolder(string name,string folderPath)
 		{
-			if(!FileUtility.IsFolderExist(folderPath))
+			if(!KZFileKit.IsFolderExist(folderPath))
 			{
-				if(!CommonUtility.DisplayCheck($"Create {name} folder",$"{name}Folder is not exist.\n you want to create the {name}Folder?"))
+				if(!KZEditorKit.DisplayCheck($"Create {name} folder",$"{name}Folder is not exist.\n you want to create the {name}Folder?"))
 				{
 					return;
 				}
 
-				FileUtility.CreateFolder(folderPath);
+				KZFileKit.CreateFolder(folderPath);
 			}
 
-			CommonUtility.Open(folderPath);
+			KZEditorKit.Open(folderPath);
 		}
 
 		private static void _DisplayGenerateEnd()
@@ -66,7 +66,7 @@ namespace KZLib.EditorInternal.Menus
 
 		private static void _DisplayInfo(string message,bool refreshAsset)
 		{
-			CommonUtility.DisplayInfo(message);
+			KZEditorKit.DisplayInfo(message);
 
 			if(refreshAsset)
 			{

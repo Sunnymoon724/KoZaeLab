@@ -1,57 +1,188 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace KZLib.UI
 {
 	public partial class ShapeDrawing : GraphicDrawing
 	{
+		internal const float c_zeroAngle = 0.0f;
+		internal const float c_fullAngle = 360.0f;
 		private const int c_pivotResolution = 54;
 
 		[SerializeField]
-		private float m_ellipseAngle = Global.FULL_ANGLE;
+		private float m_ellipseAngle = c_fullAngle;
 		internal float EllipseAngle
 		{
 			get => m_ellipseAngle;
 			set
 			{
-				if(m_ellipseAngle == value)
+				int _CalculateExpectedVertexCount_EllipseAngle(float angle)
 				{
-					return;
+					var segmentCnt = _GetSegmentCount_EllipseInner(angle);
+
+					return _CalculateExpectedVertexCount_Inner(segmentCount:segmentCnt);
 				}
 
-				var vertexCount = _CalculateExpectedVertices_Ellipse(value,FillType,FillColor,OutlineThickness,OutlineColor);
-
-				if(!_IsValidVertex(vertexCount))
-				{
-					return;
-				}
-
-				m_ellipseAngle = value;
-
-				SetVerticesDirty();
+				_SetValueWithVertexCheck(ref m_ellipseAngle,value,_CalculateExpectedVertexCount_EllipseAngle,null);
 			}
 		}
 
-		private void _DrawShape_Ellipse(VertexHelper vertexHelper,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius)
+		private void _DrawFill_Ellipse(VertexHelper vertexHelper,Color drawColor,bool canDrawAntiAliasing)
 		{
-			var segmentCount = _GetSegmentCount_Ellipse(EllipseAngle);
-			var segmentAngle = EllipseAngle*Mathf.Deg2Rad/segmentCount;
+			var vertCnt = vertexHelper.currentVertCount;
 
-			_DrawCommonShape(vertexHelper,segmentCount,segmentAngle,centerPoint,currentRadius,innerRadius,false);
+			_AddVert(vertexHelper,Center,drawColor);
+
+			var vertInfoList = _CalculateAllEllipseVertexList(true);
+			var transparentColor = drawColor.MaskAlpha();
+
+			for(var i=0;i<vertInfoList.Count;i++)
+			{
+				var vertInfo = vertInfoList[i];
+
+				_AddVert(vertexHelper,vertInfo.Inner,drawColor);
+
+				if(canDrawAntiAliasing)
+				{
+					_AddVert(vertexHelper,vertInfo.Anti,transparentColor);
+				}
+			}
+
+			_AddFillEllipseTriangles(vertexHelper,vertCnt,canDrawAntiAliasing);
 		}
 
-		private int _CalculateExpectedVertices_Ellipse(float angle,ShapeFillType fillType,Color fillColor,float outlineThickness,Color outlineColor)
+		private void _DrawOutline_Ellipse(VertexHelper vertexHelper,bool canDrawAntiAliasing)
 		{
-			var segmentCount = _GetSegmentCount_Ellipse(angle);
+			var vertCnt = vertexHelper.currentVertCount;
 
-			return _CalculateExpectedVertices_Shape(segmentCount,fillType,fillColor,outlineThickness,outlineColor);
+			var vertInfoList = _CalculateAllEllipseVertexList(false);
+			var transparentColor = OutlineColor.MaskAlpha();
+
+			for(var i=0;i<vertInfoList.Count;i++)
+			{
+				var vertInfo = vertInfoList[i];
+
+				_AddVert(vertexHelper,vertInfo.Inner,OutlineColor);
+				_AddVert(vertexHelper,vertInfo.Outer,OutlineColor);
+
+				if(canDrawAntiAliasing)
+				{
+					_AddVert(vertexHelper,vertInfo.Anti,transparentColor);
+				}
+			}
+
+			_AddOutlineEllipseTriangles(vertexHelper,vertCnt,canDrawAntiAliasing);
 		}
 
-		private int _GetSegmentCount_Ellipse(float angle)
+		private List<VertexInfo> _CalculateAllEllipseVertexList(bool isFill)
 		{
-			angle = Mathf.Clamp(angle,Global.ZERO_ANGLE,Global.FULL_ANGLE);
+			var vertInfoList = new List<VertexInfo>();
+			var segmentCnt = _GetSegmentCount_Ellipse();
+			var segmentAngle = _CalculateSegmentAngle(EllipseAngle,segmentCnt);
 
-			return Mathf.CeilToInt(c_pivotResolution*angle/Global.FULL_ANGLE);
+			var innerRadius = Radius.Offset(-OutlineThickness);
+			var outerRadius = Radius;
+			var antiRadius = isFill ? innerRadius.Offset(AntiAliasing) : outerRadius.Offset(AntiAliasing);
+
+
+			for(var i=0;i<=segmentCnt;i++)
+			{
+				var cos = Mathf.Cos(segmentAngle*i);
+				var sin = Mathf.Sin(segmentAngle*i);
+
+				var outerVert = _CalculateLocalVertex(cos,sin,outerRadius);
+				var innerVert = _CalculateLocalVertex(cos,sin,innerRadius);
+				var antiVert = _CalculateLocalVertex(cos,sin,antiRadius);
+
+				vertInfoList.Add(new VertexInfo(outerVert,innerVert,antiVert));
+			}
+
+			return vertInfoList;
+		}
+
+		private void _AddFillEllipseTriangles(VertexHelper vertexHelper,int vertCnt,bool canDrawAntiAliasing)
+		{
+			var segmentCnt = _GetSegmentCount_Ellipse();
+
+			if(canDrawAntiAliasing)
+			{
+				for(var i=0;i<segmentCnt;i++)
+				{
+					var currInner = vertCnt+1+(i*2);
+					var currAnti  = currInner+1;
+
+					var nextInner = currInner+2;
+					var nextAnti  = nextInner+1;
+
+					vertexHelper.AddTriangle(vertCnt,currInner,nextInner);
+
+					vertexHelper.AddTriangle(currInner,currAnti,nextAnti);
+					vertexHelper.AddTriangle(currInner,nextAnti,nextInner);
+				}
+			}
+			else
+			{
+				for(var i=0;i<segmentCnt;i++)
+				{
+					vertexHelper.AddTriangle(vertCnt,vertCnt+1+i,vertCnt+2+i);
+				}
+			}
+		}
+
+		private void _AddOutlineEllipseTriangles(VertexHelper vertexHelper,int vertCnt,bool canDrawAntiAliasing)
+		{
+			var segmentCnt = _GetSegmentCount_Ellipse();
+
+			if(canDrawAntiAliasing)
+			{
+				for(var i=0;i<segmentCnt;i++)
+				{
+					var curr = vertCnt+(i*3);
+					var next = vertCnt+((i+1)*3);
+
+					vertexHelper.AddTriangle(curr,curr+1,next+1);
+					vertexHelper.AddTriangle(curr,next+1,next);
+
+					vertexHelper.AddTriangle(curr+1,curr+2,next+2);
+					vertexHelper.AddTriangle(curr+1,next+2,next+1);
+				}
+			}
+			else
+			{
+				for(var i=0;i<segmentCnt;i++)
+				{
+					var curr = vertCnt+(i*2);
+					var next = vertCnt+((i+1)*2);
+
+					vertexHelper.AddTriangle(curr,curr+1,next+1);
+					vertexHelper.AddTriangle(curr,next+1,next);
+				}
+			}
+		}
+
+
+		private int _GetSegmentCount_Ellipse()
+		{
+			return _GetSegmentCount_EllipseInner(EllipseAngle);
+		}
+
+		private int _GetSegmentCount_EllipseInner(float angle)
+		{
+			angle = Mathf.Clamp(angle,c_zeroAngle,c_fullAngle);
+
+			return Mathf.CeilToInt(c_pivotResolution*angle/c_fullAngle);
+		}
+
+
+		private int _CalculateExpectedFillVertexCount_Ellipse(int segmentCount,bool canDrawAntiAliasing)
+		{
+			return 1+(canDrawAntiAliasing ? segmentCount*2 : segmentCount);
+		}
+
+		private int _CalculateExpectedOutlineVertexCount_Ellipse(int segmentCount,bool canDrawAntiAliasing)
+		{
+			return canDrawAntiAliasing ? segmentCount*3 : segmentCount*2;
 		}
 	}
 }

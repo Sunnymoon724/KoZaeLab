@@ -23,8 +23,6 @@ namespace KZLib.Data
 
 		public SystemLanguage CurrentLanguage => m_currentLanguage;
 
-		private LingoManager() { }
-
 		protected override void _Release(bool disposing)
 		{
 			if(disposing)

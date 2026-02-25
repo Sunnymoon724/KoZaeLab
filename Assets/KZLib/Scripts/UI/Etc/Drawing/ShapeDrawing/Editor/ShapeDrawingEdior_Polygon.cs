@@ -10,12 +10,17 @@ namespace KZLib.UI
 
 		private bool _CanShowKnot_Polygon()
 		{
-			return m_shapeDrawing.PolygonVertexDistanceCount >= Global.MIN_POLYGON_COUNT;
+			return m_shapeDrawing.PolygonVertexDistanceCount >= ShapeDrawing.c_minPolygonCount;
 		}
 
 		private void _Draw_Polygon()
 		{
-			_DrawPolygonSideCount();
+			void _SetSideCount(int count)
+			{
+				m_shapeDrawing.PolygonSideCount = count;
+			}
+
+			_DrawIntSliderInspector("Side Count",m_shapeDrawing.PolygonSideCount,ShapeDrawing.c_minPolygonCount,ShapeDrawing.c_maxPolygonCount,_SetSideCount);
 
 			var vertexDistCnt = m_shapeDrawing.PolygonVertexDistanceCount;
 
@@ -32,66 +37,42 @@ namespace KZLib.UI
 
 				for(var i=0;i<vertexDistCnt;i++)
 				{
-					EditorGUI.BeginChangeCheck();
-
-					var vertexName = $"Vertex {i+1}";
-
-					var oldDist = m_shapeDrawing.GetPolygonVertexDistance(i);
-					var newDist = EditorGUILayout.Slider(vertexName,oldDist,0.0f,1.0f);
-
-					if(EditorGUI.EndChangeCheck())
+					void _SetVertexDistance(float distance)
 					{
-						Undo.RecordObject(m_shapeDrawing,$"Change {vertexName} Distance");
-
-						m_shapeDrawing.SetPolygonVertexDistance(i,newDist);
-
-						EditorUtility.SetDirty(m_shapeDrawing);
+						m_shapeDrawing.SetPolygonVertexDistance(i,distance);
 					}
+
+					_DrawSliderInspector($"Vertex {i+1}",m_shapeDrawing.GetPolygonVertexDistance(i),0.0f,1.0f,_SetVertexDistance);
 				}
 
 				EditorGUI.indentLevel--;
 			}
 		}
 
-		private void _UpdateKnotList_Polygon(Vector3 position,Quaternion rotation)
+		private void _SyncAllKnotInfos_Polygon()
 		{
 			for(var i=0;i<m_shapeDrawing.PolygonVertexDistanceCount;i++)
 			{
-				var edgePos = _GetPolygonEdgePosition(i);
-				var localPos = edgePos*m_shapeDrawing.GetPolygonVertexDistance(i);
-				var controlPos = position+rotation*localPos;
+				var vertPos = _GetPolygonVertexPosition(i)*m_shapeDrawing.GetPolygonVertexDistance(i);
 
-				_AddOrUpdateKnotInfo(i+1,controlPos,KnotType.Major);
+				_SyncWorldKnotInfo(i+1,vertPos,KnotType.Major);
 			}
 		}
 
-		private void _ChangeKnotPosition_Polygon(int index,Vector3 localPosition)
+		private void _RefreshKnotInfo_Polygon(int index,Vector3 position)
 		{
-			var edgePos = _GetPolygonEdgePosition(index-1);
-			var projectedDist = Vector3.Dot(localPosition,edgePos.normalized);
-			var ratio = Mathf.Clamp01(projectedDist/edgePos.magnitude);
+			var vertPos = _GetPolygonVertexPosition(index-1);
+			var projected = Vector3.Dot(position,vertPos.normalized);
+			var ratio = Mathf.Clamp01(projected/vertPos.magnitude);
+
 			m_shapeDrawing.SetPolygonVertexDistance(index-1,ratio);
 		}
 
-		private void _DrawPolygonSideCount()
+		private Vector3 _GetPolygonVertexPosition(int index)
 		{
-			EditorGUI.BeginChangeCheck();
+			var angle = ShapeDrawing.c_fullAngle/m_shapeDrawing.PolygonSideCount;
 
-			var newSideCnt = EditorGUILayout.IntSlider("Side Count",m_shapeDrawing.PolygonSideCount,Global.MIN_POLYGON_COUNT,Global.MAX_POLYGON_COUNT);
-
-			if(EditorGUI.EndChangeCheck())
-			{
-				Undo.RecordObject(m_shapeDrawing,"Change Side Count");
-
-				m_shapeDrawing.PolygonSideCount = newSideCnt;
-
-				m_serializedObject.Update();
-			}
-		}
-
-		private Vector3 _GetPolygonEdgePosition(int index)
-		{
-			return _GetEdgePosition(m_shapeDrawing.PolygonSegmentAngle*index);
+			return _GetVertexPosition(angle*index);
 		}
 	}
 }

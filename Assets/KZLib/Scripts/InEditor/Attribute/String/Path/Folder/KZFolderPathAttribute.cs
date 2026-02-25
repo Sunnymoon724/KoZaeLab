@@ -18,14 +18,14 @@ namespace KZLib.Attributes
 	{
 		protected override string FindNewPath()
 		{
-			return CommonUtility.FindFolderPathInPanel("Change new path.");
+			return KZEditorKit.FindFolderPathInPanel("Change new path.");
 		}
 
 		protected override Rect OnClickToOpen(Rect rect,bool isValid)
 		{
 			void _ClickButton()
 			{
-				CommonUtility.Open(AbsolutePath);
+				KZEditorKit.Open(AbsolutePath);
 			}
 
 			return DrawButton(rect,SdfIconType.Folder2,isValid,_ClickButton);
@@ -33,7 +33,7 @@ namespace KZLib.Attributes
 
 		protected override bool IsValidPath()
 		{
-			return FileUtility.IsFolderExist(ValueEntry.SmartValue);
+			return KZFileKit.IsFolderExist(ValueEntry.SmartValue);
 		}
 	}
 #endif

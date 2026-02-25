@@ -33,7 +33,7 @@ namespace KZLib.Attributes
 
 		protected override string FindNewPath()
 		{
-			return CommonUtility.FindFilePathInPanel("Change new path.",ResourceKind);
+			return KZEditorKit.FindFilePathInPanel("Change new path.",ResourceKind);
 		}
 
 		protected override Rect OnClickToOpen(Rect rect,bool isValid)
@@ -45,16 +45,16 @@ namespace KZLib.Attributes
 
 		protected override bool IsValidPath()
 		{
-			return FileUtility.IsFileExist(AbsolutePath);
+			return KZFileKit.IsFileExist(AbsolutePath);
 		}
 
 		protected UResource GetResource<UResource>() where UResource : Object
 		{
-			var assetsPath = FileUtility.GetAssetPath(ValueEntry.SmartValue);
+			var assetsPath = KZFileKit.GetAssetPath(ValueEntry.SmartValue);
 
-			if(!FileUtility.IsStartWithAssetHeader(assetsPath))
+			if(!KZFileKit.IsStartWithAssetHeader(assetsPath))
 			{
-				CommonUtility.DisplayError(new Exception($"{ValueEntry.SmartValue} is not in the Assets folder."));
+				KZEditorKit.DisplayError(new Exception($"{ValueEntry.SmartValue} is not in the Assets folder."));
 
 				return null;
 			}
@@ -63,7 +63,7 @@ namespace KZLib.Attributes
 
 			if(!resource)
 			{
-				CommonUtility.DisplayError(new Exception($"{assetsPath} is not a resource."));
+				KZEditorKit.DisplayError(new Exception($"{assetsPath} is not a resource."));
 
 				return null;
 			}
@@ -97,7 +97,7 @@ namespace KZLib.Attributes
 					return;
 				}
 
-				ViewerObject = AssetDatabase.LoadAssetAtPath<UObject>(FileUtility.GetAssetPath(m_objectPath));
+				ViewerObject = AssetDatabase.LoadAssetAtPath<UObject>(KZFileKit.GetAssetPath(m_objectPath));
 			}
 
 			[OnInspectorGUI]

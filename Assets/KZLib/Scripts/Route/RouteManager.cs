@@ -49,7 +49,7 @@ namespace KZLib
 		{
 			var routeFilePath = GetRouteFilePath();
 
-			if(!FileUtility.IsFileExist(routeFilePath))
+			if(!KZFileKit.IsFileExist(routeFilePath))
 			{
 				// add default route
 				var content = @"# resources folder
@@ -73,7 +73,7 @@ namespace KZLib
 				# generated script folder
 				generatedScript : Assets/Scripts/Generated";
 
-				FileUtility.WriteTextToFile(routeFilePath,content.Replace("\t",""));
+				KZFileKit.WriteTextToFile(routeFilePath,content.Replace("\t",""));
 			}
 		}
 

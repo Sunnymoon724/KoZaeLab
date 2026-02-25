@@ -27,9 +27,6 @@ public static partial class Global
 	public const float PERCENT_HUNDRED = 0.01f;
 	public const float PERCENT_THOUSAND = 0.001f;
 	public const float PERCENT_10THOUSAND = 0.0001f;
-
-	public const int MIN_POLYGON_COUNT = 3;
-	public const int MAX_POLYGON_COUNT = 36;
 }
 #endregion General
 

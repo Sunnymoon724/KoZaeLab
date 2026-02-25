@@ -103,6 +103,10 @@ public static partial class ContainerExtension
 		{
 			list.Add(value);
 		}
+		else if(collection is HashSet<TValue> hashSet)
+		{
+			hashSet.Add(value);
+		}
 		else if(collection is Queue<TValue> queue)
 		{
 			queue.Enqueue(value);

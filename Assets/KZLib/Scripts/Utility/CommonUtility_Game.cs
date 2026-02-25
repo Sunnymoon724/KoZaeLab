@@ -150,7 +150,7 @@ public static partial class CommonUtility
 	public static EnvironmentType GetCurrentEnvironmentType()
 	{
 #if UNITY_EDITOR
-		var text = FileUtility.ReadFileToText(Path.Combine(Global.PROJECT_PARENT_PATH,"BranchInfo.txt"));
+		var text = KZFileKit.ReadFileToText(Path.Combine(Global.PROJECT_PARENT_PATH,"BranchInfo.txt"));
 
 		if(text.TryToEnum<EnvironmentType>(out var environment))
 		{

@@ -37,20 +37,6 @@ public static class KZKnotKit
 		_DrawKnot(index,true,position,controlColor);
 	}
 
-	public static void DrawMajorKnot(int index,Vector3 position,bool isMouseOver,bool isSelected)
-	{
-		var color = isSelected ? s_selectedColor : isMouseOver ? s_highlightMajorColor : s_normalMajorColor;
-
-		_DrawKnot(index,true,position,color);
-	}
-
-	public static void DrawMinorKnot(int index,Vector3 position,bool isMouseOver,bool isSelected)
-	{
-		var color = isSelected ? s_selectedColor : isMouseOver ? s_highlightMinorColor : s_normalMinorColor;
-
-		_DrawKnot(index,true,position,color);
-	}
-
 	private static void _DrawKnot(int index,bool isMajor,Vector3 position,Color color)
 	{
 		var knotSize = _GetKnotDiameterSize(isMajor,position);

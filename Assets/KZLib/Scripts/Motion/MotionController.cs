@@ -9,7 +9,6 @@ using System;
 using System.Collections;
 using UnityEngine.UI;
 
-
 #if UNITY_EDITOR
 
 using UnityEditor;
@@ -86,7 +85,7 @@ namespace KZLib
 				return;
 			}
 
-			var motionPrt = ProtoManager.In.GetProto<MotionProto>(motionNum);
+			var motionPrt = ProtoManager.In.GetProto<IMotionProto>(motionNum);
 
 			m_motionEventDict.Clear();
 
@@ -95,7 +94,7 @@ namespace KZLib
 			for(var i=0;i<motionEventArray.Length;i++)
 			{
 				var motionEvent = motionEventArray[i];
-				
+
 				m_motionEventDict.Add(motionEvent.Order,motionEvent);
 			}
 

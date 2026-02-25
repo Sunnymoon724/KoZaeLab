@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using KZLib.Utilities;
 
 #if UNITY_EDITOR
@@ -14,46 +15,14 @@ public static partial class CommonUtility
 #if UNITY_EDITOR
 	public static bool IsExistAsset(string filter = null,string[] searchInFolderArray = null)
 	{
-		return _FindAssetArray(filter,searchInFolderArray).Length > 0;
-	}
-
-	public static IEnumerable<string> FindAssetPathGroup(string filter = null,string[] searchInFolderArray = null)
-	{
-		var guidArray = _FindAssetArray(filter,searchInFolderArray);
-
-		for(var i=0;i<guidArray.Length;i++)
-		{
-			var path = AssetDatabase.GUIDToAssetPath(guidArray[i]);
-
-			if(!path.IsEmpty())
-			{
-				yield return path;
-			}
-		}
-	}
-
-	public static TObject FindAsset<TObject>(string filter = null,string[] searchInFolderArray = null) where TObject : Object
-	{
-		var guidArray = _FindAssetArray(filter,searchInFolderArray);
-
-		if(guidArray.Length == 0)
-		{
-			return null;
-		}
-
-		if(guidArray.Length > 1)
-		{
-			LogChannel.System.W($"Result is not one. -> Use {guidArray[0]}");
-		}
-
-		return AssetDatabase.LoadAssetAtPath<TObject>(AssetDatabase.GUIDToAssetPath(guidArray[0]));
+		return AssetDatabase.FindAssets(filter,searchInFolderArray).Length > 0;
 	}
 
 	public static IEnumerable<TObject> FindAssetGroupInFolder<TObject>(string folderPath) where TObject : Object
 	{
-		foreach(var path in FileUtility.FindFilePathGroup(FileUtility.GetAbsolutePath(folderPath,true)))
+		foreach(var path in KZFileKit.FindFilePathGroup(KZFileKit.GetAbsolutePath(folderPath,true)))
 		{
-			var asset = AssetDatabase.LoadAssetAtPath<TObject>(FileUtility.GetAssetPath(path));
+			var asset = AssetDatabase.LoadAssetAtPath<TObject>(KZFileKit.GetAssetPath(path));
 
 			if(asset != null)
 			{
@@ -62,43 +31,21 @@ public static partial class CommonUtility
 		}
 	}
 
-	private static string[] _FindAssetArray(string filter,string[] searchInFolderArray)
+	public static TObject[] FindAssetListInFolder<TObject>(string folderPath) where TObject : Object
 	{
-		return AssetDatabase.FindAssets(filter,searchInFolderArray);
-	}
+		var list = new List<TObject>();
 
-	public static void CreateAsset(string path,Object asset,bool isOverride)
-	{
-		if(path.IsEmpty() || !asset)
+		foreach(var path in KZFileKit.FindFilePathGroup(KZFileKit.GetAbsolutePath(folderPath,true)))
 		{
-			LogChannel.System.E($"Path or asset is null {path} or {asset}");
+			var asset = AssetDatabase.LoadAssetAtPath<TObject>(KZFileKit.GetAssetPath(path));
 
-			return;
-		}
-
-		var folderPath = FileUtility.GetParentAbsolutePath(path,true);
-		var assetPath = FileUtility.GetAssetPath(path);
-
-		FileUtility.CreateFolder(folderPath);
-
-		if(FileUtility.IsFileExist(path))
-		{
-			if(isOverride)
+			if(asset != null)
 			{
-				AssetDatabase.DeleteAsset(assetPath);
-			}
-			else
-			{
-				return;
+				list.Add(asset);
 			}
 		}
 
-		AssetDatabase.CreateAsset(asset,assetPath);
-
-		EditorUtility.SetDirty(asset);
-		SaveAsset();
-
-		LogChannel.System.I($"{asset.name} is saved in {path}.");
+		return list.ToArray();
 	}
 #endif
 }

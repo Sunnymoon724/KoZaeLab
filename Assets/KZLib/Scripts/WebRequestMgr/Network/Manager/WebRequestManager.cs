@@ -104,7 +104,7 @@ namespace KZLib.Networking
 
 			var filePath = Path.Combine(Global.PROJECT_PARENT_PATH,"NetworkDump",$"{dumpInfo.Uri.AbsolutePath.Replace("/","#")}.log");
 
-			FileUtility.WriteTextToFile(filePath,dumpBuilder.ToString());
+			KZFileKit.WriteTextToFile(filePath,dumpBuilder.ToString());
 		}
 #endif
 	}

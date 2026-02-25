@@ -76,7 +76,7 @@ public static partial class CommonUtility
 				assetEntry.address = addressName;
 			}
 
-			SaveAsset();
+			KZAssetKit.SaveAsset();
 		}
 
 		return true;
@@ -127,7 +127,7 @@ public static partial class CommonUtility
 
 			assetEntry.parentGroup = newGroup;
 
-			SaveAsset();
+			KZAssetKit.SaveAsset();
 
 			settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryMoved,assetEntry,true);
 		}
@@ -168,7 +168,7 @@ public static partial class CommonUtility
 
 		if(newGroup != null)
 		{
-			SaveAsset();
+			KZAssetKit.SaveAsset();
 		}
 
 		return newGroup;
@@ -202,7 +202,7 @@ public static partial class CommonUtility
 
 		if(newGroup != null)
 		{
-			SaveAsset();
+			KZAssetKit.SaveAsset();
 		}
 
 		return newGroup;

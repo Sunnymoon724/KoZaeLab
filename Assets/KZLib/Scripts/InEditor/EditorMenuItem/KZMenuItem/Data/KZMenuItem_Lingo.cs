@@ -34,16 +34,16 @@ namespace KZLib.EditorInternal.Menus
 			{
 				localizationSettings = ScriptableObject.CreateInstance<LocalizationSettings>();
 
-				CommonUtility.CreateAsset(Path.Combine("Localization","LocalizationSettings.asset"),localizationSettings,true);
+				KZAssetKit.CreateAsset(Path.Combine("Localization","LocalizationSettings.asset"),localizationSettings,true);
 
 				EditorBuildSettings.AddConfigObject("com.unity.localization.settings",localizationSettings,true);
 			}
 
 			var lingoRoute = RouteManager.In.GetOrCreateRoute("defaultRes:lingo");
 
-			foreach(var lingoFilePath in FileUtility.FindAllExcelFileGroupByFolderPath(Global.LINGO_FOLDER_PATH))
+			foreach(var lingoFilePath in KZFileKit.FindAllExcelFileGroupByFolderPath(Global.LINGO_FOLDER_PATH))
 			{
-				if(!FileUtility.IsExcelFile(lingoFilePath))
+				if(!KZFileKit.IsExcelFile(lingoFilePath))
 				{
 					LogChannel.System.W($"{lingoFilePath} is not exist. -> generate failed");
 
@@ -63,11 +63,11 @@ namespace KZLib.EditorInternal.Menus
 
 						identifierHashSet.Add(locale.Identifier);
 
-						CommonUtility.CreateAsset(assetPath,locale,false);
+						KZAssetKit.CreateAsset(assetPath,locale,false);
 					}
 
 					var tableNameHashSet = new HashSet<string>();
-					var fileName = FileUtility.GetOnlyName(lingoFilePath);
+					var fileName = KZFileKit.GetOnlyName(lingoFilePath);
 
 					switch(fileName)
 					{
@@ -143,7 +143,7 @@ namespace KZLib.EditorInternal.Menus
 						var sheetName = removeList[i].Replace("Table","");
 						var folderPath = Path.Combine("Assets","Localization",fileName,sheetName);
 
-						FileUtility.DeleteFolder(FileUtility.GetAbsolutePath(folderPath,true),true);
+						KZFileKit.DeleteFolder(KZFileKit.GetAbsolutePath(folderPath,true),true);
 					}
 				}
 				catch(Exception exception)
@@ -209,7 +209,7 @@ namespace KZLib.EditorInternal.Menus
 
 			_CheckUnusedKeys(collection.SharedData,keyHashSet);
 
-			CommonUtility.SaveAsset();
+			KZAssetKit.SaveAsset();
 		}
 
 		private static void _ApplyAssetTableCollection(AssetTableCollection collection,string sheetName,Dictionary<string,string[]> lingoDict)
@@ -268,7 +268,7 @@ namespace KZLib.EditorInternal.Menus
 
 			_CheckUnusedKeys(collection.SharedData,keyHashSet);
 
-			CommonUtility.SaveAsset();
+			KZAssetKit.SaveAsset();
 		}
 
 		private static TCollection _GetOrCreateLocalizationTableCollection<TCollection>(string sheetName,string fileName,Func<TableReference,TCollection> onGetCollection,Func<string,string,TCollection> onCreateCollection)
@@ -280,11 +280,11 @@ namespace KZLib.EditorInternal.Menus
 			{
 				var folderPath = Path.Combine("Assets","Localization",fileName,sheetName);
 
-				FileUtility.CreateFolder(FileUtility.GetAbsolutePath(folderPath,true));
+				KZFileKit.CreateFolder(KZFileKit.GetAbsolutePath(folderPath,true));
 
 				collection = onCreateCollection(tableName,folderPath);
 
-				CommonUtility.SaveAsset();
+				KZAssetKit.SaveAsset();
 			}
 
 			return collection;
@@ -421,7 +421,7 @@ namespace KZLib.EditorInternal.Menus
 			var assetGroup = _GetOrCreateAddressableGroup(language);
 			var guid = AssetDatabase.AssetPathToGUID(assetPath);
 
-			if(!CommonUtility.TryRegisterAddressable(assetPath,FileUtility.GetOnlyName(assetPath),assetGroup,true,out var addressableAsset))
+			if(!CommonUtility.TryRegisterAddressable(assetPath,KZFileKit.GetOnlyName(assetPath),assetGroup,true,out var addressableAsset))
 			{
 				return null;
 			}

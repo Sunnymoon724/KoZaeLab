@@ -50,7 +50,7 @@ public class ProtoDrawer : OdinValueDrawer<IProto>
 
 		GUIUtility.systemCopyBuffer = stringBuilder.ToString();
 
-		CommonUtility.DisplayInfo("The properties have been copied to the clipboard.");
+		KZEditorKit.DisplayInfo("The properties have been copied to the clipboard.");
 	}
 }
 #endif

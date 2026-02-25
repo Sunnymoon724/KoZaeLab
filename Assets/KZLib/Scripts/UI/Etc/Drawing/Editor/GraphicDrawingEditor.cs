@@ -1,8 +1,10 @@
 ﻿#if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace KZLib.UI
 {
@@ -55,7 +57,6 @@ namespace KZLib.UI
 		protected abstract bool _CanShowKnot();
 		protected abstract void _DoUpdateKnotList();
 		protected abstract void _ChangeKnotPosition(int index,Vector3 newPosition);
-		protected abstract Vector3[] _GetWorldCornerArray();
 		protected abstract Vector3 _ConvertToMousePosition(Vector3 mousePosition);
 
 		public override void OnInspectorGUI()
@@ -343,25 +344,182 @@ namespace KZLib.UI
 
 		private void _DrawBorder()
 		{
-			var cornerArray = _GetWorldCornerArray();
+			var drawing = target as GraphicDrawing;
+			var cornerArray = drawing._GetCornerArray();
 
-			cornerArray[4] = cornerArray[0];
+			var worldCornerArray = new Vector3[5];
 
-			KZKnotKit.DrawBorderLine(cornerArray,2.0f,m_isEditing);
+			for(var i=0;i<worldCornerArray.Length-1;i++)
+			{
+				worldCornerArray[i] = drawing.transform.TransformPoint(cornerArray[i]);
+			}
+
+			worldCornerArray[^1] = worldCornerArray[0];
+
+			KZKnotKit.DrawBorderLine(worldCornerArray,2.0f,m_isEditing);
 		}
 
-		protected void _AddOrUpdateKnotInfo(int index,Vector3 position,KnotType knotType)
+		protected void _SyncKnotInfo(int index,Vector3 worldPosition,KnotType knotType)
 		{
 			if(m_knotInfoDict.TryGetValue(index,out var knotInfo))
 			{
-				knotInfo.Position = position;
+				knotInfo.Position = worldPosition;
 			}
 			else
 			{
-				m_knotInfoDict.Add(index,new KnotInfo(position,knotType));
+				m_knotInfoDict.Add(index,new KnotInfo(worldPosition,knotType));
 			}
 
 			m_knotIndexHashSet.Add(index);
+		}
+
+		protected void _DrawInspector<TValue>(Func<TValue> onDrawValue,Action<TValue> onSetValue,string undoText)
+		{
+			EditorGUI.BeginChangeCheck();
+
+			var newValue = onDrawValue();
+
+			if(EditorGUI.EndChangeCheck())
+			{
+				Undo.RecordObject(target,undoText);
+
+				onSetValue(newValue);
+
+				m_serializedObject.Update();
+			}
+		}
+
+		protected void _DrawFloatInspector(string label,float value,Action<float> onSetValue)
+		{
+			float _DrawFloat()
+			{
+				return EditorGUILayout.FloatField(label,value);
+			}
+
+			_DrawInspector(_DrawFloat,onSetValue,$"Change {label}");
+		}
+
+		protected void _DrawEnumInspector<TEnum>(string label,TEnum value,Action<TEnum> onSetValue) where TEnum : Enum
+		{
+			TEnum _DrawEnum()
+			{
+				var newType = EditorGUILayout.EnumPopup(label,value);
+
+				return (TEnum) newType;
+			}
+
+			_DrawInspector(_DrawEnum,onSetValue,$"Change {label}");
+		}
+
+		protected void _DrawColorInspector(string label,Color value,Action<Color> onSetValue)
+		{
+			Color _DrawColor()
+			{
+				return EditorGUILayout.ColorField(new GUIContent(label),value);
+			}
+
+			_DrawInspector(_DrawColor,onSetValue,$"Change {label}");
+		}
+
+		protected void _DrawDefaultInspector_Material(MaskableGraphic graphic)
+		{
+			void _SetMaterial(Material material)
+			{
+				graphic.material = material;
+			}
+
+			_DrawMaterialInspector("Material",graphic.material,_SetMaterial);
+		}
+
+		protected void _DrawDefaultInspector_RaycastTarget(MaskableGraphic graphic)
+		{
+			void _SetRaycastTarget(bool raycastTarget)
+			{
+				graphic.raycastTarget = raycastTarget;
+			}
+
+			_DrawToggleInspector("Raycast Target",graphic.raycastTarget,_SetRaycastTarget);
+		}
+
+		protected void _DrawDefaultInspector_RaycastPadding(MaskableGraphic graphic)
+		{
+			var label = "Raycast Padding";
+
+			m_isRaycastPaddingExpanded = EditorGUILayout.Foldout(m_isRaycastPaddingExpanded,label);
+
+			if(m_isRaycastPaddingExpanded)
+			{
+				EditorGUI.indentLevel++;
+
+				Vector4 _DrawRaycastPadding()
+				{
+					return new Vector4(
+						EditorGUILayout.FloatField("Left",graphic.raycastPadding.x),
+						EditorGUILayout.FloatField("Right",graphic.raycastPadding.y),
+						EditorGUILayout.FloatField("Top",graphic.raycastPadding.z),
+						EditorGUILayout.FloatField("Bottom",graphic.raycastPadding.w)
+					);
+				}
+
+				void _SetRaycastPadding(Vector4 padding)
+				{
+					graphic.raycastPadding = padding;
+				}
+
+				_DrawInspector(_DrawRaycastPadding,_SetRaycastPadding,$"Change {label}");
+
+				EditorGUI.indentLevel--;
+			}
+		}
+
+		protected void _DrawDefaultInspector_Maskable(MaskableGraphic graphic)
+		{
+			void _SetMaskable(bool maskable)
+			{
+				graphic.maskable = maskable;
+			}
+
+			_DrawToggleInspector("Maskable",graphic.raycastTarget,_SetMaskable);
+		}
+
+		protected void _DrawMaterialInspector(string label,Material value,Action<Material> onSetValue)
+		{
+			Material _DrawMaterial()
+			{
+				return EditorGUILayout.ObjectField(label,value,typeof(Material),false) as Material;
+			}
+
+			_DrawInspector(_DrawMaterial,onSetValue,$"Change {label}");
+		}
+
+		protected void _DrawToggleInspector(string label,bool value,Action<bool> onSetValue)
+		{
+			bool _DrawToggle()
+			{
+				return EditorGUILayout.Toggle(label,value);
+			}
+
+			_DrawInspector(_DrawToggle,onSetValue,$"Change {label}");
+		}
+
+		protected void _DrawSliderInspector(string label,float value,float minValue,float maxValue,Action<float> onSetValue)
+		{
+			float _DrawSlider()
+			{
+				return EditorGUILayout.Slider(label,value,minValue,maxValue);
+			}
+
+			_DrawInspector(_DrawSlider,onSetValue,$"Change {label}");
+		}
+
+		protected void _DrawIntSliderInspector(string label,int value,int minValue,int maxValue,Action<int> onSetValue)
+		{
+			int _DrawIntSlider()
+			{
+				return EditorGUILayout.IntSlider(label,value,minValue,maxValue);
+			}
+
+			_DrawInspector(_DrawIntSlider,onSetValue,$"Change {label}");
 		}
 	}
 }

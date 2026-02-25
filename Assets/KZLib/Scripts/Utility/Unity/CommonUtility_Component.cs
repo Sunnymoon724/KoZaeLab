@@ -1,12 +1,6 @@
 using UnityEngine;
-using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-
-#if UNITY_EDITOR
-
-using UnityEditor;
-
-#endif
+using System;
 
 public static partial class CommonUtility
 {
@@ -27,38 +21,37 @@ public static partial class CommonUtility
 	}
 
 #if UNITY_EDITOR
-	public static IEnumerable<TComponent> FindComponentGroupInInUnity<TComponent>() where TComponent : Component
+	public static void ExecuteMatchedComponentInUnity<TComponent>(Action<TComponent> onAction = null) where TComponent : Component
 	{
-		foreach(var component in FindComponentGroupInActiveScene<TComponent>())
-		{
-			yield return component;
-		}
+		ExecuteMatchedComponentInActiveScene(onAction);
 
-		foreach(var assetPath in FindAssetPathGroup("t:prefab"))
+		bool _Execute(GameObject asset,int index,int totalCount)
 		{
-			var asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
 			var componentArray = asset.GetComponentsInChildren<TComponent>(true);
 
 			for(var i=0;i<componentArray.Length;i++)
 			{
-				yield return componentArray[i];
+				onAction?.Invoke(componentArray[i]);
 			}
+
+			return true;
 		}
+
+		KZAssetKit.ExecuteMatchedAsset<GameObject>("t:prefab",null,_Execute);
 	}
 
-	public static IEnumerable<TComponent> FindComponentGroupInActiveScene<TComponent>() where TComponent : Component
+	public static void ExecuteMatchedComponentInActiveScene<TComponent>(Action<TComponent> onAction = null) where TComponent : Component
 	{
 		var activeScene = SceneManager.GetActiveScene();
-		
 		var rootGameObjectArray = activeScene.GetRootGameObjects();
-		
+
 		for(var i=0;i<rootGameObjectArray.Length;i++)
 		{
 			var componentArray = rootGameObjectArray[i].GetComponentsInChildren<TComponent>(true);
 
 			for(var j=0;j<componentArray.Length;j++)
 			{
-				yield return componentArray[j];
+				onAction?.Invoke(componentArray[j]);
 			}
 		}
 	}

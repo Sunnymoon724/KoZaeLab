@@ -47,7 +47,7 @@ namespace KZLib.Development
 
 			if(m_randomMode)
 			{
-				RandomUtility.Randomize(m_indexList);
+				KZRandomKit.Randomize(m_indexList);
 			}
 
 			var token = m_tokenSource.Token;

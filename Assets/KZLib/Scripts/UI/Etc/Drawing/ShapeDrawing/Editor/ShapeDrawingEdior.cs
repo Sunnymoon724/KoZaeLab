@@ -22,8 +22,9 @@ namespace KZLib.UI
 			{
 				return new()
 				{
-					[ShapeDrawing.ShapePrimitiveType.Ellipse] = new(m_owner._Draw_Ellipse,m_owner._CanShowKnot_Ellipse,m_owner._UpdateKnotList_Ellipse,m_owner._ChangeKnotPosition_Ellipse),
-					[ShapeDrawing.ShapePrimitiveType.Polygon] = new(m_owner._Draw_Polygon,m_owner._CanShowKnot_Polygon,m_owner._UpdateKnotList_Polygon,m_owner._ChangeKnotPosition_Polygon),
+					[ShapeDrawing.ShapePrimitiveType.Ellipse] = new(m_owner._Draw_Ellipse,m_owner._CanShowKnot_Ellipse,m_owner._SyncAllKnotInfos_Ellipse,m_owner._RefreshKnotInfo_Ellipse),
+					[ShapeDrawing.ShapePrimitiveType.Polygon] = new(m_owner._Draw_Polygon,m_owner._CanShowKnot_Polygon,m_owner._SyncAllKnotInfos_Polygon,m_owner._RefreshKnotInfo_Polygon),
+					[ShapeDrawing.ShapePrimitiveType.Triangle] = new(m_owner._Draw_Triangle,m_owner._CanShowKnot_Triangle,m_owner._SyncAllKnotInfos_Triangle,m_owner._RefreshKnotInfo_Triangle),
 				};
 			}
 		}
@@ -32,15 +33,15 @@ namespace KZLib.UI
 		{
 			public readonly Action Draw;
 			public readonly Func<bool> CanShowKnot;
-			public readonly Action<Vector3,Quaternion> UpdateKnotList;
-			public readonly Action<int,Vector3> ChangeKnotPosition;
+			public readonly Action SyncAllKnotInfos;
+			public readonly Action<int,Vector3> RefreshKnotInfo;
 
-			public ShapeEditorStrategy(Action draw,Func<bool> canShowKnot,Action<Vector3,Quaternion> updateKnotList,Action<int,Vector3> changeKnotPosition)
+			public ShapeEditorStrategy(Action draw,Func<bool> canShowKnot,Action syncAllKnotInfos,Action<int,Vector3> refreshKnotInfo)
 			{
 				Draw = draw;
 				CanShowKnot = canShowKnot;
-				UpdateKnotList = updateKnotList;
-				ChangeKnotPosition = changeKnotPosition;
+				SyncAllKnotInfos = syncAllKnotInfos;
+				RefreshKnotInfo = refreshKnotInfo;
 			}
 		}
 
@@ -60,157 +61,69 @@ namespace KZLib.UI
 
 		protected override void _DoInspectorGUI()
 		{
-			_DrawPrimitiveType();
-			_DrawOutline();
-			_DrawDefaultField();
+			void _SetPrimitiveType(ShapeDrawing.ShapePrimitiveType primitiveType)
+			{
+				m_shapeDrawing.PrimitiveType = primitiveType;
+			}
+
+			_DrawEnumInspector("Primitive Type",m_shapeDrawing.PrimitiveType,_SetPrimitiveType);
+
+
+			void _SetOutlineThickness(float outlineThickness)
+			{
+				var rect = m_shapeDrawing.rectTransform.rect;
+				var thickness = Mathf.Min(rect.width,rect.height);
+
+				m_shapeDrawing.OutlineThickness = Mathf.Clamp(outlineThickness,0.0f,thickness/2.0f);
+			}
+
+			_DrawFloatInspector("Outline Thickness",m_shapeDrawing.OutlineThickness,_SetOutlineThickness);
+
+
+			void _SetOutlineColor(Color outlineColor)
+			{
+				m_shapeDrawing.OutlineColor = outlineColor;
+			}
+
+			_DrawColorInspector("Outline Color",m_shapeDrawing.OutlineColor,_SetOutlineColor);
+
+			_DrawDefaultInspector();
 
 			if(_TryGetStrategy(m_shapeDrawing.PrimitiveType,out var strategy))
 			{
 				strategy.Draw();
 			}
 
-			_DrawFill();
+
+			void _SetFillType(ShapeDrawing.ShapeFillType fillType)
+			{
+				m_shapeDrawing.FillType = fillType;
+			}
+
+			_DrawEnumInspector("Fill Type",m_shapeDrawing.FillType,_SetFillType);
+
+			void _SetFillColor(Color color)
+			{
+				m_shapeDrawing.FillColor = color;
+			}
+
+			_DrawColorInspector("Fill Color",m_shapeDrawing.FillColor,_SetFillColor);
+
+
+			void _SetAntiAliasing(float antiAliasing)
+			{
+				m_shapeDrawing.AntiAliasing = antiAliasing;
+			}
+
+			_DrawFloatInspector("Anti Aliasing",m_shapeDrawing.AntiAliasing,_SetAntiAliasing);
 		}
 
-		private void _DrawPrimitiveType()
+		private void _DrawDefaultInspector()
 		{
-			EditorGUI.BeginChangeCheck();
-
-			var newType = EditorGUILayout.EnumPopup("Primitive Type",m_shapeDrawing.PrimitiveType);
-
-			if(EditorGUI.EndChangeCheck() && newType is ShapeDrawing.ShapePrimitiveType primitiveType)
-			{
-				Undo.RecordObject(m_shapeDrawing,"Change Primitive Type");
-
-				m_shapeDrawing.PrimitiveType = primitiveType;
-
-				m_serializedObject.Update();
-			}
-		}
-
-		private void _DrawOutline()
-		{
-			EditorGUI.BeginChangeCheck();
-
-			var newOutlineThickness = EditorGUILayout.FloatField("Outline Thickness",m_shapeDrawing.OutlineThickness);
-
-			if(EditorGUI.EndChangeCheck())
-			{
-				Undo.RecordObject(m_shapeDrawing,"Change Outline Thickness");
-
-				var rect = m_shapeDrawing.rectTransform.rect;
-				var thickness = Mathf.Min(rect.width,rect.height);
-
-				m_shapeDrawing.OutlineThickness = Mathf.Clamp(newOutlineThickness,0.0f,thickness/2.0f);
-			}
-
-			EditorGUI.BeginChangeCheck();
-
-			var newOutlineColor = EditorGUILayout.ColorField(new GUIContent("Outline Color"),m_shapeDrawing.OutlineColor);
-
-			if(EditorGUI.EndChangeCheck())
-			{
-				Undo.RecordObject(m_shapeDrawing,"Change Outline Color");
-
-				m_shapeDrawing.OutlineColor = newOutlineColor;
-
-				m_serializedObject.Update();
-			}
-		}
-
-		private void _DrawDefaultField()
-		{
-			EditorGUI.BeginChangeCheck();
-
-			var newMaterial = EditorGUILayout.ObjectField("Material",m_shapeDrawing.material,typeof(Material),false) as Material;
-
-			if(EditorGUI.EndChangeCheck())
-			{
-				Undo.RecordObject(m_shapeDrawing,"Change Material");
-
-				m_shapeDrawing.material = newMaterial;
-			}
-
-			EditorGUI.BeginChangeCheck();
-
-			var newRaycast = EditorGUILayout.Toggle("Raycast Target",m_shapeDrawing.raycastTarget);
-
-			if(EditorGUI.EndChangeCheck())
-			{
-				Undo.RecordObject(m_shapeDrawing,"Change Raycast Target");
-
-				m_shapeDrawing.raycastTarget = newRaycast;
-			}
-
-			m_isRaycastPaddingExpanded = EditorGUILayout.Foldout(m_isRaycastPaddingExpanded,"Raycast Padding");
-
-			if(m_isRaycastPaddingExpanded)
-			{
-				EditorGUI.indentLevel++;
-
-				EditorGUI.BeginChangeCheck();
-
-				var padding = new Vector4(
-					EditorGUILayout.FloatField("Left",m_shapeDrawing.raycastPadding.x),
-					EditorGUILayout.FloatField("Right",m_shapeDrawing.raycastPadding.y),
-					EditorGUILayout.FloatField("Top",m_shapeDrawing.raycastPadding.z),
-					EditorGUILayout.FloatField("Bottom",m_shapeDrawing.raycastPadding.w)
-				);
-
-				if(EditorGUI.EndChangeCheck())
-				{
-					Undo.RecordObject(m_shapeDrawing,"Change Raycast Padding");
-
-					m_shapeDrawing.raycastPadding = padding;
-				}
-
-				EditorGUI.indentLevel--;
-			}
-
-			EditorGUI.BeginChangeCheck();
-
-			var newMaskable = EditorGUILayout.Toggle("Maskable",m_shapeDrawing.maskable);
-
-			if(EditorGUI.EndChangeCheck())
-			{
-				Undo.RecordObject(m_shapeDrawing,"Change Maskable");
-
-				m_shapeDrawing.maskable = newMaskable;
-			}
-		}
-
-		private void _DrawFill()
-		{
-			EditorGUI.BeginChangeCheck();
-
-			var newType = EditorGUILayout.EnumPopup("Fill Type",m_shapeDrawing.FillType);
-
-			if(EditorGUI.EndChangeCheck() && newType is ShapeDrawing.ShapeFillType shapeFillType)
-			{
-				Undo.RecordObject(m_shapeDrawing,"Change Fill Type");
-
-				m_shapeDrawing.FillType = shapeFillType;
-
-				m_serializedObject.Update();
-			}
-
-			if(m_shapeDrawing.FillType != ShapeDrawing.ShapeFillType.Solid) //? solid is use fill color only
-			{
-				return;
-			}
-
-			EditorGUI.BeginChangeCheck();
-
-			var newFillColor = EditorGUILayout.ColorField(new GUIContent("Fill Color"),m_shapeDrawing.FillColor);
-
-			if(EditorGUI.EndChangeCheck())
-			{
-				Undo.RecordObject(m_shapeDrawing,"Change Fill Color");
-
-				m_shapeDrawing.FillColor = newFillColor;
-
-				m_serializedObject.Update();
-			}
+			_DrawDefaultInspector_Material(m_shapeDrawing);
+			_DrawDefaultInspector_RaycastTarget(m_shapeDrawing);
+			_DrawDefaultInspector_RaycastPadding(m_shapeDrawing);
+			_DrawDefaultInspector_Maskable(m_shapeDrawing);
 		}
 
 		private void OnSceneGUI()
@@ -230,24 +143,15 @@ namespace KZLib.UI
 			return _TryGetStrategy(m_shapeDrawing.PrimitiveType,out var strategy) && strategy.CanShowKnot();
 		}
 
-		protected override Vector3[] _GetWorldCornerArray()
-		{
-			var cornerArray = new Vector3[5];
-
-			m_shapeDrawing.rectTransform.GetWorldCorners(cornerArray);
-
-			return cornerArray;
-		}
-
 		protected override void _DoUpdateKnotList()
 		{
-			CurrentTransform.GetPositionAndRotation(out var position,out var rotation);
+			CurrentTransform.GetPositionAndRotation(out var center,out var _);
 
-			_AddOrUpdateKnotInfo(0,position,KnotType.Fixed);
+			_SyncKnotInfo(0,center,KnotType.Fixed);
 
 			if(_TryGetStrategy(m_shapeDrawing.PrimitiveType,out var strategy))
 			{
-				strategy.UpdateKnotList(position,rotation);
+				strategy.SyncAllKnotInfos();
 			}
 		}
 
@@ -257,7 +161,7 @@ namespace KZLib.UI
 
 			if(_TryGetStrategy(m_shapeDrawing.PrimitiveType,out var strategy))
 			{
-				strategy.ChangeKnotPosition(index,localPos);
+				strategy.RefreshKnotInfo(index,localPos);
 			}
 		}
 
@@ -269,14 +173,24 @@ namespace KZLib.UI
 			return plane.Raycast(ray,out float enter) ? ray.GetPoint(enter) : CurrentTransform.position;
 		}
 
-		private Vector3 _GetEdgePosition(float angle)
+		private Vector3 _GetVertexPosition(float degree)
 		{
 			var radius = m_shapeDrawing.Radius;
+			var radian = Mathf.Deg2Rad*degree;
 
-			var cos = Mathf.Cos(angle);
-			var sin = Mathf.Sin(angle);
+			var cos = Mathf.Cos(radian);
+			var sin = Mathf.Sin(radian);
 
 			return new Vector3(cos*radius.x,sin*radius.y);
+		}
+
+		private void _SyncWorldKnotInfo(int index,Vector3 position,KnotType knotType)
+		{
+			CurrentTransform.GetPositionAndRotation(out var center,out var rotation);
+
+			var worldPos = center+rotation*position;
+
+			_SyncKnotInfo(index,worldPos,knotType);
 		}
 	}
 }

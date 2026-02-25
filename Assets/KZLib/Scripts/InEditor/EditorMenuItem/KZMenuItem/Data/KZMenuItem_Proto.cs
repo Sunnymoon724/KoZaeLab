@@ -14,7 +14,7 @@ namespace KZLib.EditorInternal.Menus
 
 			var batchFilePath = Path.Combine(Global.TOOL_FOLDER_PATH,"GenerateProto",$"GenerateProto_{environmentType}.bat");
 
-			CommonUtility.OpenBatchFile(batchFilePath);
+			KZEditorKit.OpenBatchFile(batchFilePath);
 		}
 		
 		[MenuItem("KZMenu/Proto/Generate All Environment Proto",false,MenuOrder.Data.GENERATE)]
@@ -22,7 +22,7 @@ namespace KZLib.EditorInternal.Menus
 		{
 			var batchFilePath = Path.Combine(Global.TOOL_FOLDER_PATH,"GenerateProto",$"GenerateProto_All.bat");
 
-			CommonUtility.OpenBatchFile(batchFilePath);
+			KZEditorKit.OpenBatchFile(batchFilePath);
 		}
 
 		[MenuItem("KZMenu/Proto/Open Proto Folder",false,MenuOrder.Data.OPEN)]

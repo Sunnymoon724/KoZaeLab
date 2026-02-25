@@ -40,7 +40,7 @@ namespace KZLib.Attributes
 
 		protected readonly List<Func<Rect,bool,Rect>> m_onClickedList = new();
 
-		protected string AbsolutePath => FileUtility.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets);
+		protected string AbsolutePath => KZFileKit.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets);
 
 		protected override void Initialize()
 		{
@@ -73,12 +73,12 @@ namespace KZLib.Attributes
 				if(Attribute.IsIncludeAssets)
 				{
 					//? Path in assets folder
-					if(!FileUtility.IsIncludeAssetHeader(newPath))
+					if(!KZFileKit.IsIncludeAssetHeader(newPath))
 					{
-						CommonUtility.DisplayError(new NullReferenceException($"{newPath} is not in assets folder."));
+						KZEditorKit.DisplayError(new NullReferenceException($"{newPath} is not in assets folder."));
 					}
 
-					ValueEntry.SmartValue = FileUtility.RemoveAssetHeader(newPath);
+					ValueEntry.SmartValue = KZFileKit.RemoveAssetHeader(newPath);
 				}
 				else
 				{
@@ -127,7 +127,7 @@ namespace KZLib.Attributes
 		{
 			void _ClickButton()
 			{
-				CommonUtility.Open(FileUtility.GetParentPath(AbsolutePath));
+				KZEditorKit.Open(KZFileKit.GetParentPath(AbsolutePath));
 			}
 
 			return DrawButton(rect,SdfIconType.Folder2,isValid,_ClickButton);

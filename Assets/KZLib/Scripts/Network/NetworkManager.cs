@@ -101,7 +101,7 @@ namespace KZLib.Networking
 			var respondPacket = playFabPacket.RespondPacket;
 			var code = respondPacket.Code;
 			var isSuccess = code == 0;
-			var message = respondPacket.IsEncrypted ? CryptoUtility.RSA.DecryptFromString(respondPacket.Message,m_publicKey) : respondPacket.Message;
+			var message = respondPacket.IsEncrypted ? KZCryptoKit.RSA.DecryptFromString(respondPacket.Message,m_publicKey) : respondPacket.Message;
 			var requestText = JsonConvert.SerializeObject(playFabPacket.RequestPacket,Formatting.Indented);
 
 			_WriteDump(functionName,requestText,isSuccess,message,playFabPacket.Duration);
@@ -110,7 +110,7 @@ namespace KZLib.Networking
 			{
 				LogChannel.Network.E($"Respond Error : {code}");
 
-				var errorPrt = ProtoManager.In.GetProto<NetworkErrorProto>(code);
+				var errorPrt = ProtoManager.In.GetProto<INetworkErrorProto>(code);
 
 				if(errorPrt == null)
 				{
@@ -241,7 +241,7 @@ namespace KZLib.Networking
 
 			var filePath = Path.Combine(Global.PROJECT_PARENT_PATH,"NetworkDump",$"{requestMethodName}.log");
 
-			FileUtility.WriteTextToFile(filePath,dumpBuilder.ToString());
+			KZFileKit.WriteTextToFile(filePath,dumpBuilder.ToString());
 		}
 #endif
 	}

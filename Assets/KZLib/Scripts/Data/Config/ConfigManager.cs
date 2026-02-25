@@ -14,8 +14,6 @@ namespace KZLib.Data
 
 		private readonly static Type[] s_defaultConfigArray = new Type[] { typeof(GameConfig),typeof(OptionConfig),typeof(ServiceConfig),typeof(EditorConfig) };
 
-		private ConfigManager() { }
-
 		protected override void _Initialize()
 		{
 			base._Initialize();
@@ -119,7 +117,7 @@ namespace KZLib.Data
 
 			//? check custom. [only editor]
 #if UNITY_EDITOR
-			text = FileUtility.ReadFileToText(Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,$"Custom{fileName}"));
+			text = KZFileKit.ReadFileToText(Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,$"Custom{fileName}"));
 #endif
 			if(!text.IsEmpty())
 			{
@@ -139,7 +137,7 @@ namespace KZLib.Data
 #else
 			var routePath = $"defaultRes:config:{fileName}";
 #endif
-			text = FileUtility.ReadFileToText(RouteManager.In.GetOrCreateRoute(routePath).AbsolutePath);
+			text = KZFileKit.ReadFileToText(RouteManager.In.GetOrCreateRoute(routePath).AbsolutePath);
 
 			if(!text.IsEmpty())
 			{

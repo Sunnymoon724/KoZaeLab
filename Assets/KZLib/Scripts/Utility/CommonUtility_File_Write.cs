@@ -5,12 +5,12 @@ public static partial class CommonUtility
 {
 	public static string FindTemplateText(string absoluteFilePath)
 	{
-		if(!FileUtility.IsPathExist(absoluteFilePath))
+		if(!KZFileKit.IsPathExist(absoluteFilePath))
 		{
 			return null;
 		}
 
-		return FileUtility.ReadFileToText(FindTemplateFileAbsolutePath(absoluteFilePath));
+		return KZFileKit.ReadFileToText(FindTemplateFileAbsolutePath(absoluteFilePath));
 	}
 }
 #endif

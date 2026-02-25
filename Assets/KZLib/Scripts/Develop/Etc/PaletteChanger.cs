@@ -94,9 +94,9 @@ namespace KZLib.Development
 				{
 					ProtoManager.In.LoadInEditor();
 
-					foreach(var prt in ProtoManager.In.FindProtoGroup<ColorProto>())
+					foreach(var prt in ProtoManager.In.FindProtoGroup<IColorProto>())
 					{
-						m_paletteNameList.Add(LingoManager.In.FindString(prt.NameKey),prt.Num);
+						m_paletteNameList.Add($"{prt.Num}",prt.Num);
 					}
 				}
 

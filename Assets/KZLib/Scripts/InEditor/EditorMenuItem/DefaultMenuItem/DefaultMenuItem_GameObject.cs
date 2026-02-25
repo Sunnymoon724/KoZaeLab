@@ -3,9 +3,9 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.UI;
 using System;
+using KZLib.UI;
 
 using Object = UnityEngine.Object;
-using KZLib.UI;
 
 namespace KZLib.EditorInternal.Menus
 {
@@ -157,7 +157,7 @@ namespace KZLib.EditorInternal.Menus
 			Undo.IncrementCurrentGroup();
 
 			var group = Undo.GetCurrentGroup();
-			var line = new GameObject("     ") { tag = "Category" };
+			var line = new GameObject("##");
 
 			Undo.RegisterCreatedObjectUndo(line,"Create Category Line");
 
@@ -166,8 +166,9 @@ namespace KZLib.EditorInternal.Menus
 			if(selected)
 			{
 				var root = selected.transform.root;
+				var siblingIndex = root.GetSiblingIndex();
 
-				line.transform.SetSiblingIndex(root.GetSiblingIndex()+1);
+				line.transform.SetSiblingIndex(siblingIndex+1);
 			}
 
 			Undo.CollapseUndoOperations(group);
@@ -189,7 +190,7 @@ namespace KZLib.EditorInternal.Menus
 		}
 
 		[MenuItem("GameObject/Copy Hierarchy",true,MenuOrder.GameObject.HIERARCHY)]
-		private static bool _IsCopyHierarchy()
+		private static bool _CanCopyHierarchy()
 		{
 			return Selection.gameObjects.Length == 1;
 		}

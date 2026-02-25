@@ -32,25 +32,35 @@ namespace KZLib.Windows
 					return;
 				}
 
-				m_prefabList.Clear();
+				m_prefabHashSet.Clear();
 
-				foreach(var assetPath in CommonUtility.FindAssetPathGroup("t:prefab"))
+				bool _Execute(string assetPath,int index,int totalCount)
 				{
 					var asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+
+					if(!asset)
+					{
+						return true;
+					}
+
 					var meshFilterArray = asset.GetComponentsInChildren<MeshFilter>(true);
 
 					for(var i=0;i<meshFilterArray.Length;i++)
 					{
 						if(meshFilterArray[i].sharedMesh == m_selectionMesh)
 						{
-							m_prefabList.AddNotOverlap(new Prefab(asset,assetPath,value,m_replaceMesh,IsValidReplace));
+							m_prefabHashSet.Add(new Prefab(asset,assetPath,value,m_replaceMesh,IsValidReplace));
 						}
 					}
+
+					return true;
 				}
 
-				if(m_prefabList.IsNullOrEmpty())
+				KZAssetKit.ExecuteMatchedAssetPath("t:prefab",null,_Execute);
+
+				if(m_prefabHashSet.IsNullOrEmpty())
 				{
-					CommonUtility.DisplayInfo("There is no prefab with a mesh.");
+					KZEditorKit.DisplayInfo("There is no prefab with a mesh.");
 				}
 			}
 		}
@@ -73,31 +83,31 @@ namespace KZLib.Windows
 					return;
 				}
 
-				var prefabList = new List<Prefab>(m_prefabList);
+				var prefabList = new List<Prefab>(m_prefabHashSet);
 
-				m_prefabList.Clear();
+				m_prefabHashSet.Clear();
 
 				var isValidReplace = SelectionMesh && SelectionMesh != ReplaceMesh;
 
 				for(var i=0;i<prefabList.Count;i++)
 				{
-					m_prefabList.AddNotOverlap(new Prefab(prefabList[i],value,isValidReplace));
+					m_prefabHashSet.Add(new Prefab(prefabList[i],value,isValidReplace));
 				}
 			}
 		}
 
 		[HorizontalGroup("Find Mesh/2",Order = 2),SerializeField,ShowIf(nameof(HasPrefab)),ListDrawerSettings(ShowFoldout = false,DraggableItems = false,HideAddButton = true,HideRemoveButton = true)]
-		private List<Prefab> m_prefabList = new();
-		private bool HasPrefab => SelectionMesh && !m_prefabList.IsNullOrEmpty();
+		private HashSet<Prefab> m_prefabHashSet = new();
+		private bool HasPrefab => SelectionMesh && !m_prefabHashSet.IsNullOrEmpty();
 
 		private bool IsValidReplace => ReplaceMesh && SelectionMesh != ReplaceMesh && HasPrefab;
 
 		[VerticalGroup("Find Mesh/3",Order = 3),ShowIf(nameof(HasPrefab)),EnableIf(nameof(IsValidReplace))]
 		protected void OnMeshToolBar()
 		{
-			for(var i=0;i<m_prefabList.Count;i++)
+			foreach(var prefab in m_prefabHashSet)
 			{
-				m_prefabList[i].OnChangeMesh();
+				prefab.OnChangeMesh();
 			}
 		}
 

@@ -14,7 +14,7 @@ namespace KZLib.Windows
 		[HorizontalGroup("Button/0"),Button("Find Image",ButtonSizes.Large)]
 		protected void OnFindImage()
 		{
-			m_spritePath = CommonUtility.FindFilePathInPanel("Change new path.","png");
+			m_spritePath = KZEditorKit.FindFilePathInPanel("Change new path.","png");
 		}
 
 		[HorizontalGroup("Button/0"),Button("Convert Image",ButtonSizes.Large),EnableIf(nameof(IsExist))]
@@ -22,9 +22,9 @@ namespace KZLib.Windows
 		{
 			var texture2D = new Texture2D(1,1);
 
-			if(!texture2D.LoadImage(FileUtility.ReadFileToBytes(m_spritePath)))
+			if(!texture2D.LoadImage(KZFileKit.ReadFileToBytes(m_spritePath)))
 			{
-				CommonUtility.DisplayError(new Exception("Fail to load image."));
+				KZEditorKit.DisplayError(new Exception("Fail to load image."));
 
 				return;
 			}
@@ -47,25 +47,25 @@ namespace KZLib.Windows
 					changed = true;
 				}
 
-				CommonUtility.DisplayCancelableProgressBar("Change Color",$"Change Color : {i/pixelArray.Length}",i/(float)pixelArray.Length);
+				KZEditorKit.DisplayCancelableProgressBar("Change Color",$"Change Color : {i/pixelArray.Length}",i/(float)pixelArray.Length);
 			}
 
 			if(changed)
 			{
 				texture2D.SetPixels32(pixelArray);
 
-				var convertPath = string.Concat(FileUtility.GetPathWithoutExtension(m_spritePath),"_Convert.png");
+				var convertPath = string.Concat(KZFileKit.GetPathWithoutExtension(m_spritePath),"_Convert.png");
 
-				FileUtility.WriteByteToFile(convertPath,texture2D.EncodeToPNG());
+				KZFileKit.WriteByteToFile(convertPath,texture2D.EncodeToPNG());
 
-				CommonUtility.DisplayInfo("Image change completed");
+				KZEditorKit.DisplayInfo("Image change completed");
 			}
 			else
 			{
-				CommonUtility.DisplayInfo("No color to change");
+				KZEditorKit.DisplayInfo("No color to change");
 			}
 
-			CommonUtility.ClearProgressBar();
+			KZEditorKit.ClearProgressBar();
 		}
 
 		private bool IsExist => !m_spritePath.IsEmpty() && !m_beforeColor.Equals(m_afterColor);

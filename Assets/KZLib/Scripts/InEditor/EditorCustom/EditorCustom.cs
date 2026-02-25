@@ -526,7 +526,7 @@ namespace KZLib.EditorInternal
 
 		private static void _ResetCustomData()
 		{
-			if(!CommonUtility.DisplayCheckBeforeExecute("Reset CustomData"))
+			if(!KZEditorKit.DisplayCheckBeforeExecute("Reset CustomData"))
 			{
 				return;
 			}
@@ -537,7 +537,7 @@ namespace KZLib.EditorInternal
 
 			_Initialize();
 
-			CommonUtility.DisplayInfo("CustomData reset complete");
+			KZEditorKit.DisplayInfo("CustomData reset complete");
 		}
 
 		private static void _SaveCustomData()

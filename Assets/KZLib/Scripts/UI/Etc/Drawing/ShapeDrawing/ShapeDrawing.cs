@@ -8,8 +8,10 @@ namespace KZLib.UI
 {
 	public partial class ShapeDrawing : GraphicDrawing
 	{
-		internal enum ShapePrimitiveType { Ellipse, Polygon, } // Rectangle, }
+		internal enum ShapePrimitiveType { Ellipse, Polygon, Triangle, } // Rectangle, Freeform, }
 		internal enum ShapeFillType { None, Matched, Solid, }
+
+		private record VertexInfo(Vector3 Outer,Vector3 Inner,Vector3 Anti);
 
 		[SerializeField]
 		private ShapePrimitiveType m_primitiveType = ShapePrimitiveType.Ellipse;
@@ -18,21 +20,12 @@ namespace KZLib.UI
 			get => m_primitiveType;
 			set
 			{
-				if(m_primitiveType == value)
+				int _CalculateExpectedVertexCount_PrimitiveType(ShapePrimitiveType primitiveType)
 				{
-					return;
+					return _CalculateExpectedVertexCount_Inner(primitiveType:primitiveType);
 				}
 
-				var vertexCount = _GetTotalExpectedVertices(value,FillType,FillColor,OutlineThickness,OutlineColor);
-
-				if(!_IsValidVertex(vertexCount))
-				{
-					return;
-				}
-
-				m_primitiveType = value;
-
-				SetVerticesDirty();
+				_SetValueWithVertexCheck(ref m_primitiveType,value,_CalculateExpectedVertexCount_PrimitiveType,null);
 			}
 		}
 
@@ -43,21 +36,12 @@ namespace KZLib.UI
 			get => m_outlineThickness;
 			set
 			{
-				if(m_outlineThickness == value)
+				int _CalculateExpectedVertexCount_OutlineThickness(float outlineThickness)
 				{
-					return;
+					return _CalculateExpectedVertexCount_Inner(outlineThickness:outlineThickness);
 				}
 
-				var vertexCount = _GetTotalExpectedVertices(PrimitiveType,FillType,FillColor,value,OutlineColor);
-
-				if(!_IsValidVertex(vertexCount))
-				{
-					return;
-				}
-
-				m_outlineThickness = value;
-
-				SetVerticesDirty();
+				_SetValueWithVertexCheck(ref m_outlineThickness,value,_CalculateExpectedVertexCount_OutlineThickness,null);
 			}
 		}
 
@@ -68,21 +52,12 @@ namespace KZLib.UI
 			get => m_outlineColor;
 			set
 			{
-				if(m_outlineColor == value)
+				int _CalculateExpectedVertexCount_OutlineColor(Color outlineColor)
 				{
-					return;
+					return _CalculateExpectedVertexCount_Inner(outlineColor:outlineColor);
 				}
 
-				var vertexCount = _GetTotalExpectedVertices(PrimitiveType,FillType,FillColor,OutlineThickness,value);
-
-				if(!_IsValidVertex(vertexCount))
-				{
-					return;
-				}
-
-				m_outlineColor = value;
-
-				SetVerticesDirty();
+				_SetValueWithVertexCheck(ref m_outlineColor,value,_CalculateExpectedVertexCount_OutlineColor,null);
 			}
 		}
 
@@ -93,21 +68,12 @@ namespace KZLib.UI
 			get => m_fillType;
 			set
 			{
-				if(m_fillType == value)
+				int _CalculateExpectedVertexCount_FillType(ShapeFillType fillType)
 				{
-					return;
+					return _CalculateExpectedVertexCount_Inner(fillType:fillType);
 				}
 
-				var vertexCount = _GetTotalExpectedVertices(PrimitiveType,value,FillColor,OutlineThickness,OutlineColor);
-
-				if(!_IsValidVertex(vertexCount))
-				{
-					return;
-				}
-
-				m_fillType = value;
-
-				SetVerticesDirty();
+				_SetValueWithVertexCheck(ref m_fillType,value,_CalculateExpectedVertexCount_FillType,null);
 			}
 		}
 
@@ -118,30 +84,31 @@ namespace KZLib.UI
 			get => m_fillColor;
 			set
 			{
-				if(m_fillColor == value)
+				int _CalculateExpectedVertexCount_FillColor(Color fillColor)
 				{
-					return;
+					return _CalculateExpectedVertexCount_Inner(fillColor:fillColor);
 				}
 
-				var vertexCount = _GetTotalExpectedVertices(PrimitiveType,FillType,value,OutlineThickness,OutlineColor);
-
-				if(!_IsValidVertex(vertexCount))
-				{
-					return;
-				}
-
-				m_fillColor = value;
-
-				SetVerticesDirty();
+				_SetValueWithVertexCheck(ref m_fillColor,value,_CalculateExpectedVertexCount_FillColor,null);
 			}
 		}
 
 		[SerializeField]
-		private Vector2 m_radius = Vector2.zero;
-		internal Vector2 Radius
+		private float m_antiAliasing = 0.0f;
+		internal float AntiAliasing
 		{
-			get => m_radius;
-			private set => m_radius = value;
+			get => m_antiAliasing;
+			set
+			{
+				value = Mathf.Max(value,0.0f);
+
+				int _CalculateExpectedVertexCount_AntiAliasing(float antiAliasing)
+				{
+					return _CalculateExpectedVertexCount_Inner(antiAliasing:antiAliasing);
+				}
+
+				_SetValueWithVertexCheck(ref m_antiAliasing,value,_CalculateExpectedVertexCount_AntiAliasing,null);
+			}
 		}
 
 		private class ShapeCatalog : StrategyCatalog<ShapeDrawing,ShapePrimitiveType,ShapeStrategy>
@@ -150,33 +117,34 @@ namespace KZLib.UI
 
 			protected override Dictionary<ShapePrimitiveType,ShapeStrategy> _BindStrategy()
 			{
-				int _CalculateExpectedVertices_Ellipse_Inner(ShapeFillType fillType,Color fillColor,float outlineThickness,Color outlineColor)
-				{
-					return m_owner._CalculateExpectedVertices_Ellipse(m_owner.EllipseAngle,fillType,fillColor,outlineThickness,outlineColor);
-				}
-
-				int _CalculateExpectedVertices_Polygon_Inner(ShapeFillType fillType,Color fillColor,float outlineThickness,Color outlineColor)
-				{
-					return m_owner._GetExpectedVertices_Polygon(m_owner.PolygonSideCount,fillType,fillColor,outlineThickness,outlineColor);
-				}
-
 				return new()
 				{
-					[ShapePrimitiveType.Ellipse] = new(m_owner._DrawShape_Ellipse,_CalculateExpectedVertices_Ellipse_Inner),
-					[ShapePrimitiveType.Polygon] = new(m_owner._DrawShape_Polygon,_CalculateExpectedVertices_Polygon_Inner),
+					[ShapePrimitiveType.Ellipse] = new(m_owner._DrawFill_Ellipse,m_owner._DrawOutline_Ellipse,m_owner._GetSegmentCount_Ellipse,m_owner._CalculateExpectedFillVertexCount_Ellipse,m_owner._CalculateExpectedOutlineVertexCount_Ellipse),
+					[ShapePrimitiveType.Polygon] = new(m_owner._DrawFill_Polygon,m_owner._DrawOutline_Polygon,m_owner._GetSegmentCount_Polygon,m_owner._CalculateExpectedFillVertexCount_Polygon,m_owner._CalculateExpectedOutlineVertexCount_Polygon),
+					[ShapePrimitiveType.Triangle] = new(m_owner._DrawFill_Triangle,m_owner._DrawOutline_Triangle,m_owner._GetSegmentCount_Triangle,m_owner._CalculateExpectedFillVertexCount_Triangle,m_owner._CalculateExpectedOutlineVertexCount_Triangle),
 				};
 			}
 		}
 
 		private readonly struct ShapeStrategy
 		{
-			public readonly Action<VertexHelper,Vector2,Vector2,Vector2> Draw;
-			public readonly Func<ShapeFillType,Color,float,Color,int> GetVertexCount;
+			public readonly Action<VertexHelper,Color,bool> DrawFill;
+			public readonly Action<VertexHelper,bool> DrawOutline;
 
-			public ShapeStrategy(Action<VertexHelper,Vector2,Vector2,Vector2> draw,Func<ShapeFillType,Color,float,Color,int> getVertexCount)
+			public readonly Func<int> GetSegmentCount;
+
+			public readonly Func<int,bool,int> CalculateExpectedFillVertexCount;
+			public readonly Func<int,bool,int> CalculateExpectedOutlineVertexCount;
+
+			public ShapeStrategy(Action<VertexHelper,Color,bool> drawFill,Action<VertexHelper,bool> drawOutline,Func<int> getSegmentCount,Func<int,bool,int> calculateExpectedFillVertexCount,Func<int,bool,int> calculateExpectedOutlineVertexCount)
 			{
-				Draw = draw;
-				GetVertexCount = getVertexCount;
+				DrawFill = drawFill;
+				DrawOutline = drawOutline;
+
+				GetSegmentCount = getSegmentCount;
+
+				CalculateExpectedFillVertexCount = calculateExpectedFillVertexCount;
+				CalculateExpectedOutlineVertexCount = calculateExpectedOutlineVertexCount;
 			}
 		}
 
@@ -191,147 +159,92 @@ namespace KZLib.UI
 
 		protected override void _PopulateMesh(VertexHelper vertexHelper)
 		{
-			var rect = GetPixelAdjustedRect();
-
-			Radius = new Vector2(rect.width/2.0f,rect.height/2.0f);
-
-			var centerPoint = rect.center;
-			var innerRadius = new Vector2(Radius.x-OutlineThickness,Radius.y-OutlineThickness);
-
-			_DrawShape(vertexHelper,centerPoint,Radius,innerRadius);
-		}
-
-		private void _DrawShape(VertexHelper vertexHelper,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius)
-		{
-			if(_TryGetStrategy(PrimitiveType,out var strategy))
-			{
-				strategy.Draw(vertexHelper,centerPoint,currentRadius,innerRadius);
-			}
-		}
-
-		private bool _ShouldDrawByFill(ShapeFillType fillType,Color color)
-		{
-			return fillType != ShapeFillType.None && _ShouldDrawByColor(color);
-		}
-
-		private bool _ShouldDrawByOutline(float thickness,Color color)
-		{
-			return thickness >= 0.0f && _ShouldDrawByColor(color);
-		}
-
-		private bool _ShouldDrawByColor(Color color)
-		{
-			return color.a >= 0.0f;
-		}
-
-		private void _DrawCommonShape(VertexHelper vertexHelper,int segmentCount,float segmentAngle,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius,bool useDistance)
-		{
 			var realFillColor = _GetFillColor(FillType,FillColor,OutlineColor);
 
+			var canDrawFill = _CanDrawFill(FillType,realFillColor);
+			var canDrawOutline = _CanDrawOutline(OutlineThickness,OutlineColor);
+
+			var canDrawAntiAliasing = AntiAliasing > 0.0f;
+
 			//? Draw Fill
-			if(_ShouldDrawByFill(FillType,realFillColor))
+			if(canDrawFill)
 			{
-				_DrawShapeWithFill(vertexHelper,segmentCount,segmentAngle,centerPoint,innerRadius,realFillColor,useDistance);
+				if(_TryGetStrategy(PrimitiveType,out var strategy))
+				{
+					strategy.DrawFill(vertexHelper,realFillColor,!canDrawOutline && canDrawAntiAliasing);
+				}
 			}
 
 			//? Draw Outline
-			if(_ShouldDrawByOutline(OutlineThickness,OutlineColor))
+			if(canDrawOutline)
 			{
-				_DrawShapeWithOutline(vertexHelper,segmentCount,segmentAngle,centerPoint,currentRadius,innerRadius,useDistance);
+				if(_TryGetStrategy(PrimitiveType,out var strategy))
+				{
+					strategy.DrawOutline(vertexHelper,canDrawAntiAliasing);
+				}
 			}
 		}
 
-		private void _DrawShapeWithFill(VertexHelper vertexHelper,int segmentCount,float segmentAngle,Vector2 centerPoint,Vector2 currentRadius,Color drawColor,bool useDistance)
+		private bool _CanDrawFill(ShapeFillType fillType,Color color)
 		{
-			var count = vertexHelper.currentVertCount;
-
-			vertexHelper.AddVert(centerPoint,drawColor,Vector2.zero);
-
-			for(var i=0;i<=segmentCount;i++)
-			{
-				var distance = useDistance ? GetPolygonVertexDistance(i%segmentCount) : 1.0f;
-
-				var cos = Mathf.Cos(segmentAngle*i)*distance;
-				var sin = Mathf.Sin(segmentAngle*i)*distance;
-
-				vertexHelper.AddVert(new (centerPoint.x+cos*currentRadius.x,centerPoint.y+sin*currentRadius.y),drawColor,Vector2.zero);
-			}
-
-			for(var i=1;i<=segmentCount;i++)
-			{
-				vertexHelper.AddTriangle(count,count+i,count+i+1);
-			}
+			return fillType != ShapeFillType.None && _CanDraw(color);
 		}
 
-		private void _DrawShapeWithOutline(VertexHelper vertexHelper,int segmentCount,float segmentAngle,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius,bool useDistance)
+		private bool _CanDrawOutline(float thickness,Color color)
 		{
-			// Outline use only base color
-			var count = vertexHelper.currentVertCount;
+			return _CanDraw(color) && thickness >= 0.0f;
+		}
 
-			for(var i=0;i<=segmentCount;i++)
+		private bool _CanDraw(Color color)
+		{
+			return color.a > 0.0f;
+		}
+
+		protected override int _CalculateExpectedVertexCount()
+		{
+			return _CalculateExpectedVertexCount_Inner();
+		}
+
+		private int _CalculateExpectedVertexCount_Inner(ShapePrimitiveType? primitiveType = null,ShapeFillType? fillType = null,Color? fillColor = null,float? outlineThickness = null,Color? outlineColor = null,int? segmentCount = null,float? antiAliasing = null)
+		{
+			var primitiveType2 = primitiveType ?? PrimitiveType;
+			var fillType2 = fillType ?? FillType;
+			var fillColor2 = fillColor ?? FillColor;
+			var outlineThickness2 = outlineThickness ?? OutlineThickness;
+			var outlineColor2 = outlineColor ?? OutlineColor;
+			var antiAliasing2 = antiAliasing ?? AntiAliasing;
+
+			if(_TryGetStrategy(primitiveType2,out var strategy))
 			{
-				var distanceRatio = useDistance ? GetPolygonVertexDistance(i%segmentCount) : 1.0f;
+				var segmentCount2 = segmentCount ?? strategy.GetSegmentCount();
 
-				var cosAngle = Mathf.Cos(segmentAngle*i)*distanceRatio;
-				var sinAngle = Mathf.Sin(segmentAngle*i)*distanceRatio;
+				var vertCnt = 0;
 
-				vertexHelper.AddVert(new (centerPoint.x+cosAngle*innerRadius.x,centerPoint.y+sinAngle*innerRadius.y),OutlineColor,Vector2.zero);
-				vertexHelper.AddVert(new (centerPoint.x+cosAngle*currentRadius.x,centerPoint.y+sinAngle*currentRadius.y),OutlineColor,Vector2.zero);
+				var realFillColor = _GetFillColor(fillType2,fillColor2,outlineColor2);
+
+				var canDrawFill = _CanDrawFill(fillType2,realFillColor);
+				var canDrawOutline = _CanDrawOutline(outlineThickness2,outlineColor2);
+
+				var canDrawAntiAliasing = antiAliasing2 > 0.0f;
+
+				//? Draw Fill
+				if(canDrawFill)
+				{
+					vertCnt += strategy.CalculateExpectedFillVertexCount(segmentCount2,!canDrawOutline && canDrawAntiAliasing);
+				}
+
+				//? Draw Outline
+				if(canDrawOutline)
+				{
+					vertCnt += strategy.CalculateExpectedOutlineVertexCount(segmentCount2,canDrawAntiAliasing);
+				}
+
+				return vertCnt;
 			}
-
-			for(var i=0;i<segmentCount*2;i+=2)
+			else
 			{
-				vertexHelper.AddTriangle(count+i,count+i+1,count+i+2);
-				vertexHelper.AddTriangle(count+i+1,count+i+2,count+i+3);
+				return 0;
 			}
-		}
-
-		protected override int _GetTotalExpectedVertices()
-		{
-			return _GetTotalExpectedVertices(PrimitiveType,FillType,FillColor,OutlineThickness,OutlineColor);
-		}
-
-		private int _GetTotalExpectedVertices(ShapePrimitiveType primitiveType,ShapeFillType fillType,Color fillColor,float outlineThickness,Color outlineColor)
-		{
-			return _TryGetStrategy(primitiveType,out var strategy) ? strategy.GetVertexCount(fillType,fillColor,outlineThickness,outlineColor) : 0;
-		}
-
-		private int _CalculateExpectedVertices_Shape(int sideCount,ShapeFillType fillType,Color fillColor,float outlineThickness,Color outlineColor)
-		{
-			var count = 0;
-			var realFillColor = _GetFillColor(fillType,fillColor,outlineColor);
-
-			//? Draw Fill
-			if(_ShouldDrawByFill(fillType,realFillColor))
-			{
-				count += _CalculateExpectedVertices_PolygonWithFill(sideCount);
-			}
-
-			//? Draw Outline
-			if(_ShouldDrawByOutline(outlineThickness,outlineColor))
-			{
-				count += _CalculateExpectedVertices_PolygonWithOutline(sideCount);
-			}
-
-			return count;
-		}
-
-		private int _CalculateExpectedVertices_PolygonWithFill(int segmentCount)
-		{
-			var count = 1;
-
-			count += segmentCount+1;
-
-			return count;
-		}
-
-		private int _CalculateExpectedVertices_PolygonWithOutline(int segmentCount)
-		{
-			var count = 0;
-
-			count += (segmentCount+1)*2;
-
-			return count;
 		}
 
 		private Color _GetFillColor(ShapeFillType fillType,Color fillColor,Color outlineColor)
@@ -342,6 +255,61 @@ namespace KZLib.UI
 				ShapeFillType.Matched => outlineColor,
 				_ => Color.clear,
 			};
+		}
+
+		private Vector2 _GetOffsetVertex(Vector2 vertex,Vector2 center,Vector2 direction1,Vector2 direction2,float thickness)
+		{
+			if(direction1 == Vector2.zero || direction2 == Vector2.zero)
+			{
+				return vertex;
+			}
+
+			var bisector = (direction1+direction2).normalized;
+			var normal = (center-vertex).normalized;
+
+			if(Vector2.Dot(bisector,normal) < 0.0f) 
+			{
+				bisector = -bisector;
+			}
+
+			var angle = Vector2.Angle(direction1,direction2)*0.5f*Mathf.Deg2Rad;
+			var sinAngle = Mathf.Sin(angle);
+
+			var dist = (sinAngle > 0.01f) ? (thickness/sinAngle) : thickness;
+
+			return vertex+bisector*dist;
+		}
+
+		private float _CalculateSegmentAngle(float degree,int count)
+		{
+			return degree*Mathf.Deg2Rad/count;
+		}
+
+		private Vector2 _CalculateLocalVertex(float cos,float sin,Vector2 radius)
+		{
+			return new Vector2(Center.x+cos*radius.x,Center.y+sin*radius.y);
+		}
+
+		private List<VertexInfo> _CalculateAllVertexList_CommonShape(bool isFill,int segmentCount,Vector2[] outerVertArray)
+		{
+			var vertInfoList = new List<VertexInfo>();
+
+			for(var i=0;i<segmentCount;i++)
+			{
+				var currVert = outerVertArray[i];
+				var prevVert = outerVertArray[CommonUtility.LoopClamp(i-1,segmentCount)];
+				var nextVert = outerVertArray[CommonUtility.LoopClamp(i+1,segmentCount)];
+
+				var direction1 = (prevVert-currVert).normalized;
+				var direction2 = (nextVert-currVert).normalized;
+
+				var innerVert = _GetOffsetVertex(currVert,Center,direction1,direction2,OutlineThickness);
+				var antiVert = _GetOffsetVertex(isFill ? innerVert :currVert,Center,direction1,direction2,-AntiAliasing);
+
+				vertInfoList.Add(new VertexInfo(currVert,innerVert,antiVert));
+			}
+
+			return vertInfoList;
 		}
 	}
 }

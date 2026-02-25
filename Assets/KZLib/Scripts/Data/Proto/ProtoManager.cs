@@ -22,8 +22,6 @@ namespace KZLib.Data
 
 		private readonly Dictionary<int,Vector4[]> m_colorVectorDict = new();
 
-		private ProtoManager() { }
-
 		protected override void _Release(bool disposing)
 		{
 			if(disposing)
@@ -306,7 +304,7 @@ namespace KZLib.Data
 		{
 			if(!m_colorVectorDict.TryGetValue(num,out Vector4[] colorVectorArray))
 			{
-				var colorPrt = GetProto<ColorProto>(num);
+				var colorPrt = GetProto<IColorProto>(num);
 
 				if(colorPrt == null)
 				{

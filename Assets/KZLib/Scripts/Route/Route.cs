@@ -50,8 +50,8 @@ namespace KZLib.Data
 
 			var localPath = path.Replace($"{Path.Combine(projectPath,c_Assets)}{Path.DirectorySeparatorChar}","");
 
-			m_localPath = Path.Combine(FileUtility.GetParentPath(localPath),FileUtility.GetFileName(localPath));
-			m_extension = FileUtility.GetExtension(localPath).TrimStart('.');
+			m_localPath = Path.Combine(KZFileKit.GetParentPath(localPath),KZFileKit.GetFileName(localPath));
+			m_extension = KZFileKit.GetExtension(localPath).TrimStart('.');
 		}
 
 		public string AssetPath => Path.Combine(c_Assets,LocalPath);

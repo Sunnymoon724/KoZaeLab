@@ -95,7 +95,7 @@ namespace KZLib.Windows
 
 		private void _OnRemoveInfo(int index)
 		{
-			if(!CommonUtility.DisplayCheckBeforeExecute("Remove this playerPrefs"))
+			if(!KZEditorKit.DisplayCheckBeforeExecute("Remove this playerPrefs"))
 			{
 				return;
 			}
@@ -154,7 +154,7 @@ namespace KZLib.Windows
 		[VerticalGroup("2",Order = 2),Button("Delete All",ButtonHeight = 30),ShowIf(nameof(IsExistInfo))]
 		protected void OnDeleteAll()
 		{
-			if(!CommonUtility.DisplayCheckBeforeExecute("Delete all playerPrefs"))
+			if(!KZEditorKit.DisplayCheckBeforeExecute("Delete all playerPrefs"))
 			{
 				return;
 			}

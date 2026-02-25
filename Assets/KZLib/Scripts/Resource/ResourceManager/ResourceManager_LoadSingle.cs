@@ -143,12 +143,12 @@ namespace KZLib
 #endif
 			if(filePath.StartsWith(c_Resources))
 			{
-				var resourcePath = FileUtility.RemoveHeaderInPath(filePath,c_Resources);
+				var resourcePath = KZFileKit.RemoveHeaderInPath(filePath,c_Resources);
 
 				return Resources.Load<TObject>(resourcePath[..resourcePath.LastIndexOf('.')]);
 			}
 
-			var assetPath = FileUtility.GetAssetPath(filePath);
+			var assetPath = KZFileKit.GetAssetPath(filePath);
 
 			if(m_useServerResource)
 			{

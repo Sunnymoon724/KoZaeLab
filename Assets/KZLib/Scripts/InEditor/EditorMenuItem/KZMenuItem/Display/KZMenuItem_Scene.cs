@@ -8,7 +8,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Scene/Open Main Scene",false,MenuOrder.Display.MANUAL)]
 		private static void _OnOpenMainScene()
 		{
-			CommonUtility.OpenSceneInEditor("MainScene");
+			KZEditorKit.OpenSceneInEditor("MainScene");
 		}
 	}
 }

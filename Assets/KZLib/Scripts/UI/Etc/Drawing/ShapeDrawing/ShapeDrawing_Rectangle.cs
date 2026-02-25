@@ -1,115 +1,131 @@
 ﻿
-// namespace KZLib.UI
-// {
-// 	public partial class UIShape : MaskableGraphic
-// 	{
-// 		[SerializeField]
-//		private float m_rectangleRadius = 0.0f;
-//
-// 		private void _DrawRectangle(VertexHelper vertexHelper,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius)
-// 		{
-// 			float maxRadius = Mathf.Min(currentRadius.x,currentRadius.y)/2.0f;
-			
-// 			//? Draw left-top corner
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
-			
-// 			//? Draw top
-			
-// 			// RoundedProperties.UpdateAdjusted(pixelRect, 0.0f);
-// 			// AntiAliasingProperties.UpdateAdjusted(canvas);
-// 			// OutlineProperties.UpdateAdjusted();
-// 			// ShadowProperties.UpdateAdjusted();
-			
-// 			//? Draw Fill
-// 			// if(m_fillType != FillType.None)
-// 			// {
-// 			// 	var fillColor = _GetColor();
+namespace KZLib.UI
+{
+	public partial class ShapeDrawing : GraphicDrawing
+	{
+		internal const int c_rectangleSegmentCount = 4;
+		internal const int c_rectangleCornerResolution = 8;
 
-// 			// 	_DrawPolygonWithFill(vertexHelper,size,angle,center,inner,fillColor,false);
-// 			// }
+		internal const float c_minRectangleOffset = 0.0f;
 
-// 			//? Draw Outline
-// 			// if(color != Color.clear)
-// 			// {
-// 			// 	_DrawPolygonWithOutline(vertexHelper,size,angle,center,radius,inner,false);
-// 			// }
-// 		}
+		[SerializeField]
+		private float m_cornerRadius = c_minRectangleOffset;
+		internal float CornerRadius
+		{
+			get => m_cornerRadius;
+			set
+			{
+				if(m_cornerRadius == value)
+				{
+					return;
+				}
 
-// 		private void _DrawRectangleWithFill(VertexHelper vertexHelper,int size,float angle,Vector2 center,Vector2 radius,Color drawColor)
-// 		{
-// 			var count = vertexHelper.currentVertCount;
+				m_cornerRadius = value;
 
-// 			vertexHelper.AddVert(center,drawColor,Vector2.zero);
+				SetVerticesDirty();
+			}
+		}
 
-// 			for(var i=0;i<=size;i++)
-// 			{
-// 				var distance = useDistance ? m_polygonVertexDistanceArray[i%size] : 1.0f;
+		private void _DrawFill_Rectangle(VertexHelper vertexHelper,Color drawColor,bool canDrawAntiAliasing)
+		{
+			var vertCnt = vertexHelper.currentVertCount;
 
-// 				var cos = Mathf.Cos(angle*i)*distance;
-// 				var sin = Mathf.Sin(angle*i)*distance;
+			var vertInfoList = _CalculateAllTriangleVertexList(true);
+			var transparentColor = drawColor.MaskAlpha();
 
-// 				vertexHelper.AddVert(new (center.x+cos*radius.x,center.y+sin*radius.y),color,Vector2.zero);
-// 			}
+			for(var i=0;i<vertInfoList.Count;i++)
+			{
+				var vertInfo = vertInfoList[i];
 
-// 			for(var i=1;i<=size;i++)
-// 			{
-// 				vertexHelper.AddTriangle(count,count+i,count+i+1);
-// 			}
-			
-// 			int cornerSegments = 5;
-// 			float angleStart = Mathf.PI;            // 180도, 좌상단 시작
-// 			float angleEnd = Mathf.PI * 1.5f;       // 270도, 좌상단 끝
+				_AddVert(vertexHelper,vertInfo.Inner,drawColor);
 
-// 			for(int i = 0; i <= cornerSegments; i++)
-// 			{
-// 				float t = i / (float)cornerSegments;
-// 				float angle = Mathf.Lerp(angleStart, angleEnd, t);
-// 				float x = cornerCenter.x + Mathf.Cos(angle) * radius;
-// 				float y = cornerCenter.y + Mathf.Sin(angle) * radius;
-// 				vh.AddVert(new Vector3(x, y), color, uv);
-// 			}
-			
-// 		}
-		
-// 		private void _DrawRectWithOutline(VertexHelper vertexHelper,int size,float angle,Vector2 center,Vector2 radius,Vector2 inner,bool useDistance)
-// 		{
-			
-// 		}
-		
-// 		private void _DrawRectangleCorner(VertexHelper vertexHelper,int size,float angle,Vector2 center,Vector2 radius,Color drawColor)
-// 		{
-// 			// var count = vertexHelper.currentVertCount;
+				if(canDrawAntiAliasing)
+				{
+					_AddVert(vertexHelper,vertInfo.Anti,transparentColor);
+				}
+			}
 
-// 			// vertexHelper.AddVert(center,drawColor,Vector2.zero);
+			_AddFillTriangleTriangles(vertexHelper,vertCnt,canDrawAntiAliasing);
+		}
 
-// 			// for(var i=0;i<=size;i++)
-// 			// {
-// 			// 	var distance = useDistance ? m_polygonVertexDistanceArray[i%size] : 1.0f;
+		private void _DrawOutline_Rectangle(VertexHelper vertexHelper,bool canDrawAntiAliasing)
+		{
+			var vertCnt = vertexHelper.currentVertCount;
 
-// 			// 	var cos = Mathf.Cos(angle*i)*distance;
-// 			// 	var sin = Mathf.Sin(angle*i)*distance;
+			var vertInfoList = _CalculateAllTriangleVertexList(false);
+			var transparentColor = OutlineColor.MaskAlpha();
 
-// 			// 	vertexHelper.AddVert(new (center.x+cos*radius.x,center.y+sin*radius.y),color,Vector2.zero);
-// 			// }
+			for(var i=0;i<vertInfoList.Count;i++)
+			{
+				var vertInfo = vertInfoList[i];
 
-// 			// for(var i=1;i<=size;i++)
-// 			// {
-// 			// 	vertexHelper.AddTriangle(count,count+i,count+i+1);
-// 			// }
-			
-// 			// int cornerSegments = 5;
-// 			// float angleStart = Mathf.PI;            // 180도, 좌상단 시작
-// 			// float angleEnd = Mathf.PI * 1.5f;       // 270도, 좌상단 끝
+				_AddVert(vertexHelper,vertInfo.Inner,OutlineColor);
+				_AddVert(vertexHelper,vertInfo.Outer,OutlineColor);
 
-// 			// for(int i = 0; i <= cornerSegments; i++)
-// 			// {
-// 			// 	float t = i / (float)cornerSegments;
-// 			// 	float angle = Mathf.Lerp(angleStart, angleEnd, t);
-// 			// 	float x = cornerCenter.x + Mathf.Cos(angle) * radius;
-// 			// 	float y = cornerCenter.y + Mathf.Sin(angle) * radius;
-// 			// 	vh.AddVert(new Vector3(x, y), color, uv);
-// 			// }
-			
-// 		}
-// 	}
-// }
+				if(canDrawAntiAliasing)
+				{
+					_AddVert(vertexHelper,vertInfo.Anti,transparentColor);
+				}
+			}
+
+			_AddOutlineTriangleTriangles(vertexHelper,vertCnt,canDrawAntiAliasing);
+		}
+
+		private List<VertexInfo> _CalculateAllRectangleVertexList(bool isFill)
+		{
+			var outerVertArray = _CalculateRectangleOuterVertexArray();
+
+			return _CalculateAllVertexList_CommonShape(isFill,c_rectangleSegmentCount,outerVertArray);
+		}
+
+		private Vector2[] _CalculateRectangleOuterVertexArray()
+		{
+			var vertArray = new Vector2[c_rectangleSegmentCount];
+			var cornerRadius = Mathf.Min(m_cornerRadius,Radius.x,Radius.y);
+
+			var startAngleArray = new float[] { 0, 90, 180, 270 };
+
+			var centerArray = new Vector2[]
+			{
+				new (+Radius.x-cornerRadius,+Radius.y-cornerRadius),
+				new (-Radius.x+cornerRadius,+Radius.y-cornerRadius),
+				new (-Radius.x+cornerRadius,-Radius.y+cornerRadius),
+				new (+Radius.x-cornerRadius,-Radius.y+cornerRadius)
+			};
+
+			for(var i=0;i<c_rectangleSegmentCount;i++)
+			{
+				for(var j=0;j<=c_rectangleCornerResolution;j++)
+				{
+					var angle = (startAngleArray[i]+(j*90.0f/c_rectangleCornerResolution))*Mathf.Deg2Rad;
+					var cos = Mathf.Cos(angle);
+					var sin = Mathf.Sin(angle);
+
+					vertArray[i] = centerArray[i]+new Vector2(cos*cornerRadius,sin*cornerRadius);
+				}
+			}
+
+			return vertArray;
+		}
+
+		private int _GetSegmentCount_Rectangle()
+		{
+			return c_triangleSegmentCount;
+		}
+
+
+		private int _CalculateExpectedFillVertexCount_Rectangle(int segmentCount,bool canDrawAntiAliasing)
+		{
+			return segmentCount;
+		}
+
+		private int _CalculateExpectedOutlineVertexCount_Rectangle(int segmentCount,bool canDrawAntiAliasing)
+		{
+			return segmentCount;
+		}
+	}
+}

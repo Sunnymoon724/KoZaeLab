@@ -15,19 +15,19 @@ public static class Vector2Extension
 	#endregion Set
 
 	#region Offset
-	public static Vector2 Offset(this Vector2 vector,Vector2 offset)
+	public static Vector2 Offset(this Vector2 vector,float value)
 	{
-		return new Vector2(vector.x+offset.x,vector.y+offset.y);
+		return new Vector2(vector.x+value,vector.y+value);
 	}
 
 	public static Vector2 OffsetX(this Vector2 vector,float x)
 	{
-		return vector.Offset(new(x,0.0f));
+		return vector+new Vector2(x,0.0f);
 	}
 
 	public static Vector2 OffsetY(this Vector2 vector,float y)
 	{
-		return vector.Offset(new(0.0f,y));
+		return vector+new Vector2(0.0f,y);
 	}
     #endregion Offset
 

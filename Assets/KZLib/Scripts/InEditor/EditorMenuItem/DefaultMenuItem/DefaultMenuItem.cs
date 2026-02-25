@@ -14,7 +14,8 @@ namespace KZLib.EditorInternal.Menus
 				public const int PREFAB				= DEFAULT + 1 * Global.MENU_ORDER_SUB_SPACE;
 				public const int SCRIPT				= DEFAULT + 2 * Global.MENU_ORDER_SUB_SPACE;
 				public const int TEXTURE			= DEFAULT + 3 * Global.MENU_ORDER_SUB_SPACE;
-				public const int SCRIPTABLE_OBJECT	= DEFAULT + 3 * Global.MENU_ORDER_SUB_SPACE;
+				public const int SCRIPTABLE_OBJECT	= DEFAULT + 4 * Global.MENU_ORDER_SUB_SPACE;
+				public const int MESH				= DEFAULT + 5 * Global.MENU_ORDER_SUB_SPACE;
 			}
 
 			public static class GameObject

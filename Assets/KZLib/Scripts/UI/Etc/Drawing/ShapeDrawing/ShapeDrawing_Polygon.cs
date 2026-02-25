@@ -6,47 +6,44 @@ namespace KZLib.UI
 {
 	public partial class ShapeDrawing : GraphicDrawing
 	{
+		internal const int c_minPolygonCount = 3;
+		internal const int c_maxPolygonCount = 36;
+
 		[SerializeField]
-		private int m_polygonSideCount = Global.MIN_POLYGON_COUNT;
+		private int m_polygonSideCount = c_minPolygonCount;
 		internal int PolygonSideCount
 		{
 			get => m_polygonSideCount;
 			set
 			{
-				if(m_polygonSideCount == value)
+				int _CalculateExpectedVertexCount_PolygonSideCount(int polygonSideCount)
 				{
-					return;
+					return _CalculateExpectedVertexCount_Inner(segmentCount:polygonSideCount);
 				}
 
-				var vertexCount = _GetExpectedVertices_Polygon(value,FillType,FillColor,OutlineThickness,OutlineColor);
-
-				if(!_IsValidVertex(vertexCount))
+				void _SetVertexDistanceList()
 				{
-					return;
-				}
+					var listCount = m_polygonVertexDistanceList.Count;
 
-				m_polygonSideCount = value;
-
-				var listCount = m_polygonVertexDistanceList.Count;
-
-				if(listCount < m_polygonSideCount)
-				{
-					for(var i=listCount;i<m_polygonSideCount;i++)
+					if(listCount < m_polygonSideCount)
 					{
-						m_polygonVertexDistanceList.Add(1);
+						for(var i=listCount;i<m_polygonSideCount;i++)
+						{
+							m_polygonVertexDistanceList.Add(1);
+						}
+					}
+					else if(listCount > m_polygonSideCount)
+					{
+						m_polygonVertexDistanceList.RemoveRange(m_polygonSideCount,listCount-m_polygonSideCount);
 					}
 				}
-				else if(listCount > m_polygonSideCount)
-				{
-					m_polygonVertexDistanceList.RemoveRange(m_polygonSideCount,listCount-m_polygonSideCount);
-				}
 
-				SetVerticesDirty();
+				_SetValueWithVertexCheck(ref m_polygonSideCount,value,_CalculateExpectedVertexCount_PolygonSideCount,_SetVertexDistanceList);
 			}
 		}
 
 		[SerializeField]
-		private List<float> m_polygonVertexDistanceList = new(Global.MIN_POLYGON_COUNT) {1, 1, 1, };
+		private List<float> m_polygonVertexDistanceList = new(c_minPolygonCount) { 1.0f, 1.0f, 1.0f, };
 		internal int PolygonVertexDistanceCount => m_polygonVertexDistanceList.Count;
 		internal float GetPolygonVertexDistance(int index)
 		{
@@ -64,16 +61,153 @@ namespace KZLib.UI
 			SetVerticesDirty();
 		}
 
-		internal float PolygonSegmentAngle => 2.0f*Mathf.PI/PolygonSideCount;
-
-		private void _DrawShape_Polygon(VertexHelper vertexHelper,Vector2 centerPoint,Vector2 currentRadius,Vector2 innerRadius)
+		private void _DrawFill_Polygon(VertexHelper vertexHelper,Color drawColor,bool canDrawAntiAliasing)
 		{
-			_DrawCommonShape(vertexHelper,PolygonSideCount,PolygonSegmentAngle,centerPoint,currentRadius,innerRadius,true);
+			var vertCnt = vertexHelper.currentVertCount;
+
+			_AddVert(vertexHelper,Center,drawColor);
+
+			var vertInfoList = _CalculateAllPolygonVertexList(true);
+			var transparentColor = drawColor.MaskAlpha();
+
+			for(var i=0;i<vertInfoList.Count;i++)
+			{
+				var vertInfo = vertInfoList[i];
+
+				_AddVert(vertexHelper,vertInfo.Inner,drawColor);
+
+				if(canDrawAntiAliasing)
+				{
+					_AddVert(vertexHelper,vertInfo.Anti,transparentColor);
+				}
+			}
+
+			_AddFillPolygonTriangles(vertexHelper,vertCnt,canDrawAntiAliasing);
 		}
 
-		private int _GetExpectedVertices_Polygon(int sideCount,ShapeFillType fillType,Color fillColor,float outlineThickness,Color outlineColor)
+		private void _DrawOutline_Polygon(VertexHelper vertexHelper,bool canDrawAntiAliasing)
 		{
-			return _CalculateExpectedVertices_Shape(sideCount,fillType,fillColor,outlineThickness,outlineColor);
+			var vertCnt = vertexHelper.currentVertCount;
+
+			var transparentColor = OutlineColor.MaskAlpha();
+			var vertInfoList = _CalculateAllPolygonVertexList(false);
+
+			for(var i=0;i<vertInfoList.Count;i++)
+			{
+				var vertInfo = vertInfoList[i];
+
+				_AddVert(vertexHelper,vertInfo.Outer,OutlineColor);
+				_AddVert(vertexHelper,vertInfo.Inner,OutlineColor);
+
+				if(canDrawAntiAliasing)
+				{
+					_AddVert(vertexHelper,vertInfo.Anti,transparentColor);
+				}
+			}
+
+			_AddOutlinePolygonTriangles(vertexHelper,vertCnt,canDrawAntiAliasing);
+		}
+
+		private List<VertexInfo> _CalculateAllPolygonVertexList(bool isFill)
+		{
+			var outerVertArray = _CalculatePolygonOuterVertexArray();
+
+			return _CalculateAllVertexList_CommonShape(isFill,PolygonSideCount,outerVertArray);
+		}
+
+		private Vector2[] _CalculatePolygonOuterVertexArray()
+		{
+			var segmentAngle = _CalculateSegmentAngle(c_fullAngle,PolygonSideCount);
+			var vertArray = new Vector2[PolygonSideCount];
+
+			for(var i=0;i<PolygonSideCount;i++)
+			{
+				var distRatio = GetPolygonVertexDistance(i%PolygonSideCount);
+
+				var angle = segmentAngle*i;
+
+				var cos = Mathf.Cos(angle)*distRatio;
+				var sin = Mathf.Sin(angle)*distRatio;
+
+				vertArray[i] = _CalculateLocalVertex(cos,sin,Radius);
+			}
+
+			return vertArray;
+		}
+
+		private void _AddFillPolygonTriangles(VertexHelper vertexHelper,int vertCnt,bool canDrawAntiAliasing)
+		{
+			if(canDrawAntiAliasing)
+			{
+				for(var i=0;i<PolygonSideCount;i++)
+				{
+					var currInner	= vertCnt+1+(i*2);
+					var currAnti	= currInner+1;
+					var nextInner	= (i == PolygonSideCount-1) ? (vertCnt+1) : (currInner+2);
+					var nextAnti	= nextInner+1;
+
+					vertexHelper.AddTriangle(vertCnt,currInner,nextInner);
+
+					vertexHelper.AddTriangle(currInner,currAnti,nextAnti);
+					vertexHelper.AddTriangle(currInner,nextAnti,nextInner);
+				}
+			}
+			else
+			{
+				for(var i=0;i<PolygonSideCount;i++)
+				{
+					var currInner = vertCnt+1+i;
+					var nextInner = (i == PolygonSideCount-1) ? (vertCnt+1) : (currInner+1);
+
+					vertexHelper.AddTriangle(vertCnt,currInner,nextInner);
+				}
+			}
+		}
+
+		private void _AddOutlinePolygonTriangles(VertexHelper vertexHelper,int vertCnt,bool canDrawAntiAliasing)
+		{
+			if(canDrawAntiAliasing)
+			{
+				for(var i=0;i<PolygonSideCount;i++)
+				{
+					var curr = vertCnt+(i*3);
+					var next = vertCnt+((i+1)%PolygonSideCount*3);
+
+					vertexHelper.AddTriangle(curr,next,next+1);
+					vertexHelper.AddTriangle(curr,next+1,curr+1);
+
+					vertexHelper.AddTriangle(curr,curr+2,next+2);
+					vertexHelper.AddTriangle(curr,next+2,next);
+				}
+			}
+			else
+			{
+				for(var i=0;i<PolygonSideCount;i++)
+				{
+					var curr = vertCnt+(i*2);
+					var next = vertCnt+((i+1)%PolygonSideCount*2);
+
+					vertexHelper.AddTriangle(curr,next,next+1);
+					vertexHelper.AddTriangle(curr,next+1,curr+1);
+				}
+			}
+		}
+
+
+		private int _GetSegmentCount_Polygon()
+		{
+			return PolygonSideCount;
+		}
+
+
+		private int _CalculateExpectedFillVertexCount_Polygon(int segmentCount,bool canDrawAntiAliasing)
+		{
+			return 1+(canDrawAntiAliasing ? segmentCount*2 : segmentCount);
+		}
+
+		private int _CalculateExpectedOutlineVertexCount_Polygon(int segmentCount,bool canDrawAntiAliasing)
+		{
+			return canDrawAntiAliasing ? segmentCount*3 : segmentCount*2;
 		}
 	}
 }

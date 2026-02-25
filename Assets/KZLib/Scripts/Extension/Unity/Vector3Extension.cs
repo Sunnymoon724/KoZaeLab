@@ -50,39 +50,39 @@ public static class Vector3Extension
 	#endregion Set
 
 	#region Offset
-	public static Vector3 Offset(this Vector3 vector,Vector3 offset)
+	public static Vector3 Offset(this Vector3 vector,float value)
 	{
-		return new Vector3(vector.x+offset.x,vector.y+offset.y,vector.z+offset.z);
+		return new Vector3(vector.x+value,vector.y+value,vector.z+value);
 	}
 
 	public static Vector3 OffsetXY(this Vector3 vector,Vector2 offset)
 	{
-		return vector.Offset(new(offset.x,offset.y,0.0f));
+		return vector+(Vector3) offset;
 	}
 
 	public static Vector3 OffsetXZ(this Vector3 vector,Vector2 offset)
 	{
-		return vector.Offset(new(offset.x,0.0f,offset.y));
+		return vector+new Vector3(offset.x,0.0f,offset.y);
 	}
 
 	public static Vector3 OffsetYZ(this Vector3 vector,Vector2 offset)
 	{
-		return vector.Offset(new(0.0f,offset.x,offset.y));
+		return vector+new Vector3(0.0f,offset.x,offset.y);
 	}
 
 	public static Vector3 OffsetX(this Vector3 vector,float x)
 	{
-		return vector.Offset(new(x,0.0f,0.0f));
+		return vector+new Vector3(x,0.0f,0.0f);
 	}
 
 	public static Vector3 OffsetY(this Vector3 vector,float y)
 	{
-		return vector.Offset(new(0.0f,y,0.0f));
+		return vector+new Vector3(0.0f,y,0.0f);
 	}
 
 	public static Vector3 OffsetZ(this Vector3 vector,float z)
 	{
-		return vector.Offset(new(0.0f,0.0f,z));
+		return vector+new Vector3(0.0f,0.0f,z);
 	}
 	#endregion Offset
 

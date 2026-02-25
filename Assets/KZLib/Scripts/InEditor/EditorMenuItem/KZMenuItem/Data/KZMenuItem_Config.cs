@@ -19,9 +19,9 @@ namespace KZLib.EditorInternal.Menus
 			var templateFilePath = CommonUtility.FindTemplateText("ConfigTemplate.txt");
 			var outputRoute = RouteManager.In.GetOrCreateRoute("generatedScript");
 
-			foreach(var configFilePath in FileUtility.FindAllExcelFileGroupByFolderPath(Global.CONFIG_FOLDER_PATH))
+			foreach(var configFilePath in KZFileKit.FindAllExcelFileGroupByFolderPath(Global.CONFIG_FOLDER_PATH))
 			{
-				if(!FileUtility.IsExcelFile(configFilePath))
+				if(!KZFileKit.IsExcelFile(configFilePath))
 				{
 					LogChannel.System.W($"{configFilePath} is not exist. -> generate failed");
 
@@ -30,7 +30,7 @@ namespace KZLib.EditorInternal.Menus
 
 				try
 				{
-					var fileName = FileUtility.GetFileName(configFilePath);
+					var fileName = KZFileKit.GetFileName(configFilePath);
 
 					if(ConfigManager.IsDefaultConfig(fileName))
 					{
@@ -61,7 +61,7 @@ namespace KZLib.EditorInternal.Menus
 
 		// 	ConfigGenerator.GenerateConfigTemplateFile(configFolderPath,"Game",out var result);
 
-		// 	CommonUtility.DisplayInfo(result);
+		// 	KZEditorKit.DisplayInfo(result);
 		// }
 
 		#region Game Config
@@ -147,11 +147,11 @@ namespace KZLib.EditorInternal.Menus
 		{
 			var yamlRoute = RouteManager.In.GetOrCreateRoute(routePath);
 
-			FileUtility.CreateFolder(yamlRoute.AbsolutePath);
+			KZFileKit.CreateFolder(yamlRoute.AbsolutePath);
 
 			var filePath = Path.Combine(yamlRoute.AbsolutePath,fileName);
 
-			if(FileUtility.IsFileExist(filePath))
+			if(KZFileKit.IsFileExist(filePath))
 			{
 				_DisplayInfo($"{fileName} is already exist.",true);
 
@@ -178,12 +178,12 @@ namespace KZLib.EditorInternal.Menus
 
 			var filePath = Path.Combine(yamlRoute.AbsolutePath,fileName);
 
-			return !FileUtility.IsFileExist(filePath);
+			return !KZFileKit.IsFileExist(filePath);
 		}
 
 		private static void _GenerateCustomConfigYamlFile(string fileName,IConfig config)
 		{
-			FileUtility.CreateFolder(Global.CUSTOM_CONFIG_FOLDER_PATH);
+			KZFileKit.CreateFolder(Global.CUSTOM_CONFIG_FOLDER_PATH);
 
 			var customFilePath = Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,fileName);
 

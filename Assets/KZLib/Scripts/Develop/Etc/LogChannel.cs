@@ -331,7 +331,7 @@ public partial class LogChannel
 			return false;
 		}
 
-		InternalEditorUtility.OpenFileAtLineExternal(FileUtility.GetAbsolutePath(pathArray[0], true), lineNumber);
+		InternalEditorUtility.OpenFileAtLineExternal(KZFileKit.GetAbsolutePath(pathArray[0], true), lineNumber);
 
 		return true;
 	}

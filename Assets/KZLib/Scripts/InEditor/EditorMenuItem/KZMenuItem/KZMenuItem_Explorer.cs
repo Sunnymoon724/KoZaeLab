@@ -11,7 +11,7 @@ namespace KZLib.EditorInternal.Menus
 		{
 			var filePath = RouteManager.In.GetRouteFilePath();
 
-			CommonUtility.Open(filePath);
+			KZEditorKit.Open(filePath);
 		}
 
 		[MenuItem("KZMenu/Explorer/Open Documents Folder",false,MenuOrder.Explorer.OPEN)]

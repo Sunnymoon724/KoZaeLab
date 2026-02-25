@@ -13,22 +13,20 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Option/Delete All Manager",false,MenuOrder.Option.DELETE)]
 		private static void _OnDeleteAllManager()
 		{
-			if(!CommonUtility.DisplayCheckBeforeExecute("Delete all manager"))
+			if(!KZEditorKit.DisplayCheckBeforeExecute("Delete all manager"))
 			{
 				return;
 			}
 
 			CommonUtility.ReleaseManager();
 
-			DefaultMenuItem.ReLoad();
-
-			CommonUtility.DisplayInfo("Managers are deleted.");
+			KZEditorKit.DisplayInfo("Managers are deleted.");
 		}
 
 		[MenuItem("KZMenu/Option/Delete Empty Folder",false,MenuOrder.Option.DELETE)]
 		private static void _OnDeleteAllEmptyFolder()
 		{
-			if(!CommonUtility.DisplayCheckBeforeExecute("Delete all empty folder"))
+			if(!KZEditorKit.DisplayCheckBeforeExecute("Delete all empty folder"))
 			{
 				return;
 			}
@@ -37,38 +35,57 @@ namespace KZLib.EditorInternal.Menus
 			{
 				AssetDatabase.Refresh();
 
-				CommonUtility.DisplayInfo("Empty folder are deleted");
+				KZEditorKit.DisplayInfo("Empty folder are deleted");
 			}
 
-			FileUtility.DeleteEmptyDirectory(Application.dataPath,_AfterDelete);
+			KZFileKit.DeleteEmptyDirectory(Application.dataPath,_AfterDelete);
 		}
 
 		[MenuItem("KZMenu/Option/Unload Unused Assets Immediate",false,MenuOrder.Option.DELETE)]
 		private static void _OnUnloadUnusedAssets()
 		{
-			if(!CommonUtility.DisplayCheckBeforeExecute("Unload unused assets"))
+			if(!KZEditorKit.DisplayCheckBeforeExecute("Unload unused assets"))
 			{
 				return;
 			}
 
 			EditorUtility.UnloadUnusedAssetsImmediate(true);
 
-			CommonUtility.DisplayInfo("Assets are unloaded");
+			KZEditorKit.DisplayInfo("Assets are unloaded");
 		}
 
 		[MenuItem("KZMenu/Option/Find Missing Component",false,MenuOrder.Option.FIND)]
 		private static void _OnFindMissingComponent()
 		{
-			if(!CommonUtility.DisplayCheckBeforeExecute("Find missing component"))
+			if(!KZEditorKit.DisplayCheckBeforeExecute("Find missing component"))
 			{
 				return;
 			}
 
-			var textList = new List<string>();
+			if(KZEditorKit.DisplayCancelableProgressBar("Find missing component","Finding...",0.0f))
+			{
+				KZEditorKit.ClearProgressBar();
 
-			foreach(var assetPath in CommonUtility.FindAssetPathGroup("t:prefab"))
+				return;
+			}
+
+			var textHashSet = new HashSet<string>();
+
+			bool _Execute(string assetPath,int index,int totalCount)
 			{
 				var asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+
+				if(!asset)
+				{
+					return true;
+				}
+
+				if(KZEditorKit.DisplayCancelableProgressBar("Find missing component",$"Finding ({index/totalCount})",index/ (float) totalCount))
+				{
+					KZEditorKit.ClearProgressBar();
+
+					return false;
+				}
 
 				void _Recursive(Transform child)
 				{
@@ -81,14 +98,20 @@ namespace KZLib.EditorInternal.Menus
 							continue;
 						}
 
-						textList.Add($"<b> <a href=\"{assetPath}\">{asset.name}</a> </b>");
+						textHashSet.Add($"<b> <a href=\"{assetPath}\">{asset.name}</a> </b>");
 					}
 				}
 
 				asset.transform.RecursiveChildren(_Recursive);
+
+				return true;
 			}
 
-			if(textList.Count == 0)
+			KZAssetKit.ExecuteMatchedAssetPath("t:prefab",null,_Execute);
+
+			KZEditorKit.ClearProgressBar();
+
+			if(textHashSet.Count == 0)
 			{
 				LogChannel.Editor.I("Missing component is not found.");
 			}
@@ -96,9 +119,9 @@ namespace KZLib.EditorInternal.Menus
 			{
 				LogChannel.Editor.I("Missing component list");
 
-				for(var i=0;i<textList.Count;i++)
+				foreach(var text in textHashSet)
 				{
-					LogChannel.Editor.I(textList[i]);
+					LogChannel.Editor.I(text);
 				}
 			}
 		}
@@ -106,18 +129,36 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Option/Find Missing MeshFilter",false,MenuOrder.Option.FIND)]
 		private static void _OnFindMissingMeshFilter()
 		{
-			if(!CommonUtility.DisplayCheckBeforeExecute("Find missing meshFilter"))
+			if(!KZEditorKit.DisplayCheckBeforeExecute("Find missing meshFilter"))
 			{
 				return;
 			}
 
-			var resultList = new List<string>();
+			if(KZEditorKit.DisplayCancelableProgressBar("Find missing meshFilter","Finding...",0.0f))
+			{
+				KZEditorKit.ClearProgressBar();
 
+				return;
+			}
+
+			var resultList = new List<string>();
 			var textListDict = new Dictionary<string,List<string>>();
 
-			foreach(var assetPath in CommonUtility.FindAssetPathGroup("t:prefab"))
+			bool _Execute(string assetPath,int index,int totalCount)
 			{
 				var asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+
+				if(!asset)
+				{
+					return true;
+				}
+
+				if(KZEditorKit.DisplayCancelableProgressBar("Find missing meshFilter",$"Finding ({index/totalCount})",index/(float) totalCount))
+				{
+					KZEditorKit.ClearProgressBar();
+
+					return false;
+				}
 
 				void _Recursive(Transform child)
 				{
@@ -132,7 +173,13 @@ namespace KZLib.EditorInternal.Menus
 				}
 
 				asset.transform.RecursiveChildren(_Recursive);
+
+				return true;
 			}
+
+			KZAssetKit.ExecuteMatchedAssetPath("t:prefab",null,_Execute);
+
+			KZEditorKit.ClearProgressBar();
 
 			if(textListDict.Count == 0)
 			{
@@ -165,7 +212,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Option/Add PlayFab Module",false,MenuOrder.Option.MODULE)]
 		private static void _OnAddPlayFabModule()
 		{
-			if(!CommonUtility.DisplayCheckBeforeExecute("Add playFab module"))
+			if(!KZEditorKit.DisplayCheckBeforeExecute("Add playFab module"))
 			{
 				return;
 			}
@@ -188,7 +235,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Option/Add InAppPurchase Module",false,MenuOrder.Option.MODULE)]
 		private static void _OnAddInAppPurchaseModule()
 		{
-			if(!CommonUtility.DisplayCheckBeforeExecute("Add in app purchase module"))
+			if(!KZEditorKit.DisplayCheckBeforeExecute("Add in app purchase module"))
 			{
 				return;
 			}
@@ -201,7 +248,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Option/Add InAppPurchase Module",true,MenuOrder.Option.MODULE)]
 		private static bool _IsEnableInAppPurchaseModule()
 		{
-#if KZLIB_PLAY_FAB
+#if KZLIB_IN_APP_PURCHASE
 			return false;
 #else
 			return true;
