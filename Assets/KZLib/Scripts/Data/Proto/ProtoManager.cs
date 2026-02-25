@@ -154,6 +154,30 @@ namespace KZLib.Data
 			return proto;
 		}
 
+		private TProto _GetProto<TProto>(int num) where TProto : class,IProto
+		{
+			var protoType = typeof(TProto);
+
+			if(!protoType.IsInterface)
+			{
+				return GetProto(num,protoType) as TProto;
+			}
+
+			foreach(var pair in m_protoDict)
+			{
+				var childType = pair.Key;
+
+				if(protoType.IsAssignableFrom(childType))
+				{
+					return GetProto(num,childType) as TProto;
+				}
+			}
+
+			LogChannel.System.E($"{protoType.Name} is not exist.");
+
+			return null;
+		}
+
 		public IEnumerable<TProto> FindProtoGroup<TProto>() where TProto : class,IProto
 		{
 			foreach(var proto in FindProtoGroup(typeof(TProto)))
@@ -304,7 +328,7 @@ namespace KZLib.Data
 		{
 			if(!m_colorVectorDict.TryGetValue(num,out Vector4[] colorVectorArray))
 			{
-				var colorPrt = GetProto<IColorProto>(num);
+				var colorPrt = _GetProto<IColorProto>(num);
 
 				if(colorPrt == null)
 				{

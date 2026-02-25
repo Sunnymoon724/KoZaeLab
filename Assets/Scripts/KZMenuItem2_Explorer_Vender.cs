@@ -36,7 +36,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Explorer/Check Vendor Projects",false,MenuOrder.Explorer.VENDER)]
 		private static void _OnCheckVendorProjects()
 		{
-			if(!CommonUtility.DisplayCheckBeforeExecute("Check vendor projects"))
+			if(!KZEditorKit.DisplayCheckBeforeExecute("Check vendor projects"))
 			{
 				return;
 			}
@@ -45,7 +45,7 @@ namespace KZLib.EditorInternal.Menus
 
 			if(vendorManifestInfo.RepositoryInfoDict.IsNullOrEmpty())
 			{
-				CommonUtility.DisplayInfo("vendorManifestInfoArray is null or empty.");
+				KZEditorKit.DisplayInfo("vendorManifestInfoArray is null or empty.");
 
 				return;
 			}
@@ -54,7 +54,7 @@ namespace KZLib.EditorInternal.Menus
 
 			if(timestamp < c_cacheDuration)
 			{
-				if(!CommonUtility.DisplayCheck("Refresh coolTime is left","The cool-down is not over yet. Do you still want to refresh?"))
+				if(!KZEditorKit.DisplayCheck("Refresh coolTime is left","The cool-down is not over yet. Do you still want to refresh?"))
 				{
 					return;
 				}
@@ -118,18 +118,18 @@ namespace KZLib.EditorInternal.Menus
 			
 			if(errorCount > 0)
 			{
-				CommonUtility.DisplayInfo("error is exist.\n check the log.");
+				KZEditorKit.DisplayInfo("error is exist.\n check the log.");
 
 				return;
 			}
 
 			if(updatedCount > 0)
 			{
-				CommonUtility.DisplayInfo("detected need to update libraries.\n check the log.");
+				KZEditorKit.DisplayInfo("detected need to update libraries.\n check the log.");
 			}
 			else
 			{
-				CommonUtility.DisplayInfo("all vender is latest version.");
+				KZEditorKit.DisplayInfo("all vender is latest version.");
 			}
 
 			vendorManifestInfo.LastCheckTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
@@ -140,7 +140,7 @@ namespace KZLib.EditorInternal.Menus
 		private static VendorManifestInfo _GetOrCreateVendorManifestInfo()
 		{
 			var vendorManifestRoute = RouteManager.In.GetOrCreateRoute(c_venderManifestPath);
-			var vendorManifestText = FileUtility.ReadFileToText(vendorManifestRoute.AbsolutePath);
+			var vendorManifestText = KZFileKit.ReadFileToText(vendorManifestRoute.AbsolutePath);
 
 			if(!vendorManifestText.IsEmpty())
 			{
@@ -172,21 +172,21 @@ namespace KZLib.EditorInternal.Menus
 			var serializer = new SerializerBuilder().Build();
 			var yamlText = serializer.Serialize(vendorManifestInfo);
 
-			FileUtility.WriteTextToFile(vendorRoute.AbsolutePath,yamlText);
+			KZFileKit.WriteTextToFile(vendorRoute.AbsolutePath,yamlText);
 
-			CommonUtility.SaveAsset();
+			KZAssetKit.SaveAsset();
 		}
 
 		private static ResultInfo _GetLocalVersion(string relativePath)
 		{
-			var absolutePath = FileUtility.GetAbsolutePath(relativePath,true);
+			var absolutePath = KZFileKit.GetAbsolutePath(relativePath,true);
 			
-			if(!FileUtility.IsFileExist(absolutePath))
+			if(!KZFileKit.IsFileExist(absolutePath))
 			{
 				return new ResultInfo(false,"File not found");
 			}
 			
-			var json = JObject.Parse(FileUtility.ReadFileToText(absolutePath));
+			var json = JObject.Parse(KZFileKit.ReadFileToText(absolutePath));
 
 			if(!json.TryGetValue("version",out JToken version))
 			{

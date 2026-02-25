@@ -36,7 +36,7 @@ namespace KZLib.EditorInternal.Menus
 		{
 			var batchFilePath = Path.Combine(Global.PROJECT_PARENT_PATH,"KoZaeBuilding","BuildLibrary.bat");
 
-			CommonUtility.OpenBatchFile(batchFilePath);
+			KZEditorKit.OpenBatchFile(batchFilePath);
 		}
 	}
 }
