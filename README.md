@@ -46,15 +46,6 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 
 ***
 
-<a id="error-solution"></a>
-## ⚠️ Error Solution
-
-**Issue:** Compilation errors may occur when the library is initially downloaded due to missing DLL files in WorkResources. (This specific DLL is generated via automated Excel parsing and is planned for public release soon.)
-
-**Solution:** You must manually add the missing DLL by extracting the compressed file located at the following path:
-`Packages\KoZaeLibrary\WorkResources\CommonLibs\KZLib`
-
-***
 
 <a id="third-party-attributions"></a>
 ## 🤝 Third Party Attributions
