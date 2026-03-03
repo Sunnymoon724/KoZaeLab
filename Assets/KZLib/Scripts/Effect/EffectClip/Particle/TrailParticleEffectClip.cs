@@ -15,9 +15,19 @@ public class TrailParticleEffectClip : ParticleEffectClip
 
 	protected override bool IsShowIgnoreTimeScale => false;
 
-	protected override void Reset()
+	protected async override UniTask _ExecuteEffectAsync()
 	{
-		base.Reset();
+		static bool _WaitForTrailParticle()
+		{
+			return false;
+		}
+
+		await CommonUtility.WaitForConditionAsync(_WaitForTrailParticle,SetTime,m_ignoreTimeScale,m_tokenSource.Token).SuppressCancellationThrow();
+	}
+
+	protected override void _Reset()
+	{
+		base._Reset();
 
 		if(!m_mainParticle)
 		{
@@ -27,15 +37,5 @@ public class TrailParticleEffectClip : ParticleEffectClip
 		var mainModule = m_mainParticle.main;
 
 		mainModule.loop = true;
-	}
-
-	protected async override UniTask _ExecuteEffectAsync()
-	{
-		static bool _WaitForTrailParticle()
-		{
-			return false;
-		}
-
-		await CommonUtility.WaitForConditionAsync(_WaitForTrailParticle,SetTime,m_ignoreTimeScale,m_tokenSource.Token).SuppressCancellationThrow();
 	}
 }

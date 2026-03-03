@@ -1,11 +1,12 @@
 using System;
 using R3;
 using Sirenix.OdinInspector;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace UnityEngine.UI
+namespace KZLib.UI
 {
-	public partial class FocusScroller : BaseComponentUI,IPointerUpHandler,IPointerDownHandler,IBeginDragHandler,IEndDragHandler,IDragHandler,IScrollHandler
+	public partial class FocusScroller : MonoBehaviour,IPointerUpHandler,IPointerDownHandler,IBeginDragHandler,IEndDragHandler,IDragHandler,IScrollHandler
 	{
 		#region Scroll Info
 		private record ScrollInfo

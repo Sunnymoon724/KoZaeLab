@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter)),RequireComponent(typeof(MeshRenderer))]
-public abstract class BaseMesh : BaseComponent
+public abstract class BaseMesh : MonoBehaviour
 {
 	protected const long c_maxIndexCount = 65535L;
 
@@ -14,10 +14,8 @@ public abstract class BaseMesh : BaseComponent
 
 	protected MaterialPropertyBlock PropertyBlock => m_propertyBlock ??= new();
 
-	protected override void Reset()
+	private void Reset()
 	{
-		base.Reset();
-
 		if(!m_meshFilter)
 		{
 			m_meshFilter = GetComponent<MeshFilter>();

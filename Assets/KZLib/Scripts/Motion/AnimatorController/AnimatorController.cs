@@ -10,7 +10,7 @@
 // 	/// 매 프레임 체크하며 애니메이션 실행함 (애니메이션 확인도 추가)
 // 	/// </summary>
 // 	[RequireComponent(typeof(Animator)),ExecuteInEditMode]
-// 	public class AnimatorController : BaseComponent
+// 	public class AnimatorController : MonoBehaviour
 // 	{
 // 		[SerializeField]
 // 		protected Animator m_animator = null;

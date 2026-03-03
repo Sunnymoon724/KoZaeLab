@@ -4,7 +4,7 @@ using R3;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class LocalizeTextUI : BaseTextUI
+public class LocalizeTextUI : BaseTextMeshUI
 {
 	[SerializeField]
 	private string m_key = null;
@@ -19,24 +19,18 @@ public class LocalizeTextUI : BaseTextUI
 
 	private bool IsValidKey => !m_key.IsEmpty();
 
-	protected override void _Initialize()
+	private void Awake()
 	{
-		base._Initialize();
-
 		_OnChangedLanguage(Unit.Default);
 	}
 
-	protected override void OnEnable()
+	private void OnEnable()
 	{
-		base.OnEnable();
-
 		m_subscription = LingoManager.In.OnChangedLanguage.Subscribe(_OnChangedLanguage);
 	}
 
-	protected override void OnDisable()
+	private void OnDisable()
 	{
-		base.OnDisable();
-
 		m_subscription?.Dispose();
 	}
 
@@ -58,7 +52,7 @@ public class LocalizeTextUI : BaseTextUI
 		{
 			return;
 		}
-		
+
 		if(m_key.IsEqual(key))
 		{
 			return;

@@ -5,7 +5,7 @@
 
 // namespace UnityEngine.UI
 // {
-// 	public partial class FocusScroller : BaseComponentUI,IPointerUpHandler,IPointerDownHandler,IBeginDragHandler,IEndDragHandler,IDragHandler,IScrollHandler
+// 	public partial class FocusScroller : MonoBehaviour,IPointerUpHandler,IPointerDownHandler,IBeginDragHandler,IEndDragHandler,IDragHandler,IScrollHandler
 // 	{
 // 		[Space(10)]
 // 		[SerializeField]

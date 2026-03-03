@@ -6,14 +6,16 @@ using KZLib.Development;
 using R3;
 using Sirenix.OdinInspector;
 using System;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace UnityEngine.UI
+namespace KZLib.UI
 {
 	[RequireComponent(typeof(ScrollRect))]
-	public class Carousel : BaseComponent,IBeginDragHandler,IEndDragHandler
+	public class Carousel : MonoBehaviour,IBeginDragHandler,IEndDragHandler
 	{
 		[SerializeField]
-		ScrollRect m_scrollRect = null;
+		private ScrollRect m_scrollRect = null;
 
 		[ShowInInspector,ReadOnly]
 		private bool IsVertical => m_scrollRect != null && m_scrollRect.vertical;
@@ -51,10 +53,8 @@ namespace UnityEngine.UI
 		private CancellationTokenSource m_snapTokenSource = null;
 		private CancellationTokenSource m_autoScrollTokenSource = null;
 
-		protected override void _Initialize()
+		private void Awake()
 		{
-			base._Initialize();
-
 			_EnsureInitialized();
 		}
 
@@ -81,10 +81,8 @@ namespace UnityEngine.UI
 			m_initialize = true;
 		}
 
-		protected override void OnEnable()
+		private void OnEnable()
 		{
-			base.OnEnable();
-
 			m_scrollRect.onValueChanged.AddAction(_RefreshScroll);
 
 			if(m_useAutoScroll)
@@ -93,19 +91,15 @@ namespace UnityEngine.UI
 			}
 		}
 
-		protected override void OnDisable()
+		private void OnDisable()
 		{
-			base.OnDisable();
-
 			m_scrollRect.onValueChanged.RemoveAction(_RefreshScroll);
 
 			_KillAllTokenSource();
 		}
 
-		protected override void _Release()
+		private void OnDestroy()
 		{
-			base._Release();
-
 			_KillAllTokenSource();
 		}
 
@@ -319,10 +313,8 @@ namespace UnityEngine.UI
 			await CommonUtility.LoopUniTaskAsync(_PlayTaskAsync,-1,token).SuppressCancellationThrow();
 		}
 
-		protected override void Reset()
+		private void Reset()
 		{
-			base.Reset();
-
 			if(!m_scrollRect)
 			{
 				m_scrollRect = GetComponent<ScrollRect>();

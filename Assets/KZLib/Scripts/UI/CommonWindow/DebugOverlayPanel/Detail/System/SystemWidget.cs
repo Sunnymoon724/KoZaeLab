@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace KZLib.UI.Widgets
 {
-	public class SystemWidget : BaseComponent
+	public class SystemWidget : MonoBehaviour
 	{
 		[SerializeField]
 		private TMP_Text m_operatingSystemText = null;
@@ -34,10 +34,8 @@ namespace KZLib.UI.Widgets
 		[SerializeField]
 		private TMP_Text m_windowResolutionText = null;
 
-		protected override void _Initialize()
+		private void Awake()
 		{
-			base._Initialize();
-
 			m_operatingSystemText.SetSafeTextMeshPro(SystemInfo.operatingSystem);
 			m_deviceModelText.SetSafeTextMeshPro(SystemInfo.deviceModel);
 			m_memorySizeText.SetSafeTextMeshPro($"{SystemInfo.systemMemorySize} MB");
@@ -52,10 +50,8 @@ namespace KZLib.UI.Widgets
 			m_graphicShaderLevelText.SetSafeTextMeshPro($"{SystemInfo.graphicsShaderLevel}");
 		}
 
-		protected override void OnEnable()
+		private void OnEnable()
 		{
-			base.OnEnable();
-
 			var resolution = Screen.currentResolution;
 
 			m_screenResolutionText.SetSafeTextMeshPro($"{resolution.width}x{resolution.height} {resolution.refreshRateRatio:F3}Hz");

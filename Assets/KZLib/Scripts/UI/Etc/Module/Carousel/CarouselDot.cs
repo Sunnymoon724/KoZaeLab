@@ -1,10 +1,8 @@
-using UnityEngine.EventSystems;
-using System.Collections;
-using System.Collections.Generic;
+using UnityEngine;
 
-namespace UnityEngine.UI
+namespace KZLib.UI
 {
-	public abstract class CarouselDot : BaseComponent
+	public abstract class CarouselDot : MonoBehaviour
 	{
 		public abstract void SetDot(bool selected);
 	}

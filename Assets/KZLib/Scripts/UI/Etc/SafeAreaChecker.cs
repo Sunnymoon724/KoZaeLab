@@ -4,15 +4,13 @@ using UnityEngine;
 using R3;
 
 [RequireComponent(typeof(RectTransform))]
-public class SafeAreaChecker : BaseComponent
+public class SafeAreaChecker : MonoBehaviour
 {
 	[SerializeField]
 	private RectTransform m_rectTrans = null;
 
-	protected override void _Initialize()
+	private void Awake()
 	{
-		base._Initialize();
-
 		m_rectTrans = GetComponent<RectTransform>();
 
 		GlobalMessagePipe.GetSubscriber<CommonNoticeTag,Unit>().Subscribe(CommonNoticeTag.ChangedDeviceResolution,ApplyResolution).RegisterTo(destroyCancellationToken);
@@ -46,10 +44,8 @@ public class SafeAreaChecker : BaseComponent
 		}
 	}
 
-	protected override void Reset()
+	private void Reset()
 	{
-		base.Reset();
-		
 		if(!m_rectTrans)
 		{
 			m_rectTrans = GetComponent<RectTransform>();

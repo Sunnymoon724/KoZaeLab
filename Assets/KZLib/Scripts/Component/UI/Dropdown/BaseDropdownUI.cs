@@ -2,29 +2,23 @@ using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(TMP_Dropdown))]
-public abstract class BaseDropdownUI : BaseComponentUI
+public abstract class BaseDropdownUI : MonoBehaviour
 {
 	[SerializeField]
 	protected TMP_Dropdown m_dropdown = null;
 
-	protected override void OnEnable()
+	private void OnEnable()
 	{
-		base.OnEnable();
-
 		m_dropdown.onValueChanged.AddAction(_OnValueChanged);
 	}
 
-	protected override void OnDisable()
+	private void OnDisable()
 	{
-		base.OnDisable();
-
 		m_dropdown.onValueChanged.RemoveAction(_OnValueChanged);
 	}
 
-	protected override void Reset()
+	private void Reset()
 	{
-		base.Reset();
-
 		if(!m_dropdown)
 		{
 			m_dropdown = GetComponent<TMP_Dropdown>();

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace KZLib.UI.Widgets.Debug
 {
-	public class MemoryMonitor : BaseComponent
+	public class MemoryMonitor : MonoBehaviour
 	{
 		[SerializeField]
 		private TMP_Text m_sizeText = null;

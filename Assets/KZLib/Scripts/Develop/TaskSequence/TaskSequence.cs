@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace KZLib.Development
 {
-	public abstract class TaskSequence : BaseComponent
+	public abstract class TaskSequence : MonoBehaviour
 	{
 		public record Param();
 
@@ -32,10 +32,8 @@ namespace KZLib.Development
 		private bool m_isPlaying = false;
 		protected CancellationTokenSource m_tokenSource = null;
 
-		protected override void _Initialize()
+		private void Awake()
 		{
-			base._Initialize();
-
 			if(m_skipButton)
 			{
 				void _ClickButton()
@@ -45,24 +43,32 @@ namespace KZLib.Development
 
 				m_skipButton.onClick.SetAction(_ClickButton);
 			}
+
+			_Initialize();
 		}
 
-		protected override void OnEnable()
-		{
-			base.OnEnable();
+		protected virtual void _Initialize() { }
 
+		private void OnEnable()
+		{
 			if(m_autoPlay)
 			{
 				PlaySequence();
 			}
+
+			_OnEnable();
 		}
 
-		protected override void OnDisable()
+		protected virtual void _OnEnable() { }
+
+		private void OnDisable()
 		{
-			base.OnDisable();
-
 			CommonUtility.KillTokenSource(ref m_tokenSource);
+
+			_OnDisable();
 		}
+		
+		protected virtual void _OnDisable() { }
 
 		public void PlaySequence(Param sequenceParam = null)
 		{

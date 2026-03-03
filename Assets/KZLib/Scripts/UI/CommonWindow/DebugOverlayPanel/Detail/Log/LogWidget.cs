@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace KZLib.UI.Widgets.Debug
 {
-	public class LogWidget : BaseComponent
+	public class LogWidget : MonoBehaviour
 	{
 		#region Log Info
 		[Serializable]
@@ -79,10 +79,8 @@ namespace KZLib.UI.Widgets.Debug
 
 		private IDisposable m_subscription = null;
 
-		protected override void _Initialize()
+		private void Awake()
 		{
-			base._Initialize();
-
 			m_inputField.text = string.Empty;
 
 			foreach(var pair in m_logInfoDict)
@@ -100,10 +98,8 @@ namespace KZLib.UI.Widgets.Debug
 			m_inputField.onValueChanged.SetAction(_ChangeValue);
 		}
 
-		protected override void OnEnable()
+		private void OnEnable()
 		{
-			base.OnEnable();
-
 			void _RefreshLogScroll(MessageInfo messageInfo)
 			{
 				var entryInfo = _CreateLogEntryInfo(messageInfo);
@@ -119,10 +115,8 @@ namespace KZLib.UI.Widgets.Debug
 			_SetScrollRect();
 		}
 
-		protected override void OnDisable()
+		private void OnDisable()
 		{
-			base.OnDisable();
-
 			m_subscription?.Dispose();
 		}
 

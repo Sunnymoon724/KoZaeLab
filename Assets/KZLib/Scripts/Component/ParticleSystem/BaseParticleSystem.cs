@@ -2,17 +2,15 @@
 using UnityEngine;
 
 [RequireComponent(typeof(ParticleSystem))]
-public abstract class BaseParticleSystem : BaseComponent
+public abstract class BaseParticleSystem : MonoBehaviour
 {
 	[SerializeField]
 	protected ParticleSystem m_particleSystem = null;
 
 	protected ParticleSystem.MainModule m_mainModule = default;
 
-	protected override void Reset()
+	private void Reset()
 	{
-		base.Reset();
-
 		if(!m_particleSystem)
 		{
 			m_particleSystem = GetComponent<ParticleSystem>();

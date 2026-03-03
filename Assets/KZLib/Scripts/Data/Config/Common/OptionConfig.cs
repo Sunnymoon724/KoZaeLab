@@ -350,9 +350,9 @@ namespace KZLib.Data
 
 		private void _CheckGraphicQuality()
 		{
-			QualitySettings.globalTextureMipmapLimit = int.Parse(GraphicQualityOption.In.FindValue(m_graphicQuality,Global.GLOBAL_TEXTURE_MIPMAP_LIMIT));
-			QualitySettings.anisotropicFiltering = (AnisotropicFiltering) Enum.Parse(typeof(AnisotropicFiltering),GraphicQualityOption.In.FindValue(m_graphicQuality,Global.ANISOTROPIC_FILTERING));
-			QualitySettings.vSyncCount = int.Parse(GraphicQualityOption.In.FindValue(m_graphicQuality,Global.VERTICAL_SYNC_COUNT));
+			QualitySettings.globalTextureMipmapLimit = GraphicQualityOption.In.GetOptionValue<int>(m_graphicQuality,Global.GLOBAL_TEXTURE_MIPMAP_LIMIT);
+			QualitySettings.anisotropicFiltering = GraphicQualityOption.In.GetOptionValue<AnisotropicFiltering>(m_graphicQuality,Global.ANISOTROPIC_FILTERING);
+			QualitySettings.vSyncCount = GraphicQualityOption.In.GetOptionValue<int>(m_graphicQuality,Global.VERTICAL_SYNC_COUNT);
 		}
 		#endregion Graphic
 

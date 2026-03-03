@@ -3,7 +3,7 @@ using UnityEngine.Profiling;
 
 namespace KZLib.UI.Widgets.Debug
 {
-	public class MemoryProfile : BaseComponent,IImmediateOverlay
+	public class MemoryProfile : MonoBehaviour,IImmediateOverlay
 	{
 		public bool IsActive => gameObject.activeInHierarchy;
 

@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(EventSystem))]
-public class AdjustDragThreshold : BaseComponent
+public class AdjustDragThreshold : MonoBehaviour
 {
 	[SerializeField]
 	private EventSystem m_eventSystem = null;
@@ -13,10 +13,8 @@ public class AdjustDragThreshold : BaseComponent
 	private const int c_reference_dpi = 100;
 	private const float c_reference_pixel_drag = 5.0f;
 
-	protected override void _Initialize()
+	private void Awake()
 	{
-		base._Initialize();
-
 		if(m_runOnAwake)
 		{
 			_SetPixelDrag(Screen.dpi);
@@ -35,10 +33,8 @@ public class AdjustDragThreshold : BaseComponent
 		m_eventSystem.pixelDragThreshold = Mathf.RoundToInt(screen_dpi/c_reference_dpi*c_reference_pixel_drag);
 	}
 
-	protected override void Reset()
+	private void Reset()
 	{
-		base.Reset();
-
 		if(!m_eventSystem) 
 		{
 			m_eventSystem = GetComponent<EventSystem>();

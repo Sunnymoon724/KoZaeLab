@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using DG.Tweening;
 using KZLib.Attributes;
 using KZLib.Development;
+using KZLib.UI;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(ScrollRect))]
-public class ReuseScrollRect : BaseComponent
+public class ReuseScrollRect : MonoBehaviour
 {
 	private enum ScrollToType { Top, Center, Bottom, }
 
@@ -46,10 +47,8 @@ public class ReuseScrollRect : BaseComponent
 
 	private bool m_initialize = false;
 
-	protected override void _Initialize()
+	private void Awake()
 	{
-		base._Initialize();
-
 		_EnsureInitialized();
 	}
 
@@ -77,7 +76,6 @@ public class ReuseScrollRect : BaseComponent
 
 		if(IsVertical)
 		{
-			
 			m_slotPivot = m_slotSize*content.pivot.y-m_slotSize-m_padding;
 
 			content.anchorMin = new Vector2(content.anchorMin.x,1.0f);
@@ -97,26 +95,20 @@ public class ReuseScrollRect : BaseComponent
 		m_initialize = true;
 	}
 
-	protected override void OnEnable()
+	private void OnEnable()
 	{
-		base.OnEnable();
-
 		m_scrollRect.onValueChanged.AddAction(_OnScrollChanged);
 	}
 
-	protected override void OnDisable()
+	private void OnDisable()
 	{
-		base.OnDisable();
-
 		m_scrollRect.onValueChanged.RemoveAction(_OnScrollChanged);
 
 		CommonUtility.KillTween(m_tween);
 	}
 
-	protected override void _Release()
+	private void OnDestroy()
 	{
-		base._Release();
-
 		CommonUtility.KillTween(m_tween);
 
 		Clear();
@@ -161,10 +153,7 @@ public class ReuseScrollRect : BaseComponent
 
 	private int _FindIndex(IEntryInfo entryInfo)
 	{
-		bool _IsMatch(IEntryInfo info)
-		{
-			return info.Equals(entryInfo);
-		}
+		bool _IsMatch(IEntryInfo info) => info.Equals(entryInfo);
 
 		return m_entryInfoList.FindIndex(_IsMatch);
 	}
@@ -427,10 +416,8 @@ public class ReuseScrollRect : BaseComponent
 		return (m_slotSize+m_space)*index;
 	}
 
-	protected override void Reset()
+	private void Reset()
 	{
-		base.Reset();
-
 		if(!m_scrollRect)
 		{
 			m_scrollRect = GetComponent<ScrollRect>();

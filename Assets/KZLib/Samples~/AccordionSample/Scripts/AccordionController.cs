@@ -1,13 +1,11 @@
 using System.Collections.Generic;
-using KZLib;
-using KZLib.Development;
+using KZLib.UI;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace KZLib.Samples.UI
 {
-	public class AccordionController : BaseComponent
+	public class AccordionController : MonoBehaviour
 	{
 		[VerticalGroup("0",Order = 0),SerializeField]
 		private Accordion m_accordionGroup = null;
@@ -61,10 +59,8 @@ namespace KZLib.Samples.UI
 
 		private readonly List<IEntryInfo> m_entryInfoList = new();
 
-		protected override void Start()
+		private void Start()
 		{
-			base.Start();
-
 			_SetEntryInfoList();
 		}
 

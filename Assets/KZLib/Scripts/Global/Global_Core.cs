@@ -30,13 +30,6 @@ public static partial class Global
 }
 #endregion General
 
-// #region Time
-// public static partial class Global
-// {
-	
-// }
-// #endregion Time
-
 #region Path
 public static partial class Global
 {
@@ -65,7 +58,6 @@ public static partial class Global
 #region Graphic Option
 public static partial class Global
 {
-	
 	public const string GLOBAL_TEXTURE_MIPMAP_LIMIT = "GlobalTextureMipmapLimit";
 	public const string ANISOTROPIC_FILTERING = "AnisotropicFiltering";
 	public const string VERTICAL_SYNC_COUNT = "VerticalSyncCount";

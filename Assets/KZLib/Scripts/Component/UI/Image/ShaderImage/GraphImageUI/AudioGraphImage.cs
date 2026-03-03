@@ -49,9 +49,9 @@ public class AudioGraphImage : GraphImage
 		return (value+160.0f)/160.0f;
 	}
 
-	protected override void Reset()
+	protected override void _Reset()
 	{
-		base.Reset();
+		base._Reset();
 
 		m_graphLength = 81;
 	}

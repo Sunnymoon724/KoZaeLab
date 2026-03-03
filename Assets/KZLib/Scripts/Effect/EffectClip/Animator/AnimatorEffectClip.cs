@@ -36,20 +36,6 @@ public class AnimatorEffectClip : EffectClip
 		}
 	}
 
-	protected override void Reset()
-	{
-		base.Reset();
-
-		if(!m_animator)
-		{
-			m_animator = GetComponent<Animator>();
-		}
-
-		AnimationName = null;
-
-		m_ignoreTimeScale = m_animator.updateMode == AnimatorUpdateMode.UnscaledTime;
-	}
-
 	public override void SetEffect(EffectClip.Param effectParam)
 	{
 		base.SetEffect(effectParam);
@@ -79,6 +65,20 @@ public class AnimatorEffectClip : EffectClip
 		}
 
 		await CommonUtility.WaitForConditionAsync(_WaitForAnimation,SetTime,m_ignoreTimeScale,m_tokenSource.Token).SuppressCancellationThrow();
+	}
+
+	protected override void _Reset()
+	{
+		base._Reset();
+
+		if(!m_animator)
+		{
+			m_animator = GetComponent<Animator>();
+		}
+
+		AnimationName = null;
+
+		m_ignoreTimeScale = m_animator.updateMode == AnimatorUpdateMode.UnscaledTime;
 	}
 
 #if UNITY_EDITOR

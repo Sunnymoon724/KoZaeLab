@@ -29,24 +29,20 @@ public class PatternRawImageUI : BaseRawImageUI
 
 	private CancellationTokenSource m_tokenSource = null;
 
-	protected override void OnEnable()
+	private void OnEnable()
 	{
-		base.OnEnable();
-
 		_SetPatternAspect();
 
 		if(Application.isPlaying)
-        {
+		{
 			CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
-            _ScrollPatternAsync(m_tokenSource.Token).Forget();
-        }
+			_ScrollPatternAsync(m_tokenSource.Token).Forget();
+		}
 	}
 
-	protected override void OnDisable()
+	private void OnDisable()
 	{
-		base.OnDisable();
-
 		CommonUtility.KillTokenSource(ref m_tokenSource);
 	}
 
@@ -129,9 +125,9 @@ public class PatternRawImageUI : BaseRawImageUI
 		await CommonUtility.LoopUpdateAndWaitForFrameAsync(_UpdatePattern,m_ignoreTimescale,-1,token);
 	}
 
-	protected override void Reset()
+	protected override void _Reset()
 	{
-		base.Reset();
+		base._Reset();
 
 		m_rawImage.raycastTarget = false;
 

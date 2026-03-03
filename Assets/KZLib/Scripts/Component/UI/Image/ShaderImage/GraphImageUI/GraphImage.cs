@@ -27,19 +27,17 @@ public class GraphImage : ShaderImage
 		m_image.material.SetFloat("_GraphLength",m_graphLength);
 	}
 
-	protected override void OnEnable()
+	private void OnEnable()
 	{
-		base.OnEnable();
-
 		if(m_resetEnable)
 		{
 			ResetGraph();
 		}
 	}
 
-	protected override void Reset()
+	protected override void _Reset()
 	{
-		base.Reset();
+		base._Reset();
 
 		if(!m_materialShader)
 		{

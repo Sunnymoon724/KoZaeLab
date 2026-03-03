@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using KZLib.Attributes;
 using KZLib.Development;
+using KZLib.UI;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(GridLayoutGroup))]
-public class ReuseGridLayoutGroup : BaseComponent
+public class ReuseGridLayoutGroup : MonoBehaviour
 {
 	[SerializeField]
 	private Transform m_storage = null;
@@ -26,10 +27,8 @@ public class ReuseGridLayoutGroup : BaseComponent
 
 	private GameObjectPool<Slot> m_slotPool = null;
 
-	protected override void _Initialize()
+	private void Awake()
 	{
-		base._Initialize();
-
 		m_slotPool = new GameObjectPool<Slot>(m_pivot,m_storage,m_poolCapacity,false);
 
 		m_pivot.gameObject.EnsureActive(false);
@@ -83,10 +82,8 @@ public class ReuseGridLayoutGroup : BaseComponent
 		m_slotList.RemoveRange(count,m_slotList.Count-count);
 	}
 
-	protected override void Reset()
+	private void Reset()
 	{
-		base.Reset();
-
 		if(!m_storage)
 		{
 			m_storage = transform.parent;

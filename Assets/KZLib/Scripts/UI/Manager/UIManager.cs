@@ -3,6 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using KZLib.Utilities;
 using KZLib.Data;
+using KZLib.UI;
 
 namespace KZLib
 {

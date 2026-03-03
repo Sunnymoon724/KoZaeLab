@@ -1,11 +1,11 @@
 using System.Collections.Generic;
+using KZLib.UI;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace KZLib.Samples.UI
 {
-	public class CarouselController : BaseComponent
+	public class CarouselController : MonoBehaviour
 	{
 		[VerticalGroup("0",Order = 0),SerializeField]
 		private List<Carousel> m_carouselList = new();
@@ -59,10 +59,8 @@ namespace KZLib.Samples.UI
 
 		private readonly List<IEntryInfo> m_entryInfoList = new();
 
-		protected override void Start()
+		private void Start()
 		{
-			base.Start();
-
 			_SetEntryInfoList();
 		}
 

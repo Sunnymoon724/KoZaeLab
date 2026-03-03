@@ -29,7 +29,7 @@ public interface IWindow
 }
 
 [RequireComponent(typeof(CanvasGroup))]
-public abstract class Window : BaseComponent,IWindow
+public abstract class Window : MonoBehaviour,IWindow
 {
 	[InfoBox("CanvasGroup is null",InfoMessageType.Error,nameof(IsExistCanvasGroup))]
 	[VerticalGroup("CanvasGroup",Order = -25),SerializeField]
@@ -89,12 +89,28 @@ public abstract class Window : BaseComponent,IWindow
 		m_canvas = canvas;
 	}
 
-	protected override void _Initialize()
+	private void Awake()
 	{
-		base._Initialize();
-
 		_SetCanvasGroupState(1,true,true);
+
+		_Initialize();
 	}
+
+	protected virtual void _Initialize() { }
+
+	private void OnEnable()
+	{
+		_OnEnable();
+	}
+
+	protected virtual void _OnEnable() { }
+
+	private void OnDisable()
+	{
+		_OnDisable();
+	}
+
+	protected virtual void _OnDisable() { }
 
 	public virtual void Open(object param)
 	{
@@ -119,7 +135,12 @@ public abstract class Window : BaseComponent,IWindow
 		LogChannel.UI.I($"{NameTag} is closed");
 	}
 
-	protected override void _Release() { }
+	private void OnDestroy()
+	{
+		_Release();
+	}
+
+	protected virtual void _Release() { }
 
 	public virtual void Hide(bool isHidden)
 	{
@@ -159,10 +180,8 @@ public abstract class Window : BaseComponent,IWindow
 		m_onClose = onClose;
 	}
 
-	protected override void Reset()
+	protected virtual void Reset()
 	{
-		base.Reset();
-
 		if(!m_canvasGroup)
 		{
 			m_canvasGroup = GetComponent<CanvasGroup>();

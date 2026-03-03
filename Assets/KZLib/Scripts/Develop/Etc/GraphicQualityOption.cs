@@ -301,6 +301,22 @@ namespace KZLib.Development
 			LogChannel.System.E($"Not supported GraphicsQuality. [{optionName}]");
 
 			return string.Empty;
-		} 
+		}
+
+		public TValue GetOptionValue<TValue>(long graphicQuality,string optionName)
+		{
+			var value = FindValue(graphicQuality,optionName);
+
+			return optionName switch
+			{
+				Global.GLOBAL_TEXTURE_MIPMAP_LIMIT or 
+				Global.VERTICAL_SYNC_COUNT or 
+				Global.DISABLE_CAMERA_FAR_HALF => (TValue)Convert.ChangeType(value,typeof(TValue)),
+
+				Global.ANISOTROPIC_FILTERING => (TValue)Enum.Parse(typeof(TValue),value,true),
+
+				_ => (TValue)(object)value,
+			};
+		}
 	}
 }

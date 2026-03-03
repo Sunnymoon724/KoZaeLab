@@ -2,29 +2,23 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Button))]
-public abstract class BaseButtonUI : BaseComponentUI
+public abstract class BaseButtonUI : MonoBehaviour
 {
 	[SerializeField]
 	protected Button m_button = null;
 
-	protected override void OnEnable()
+	private void OnEnable()
 	{
-		base.OnEnable();
-
 		m_button.onClick.AddAction(_OnClickedButton);
 	}
 
-	protected override void OnDisable()
+	private void OnDisable()
 	{
-		base.OnDisable();
-
 		m_button.onClick.RemoveAction(_OnClickedButton);
 	}
 
-	protected override void Reset()
+	private void Reset()
 	{
-		base.Reset();
-
 		if(!m_button)
 		{
 			m_button = GetComponent<Button>();

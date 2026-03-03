@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace KZLib.UI.Widgets.Debug
 {
-	public class AudioProfile : BaseComponent,IImmediateOverlay
+	public class AudioProfile : MonoBehaviour,IImmediateOverlay
 	{
 		private const int c_spectrumSize = 512;
 

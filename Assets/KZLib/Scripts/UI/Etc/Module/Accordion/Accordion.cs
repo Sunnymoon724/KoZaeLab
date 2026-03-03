@@ -3,11 +3,13 @@ using KZLib.Attributes;
 using KZLib.Development;
 using R3;
 using Sirenix.OdinInspector;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace UnityEngine.UI
+namespace KZLib.UI
 {
 	[RequireComponent(typeof(HorizontalOrVerticalLayoutGroup),typeof(ContentSizeFitter))]
-	public class Accordion : BaseComponent
+	public class Accordion : MonoBehaviour
 	{
 		[SerializeField]
 		private AccordionSlot m_slot = null;
@@ -34,10 +36,8 @@ namespace UnityEngine.UI
 
 		public AccordionSlot CurrentAccordion => m_poolBinder.GetItemByIndex(m_currentIndex);
 
-		protected override void _Initialize()
+		private void Awake()
 		{
-			base._Initialize();
-
 			_EnsureInitialized();
 		}
 
@@ -72,10 +72,8 @@ namespace UnityEngine.UI
 			m_initialize = true;
 		}
 
-		protected override void _Release()
+		private void OnDestroy()
 		{
-			base._Release();
-
 			m_poolBinder?.Dispose();
 		}
 

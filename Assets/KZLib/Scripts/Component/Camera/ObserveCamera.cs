@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Sirenix.OdinInspector;
 
-public class ObserveCamera : BaseComponent
+public class ObserveCamera : MonoBehaviour
 {
 	[SerializeField]
 	private float m_backDistance = 5.0f;
@@ -17,7 +17,7 @@ public class ObserveCamera : BaseComponent
 
 	private Vector3 m_mousePosition = Vector2.zero;
 
-	protected override void _Initialize()
+	private void Awake()
 	{
 		m_rotate.y = transform.rotation.eulerAngles.y;
 	}

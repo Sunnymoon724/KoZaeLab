@@ -10,7 +10,7 @@ using UnityEditor;
 
 namespace KZLib.Development
 {
-	public partial class PathCreator : BaseComponent
+	public partial class PathCreator : MonoBehaviour
 	{
 		private void _GetCurvePointArray()
 		{

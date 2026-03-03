@@ -2,8 +2,10 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace UnityEngine.UI
+namespace KZLib.UI
 {
 	[RequireComponent(typeof(LayoutElement))]
 	public class AccordionSlot : Slot
@@ -155,10 +157,8 @@ namespace UnityEngine.UI
 			m_onClicked?.Invoke(this);
 		}
 
-		protected override void Reset()
+		private void Reset()
 		{
-			base.Reset();
-
 			if(!m_layoutElement)
 			{
 				m_layoutElement = GetComponent<LayoutElement>();

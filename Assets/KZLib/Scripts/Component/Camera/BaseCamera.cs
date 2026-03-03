@@ -2,35 +2,29 @@
 using KZLib;
 
 [RequireComponent(typeof(Camera))]
-public abstract class BaseCamera : BaseComponent
+public abstract class BaseCamera : MonoBehaviour
 {
 	[SerializeField]
 	protected Camera m_camera = null;
 
-	protected override void _Initialize()
+	private void Awake()
 	{
-		base._Initialize();
-
 		if(CameraManager.HasInstance)
 		{
 			CameraManager.In.AddSubCamera(m_camera);
 		}
 	}
 
-	protected override void _Release()
+	private void OnDestroy()
 	{
-		base._Release();
-
 		if(CameraManager.HasInstance)
 		{
 			CameraManager.In.RemoveSubCamera(m_camera);
 		}
 	}
 
-	protected override void Reset()
+	private void Reset()
 	{
-		base.Reset();
-
 		if(!m_camera)
 		{
 			m_camera = GetComponent<Camera>();

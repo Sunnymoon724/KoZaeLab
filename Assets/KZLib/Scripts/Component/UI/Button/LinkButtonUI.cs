@@ -5,7 +5,7 @@ public class LinkButtonUI : BaseButtonUI
 	[SerializeField]
 	private string m_linkPath = null;
 
-	protected override void _Initialize()
+	private void Awake()
 	{
 		if(m_linkPath.IsEmpty())
 		{
@@ -13,8 +13,6 @@ public class LinkButtonUI : BaseButtonUI
 
 			return;
 		}
-
-		base._Initialize();
 	}
 
 	protected override void _OnClickedButton()

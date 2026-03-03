@@ -80,9 +80,9 @@ public class ProgressImage : BaseImage
 		await CommonUtility.ExecuteProgressAsync(CurrentValue,amount,duration,_SetValue,ignoreTimescale,animationCurve,token);
 	}
 
-	protected override void Reset() 
+	protected override void _Reset() 
 	{
-		base.Reset();
+		base._Reset();
 
 		m_image.type = Image.Type.Filled;
 		m_image.fillMethod = Image.FillMethod.Horizontal;

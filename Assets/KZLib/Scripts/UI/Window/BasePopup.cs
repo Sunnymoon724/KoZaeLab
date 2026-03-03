@@ -21,13 +21,11 @@ public abstract class BasePopup : Window2D
 		{
 			AddSequence(ref m_openSequence,m_popUpTransform.DOScale(0.5f,0.2f).From().SetEase(Ease.OutBack,2.0f));
 		}
-
-		
 	}
 
-	protected override void OnEnable()
+	protected override void _OnEnable()
 	{
-		base.OnEnable();
+		base._OnEnable();
 
 		if(m_closeButton)
 		{
@@ -35,9 +33,9 @@ public abstract class BasePopup : Window2D
 		}
 	}
 
-	protected override void OnDisable()
+	protected override void _OnDisable()
 	{
-		base.OnDisable();
+		base._OnDisable();
 
 		if(m_closeButton)
 		{

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace KZLib.Samples.Component
 {
-	public class ReuseScrollRectController : BaseComponent
+	public class ReuseScrollRectController : MonoBehaviour
 	{
 		private record SampleEntryInfo : EntryInfo
 		{
@@ -91,10 +91,8 @@ namespace KZLib.Samples.Component
 
 		private readonly List<IEntryInfo> m_entryInfoList = new();
 
-		protected override void Start()
+		private void Start()
 		{
-			base.Start();
-
 			_SetEntryList();
 		}
 

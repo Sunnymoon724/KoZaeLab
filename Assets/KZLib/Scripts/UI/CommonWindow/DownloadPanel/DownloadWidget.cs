@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace KZLib.UI.Widgets
 {
-	public class DownloadWidget : BaseComponent
+	public class DownloadWidget : MonoBehaviour
 	{
 		[SerializeField]
 		private Image m_progressImage = null;
@@ -15,10 +15,8 @@ namespace KZLib.UI.Widgets
 		[SerializeField]
 		private TMP_Text m_progressText = null;
 
-		protected override void _Initialize()
+		private void Awake()
 		{
-			base._Initialize();
-
 			SetProgressImage(0.0f);
 			SetProgressText(string.Empty);
 			SetDownloadedSizeText(string.Empty);

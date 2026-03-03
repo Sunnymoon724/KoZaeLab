@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace KZLib.UI.Widgets.Debug
 {
-	public class SimpleFps : BaseComponent,IPeriodicOverlay
+	public class SimpleFps : MonoBehaviour,IPeriodicOverlay
 	{
 		[SerializeField]
 		private TMP_Text m_frameText = null;

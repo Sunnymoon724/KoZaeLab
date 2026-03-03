@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FormatTextUI : BaseTextUI
+public class FormatTextUI : BaseTextMeshUI
 {
 	[SerializeField]
 	private string m_formatText = null;

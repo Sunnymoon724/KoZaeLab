@@ -1,7 +1,7 @@
 using UnityEngine;
 using Sirenix.OdinInspector;
 
-public abstract class BaseToggleMount : BaseComponentUI
+public abstract class BaseToggleMount : MonoBehaviour
 {
 	[SerializeField,HideInInspector]
 	private bool m_isOn = false;

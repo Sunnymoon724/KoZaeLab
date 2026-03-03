@@ -4,7 +4,7 @@ using KZLib;
 using MessagePipe;
 using UnityEngine;
 
-public class BadgeUI : BaseComponent
+public class BadgeUI : MonoBehaviour
 {
 	[SerializeField]
 	private List<GameObject> m_badgeList = new();
@@ -13,10 +13,8 @@ public class BadgeUI : BaseComponent
 
 	private IDisposable m_subscription = null;
 
-	protected override void OnEnable()
+	private void OnEnable()
 	{
-		base.OnEnable();
-
 		if(m_badgeTag != BadgeTag.NONE)
 		{
 			m_subscription = GlobalMessagePipe.GetSubscriber<BadgeTag,bool>().Subscribe(m_badgeTag,_RefreshBadge);
@@ -27,10 +25,8 @@ public class BadgeUI : BaseComponent
 		}
 	}
 
-	protected override void OnDisable()
+	private void OnDisable()
 	{
-		base.OnDisable();
-
 		m_subscription?.Dispose();
 	}
 

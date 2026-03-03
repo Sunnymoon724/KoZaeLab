@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using UnityEngine;
 
-namespace UnityEngine.UI
+namespace KZLib.UI
 {
 	public class ToggleSlot : Slot
 	{

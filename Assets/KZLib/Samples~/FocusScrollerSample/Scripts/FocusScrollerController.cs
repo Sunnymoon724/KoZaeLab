@@ -1,11 +1,11 @@
 using System.Collections.Generic;
+using KZLib.UI;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace KZLib.Samples.UI
 {
-	public class FocusScrollerController : BaseComponent
+	public class FocusScrollerController : MonoBehaviour
 	{
 		private record SampleEntryInfo : EntryInfo
 		{
@@ -67,10 +67,8 @@ namespace KZLib.Samples.UI
 
 		private readonly List<IEntryInfo> m_entryInfoList = new();
 
-		protected override void Start()
+		private void Start()
 		{
-			base.Start();
-
 			_SetEntryInfoList();
 		}
 

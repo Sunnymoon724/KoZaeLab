@@ -55,17 +55,17 @@ public class SkipPanel : BasePanel
 		_ShowSkipButton(m_skipShowDuration);
 	}
 
-	protected override void OnEnable()
+	protected override void _OnEnable()
 	{
-		base.OnEnable();
+		base._OnEnable();
 
 		m_triggerButton.onClick.AddAction(_OnClickedTrigger);
 		m_skipButton.onClick.AddAction(_OnClickedSkip);
 	}
 
-	protected override void OnDisable()
+	protected override void _OnDisable()
 	{
-		base.OnDisable();
+		base._OnDisable();
 
 		m_triggerButton.onClick.RemoveAction(_OnClickedTrigger);
 		m_skipButton.onClick.RemoveAction(_OnClickedSkip);

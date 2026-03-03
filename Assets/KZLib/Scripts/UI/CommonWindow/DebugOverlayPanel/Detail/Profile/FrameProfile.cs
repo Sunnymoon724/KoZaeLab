@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace KZLib.UI.Widgets.Debug
 {
-	public class FrameProfile : BaseComponent,IPeriodicOverlay
+	public class FrameProfile : MonoBehaviour,IPeriodicOverlay
 	{
 		[SerializeField]
 		private FrameMonitor m_currentFrameMonitor = null;

@@ -1,15 +1,23 @@
 using System;
 using Coffee.UIEffects;
-using KZLib;
 using Sirenix.OdinInspector;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace UnityEngine.UI
+#if UNITY_EDITOR
+
+using UnityEditor;
+
+#endif
+
+namespace KZLib.UI
 {
 	[RequireComponent(typeof(RectTransform))]
-	public class Slot : BaseComponent
+	public class Slot : MonoBehaviour
 	{
-		protected override bool UseGizmos => true;
+		protected virtual bool UseGizmos => true;
+		protected virtual string GizmosText => string.Empty;
 
 		protected const int c_imageOrder = 0;
 		protected const int c_textOrder = 1;
@@ -60,20 +68,16 @@ namespace UnityEngine.UI
 			set => RectTrans.anchoredPosition = value;
 		}
 
-		protected override void OnEnable()
+		private void OnEnable()
 		{
-			base.OnEnable();
-
 			if(m_button)
 			{
 				m_button.onClick.AddAction(_OnClicked);
 			}
 		}
 
-		protected override void OnDisable()
+		private void OnDisable()
 		{
-			base.OnDisable();
-
 			if(m_button)
 			{
 				m_button.onClick.RemoveAction(_OnClicked);
@@ -154,5 +158,32 @@ namespace UnityEngine.UI
 
 			return isVertical ? rect.height : rect.width;
 		}
+
+#if UNITY_EDITOR
+	private void OnDrawGizmos()
+	{
+		if(!UseGizmos)
+		{
+			return;
+		}
+
+		_DrawGizmo();
+	}
+
+	protected virtual void _DrawGizmo()
+	{
+		_DrawGizmoText(transform.position);
+	}
+
+	protected void _DrawGizmoText(Vector3 position)
+	{
+		var style = new GUIStyle();
+		style.normal.textColor = Color.white;
+
+		Handles.Label(position,GizmosText,style);
+	}
+
+	protected Vector3 CubeSize => transform.lossyScale*10.0f;
+#endif
 	}
 }

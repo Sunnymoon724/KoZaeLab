@@ -29,9 +29,9 @@ public class ShiftGraphImage : GraphImage
 		SetGraphArray();
 	}
 
-	protected override void Reset()
+	protected override void _Reset()
 	{
-		base.Reset();
+		base._Reset();
 
 		m_graphLength = 150;
 	}

@@ -5,7 +5,7 @@ using KZLib.Utilities;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class MenuToolBarUI : BaseComponentUI
+public class MenuToolBarUI : MonoBehaviour
 {
 	#region MenuInfo
 	[Serializable]
@@ -57,7 +57,7 @@ public class MenuToolBarUI : BaseComponentUI
 	[HorizontalGroup("2",Order = 2),SerializeField,ToggleLeft,OnValueChanged(nameof(_OnChangeCommon))]
 	private bool m_useCommonSound = false;
 	[HorizontalGroup("2",Order = 2),SerializeField,HideLabel,ShowIf(nameof(m_useCommonSound))]
-	private AudioClip m_menuSound;
+	private AudioClip m_menuSound = null;
 
 	[HorizontalGroup("3",Order = 3),SerializeField,ListDrawerSettings(ShowFoldout = false,CustomAddFunction = nameof(_OnAddMenu),DraggableItems = false)]
 	private List<MenuInfo> m_menuInfoList = new();

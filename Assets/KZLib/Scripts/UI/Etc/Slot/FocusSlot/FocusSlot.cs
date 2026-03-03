@@ -1,6 +1,7 @@
 using Sirenix.OdinInspector;
+using UnityEngine;
 
-namespace UnityEngine.UI
+namespace KZLib.UI
 {
 	public abstract class FocusSlot : Slot //,IFocusSlot
 	{

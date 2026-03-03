@@ -2,15 +2,13 @@
 using TMPro;
 
 [RequireComponent(typeof(TMP_Text))]
-public abstract class BaseTextUI : BaseComponentUI
+public abstract class BaseTextMeshUI : MonoBehaviour
 {
 	[SerializeField]
 	protected TMP_Text m_textMesh = null;
 
-	protected override void Reset()
+	private void Reset()
 	{
-		base.Reset();
-
 		if(!m_textMesh)
 		{
 			m_textMesh = GetComponent<TMP_Text>();

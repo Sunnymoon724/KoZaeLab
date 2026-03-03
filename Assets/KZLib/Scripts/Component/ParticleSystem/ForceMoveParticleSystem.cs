@@ -14,18 +14,14 @@
 		private float m_startTime = 0.0f;
 		private ParticleSystem.Particle[] m_particleArray = null;
 
-		protected override void _Initialize()
+		private void Awake()
 		{
-			base._Initialize();
-
 			m_mainModule = m_particleSystem.main;
 			m_startTime = Time.time;
 		}
 
-		protected override void Start()
+		private void Start()
 		{
-			base.Start();
-
 			m_startTime = Time.time;
 		}
 

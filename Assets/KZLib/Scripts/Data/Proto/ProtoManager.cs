@@ -137,7 +137,7 @@ namespace KZLib.Data
 				return null;
 			}
 
-			if(!m_protoDict.TryGetValue(protoType, out var protoDict))
+			if(!m_protoDict.TryGetValue(protoType,out var protoDict))
 			{
 				LogChannel.System.E($"{protoType.Name} is not exist.");
 
@@ -156,24 +156,24 @@ namespace KZLib.Data
 
 		private TProto _GetProto<TProto>(int num) where TProto : class,IProto
 		{
-			var protoType = typeof(TProto);
+			var prtType = typeof(TProto);
 
-			if(!protoType.IsInterface)
+			if(!prtType.IsInterface)
 			{
-				return GetProto(num,protoType) as TProto;
+				return GetProto(num,prtType) as TProto;
 			}
 
 			foreach(var pair in m_protoDict)
 			{
 				var childType = pair.Key;
 
-				if(protoType.IsAssignableFrom(childType))
+				if(prtType.IsAssignableFrom(childType))
 				{
 					return GetProto(num,childType) as TProto;
 				}
 			}
 
-			LogChannel.System.E($"{protoType.Name} is not exist.");
+			LogChannel.System.E($"{prtType.Name} is not exist.");
 
 			return null;
 		}
@@ -202,6 +202,26 @@ namespace KZLib.Data
 			foreach(var pair in m_protoDict)
 			{
 				yield return pair.Key;
+			}
+		}
+
+		public IEnumerable<IColorProto> FindColorProtoGroup()
+		{
+			var prtType = typeof(IColorProto);
+
+			foreach(var pair1 in m_protoDict)
+			{
+				var childType = pair1.Key;
+
+				if(!prtType.IsAssignableFrom(childType))
+				{
+					continue;
+				}
+
+				foreach(var pair2 in pair1.Value)
+				{
+					yield return pair2.Value as IColorProto;
+				}
 			}
 		}
 

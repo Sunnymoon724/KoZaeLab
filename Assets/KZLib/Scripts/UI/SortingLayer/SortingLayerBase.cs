@@ -2,7 +2,7 @@
 // using Sirenix.OdinInspector;
 // using UnityEngine;
 
-// public abstract class SortingLayerBase : BaseComponentUI
+// public abstract class SortingLayerBase : MonoBehaviour
 // {
 // 	private const int c_defaultSortingLayerOrder = 1000;
 // 	protected const int c_sortingInterval = 5;

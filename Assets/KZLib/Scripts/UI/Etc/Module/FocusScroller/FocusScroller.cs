@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using KZLib.Attributes;
 using R3;
 using KZLib.Development;
+using UnityEngine;
 
-namespace UnityEngine.UI
+namespace KZLib.UI
 {
-	public partial class FocusScroller : BaseComponentUI,IPointerUpHandler,IPointerDownHandler,IBeginDragHandler,IEndDragHandler,IDragHandler,IScrollHandler
+	public partial class FocusScroller : MonoBehaviour,IPointerUpHandler,IPointerDownHandler,IBeginDragHandler,IEndDragHandler,IDragHandler,IScrollHandler
 	{
 		[SerializeField]
 		private RectTransform m_viewport = null;
@@ -25,8 +26,6 @@ namespace UnityEngine.UI
 
 		[SerializeField]
 		private bool m_vertical = false;
-
-		
 
 		[SerializeField,KZMinClamp(1)]
 		private int m_poolCapacity = 1;
@@ -51,10 +50,8 @@ namespace UnityEngine.UI
 		public IEntryInfo FocusEntryInfo => m_entryInfoList.TryGetValueByIndex(m_focusIndex,out var info) ? info : null;
 		private bool IsCircularMode => m_circularMode && m_entryInfoList.Count != 1;
 
-		protected override void _Initialize()
+		private void Awake()
 		{
-			base._Initialize();
-
 			m_slotPool = new GameObjectPool<FocusSlot>(m_slot,m_viewport,m_poolCapacity,false);
 
 			var slotRectTransform = m_slot.GetComponent<RectTransform>();
@@ -182,10 +179,8 @@ namespace UnityEngine.UI
 			}
 		}
 
-		protected override void Reset()
+		private void Reset()
 		{
-			base.Reset();
-
 			if(!m_viewport)
 			{
 				var viewport = transform.Find("Viewport");

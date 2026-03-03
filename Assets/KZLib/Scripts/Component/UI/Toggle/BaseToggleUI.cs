@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using KZLib.Attributes;
 
 [RequireComponent(typeof(Toggle))]
-public abstract class BaseToggleUI : BaseComponentUI
+public abstract class BaseToggleUI : MonoBehaviour
 {
 	[VerticalGroup("0",Order = 0),SerializeField]
 	protected Toggle m_toggle = null;
@@ -12,17 +12,13 @@ public abstract class BaseToggleUI : BaseComponentUI
 	[VerticalGroup("0",Order = 0),ShowInInspector,KZIsValid("O","X")]
 	public bool IsOn => m_toggle != null && m_toggle.isOn;
 
-	protected override void OnEnable()
+	private void OnEnable()
 	{
-		base.OnEnable();
-
 		m_toggle.onValueChanged.AddAction(_OnClickedToggle);
 	}
 
-	protected override void OnDisable()
+	private void OnDisable()
 	{
-		base.OnDisable();
-
 		m_toggle.onValueChanged.RemoveAction(_OnClickedToggle);
 	}
 
@@ -43,10 +39,8 @@ public abstract class BaseToggleUI : BaseComponentUI
 		m_toggle.isOn = isOn;
 	}
 
-	protected override void Reset()
+	private void Reset()
 	{
-		base.Reset();
-
 		if(!m_toggle)
 		{
 			m_toggle = GetComponent<Toggle>();

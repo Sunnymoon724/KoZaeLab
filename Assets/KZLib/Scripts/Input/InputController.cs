@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 namespace KZLib
 {
-	public abstract class InputController : BaseComponent
+	public abstract class InputController : MonoBehaviour
 	{
 		[SerializeField,HideInInspector]
 		private bool m_blocked = false;
@@ -26,14 +26,12 @@ namespace KZLib
 		protected abstract void SubscribeInputAction();
 		protected abstract void UnsubscribeInputAction();
 
-		protected override void _Initialize()
+		private void Awake()
 		{
-			base._Initialize();
-
 			InputManager.In.AddInputCon(this);
-			
+
 			var actionMapArray = m_inputActionAsset.actionMaps;
-			
+
 			for(var i=0;i<actionMapArray.Count;i++)
 			{
 				var inputActionArray = actionMapArray[i].actions;
@@ -49,24 +47,18 @@ namespace KZLib
 			SubscribeInputAction();
 		}
 
-		protected override void OnEnable()
+		private void OnEnable()
 		{
-			base.OnEnable();
-
 			_SetEnable(true);
 		}
 
-		protected override void OnDisable()
+		private void OnDisable()
 		{
-			base.OnDisable();
-
 			_SetEnable(false);
 		}
 
-		protected override void _Release()
+		private void _Release()
 		{
-			base._Release();
-
 			UnsubscribeInputAction();
 
 			if(InputManager.HasInstance)

@@ -18,10 +18,8 @@ public class LongPressButtonUI : BaseButtonUI,IPointerDownHandler,IPointerUpHand
 
 	private CancellationTokenSource m_tokenSource = null;
 
-	protected override void OnDisable()
+	private void OnDisable()
 	{
-		base.OnDisable();
-
 		CommonUtility.KillTokenSource(ref m_tokenSource); 
 	}
 

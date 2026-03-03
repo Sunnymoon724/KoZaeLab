@@ -4,7 +4,7 @@ using TMPro;
 
 namespace KZLib.UI.Widgets.Debug
 {
-	public class RenderMonitor : BaseComponent
+	public class RenderMonitor : MonoBehaviour
 	{
 		[SerializeField]
 		private TMP_Text m_nameText = null;
@@ -14,22 +14,18 @@ namespace KZLib.UI.Widgets.Debug
 		private ProfilerRecorder m_profilerRecorder;
 		private string m_statName = null;
 
-		protected override void _Initialize()
+		private void Awake()
 		{
 			m_statName = m_nameText.text;
 		}
 
-		protected override void OnEnable()
+		private void OnEnable()
 		{
-			base.OnEnable();
-
 			m_profilerRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Render,m_statName);
 		}
 
-		protected override void OnDisable()
+		private void OnDisable()
 		{
-			base.OnDisable();
-
 			m_profilerRecorder.Dispose();
 		}
 

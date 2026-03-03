@@ -3,7 +3,7 @@ using TMPro;
 
 namespace KZLib.UI.Widgets.Debug
 {
-	public class FrameMonitor : BaseComponent
+	public class FrameMonitor : MonoBehaviour
 	{
 		[SerializeField]
 		private TMP_Text m_frameRateText = null;

@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using KZLib;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Canvas))]
-public abstract class Repository : BaseComponent
+public abstract class Repository : MonoBehaviour
 {
 	[InfoBox("canvas is null",InfoMessageType.Error,nameof(IsValidCanvas))]
 	[VerticalGroup("Canvas",Order = -25),SerializeField]
@@ -26,10 +25,8 @@ public abstract class Repository : BaseComponent
 	protected abstract bool IsValid(Window window);
 	public abstract void Add(Window window);
 
-	protected override void _Release()
+	private void OnDestroy()
 	{
-		base._Release();
-
 		RemoveAll(null,true);
 
 		m_windowList.Clear();
@@ -133,10 +130,8 @@ public abstract class Repository : BaseComponent
 		}
 	}
 
-	protected override void Reset()
+	private void Reset()
 	{
-		base.Reset();
-
 		if(!m_canvas)
 		{
 			m_canvas = GetComponent<Canvas>();

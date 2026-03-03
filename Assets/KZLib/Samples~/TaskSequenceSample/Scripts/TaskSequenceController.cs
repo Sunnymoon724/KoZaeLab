@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace KZLib.Samples.Develop
 {
-	public class TaskSequenceController : BaseComponent
+	public class TaskSequenceController : MonoBehaviour
 	{
 		[InfoBox("Space -> TaskSequence Start / Q -> TaskSequence Cancel")]
 		[SerializeField]

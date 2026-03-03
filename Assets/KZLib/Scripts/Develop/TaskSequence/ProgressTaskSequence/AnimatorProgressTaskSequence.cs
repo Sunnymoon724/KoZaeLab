@@ -87,10 +87,8 @@ namespace KZLib.Development
 			}
 		}
 
-		protected override void Reset()
+		private void Reset()
 		{
-			base.Reset();
-
 			if(!m_animator)
 			{
 				m_animator = GetComponent<Animator>();

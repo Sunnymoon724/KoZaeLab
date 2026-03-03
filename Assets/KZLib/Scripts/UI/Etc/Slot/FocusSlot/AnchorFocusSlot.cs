@@ -1,6 +1,7 @@
 using Sirenix.OdinInspector;
+using UnityEngine;
 
-namespace UnityEngine.UI
+namespace KZLib.UI
 {
 	[RequireComponent(typeof(RectTransform))]
 	public abstract class AnchorFocusSlot : FocusSlot

@@ -1,5 +1,6 @@
+using UnityEngine;
 
-namespace UnityEngine.UI
+namespace KZLib.UI
 {
 	public class ListSlot : Slot
 	{

@@ -2,10 +2,11 @@ using System.Collections.Generic;
 using R3;
 using KZLib.Development;
 using System;
+using UnityEngine;
 
-namespace UnityEngine.UI
+namespace KZLib.UI
 {
-	public class CarouselNavigator : BaseComponent
+	public class CarouselNavigator : MonoBehaviour
 	{
 		[SerializeField]
 		private Carousel m_carousel = null;
@@ -17,7 +18,7 @@ namespace UnityEngine.UI
 
 		private IDisposable m_subscription = null;
 
-		protected override void _Initialize()
+		private void Awake()
 		{
 			static void _BindDot(CarouselDot dot,bool selected)
 			{
@@ -27,17 +28,13 @@ namespace UnityEngine.UI
 			m_poolBinder = new GameObjectPoolBinder<CarouselDot,bool>(m_dot,transform,_BindDot);
 		}
 		
-		protected override void OnEnable()
+		private void OnEnable()
 		{
-			base.OnEnable();
-
 			m_subscription = m_carousel.OnChangedIndex.Subscribe(_OnChangedIndex);
 		}
 
-		protected override void OnDisable()
+		private void OnDisable()
 		{
-			base.OnDisable();
-
 			m_subscription?.Dispose();
 		}
 

@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class DrawLineRenderer : BaseLineRenderer
 {
-	protected override bool UseGizmos => true;
-
 #if UNITY_EDITOR
 	private bool m_startGizmo = false;
 #endif
@@ -14,17 +12,13 @@ public class DrawLineRenderer : BaseLineRenderer
 	private CancellationTokenSource m_tokenSource = null;
 	private Tween m_tween = null;
 
-	protected override void OnDisable()
+	private void OnDisable()
 	{
-		base.OnDisable();
-
 		_KillRenderer();
 	}
 
-	protected override void _Release()
+	private void OnDestroy()
 	{
-		base._Release();
-
 		_KillRenderer();
 	}
 
@@ -127,7 +121,7 @@ public class DrawLineRenderer : BaseLineRenderer
 	}
 
 #if UNITY_EDITOR
-	protected override void _DrawGizmo()
+	private void OnDrawGizmos()
 	{
 		if(!m_startGizmo || m_lineRenderer.positionCount < 2)
 		{

@@ -14,29 +14,6 @@ public class ParticleEffectClip : EffectClip
 	[VerticalGroup("General/2",Order = 2),SerializeField]
 	protected List<ParticleSystem> m_subParticleList = null;
 
-	protected override void Reset()
-	{
-		base.Reset();
-
-		if(!m_mainParticle)
-		{
-			m_mainParticle = GetComponent<ParticleSystem>();
-		}
-
-		if(!m_mainParticle)
-		{
-			return;
-		}
-
-		var mainModule = m_mainParticle.main;
-
-		Duration = mainModule.duration;
-		IsLoop = mainModule.loop;
-		m_ignoreTimeScale = mainModule.useUnscaledTime;
-
-		mainModule.playOnAwake = true;
-	}
-
 	public override void SetEffect(EffectClip.Param effectParam)
 	{
 		base.SetEffect(effectParam);
@@ -70,5 +47,28 @@ public class ParticleEffectClip : EffectClip
 	private void _SetColor(ParticleSystem.MainModule mainModule,Color color)
 	{
 		mainModule.startColor = new ParticleSystem.MinMaxGradient(color);
+	}
+
+	protected override void _Reset()
+	{
+		base._Reset();
+
+		if(!m_mainParticle)
+		{
+			m_mainParticle = GetComponent<ParticleSystem>();
+		}
+
+		if(!m_mainParticle)
+		{
+			return;
+		}
+
+		var mainModule = m_mainParticle.main;
+
+		Duration = mainModule.duration;
+		IsLoop = mainModule.loop;
+		m_ignoreTimeScale = mainModule.useUnscaledTime;
+
+		mainModule.playOnAwake = true;
 	}
 }

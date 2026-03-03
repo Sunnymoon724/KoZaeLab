@@ -11,7 +11,7 @@ using Sirenix.Utilities.Editor;
 
 namespace KZLib.Development
 {
-	public partial class PathCreator : BaseComponent
+	public partial class PathCreator : MonoBehaviour
 	{
 		[SerializeField,HideInInspector]
 		private bool m_reverse = false;

@@ -20,16 +20,6 @@ public class TrailRendererEffectClip : EffectClip
 
 	protected override bool IsShowIgnoreTimeScale => false;
 
-	protected override void Reset()
-	{
-		base.Reset();
-
-		if(!m_trailRenderer)
-		{
-			m_trailRenderer = GetComponent<TrailRenderer>();
-		}
-	}
-
 	public override void SetEffect(Param effectParam)
 	{
 		base.SetEffect(effectParam);
@@ -53,5 +43,15 @@ public class TrailRendererEffectClip : EffectClip
 		}
 
 		await CommonUtility.WaitForConditionAsync(_WaitForTrailRenderer,SetTime,m_ignoreTimeScale,m_tokenSource.Token).SuppressCancellationThrow();
+	}
+
+	protected override void _Reset()
+	{
+		base._Reset();
+
+		if(!m_trailRenderer)
+		{
+			m_trailRenderer = GetComponent<TrailRenderer>();
+		}
 	}
 }

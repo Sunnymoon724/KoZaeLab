@@ -46,9 +46,9 @@ namespace KZLib.Development
 
 		private bool IsFade => CurrentType == TransitionType.None;
 
-		protected override void OnDisable()
+		protected override void _OnDisable()
 		{
-			base.OnDisable();
+			base._OnDisable();
 
 			if(CurrentMaterial)
 			{

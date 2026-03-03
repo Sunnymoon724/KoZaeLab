@@ -20,10 +20,8 @@ public class GroupDropdownUI : BaseDropdownUI
 
 	private Action<string> OnValueChanged;
 
-	protected override void OnEnable()
+	private void OnEnable()
 	{
-		base.OnEnable();
-
 		if(m_prevButton != null)
 		{
 			m_prevButton.onClick.AddAction(_OnClickedPrevButton);
@@ -35,10 +33,8 @@ public class GroupDropdownUI : BaseDropdownUI
 		}
 	}
 
-	protected override void OnDisable()
+	private void OnDisable()
 	{
-		base.OnDisable();
-
 		if(m_prevButton != null)
 		{
 			m_prevButton.onClick.RemoveAction(_OnClickedPrevButton);

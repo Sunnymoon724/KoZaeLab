@@ -15,7 +15,7 @@ namespace KZLib.Development
 {
 	public enum PathDrawMode { Curve, Polygon };
 
-	public partial class PathCreator : BaseComponent
+	public partial class PathCreator : MonoBehaviour
 	{
 		[VerticalGroup("0",Order = 0),SerializeField]
 		private SpaceType m_pathSpaceType = SpaceType.xyz;
@@ -143,10 +143,8 @@ namespace KZLib.Development
 			Reset();
 		}
 
-		protected override void Reset()
+		private void Reset()
 		{
-			base.Reset();
-
 			var is2D = EditorSettings.defaultBehaviorMode == EditorBehaviorMode.Mode2D;
 
 			m_pathSpaceType = is2D ? SpaceType.xy : SpaceType.xyz;

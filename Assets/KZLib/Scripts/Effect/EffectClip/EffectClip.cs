@@ -6,7 +6,7 @@ using KZLib.Attributes;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 
-public abstract class EffectClip : BaseComponent
+public abstract class EffectClip : MonoBehaviour
 {
 	public record Param(Action<bool> OnComplete = null);
 
@@ -45,19 +45,15 @@ public abstract class EffectClip : BaseComponent
 
 	protected CancellationTokenSource m_tokenSource = null;
 
-	protected override void OnEnable()
+	private void OnEnable()
 	{
-		base.OnEnable();
-
 		CommonUtility.RecycleTokenSource(ref m_tokenSource);
 
 		_PlayEffectAsync(m_tokenSource.Token).Forget();
 	}
 
-	protected override void OnDisable()
+	private void OnDisable()
 	{
-		base.OnDisable();
-
 		CommonUtility.KillTokenSource(ref m_tokenSource);
 	}
 
@@ -127,4 +123,11 @@ public abstract class EffectClip : BaseComponent
 	{
 		EndEffect(!isDestroy);
 	}
+
+	private void Reset()
+	{
+		_Reset();
+	}
+
+	protected virtual void _Reset() { }
 }

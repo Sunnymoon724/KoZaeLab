@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
-public abstract class BaseLineRenderer : BaseComponent
+public abstract class BaseLineRenderer : MonoBehaviour
 {
 	[SerializeField]
 	protected LineRenderer m_lineRenderer = null;
@@ -40,10 +40,8 @@ public abstract class BaseLineRenderer : BaseComponent
 		return mesh;
 	}
 
-	protected override void Reset()
+	private void Reset()
 	{
-		base.Reset();
-
 		if(!m_lineRenderer)
 		{
 			m_lineRenderer = GetComponent<LineRenderer>();
