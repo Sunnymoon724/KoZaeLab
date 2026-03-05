@@ -18,7 +18,7 @@ using UnityEditor;
 namespace KZLib
 {
 	[RequireComponent(typeof(Animator))]
-	public class MotionController : SerializedMonoBehaviour
+	public class MotionController : MonoBehaviour
 	{
 		[SerializeField]
 		protected Animator m_animator = null;
@@ -28,7 +28,7 @@ namespace KZLib
 
 		private readonly Dictionary<int,MotionEvent> m_motionEventDict = new();
 
-		public void PlayAnimation(string stateName,int layer,float speed = 1.0f,float normalizedTime = 0.0f)
+		public void PlayAnimation(string stateName,int layer = 0,float speed = 1.0f,float normalizedTime = 0.0f)
 		{
 			if(!m_animator)
 			{
@@ -125,11 +125,23 @@ namespace KZLib
 		}
 
 #if UNITY_EDITOR
+		public void SetState(string stateName,int layer = 0,float normalizedTime = 0.0f)
+		{
+			if(!m_animator)
+			{
+				return;
+			}
+
+			m_animator.Play(stateName,layer,normalizedTime);
+			m_animator.Update(0.0f);
+		}
+
+
 		[BoxGroup("Animation",ShowLabel = false)]
 		[VerticalGroup("Animation/0"),SerializeField,ValueDropdown(nameof(StateNameGroup))]
 		protected string m_stateName = null;
 
-		private bool m_isPlaying = false;
+		private bool m_isPlayingInEditor = false;
 		private float m_lastTime = 0.0f;
 
 		[HorizontalGroup("Animation/1"),Button(Name = "",Icon = SdfIconType.PlayFill,ButtonHeight = 30),EnableIf(nameof(IsValidState))]
@@ -146,13 +158,13 @@ namespace KZLib
 			m_animator.Play(m_stateName);
 
 			m_lastTime = Convert.ToSingle(EditorApplication.timeSinceStartup);
-			m_isPlaying = true;
+			m_isPlayingInEditor = true;
 		}
 
 		[HorizontalGroup("Animation/1"),Button(Name = "",Icon = SdfIconType.StopFill,ButtonHeight = 30),EnableIf(nameof(IsValidState))]
 		protected void _OnStopAnimationInEditor()
 		{
-			m_isPlaying = false;
+			m_isPlayingInEditor = false;
 
 			EditorApplication.update -= _OnUpdateInEditor;
 		}
@@ -164,7 +176,7 @@ namespace KZLib
 				return;
 			}
 
-			if(!m_isPlaying)
+			if(!m_isPlayingInEditor)
 			{
 				return;
 			}
