@@ -6,9 +6,13 @@ using UnityEngine.Localization;
 using System.Threading;
 using R3;
 
+#if UNITY_EDITOR
+
+using UnityEditor.Localization;
+
+#endif
+
 using Object = UnityEngine.Object;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using System;
 
 namespace KZLib.Data
 {
@@ -45,32 +49,21 @@ namespace KZLib.Data
 				return true;
 			}
 
-			try 
+#if UNITY_EDITOR
+			if(!LocalizationEditorSettings.ActiveLocalizationSettings)
 			{
-				var handle = LocalizationSettings.InitializationOperation;
-	
-				await handle;
-
-				if(handle.Status == AsyncOperationStatus.Failed)
-				{
-					LogChannel.System.W("Localization initialization failed via Handle.");
-
-					return false;
-				}
-			}
-			catch(Exception exception)
-			{
-				LogChannel.System.W($"Localization system is not ready or missing: {exception.Message}");
-
 				return false;
 			}
+#endif
 
 			if(!LocalizationSettings.Instance)
 			{
-				LogChannel.System.W("LocalizationSettings is null. Skip LingoManager initialization.");
+				LogChannel.System.W("Localization Settings asset not found in Project Settings. Skipping LingoManager.");
 
 				return false;
 			}
+
+			await LocalizationSettings.InitializationOperation;
 
 			var optionCfg = ConfigManager.In.Access<OptionConfig>();
 
