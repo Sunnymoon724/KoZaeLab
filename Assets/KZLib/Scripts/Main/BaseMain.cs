@@ -279,7 +279,6 @@ namespace KZLib
 
 		protected virtual void _InitializeResolution(StringBuilder stringBuilder)
 		{
-			//? 모바일에서 화면잠김을 방지하기 위한 값.
 			Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
 #if UNITY_EDITOR || UNITY_STANDALONE

@@ -36,11 +36,18 @@ namespace KZLib.Data
 			base._Release(disposing);
 		}
 		
-		public async UniTask<bool> TryLoadAsync(CancellationToken token)
+		public async UniTask<bool> TryLoadAsync(CancellationToken _)
 		{
 			if(m_isLoaded)
 			{
 				return true;
+			}
+
+			if(LocalizationSettings.Instance == null)
+			{
+				LogChannel.System.W("LocalizationSettings is null. Skip LingoManager initialization.");
+
+				return false;
 			}
 
 			await LocalizationSettings.InitializationOperation;
