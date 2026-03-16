@@ -43,14 +43,14 @@ namespace KZLib.Data
 				return true;
 			}
 
-			if(LocalizationSettings.Instance == null)
+			await LocalizationSettings.InitializationOperation;
+
+			if(!LocalizationSettings.Instance)
 			{
 				LogChannel.System.W("LocalizationSettings is null. Skip LingoManager initialization.");
 
 				return false;
 			}
-
-			await LocalizationSettings.InitializationOperation;
 
 			var optionCfg = ConfigManager.In.Access<OptionConfig>();
 
