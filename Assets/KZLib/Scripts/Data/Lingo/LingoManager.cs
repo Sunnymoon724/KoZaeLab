@@ -65,8 +65,6 @@ namespace KZLib.Data
 				return false;
 			}
 
-			await LocalizationSettings.InitializationOperation;
-
 			if(!LocalizationSettings.Instance)
 			{
 				LogChannel.System.W("LocalizationSettings is null. Skip LingoManager initialization.");
