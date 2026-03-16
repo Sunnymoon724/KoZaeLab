@@ -7,6 +7,8 @@ using System.Threading;
 using R3;
 
 using Object = UnityEngine.Object;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using System;
 
 namespace KZLib.Data
 {
@@ -41,6 +43,26 @@ namespace KZLib.Data
 			if(m_isLoaded)
 			{
 				return true;
+			}
+
+			try 
+			{
+				var handle = LocalizationSettings.InitializationOperation;
+	
+				await handle;
+
+				if(handle.Status == AsyncOperationStatus.Failed)
+				{
+					LogChannel.System.W("Localization initialization failed via Handle.");
+
+					return false;
+				}
+			}
+			catch(Exception exception)
+			{
+				LogChannel.System.W($"Localization system is not ready or missing: {exception.Message}");
+
+				return false;
 			}
 
 			await LocalizationSettings.InitializationOperation;
