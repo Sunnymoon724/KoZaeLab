@@ -44,14 +44,14 @@ https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
 ```
 * **UIEffect**: [GitHub Link](https://github.com/mob-sakai/UIEffect?tab=readme-ov-file#-installation)
 ```
-https://github.com/mob-sakai/UIEffect.git?path=Packages/src#5.9.0
+https://github.com/mob-sakai/UIEffect.git?path=Packages/src
 ```
 * **SoftMaskForUGUI**: [GitHub Link](https://github.com/mob-sakai/SoftMaskForUGUI?tab=readme-ov-file#-installation)
 ```
-https://github.com/mob-sakai/SoftMaskForUGUI.git?path=Packages/src#3.2.0
+https://github.com/mob-sakai/SoftMaskForUGUI.git?path=Packages/src
 ```
 * **ParticleEffectForUGUI**: [GitHub Link](https://github.com/mob-sakai/ParticleEffectForUGUI?tab=readme-ov-file#-installation)
 ```
-https://github.com/mob-sakai/ParticleEffectForUGUI.git#4.9.0
+https://github.com/mob-sakai/ParticleEffectForUGUI.git
 ```
 ***
