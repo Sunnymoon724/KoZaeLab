@@ -17,15 +17,15 @@ namespace KZLib.Samples.Develop
 		{
 			while(true)
 			{
-				LogChannel.Network.I("Network Info");
+				LogChannel.Test.I("Test Info");
 
 				await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 
-				LogChannel.Editor.W("Editor Warning");
+				LogChannel.Test.W("Test Warning");
 
 				await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 
-				LogChannel.System.E("System Error");
+				LogChannel.Test.E("Test Error");
 
 				await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 			}

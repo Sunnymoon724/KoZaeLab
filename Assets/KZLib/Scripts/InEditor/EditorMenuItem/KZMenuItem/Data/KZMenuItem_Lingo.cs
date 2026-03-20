@@ -5,7 +5,6 @@ using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using KZLib.ToolKits;
-using KZLib.Utilities;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEditor.AddressableAssets.Settings;
@@ -45,7 +44,7 @@ namespace KZLib.EditorInternal.Menus
 			{
 				if(!KZFileKit.IsExcelFile(lingoFilePath))
 				{
-					LogChannel.System.W($"{lingoFilePath} is not exist. -> generate failed");
+					LogChannel.Editor.W($"{lingoFilePath} is not exist. -> generate failed");
 
 					continue;
 				}
@@ -107,7 +106,7 @@ namespace KZLib.EditorInternal.Menus
 							}
 						default:
 							{
-								LogChannel.System.W($"Excel file name must be String or Asset.");
+								LogChannel.Editor.W($"Excel file name must be String or Asset.");
 
 								break;
 							}
@@ -148,7 +147,7 @@ namespace KZLib.EditorInternal.Menus
 				}
 				catch(Exception exception)
 				{
-					LogChannel.System.E(exception);
+					LogChannel.Editor.E(exception);
 
 					return;
 				}
@@ -164,7 +163,7 @@ namespace KZLib.EditorInternal.Menus
 
 			if(schemeArray == null)
 			{
-				LogChannel.System.E($"{c_key} is not found in {sheetName}");
+				LogChannel.Editor.E($"{c_key} is not found in {sheetName}");
 
 				return;
 			}
@@ -219,7 +218,7 @@ namespace KZLib.EditorInternal.Menus
 
 			if(schemeArray == null)
 			{
-				LogChannel.System.E($"{c_key} is not found in {sheetName}");
+				LogChannel.Editor.E($"{c_key} is not found in {sheetName}");
 
 				return;
 			}
@@ -399,11 +398,11 @@ namespace KZLib.EditorInternal.Menus
 			var tableName = $"Localization-Asset-Tables-{language}";
 			var assetName = $"Localization-Assets-{language}";
 
-			var assetGroup = CommonUtility.GetAddressableGroup(assetName);
+			var assetGroup = KZEditorKit.GetAddressableGroup(assetName);
 
 			if(assetGroup == null)
 			{
-				assetGroup = CommonUtility.CopyAddressableGroup(tableName,assetName);
+				assetGroup = KZEditorKit.CopyAddressableGroup(tableName,assetName);
 
 				var namingSchema = assetGroup.GetSchema<BundledAssetGroupSchema>();
 
@@ -421,7 +420,7 @@ namespace KZLib.EditorInternal.Menus
 			var assetGroup = _GetOrCreateAddressableGroup(language);
 			var guid = AssetDatabase.AssetPathToGUID(assetPath);
 
-			if(!CommonUtility.TryRegisterAddressable(assetPath,KZFileKit.GetOnlyName(assetPath),assetGroup,true,out var addressableAsset))
+			if(!KZEditorKit.TryRegisterAddressable(assetPath,KZFileKit.GetOnlyName(assetPath),assetGroup,true,out var addressableAsset))
 			{
 				return null;
 			}

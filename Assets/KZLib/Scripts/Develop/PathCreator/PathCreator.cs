@@ -70,7 +70,7 @@ namespace KZLib.Development
 
 					m_pathSubject.OnNext(Unit.Default);
 
-					m_pathLength = CommonUtility.GetTotalDistance(m_pointArray);
+					m_pathLength = KZMathKit.GetTotalDistance(m_pointArray);
 
 					if(m_lineRenderer)
 					{

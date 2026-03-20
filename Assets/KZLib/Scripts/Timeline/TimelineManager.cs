@@ -73,7 +73,7 @@ namespace KZLib
 
 				m_playingCutScene = false;
 
-				CommonUtility.UnLockInput();
+				KZInputKit.UnLockInput();
 			}
 
 			m_director.extrapolationMode = DirectorWrapMode.None;
@@ -92,7 +92,7 @@ namespace KZLib
 
 		private void _PlayCutScene()
 		{
-			CommonUtility.LockInput();
+			KZInputKit.LockInput();
 
 			m_cutScenePause = false;
 			m_playingCutScene = true;

@@ -30,7 +30,7 @@ namespace KZLib
 
 		protected override void _Initialize()
 		{
-			CommonUtility.RecycleTokenSource(ref m_tokenSource);
+			KZExternalKit.RecycleTokenSource(ref m_tokenSource);
 
 			var gameCfg = ConfigManager.In.Access<GameConfig>();
 
@@ -41,7 +41,7 @@ namespace KZLib
 
 		protected override void _Release(bool disposing)
 		{
-			CommonUtility.KillTokenSource(ref m_tokenSource);
+			KZExternalKit.KillTokenSource(ref m_tokenSource);
 
 			if(disposing)
 			{

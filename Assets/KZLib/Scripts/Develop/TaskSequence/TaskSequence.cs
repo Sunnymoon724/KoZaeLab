@@ -63,7 +63,7 @@ namespace KZLib.Development
 
 		private void OnDisable()
 		{
-			CommonUtility.KillTokenSource(ref m_tokenSource);
+			KZExternalKit.KillTokenSource(ref m_tokenSource);
 
 			_OnDisable();
 		}
@@ -84,7 +84,7 @@ namespace KZLib.Development
 				return;
 			}
 
-			CommonUtility.RecycleTokenSource(ref m_tokenSource);
+			KZExternalKit.RecycleTokenSource(ref m_tokenSource);
 
 			m_isPlaying = true;
 
@@ -95,18 +95,18 @@ namespace KZLib.Development
 				await _DoPlaySequenceAsync(sequenceParam);
 			}
 
-			await CommonUtility.LoopUniTaskAsync(_PlayAsync,m_loopCount,m_tokenSource.Token).SuppressCancellationThrow();
+			await KZExternalKit.LoopUniTaskAsync(_PlayAsync,m_loopCount,m_tokenSource.Token).SuppressCancellationThrow();
 
 			_FinishSequence();
 
 			m_isPlaying = false;
 
-			CommonUtility.KillTokenSource(ref m_tokenSource);
+			KZExternalKit.KillTokenSource(ref m_tokenSource);
 		}
 
 		public void CancelSequence()
 		{
-			CommonUtility.KillTokenSource(ref m_tokenSource);
+			KZExternalKit.KillTokenSource(ref m_tokenSource);
 		}
 
 		public virtual void ResetSequence() { }

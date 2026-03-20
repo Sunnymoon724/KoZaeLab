@@ -58,7 +58,7 @@ namespace KZLib.Data
 
 			if(!LocalizationSettings.Instance)
 			{
-				LogChannel.System.W("Localization Settings asset not found in Project Settings. Skipping LingoManager.");
+				LogChannel.Data.W("Localization Settings asset not found in Project Settings. Skipping LingoManager.");
 
 				return false;
 			}
@@ -88,7 +88,7 @@ namespace KZLib.Data
 
 				if(newLocal == null)
 				{
-					LogChannel.System.E("Localization is not include English locale");
+					LogChannel.Data.E("Localization is not include English locale");
 
 					return;
 				}
@@ -111,7 +111,7 @@ namespace KZLib.Data
 
 			if(localizedText == key)
 			{
-				LogChannel.System.W($"{key} is not exist in localization.");
+				LogChannel.Data.W($"{key} is not exist in localization.");
 
 				return key;
 			}
@@ -126,7 +126,7 @@ namespace KZLib.Data
 				return null;
 			}
 
-			return await CommonUtility.LoadHandleSafeAsync(LocalizationSettings.AssetDatabase.GetLocalizedAssetAsync<TAsset>(tableName,key));
+			return await KZExternalKit.LoadHandleSafeAsync(LocalizationSettings.AssetDatabase.GetLocalizedAssetAsync<TAsset>(tableName,key));
 		}
 
 		private bool _SplitLingoFormat(string key,out string tableName)

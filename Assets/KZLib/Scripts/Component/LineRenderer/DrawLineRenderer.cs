@@ -26,7 +26,7 @@ public class DrawLineRenderer : BaseLineRenderer
 	{
 		m_lineRenderer.positionCount = 0;
 
-		CommonUtility.KillTokenSource(ref m_tokenSource);
+		KZExternalKit.KillTokenSource(ref m_tokenSource);
 
 		m_tween?.Kill();
 	}
@@ -46,7 +46,7 @@ public class DrawLineRenderer : BaseLineRenderer
 			_DrawLine(progress,positionArray);
 		}
 
-		await CommonUtility.ExecuteProgressAsync(0.0f,positionArray.Length-1,duration,_Progress,ignoreTimescale,null,m_tokenSource.Token).SuppressCancellationThrow();
+		await KZExternalKit.ExecuteProgressAsync(0.0f,positionArray.Length-1,duration,_Progress,ignoreTimescale,null,m_tokenSource.Token).SuppressCancellationThrow();
 
 #if UNITY_EDITOR
 		m_startGizmo = false;
@@ -64,7 +64,7 @@ public class DrawLineRenderer : BaseLineRenderer
 			_DrawLine(progress,positionArray);
 		}
 
-		m_tween = CommonUtility.SetTweenProgress(0.0f,positionArray.Length-1,duration,_Progress).SetUpdate(ignoreTimescale).SetEase(Ease.Linear);
+		m_tween = KZExternalKit.SetTweenProgress(0.0f,positionArray.Length-1,duration,_Progress).SetUpdate(ignoreTimescale).SetEase(Ease.Linear);
 
 #if UNITY_EDITOR
 
@@ -117,7 +117,7 @@ public class DrawLineRenderer : BaseLineRenderer
 
 	private float _GetDuration(Vector3[] positionArray,float speed)
 	{
-		return CommonUtility.GetTotalDistance(positionArray)/speed;
+		return KZMathKit.GetTotalDistance(positionArray)/speed;
 	}
 
 #if UNITY_EDITOR

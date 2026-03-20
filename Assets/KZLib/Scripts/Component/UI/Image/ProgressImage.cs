@@ -77,7 +77,7 @@ public class ProgressImage : BaseImage
 			CurrentValue = progress;
 		}
 
-		await CommonUtility.ExecuteProgressAsync(CurrentValue,amount,duration,_SetValue,ignoreTimescale,animationCurve,token);
+		await KZExternalKit.ExecuteProgressAsync(CurrentValue,amount,duration,_SetValue,ignoreTimescale,animationCurve,token);
 	}
 
 	protected override void _Reset() 

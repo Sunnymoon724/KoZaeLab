@@ -20,7 +20,7 @@ public class LongPressButtonUI : BaseButtonUI,IPointerDownHandler,IPointerUpHand
 
 	private void OnDisable()
 	{
-		CommonUtility.KillTokenSource(ref m_tokenSource); 
+		KZExternalKit.KillTokenSource(ref m_tokenSource); 
 	}
 
 	public void SetClicked(Action onPressedShort,Action<bool> onPressedLong)
@@ -43,7 +43,7 @@ public class LongPressButtonUI : BaseButtonUI,IPointerDownHandler,IPointerUpHand
 			return;
 		}
 
-		CommonUtility.RecycleTokenSource(ref m_tokenSource);
+		KZExternalKit.RecycleTokenSource(ref m_tokenSource);
 
 		_DetectLongTouchAsync(m_tokenSource.Token).Forget();
 	}
@@ -57,7 +57,7 @@ public class LongPressButtonUI : BaseButtonUI,IPointerDownHandler,IPointerUpHand
 
 		bool wasLongPressed = m_isLongPressed;
 
-		CommonUtility.KillTokenSource(ref m_tokenSource);
+		KZExternalKit.KillTokenSource(ref m_tokenSource);
 
 		m_isLongPressed = false;
 

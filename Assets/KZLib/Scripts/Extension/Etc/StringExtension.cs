@@ -884,7 +884,7 @@ public static class StringExtension
 #if UNITY_EDITOR
 		if(layer == Global.INVALID_INDEX && isAutoCreate)
 		{
-			CommonUtility.AddLayer(layerName);
+			KZEditorKit.AddLayer(layerName);
 
 			layer = LayerMask.NameToLayer(layerName);
 		}

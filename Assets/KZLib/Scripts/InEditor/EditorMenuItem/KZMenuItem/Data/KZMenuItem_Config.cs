@@ -3,7 +3,6 @@ using System;
 using System.IO;
 using KZLib.Data;
 using KZLib.ToolKits;
-using KZLib.Utilities;
 using UnityEditor;
 
 namespace KZLib.EditorInternal.Menus
@@ -16,14 +15,14 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Config/Generate All Config",false,MenuOrder.Data.GENERATE-1)]
 		private static void _OnGenerateAllConfig()
 		{
-			var templateFilePath = CommonUtility.FindTemplateText("ConfigTemplate.txt");
+			var templateFilePath = KZEditorKit.FindTemplateText("ConfigTemplate.txt");
 			var outputRoute = RouteManager.In.GetOrCreateRoute("generatedScript");
 
 			foreach(var configFilePath in KZFileKit.FindAllExcelFileGroupByFolderPath(Global.CONFIG_FOLDER_PATH))
 			{
 				if(!KZFileKit.IsExcelFile(configFilePath))
 				{
-					LogChannel.System.W($"{configFilePath} is not exist. -> generate failed");
+					LogChannel.Editor.W($"{configFilePath} is not exist. -> generate failed");
 
 					continue;
 				}
@@ -34,18 +33,18 @@ namespace KZLib.EditorInternal.Menus
 
 					if(ConfigManager.IsDefaultConfig(fileName))
 					{
-						LogChannel.System.W($"{fileName} is default config. -> generate failed");
+						LogChannel.Editor.W($"{fileName} is default config. -> generate failed");
 
 						continue;
 					}
 
 					ConfigGenerator.GenerateConfig(configFilePath,outputRoute.AbsolutePath,templateFilePath);
 
-					LogChannel.System.I($"{fileName} is generated.");
+					LogChannel.Editor.I($"{fileName} is generated.");
 				}
 				catch(Exception exception)
 				{
-					LogChannel.System.E(exception);
+					LogChannel.Editor.E(exception);
 
 					return;
 				}
@@ -164,7 +163,7 @@ namespace KZLib.EditorInternal.Menus
 			}
 			catch(Exception exception)
 			{
-				LogChannel.System.E(exception);
+				LogChannel.Editor.E(exception);
 
 				return;
 			}
@@ -193,7 +192,7 @@ namespace KZLib.EditorInternal.Menus
 			}
 			catch(Exception exception)
 			{
-				LogChannel.System.E(exception);
+				LogChannel.Editor.E(exception);
 
 				return;
 			}

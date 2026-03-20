@@ -4,6 +4,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using R3;
 using Sirenix.OdinInspector;
+using UnityEngine;
 
 namespace KZLib
 {
@@ -11,6 +12,9 @@ namespace KZLib
 
 	public abstract class UnitStateController<TEnum> : SerializedMonoBehaviour where TEnum : struct,Enum
 	{
+		[SerializeField]
+		private bool m_showStateLog = false;
+
 		protected bool m_changeAllowed = false;
 		protected CancellationTokenSource m_tokenSource = null;
 		private readonly Dictionary<TEnum,Func<CancellationToken,IUnitStateParam,UniTask<TEnum>>> m_stateFuncDict = new();
@@ -34,7 +38,7 @@ namespace KZLib
 		{
 			m_stateFuncDict.Clear();
 
-			CommonUtility.KillTokenSource(ref m_tokenSource);
+			KZExternalKit.KillTokenSource(ref m_tokenSource);
 		}
 
 		public async UniTask EnterStateAsync(TEnum newState,IUnitStateParam param,bool isForce = false)
@@ -46,13 +50,13 @@ namespace KZLib
 
 			var curState = newState;
 
-			CommonUtility.RecycleTokenSource(ref m_tokenSource);
+			KZExternalKit.RecycleTokenSource(ref m_tokenSource);
 
 			while(isActiveAndEnabled)
 			{
 				if(!m_stateFuncDict.TryGetValue(curState, out var stateFunc))
 				{
-					LogChannel.System.E($"{curState} state not found");
+					LogChannel.UnitState.E($"{curState} state not found");
 
 					return;
 				}
@@ -63,7 +67,10 @@ namespace KZLib
 
 				_ReadyState();
 
-				LogChannel.System.I($"{name} is entered {curState}");
+				if(m_showStateLog)
+				{
+					LogChannel.UnitState.I($"{name} is entered {curState}");
+				}
 
 				var nextState = await stateFunc.Invoke(m_tokenSource.Token,param);
 

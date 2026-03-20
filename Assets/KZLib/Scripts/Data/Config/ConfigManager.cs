@@ -62,7 +62,7 @@ namespace KZLib.Data
 
 				if(config == null)
 				{
-					LogChannel.System.E($"{key}config is not exist.");
+					LogChannel.Data.E($"{key}config is not exist.");
 
 					return null;
 				}
@@ -103,7 +103,7 @@ namespace KZLib.Data
 				}
 				catch(Exception exception)
 				{
-					LogChannel.System.E($"Failed to deserialize {name}.yaml [{exception.Message}]");
+					LogChannel.Data.E($"Failed to deserialize {name}.yaml [{exception.Message}]");
 				}
 			}
 
@@ -144,7 +144,7 @@ namespace KZLib.Data
 				return text;
 			}
 
-			LogChannel.System.W($"{name} yaml file is not exist. generate config first.");
+			LogChannel.Data.W($"{name} yaml file is not exist. generate config first.");
 
 			return null;
 		}

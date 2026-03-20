@@ -104,12 +104,12 @@ public class ReuseScrollRect : MonoBehaviour
 	{
 		m_scrollRect.onValueChanged.RemoveAction(_OnScrollChanged);
 
-		CommonUtility.KillTween(m_tween);
+		KZExternalKit.KillTween(m_tween);
 	}
 
 	private void OnDestroy()
 	{
-		CommonUtility.KillTween(m_tween);
+		KZExternalKit.KillTween(m_tween);
 
 		Clear();
 	}
@@ -185,9 +185,9 @@ public class ReuseScrollRect : MonoBehaviour
 
 		var current = _GetContentLocation();
 
-		CommonUtility.KillTween(m_tween);
+		KZExternalKit.KillTween(m_tween);
 
-		m_tween = CommonUtility.SetTweenProgress(current,location,duration,SetContentLocation,onComplete);
+		m_tween = KZExternalKit.SetTweenProgress(current,location,duration,SetContentLocation,onComplete);
 
 		m_tween.Play();
 	}

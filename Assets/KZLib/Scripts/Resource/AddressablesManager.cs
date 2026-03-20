@@ -31,7 +31,7 @@ namespace KZLib
 
 		public async UniTask<long> GetDownloadAssetSizeAsync(string label)
 		{
-			return await CommonUtility.LoadHandleSafeAsync(Addressables.GetDownloadSizeAsync(label));
+			return await KZExternalKit.LoadHandleSafeAsync(Addressables.GetDownloadSizeAsync(label));
 		}
 
 		public async UniTask<bool> DownloadAssetAsync(string label,Action<float,long,long> onUpdateProgress = null)
@@ -65,7 +65,7 @@ namespace KZLib
 			{
 				if(!errorLog.IsEmpty())
 				{
-					LogChannel.System.E(errorLog);
+					LogChannel.Resource.E(errorLog);
 				}
 
 				return false;
@@ -76,7 +76,7 @@ namespace KZLib
 		{
 			if(!m_assetInfoDict.TryGetValue(path,out var result))
 			{
-				LogChannel.System.E($"Asset is not exist. [{path}]");
+				LogChannel.Resource.E($"Asset is not exist. [{path}]");
 
 				return null;
 			}
@@ -101,7 +101,7 @@ namespace KZLib
 
 			if(objectList.IsNullOrEmpty())
 			{
-				LogChannel.System.E($"Asset is not exist. [{path}]");
+				LogChannel.Resource.E($"Asset is not exist. [{path}]");
 
 				return Array.Empty<TObject>();
 			}
@@ -113,7 +113,7 @@ namespace KZLib
 		{
 			if(labelArray.IsNullOrEmpty())
 			{
-				LogChannel.System.E($"LabelArray is null or empty.");
+				LogChannel.Resource.E($"LabelArray is null or empty.");
 
 				return;
 			}
@@ -123,7 +123,7 @@ namespace KZLib
 			for(var i=0;i<labelArray.Length;i++)
 			{
 				var label = labelArray[i];
-				var locationList = await CommonUtility.LoadHandleSafeAsync(Addressables.LoadResourceLocationsAsync(label));
+				var locationList = await KZExternalKit.LoadHandleSafeAsync(Addressables.LoadResourceLocationsAsync(label));
 
 				for(var j=0;j<locationList.Count;j++)
                 {
@@ -143,7 +143,7 @@ namespace KZLib
 					continue;
 				}
 
-				var asset = await CommonUtility.LoadHandleSafeAsync(Addressables.LoadAssetAsync<Object>(locationInfo.Location.PrimaryKey));
+				var asset = await KZExternalKit.LoadHandleSafeAsync(Addressables.LoadAssetAsync<Object>(locationInfo.Location.PrimaryKey));
 
 				m_assetInfoDict.Add(key,new AssetInfo(asset,locationInfo.Label));
 

@@ -64,7 +64,7 @@ public class AnimatorEffectClip : EffectClip
 			return m_animator.IsAnimationFinished(AnimationName);
 		}
 
-		await CommonUtility.WaitForConditionAsync(_WaitForAnimation,SetTime,m_ignoreTimeScale,m_tokenSource.Token).SuppressCancellationThrow();
+		await KZExternalKit.WaitForConditionAsync(_WaitForAnimation,SetTime,m_ignoreTimeScale,m_tokenSource.Token).SuppressCancellationThrow();
 	}
 
 	protected override void _Reset()

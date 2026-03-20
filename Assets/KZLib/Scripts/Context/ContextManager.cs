@@ -19,7 +19,7 @@ namespace KZLib
 
 			var contextType = typeof(IContext);
 
-			foreach(var type in CommonUtility.FindDerivedTypeGroup(contextType))
+			foreach(var type in KZReflectionKit.FindDerivedTypeGroup(contextType))
 			{
 				if(type.IsAbstract || type.IsInterface || type.IsGenericTypeDefinition || type.IsNested)
 				{

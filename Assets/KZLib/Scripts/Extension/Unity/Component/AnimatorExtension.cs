@@ -281,22 +281,54 @@ public static class AnimatorExtension
 
 		var controller2 = animator.runtimeAnimatorController as AnimatorOverrideController;
 
+		if(!controller2)
+		{
+			return null;
+		}
+
 		return controller2.runtimeAnimatorController as AnimatorController;
 	}
 
 	public static IEnumerable<string> FindStateNameGroup(this Animator animator)
 	{
-		var controller = animator.GetAnimatorController(out var _);
-
 		if(_IsValid(animator))
 		{
-			for(var i=0;i<controller.layers.Length;i++)
-			{
-				var animatorStateArray = controller.layers[i].stateMachine.states;
+			var controller = animator.GetAnimatorController(out var _);
 
-				for(var j=0;j<animatorStateArray.Length;j++)
+			if(controller)
+			{
+				var layerArray = controller.layers;
+
+				if(layerArray != null)
 				{
-					yield return animatorStateArray[j].state.name;
+					for(var i=0;i<layerArray.Length;i++)
+					{
+						var stateMachine = layerArray[i].stateMachine;
+
+						if(!stateMachine)
+						{
+							continue;
+						}
+
+						var animatorStateArray = stateMachine.states;
+
+						if(animatorStateArray == null)
+						{
+							continue;
+						}
+
+						for(var j=0;j<animatorStateArray.Length;j++)
+						{
+							var state = animatorStateArray[j].state;
+
+							if(!state)
+							{
+								continue;
+							}
+
+							yield return state.name;
+						}
+					}
 				}
 			}
 		}

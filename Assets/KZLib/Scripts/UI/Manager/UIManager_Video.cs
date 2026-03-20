@@ -26,7 +26,7 @@ namespace KZLib
 		{
 			if(videoInfo == null)
 			{
-				LogChannel.System.E("VideoInfo is null");
+				LogChannel.UI.E("VideoInfo is null");
 
 				return;
 			}

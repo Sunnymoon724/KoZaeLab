@@ -23,7 +23,7 @@ namespace KZLib.Windows
 		[HorizontalGroup("Network/Discord/1"),Button("Post Image",ButtonSizes.Large),EnableIf(nameof(IsExistDiscord))]
 		protected void OnPostImageTest_Discord()
 		{
-			WebRequestManager.In.PostDiscordWebHook(m_discordLink,"Image Test",new MessageInfo[] { new("Test","Hello World") },CommonUtility.FindTestImage());
+			WebRequestManager.In.PostDiscordWebHook(m_discordLink,"Image Test",new MessageInfo[] { new("Test","Hello World") },KZEditorKit.FindTestImage());
 		}
 	}
 }

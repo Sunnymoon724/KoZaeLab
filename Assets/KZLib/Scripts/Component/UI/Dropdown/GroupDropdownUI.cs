@@ -65,7 +65,7 @@ public class GroupDropdownUI : BaseDropdownUI
 	{
 		if(added != 0)
 		{
-			var value = CommonUtility.LoopClamp(m_dropdown.value+added,m_dropdown.options.Count);
+			var value = KZMathKit.LoopClamp(m_dropdown.value+added,m_dropdown.options.Count);
 
 			m_dropdown.SetValueWithoutNotify(value);
 		}

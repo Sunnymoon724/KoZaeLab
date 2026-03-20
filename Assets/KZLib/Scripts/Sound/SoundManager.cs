@@ -78,7 +78,7 @@ namespace KZLib
 			{
 				if(delay < 0.0f)
 				{
-					LogChannel.System.W($"Delay time is negative: {delay}");
+					LogChannel.Sound.W($"Delay time is negative: {delay}");
 				}
 
 				audioSource.PlayDelayed(delay);

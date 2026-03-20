@@ -10,7 +10,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Proto/Generate Current Environment Proto",false,MenuOrder.Data.GENERATE)]
 		private static void _OnGenerateCurrentEnvironmentProto()
 		{
-			var environmentType = CommonUtility.GetCurrentEnvironmentType();
+			var environmentType = KZGameKit.GetCurrentEnvironmentType();
 
 			var batchFilePath = Path.Combine(Global.TOOL_FOLDER_PATH,"GenerateProto",$"GenerateProto_{environmentType}.bat");
 

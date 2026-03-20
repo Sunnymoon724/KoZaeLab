@@ -552,7 +552,7 @@ namespace KZLib.EditorInternal
 			}
 			catch(Exception exception)
 			{
-				LogChannel.System.E($"Set editorPrefs failed. [{c_editorText}/{CustomData} - {exception.Message}]");
+				LogChannel.Editor.E($"Set editorPrefs failed. [{c_editorText}/{CustomData} - {exception.Message}]");
 			}
 		}
 

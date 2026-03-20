@@ -146,8 +146,8 @@ PlayerSettings:
   bundleVersion: 0.1.0
   preloadedAssets:
   - {fileID: 11400000, guid: 7bc4ed90efd0e774baa841690154cdb1, type: 2}
-  - {fileID: 11400000, guid: 008a1bfcf9bd266468f1b98bc1e8a817, type: 2}
   - {fileID: 11400000, guid: 720651a032c9b9642bdbac2b8b76c1ef, type: 2}
+  - {fileID: 11400000, guid: 008a1bfcf9bd266468f1b98bc1e8a817, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -854,9 +854,11 @@ PlayerSettings:
     EmbeddedLinux: DOTWEEN
     GameCoreScarlett: DOTWEEN
     GameCoreXboxOne: UNITY_POST_PROCESSING_STACK_V2;DOTWEEN
+    Kepler: DOTWEEN
     LinuxHeadlessSimulation: DOTWEEN
     Lumin: UNITY_POST_PROCESSING_STACK_V2
     Nintendo Switch: UNITY_POST_PROCESSING_STACK_V2;DOTWEEN
+    Nintendo Switch 2: DOTWEEN
     PS4: UNITY_POST_PROCESSING_STACK_V2;DOTWEEN
     PS5: UNITY_POST_PROCESSING_STACK_V2;DOTWEEN
     QNX: DOTWEEN

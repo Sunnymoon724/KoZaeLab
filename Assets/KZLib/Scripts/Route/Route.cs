@@ -19,7 +19,7 @@ namespace KZLib.Data
 		{
 			if(path.IsEmpty())
 			{
-				LogChannel.System.E("Path cannot be null or empty.");
+				LogChannel.Data.E("Path cannot be null or empty.");
 
 				m_localPath = null;
 				m_extension = null;

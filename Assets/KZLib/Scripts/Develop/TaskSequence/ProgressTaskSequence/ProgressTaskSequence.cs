@@ -70,7 +70,7 @@ namespace KZLib.Development
 				Progress = progress;
 			}
 
-			await CommonUtility.ExecuteProgressAsync(start,finish,duration,_Progress,m_IgnoreTimeScale,null,m_tokenSource.Token).SuppressCancellationThrow();
+			await KZExternalKit.ExecuteProgressAsync(start,finish,duration,_Progress,m_IgnoreTimeScale,null,m_tokenSource.Token).SuppressCancellationThrow();
 		}
 	}
 }

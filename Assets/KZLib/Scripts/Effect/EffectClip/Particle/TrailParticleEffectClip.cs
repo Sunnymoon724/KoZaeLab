@@ -22,7 +22,7 @@ public class TrailParticleEffectClip : ParticleEffectClip
 			return false;
 		}
 
-		await CommonUtility.WaitForConditionAsync(_WaitForTrailParticle,SetTime,m_ignoreTimeScale,m_tokenSource.Token).SuppressCancellationThrow();
+		await KZExternalKit.WaitForConditionAsync(_WaitForTrailParticle,SetTime,m_ignoreTimeScale,m_tokenSource.Token).SuppressCancellationThrow();
 	}
 
 	protected override void _Reset()

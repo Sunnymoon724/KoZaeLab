@@ -17,23 +17,23 @@ public class ResolutionMonitor
 
 	public void StartResolutionDetection()
 	{
-		CommonUtility.RecycleTokenSource(ref m_tokenSource);
+		KZExternalKit.RecycleTokenSource(ref m_tokenSource);
 
 		_SetScreen(false);
-	
+
 		_CheckResolutionDetectionAsync(m_tokenSource.Token).Forget();
 	}
 
 	public void StopResolutionDetection()
 	{
-		CommonUtility.KillTokenSource(ref m_tokenSource);
+		KZExternalKit.KillTokenSource(ref m_tokenSource);
 	}
 
-	private void _SetScreen(bool _notify)
+	private void _SetScreen(bool notify)
 	{
 		m_resolution = new Vector2Int(Screen.width,Screen.height);
 
-		if(_notify)
+		if(notify)
 		{
 			GlobalMessagePipe.GetPublisher<CommonNoticeTag,Unit>().Publish(CommonNoticeTag.ChangedDeviceResolution,Unit.Default);
 		}
@@ -50,7 +50,7 @@ public class ResolutionMonitor
 				break;
 			}
 
-			if( m_resolution.x != Screen.width || m_resolution.y != Screen.height )
+			if(m_resolution.x != Screen.width || m_resolution.y != Screen.height)
 			{
 				_SetScreen(true);
 			}

@@ -56,7 +56,7 @@ namespace KZLib
 			Application.lowMemory -= _OnLowMemory;
 			SceneManager.sceneLoaded -= _OnUnloadSceneAssetBundle;
 
-			CommonUtility.ClearUnloadedAssetMemory();
+			KZMemoryKit.ClearUnloadedAssetMemory();
 
 #if UNITY_EDITOR
 			EditorUtility.UnloadUnusedAssetsImmediate(true);
@@ -204,7 +204,7 @@ namespace KZLib
 
 			m_isSceneChanging = true;
 
-			CommonUtility.LockInput();
+			KZInputKit.LockInput();
 
 			// darker
 			await UIManager.In.PlayTransitionOutAsync(transitionNameTag,false);
@@ -247,7 +247,7 @@ namespace KZLib
 			// brighter
 			await UIManager.In.PlayTransitionInAsync(transitionNameTag,true);
 
-			CommonUtility.UnLockInput();
+			KZInputKit.UnLockInput();
 
 			m_isSceneChanging = false;
 		}
@@ -256,27 +256,27 @@ namespace KZLib
 		{
 			if(sceneName.IsEmpty())
 			{
-				LogChannel.System.E("Scene name is empty.");
+				LogChannel.Scene.E("Scene name is empty.");
 
 				return;
 			}
 
 			onUpdateProgress?.Invoke(0.0f);
 
-			LogChannel.System.I($"{sceneName} create start.");
+			LogChannel.Scene.I($"{sceneName} create start.");
 
 			var sceneType = Type.GetType($"{sceneName}, Assembly-CSharp");
 
 			if(sceneType == null)
 			{
-				LogChannel.System.E($"{sceneName} is not exists.");
+				LogChannel.Scene.E($"{sceneName} is not exists.");
 
 				return;
 			}
 
 			if(Activator.CreateInstance(sceneType) is not SceneState sceneState)
 			{
-				LogChannel.System.E($"{sceneName} create failed.");
+				LogChannel.Scene.E($"{sceneName} create failed.");
 
 				return;
 			}
@@ -290,7 +290,7 @@ namespace KZLib
 
 			await sceneState.InitializeAsync(_UpdateProgress);
 
-			LogChannel.System.I($"{sceneName} create end.");
+			LogChannel.Scene.I($"{sceneName} create end.");
 
 			onUpdateProgress?.Invoke(1.0f);
 		}
@@ -306,7 +306,7 @@ namespace KZLib
 
 			onUpdateProgress?.Invoke(0.0f);
 
-			LogChannel.System.I($"{current.SceneName} destroy start.");
+			LogChannel.Scene.I($"{current.SceneName} destroy start.");
 
 			// remove current scene
 			m_sceneStateStack.Pop();
@@ -323,12 +323,12 @@ namespace KZLib
 
 			// TODO 씬 전환시 사용하지 않는 어셋 삭제
 			// AssetBundleManager.Instance.UnloadLoadeAssetBundle();
-			CommonUtility.ClearUnloadedAssetMemory();
+			KZMemoryKit.ClearUnloadedAssetMemory();
 
 #if UNITY_EDITOR
 			EditorUtility.UnloadUnusedAssetsImmediate(true);
 #endif
-			LogChannel.System.I($"{current.SceneName} destroy end.");
+			LogChannel.Scene.I($"{current.SceneName} destroy end.");
 
 			_OnLowMemory();
 
@@ -344,7 +344,7 @@ namespace KZLib
 
 			m_lastUnloadTime = Time.unscaledTime;
 
-			CommonUtility.ClearUnloadedAssetMemory();
+			KZMemoryKit.ClearUnloadedAssetMemory();
 		}
 		
 		private void _OnUnloadSceneAssetBundle(Scene scene, LoadSceneMode mode)

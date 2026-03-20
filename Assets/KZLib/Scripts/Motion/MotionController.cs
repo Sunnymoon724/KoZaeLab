@@ -21,41 +21,71 @@ namespace KZLib
 	public class MotionController : MonoBehaviour
 	{
 		[SerializeField]
-		protected Animator m_animator = null;
+		private Animator m_animator = null;
 
 		[SerializeField,KZRichText]
 		protected string m_currentStateName = null;
 
 		private readonly Dictionary<int,MotionEvent> m_motionEventDict = new();
 
-		public void PlayAnimation(string stateName,int layer = 0,float speed = 1.0f,float normalizedTime = 0.0f)
+		public void SetAnimator(string animatorPath)
 		{
 			if(!m_animator)
 			{
 				return;
 			}
 
-			SetSpeed(speed);
+			m_animator.runtimeAnimatorController = ResourceManager.In.GetAnimatorOverrideController(animatorPath);
 
-			m_currentStateName = stateName;
-
-			m_animator.Play(stateName,layer,normalizedTime);
+			m_animator.Rebind();
 		}
 
-		public void PlayAnimationInTime(string stateName,int layer,float duration)
+		public void PlayAnimation(string stateName,int layer = 0,float speed = 1.0f,float normalizedTime = 0.0f)
 		{
-			if(!m_animator)
+			if(!_CheckAnimation(stateName,layer))
+			{
+				return;
+			}
+
+			_PlayAnimationInner(stateName,layer,speed,normalizedTime);
+		}
+
+		public void PlayAnimationInTime(string stateName,int layer,float duration,float normalizedTime)
+		{
+			if(!_CheckAnimation(stateName,layer))
 			{
 				return;
 			}
 
 			var clipLength = FindAnimationClipLength(stateName);
 
-			SetSpeed(clipLength/duration);
+			_PlayAnimationInner(stateName,layer,clipLength/duration,normalizedTime);
+		}
+
+		private bool _CheckAnimation(string stateName,int layer)
+		{
+			if(!m_animator)
+			{
+				return false;
+			}
+
+			if(!m_animator.HasState(layer,Animator.StringToHash(stateName)))
+			{
+				LogChannel.Server.W($"{stateName} is not exist in {m_animator.name}");
+
+				return false;
+			}
+
+			return true;
+		}
+
+		private void _PlayAnimationInner(string stateName,int layer,float speed,float normalizedTime)
+		{
+			SetSpeed(speed);
 
 			m_currentStateName = stateName;
 
-			m_animator.Play(stateName,layer);
+			m_animator.Play(stateName,layer,normalizedTime);
 		}
 
 		public void SetSpeed(float speed = 1.0f)

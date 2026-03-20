@@ -7,7 +7,7 @@ namespace KZLib.Samples.Main
 	{
 		private void Start()
 		{
-			LogChannel.Client.I("Start");
+			LogChannel.Test.I("Start");
 		}
 	}
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace KZLib.Development
 {
-	public class InfiniteBackground : SerializedMonoBehaviour
+	public class InfiniteBackground : MonoBehaviour
 	{
 		[SerializeField]
 		private SpriteRenderer m_pivot = null;

@@ -41,7 +41,7 @@ public class ParticleEffectClip : EffectClip
 			return !m_mainParticle.isPlaying;
 		}
 
-		await CommonUtility.WaitForConditionAsync(_WaitForParticle,SetTime,m_ignoreTimeScale,m_tokenSource.Token).SuppressCancellationThrow();
+		await KZExternalKit.WaitForConditionAsync(_WaitForParticle,SetTime,m_ignoreTimeScale,m_tokenSource.Token).SuppressCancellationThrow();
 	}
 
 	private void _SetColor(ParticleSystem.MainModule mainModule,Color color)

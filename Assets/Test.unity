@@ -407,19 +407,22 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_shapeType: 2
-  m_outlineSize: 8
+  m_radius: {x: 0, y: 0}
+  m_center: {x: 0, y: 0}
+  m_primitiveType: 0
+  m_outlineThickness: 1
+  m_outlineColor: {r: 1, g: 1, b: 1, a: 1}
   m_fillType: 0
   m_fillColor: {r: 0.40381765, g: 1, b: 0, a: 1}
+  m_antiAliasing: 0
   m_ellipseAngle: 360
   m_polygonSideCount: 6
-  m_polygonVertexDistanceArray:
+  m_polygonVertexDistanceList:
   - 1
   - 1
   - 1
-  - 1
-  - 1
-  - 1
+  m_cornerRadius: 0
+  m_triangleOffset: 0.5
 --- !u!222 &459782904
 CanvasRenderer:
   m_ObjectHideFlags: 0

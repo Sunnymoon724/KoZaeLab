@@ -81,7 +81,7 @@ namespace KZLib.Networking
 			{
 				if(!dumpInfo.Payload.IsEmpty())
 				{
-					dumpBuilder.Append($"[REQUEST PAYLOAD]\n{CommonUtility.PrettifyJson(dumpInfo.Payload)}\n");
+					dumpBuilder.Append($"[REQUEST PAYLOAD]\n{KZExternalKit.PrettifyJson(dumpInfo.Payload)}\n");
 				}
 	
 				dumpBuilder.Append($"\n[REQUEST CONTENT]\n{dumpInfo.ContentType}\n");
@@ -94,7 +94,7 @@ namespace KZLib.Networking
 
 			if(!responseInfo.Content.IsEmpty())
 			{
-				dumpBuilder.Append($"[RESPONSE CONTENT]\n{CommonUtility.PrettifyJson(responseInfo.Content)}\n");
+				dumpBuilder.Append($"[RESPONSE CONTENT]\n{KZExternalKit.PrettifyJson(responseInfo.Content)}\n");
 			}
 
 			if(!responseInfo.Result)

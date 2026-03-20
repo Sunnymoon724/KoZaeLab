@@ -60,7 +60,7 @@ namespace KZLib.Attributes
 
 		protected TMember _FindValue<TMember>(string memberName)
 		{
-			return CommonUtility.FindValueInObject<TMember>(memberName,Property.ParentValues[0]);
+			return KZReflectionKit.FindValueInObject<TMember>(memberName,Property.ParentValues[0]);
 		}
 
 		protected GUIStyle _GetValidationStyle(bool isValid,string wrongHexColor = null)

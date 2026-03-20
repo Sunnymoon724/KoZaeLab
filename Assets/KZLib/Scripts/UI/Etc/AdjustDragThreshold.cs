@@ -25,7 +25,7 @@ public class AdjustDragThreshold : MonoBehaviour
 	{
 		if(!m_eventSystem)
 		{
-			LogChannel.System.E("EventSystem is null");
+			LogChannel.UI.E("EventSystem is null");
 
 			return;
 		}

@@ -39,7 +39,7 @@ namespace KZLib.Windows
 		[HorizontalGroup("Network/GoogleDrive/1",Order = 1),Button("Post Image",ButtonSizes.Large),EnableIf(nameof(IsExistGoogleDrive))]
 		protected void OnPostImage_GoogleDrive()
 		{
-			WebRequestManager.In.PostGoogleDriveFile("Test","Ostrich.png",CommonUtility.FindTestImage(),"image/png");
+			WebRequestManager.In.PostGoogleDriveFile("Test","Ostrich.png",KZEditorKit.FindTestImage(),"image/png");
 		}
 
 		[HorizontalGroup("Network/GoogleDrive/3",Order = 3),SerializeField,TableList(HideToolbar = true,AlwaysExpanded = true,IsReadOnly = true),EnableIf(nameof(IsExistGoogleDrive))]

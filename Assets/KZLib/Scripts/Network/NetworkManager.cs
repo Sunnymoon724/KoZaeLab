@@ -75,14 +75,14 @@ namespace KZLib.Networking
 
 			if(touchBlock)
 			{
-				CommonUtility.LockInput();
+				KZInputKit.LockInput();
 			}
 
 			var result = await onRequestFunc.Invoke();
 
 			if(touchBlock)
 			{
-				CommonUtility.UnLockInput();
+				KZInputKit.UnLockInput();
 			}
 
 			if(result && noticeTag != CommonNoticeTag.None)

@@ -35,7 +35,7 @@ public static partial class ContainerExtension
 
 		if(canLoop)
 		{
-			index = CommonUtility.LoopClamp(index+count,list.Count);
+			index = KZMathKit.LoopClamp(index+count,list.Count);
 		}
 		else
 		{

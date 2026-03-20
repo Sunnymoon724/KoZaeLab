@@ -43,7 +43,7 @@ public class VideoPanel : BasePanel
 		m_videoPlayer.clip = null;
 		m_screenImage.color = Color.black;
 
-		CommonUtility.KillTokenSource(ref m_tokenSource);
+		KZExternalKit.KillTokenSource(ref m_tokenSource);
 
 		m_videoPlayer.errorReceived -= _ReceiveError;
 		m_videoPlayer.loopPointReached -= _IsVideoEnd;
@@ -81,7 +81,7 @@ public class VideoPanel : BasePanel
 
 			if(!videoClip)
 			{
-				LogChannel.System.E($"Video path is wrong. [{videoInfo.VideoPath}]");
+				LogChannel.UI.E($"Video path is wrong. [{videoInfo.VideoPath}]");
 
 				return;
 			}
@@ -141,7 +141,7 @@ public class VideoPanel : BasePanel
 
 		m_videoPlayer.Play();
 
-		CommonUtility.RecycleTokenSource(ref m_tokenSource);
+		KZExternalKit.RecycleTokenSource(ref m_tokenSource);
 
 		_UpdateVideoStateAsync(m_tokenSource.Token).Forget();
 	}
@@ -153,7 +153,7 @@ public class VideoPanel : BasePanel
 		m_screenImage.texture = null;
 		m_screenImage.color = Color.black;
 
-		CommonUtility.KillTokenSource(ref m_tokenSource);
+		KZExternalKit.KillTokenSource(ref m_tokenSource);
 	}
 
 	private async UniTaskVoid _UpdateVideoStateAsync(CancellationToken token)
@@ -198,6 +198,6 @@ public class VideoPanel : BasePanel
 
 	public void SeekFrame(long frame)
 	{
-		m_videoPlayer.frame = CommonUtility.Clamp(frame,0L,(long)m_videoPlayer.frameCount);
+		m_videoPlayer.frame = Math.Clamp(frame,0L,(long)m_videoPlayer.frameCount);
 	}
 }

@@ -87,7 +87,7 @@ namespace KZLib
 		{
 			if(folderPath.IsEmpty())
 			{
-				LogChannel.System.I("Path is null.");
+				LogChannel.Resource.I("Path is null.");
 
 				return null;
 			}
@@ -102,7 +102,7 @@ namespace KZLib
 
 				if(cacheArray.IsNullOrEmpty())
 				{
-					LogChannel.System.E($"Resources is not exist. [path : {folderPath}]");
+					LogChannel.Resource.E($"Resources is not exist. [path : {folderPath}]");
 
 					return null;
 				}
@@ -138,7 +138,7 @@ namespace KZLib
 #if UNITY_EDITOR
 			if(Path.HasExtension(folderPath))
 			{
-				LogChannel.System.E($"Path is folder path.[path : {folderPath}]");
+				LogChannel.Resource.E($"Path is folder path.[path : {folderPath}]");
 
 				return null;
 			}
@@ -156,7 +156,7 @@ namespace KZLib
 			}
 
 #if UNITY_EDITOR
-			return CommonUtility.FindAssetGroupInFolder<TObject>(assetPath).ToArray();
+			return KZAssetKit.FindAssetGroupInFolder<TObject>(assetPath).ToArray();
 #else
 			return null;
 #endif

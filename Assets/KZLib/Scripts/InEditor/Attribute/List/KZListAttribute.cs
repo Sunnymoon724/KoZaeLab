@@ -28,7 +28,7 @@ namespace KZLib.Attributes
 			var rect = _DrawPrefixLabel(label);
 			var countRect = new Rect(rect.x,rect.y,c_width,rect.height);
 
-			m_listCount = CommonUtility.MinClamp(EditorGUI.IntField(countRect,"",m_listCount),0);
+			m_listCount = Mathf.Max(EditorGUI.IntField(countRect,"",m_listCount),0);
 
 			if(m_listCount <= 0)
 			{

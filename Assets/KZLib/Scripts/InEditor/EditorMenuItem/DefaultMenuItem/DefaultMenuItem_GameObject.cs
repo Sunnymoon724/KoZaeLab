@@ -186,7 +186,7 @@ namespace KZLib.EditorInternal.Menus
 				return;
 			}
 
-			CommonUtility.CopyToClipBoard(selected.transform.FindHierarchy());
+			KZEditorKit.CopyToClipBoard(selected.transform.FindHierarchy());
 		}
 
 		[MenuItem("GameObject/Copy Hierarchy",true,MenuOrder.GameObject.HIERARCHY)]

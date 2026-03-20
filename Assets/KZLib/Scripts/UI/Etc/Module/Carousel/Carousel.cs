@@ -105,8 +105,8 @@ namespace KZLib.UI
 
 		private void _KillAllTokenSource()
 		{
-			CommonUtility.KillTokenSource(ref m_snapTokenSource);
-			CommonUtility.KillTokenSource(ref m_autoScrollTokenSource);
+			KZExternalKit.KillTokenSource(ref m_snapTokenSource);
+			KZExternalKit.KillTokenSource(ref m_autoScrollTokenSource);
 		}
 
 		public void SetEntryInfoList(List<IEntryInfo> entryInfoList,int index = -1)
@@ -208,7 +208,7 @@ namespace KZLib.UI
 
 		void IEndDragHandler.OnEndDrag(PointerEventData eventData)
 		{
-			CommonUtility.RecycleTokenSource(ref m_snapTokenSource);
+			KZExternalKit.RecycleTokenSource(ref m_snapTokenSource);
 
 			m_scrollRect.velocity = Vector2.zero;
 
@@ -239,7 +239,7 @@ namespace KZLib.UI
 				content.anchoredPosition = Vector2.Lerp(start,finish,time);
 			}
 
-			await CommonUtility.ExecuteProgressAsync(0.0f,1.0f,duration,_ScrollContent,false,null,token);
+			await KZExternalKit.ExecuteProgressAsync(0.0f,1.0f,duration,_ScrollContent,false,null,token);
 
 			m_centerSlot = target;
 
@@ -287,7 +287,7 @@ namespace KZLib.UI
 				return;
 			}
 
-			CommonUtility.RecycleTokenSource(ref m_autoScrollTokenSource);
+			KZExternalKit.RecycleTokenSource(ref m_autoScrollTokenSource);
 
 			if(m_centerSlot == null)
 			{
@@ -305,12 +305,12 @@ namespace KZLib.UI
 
 				var nextSlot = m_poolBinder.GetNearItem(m_centerSlot,1,true);
 
-				CommonUtility.RecycleTokenSource(ref m_snapTokenSource);
+				KZExternalKit.RecycleTokenSource(ref m_snapTokenSource);
 
 				await _SnapAsync(nextSlot,m_autoScrollDuration,m_snapTokenSource.Token);
 			}
 
-			await CommonUtility.LoopUniTaskAsync(_PlayTaskAsync,-1,token).SuppressCancellationThrow();
+			await KZExternalKit.LoopUniTaskAsync(_PlayTaskAsync,-1,token).SuppressCancellationThrow();
 		}
 
 		private void Reset()

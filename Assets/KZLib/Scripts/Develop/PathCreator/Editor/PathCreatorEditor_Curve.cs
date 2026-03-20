@@ -113,7 +113,7 @@ namespace KZLib.Development
 			for(var i=0;i<length;i++)
 			{
 				Handles.DrawDottedLine(handleArray[i*3+0],handleArray[i*3+1],5.0f);
-				Handles.DrawDottedLine(handleArray[i*3+2],handleArray[CommonUtility.LoopClamp(i*3+3,handleArray.Length)],5.0f);
+				Handles.DrawDottedLine(handleArray[i*3+2],handleArray[KZMathKit.LoopClamp(i*3+3,handleArray.Length)],5.0f);
 			}
 
 			Handles.color = m_normalLineColor;

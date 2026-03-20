@@ -47,14 +47,14 @@ public abstract class EffectClip : MonoBehaviour
 
 	private void OnEnable()
 	{
-		CommonUtility.RecycleTokenSource(ref m_tokenSource);
+		KZExternalKit.RecycleTokenSource(ref m_tokenSource);
 
 		_PlayEffectAsync(m_tokenSource.Token).Forget();
 	}
 
 	private void OnDisable()
 	{
-		CommonUtility.KillTokenSource(ref m_tokenSource);
+		KZExternalKit.KillTokenSource(ref m_tokenSource);
 	}
 
 	public virtual void SetEffect(Param effectParam)
@@ -89,7 +89,7 @@ public abstract class EffectClip : MonoBehaviour
 			m_currentTime = Duration;
 		}
 
-		await CommonUtility.LoopUniTaskAsync(_PlayTaskAsync,count,token).SuppressCancellationThrow();
+		await KZExternalKit.LoopUniTaskAsync(_PlayTaskAsync,count,token).SuppressCancellationThrow();
 
 		EndEffect(true);
 	}

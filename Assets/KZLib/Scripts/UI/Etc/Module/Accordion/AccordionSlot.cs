@@ -56,7 +56,7 @@ namespace KZLib.UI
 
 			if(m_duration != 0.0f)
 			{
-				CommonUtility.RecycleTokenSource(ref m_tokenSource);
+				KZExternalKit.RecycleTokenSource(ref m_tokenSource);
 
 				if(m_isOn)
 				{
@@ -137,7 +137,7 @@ namespace KZLib.UI
 					m_layoutElement.preferredHeight = height;
 				}
 
-				await CommonUtility.ExecuteProgressAsync(start,finish,m_duration,_ProgressHeight,false,null,token);
+				await KZExternalKit.ExecuteProgressAsync(start,finish,m_duration,_ProgressHeight,false,null,token);
 			}
 			else
 			{
@@ -146,7 +146,7 @@ namespace KZLib.UI
 					m_layoutElement.preferredWidth = width;
 				}
 
-				await CommonUtility.ExecuteProgressAsync(start,finish,m_duration,_ProgressWidth,false,null,token);
+				await KZExternalKit.ExecuteProgressAsync(start,finish,m_duration,_ProgressWidth,false,null,token);
 			}
 		}
 		

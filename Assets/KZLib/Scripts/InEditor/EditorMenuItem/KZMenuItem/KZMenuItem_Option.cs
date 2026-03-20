@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
-using KZLib.Utilities;
 using UnityEditor.Build;
 
 namespace KZLib.EditorInternal.Menus
@@ -18,7 +17,7 @@ namespace KZLib.EditorInternal.Menus
 				return;
 			}
 
-			CommonUtility.ReleaseManager();
+			KZGameKit.ReleaseManager();
 
 			KZEditorKit.DisplayInfo("Managers are deleted.");
 		}
@@ -219,7 +218,7 @@ namespace KZLib.EditorInternal.Menus
 
 			var targetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
 
-			CommonUtility.AddDefineSymbol("KZLIB_PLAY_FAB",NamedBuildTarget.FromBuildTargetGroup(targetGroup));
+			KZEditorKit.AddDefineSymbol("KZLIB_PLAY_FAB",NamedBuildTarget.FromBuildTargetGroup(targetGroup));
 		}
 
 		[MenuItem("KZMenu/Option/Add PlayFab Module",true,MenuOrder.Option.MODULE)]
@@ -242,7 +241,7 @@ namespace KZLib.EditorInternal.Menus
 
 			var targetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
 
-			CommonUtility.AddDefineSymbol("KZLIB_IN_APP_PURCHASE",NamedBuildTarget.FromBuildTargetGroup(targetGroup));
+			KZEditorKit.AddDefineSymbol("KZLIB_IN_APP_PURCHASE",NamedBuildTarget.FromBuildTargetGroup(targetGroup));
 		}
 
 		[MenuItem("KZMenu/Option/Add InAppPurchase Module",true,MenuOrder.Option.MODULE)]

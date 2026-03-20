@@ -1,0 +1,118 @@
+﻿using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+
+namespace KZLib.Utilities
+{
+	public sealed class TimeTracker : IDisposable
+	{
+		private CancellationTokenSource m_tokenSource = null;
+		private bool m_disposed = false;
+
+		~TimeTracker()
+		{
+			_Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			_Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void _Dispose(bool disposing)
+		{
+			if(m_disposed)
+			{
+				return;
+			}
+
+			if(disposing)
+			{
+				StopTimer();
+			}
+
+			m_disposed = true;
+		}
+
+		public void StopTimer()
+		{
+			KZExternalKit.KillTokenSource(ref m_tokenSource);
+		}
+
+		public void SetTimer(long timestamp,Action<TimeSpan> onRefresh,Action onComplete)
+		{
+			SetTimerAsync(timestamp,onRefresh,onComplete).Forget();
+		}
+
+		public async UniTask SetTimerAsync(long timestamp,Action<TimeSpan> onRefresh,Action onComplete)
+		{
+			var dateTime = timestamp <= 0L ? DateTime.MinValue : timestamp.ToDateTime(false);
+
+			await SetTimerAsync(dateTime,onRefresh,onComplete);
+		}
+
+		public void SetTimer(DateTime dateTime,Action<TimeSpan> onRefresh,Action onComplete)
+		{
+			SetTimerAsync(dateTime,onRefresh,onComplete).Forget();
+		}
+
+		public async UniTask SetTimerAsync(DateTime dateTime,Action<TimeSpan> onRefresh,Action onComplete)
+		{
+			if(dateTime == DateTime.MinValue)
+			{
+				// not use timer
+				return;
+			}
+
+			var endTime = dateTime.Kind == DateTimeKind.Utc ? dateTime : dateTime.ToUniversalTime();
+			var remainingTime = _GetRemainingTime(endTime);
+
+			if(remainingTime.TotalMilliseconds <= 0L)
+			{
+				// timer is over
+				onRefresh?.Invoke(TimeSpan.Zero);
+				onComplete?.Invoke();
+
+				return;
+			}
+
+			await _PlayTimerAsync(endTime,onRefresh,onComplete);
+		}
+
+		private async UniTask _PlayTimerAsync(DateTime dateTime,Action<TimeSpan> onRefresh,Action onComplete)
+		{
+			KZExternalKit.RecycleTokenSource(ref m_tokenSource);
+
+			var token = m_tokenSource.Token;
+
+			TimeSpan remainingTime;
+
+			while(!token.IsCancellationRequested) 
+			{
+				remainingTime = _GetRemainingTime(dateTime);
+
+				if(remainingTime.TotalSeconds <= 0.0d)
+				{
+					break;
+				}
+
+				onRefresh?.Invoke(remainingTime);
+
+				await UniTask.Delay(TimeSpan.FromSeconds(1.0f),true,cancellationToken: token).SuppressCancellationThrow();
+			}
+
+			if(!token.IsCancellationRequested)
+			{
+				remainingTime = _GetRemainingTime(dateTime);
+				onRefresh?.Invoke(remainingTime);
+				onComplete?.Invoke();
+			}
+		}
+
+		private TimeSpan _GetRemainingTime(DateTime dateTime)
+		{
+			return dateTime-GameTimeManager.In.GetCurrentTime(true);
+		}
+	}
+}

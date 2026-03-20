@@ -137,7 +137,7 @@ namespace KZLib
 				Open(nameTag,param);
 			}
 
-			CommonUtility.DelayAction(_Open,delayTime);
+			KZExternalKit.DelayAction(_Open,delayTime);
 		}
 
 		public IWindow Open(CommonUINameTag nameTag,object param = null)

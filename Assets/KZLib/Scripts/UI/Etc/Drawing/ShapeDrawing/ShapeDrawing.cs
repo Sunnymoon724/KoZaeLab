@@ -297,8 +297,8 @@ namespace KZLib.UI
 			for(var i=0;i<segmentCount;i++)
 			{
 				var currVert = outerVertArray[i];
-				var prevVert = outerVertArray[CommonUtility.LoopClamp(i-1,segmentCount)];
-				var nextVert = outerVertArray[CommonUtility.LoopClamp(i+1,segmentCount)];
+				var prevVert = outerVertArray[KZMathKit.LoopClamp(i-1,segmentCount)];
+				var nextVert = outerVertArray[KZMathKit.LoopClamp(i+1,segmentCount)];
 
 				var direction1 = (prevVert-currVert).normalized;
 				var direction2 = (nextVert-currVert).normalized;

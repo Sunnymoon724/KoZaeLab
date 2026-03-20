@@ -25,7 +25,7 @@ namespace KZLib.Windows
 			{
 				m_currentPoint = value;
 
-				m_resultPoint = CommonUtility.GetEaseCurve(m_easeType).Evaluate(value);
+				m_resultPoint = KZMathKit.GetEaseCurve(m_easeType).Evaluate(value);
 			}
 		}
 
@@ -78,7 +78,7 @@ namespace KZLib.Windows
 			Handles.color = color;
 
 			var pointList = new List<Vector3>();
-			var curve = CommonUtility.GetEaseCurve(m_easeType);
+			var curve = KZMathKit.GetEaseCurve(m_easeType);
 
 			for(var i=0.0f;i<1.0f;i+=0.01f)
 			{

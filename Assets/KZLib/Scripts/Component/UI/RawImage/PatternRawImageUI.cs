@@ -35,7 +35,7 @@ public class PatternRawImageUI : BaseRawImageUI
 
 		if(Application.isPlaying)
 		{
-			CommonUtility.RecycleTokenSource(ref m_tokenSource);
+			KZExternalKit.RecycleTokenSource(ref m_tokenSource);
 
 			_ScrollPatternAsync(m_tokenSource.Token).Forget();
 		}
@@ -43,7 +43,7 @@ public class PatternRawImageUI : BaseRawImageUI
 
 	private void OnDisable()
 	{
-		CommonUtility.KillTokenSource(ref m_tokenSource);
+		KZExternalKit.KillTokenSource(ref m_tokenSource);
 	}
 
 	private void _SetPatternAspect()
@@ -122,7 +122,7 @@ public class PatternRawImageUI : BaseRawImageUI
 			m_rawImage.uvRect = scrollRect;
 		}
 
-		await CommonUtility.LoopUpdateAndWaitForFrameAsync(_UpdatePattern,m_ignoreTimescale,-1,token);
+		await KZExternalKit.LoopUpdateAndWaitForFrameAsync(_UpdatePattern,m_ignoreTimescale,-1,token);
 	}
 
 	protected override void _Reset()

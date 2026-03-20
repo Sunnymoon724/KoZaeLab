@@ -98,10 +98,10 @@ public class SkipPanel : BasePanel
 		{
 			_SetButtonsState(isSkipActive : true,isTriggerActive : false);
 
-			CommonUtility.DelayAction(_HideSkipButton,m_skipHideDuration);
+			KZExternalKit.DelayAction(_HideSkipButton,m_skipHideDuration);
 		}
 
-		CommonUtility.DelayAction(_PlayAction,delayTime);
+		KZExternalKit.DelayAction(_PlayAction,delayTime);
 	}
 
 	private void _HideSkipButton()

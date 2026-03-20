@@ -87,7 +87,7 @@ namespace KZLib.UI
 
 		public void RefreshIndex(int index)
 		{
-			m_focusIndex = CommonUtility.LoopClamp(index,m_entryInfoList.Count);
+			m_focusIndex = KZMathKit.LoopClamp(index,m_entryInfoList.Count);
 
 			// _RefreshNavigatorState();
 
@@ -131,11 +131,11 @@ namespace KZLib.UI
 			{
 				var index = firstIndex+i;
 				var location = firstLocation+i*m_slotSpace;
-				var slot = m_slotList[CommonUtility.LoopClamp(index,slotCount)];
+				var slot = m_slotList[KZMathKit.LoopClamp(index,slotCount)];
 
 				if(IsCircularMode)
 				{
-					index = CommonUtility.LoopClamp(index,entryInfoCount);
+					index = KZMathKit.LoopClamp(index,entryInfoCount);
 				}
 
 				if(index < 0 || index >= entryInfoCount || location > 1.0f)

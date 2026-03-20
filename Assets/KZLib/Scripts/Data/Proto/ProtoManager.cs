@@ -58,7 +58,7 @@ namespace KZLib.Data
 			var accumulatedTime = 0.0d;
 			var stopwatch = new Stopwatch();
 
-			LogChannel.System.I("Proto Load Start");
+			LogChannel.Data.I("Proto Load Start");
 
 			for(var i=0;i<textAssetArray.Length;i++)
 			{
@@ -66,7 +66,7 @@ namespace KZLib.Data
 
 				if(textAsset == null)
 				{
-					LogChannel.System.W($"TextAsset is null in {i}");
+					LogChannel.Data.W($"TextAsset is null in {i}");
 
 					continue;
 				}
@@ -90,7 +90,7 @@ namespace KZLib.Data
 
 			stopwatch.Stop();
 
-			LogChannel.System.I($"Proto Load Complete [Count : {textAssetArray.Length} / Duration : {(GameTimeManager.In.GetCurrentTime(true)-start).TotalSeconds}]");
+			LogChannel.Data.I($"Proto Load Complete [Count : {textAssetArray.Length} / Duration : {(GameTimeManager.In.GetCurrentTime(true)-start).TotalSeconds}]");
 
 			m_isLoaded = true;
 
@@ -117,7 +117,7 @@ namespace KZLib.Data
 
 			if(proto == null)
 			{
-				LogChannel.System.W($"Proto not found for {protoType.Name} with num {num}.");
+				LogChannel.Data.W($"Proto not found for {protoType.Name} with num {num}.");
 			}
 
 			return proto != null;
@@ -132,21 +132,21 @@ namespace KZLib.Data
 		{
 			if(num <= c_invalidNumber)
 			{
-				LogChannel.System.E($"{num} is not valid. [type : {protoType}]");
+				LogChannel.Data.E($"{num} is not valid. [type : {protoType}]");
 
 				return null;
 			}
 
 			if(!m_protoDict.TryGetValue(protoType,out var protoDict))
 			{
-				LogChannel.System.E($"{protoType.Name} is not exist.");
+				LogChannel.Data.E($"{protoType.Name} is not exist.");
 
 				return null;
 			}
 
 			if(!protoDict.TryGetValue(num, out var proto))
 			{
-				LogChannel.System.E($"{protoType.Name} is not include {num}.");
+				LogChannel.Data.E($"{protoType.Name} is not include {num}.");
 
 				return null;
 			}
@@ -173,7 +173,7 @@ namespace KZLib.Data
 				}
 			}
 
-			LogChannel.System.E($"{prtType.Name} is not exist.");
+			LogChannel.Data.E($"{prtType.Name} is not exist.");
 
 			return null;
 		}
@@ -247,7 +247,7 @@ namespace KZLib.Data
 				}
 
 				var protoTypeName = $"KZLib.Data.{protoName}Proto";
-				var protoType = CommonUtility.FindType(protoTypeName) ?? throw new InvalidOperationException($"{protoTypeName} is not exist.");
+				var protoType = KZReflectionKit.FindType(protoTypeName) ?? throw new InvalidOperationException($"{protoTypeName} is not exist.");
 				var deserialize = MemoryPackSerializer.Deserialize(protoType.MakeArrayType(),textAsset.bytes);
 
 				if(deserialize is not object[] resultArray)
@@ -280,7 +280,7 @@ namespace KZLib.Data
 			}
 			catch(Exception exception)
 			{
-				LogChannel.System.E($"Load failed. [Exception : {exception.Message}]");
+				LogChannel.Data.E($"Load failed. [Exception : {exception.Message}]");
 
 				return false;
 			}
@@ -314,7 +314,7 @@ namespace KZLib.Data
 
 				if(textAsset == null)
 				{
-					LogChannel.System.W($"TextAsset is null in {i}");
+					LogChannel.Data.W($"TextAsset is null in {i}");
 
 					continue;
 				}
@@ -336,7 +336,7 @@ namespace KZLib.Data
 
 			if(textAssetArray.IsNullOrEmpty())
 			{
-				LogChannel.System.E("Load failed, textAsset is null.");
+				LogChannel.Data.E("Load failed, textAsset is null.");
 
 				return false;
 			}

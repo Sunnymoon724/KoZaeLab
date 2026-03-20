@@ -30,7 +30,7 @@ namespace KZLib.Networking
 		{
 			if(trelloKey.IsEmpty())
 			{
-				LogChannel.System.E("TrelloKey is empty");
+				LogChannel.Network.E("TrelloKey is empty");
 
 				return null;
 			}

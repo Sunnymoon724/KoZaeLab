@@ -91,7 +91,7 @@ namespace KZLib
 			ServerTime = DateTime.UtcNow;
 			m_timeDifference = TimeSpan.Zero;
 
-			CommonUtility.RecycleTokenSource(ref m_tokenSource);
+			KZExternalKit.RecycleTokenSource(ref m_tokenSource);
 
 			_UpdateAsync(m_tokenSource.Token).Forget();
 		}
@@ -102,7 +102,7 @@ namespace KZLib
 			{
 				m_gameTimeDict.Clear();
 
-				CommonUtility.KillTokenSource(ref m_tokenSource);
+				KZExternalKit.KillTokenSource(ref m_tokenSource);
 			}
 
 			base._Release(disposing);

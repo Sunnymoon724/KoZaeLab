@@ -208,7 +208,7 @@ namespace KZLib
 
 		private async UniTask _StartMainAsync()
 		{
-			CommonUtility.RecycleTokenSource(ref m_tokenSource);
+			KZExternalKit.RecycleTokenSource(ref m_tokenSource);
 
 			if(IsTestMode)
 			{
@@ -312,7 +312,7 @@ namespace KZLib
 
 			m_isPlaying = false;
 
-			CommonUtility.ReleaseManager();
+			KZGameKit.ReleaseManager();
 		}
 
 		protected virtual void Update()
