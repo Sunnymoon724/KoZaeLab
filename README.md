@@ -57,6 +57,6 @@ https://github.com/mob-sakai/ParticleEffectForUGUI.git
 
 ### Etc
 This project references the following repository as a compiled DLL:
-* [KoZaeLibrary](https://github.com/Sunnymoon724/KoZaeLibrary) - Personal utility library for Unity development.
+* [KoZaeLibrary](https://github.com/Sunnymoon724/KoZaeLibrary)
 
 ***
