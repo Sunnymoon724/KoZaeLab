@@ -27,11 +27,7 @@ namespace KZLib
 		{
 			base._Initialize();
 
-			var optionCfg = ConfigManager.In.Access<OptionConfig>();
-
-			optionCfg.OnChangedGraphicQuality.Subscribe(_OnChangeFarClipPlane).AddTo(m_disposable);
-
-			_OnChangeFarClipPlane(optionCfg.CurrentGraphicQuality);
+			TuneManager.In.FetchTune<GraphicTune>().OnChangedGraphicQuality.Subscribe(_OnChangeFarClipPlane).AddTo(m_disposable);
 		}
 
 		protected override void _Release(bool disposing)

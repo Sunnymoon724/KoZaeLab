@@ -15,14 +15,16 @@ public class BadgeUI : MonoBehaviour
 
 	private void OnEnable()
 	{
-		if(m_badgeTag != BadgeTag.NONE)
+		if(m_badgeTag == BadgeTag.NONE)
 		{
-			m_subscription = GlobalMessagePipe.GetSubscriber<BadgeTag,bool>().Subscribe(m_badgeTag,_RefreshBadge);
-
-			var badgeCtx = ContextManager.In.Access<IBadgeContext>();
-
-			_RefreshBadge(badgeCtx.HasBadge(m_badgeTag));
+			return;
 		}
+
+		var currentCount = ContextManager.In.GetBadgeCount(m_badgeTag);
+		_RefreshBadge(currentCount);
+
+		m_subscription?.Dispose();
+		m_subscription = GlobalMessagePipe.GetSubscriber<BadgeTag,int>().Subscribe(m_badgeTag,_RefreshBadge);
 	}
 
 	private void OnDisable()
@@ -30,13 +32,18 @@ public class BadgeUI : MonoBehaviour
 		m_subscription?.Dispose();
 	}
 
-	private void _RefreshBadge(bool hasBadge)
+	private void _RefreshBadge(int currentCount)
 	{
-		var badge = hasBadge;
+		var hasBadge = currentCount > 0;
 
 		for(int i=0;i<m_badgeList.Count;i++)
 		{
-			m_badgeList[i].SetActive( badge );
+			var badge = m_badgeList[i];
+
+			if(badge)
+			{
+				badge.SetActive(hasBadge);
+			}
 		}
 	}
 }

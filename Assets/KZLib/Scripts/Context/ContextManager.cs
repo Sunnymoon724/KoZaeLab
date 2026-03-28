@@ -1,107 +1,189 @@
 using System;
 using System.Collections.Generic;
 using KZLib.Utilities;
+using MessagePipe;
+
+public class BadgeTag : CustomTag
+{
+	public BadgeTag Parent { get; }
+	public UnlockTag Dependency { get; }
+
+	public static readonly BadgeTag NONE = new(nameof(NONE));
+
+	protected BadgeTag(string name,BadgeTag parent = null, UnlockTag dependency = null) : base(name)
+	{
+		Parent = parent;
+		Dependency = dependency ?? UnlockTag.NONE;
+	}
+}
+
+public class UnlockTag : CustomTag
+{
+	public static readonly UnlockTag NONE = new(nameof(NONE));
+
+	protected UnlockTag(string name) : base(name) { }
+}
 
 namespace KZLib
 {
-	public interface IContext { }
+	public interface IContext
+	{
+		bool IsUnlocked(UnlockTag tag);
+		int GetBadgeCount(BadgeTag tag);
 
+		CustomTag[] TagArray { get; }
+	}
+
+	/// <summary>
+	/// Context = GameContent
+	/// </summary>
 	public class ContextManager : Singleton<ContextManager>
 	{
-		private readonly Dictionary<string,Type> m_contextTypeDict = new();
-		private readonly Dictionary<string,IContext> m_contextDict = new();
+		private readonly Dictionary<UnlockTag,List<IContext>> m_unlockListDict = new();
+		private readonly Dictionary<BadgeTag,List<IContext>> m_badgeListDict = new();
 
-		private ContextManager() { }
+		private readonly Dictionary<UnlockTag,List<BadgeTag>> m_dependencyBadgeListDict = new();
 
-		protected override void _Initialize()
+		private readonly Dictionary<BadgeTag,int> m_badgeCacheDict = new();
+		private readonly Dictionary<UnlockTag,bool> m_unlockCacheDict = new();
+
+		public void InitializeContext()
 		{
-			base._Initialize();
+			m_unlockListDict.Clear();
+			m_badgeListDict.Clear();
+			m_dependencyBadgeListDict.Clear();
 
-			var contextType = typeof(IContext);
-
-			foreach(var type in KZReflectionKit.FindDerivedTypeGroup(contextType))
+			foreach(var type in KZReflectionKit.FindDerivedTypeGroup(typeof(IContext)))
 			{
-				if(type.IsAbstract || type.IsInterface || type.IsGenericTypeDefinition || type.IsNested)
+				if(Activator.CreateInstance(type) is not IContext context)
 				{
 					continue;
 				}
 
-				var interfaceTypeArray = type.GetInterfaces();
-				var flag = false;
-
-				for(var i=0;i<interfaceTypeArray.Length;i++)
+				if(context.TagArray == null)
 				{
-					var interfaceType = interfaceTypeArray[i];
-	
-					if(interfaceType == contextType || !contextType.IsAssignableFrom(interfaceType))
-					{
-						continue;
-					}
+					continue;
+				}
 
-					var key = interfaceType.Name;
-
-					if(flag)
+				foreach(var tag in context.TagArray)
+				{
+					if(tag is UnlockTag unlockTag)
 					{
-						throw new ArgumentException($"Value : {type} is already exists.");
+						_AddMapping(m_unlockListDict,unlockTag,context);
 					}
+					else if(tag is BadgeTag badgeTag)
+					{
+						_AddMapping(m_badgeListDict,badgeTag,context);
 
-					if(!m_contextTypeDict.ContainsKey(key))
-					{
-						m_contextTypeDict.Add(key,type);
-						flag = true;
-					}
-					else
-					{
-						throw new ArgumentException($"Key : {key} is already exists.");
+						var dependency = badgeTag.Dependency;
+
+						if(dependency != UnlockTag.NONE)
+						{
+							m_dependencyBadgeListDict.AddOrCreate(dependency,badgeTag);
+						}
 					}
 				}
 			}
+		}
+
+		private void _AddMapping<TTag>(Dictionary<TTag,List<IContext>> tagListDict,TTag tag,IContext context)
+		{
+			tagListDict.AddOrCreate(tag,context);
 		}
 
 		protected override void _Release(bool disposing)
 		{
 			if(disposing)
 			{
-				m_contextDict.Clear();
+				m_unlockListDict.Clear();
+				m_badgeListDict.Clear();
 			}
 
 			base._Release(disposing);
 		}
 
-		/// <summary>
-		/// If config is not exist, create new config.
-		/// </summary>
-		public TContext Access<TContext>() where TContext : class,IContext
+		public bool IsUnlocked(UnlockTag unlockTag)
 		{
-			var key = typeof(TContext).Name;
-
-			if(!m_contextDict.TryGetValue(key,out var context))
+			if(unlockTag == UnlockTag.NONE)
 			{
-				context = _Create(key);
-
-				if(context == null)
-				{
-					LogChannel.System.E($"{key}context is not exist.");
-
-					return null;
-				}
-
-				m_contextDict.Add(key,context);
+				return true;
 			}
 
-			return context as TContext;
+			if(m_unlockListDict.TryGetValue(unlockTag,out var unlockList))
+			{
+				foreach(var unlock in unlockList)
+				{
+					if(unlock.IsUnlocked(unlockTag))
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
 		}
 
-		private IContext _Create(string key)
+		public int GetBadgeCount(BadgeTag badgeTag)
 		{
-			var contextType = m_contextTypeDict.TryGetValue(key,out var type) ? type : null;
-			
-			if(contextType != null)
+			if(badgeTag == BadgeTag.NONE || !IsUnlocked(badgeTag.Dependency))
 			{
-				return Activator.CreateInstance(contextType) as IContext;
+				return 0;
 			}
 
-			return null;
-		} 
+			var count = 0;
+
+			if(m_badgeListDict.TryGetValue(badgeTag,out var badgeList))
+			{
+				foreach(var badge in badgeList)
+				{
+					count += badge.GetBadgeCount(badgeTag);
+				}
+			}
+
+			return count;
+		}
+
+		public void NotifyBadgeChanged(BadgeTag badgeTag)
+		{
+			if(badgeTag == BadgeTag.NONE)
+			{
+				return;
+			}
+
+			var current = GetBadgeCount(badgeTag);
+
+			if(!m_badgeCacheDict.TryGetValue(badgeTag,out var last) || last != current)
+			{
+				m_badgeCacheDict[badgeTag] = current;
+
+				GlobalMessagePipe.GetPublisher<BadgeTag,bool>().Publish(badgeTag,current > 0);
+				GlobalMessagePipe.GetPublisher<BadgeTag,int>().Publish(badgeTag,current);
+
+				if(badgeTag.Parent != null)
+				{
+					NotifyBadgeChanged(badgeTag.Parent);
+				}
+			}
+		}
+
+		public void NotifyUnlockChanged(UnlockTag unlockTag)
+		{
+			var current = IsUnlocked(unlockTag);
+
+			if(!m_unlockCacheDict.TryGetValue(unlockTag,out var last) || last != current)
+			{
+				m_unlockCacheDict[unlockTag] = current;
+
+				GlobalMessagePipe.GetPublisher<UnlockTag,bool>().Publish(unlockTag,current);
+				
+				if(m_dependencyBadgeListDict.TryGetValue(unlockTag,out var badgeList))
+				{
+					foreach(var badge in badgeList)
+					{
+						NotifyBadgeChanged(badge);
+					}
+				}
+			}
+		}
 	}
 }
