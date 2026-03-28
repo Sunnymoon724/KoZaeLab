@@ -3,7 +3,7 @@ using YamlDotNet.Serialization;
 
 namespace KZLib.Data
 {
-	public class ServiceConfig : IConfig
+	public class WebhookConfig : IConfig
 	{
 		private Dictionary<string,string> DiscordLinkDict { get; set; } = new() { { "Bug Report", " " }, };
 		private Dictionary<string,string> GoogleSheetFileIdDict { get; set; } = new() { { " ", " " }, };

@@ -65,11 +65,7 @@ namespace KZLib.Data
 
 			await LocalizationSettings.InitializationOperation;
 
-			var optionCfg = ConfigManager.In.Access<OptionConfig>();
-
-			optionCfg.OnChangedLanguage.Subscribe(_OnChangeLanguage).AddTo(m_disposable);
-
-			_OnChangeLanguage(optionCfg.CurrentLanguage);
+			TuneManager.In.FetchTune<LanguageTune>().OnChangedLanguage.Subscribe(_OnChangeLanguage).AddTo(m_disposable);
 
 			m_isLoaded = true;
 

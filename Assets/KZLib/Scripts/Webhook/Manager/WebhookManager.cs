@@ -1,19 +1,19 @@
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Cysharp.Threading.Tasks;
+using KZLib.Data;
 using KZLib.Utilities;
 using R3;
 
-namespace KZLib.Networking
+namespace KZLib.Webs
 {
-	public partial class WebRequestManager : Singleton<WebRequestManager>
+	public partial class WebhookManager : Singleton<WebhookManager>
 	{
 		private readonly Subject<string> m_networkErrorSubject = new();
 		public Observable<string> OnShownNetworkError => m_networkErrorSubject;
 
-		private WebRequestManager() { }
+		private WebhookConfig WebhookCfg => ConfigManager.In.FetchConfig<WebhookConfig>();
 
 		protected override void _Release(bool disposing)
 		{
@@ -34,7 +34,7 @@ namespace KZLib.Networking
 		{
 			if(webRequest == null)
 			{
-				LogChannel.Network.E("WebRequest is null");
+				LogChannel.Web.E("WebRequest is null");
 
 				return null;
 			}
@@ -53,11 +53,11 @@ namespace KZLib.Networking
 
 			if(responseInfo.Result)
 			{
-				LogChannel.Network.I($"{webRequest.Name} is Success");
+				LogChannel.Web.I($"{webRequest.Name} is Success");
 			}
 			else
 			{
-				LogChannel.Network.E($"{webRequest.Name} is Failed");
+				LogChannel.Web.E($"{webRequest.Name} is Failed");
 
 				m_networkErrorSubject.OnNext(responseInfo.Error);
 			}
@@ -71,7 +71,7 @@ namespace KZLib.Networking
 			var dumpBuilder = new StringBuilder();
 			var currentTime = GameTimeManager.In.GetCurrentTime(true);
 
-			dumpBuilder.Append("================= [Web Request Dump] =================\n\n");
+			dumpBuilder.Append("================= [Webhook Dump] =================\n\n");
 			dumpBuilder.Append($"[TIME]\n{currentTime:yyyy\\/MM\\/dd\\ HH:mm:ss}\n\n");
 			dumpBuilder.Append($"[FULL URL]\n{dumpInfo.Uri.AbsoluteUri}\n\n");
 			dumpBuilder.Append($"[REQUEST]\n");

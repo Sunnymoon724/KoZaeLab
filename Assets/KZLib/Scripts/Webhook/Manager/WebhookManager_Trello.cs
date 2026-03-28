@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using KZLib.Data;
 using KZLib.Utilities;
 using Newtonsoft.Json.Linq;
 
-namespace KZLib.Networking
+namespace KZLib.Webs
 {
-	public partial class WebRequestManager : Singleton<WebRequestManager>
+	public partial class WebhookManager : Singleton<WebhookManager>
 	{
+		private const string c_trelloBoard = "boards";
+		private const string c_trelloClosed = "closed";
+		private const string c_trelloId = "id";
+		private const string c_trelloName = "name";
+		
 		public void GetTrelloBoard(Action<List<string>> onAction)
 		{
 			GetTrelloBoardAsync().ContinueWith(onAction).Forget();
@@ -21,23 +25,19 @@ namespace KZLib.Networking
 
 		public async UniTask<List<string>> GetTrelloBoardAsync()
 		{
-			var serviceCfg = ConfigManager.In.Access<ServiceConfig>();
-
-			return await GetTrelloBoardAsync(serviceCfg.TrelloKey);
+			return await GetTrelloBoardAsync(WebhookCfg.TrelloKey);
 		}
 
 		public async UniTask<List<string>> GetTrelloBoardAsync(string trelloKey)
 		{
-			if(trelloKey.IsEmpty())
+			if(!_IsValidTrelloKey(trelloKey))
 			{
-				LogChannel.Network.E("TrelloKey is empty");
-
 				return null;
 			}
 
 			var info = await _SendWebRequest(GetTrelloBoardWebRequest.Create(trelloKey));
 
-			return _ParseTrelloData(info,"boards");
+			return _ParseTrelloData(info,c_trelloBoard);
 		}
 
 		public void GetTrelloList(string boardId,Action<List<string>> onAction)
@@ -52,30 +52,24 @@ namespace KZLib.Networking
 
 		public async UniTask<List<string>> GetTrelloListAsync(string boardId)
 		{
-			var serviceCfg = ConfigManager.In.Access<ServiceConfig>();
-
-			return await GetTrelloListAsync(serviceCfg.TrelloKey,boardId);
+			return await GetTrelloListAsync(WebhookCfg.TrelloKey,boardId);
 		}
 
 		public async UniTask<List<string>> GetTrelloListAsync(string trelloKey,string boardId)
 		{
-			if(trelloKey.IsEmpty())
+			if(!_IsValidTrelloKey(trelloKey))
 			{
-				LogChannel.Network.E("TrelloKey is empty");
-
 				return null;
 			}
 
-			if(boardId.IsEmpty())
+			if(!_IsValidTrelloBoardId(boardId))
 			{
-				LogChannel.Network.E("Trello boardId is empty");
-
 				return null;
 			}
 
 			var info = await _SendWebRequest(GetTrelloListWebRequest.Create(trelloKey,boardId));
 
-			return _ParseTrelloData(info,"boards");
+			return _ParseTrelloData(info,c_trelloBoard);
 		}
 
 		public void GetTrelloCard(string listId,Action<List<string>> onAction)
@@ -90,30 +84,24 @@ namespace KZLib.Networking
 
 		public async UniTask<List<string>> GetTrelloCardAsync(string listId)
 		{
-			var serviceCfg = ConfigManager.In.Access<ServiceConfig>();
-
-			return await GetTrelloCardAsync(serviceCfg.TrelloKey,listId);
+			return await GetTrelloCardAsync(WebhookCfg.TrelloKey,listId);
 		}
 
 		public async UniTask<List<string>> GetTrelloCardAsync(string trelloKey,string listId)
 		{
-			if(trelloKey.IsEmpty())
+			if(!_IsValidTrelloKey(trelloKey))
 			{
-				LogChannel.Network.E("TrelloKey is empty");
-
 				return null;
 			}
 
-			if(listId.IsEmpty())
+			if(!_IsValidTrelloListId(listId))
 			{
-				LogChannel.Network.E("Trello listId is empty");
-
 				return null;
 			}
 
 			var info = await _SendWebRequest(GetTrelloCardWebRequest.Create(trelloKey,listId));
 
-			return _ParseTrelloData(info,"boards");
+			return _ParseTrelloData(info,c_trelloBoard);
 		}
 
 		private static List<string> _ParseTrelloData(ResponseInfo responseInfo,string key)
@@ -122,29 +110,34 @@ namespace KZLib.Networking
 			{
 				try
 				{
-					var trello = JObject.Parse(responseInfo.Content);
+					var json = JObject.Parse(responseInfo.Content);
 					var tokenList = new List<string>();
 
-					foreach(var token in trello[key])
+					if(json.TryGetValue(key,out var tokenArray))
 					{
-						if((bool) token["closed"])
+						foreach(var token in tokenArray)
 						{
-							continue;
-						}
+							var isClosed = token.Value<bool>(c_trelloClosed);
 
-						tokenList.Add(token.ToString());
+							if(isClosed)
+							{
+								continue;
+							}
+
+							tokenList.Add(token.ToString());
+						}
 					}
 
 					return tokenList;
 				}
 				catch(Exception exception)
 				{
-					LogChannel.Network.E($"Parse is failed - {exception}");
+					LogChannel.Web.E($"Parse is failed - {exception}");
 				}
 			}
 			else
 			{
-				LogChannel.Network.E("Result is failed");
+				LogChannel.Web.E("Result is failed");
 			}
 
 			return null;
@@ -162,17 +155,13 @@ namespace KZLib.Networking
 
 		public async UniTask PostTrelloListAsync(string boardId,string name)
 		{
-			var serviceCfg = ConfigManager.In.Access<ServiceConfig>();
-
-			await PostTrelloListAsync(serviceCfg.TrelloKey,boardId,name);
+			await PostTrelloListAsync(WebhookCfg.TrelloKey,boardId,name);
 		}
 
 		public async UniTask PostTrelloListAsync(string trelloKey,string boardId,string name)
 		{
-			if(trelloKey.IsEmpty())
+			if(!_IsValidTrelloKey(trelloKey))
 			{
-				LogChannel.Network.E("TrelloKey is empty");
-
 				return;
 			}
 
@@ -191,17 +180,13 @@ namespace KZLib.Networking
 
 		public async UniTask PostTrelloCardAsync(string listId,string name,string description,byte[] file = null)
 		{
-			var serviceCfg = ConfigManager.In.Access<ServiceConfig>();
-
-			await PostTrelloCardAsync(serviceCfg.TrelloKey,listId,name,description,file);
+			await PostTrelloCardAsync(WebhookCfg.TrelloKey,listId,name,description,file);
 		}
 
 		public async UniTask PostTrelloCardAsync(string trelloKey,string listId,string name,string description,byte[] file = null)
 		{
-			if(trelloKey.IsEmpty())
+			if(!_IsValidTrelloKey(trelloKey))
 			{
-				LogChannel.Network.E("TrelloKey is empty");
-
 				return;
 			}
 
@@ -212,12 +197,17 @@ namespace KZLib.Networking
 				return;
 			}
 
-			var cardId = JObject.Parse(cardInfo.Content)["id"].ToString();
+			var json = JObject.Parse(cardInfo.Content);
 
-			if(cardId.IsEmpty())
+			if(!json.TryGetValue(c_trelloId,out var value))
 			{
-				LogChannel.Network.E("Card id is empty");
+				return;
+			}
 
+			var cardId = value.ToString();
+
+			if(!_IsValidTrelloCardId(cardId))
+			{
 				return;
 			}
 
@@ -236,44 +226,34 @@ namespace KZLib.Networking
 
 		public async UniTask PostTrelloListInCardAsync(string boardName,string listName,string cardName,string cardDescription,byte[] file = null)
 		{
-			var serviceCfg = ConfigManager.In.Access<ServiceConfig>();
-
-			await PostTrelloListInCardAsync(serviceCfg.TrelloKey,boardName,listName,cardName,cardDescription,file);
+			await PostTrelloListInCardAsync(WebhookCfg.TrelloKey,boardName,listName,cardName,cardDescription,file);
 		}
 
 		public async UniTask PostTrelloListInCardAsync(string trelloKey,string boardName,string listName,string cardName,string cardDescription,byte[] file = null)
 		{
-			if(trelloKey.IsEmpty())
+			if(!_IsValidTrelloKey(trelloKey))
 			{
-				LogChannel.Network.E("TrelloKey is empty");
-
 				return;
 			}
 
 			var boardList = await GetTrelloBoardAsync(trelloKey);
 
-			if(boardList.IsNullOrEmpty())
+			if(!_IsExistTrelloBoardList(boardList))
 			{
-				LogChannel.Network.W("Trello board is empty");
-
 				return;
 			}
 
 			var boardId = _FindId(boardList,boardName);
 
-			if(boardId.IsEmpty())
+			if(!_IsValidTrelloBoardId(boardId))
 			{
-				LogChannel.Network.E("Trello board id is null");
-
 				return;
 			}
 
 			var listList = await GetTrelloListAsync(boardId);
 
-			if(listList.IsNullOrEmpty())
+			if(!_IsValidTrelloListId(boardId))
 			{
-				LogChannel.Network.W("Trello list is empty");
-
 				return;
 			}
 
@@ -293,21 +273,87 @@ namespace KZLib.Networking
 			{
 				for(var i=0;i<dataList.Count;i++)
 				{
-					var jObject = JObject.Parse(dataList[i]);
-					var dataName = jObject["name"].ToString();
+					var json = JObject.Parse(dataList[i]);
 
-					if(name.IsEqual(dataName))
+					if(!json.TryGetValue(c_trelloName,out var value))
 					{
-						return jObject["id"].ToString();
+						continue;
+					}
+
+					var dataName = value.ToString();
+
+					if(name.IsEqual(dataName) && json.TryGetValue(c_trelloId,out var trelloId))
+					{
+						return trelloId.ToString();
 					}
 				}
 			}
 			catch(Exception exception)
 			{
-				LogChannel.Network.E($"Convert is failed - {exception}");
+				LogChannel.Web.E($"Convert is failed - {exception}");
 			}
 
 			return null;
+		}
+
+		private bool _IsValidTrelloKey(string trelloKey)
+		{
+			if(trelloKey.IsEmpty())
+			{
+				LogChannel.Web.E("TrelloKey is empty");
+
+				return false;
+			}
+
+			return true;
+		}
+
+		private bool _IsValidTrelloBoardId(string boardId)
+		{
+			if(boardId.IsEmpty())
+			{
+				LogChannel.Web.E("Trello boardId is empty");
+
+				return false;
+			}
+
+			return true;
+		}
+
+		private bool _IsExistTrelloBoardList(List<string> boardList)
+		{
+			if(boardList.IsNullOrEmpty())
+			{
+				LogChannel.Web.W("Trello board is empty");
+
+				return false;
+			}
+
+			return true;
+		}
+
+		private bool _IsValidTrelloListId(string listId)
+		{
+			if(listId.IsEmpty())
+			{
+				LogChannel.Web.E("Trello listId is empty");
+
+				return false;
+			}
+
+			return true;
+		}
+
+		private bool _IsValidTrelloCardId(string cardId)
+		{
+			if(cardId.IsEmpty())
+			{
+				LogChannel.Web.E("Card id is empty");
+
+				return false;
+			}
+
+			return true;
 		}
 	}
 }

@@ -1,14 +1,13 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
-using KZLib.Networking;
-using Newtonsoft.Json.Linq;
+using KZLib.Webs;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEngine;
 
 namespace KZLib.Windows
 {
-	public partial class NetworkTestWindow : OdinEditorWindow
+	public partial class WebhookTestWindow : OdinEditorWindow
 	{
 		[TabGroup("Network","GoogleDrive")]
 		[HorizontalGroup("Network/GoogleDrive/0",Order = 0),SerializeField]
@@ -27,19 +26,22 @@ namespace KZLib.Windows
 
 				for(var i=0;i<entryList.Count;i++)
 				{
-					var json = JObject.Parse(entryList[i]);
+					if(!_TryCreateResultInfo(entryList[i],out var resultInfo))
+					{
+						continue;
+					}
 
-					m_googleDriveList.Add(new ResultInfo(json["name"].ToString(),json["id"].ToString()));
+					m_googleDriveList.Add(resultInfo);
 				}
 			}
 
-			WebRequestManager.In.GetGoogleDriveEntry("Test",_FindEntry);
+			WebhookManager.In.GetGoogleDriveEntry("Test",_FindEntry);
 		}
 
 		[HorizontalGroup("Network/GoogleDrive/1",Order = 1),Button("Post Image",ButtonSizes.Large),EnableIf(nameof(IsExistGoogleDrive))]
 		protected void OnPostImage_GoogleDrive()
 		{
-			WebRequestManager.In.PostGoogleDriveFile("Test","Ostrich.png",KZEditorKit.FindTestImage(),"image/png");
+			WebhookManager.In.PostGoogleDriveFile("Test","Ostrich.png",KZEditorKit.FindTestImage(),"image/png");
 		}
 
 		[HorizontalGroup("Network/GoogleDrive/3",Order = 3),SerializeField,TableList(HideToolbar = true,AlwaysExpanded = true,IsReadOnly = true),EnableIf(nameof(IsExistGoogleDrive))]

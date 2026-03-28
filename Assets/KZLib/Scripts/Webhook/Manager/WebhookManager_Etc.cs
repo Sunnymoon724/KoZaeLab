@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using System.Text;
 using Cysharp.Threading.Tasks;
-using KZLib.Data;
 using KZLib.Utilities;
 using UnityEngine;
 
-namespace KZLib.Networking
+namespace KZLib.Webs
 {
-	public partial class WebRequestManager : Singleton<WebRequestManager>
+	public partial class WebhookManager : Singleton<WebhookManager>
 	{
 		public void PostBugReportWebRequest(IEnumerable<MessageInfo> messageGroup,byte[] file)
 		{
@@ -16,8 +15,7 @@ namespace KZLib.Networking
 
 		public async UniTask PostBugReportWebRequestAsync(IEnumerable<MessageInfo> messageInfoGroup,byte[] file)
 		{
-			var serviceCfg = ConfigManager.In.Access<ServiceConfig>();
-			var postHashSet = new HashSet<string>(serviceCfg.BugReportPostList);
+			var postHashSet = new HashSet<string>(WebhookCfg.BugReportPostList);
 			var taskList = new List<UniTask>();
 
 			if(postHashSet.Contains("Discord"))

@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using KZLib.Data;
 using KZLib.Utilities;
 
-namespace KZLib.Networking
+namespace KZLib.Webs
 {
-	public partial class WebRequestManager : Singleton<WebRequestManager>
+	public partial class WebhookManager : Singleton<WebhookManager>
 	{
 		public void PostDiscordWebHook(string content,IEnumerable<MessageInfo> messageGroup = null,byte[] file = null)
 		{
@@ -19,16 +18,14 @@ namespace KZLib.Networking
 
 		public async UniTask PostDiscordWebHookAsync(string content,IEnumerable<MessageInfo> messageGroup = null,byte[] file = null)
 		{
-			var serviceCfg = ConfigManager.In.Access<ServiceConfig>();
-
-			await PostDiscordWebHookAsync(serviceCfg.GetDiscordLink(content),content,messageGroup,file);
+			await PostDiscordWebHookAsync(WebhookCfg.GetDiscordLink(content),content,messageGroup,file);
 		}
 
 		public async UniTask PostDiscordWebHookAsync(string link,string content,IEnumerable<MessageInfo> messageGroup = null,byte[] file = null)
 		{
 			if(link.IsEmpty())
 			{
-				LogChannel.Network.E("Link is empty");
+				LogChannel.Web.E("Link is empty");
 
 				return;
 			}

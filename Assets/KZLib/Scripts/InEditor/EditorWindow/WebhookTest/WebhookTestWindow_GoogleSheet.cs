@@ -1,12 +1,12 @@
 #if UNITY_EDITOR
-using KZLib.Networking;
+using KZLib.Webs;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEngine;
 
 namespace KZLib.Windows
 {
-	public partial class NetworkTestWindow : OdinEditorWindow
+	public partial class WebhookTestWindow : OdinEditorWindow
 	{
 		[TabGroup("Network","GoogleSheet")]
 		[HorizontalGroup("Network/GoogleSheet/0",Order = 0),SerializeField]
@@ -44,13 +44,13 @@ namespace KZLib.Windows
 				}
 			}
 
-			WebRequestManager.In.GetGoogleSheet("Test",m_googleSheetIndex,_CreateSheet);
+			WebhookManager.In.GetGoogleSheet("Test",m_googleSheetIndex,_CreateSheet);
 		}
 
 		[HorizontalGroup("Network/GoogleSheet/2",Order = 2),Button("Post Sheet",ButtonSizes.Large),EnableIf(nameof(IsExistGoogleSheet))]
 		protected void OnPostText_GoogleSheet()
 		{
-			WebRequestManager.In.PostGoogleSheetAddRow("Test",m_googleSheetIndex,"Test\tAAA\tBBB\tCCC");
+			WebhookManager.In.PostGoogleSheetAddRow("Test",m_googleSheetIndex,"Test\tAAA\tBBB\tCCC");
 
 			OnGetSheet_GoogleSheet();
 		}

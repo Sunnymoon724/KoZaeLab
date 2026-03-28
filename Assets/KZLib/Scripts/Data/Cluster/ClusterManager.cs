@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using KZLib.Utilities;
 
 namespace KZLib.Data
@@ -8,24 +7,25 @@ namespace KZLib.Data
 	{
 		private readonly struct ClusterKey : IEquatable<ClusterKey>
 		{
-			private readonly Type m_type;
-			private readonly object[] m_paramArray;
 			private readonly int m_hashCode;
+
+			public Type Type { get; init; }
+			public object[] ParamArray { get; init; }
 
 			public ClusterKey(Type type,object[] paramArray)
 			{
-				m_type = type;
-				m_paramArray = paramArray;
+				Type = type;
+				ParamArray = paramArray;
 
 				var hashCode = new HashCode();
 
-				hashCode.Add(m_type);
+				hashCode.Add(Type);
 
 				if(paramArray != null)
 				{
-					for(var i=0;i<m_paramArray.Length;i++)
+					for(var i=0;i<ParamArray.Length;i++)
 					{
-						hashCode.Add(m_paramArray[i]);
+						hashCode.Add(ParamArray[i]);
 					}
 				}
 
@@ -39,19 +39,19 @@ namespace KZLib.Data
 					return false;
 				}
 
-				if(m_type != other.m_type)
+				if(Type != other.Type)
 				{
 					return false;
 				}
 
-				if(m_paramArray.Length != other.m_paramArray.Length)
+				if(ParamArray.Length != other.ParamArray.Length)
 				{
 					return false;
 				}
 
-				for(var i=0;i<m_paramArray.Length;i++)
+				for(var i=0;i<ParamArray.Length;i++)
 				{
-					if(!Equals(m_paramArray[i],other.m_paramArray[i]))
+					if(!Equals(ParamArray[i],other.ParamArray[i]))
 					{
 						return false;
 					}
@@ -59,7 +59,7 @@ namespace KZLib.Data
 
 				return true;
 			}
-			
+
 			public override bool Equals(object target)
 			{
 				return target is ClusterKey other && Equals(other);
@@ -71,35 +71,35 @@ namespace KZLib.Data
 			}
 		}
 
-		private readonly Dictionary<ClusterKey,ICluster> m_clusterDict = new();
+		private readonly LazyRegistry<ClusterKey,ICluster> m_registry = new();
 
 		protected override void _Release(bool disposing)
 		{
 			if(disposing)
 			{
-				m_clusterDict.Clear();
+				m_registry.Release();
 			}
 
 			base._Release(disposing);
 		}
 
-		public TCluster GetOrCreateCluster<TCluster>(params object[] paramArray) where TCluster : class,ICluster
+		public TCluster FetchCluster<TCluster>(params object[] paramArray) where TCluster : class,ICluster
 		{
-			return GetOrCreateCluster(typeof(TCluster),paramArray) as TCluster;
+			return FetchCluster(typeof(TCluster),paramArray) as TCluster;
 		}
 
-		public ICluster GetOrCreateCluster(Type type,params object[] paramArray)
+		public ICluster FetchCluster(Type type,params object[] paramArray)
 		{
 			var key = new ClusterKey(type,paramArray);
 
-			if(!m_clusterDict.TryGetValue(key,out var clt))
-			{
-				clt = Activator.CreateInstance(type,paramArray) as ICluster ?? throw new InvalidCastException($"Failed to create cluster of type {type}");
+			return m_registry.Fetch(key,_TryCreateCluster);
+		}
 
-				m_clusterDict.Add(key,clt);
-			}
+		private bool _TryCreateCluster(ClusterKey key,out ICluster cluster)
+		{
+			cluster = Activator.CreateInstance(key.Type,key.ParamArray) as ICluster;
 
-			return clt;
+			return cluster != null;
 		}
 	}
 }

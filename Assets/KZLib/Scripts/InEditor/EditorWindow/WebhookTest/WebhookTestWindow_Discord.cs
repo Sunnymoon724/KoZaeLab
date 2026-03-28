@@ -1,12 +1,12 @@
 #if UNITY_EDITOR
-using KZLib.Networking;
+using KZLib.Webs;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEngine;
 
 namespace KZLib.Windows
 {
-	public partial class NetworkTestWindow : OdinEditorWindow
+	public partial class WebhookTestWindow : OdinEditorWindow
 	{
 		[TabGroup("Network","Discord")]
 		[HorizontalGroup("Network/Discord/0"),SerializeField]
@@ -17,13 +17,13 @@ namespace KZLib.Windows
 		[HorizontalGroup("Network/Discord/1"),Button("Post Text",ButtonSizes.Large),EnableIf(nameof(IsExistDiscord))]
 		protected void OnPostTextTest_Discord()
 		{
-			WebRequestManager.In.PostDiscordWebHook(m_discordLink,"Text Test",new MessageInfo[] { new("Test","Hello World") },null);
+			WebhookManager.In.PostDiscordWebHook(m_discordLink,"Text Test",_CreateTestMessageInfo(),null);
 		}
 
 		[HorizontalGroup("Network/Discord/1"),Button("Post Image",ButtonSizes.Large),EnableIf(nameof(IsExistDiscord))]
 		protected void OnPostImageTest_Discord()
 		{
-			WebRequestManager.In.PostDiscordWebHook(m_discordLink,"Image Test",new MessageInfo[] { new("Test","Hello World") },KZEditorKit.FindTestImage());
+			WebhookManager.In.PostDiscordWebHook(m_discordLink,"Image Test",_CreateTestMessageInfo(),KZEditorKit.FindTestImage());
 		}
 	}
 }

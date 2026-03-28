@@ -13,5 +13,8 @@ namespace KZLib.Data
 		public bool IsLocalSave { get; private set; } = true;
 
 		public bool UseHeadUpDisplay { get; private set; } = true;
+
+		public int LocalPushBlockStartHour { get; private set; } = 22;
+		public int LocalPushBlockEndHour { get; private set; } = 6;
 	}
 }

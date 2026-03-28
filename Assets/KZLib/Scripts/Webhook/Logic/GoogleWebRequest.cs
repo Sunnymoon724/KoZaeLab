@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace KZLib.Networking
+namespace KZLib.Webs
 {
 	public abstract class GoogleWebRequest : BaseWebRequest
 	{

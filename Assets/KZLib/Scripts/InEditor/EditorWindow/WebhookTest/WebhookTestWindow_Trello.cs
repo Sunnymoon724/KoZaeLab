@@ -1,14 +1,13 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
-using KZLib.Networking;
-using Newtonsoft.Json.Linq;
+using KZLib.Webs;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEngine;
 
 namespace KZLib.Windows
 {
-	public partial class NetworkTestWindow : OdinEditorWindow
+	public partial class WebhookTestWindow : OdinEditorWindow
 	{
 		[TabGroup("Network","Trello")]
 		[HorizontalGroup("Network/Trello/0",Order = 0),SerializeField]
@@ -28,7 +27,7 @@ namespace KZLib.Windows
 				_ShowResult_Trello(resultList);
 			}
 
-			WebRequestManager.In.GetTrelloBoard(TrelloCoreKey,_ShowResult);
+			WebhookManager.In.GetTrelloBoard(TrelloCoreKey,_ShowResult);
 		}
 
 		[HorizontalGroup("Network/Trello/3",Order = 3),SerializeField,EnableIf(nameof(IsExistTrello))]
@@ -44,7 +43,7 @@ namespace KZLib.Windows
 				_ShowResult_Trello(resultList);
 			}
 
-			WebRequestManager.In.GetTrelloList(TrelloCoreKey,m_trelloTestId,_ShowResult);
+			WebhookManager.In.GetTrelloList(TrelloCoreKey,m_trelloTestId,_ShowResult);
 		}
 
 		[HorizontalGroup("Network/Trello/4",Order = 4),Button("Get Card",ButtonSizes.Large),EnableIf(nameof(HasTestId))]
@@ -55,19 +54,19 @@ namespace KZLib.Windows
 				_ShowResult_Trello(resultList);
 			}
 
-			WebRequestManager.In.GetTrelloCard(TrelloCoreKey,m_trelloTestId,_ShowResult);
+			WebhookManager.In.GetTrelloCard(TrelloCoreKey,m_trelloTestId,_ShowResult);
 		}
 
 		[HorizontalGroup("Network/Trello/5",Order = 5),Button("Post List",ButtonSizes.Large),EnableIf(nameof(HasTestId))]
 		protected void OnPostList_Trello()
 		{
-			WebRequestManager.In.PostTrelloList(m_trelloTestId,"Test");
+			WebhookManager.In.PostTrelloList(m_trelloTestId,"Test");
 		}
 
 		[HorizontalGroup("Network/Trello/5",Order = 5),Button("Post Card",ButtonSizes.Large),EnableIf(nameof(HasTestId))]
 		protected void OnPostCard_Trello()
 		{
-			WebRequestManager.In.PostTrelloCard(m_trelloTestId,"Test","Description");
+			WebhookManager.In.PostTrelloCard(m_trelloTestId,"Test","Description");
 		}
 
 		[HorizontalGroup("Network/Trello/6",Order = 6),SerializeField,TableList(HideToolbar = true,AlwaysExpanded = true),ShowIf(nameof(IsShowTrelloResultList)),EnableIf(nameof(IsExistTrello))]
@@ -86,9 +85,12 @@ namespace KZLib.Windows
 
 			for(var i=0;i<resultList.Count;i++)
 			{
-				var json = JObject.Parse(resultList[i]);
+				if(!_TryCreateResultInfo(resultList[i],out var resultInfo))
+				{
+					continue;
+				}
 
-				m_trelloResultInfoList.Add(new ResultInfo(json["name"].ToString(),json["id"].ToString()));
+				m_trelloResultInfoList.Add(resultInfo);
 			}
 		}
 	}

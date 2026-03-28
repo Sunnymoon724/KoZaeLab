@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace KZLib.Networking
+namespace KZLib.Webs
 {
 	//? https://discohook.org/ -> webhook test link
 

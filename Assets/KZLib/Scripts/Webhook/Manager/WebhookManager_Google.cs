@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using KZLib.Data;
 using KZLib.Utilities;
 using Newtonsoft.Json.Linq;
 
-namespace KZLib.Networking
+namespace KZLib.Webs
 {
-	public partial class WebRequestManager : Singleton<WebRequestManager>
+	public partial class WebhookManager : Singleton<WebhookManager>
 	{
 		public void PostGoogleSheetAddRow(string sheetName,int sheetOrder,string content)
 		{
@@ -108,12 +107,12 @@ namespace KZLib.Networking
 				}
 				catch(Exception exception)
 				{
-					LogChannel.Network.E($"Convert is failed - {exception}");
+					LogChannel.Web.E($"Convert is failed - {exception}");
 				}
 			}
 			else
 			{
-				LogChannel.Network.E("Result is failed");
+				LogChannel.Web.E("Result is failed");
 			}
 
 			return null;
@@ -121,12 +120,11 @@ namespace KZLib.Networking
 
 		private bool _TryGetSheetId(string sheetName,out string sheetId)
 		{
-			var serviceCfg = ConfigManager.In.Access<ServiceConfig>();
-			sheetId = serviceCfg.GetGoogleSheetFileId(sheetName);
+			sheetId = WebhookCfg.GetGoogleSheetFileId(sheetName);
 
 			if(sheetId.IsEmpty())
 			{
-				LogChannel.Network.E("Sheet id is empty");
+				LogChannel.Web.E("Sheet id is empty");
 
 				return false;
 			}
@@ -136,12 +134,11 @@ namespace KZLib.Networking
 
 		private bool _TryGetGoogleSheetURL(out string url)
 		{
-			var serviceCfg = ConfigManager.In.Access<ServiceConfig>();
-			url = serviceCfg.GoogleSheetURL;
+			url = WebhookCfg.GoogleSheetURL;
 
 			if(url.IsEmpty())
 			{
-				LogChannel.Network.E("Google Sheet URL is empty");
+				LogChannel.Web.E("Google Sheet URL is empty");
 
 				return false;
 			}
@@ -151,12 +148,11 @@ namespace KZLib.Networking
 
 		private bool _TryGetFolderId(string folderName,out string folderId)
 		{
-			var serviceCfg = ConfigManager.In.Access<ServiceConfig>();
-			folderId = serviceCfg.GetGoogleDriveFolderId(folderName);
+			folderId = WebhookCfg.GetGoogleDriveFolderId(folderName);
 
 			if(folderId.IsEmpty())
 			{
-				LogChannel.Network.E("Folder id is empty");
+				LogChannel.Web.E("Folder id is empty");
 
 				return false;
 			}
@@ -166,12 +162,11 @@ namespace KZLib.Networking
 
 		private bool _TryGetGoogleDriveURL(out string url)
 		{
-			var serviceCfg = ConfigManager.In.Access<ServiceConfig>();
-			url = serviceCfg.GoogleDriveURL;
+			url = WebhookCfg.GoogleDriveURL;
 
 			if(url.IsEmpty())
 			{
-				LogChannel.Network.E("Google Drive URL is empty");
+				LogChannel.Web.E("Google Drive URL is empty");
 
 				return false;
 			}

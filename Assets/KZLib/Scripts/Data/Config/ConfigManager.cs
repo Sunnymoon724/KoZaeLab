@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using YamlDotNet.Serialization;
 using KZLib.Utilities;
 using System.IO;
@@ -10,87 +9,48 @@ namespace KZLib.Data
 	{
 		private const string c_editorYaml = "Editor.yaml";
 
-		private readonly Dictionary<string,IConfig> m_configDict = new();
+		private readonly LazyRegistry<Type,IConfig> m_registry = new();
 
-		private readonly static Type[] s_defaultConfigArray = new Type[] { typeof(GameConfig),typeof(OptionConfig),typeof(ServiceConfig),typeof(EditorConfig) };
+		private readonly static Type[] s_defaultConfigArray = new Type[] { typeof(GameConfig),typeof(WebhookConfig),typeof(EditorConfig) };
 
 		protected override void _Initialize()
 		{
 			base._Initialize();
 
-			_Access(typeof(GameConfig));
+			_FetchConfig(typeof(GameConfig));
 		}
 
 		protected override void _Release(bool disposing)
 		{
 			if(disposing)
 			{
-				foreach(var pair in m_configDict)
-				{
-					if(pair.Value is IDisposable disposable)
-					{
-						disposable.Dispose();
-					}
-				}
-
-				m_configDict.Clear();
+				m_registry.Release();
 			}
 
 			base._Release(disposing);
 		}
 
 		/// <summary>
-		/// If config is not exist, create new config.
+		/// If config is not exist, load config.
 		/// </summary>
-		public TConfig Access<TConfig>() where TConfig : class,IConfig
+		public TConfig FetchConfig<TConfig>() where TConfig : class,IConfig
 		{
 			var type = typeof(TConfig);
 
-			return _Access(type) as TConfig;
+			return _FetchConfig(type) as TConfig;
 		}
 
 		/// <summary>
-		/// If config is not exist, create new config.
+		/// If config is not exist, load config.
 		/// </summary>
-		private IConfig _Access(Type type)
+		private IConfig _FetchConfig(Type type)
 		{
-			var key = type.Name;
-
-			if(!m_configDict.TryGetValue(key,out var config))
-			{
-				config = _Create(key,type);
-
-				if(config == null)
-				{
-					LogChannel.Data.E($"{key}config is not exist.");
-
-					return null;
-				}
-
-				m_configDict.Add(key,config);
-			}
-
-			return config;
+			return m_registry.Fetch(type,_TryLoadConfig);
 		}
 
-		// public void Revoke<TConfig>()
-		// {
-		// 	var key = typeof(TConfig).Name;
-
-		// 	if(m_configDict.ContainsKey(key))
-		// 	{
-		// 		m_configDict.Remove(key);
-		// 	}
-		// }
-
-		private IConfig _Create(string name,Type type)
+		private bool _TryLoadConfig(Type type,out IConfig config)
 		{
-			if(type == typeof(OptionConfig))
-			{
-				//? OptionConfig -> only use playerPrefs
-				return new OptionConfig();
-			}
-
+			var name = type.Name;
 			var text = _LoadConfigFile(name);
 
 			if(!text.IsEmpty())
@@ -99,7 +59,9 @@ namespace KZLib.Data
 
 				try
 				{
-					return deserializer.Deserialize(text,type) as IConfig;
+					config = deserializer.Deserialize(text,type) as IConfig;
+
+					return true;
 				}
 				catch(Exception exception)
 				{
@@ -107,7 +69,9 @@ namespace KZLib.Data
 				}
 			}
 
-			return null;
+			config = null;
+
+			return false;
 		}
 
 		private string _LoadConfigFile(string name)
@@ -137,7 +101,7 @@ namespace KZLib.Data
 #else
 			var routePath = $"defaultRes:config:{fileName}";
 #endif
-			text = KZFileKit.ReadFileToText(RouteManager.In.GetOrCreateRoute(routePath).AbsolutePath);
+			text = KZFileKit.ReadFileToText(RouteManager.In.FetchRoute(routePath).AbsolutePath);
 
 			if(!text.IsEmpty())
 			{

@@ -330,7 +330,7 @@ namespace KZLib.Data
 #endif
 		private bool _TryGetTextAsset(out TextAsset[] textAssetArray)
 		{
-			var gameCfg = ConfigManager.In.Access<GameConfig>();
+			var gameCfg = ConfigManager.In.FetchConfig<GameConfig>();
 
 			textAssetArray = ResourceManager.In.GetTextAssetArray(gameCfg.ProtoFolderPath);
 
