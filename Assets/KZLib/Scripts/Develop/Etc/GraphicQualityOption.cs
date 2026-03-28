@@ -94,7 +94,7 @@ namespace KZLib.Development
 #endif
 		}
 		#endregion Option Window
-		
+
 		#region Graphic Quality Info
 		[Serializable]
 		public class GraphicQualityInfo
@@ -133,6 +133,13 @@ namespace KZLib.Development
 			}
 		}
 		#endregion Graphic Quality Info
+
+		public static long Highest => In.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityHighest);
+		public static long High => In.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityHigh);
+		public static long Middle => In.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityMiddle);
+		public static long Low => In.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityLow);
+		public static long Lowest => In.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityLowest);
+
 
 #if UNITY_EDITOR
 		[HorizontalGroup("Button",Order = 0),Button("Add Option",ButtonSizes.Large)]
@@ -311,9 +318,9 @@ namespace KZLib.Development
 			{
 				Global.GLOBAL_TEXTURE_MIPMAP_LIMIT or 
 				Global.VERTICAL_SYNC_COUNT or 
-				Global.DISABLE_CAMERA_FAR_HALF => (TValue)Convert.ChangeType(value,typeof(TValue)),
+				Global.DISABLE_CAMERA_FAR_HALF => (TValue) Convert.ChangeType(value,typeof(TValue)),
 
-				Global.ANISOTROPIC_FILTERING => (TValue)Enum.Parse(typeof(TValue),value,true),
+				Global.ANISOTROPIC_FILTERING => (TValue) Enum.Parse(typeof(TValue),value,true),
 
 				_ => (TValue)(object)value,
 			};
