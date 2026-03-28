@@ -14,7 +14,7 @@ using KZLib.Utilities;
 using KZLib.Data;
 using R3;
 
-namespace KZLib
+namespace KZLib.Natives
 {
 	public class VibrationManager : Singleton<VibrationManager>
 	{
@@ -45,11 +45,7 @@ namespace KZLib
 		{
 			base._Initialize();
 
-			var optionCfg = ConfigManager.In.Access<OptionConfig>();
-
-			optionCfg.OnChangedUseVibration.Subscribe(_OnChangeUseVibration).AddTo(m_disposable);
-
-			_OnChangeUseVibration(optionCfg.UseVibration);
+			TuneManager.In.FetchTune<NativeTune>().OnChangedVibration.Subscribe(_OnChangeUseVibration).AddTo(m_disposable);
 
 #if UNITY_IOS && !UNITY_EDITOR
 			VibrationInitialize();
