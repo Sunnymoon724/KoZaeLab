@@ -12,6 +12,7 @@ using System.IO;
 using KZLib.Data;
 using System.Collections;
 using MessagePipe;
+using KZLib.Natives;
 
 
 #if UNITY_EDITOR
@@ -36,9 +37,9 @@ namespace KZLib
 			{
 				if(!m_gameLanguage.HasValue)
 				{
-					var optionCfg = ConfigManager.In.Access<OptionConfig>();
+					var languageTne = TuneManager.In.FetchTune<LanguageTune>();
 
-					m_gameLanguage = optionCfg.CurrentLanguage;
+					m_gameLanguage = languageTne.CurrentLanguage;
 				}
 
 				return m_gameLanguage.Value;
@@ -53,9 +54,9 @@ namespace KZLib
 
 				m_gameLanguage = value;
 
-				var optionCfg = ConfigManager.In.Access<OptionConfig>();
+				var languageTne = TuneManager.In.FetchTune<LanguageTune>();
 
-				optionCfg.SetLanguage(m_gameLanguage.Value);
+				languageTne.SetLanguage(m_gameLanguage.Value);
 			}
 		}
 
@@ -170,7 +171,7 @@ namespace KZLib
 
 		private async void Start()
 		{
-			var gameCfg = ConfigManager.In.Access<GameConfig>();
+			var gameCfg = ConfigManager.In.FetchConfig<GameConfig>();
 
 #if UNITY_EDITOR
 			if(gameCfg.UseHeadUpDisplay)
@@ -184,6 +185,7 @@ namespace KZLib
 			}
 #endif
 
+			// init base setting
 			if(m_safeWidth <= 0)
 			{
 				m_safeWidth = (int) Screen.safeArea.width;
@@ -223,6 +225,8 @@ namespace KZLib
 			else
 			{
 				await _InitializeNormalMode(m_tokenSource.Token);
+
+				ContextManager.In.InitializeContext();
 
 				SceneStateManager.In.AddSceneNoLoading(StartSceneName,CommonUINameTag.None);
 			}
@@ -348,13 +352,15 @@ namespace KZLib
 		}
 #endif
 
-		private void OnApplicationFocus( bool focus )
+		private void OnApplicationFocus(bool focus)
 		{
-			if (focus)
+			if(focus)
 			{
 				LogChannel.System.I("Move to foreground");
 
 				m_resolutionMonitor?.StartResolutionDetection();
+
+				PushManager.In.ClearNotification();
 			}
 			else
 			{

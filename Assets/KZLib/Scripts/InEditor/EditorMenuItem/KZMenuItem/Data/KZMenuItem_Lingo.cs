@@ -12,6 +12,7 @@ using UnityEngine;
 using System.IO;
 using UnityEditor.Localization;
 using System.Collections.Generic;
+using KZLib.Data;
 
 namespace KZLib.EditorInternal.Menus
 {
@@ -38,7 +39,7 @@ namespace KZLib.EditorInternal.Menus
 				EditorBuildSettings.AddConfigObject("com.unity.localization.settings",localizationSettings,true);
 			}
 
-			var lingoRoute = RouteManager.In.GetOrCreateRoute("defaultRes:lingo");
+			var lingoRoute = RouteManager.In.FetchRoute("defaultRes:lingo");
 
 			foreach(var lingoFilePath in KZFileKit.FindAllExcelFileGroupByFolderPath(Global.LINGO_FOLDER_PATH))
 			{
@@ -240,7 +241,7 @@ namespace KZLib.EditorInternal.Menus
 					var language = assetTable.LocaleIdentifier.CultureInfo.EnglishName;
 					var path = _GetValueByLanguage(language,schemeArray,pair.Value);
 
-					var assetPath = RouteManager.In.GetOrCreateRoute(path).AssetPath;
+					var assetPath = RouteManager.In.FetchRoute(path).AssetPath;
 					var guid = _CreateAddressableGuid(assetPath,language,assetTable.LocaleIdentifier.Code);
 
 					if(guid.IsEmpty())

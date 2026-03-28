@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using KZLib.Networking;
+using KZLib.Webs;
 using MessagePipe;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -156,7 +156,7 @@ namespace KZLib.UI.Widgets.Debug
 				{
 					void _ClickSlot(IEntryInfo _)
 					{
-						WebRequestManager.In.PostDiscordWebHook("Log Window",new MessageInfo[] { messageInfo });
+						WebhookManager.In.PostDiscordWebHook("Log Window",new MessageInfo[] { messageInfo });
 					}
 
 					return new LogEntryInfo(logInfo.Color,headerInfo.Time,messageInfo.Body,_ClickSlot);

@@ -32,7 +32,7 @@ namespace KZLib
 		{
 			KZExternalKit.RecycleTokenSource(ref m_tokenSource);
 
-			var gameCfg = ConfigManager.In.Access<GameConfig>();
+			var gameCfg = ConfigManager.In.FetchConfig<GameConfig>();
 
 			m_useServerResource = !gameCfg.IsLocalResource;
 

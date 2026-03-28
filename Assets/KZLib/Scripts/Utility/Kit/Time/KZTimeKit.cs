@@ -46,4 +46,11 @@ public static class KZTimeKit
 
 		return todayMidnight.AddDays(daysUntilNextDay);
 	}
+
+	public static bool IsTimeInRange(DateTime dateTime,int startHour,int endHour)
+	{
+		var hour = dateTime.Hour;
+
+		return (startHour <= endHour) ? (hour >= startHour && hour < endHour) : (hour >= startHour || hour < endHour);
+	}
 }

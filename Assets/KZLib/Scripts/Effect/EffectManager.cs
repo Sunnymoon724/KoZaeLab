@@ -22,7 +22,7 @@ namespace KZLib
 		{
 			base._Initialize();
 
-			m_effectPath = ConfigManager.In.Access<GameConfig>().FXPrefabPath;
+			m_effectPath = ConfigManager.In.FetchConfig<GameConfig>().FXPrefabPath;
 		}
 
 		protected override void _Release()

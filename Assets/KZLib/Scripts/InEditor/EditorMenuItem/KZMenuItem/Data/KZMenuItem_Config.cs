@@ -16,7 +16,7 @@ namespace KZLib.EditorInternal.Menus
 		private static void _OnGenerateAllConfig()
 		{
 			var templateFilePath = KZEditorKit.FindTemplateText("ConfigTemplate.txt");
-			var outputRoute = RouteManager.In.GetOrCreateRoute("generatedScript");
+			var outputRoute = RouteManager.In.FetchRoute("generatedScript");
 
 			foreach(var configFilePath in KZFileKit.FindAllExcelFileGroupByFolderPath(Global.CONFIG_FOLDER_PATH))
 			{
@@ -79,7 +79,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Config/Game/Generate Custom GameConfig Yaml File",false,MenuOrder.Data.GENERATE)]
 		private static void _OnGenerateCustomGameConfigYamlFile()
 		{
-			_GenerateCustomConfigYamlFile("CustomGame.yaml",ConfigManager.In.Access<GameConfig>());
+			_GenerateCustomConfigYamlFile("CustomGame.yaml",ConfigManager.In.FetchConfig<GameConfig>());
 		}
 
 		[MenuItem("KZMenu/Config/Game/Generate Custom GameConfig Yaml File",true,MenuOrder.Data.GENERATE)]
@@ -89,31 +89,31 @@ namespace KZLib.EditorInternal.Menus
 		}
 		#endregion Game Config
 
-		#region Service Config
-		[MenuItem("KZMenu/Config/Service/Generate ServiceConfig Yaml File",false,MenuOrder.Data.GENERATE)]
-		private static void _OnGenerateServiceConfigYamlFile()
+		#region Webhook Config
+		[MenuItem("KZMenu/Config/Webhook/Generate WebhookConfig Yaml File",false,MenuOrder.Data.GENERATE)]
+		private static void _OnGenerateWebhookConfigYamlFile()
 		{
-			_GenerateConfigYamlFile("Service.yaml",new ServiceConfig(),"defaultRes:config");
+			_GenerateConfigYamlFile("Webhook.yaml",new WebhookConfig(),"defaultRes:config");
 		}
 
-		[MenuItem("KZMenu/Config/Service/Generate ServiceConfig Yaml File",true,MenuOrder.Data.GENERATE)]
-		private static bool _IsExistServiceConfigYamlFile()
+		[MenuItem("KZMenu/Config/Webhook/Generate WebhookConfig Yaml File",true,MenuOrder.Data.GENERATE)]
+		private static bool _IsExistWebhookConfigYamlFile()
 		{
-			return _IsExistConfigYamlFile("Service.yaml","defaultRes:config");
+			return _IsExistConfigYamlFile("Webhook.yaml","defaultRes:config");
 		}
 
-		[MenuItem("KZMenu/Config/Service/Generate Custom ServiceConfig Yaml File",false,MenuOrder.Data.GENERATE)]
-		private static void _OnGenerateCustomServiceConfigYamlFile()
+		[MenuItem("KZMenu/Config/Webhook/Generate Custom WebhookConfig Yaml File",false,MenuOrder.Data.GENERATE)]
+		private static void _OnGenerateCustomWebhookConfigYamlFile()
 		{
-			_GenerateCustomConfigYamlFile("CustomService.yaml",ConfigManager.In.Access<ServiceConfig>());
+			_GenerateCustomConfigYamlFile("CustomWebhook.yaml",ConfigManager.In.FetchConfig<WebhookConfig>());
 		}
 
-		[MenuItem("KZMenu/Config/Service/Generate Custom ServiceConfig Yaml File",true,MenuOrder.Data.GENERATE)]
-		private static bool _IsExistCustomServiceConfigYamlFile()
+		[MenuItem("KZMenu/Config/Webhook/Generate Custom WebhookConfig Yaml File",true,MenuOrder.Data.GENERATE)]
+		private static bool _IsExistCustomWebhookConfigYamlFile()
 		{
-			return _IsExistCustomConfigYamlFile("CustomService.yaml");
+			return _IsExistCustomConfigYamlFile("CustomWebhook.yaml");
 		}
-		#endregion Service Config
+		#endregion Webhook Config
 
 		#region Editor Config
 		[MenuItem("KZMenu/Config/Editor/Generate EditorConfig Yaml File",false,MenuOrder.Data.GENERATE)]
@@ -131,7 +131,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Config/Editor/Generate Custom EditorConfig Yaml File",false,MenuOrder.Data.GENERATE)]
 		private static void _OnGenerateCustomEditorConfigYamlFile()
 		{
-			_GenerateCustomConfigYamlFile("CustomEditor.yaml",ConfigManager.In.Access<EditorConfig>());
+			_GenerateCustomConfigYamlFile("CustomEditor.yaml",ConfigManager.In.FetchConfig<EditorConfig>());
 		}
 
 		[MenuItem("KZMenu/Config/Editor/Generate Custom EditorConfig Yaml File",true,MenuOrder.Data.GENERATE)]
@@ -144,7 +144,7 @@ namespace KZLib.EditorInternal.Menus
 		#region Common
 		private static void _GenerateConfigYamlFile(string fileName,IConfig config,string routePath)
 		{
-			var yamlRoute = RouteManager.In.GetOrCreateRoute(routePath);
+			var yamlRoute = RouteManager.In.FetchRoute(routePath);
 
 			KZFileKit.CreateFolder(yamlRoute.AbsolutePath);
 
@@ -173,7 +173,7 @@ namespace KZLib.EditorInternal.Menus
 
 		private static bool _IsExistConfigYamlFile(string fileName,string routePath)
 		{
-			var yamlRoute = RouteManager.In.GetOrCreateRoute(routePath);
+			var yamlRoute = RouteManager.In.FetchRoute(routePath);
 
 			var filePath = Path.Combine(yamlRoute.AbsolutePath,fileName);
 
@@ -209,7 +209,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Config/Open Default Config Folder",false,MenuOrder.Data.OPEN)]
 		private static void _OnOpenDefaultConfigFolder()
 		{
-			var configFolderRoute = RouteManager.In.GetOrCreateRoute("defaultRes:config");
+			var configFolderRoute = RouteManager.In.FetchRoute("defaultRes:config");
 
 			_OpenFolder("DefaultConfig",configFolderRoute.AbsolutePath);
 		}

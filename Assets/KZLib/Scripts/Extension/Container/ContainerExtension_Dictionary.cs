@@ -99,26 +99,7 @@ public static partial class ContainerExtension
 			dictionary.Add(key,collection);
 		}
 
-		if(collection is List<TValue> list)
-		{
-			list.Add(value);
-		}
-		else if(collection is HashSet<TValue> hashSet)
-		{
-			hashSet.Add(value);
-		}
-		else if(collection is Queue<TValue> queue)
-		{
-			queue.Enqueue(value);
-		}
-		else if(collection is Stack<TValue> stack)
-		{
-			stack.Push(value);
-		}
-		else
-		{
-			LogChannel.System.E("Not Supported");
-		}
+		collection.Add(value);
 	}
 
 	public static void SortEachList<TKey,TValue>(this IDictionary<TKey,IList<TValue>> dictionary,IComparer<TValue> comparer)

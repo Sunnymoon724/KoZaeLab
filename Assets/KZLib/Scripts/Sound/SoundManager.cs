@@ -5,9 +5,9 @@ using R3;
 
 namespace KZLib
 {
-    [RequireComponent(typeof(AudioSource))]
+	[RequireComponent(typeof(AudioSource))]
 	[SingletonConfig(AutoCreate = true,PrefabPath = "Prefab/SoundManager",DontDestroy = true)]
-    public partial class SoundManager : SingletonMB<SoundManager>
+	public partial class SoundManager : SingletonMB<SoundManager>
 	{
 		protected override void _Initialize()
 		{
@@ -23,11 +23,7 @@ namespace KZLib
 				m_sfxList.Add(CreateSFX(i));
 			}
 
-			var optionCfg = ConfigManager.In.Access<OptionConfig>();
-
-			optionCfg.OnChangedSoundVolume.Subscribe(_OnChangeSoundOption).RegisterTo(destroyCancellationToken);
-
-			_OnChangeSoundOption(optionCfg.CurrentSound);
+			TuneManager.In.FetchTune<SoundTune>().OnChangedSoundVolume.Subscribe(_OnChangeSoundOption).RegisterTo(destroyCancellationToken);
 		}
 
 		protected override void _Release()

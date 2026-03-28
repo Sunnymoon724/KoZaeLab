@@ -12,7 +12,7 @@ namespace KZLib.Networking
 
 		public AccountCredential()
 		{
-			m_accountId = PlayerPrefsManager.In.TryGetString( c_accountId,out var id ) ? id : string.Empty;
+			m_accountId = PlayerPrefsManager.In.TryGetString(c_accountId,out var id) ? id : string.Empty;
 		}
 
 		public virtual void Clear()

@@ -5,7 +5,11 @@ using System.Threading;
 
 namespace KZLib.Utilities
 {
-	public sealed class CacheResolver<TCache>: IDisposable
+	/// <summary>
+	/// A time-based cache resolver that manages TCache objects with an expiration policy.
+	/// Periodically cleans up overdue items and supports multiple values per key.
+	/// </summary>
+	public sealed class CacheResolver<TCache> : IDisposable
 	{
 		private record CacheInfo
 		{

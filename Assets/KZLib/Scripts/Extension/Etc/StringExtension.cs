@@ -894,11 +894,6 @@ public static class StringExtension
 	}
 	#endregion Layer
 
-	public static void ClearCache()
-	{
-		s_hexColorDict.Clear();
-	}
-
 	public static string XmlToJson(this string xmlText)
 	{
 		using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xmlText));

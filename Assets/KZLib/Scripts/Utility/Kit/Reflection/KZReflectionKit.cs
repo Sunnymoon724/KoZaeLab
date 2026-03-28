@@ -6,6 +6,12 @@ using Sirenix.Utilities;
 public static class KZReflectionKit
 {
 	private static readonly Dictionary<string,Type> s_typeDict = new();
+	private static readonly Lazy<Assembly[]> s_lazyAssemblyArray = new(_GetAssemblyArray);
+
+	private static Assembly[] _GetAssemblyArray()
+	{
+		return AppDomain.CurrentDomain.GetAssemblies();
+	}
 
 	public static Type FindType(string typeName,string namespaceName = null)
 	{
@@ -16,7 +22,7 @@ public static class KZReflectionKit
 			return type;
 		}
 
-		var assemblyArray = AppDomain.CurrentDomain.GetAssemblies();
+		var assemblyArray = s_lazyAssemblyArray.Value;
 
 		for(var i=0;i<assemblyArray.Length;i++)
 		{
@@ -35,15 +41,15 @@ public static class KZReflectionKit
 
 	public static IEnumerable<Type> FindTypeGroup(string namespaceName)
 	{
-		var assemblyArray = AppDomain.CurrentDomain.GetAssemblies();
+		var assemblyArray = s_lazyAssemblyArray.Value;
 
 		for(var i=0;i<assemblyArray.Length;i++)
 		{
-			var typeArray = assemblyArray[i].GetTypes();
+			var typeArray = _GetSafeTypeArray(assemblyArray[i]);
 
 			for(var j=0;j<typeArray.Length;j++)
 			{
-				var type = typeArray[i];
+				var type = typeArray[j];
 
 				if(type.Namespace.IsEqual(namespaceName))
 				{
@@ -53,32 +59,39 @@ public static class KZReflectionKit
 		}
 	}
 
-	public static IEnumerable<Type> FindDerivedTypeGroup(Type type)
+	public static IEnumerable<Type> FindDerivedTypeGroup(Type type,bool instantiableOnly = false)
 	{
-		var assemblyArray = AppDomain.CurrentDomain.GetAssemblies();
+		var assemblyArray = s_lazyAssemblyArray.Value;
 
 		for(var i=0;i<assemblyArray.Length;i++)
 		{
-			foreach(var derivedType in FindDerivedTypeGroup(type,assemblyArray[i]))
+			foreach(var derivedType in FindDerivedTypeGroup(type,assemblyArray[i],instantiableOnly))
 			{
 				yield return derivedType;
 			}
 		}
 	}
 
-	public static IEnumerable<Type> FindDerivedTypeGroup(Type type,Assembly assembly)
+	public static IEnumerable<Type> FindDerivedTypeGroup(Type type,Assembly assembly,bool instantiableOnly = false)
 	{
-		return FindDerivedTypeGroup(type,assembly.GetTypes());
+		return FindDerivedTypeGroup(type,_GetSafeTypeArray(assembly),instantiableOnly);
 	}
 
-	public static IEnumerable<Type> FindDerivedTypeGroup(Type type,IEnumerable<Type> assemblyTypeGroup)
+	public static IEnumerable<Type> FindDerivedTypeGroup(Type type,IEnumerable<Type> assemblyTypeGroup,bool instantiableOnly = false)
 	{
 		foreach(var assemblyType in assemblyTypeGroup)
 		{
-			if(type.IsAssignableFrom(assemblyType) && assemblyType != type)
+			if(!type.IsAssignableFrom(assemblyType) || assemblyType == type)
 			{
-				yield return assemblyType;
+				continue;
 			}
+
+			if(instantiableOnly && (assemblyType.IsAbstract || assemblyType.IsInterface || assemblyType.IsGenericTypeDefinition))
+			{
+				continue;
+			}
+
+			yield return assemblyType;
 		}
 	}
 
@@ -153,8 +166,30 @@ public static class KZReflectionKit
 		return default;
 	}
 
-	public static void ClearCache()
+	private static Type[] _GetSafeTypeArray(Assembly assembly)
 	{
-		s_typeDict.Clear();
+		try
+		{
+			return assembly.GetTypes();
+		}
+		catch(ReflectionTypeLoadException exception)
+		{
+			var typeArray = exception.Types;
+			var validTypeList = new List<Type>();
+
+			for(var i=0;i<typeArray.Length;i++)
+			{
+				if(typeArray[i] != null)
+				{
+					validTypeList.Add(typeArray[i]);
+				}
+			}
+
+			return validTypeList.ToArray();
+		}
+		catch(Exception)
+		{
+			return Array.Empty<Type>();
+		}
 	}
 }

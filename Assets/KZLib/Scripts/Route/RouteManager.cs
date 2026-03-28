@@ -1,21 +1,18 @@
 using System.Collections.Generic;
 using System.IO;
-using KZLib.Data;
 using KZLib.Utilities;
 using UnityEngine;
 using YamlDotNet.Serialization;
 
-namespace KZLib
+namespace KZLib.Data
 {
 	public class RouteManager : Singleton<RouteManager>
 	{
-		private readonly Dictionary<string,Route> m_routeDict = new();
+		private readonly LazyRegistry<string,Route> m_registry = new();
 
-		private readonly Dictionary<string,string> m_defaultPathDict = new();
+		private readonly Dictionary<string,string> m_definedPathDict = new();
 
 		private string m_routePath = "";
-
-		private RouteManager() { }
 
 		protected override void _Initialize()
 		{
@@ -30,7 +27,7 @@ namespace KZLib
 
 			foreach(var pair in deserializer.Deserialize<Dictionary<string,string>>(textAsset.text))
 			{
-				m_defaultPathDict.Add(pair.Key,pair.Value);
+				m_definedPathDict.Add(pair.Key,pair.Value);
 			}
 		}
 
@@ -38,8 +35,8 @@ namespace KZLib
 		{
 			if(disposing)
 			{
-				m_defaultPathDict.Clear();
-				m_routeDict.Clear();
+				m_definedPathDict.Clear();
+				m_registry.Release();
 			}
 
 			base._Release(disposing);
@@ -83,46 +80,46 @@ namespace KZLib
 		}
 
 		/// <summary>
-		/// ex) defaultPath <br/>
-		/// ex) defaultPath:path <br/>
-		/// ex) defaultPath:defaultPath:defaultPath:path <br/>
+		/// ex) definedPath <br/>
+		/// ex) definedPath:path <br/>
+		/// ex) definedPath:definedPath:definedPath:path <br/>
 		/// ex) path <br/>
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		public Route GetOrCreateRoute(string path)
+		public Route FetchRoute(string path)
 		{
-			if(!m_routeDict.TryGetValue(path,out var route))
-			{
-				var pathArray = path.Split(":");
-
-				if(pathArray.Length == 0)
-				{
-					// defaultPath or path
-					route = new Route(_ConvertDefaultPath(path));
-				}
-				else
-				{
-					var count = pathArray.Length;
-					var textArray = new string[count];
-
-					for(var i=0;i<count;i++)
-					{
-						textArray[i] = _ConvertDefaultPath(pathArray[i]);
-					}
-
-					route = new Route(Path.Combine(textArray));
-				}
-
-				m_routeDict.Add(path,route);
-			}
-
-			return route;
+			return m_registry.Fetch(path,_TryCreateRoute);
 		}
 
-		private string _ConvertDefaultPath(string text)
+		private bool _TryCreateRoute(string path,out Route route)
 		{
-			return m_defaultPathDict.TryGetValue(text,out var path) ? path : text;
+			var pathArray = path.Split(":");
+
+			if(pathArray.Length == 0)
+			{
+				// definedPath or path
+				route = new Route(_ConvertDefinedPath(path));
+
+				return true;
+			}
+
+			var count = pathArray.Length;
+			var textArray = new string[count];
+
+			for(var i=0;i<count;i++)
+			{
+				textArray[i] = _ConvertDefinedPath(pathArray[i]);
+			}
+
+			route = new Route(Path.Combine(textArray));
+
+			return true;
+		}
+
+		private string _ConvertDefinedPath(string text)
+		{
+			return m_definedPathDict.TryGetValue(text,out var path) ? path : text;
 		}
 	}
 }

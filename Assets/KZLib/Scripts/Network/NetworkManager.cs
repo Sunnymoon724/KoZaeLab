@@ -188,7 +188,7 @@ namespace KZLib.Networking
 			}
 			catch(Exception _ex)
 			{
-				LogChannel.Network.E($"Convert is fail : {_ex.Message}");
+				LogChannel.Web.E($"Convert is fail : {_ex.Message}");
 			}
 		}
 		

@@ -41,7 +41,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Window/Open Network Test Window",false,MenuOrder.Display.TEST)]
 		private static void _OnOpenNetworkTestWindow()
 		{
-			EditorWindow.GetWindow<NetworkTestWindow>().Show();
+			EditorWindow.GetWindow<WebhookTestWindow>().Show();
 		}
 		#endregion Window
 	}

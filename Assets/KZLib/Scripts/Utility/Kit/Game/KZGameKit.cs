@@ -4,6 +4,9 @@ using KZLib.Utilities;
 using System.IO;
 using KZLib.Data;
 using KZLib.Networking;
+using KZLib.Webs;
+using KZLib.Natives;
+
 
 #if UNITY_EDITOR
 
@@ -64,6 +67,7 @@ public static partial class KZGameKit
 		_ReleaseSingleton<CameraManager>();
 
 		_ReleaseSingleton<RouteManager>();
+		_ReleaseSingleton<TuneManager>();
 
 		_ReleaseSingleton<ShaderManager>();
 		_ReleaseSingleton<GameTimeManager>();
@@ -72,20 +76,18 @@ public static partial class KZGameKit
 		_ReleaseSingleton<LuaManager>();
 
 		_ReleaseSingleton<NetworkManager>();
-		_ReleaseSingleton<WebRequestManager>();
+		_ReleaseSingleton<WebhookManager>();
 
 		_ReleaseSingleton<VibrationManager>();
+		_ReleaseSingleton<PushManager>();
+
+		_ReleaseSingleton<ContextManager>();
 
 		_ReleaseSingleton<TimelineManager>();
 
 #if KZLIB_PLAY_FAB
 		_ReleaseSingleton<PlayFabManager>();
 #endif
-
-		KZReflectionKit.ClearCache();
-
-		StringExtension.ClearCache();
-		ColorExtension.ClearCache();
 	}
 
 	private static void _ReleaseSingletonMB<TBehaviour>() where TBehaviour : SingletonMB<TBehaviour>

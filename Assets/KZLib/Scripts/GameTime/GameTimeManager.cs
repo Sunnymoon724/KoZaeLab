@@ -9,6 +9,7 @@ namespace KZLib
 {
 	public class GameTimeManager : Singleton<GameTimeManager>
 	{
+		#region GameTime
 		private class GameTime
 		{
 			private record TimerInfo(float Trigger,Action CallBack);
@@ -75,6 +76,7 @@ namespace KZLib
 				m_pendingTimerInfoList.Clear();
 			}
 		}
+		#endregion GameTime
 
 		private readonly Dictionary<string,GameTime> m_gameTimeDict = new();
 		private CancellationTokenSource m_tokenSource = null;

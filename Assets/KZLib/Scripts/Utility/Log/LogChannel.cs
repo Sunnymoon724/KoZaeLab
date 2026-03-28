@@ -34,7 +34,7 @@ public partial class LogChannel
 	public static readonly LogChannel Build			= new(nameof(Build));
 
 
-	public static readonly LogChannel Network		= new(nameof(Network));
+	public static readonly LogChannel Web			= new(nameof(Web));
 	public static readonly LogChannel Server		= new(nameof(Server));
 	public static readonly LogChannel Client		= new(nameof(Client));
 
@@ -213,6 +213,25 @@ public partial class LogChannel
 
 		Application.logMessageReceived -= _HandleLogMessage;
 		Application.logMessageReceived += _HandleLogMessage;
+
+		LogBridge.OnInfo = _SendInfo;
+		LogBridge.OnWarning = _SendWarning;
+		LogBridge.OnError = _SendError;
+	}
+
+	private static void _SendInfo(string message)
+	{
+		System.I(message);
+	}
+
+	private static void _SendWarning(string message)
+	{
+		System.W(message);
+	}
+
+	private static void _SendError(string message)
+	{
+		System.E(message);
 	}
 
 	private static void _HandleLogMessage(string condition,string stackTrace,LogType logType)
