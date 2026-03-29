@@ -75,11 +75,17 @@ namespace KZLib.Data
 				{
 					return result;
 				}
+				else
+				{
+					LogChannel.Data.E($"{nameKey} parse failed from {text}.");
+
+					return defaultValue;
+				}
 			}
-
-			LogChannel.Data.E($"{nameKey} parse failed from {text}.");
-
-			return defaultValue;
+			else
+			{
+				return defaultValue;
+			}
 		}
 
 		protected void _SetValue<TValue>(ref TValue oldValue,TValue newValue,string nameKey,Action onValueChanged)

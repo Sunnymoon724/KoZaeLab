@@ -178,7 +178,7 @@ namespace KZLib.Windows
 
 				if(!m_isShowSystem)
 				{
-					if(key.StartsWith("unity.") || key.Equals("UnityGraphicsQuality") || key.Equals("AddressablesRuntimeDataPath"))
+					if(key.StartsWith("unity.") || key.StartsWith("unity_connect.") || key.Equals("UnityGraphicsQuality") || key.Equals("AddressablesRuntimeDataPath"))
 					{
 						continue;
 					}
