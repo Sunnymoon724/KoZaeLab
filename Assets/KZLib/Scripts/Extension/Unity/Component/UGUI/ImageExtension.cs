@@ -55,7 +55,7 @@ public static class ImageExtension
 	{
 		if(!image)
 		{
-			LogChannel.System.E("Image is null");
+			LogChannel.Kit.E("Image is null");
 
 			return false;
 		}

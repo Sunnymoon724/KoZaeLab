@@ -77,8 +77,15 @@ public abstract class BaseMesh : MonoBehaviour
 		return count;
 	}
 
-	protected bool IsValidMeshIndexCount(long count)
+	protected bool _IsValidMeshIndexCount(long count)
 	{
-		return count < c_maxIndexCount;
+		if(count >= c_maxIndexCount)
+		{
+			LogChannel.None.W($"The number of indices in the batched mesh is high. Object: {m_meshFilter.gameObject.name} : Index Count: {count}");
+
+			return false;
+		}
+
+		return true;
 	}
 }

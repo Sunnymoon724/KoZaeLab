@@ -339,7 +339,7 @@ public static class AnimatorExtension
 	{
 		if(!animator)
 		{
-			LogChannel.System.E("Animator is null");
+			LogChannel.Kit.E("Animator is null");
 
 			return false;
 		}

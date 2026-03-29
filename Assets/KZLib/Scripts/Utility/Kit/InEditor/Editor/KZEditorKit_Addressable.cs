@@ -50,7 +50,7 @@ public static partial class KZEditorKit
 		{
 			if(assetPath.IsEmpty())
 			{
-				LogChannel.System.E($"{assetPath} is null or empty.");
+				LogChannel.Kit.E($"{assetPath} is null or empty.");
 
 				return false;
 			}
@@ -64,7 +64,7 @@ public static partial class KZEditorKit
 
 			if(guid.IsEmpty())
 			{
-				LogChannel.System.E($"{assetPath} is not exist.");
+				LogChannel.Kit.E($"{assetPath} is not exist.");
 
 				return false;
 			}
@@ -100,7 +100,7 @@ public static partial class KZEditorKit
 
 		if(guid.IsEmpty())
 		{
-			LogChannel.System.E($"{assetPath} is not exist.");
+			LogChannel.Kit.E($"{assetPath} is not exist.");
 
 			return false;
 		}
@@ -109,7 +109,7 @@ public static partial class KZEditorKit
 
 		if(assetEntry == null)
 		{
-			LogChannel.System.E($"Asset at {assetPath} is not addressable.");
+			LogChannel.Kit.E($"Asset at {assetPath} is not addressable.");
 
 			return false;
 		}
@@ -120,7 +120,7 @@ public static partial class KZEditorKit
 
 			if(newGroup == null)
 			{
-				LogChannel.System.E($"{newGroupName} is not exist.");
+				LogChannel.Kit.E($"{newGroupName} is not exist.");
 
 				return false;
 			}
@@ -214,7 +214,7 @@ public static partial class KZEditorKit
 
 		if(settings == null)
 		{
-			LogChannel.System.E("AddressableAssetSettings is null. create first.");
+			LogChannel.Kit.E("AddressableAssetSettings is null. create first.");
 		}
 
 		return settings;

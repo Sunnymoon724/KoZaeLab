@@ -160,13 +160,13 @@ namespace KZLib
 		{
 			m_isPlaying = true;
 
-			LogChannel.System.I("Initialize Main");
+			LogChannel.Game.I("Initialize Main");
 
 			//? 에디터가 아니면 Normal Play
 #if !UNITY_EDITOR
 			GamePlayType = PlayType.Normal;
 #endif
-			LogChannel.System.I($"Current PlayType {GamePlayType}");
+			LogChannel.Game.I($"Current PlayType {GamePlayType}");
 		}
 
 		private async void Start()
@@ -201,7 +201,7 @@ namespace KZLib
 			_InitializeRenderSetting(stringBuilder);
 			_InitializeObject(stringBuilder);
 
-			LogChannel.System.I(stringBuilder.ToString());
+			LogChannel.Game.I(stringBuilder.ToString());
 
 			m_resolutionMonitor = new ResolutionMonitor();
 
@@ -312,7 +312,7 @@ namespace KZLib
 
 		protected virtual void OnDestroy()
 		{
-			LogChannel.System.I("Release Main");
+			LogChannel.Game.I("Release Main");
 
 			m_isPlaying = false;
 
@@ -336,7 +336,7 @@ namespace KZLib
 			//? Refresh Game
 			if(Input.GetKeyDown(KeyCode.F5))
 			{
-				LogChannel.System.I("Refresh Game");
+				LogChannel.Game.I("Refresh Game");
 
 				_RefreshGame().Forget();
 			}
@@ -356,7 +356,7 @@ namespace KZLib
 		{
 			if(focus)
 			{
-				LogChannel.System.I("Move to foreground");
+				LogChannel.Game.I("Move to foreground");
 
 				m_resolutionMonitor?.StartResolutionDetection();
 
@@ -364,7 +364,7 @@ namespace KZLib
 			}
 			else
 			{
-				LogChannel.System.I("Move to background");
+				LogChannel.Game.I("Move to background");
 
 				m_resolutionMonitor?.StopResolutionDetection();
 			}

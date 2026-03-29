@@ -18,7 +18,7 @@ public static class KZTextureKit
 	{
 		if(!camera)
 		{
-			LogChannel.System.E("Camera is null");
+			LogChannel.Kit.E("Camera is null");
 
 			return null;
 		}
@@ -46,7 +46,7 @@ public static class KZTextureKit
 	{
 		if(width == 0 || height == 0)
 		{
-			LogChannel.System.E($"Size is below zero {width} or {height}");
+			LogChannel.Kit.E($"Size is below zero {width} or {height}");
 
 			return null;
 		}

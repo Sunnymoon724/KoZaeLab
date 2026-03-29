@@ -45,7 +45,7 @@ public static partial class ContainerExtension
 
 		if(count == 0)
 		{
-			LogChannel.System.E("Collection is empty");
+			LogChannel.Kit.E("Collection is empty");
 
 			return default;
 		}

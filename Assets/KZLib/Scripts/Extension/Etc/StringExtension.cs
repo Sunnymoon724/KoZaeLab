@@ -210,7 +210,7 @@ public static class StringExtension
 
 		if(!result)
 		{
-			LogChannel.System.W($"Failed to convert {text} into Enum");
+			LogChannel.Kit.W($"Failed to convert {text} into Enum");
 		}
 
 		return value;
@@ -241,7 +241,7 @@ public static class StringExtension
 
 		if(!result)
 		{
-			LogChannel.System.W($"Failed to convert {text} into CustomTag");
+			LogChannel.Kit.W($"Failed to convert {text} into CustomTag");
 		}
 
 		return value;
@@ -270,7 +270,7 @@ public static class StringExtension
 
 		if(!result)
 		{
-			LogChannel.System.W($"Failed to convert {hexCode} into color");
+			LogChannel.Kit.W($"Failed to convert {hexCode} into color");
 		}
 
 		return value;
@@ -327,7 +327,7 @@ public static class StringExtension
 
 		if(!result)
 		{
-			LogChannel.System.W($"Failed to convert {text} into bool");
+			LogChannel.Kit.W($"Failed to convert {text} into bool");
 		}
 
 		return value;
@@ -369,7 +369,7 @@ public static class StringExtension
 
 		if(!result)
 		{
-			LogChannel.System.W($"Failed to convert {text} into BigInteger");
+			LogChannel.Kit.W($"Failed to convert {text} into BigInteger");
 		}
 
 		return value;
@@ -393,7 +393,7 @@ public static class StringExtension
 
 		if(!result)
 		{
-			LogChannel.System.W($"Failed to convert {text} into int");
+			LogChannel.Kit.W($"Failed to convert {text} into int");
 		}
 
 		return value;
@@ -427,7 +427,7 @@ public static class StringExtension
 
 		if(!result)
 		{
-			LogChannel.System.W($"Failed to convert {text} into float");
+			LogChannel.Kit.W($"Failed to convert {text} into float");
 		}
 
 		return value;
@@ -451,7 +451,7 @@ public static class StringExtension
 
 		if(!result)
 		{
-			LogChannel.System.W($"Failed to convert {text} into double");
+			LogChannel.Kit.W($"Failed to convert {text} into double");
 		}
 
 		return value;
@@ -475,7 +475,7 @@ public static class StringExtension
 
 		if(!result)
 		{
-			LogChannel.System.W($"Failed to convert {text} into byte");
+			LogChannel.Kit.W($"Failed to convert {text} into byte");
 		}
 
 		return value;
@@ -509,7 +509,7 @@ public static class StringExtension
 
 		if(!result)
 		{
-			LogChannel.System.W($"Failed to convert {text} into int");
+			LogChannel.Kit.W($"Failed to convert {text} into int");
 		}
 
 		return value;
@@ -533,7 +533,7 @@ public static class StringExtension
 
 		if(!result)
 		{
-			LogChannel.System.W($"Failed to convert {text} into float");
+			LogChannel.Kit.W($"Failed to convert {text} into float");
 		}
 
 		return value;
@@ -561,7 +561,7 @@ public static class StringExtension
 
 		if(!result)
 		{
-			LogChannel.System.W($"Failed to convert {text} into DateTime");
+			LogChannel.Kit.W($"Failed to convert {text} into DateTime");
 		}
 
 		return value;
@@ -589,7 +589,7 @@ public static class StringExtension
 
 		if(!result)
 		{
-			LogChannel.System.W($"Failed to convert {text} into Vector2");
+			LogChannel.Kit.W($"Failed to convert {text} into Vector2");
 		}
 
 		return value;
@@ -620,7 +620,7 @@ public static class StringExtension
 
 		if(!result)
 		{
-			LogChannel.System.W($"Failed to convert {text} into Vector3");
+			LogChannel.Kit.W($"Failed to convert {text} into Vector3");
 		}
 
 		return value;

@@ -144,11 +144,9 @@ public static partial class TransformExtension
 			return Vector2.zero;
 		}
 
-		if(!camera)
+		if(!_IsValidCamera(camera))
 		{
-			LogChannel.System.E("Camera is null.");
-
-			return default;
+			return Vector3.zero;
 		}
 
 		return RectTransformUtility.WorldToScreenPoint(camera,transform.position);
@@ -164,52 +162,62 @@ public static partial class TransformExtension
 		return ViewportPosition(transform,CameraManager.HasInstance ? CameraManager.In.CurrentCamera : Camera.main);
 	}
 	
-	public static Vector3 ViewportPosition(this Transform transform,Camera _camera)
+	public static Vector3 ViewportPosition(this Transform transform,Camera camera)
 	{
 		if(!_IsValid(transform))
 		{
 			return Vector3.zero;
 		}
 
-		if(!_camera)
+		if(!_IsValidCamera(camera))
 		{
-			LogChannel.System.E("Camera is null.");
-
 			return Vector3.zero;
 		}
 
-		return RectTransformUtility.WorldToScreenPoint(_camera,transform.position);
+		return RectTransformUtility.WorldToScreenPoint(camera,transform.position);
+	}
+	
+	private static bool _IsValidCamera(Camera camera)
+	{
+		if(!camera)
+		{
+			LogChannel.Kit.E("Camera is null.");
+
+			return false;
+		}
+
+		return true;
 	}
 
 	#region Set Rotation
-	public static void SetRotationXY(this Transform transform,Vector2 _angle)
+	public static void SetRotationXY(this Transform transform,Vector2 angle)
 	{
 		if(!_IsValid(transform))
 		{
 			return;
 		}
 
-		transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.SetXY(_angle));
+		transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.SetXY(angle));
 	}
 
-	public static void SetRotationXZ(this Transform transform,Vector2 _angle)
+	public static void SetRotationXZ(this Transform transform,Vector2 angle)
 	{
 		if(!_IsValid(transform))
 		{
 			return;
 		}
 
-		transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.SetXZ(_angle));
+		transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.SetXZ(angle));
 	}
 
-	public static void SetRotationYZ(this Transform transform,Vector2 _angle)
+	public static void SetRotationYZ(this Transform transform,Vector2 angle)
 	{
 		if(!_IsValid(transform))
 		{
 			return;
 		}
 
-		transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.SetYZ(_angle));
+		transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.SetYZ(angle));
 	}
 
 	public static void SetRotationX(this Transform transform,float x)
@@ -244,34 +252,34 @@ public static partial class TransformExtension
 	#endregion Set Rotation
 
 	#region Set Local Rotation
-	public static void SetLocalRotationXY(this Transform transform,Vector2 _angle)
+	public static void SetLocalRotationXY(this Transform transform,Vector2 angle)
 	{
 		if(!_IsValid(transform))
 		{
 			return;
 		}
 
-		transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.SetXY(_angle));
+		transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.SetXY(angle));
 	}
 
-	public static void SetLocalRotationXZ(this Transform transform,Vector2 _angle)
+	public static void SetLocalRotationXZ(this Transform transform,Vector2 angle)
 	{
 		if(!_IsValid(transform))
 		{
 			return;
 		}
 
-		transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.SetXZ(_angle));
+		transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.SetXZ(angle));
 	}
 
-	public static void SetLocalRotationYZ(this Transform transform,Vector2 _angle)
+	public static void SetLocalRotationYZ(this Transform transform,Vector2 angle)
 	{
 		if(!_IsValid(transform))
 		{
 			return;
 		}
 
-		transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.SetYZ(_angle));
+		transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.SetYZ(angle));
 	}
 
 	public static void SetLocalRotationX(this Transform transform,float x)
@@ -305,53 +313,53 @@ public static partial class TransformExtension
 	}
 	#endregion Set Local Rotation
 
-	public static void RotateAroundTarget(this Transform transform,Vector3 _target,Vector3 _axis,float _speed,bool _look)
+	public static void RotateAroundTarget(this Transform transform,Vector3 target,Vector3 axis,float speed,bool isLook)
 	{
 		if(!_IsValid(transform))
 		{
 			return;
 		}
 
-		var delta = Quaternion.AngleAxis(_speed,_look ? Vector3.up : _axis);
-        var offset = delta*(transform.position-_target);
+		var delta = Quaternion.AngleAxis(speed,isLook ? Vector3.up : axis);
+        var offset = delta*(transform.position-target);
 
-        transform.position = _target+offset;
+        transform.position = target+offset;
 
-        if(_look)
+        if(isLook)
         {
-            transform.rotation = Quaternion.LookRotation(-offset,_axis);
+            transform.rotation = Quaternion.LookRotation(-offset,axis);
         }
 	}
 
 	#region Set Local Scale
-	public static void SetLocalScaleXY(this Transform transform,Vector2 _size)
+	public static void SetLocalScaleXY(this Transform transform,Vector2 size)
 	{
 		if(!_IsValid(transform))
 		{
 			return;
 		}
 
-		transform.localScale = transform.localScale.SetXY(_size);
+		transform.localScale = transform.localScale.SetXY(size);
 	}
 
-	public static void SetLocalScaleXZ(this Transform transform,Vector2 _size)
+	public static void SetLocalScaleXZ(this Transform transform,Vector2 size)
 	{
 		if(!_IsValid(transform))
 		{
 			return;
 		}
 
-		transform.localScale = transform.localScale.SetXZ(_size);
+		transform.localScale = transform.localScale.SetXZ(size);
 	}
 
-	public static void SetLocalScaleYZ(this Transform transform,Vector2 _size)
+	public static void SetLocalScaleYZ(this Transform transform,Vector2 size)
 	{
 		if(!_IsValid(transform))
 		{
 			return;
 		}
 
-		transform.localScale = transform.localScale.SetYZ(_size);
+		transform.localScale = transform.localScale.SetYZ(size);
 	}
 
 	public static void SetLocalScaleX(this Transform transform,float x)
@@ -385,7 +393,7 @@ public static partial class TransformExtension
 	}
 	#endregion Set Local Scale
 
-	public static void SetLossyScale(this Transform transform,Vector3 _scale)
+	public static void SetLossyScale(this Transform transform,Vector3 scale)
 	{
 		if(!_IsValid(transform))
 		{
@@ -396,6 +404,6 @@ public static partial class TransformExtension
 
 		var lossyScale = transform.lossyScale;
 
-		transform.localScale = new Vector3(_scale.x/lossyScale.x,_scale.y/lossyScale.y,_scale.z/lossyScale.z);
+		transform.localScale = new Vector3(scale.x/lossyScale.x,scale.y/lossyScale.y,scale.z/lossyScale.z);
 	}
 }

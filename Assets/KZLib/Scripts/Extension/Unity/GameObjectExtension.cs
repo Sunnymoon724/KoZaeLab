@@ -276,7 +276,7 @@ public static class GameObjectExtension
 	{
 		if(!gameObject)
 		{
-			LogChannel.System.E("GameObject is null");
+			LogChannel.Kit.E("GameObject is null");
 
 			return false;
 		}

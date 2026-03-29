@@ -15,10 +15,8 @@ public class CombineMesh : BaseMesh
 
 		var count = CalculateMeshIndexCount(meshFilterArray);
 
-		if(!IsValidMeshIndexCount(count))
+		if(!_IsValidMeshIndexCount(count))
 		{
-			LogChannel.System.W($"The number of indices in the batched mesh is high. Object: {m_meshFilter.gameObject.name} : Index Count: {count}");
-
 			return;
 		}
 
@@ -54,11 +52,8 @@ public class CombineMesh : BaseMesh
 
 		var count = CalculateMeshIndexCount(meshArray);
 
-		if(!IsValidMeshIndexCount(count))
+		if(!_IsValidMeshIndexCount(count))
 		{
-			LogChannel.System.W($"The number of indices in the batched mesh is high. Object: {m_meshFilter.gameObject.name} : Index Count: {count}");
-
-
 			return;
 		}
 
@@ -105,7 +100,7 @@ public class CombineMesh : BaseMesh
 
 		var count = CalculateMeshIndexCount(m_meshFilter)+CalculateMeshIndexCount(meshFilterArray);
 
-		if(!IsValidMeshIndexCount(count))
+		if(!_IsValidMeshIndexCount(count))
 		{
 			return false;
 		}
@@ -155,7 +150,7 @@ public class CombineMesh : BaseMesh
 
 		var count = CalculateMeshIndexCount(m_meshFilter)+CalculateMeshIndexCount(meshArray);
 
-		if(!IsValidMeshIndexCount(count))
+		if(!_IsValidMeshIndexCount(count))
 		{
 			return false;
 		}

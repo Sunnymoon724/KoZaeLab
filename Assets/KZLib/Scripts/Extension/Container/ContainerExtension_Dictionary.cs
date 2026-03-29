@@ -121,7 +121,7 @@ public static partial class ContainerExtension
 			}
 			else
 			{
-				LogChannel.System.E("Not Supported");
+				LogChannel.Kit.E("Not Supported");
 
 				return;
 			}
@@ -197,7 +197,7 @@ public static partial class ContainerExtension
 
 		if(!format.Contains("{0}") || !format.Contains("{1}"))
 		{
-			LogChannel.System.E($"{format} not include {{0}} or {{1}}.");
+			LogChannel.Kit.E($"{format} not include {{0}} or {{1}}.");
 
 			return null;
 		}

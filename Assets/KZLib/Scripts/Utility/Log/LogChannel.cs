@@ -29,8 +29,10 @@ public partial class LogChannel
 	public static readonly LogChannel None			= new(nameof(None));
 
 
+	public static readonly LogChannel Game			= new(nameof(Game));
 	public static readonly LogChannel Scene			= new(nameof(Scene));
-	public static readonly LogChannel System		= new(nameof(System));
+	public static readonly LogChannel Input			= new(nameof(Input));
+
 	public static readonly LogChannel Build			= new(nameof(Build));
 
 
@@ -53,6 +55,7 @@ public partial class LogChannel
 
 
 	public static readonly LogChannel Kit			= new(nameof(Kit));
+	public static readonly LogChannel TaskSequence	= new(nameof(TaskSequence));
 	public static readonly LogChannel UnitState		= new(nameof(UnitState));
 
 
@@ -221,17 +224,17 @@ public partial class LogChannel
 
 	private static void _SendInfo(string message)
 	{
-		System.I(message);
+		External.I(message);
 	}
 
 	private static void _SendWarning(string message)
 	{
-		System.W(message);
+		External.W(message);
 	}
 
 	private static void _SendError(string message)
 	{
-		System.E(message);
+		External.E(message);
 	}
 
 	private static void _HandleLogMessage(string condition,string stackTrace,LogType logType)

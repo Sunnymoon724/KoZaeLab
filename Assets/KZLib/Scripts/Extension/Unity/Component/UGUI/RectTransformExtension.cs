@@ -198,7 +198,7 @@ public static partial class RectTransformExtension
 
 		if(canvas == null)
 		{
-			LogChannel.System.E("Canvas is null.");
+			LogChannel.Kit.E("Canvas is null.");
 
 			return default;
 		}
@@ -434,7 +434,7 @@ public static partial class RectTransformExtension
 	{
 		if(!rectTrans)
 		{
-			LogChannel.System.E("RectTransform is null.");
+			LogChannel.Kit.E("RectTransform is null.");
 
 			return false;
 		}

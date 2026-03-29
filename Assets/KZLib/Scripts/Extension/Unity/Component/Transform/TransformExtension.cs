@@ -47,7 +47,7 @@ public static partial class TransformExtension
 
 		if(!target)
 		{
-			LogChannel.System.E("Target is null.");
+			LogChannel.Kit.E("Target is null.");
 
 			return;
 		}
@@ -72,7 +72,7 @@ public static partial class TransformExtension
 
 		if(!collider)
 		{
-			LogChannel.System.E("Collider is null.");
+			LogChannel.Kit.E("Collider is null.");
 
 			return false;
 		}
@@ -114,7 +114,7 @@ public static partial class TransformExtension
 	{
 		if(!transform)
 		{
-			LogChannel.System.E("Transform is null");
+			LogChannel.Kit.E("Transform is null");
 
 			return false;
 		}

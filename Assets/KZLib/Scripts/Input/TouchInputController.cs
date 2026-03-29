@@ -66,7 +66,7 @@ namespace KZLib
 			}
 			else
 			{
-				LogChannel.System.E("TouchPress action is position value cannot be read from the device.");
+				LogChannel.Input.E("TouchPress action is position value cannot be read from the device.");
 
 				point = Vector2.zero;
 
