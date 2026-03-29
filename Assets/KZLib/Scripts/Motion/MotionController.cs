@@ -130,9 +130,19 @@ namespace KZLib
 
 			PlayAnimation(motionPrt.StateName,layer,0.0f);
 		}
-		
+
+		public async UniTask WaitForCurrentAnimationFinishAsync(int layer,CancellationToken cancellationToken)
+		{
+			await WaitForAnimationFinishAsync(m_currentStateName,layer,cancellationToken);
+		}
+
 		public async UniTask WaitForAnimationFinishAsync(string stateName,int layer,CancellationToken cancellationToken)
 		{
+			if(!m_animator)
+			{
+				return;
+			}
+
 			await m_animator.WaitForAnimationFinishAsync(stateName,layer,cancellationToken);
 		}
 
