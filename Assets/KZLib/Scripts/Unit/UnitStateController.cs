@@ -10,13 +10,13 @@ namespace KZLib
 {
     public interface IUnitStateParam { }
 
-	public abstract class UnitStateController<TEnum> : SerializedMonoBehaviour where TEnum : struct,Enum
+	public abstract class UnitStateController<TEnum> : MonoBehaviour where TEnum : struct,Enum
 	{
 		[SerializeField]
 		private bool m_showStateLog = false;
 
-		protected bool m_changeAllowed = false;
-		protected CancellationTokenSource m_tokenSource = null;
+		protected bool m_changeAllowed = true;
+		protected CancellationTokenSource m_stateTokenSource = null;
 		private readonly Dictionary<TEnum,Func<CancellationToken,IUnitStateParam,UniTask<TEnum>>> m_stateFuncDict = new();
 
 		[ShowInInspector]
@@ -38,50 +38,72 @@ namespace KZLib
 		{
 			m_stateFuncDict.Clear();
 
-			KZExternalKit.KillTokenSource(ref m_tokenSource);
+			KZExternalKit.KillTokenSource(ref m_stateTokenSource);
 		}
 
 		public async UniTask EnterStateAsync(TEnum newState,IUnitStateParam param,bool isForce = false)
 		{
-			if(isActiveAndEnabled == false || !_CanChange(newState,isForce))
+			if(!isActiveAndEnabled)
 			{
 				return;
 			}
 
-			var curState = newState;
-
-			KZExternalKit.RecycleTokenSource(ref m_tokenSource);
-
-			while(isActiveAndEnabled)
+			if(!_CanChange(newState,isForce))
 			{
-				if(!m_stateFuncDict.TryGetValue(curState, out var stateFunc))
+				if(m_showStateLog)
 				{
-					LogChannel.UnitState.E($"{curState} state not found");
+					LogChannel.Develop.I($"{name} cannot change to {newState} (Force: {isForce})");
+				}
+
+				return;
+			}
+
+			KZExternalKit.RecycleTokenSourceInMono(ref m_stateTokenSource,this);
+
+            var token = m_stateTokenSource.Token;
+			var curNextState = newState;
+			var curParam = param;
+
+			while(!token.IsCancellationRequested && isActiveAndEnabled)
+			{
+				if(!m_stateFuncDict.TryGetValue(curNextState,out var stateFunc))
+				{
+					LogChannel.Develop.E($"{curNextState} state not found");
 
 					return;
 				}
 
-				m_unitStateSubject.OnNext(new UnitStateInfo(m_stateType,curState));
+				m_unitStateSubject.OnNext(new UnitStateInfo(m_stateType,curNextState));
 
-				m_stateType = curState;
+				m_stateType = curNextState;
 
 				_ReadyState();
 
 				if(m_showStateLog)
 				{
-					LogChannel.UnitState.I($"{name} is entered {curState}");
+					LogChannel.Develop.I($"{name} is entered {curNextState}");
 				}
 
-				var nextState = await stateFunc.Invoke(m_tokenSource.Token,param);
+				var (isCanceled,nextState) = await stateFunc.Invoke(m_stateTokenSource.Token,curParam).SuppressCancellationThrow();
+
+				if(isCanceled)
+				{
+					return;
+				}
 
 				if(!_CanChange(nextState,false))
 				{
-					// wait one frame
-					await UniTask.Yield();
+					var isYieldCanceled = await UniTask.Yield(cancellationToken: token).SuppressCancellationThrow();
+
+					if(isYieldCanceled)
+					{
+						return;
+					}
 				}
 				else
 				{
-					curState = nextState;
+					curNextState = nextState;
+					curParam = null;
 				}
 			}
 		}
@@ -94,6 +116,22 @@ namespace KZLib
 			}
 
 			m_stateFuncDict[type] = stateFunc;
+		}
+
+		protected async UniTask<TEnum> _ExecuteWithLockAsync(CancellationToken token,Func<CancellationToken,UniTask> stateFunc,TEnum nextState)
+		{
+			try
+			{
+				m_changeAllowed = false;
+
+				await stateFunc(token).SuppressCancellationThrow();
+			}
+			finally
+			{
+				m_changeAllowed = true;
+			}
+
+			return nextState;
 		}
 
 		protected virtual void _ReadyState() { }

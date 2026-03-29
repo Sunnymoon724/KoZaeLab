@@ -1,10 +1,9 @@
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace KZLib
 {
-	public class UnitAgentController : SerializedMonoBehaviour
+	public class UnitAgentController : MonoBehaviour
 	{
 		[SerializeField]
 		private NavMeshAgent m_navMeshAgent = null;

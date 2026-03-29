@@ -56,7 +56,7 @@ namespace KZLib.Development
 
 			if(duration <= 0.0f)
 			{
-				LogChannel.TaskSequence.E("Duration must be greater than zero");
+				LogChannel.Develop.E("Duration must be greater than zero");
 
 				return;
 			}

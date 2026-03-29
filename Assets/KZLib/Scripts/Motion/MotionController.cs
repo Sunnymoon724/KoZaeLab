@@ -71,7 +71,7 @@ namespace KZLib
 
 			if(!m_animator.HasState(layer,Animator.StringToHash(stateName)))
 			{
-				LogChannel.Server.W($"{stateName} is not exist in {m_animator.name}");
+				LogChannel.Develop.W($"{stateName} is not exist in {m_animator.name}");
 
 				return false;
 			}

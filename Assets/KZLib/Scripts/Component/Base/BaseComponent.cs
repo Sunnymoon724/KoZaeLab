@@ -1,5 +1,4 @@
 using UnityEngine;
-using Sirenix.OdinInspector;
 using System;
 
 using Object = UnityEngine.Object;
@@ -10,7 +9,7 @@ using UnityEditor;
 
 #endif
 
-public abstract class BaseComponent : SerializedMonoBehaviour
+public abstract class BaseComponent : MonoBehaviour
 {
 	protected virtual bool UseGizmos => false;
 	protected virtual string GizmosText => string.Empty;

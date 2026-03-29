@@ -79,7 +79,7 @@ namespace KZLib.Development
 		{
 			if(m_loopCount == 0)
 			{
-				LogChannel.TaskSequence.W("loop count is zero.");
+				LogChannel.Develop.W("loop count is zero.");
 
 				return;
 			}

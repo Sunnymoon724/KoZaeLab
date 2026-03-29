@@ -13,9 +13,25 @@ public static partial class KZExternalKit
 			return;
 		}
 
-		tokenSource.Cancel();
+		if(!tokenSource.IsCancellationRequested)
+		{
+			tokenSource.Cancel(); 
+		}
+
 		tokenSource.Dispose();
 		tokenSource = null;
+	}
+
+	public static void RecycleTokenSourceInMono(ref CancellationTokenSource tokenSource,MonoBehaviour monoBehaviour)
+	{
+		RecycleTokenSource(ref tokenSource,monoBehaviour.GetCancellationTokenOnDestroy());
+	}
+
+	public static void RecycleTokenSource(ref CancellationTokenSource tokenSource,CancellationToken parentToken)
+	{
+		KillTokenSource(ref tokenSource);
+
+		tokenSource = CancellationTokenSource.CreateLinkedTokenSource(parentToken);
 	}
 
 	public static void RecycleTokenSource(ref CancellationTokenSource tokenSource)

@@ -53,10 +53,9 @@ public partial class LogChannel
 
 	public static readonly LogChannel Editor		= new(nameof(Editor));
 
-
 	public static readonly LogChannel Kit			= new(nameof(Kit));
-	public static readonly LogChannel TaskSequence	= new(nameof(TaskSequence));
-	public static readonly LogChannel UnitState		= new(nameof(UnitState));
+
+	public static readonly LogChannel Develop		= new(nameof(Develop));
 
 
 	public static readonly LogChannel External		= new(nameof(External));

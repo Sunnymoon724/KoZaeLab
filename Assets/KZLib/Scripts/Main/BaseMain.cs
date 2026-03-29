@@ -23,7 +23,7 @@ using UnityEditor;
 
 namespace KZLib
 {
-	public abstract class BaseMain : SerializedMonoBehaviour
+	public abstract class BaseMain : MonoBehaviour
 	{
 		private const string c_titleScene = "TitleScene";
 
