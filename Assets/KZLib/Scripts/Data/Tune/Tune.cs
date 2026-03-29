@@ -67,7 +67,7 @@ namespace KZLib.Data
 
 		protected abstract void _LoadAll();
 
-		protected TTune _LoadValue<TTune>(string nameKey,TryParseDelegate<TTune> parser,TTune defaultValue = default)
+		protected TTune _LoadValue<TTune>(string nameKey,TryParseDelegate<TTune> parser,TTune defaultValue)
 		{
 			if(PlayerPrefsManager.In.TryGetString(nameKey,out var text))
 			{
@@ -84,6 +84,8 @@ namespace KZLib.Data
 			}
 			else
 			{
+				_SetStringPlayerPrefs(nameKey,defaultValue.ToString());
+
 				return defaultValue;
 			}
 		}
