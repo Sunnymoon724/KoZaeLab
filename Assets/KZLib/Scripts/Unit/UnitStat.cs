@@ -3,34 +3,27 @@ using UnityEngine;
 public readonly struct UnitStat
 {
 	public float StartValue { get; init; }
-	public float IncreaseValue { get; init; }
 
 	public float AddValue { get; init; }
 	public float RateValue { get; init; }
 
-	public UnitStat(float startValue,float increaseValue,float addValue = 0.0f,float rateValue = 1.0f)
+	public UnitStat(float startValue,float addValue = 0.0f,float rateValue = 1.0f)
 	{
 		StartValue = startValue;
-		IncreaseValue = increaseValue;
 
 		AddValue = addValue;
 		RateValue = rateValue;
 	}
 
-	public float GetTotalValue(int level)
-	{
-		var baseByLevel = StartValue+(IncreaseValue*Mathf.Max(0,level-1));
-
-		return (baseByLevel+AddValue)*RateValue;
-	}
+	public float TotalValue => (StartValue+AddValue)*RateValue;
 
 	public UnitStat WithAdd(float newAdd)
 	{
-		return new(StartValue,IncreaseValue,newAdd,RateValue);
+		return new(StartValue,newAdd,RateValue);
 	}
 
 	public UnitStat WithRate(float newRate)
 	{
-		return new(StartValue,IncreaseValue,AddValue,newRate);
+		return new(StartValue,AddValue,newRate);
 	}
 }
