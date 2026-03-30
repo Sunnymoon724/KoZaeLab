@@ -26,7 +26,7 @@ namespace KZLib
 		[SerializeField,KZRichText]
 		protected string m_currentStateName = null;
 
-		private readonly Dictionary<int,MotionEvent> m_motionEventDict = new();
+		private readonly Dictionary<int,MotionEntry> m_motionEntryDict = new();
 
 		public void SetAnimator(string animatorPath)
 		{
@@ -117,15 +117,15 @@ namespace KZLib
 
 			var motionPrt = ProtoManager.In.GetProto<IMotionProto>(motionNum);
 
-			m_motionEventDict.Clear();
+			m_motionEntryDict.Clear();
 
-			var motionEventArray = motionPrt.EventArray;
+			var motionEntryArray = motionPrt.MotionEntryArray;
 
-			for(var i=0;i<motionEventArray.Length;i++)
+			for(var i=0;i<motionEntryArray.Length;i++)
 			{
-				var motionEvent = motionEventArray[i];
+				var motionEntry = motionEntryArray[i];
 
-				m_motionEventDict.Add(motionEvent.Order,motionEvent);
+				m_motionEntryDict.Add(motionEntry.Order,motionEntry);
 			}
 
 			PlayAnimation(motionPrt.StateName,layer,0.0f);
@@ -148,13 +148,13 @@ namespace KZLib
 
 		protected void _OnPlayEffect(int order)
 		{
-			if(m_motionEventDict.TryGetValue(order,out var motionEvent))
+			if(m_motionEntryDict.TryGetValue(order,out var motionEntry))
 			{
-				_PlayMotionEvent(motionEvent);
+				_PlayMotionEntry(motionEntry);
 			}
 		}
 
-		protected virtual void _PlayMotionEvent(MotionEvent motionEvent) { }
+		protected virtual void _PlayMotionEntry(MotionEntry motionEntry) { }
 
 		protected void Reset()
 		{

@@ -13,7 +13,7 @@ namespace KZLib
 	public abstract class UnitStateController<TEnum> : MonoBehaviour where TEnum : struct,Enum
 	{
 		[SerializeField]
-		private bool m_showStateLog = false;
+		private bool m_showLog = false;
 
 		protected bool m_changeAllowed = true;
 		protected CancellationTokenSource m_stateTokenSource = null;
@@ -50,7 +50,7 @@ namespace KZLib
 
 			if(!_CanChange(newState,isForce))
 			{
-				if(m_showStateLog)
+				if(m_showLog)
 				{
 					LogChannel.Develop.I($"{name} cannot change to {newState} (Force: {isForce})");
 				}
@@ -79,9 +79,9 @@ namespace KZLib
 
 				_ReadyState();
 
-				if(m_showStateLog)
+				if(m_showLog)
 				{
-					LogChannel.Develop.I($"{name} is entered {curNextState}");
+					LogChannel.Develop.I($"[UnitState] {name} is entered {curNextState}");
 				}
 
 				var (isCanceled,nextState) = await stateFunc.Invoke(m_stateTokenSource.Token,curParam).SuppressCancellationThrow();
