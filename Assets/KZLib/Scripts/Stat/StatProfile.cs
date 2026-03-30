@@ -3,61 +3,62 @@ using System.Collections.Generic;
 
 namespace KZLib
 {
-	public record StatEntry<TEnum>(TEnum Type, float Value) where TEnum : struct,Enum;
+	public record StatEntry<TEnum>(TEnum Type,float Value) where TEnum : struct,Enum;
 
 	public class StatProfile<TEnum> where TEnum : struct,Enum
 	{
-		private readonly Dictionary<TEnum,float> m_baseDict = new();
-		private readonly Dictionary<TEnum,float> m_growthDict = new();
+		private readonly Dictionary<TEnum,float> m_baseStatDict = null;
+		private readonly Dictionary<TEnum,float> m_growthStatDict = null;
 
-		public StatProfile() { }
-
-		private StatProfile(Dictionary<TEnum,float> baseDict,Dictionary<TEnum,float> growthDict)
+		public StatProfile(StatEntry<TEnum>[] baseStatArray,StatEntry<TEnum>[] growthStatArray)
 		{
-			m_baseDict = baseDict;
-			m_growthDict = growthDict;
+			m_baseStatDict = new Dictionary<TEnum,float>();
+			m_growthStatDict = new Dictionary<TEnum,float>();
+
+			_Initialize(m_baseStatDict,baseStatArray);
+			_Initialize(m_growthStatDict,growthStatArray);
 		}
 
-		public void Initialize(StatEntry<TEnum>[] baseStatArray,StatEntry<TEnum>[] growthStatArray)
+		protected StatProfile(Dictionary<TEnum,float> baseStatDict,Dictionary<TEnum,float> growthStatDict)
 		{
-			_Fill(m_baseDict,baseStatArray);
-			_Fill(m_growthDict,growthStatArray);
+			m_baseStatDict = baseStatDict;
+			m_growthStatDict = growthStatDict;
 		}
 
-		public float GetFinalStat(TEnum type,int level)
-		{
-			m_baseDict.TryGetValue(type,out var baseVal);
-			m_growthDict.TryGetValue(type,out var growthVal);
-
-			return baseVal+growthVal*level;
-		}
-
-		public static StatProfile<TEnum> operator +(StatProfile<TEnum> lhs,StatProfile<TEnum> rhs)
-		{
-			return new StatProfile<TEnum>(_Combine(lhs.m_baseDict,rhs.m_baseDict,+1),_Combine(lhs.m_growthDict,rhs.m_growthDict,+1));
-		}
-
-		public static StatProfile<TEnum> operator -(StatProfile<TEnum> lhs,StatProfile<TEnum> rhs)
-		{
-			return new StatProfile<TEnum>(_Combine(lhs.m_baseDict,rhs.m_baseDict,-1),_Combine(lhs.m_growthDict,rhs.m_growthDict,-1));
-		}
-
-		private static void _Fill(Dictionary<TEnum,float> statDict,StatEntry<TEnum>[] statArray)
+		protected void _Initialize(Dictionary<TEnum,float> statDict,StatEntry<TEnum>[] statEntryArray)
 		{
 			statDict.Clear();
 
-			if(statArray == null)
+			if(statEntryArray == null)
 			{
 				return;
 			}
 
-			foreach(var stat in statArray)
+			foreach(var stat in statEntryArray)
 			{
 				if(!statDict.TryAdd(stat.Type,stat.Value))
 				{
 					throw new ArgumentException($"Duplicate stat type: {stat.Type}");
 				}
 			}
+		}
+
+		public float GetFinalStat(TEnum type,int level)
+		{
+			m_baseStatDict.TryGetValue(type,out var baseVal);
+			m_growthStatDict.TryGetValue(type,out var growthVal);
+
+			return baseVal+growthVal*level;
+		}
+
+		public static StatProfile<TEnum> operator +(StatProfile<TEnum> lhs,StatProfile<TEnum> rhs)
+		{
+			return new StatProfile<TEnum>(_Combine(lhs.m_baseStatDict,rhs.m_baseStatDict,+1),_Combine(lhs.m_growthStatDict,rhs.m_growthStatDict,+1));
+		}
+
+		public static StatProfile<TEnum> operator -(StatProfile<TEnum> lhs,StatProfile<TEnum> rhs)
+		{
+			return new StatProfile<TEnum>(_Combine(lhs.m_baseStatDict,rhs.m_baseStatDict,-1),_Combine(lhs.m_growthStatDict,rhs.m_growthStatDict,-1));
 		}
 
 		private static Dictionary<TEnum,float> _Combine(Dictionary<TEnum,float> lhs,Dictionary<TEnum,float> rhs,int sign)

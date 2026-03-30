@@ -10,12 +10,17 @@ namespace KZLib
 		[SerializeField]
 		private bool m_showLog = false;
 
-		private readonly StatProfile<TEnum> m_statProfile = new();
+		private StatProfile<TEnum> m_statProfile = null;
 		private readonly BuffController<TEnum> m_buffController = new();
+
+		public void Initialize(StatProfile<TEnum> statProfile)
+		{
+			m_statProfile = statProfile;
+		}
 
 		public void Initialize(StatEntry<TEnum>[] baseStatArray,StatEntry<TEnum>[] growthStatArray)
 		{
-			m_statProfile.Initialize(baseStatArray,growthStatArray);
+			m_statProfile = new StatProfile<TEnum>(baseStatArray,growthStatArray);
 		}
 
 		public float GetStat(TEnum statType,int level)
