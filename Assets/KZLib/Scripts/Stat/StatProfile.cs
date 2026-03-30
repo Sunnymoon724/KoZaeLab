@@ -10,6 +10,12 @@ namespace KZLib
 		private readonly Dictionary<TEnum,float> m_baseStatDict = null;
 		private readonly Dictionary<TEnum,float> m_growthStatDict = null;
 
+		public StatProfile(StatProfile<TEnum> statProfile)
+		{
+			m_baseStatDict = new Dictionary<TEnum,float>(statProfile.m_baseStatDict);
+			m_growthStatDict = new Dictionary<TEnum,float>(statProfile.m_growthStatDict);
+		}
+
 		public StatProfile(StatEntry<TEnum>[] baseStatArray,StatEntry<TEnum>[] growthStatArray)
 		{
 			m_baseStatDict = new Dictionary<TEnum,float>();
@@ -17,12 +23,6 @@ namespace KZLib
 
 			_Initialize(m_baseStatDict,baseStatArray);
 			_Initialize(m_growthStatDict,growthStatArray);
-		}
-
-		protected StatProfile(Dictionary<TEnum,float> baseStatDict,Dictionary<TEnum,float> growthStatDict)
-		{
-			m_baseStatDict = baseStatDict;
-			m_growthStatDict = growthStatDict;
 		}
 
 		protected void _Initialize(Dictionary<TEnum,float> statDict,StatEntry<TEnum>[] statEntryArray)
@@ -51,28 +51,26 @@ namespace KZLib
 			return baseVal+growthVal*level;
 		}
 
-		public static StatProfile<TEnum> operator +(StatProfile<TEnum> lhs,StatProfile<TEnum> rhs)
+		public void Add(StatProfile<TEnum> other)
 		{
-			return new StatProfile<TEnum>(_Combine(lhs.m_baseStatDict,rhs.m_baseStatDict,+1),_Combine(lhs.m_growthStatDict,rhs.m_growthStatDict,+1));
+			_Merge(m_baseStatDict,other.m_baseStatDict,+1);
+			_Merge(m_growthStatDict,other.m_growthStatDict,+1);
 		}
 
-		public static StatProfile<TEnum> operator -(StatProfile<TEnum> lhs,StatProfile<TEnum> rhs)
+		public void Remove(StatProfile<TEnum> other)
 		{
-			return new StatProfile<TEnum>(_Combine(lhs.m_baseStatDict,rhs.m_baseStatDict,-1),_Combine(lhs.m_growthStatDict,rhs.m_growthStatDict,-1));
+			_Merge(m_baseStatDict,other.m_baseStatDict,-1);
+			_Merge(m_growthStatDict,other.m_growthStatDict,-1);
 		}
 
-		private static Dictionary<TEnum,float> _Combine(Dictionary<TEnum,float> lhs,Dictionary<TEnum,float> rhs,int sign)
+		private static void _Merge(Dictionary<TEnum,float> target,Dictionary<TEnum,float> source,int sign)
 		{
-			var result = new Dictionary<TEnum,float>(lhs);
-
-			foreach(var pair in rhs)
+			foreach(var pair in source)
 			{
-				result.TryGetValue(pair.Key,out var existing);
+				target.TryGetValue(pair.Key,out var existing);
 
-				result[pair.Key] = existing+pair.Value*sign;
+				target[pair.Key] = existing+pair.Value*sign;
 			}
-
-			return result;
 		}
 	}
 }
