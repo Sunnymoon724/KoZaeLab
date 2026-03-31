@@ -139,4 +139,14 @@ public class GroupDropdownUI : BaseDropdownUI
 
 		OnValueChanged?.Invoke(CurrentText);
 	}
+
+	public void MoveNext()
+	{
+		_OnClickedNextButton();
+	}
+
+	public void MovePrev()
+	{
+		_OnClickedPrevButton();
+	}
 }
