@@ -15,11 +15,14 @@ namespace KZLib.Utilities
 		private MaterialPropertyBlock m_propertyBlock = null;
 		private MaterialPropertyBlock PropertyBlock => m_propertyBlock ??= new MaterialPropertyBlock();
 
+		public void SetPalette(IColorProto colorPrt)
+		{
+			SetPalette(ProtoManager.In.GetColorVectorArray(colorPrt));
+		}
+
 		public void SetPalette(int colorNum)
 		{
-			var colorArray = ProtoManager.In.GetColorVectorArray(colorNum);
-
-			SetPalette(colorArray);
+			SetPalette(ProtoManager.In.GetColorVectorArray(colorNum));
 		}
 
 		public void SetPalette(Vector4[] colorArray)

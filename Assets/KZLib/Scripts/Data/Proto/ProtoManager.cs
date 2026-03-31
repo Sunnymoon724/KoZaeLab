@@ -346,17 +346,22 @@ namespace KZLib.Data
 
 		public Vector4[] GetColorVectorArray(int num)
 		{
-			if(!m_colorVectorDict.TryGetValue(num,out Vector4[] colorVectorArray))
+			if(m_colorVectorDict.TryGetValue(num,out var colorVectorArray))
 			{
-				var colorPrt = _GetProto<IColorProto>(num);
+				return colorVectorArray;
+			}
 
-				if(colorPrt == null)
-				{
-					return Array.Empty<Vector4>(); 
-				}
+			var colorPrt = _GetProto<IColorProto>(num);
 
+			return colorPrt == null ? Array.Empty<Vector4>() : GetColorVectorArray(colorPrt);
+		}
+
+		public Vector4[] GetColorVectorArray(IColorProto colorPrt)
+		{
+			if(!m_colorVectorDict.TryGetValue(colorPrt.Num,out Vector4[] colorVectorArray))
+			{
 				var hexCodeArray = colorPrt.ColorArray;
-				
+
 				if(hexCodeArray.Length < 2)
 				{
 					return Array.Empty<Vector4>(); 
@@ -372,7 +377,7 @@ namespace KZLib.Data
 					colorVectorArray[i] = hexCodeArray[i].IsEmpty() ? colorVectorArray[1] : hexCodeArray[i].ToColor();
 				}
 
-				m_colorVectorDict.Add(num,colorVectorArray);
+				m_colorVectorDict.Add(colorPrt.Num,colorVectorArray);
 			}
 
 			return colorVectorArray;
