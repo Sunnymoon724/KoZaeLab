@@ -15,7 +15,7 @@ public static class EnumExtension
 	public static TEnum AddEnum<TEnum>(this TEnum value,int count) where TEnum : struct,Enum
 	{
 		var valueArray = Enum.GetValues(typeof(TEnum));
-		var index = KZMathKit.LoopClamp(value.ToInt()+count,valueArray.Length-1);
+		var index = KZMathKit.LoopClamp(value.ToInt()+count,valueArray.Length);
 
 		return (TEnum) valueArray.GetValue(index);
 	}
