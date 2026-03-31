@@ -15,6 +15,13 @@ namespace KZLib.Utilities
 		private MaterialPropertyBlock m_propertyBlock = null;
 		private MaterialPropertyBlock PropertyBlock => m_propertyBlock ??= new MaterialPropertyBlock();
 
+		public void SetPalette(int colorNum)
+		{
+			var colorArray = ProtoManager.In.GetColorVectorArray(colorNum);
+
+			SetPalette(colorArray);
+		}
+
 		public void SetPalette(Vector4[] colorArray)
 		{
 			if(m_rendererList.Count < 1 || colorArray.IsNullOrEmpty())

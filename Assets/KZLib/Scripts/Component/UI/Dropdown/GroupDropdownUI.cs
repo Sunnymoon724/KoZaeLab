@@ -12,16 +12,18 @@ public class GroupDropdownUI : BaseDropdownUI
 	[SerializeField]
 	private Button m_nextButton = null;
 
-	public string GetCurrentText => GetCurrentOptionData.text;
-	public Sprite GetCurrentSprite => GetCurrentOptionData.image;
-	public Color GetCurrentColor => GetCurrentOptionData.color;
+	public string CurrentText => CurrentOptionData?.text;
+	public Sprite CurrentSprite => CurrentOptionData?.image;
+	public Color CurrentColor => CurrentOptionData?.color ?? Color.white;
 
-	private TMP_Dropdown.OptionData GetCurrentOptionData => m_dropdown.options.TryGetValueByIndex(m_dropdown.value,out var option) ? option : null;
+	private TMP_Dropdown.OptionData CurrentOptionData => m_dropdown.options.TryGetValueByIndex(m_dropdown.value,out var option) ? option : null;
 
 	private Action<string> OnValueChanged;
 
-	private void OnEnable()
+	protected override void OnEnable()
 	{
+		base.OnEnable();
+
 		if(m_prevButton != null)
 		{
 			m_prevButton.onClick.AddAction(_OnClickedPrevButton);
@@ -33,8 +35,10 @@ public class GroupDropdownUI : BaseDropdownUI
 		}
 	}
 
-	private void OnDisable()
+	protected override void OnDisable()
 	{
+		base.OnDisable();
+
 		if(m_prevButton != null)
 		{
 			m_prevButton.onClick.RemoveAction(_OnClickedPrevButton);
@@ -48,7 +52,7 @@ public class GroupDropdownUI : BaseDropdownUI
 
 	protected override void _OnValueChanged(int _)
 	{
-		OnValueChanged?.Invoke(GetCurrentText);
+		OnValueChanged?.Invoke(CurrentText);
 	}
 
 	private void _OnClickedPrevButton()
@@ -70,7 +74,7 @@ public class GroupDropdownUI : BaseDropdownUI
 			m_dropdown.SetValueWithoutNotify(value);
 		}
 
-		OnValueChanged?.Invoke(GetCurrentText);
+		OnValueChanged?.Invoke(CurrentText);
 	}
 
 	public void SetDropdown(List<TMP_Dropdown.OptionData> optionList,Action<string> onValueChanged)
@@ -133,6 +137,6 @@ public class GroupDropdownUI : BaseDropdownUI
 
 		OnValueChanged = onValueChanged;
 
-		OnValueChanged?.Invoke(GetCurrentText);
+		OnValueChanged?.Invoke(CurrentText);
 	}
 }

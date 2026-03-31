@@ -7,12 +7,12 @@ public abstract class BaseDropdownUI : MonoBehaviour
 	[SerializeField]
 	protected TMP_Dropdown m_dropdown = null;
 
-	private void OnEnable()
+	protected virtual void OnEnable()
 	{
 		m_dropdown.onValueChanged.AddAction(_OnValueChanged);
 	}
 
-	private void OnDisable()
+	protected virtual void OnDisable()
 	{
 		m_dropdown.onValueChanged.RemoveAction(_OnValueChanged);
 	}
