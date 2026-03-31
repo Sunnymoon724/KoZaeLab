@@ -31,7 +31,7 @@ namespace KZLib.Development
 			_Fill(capacity);
 		}
 
-		protected override void Dispose(bool disposing)
+		protected override void _Dispose(bool disposing)
 		{
 			if(disposing)
 			{
@@ -46,7 +46,7 @@ namespace KZLib.Development
 				Clear(_Clear);
 			}
 
-			base.Dispose(disposing); 
+			base._Dispose(disposing); 
 		}
 
 		private static TComponent _CopyObject(TComponent pivot) 

@@ -19,15 +19,9 @@ namespace KZLib.Data
 			_LoadAll();
 		}
 
-		~Tune()
-		{
-			_Release(false);
-		}
-
 		public void Dispose()
 		{
-			_Release(true);
-
+			_Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
@@ -43,7 +37,7 @@ namespace KZLib.Data
 			return subject;
 		}
 
-		private void _Release(bool disposing)
+		private void _Dispose(bool disposing)
 		{
 			if(m_disposed)
 			{

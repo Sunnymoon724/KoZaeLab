@@ -2,21 +2,21 @@
 
 public abstract class BaseClass : IDisposable
 {
-	private bool m_Disposed = false;
+	private bool m_disposed = false;
 
 	protected BaseClass() => Initialize();
-	~BaseClass() => Release(false);
+	~BaseClass() => _Release(false);
 
-	protected virtual void Initialize() { }
+	protected virtual void _Initialize() { }
 
-	protected virtual void Release(bool _disposing)
+	protected virtual void _Release(bool disposing)
 	{
-		if(m_Disposed)
+		if(m_disposed)
 		{
 			return;
 		}
 
-		if(_disposing)
+		if(disposing)
 		{
 			// Dispose managed state.
 			// Remove event listener
@@ -25,29 +25,21 @@ public abstract class BaseClass : IDisposable
 		// Dispose not managed resources.
 		// Set large fields to null.
 
-		m_Disposed = true;
+		m_disposed = true;
 	}
 
 	public void Dispose()
 	{
-		Release(true);
-
+		_Release(true);
 		GC.SuppressFinalize(this);
 	}
 }
 
 public class DerivedClass : BaseClass
 {
-	private bool m_Disposed = false;
-
-	protected override void Release(bool _disposing)
+	protected override void _Release(bool disposing)
 	{
-		if(m_Disposed)
-		{
-			return;
-		}
-
-		if(_disposing)
+		if(disposing)
 		{
 			// Dispose managed state.
 			// Remove event listener
@@ -56,8 +48,6 @@ public class DerivedClass : BaseClass
 		// Dispose not managed resources.
     	// Set large fields to null.
 
-		m_Disposed = true;
-
-		base.Release(_disposing);
+		base._Release(disposing);
 	}
 }

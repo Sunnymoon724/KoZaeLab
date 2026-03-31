@@ -51,11 +51,6 @@ namespace KZLib.Utilities
 			_LoopProcessAsync(m_tokenSource.Token).Forget();
 		}
 
-		~CacheResolver()
-		{
-			_Dispose(false);
-		}
-
 		public void Dispose()
 		{
 			_Dispose(true);

@@ -5,22 +5,28 @@ using UnityEngine;
 
 namespace KZLib
 {
-	public class UnitStatController<TEnum> : MonoBehaviour where TEnum : struct,Enum
+	public class UnitStatController<TEnum> where TEnum : struct,Enum
 	{
-		[SerializeField]
+		private readonly MonoBehaviour m_unitController = null;
 		private bool m_showLog = false;
 
-		private StatProfile<TEnum> m_statProfile = null;
-		private readonly BuffController<TEnum> m_buffController = new();
+		private readonly StatProfile<TEnum> m_statProfile = null;
+		private readonly BuffController<TEnum> m_buffController = null;
 
-		public void Initialize(StatProfile<TEnum> statProfile)
+		public UnitStatController(MonoBehaviour unitController,StatEntry<TEnum>[] baseStatArray,StatEntry<TEnum>[] growthStatArray,bool showLog = false) : this(unitController,new StatProfile<TEnum>(baseStatArray,growthStatArray),showLog) { }
+
+		public UnitStatController(MonoBehaviour unitController,StatProfile<TEnum> statProfile,bool showLog = false)
 		{
+			m_unitController = unitController;
 			m_statProfile = statProfile;
+			m_buffController = new BuffController<TEnum>();
+
+			SetShowLog(showLog);
 		}
 
-		public void Initialize(StatEntry<TEnum>[] baseStatArray,StatEntry<TEnum>[] growthStatArray)
+		public void SetShowLog(bool showLog)
 		{
-			m_statProfile = new StatProfile<TEnum>(baseStatArray,growthStatArray);
+			m_showLog = showLog;
 		}
 
 		public float GetStat(TEnum statType,int level)
@@ -36,7 +42,7 @@ namespace KZLib
 
 			if(m_showLog)
 			{
-				LogChannel.Develop.I($"[UnitStat] {name} add buff [{buffNum}]");
+				_ShowLog($"add buff [{buffNum}]");
 			}
 		}
 
@@ -46,7 +52,7 @@ namespace KZLib
 
 			if(m_showLog)
 			{
-				LogChannel.Develop.I($"[UnitStat] {name} remove buff [{buffNum}]");
+				_ShowLog($"remove buff [{buffNum}]");
 			}
 		}
 
@@ -59,10 +65,10 @@ namespace KZLib
 		{
 			m_buffController.TickTime(deltaTime);
 		}
-		
+
 #if UNITY_EDITOR
 		[Button("Show Active Buffs")]
-		protected void OnShowActiveBuffs()
+		protected void _OnShowActiveBuffs()
 		{
 			var builder = new StringBuilder();
 			
@@ -71,8 +77,13 @@ namespace KZLib
 				builder.AppendLine($"BuffName : {buff.BuffName}, StackCount : {buff.CurrentStackCount}, RemainingTime: {buff.CurrentRemainingTime}");
 			}
 
-			LogChannel.Develop.I($"[UnitStat] Active Buffs :\n{builder}");
+			_ShowLog($"Active Buffs :\n{builder}");
 		}
 #endif
+
+		private void _ShowLog(string text)
+		{
+			LogChannel.Develop.I($"[UnitStat] {m_unitController.name} {text}");
+		}
 	}
 }

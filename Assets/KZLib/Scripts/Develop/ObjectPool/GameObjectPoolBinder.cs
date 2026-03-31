@@ -32,12 +32,11 @@ namespace KZLib.Development
 
 		public void Dispose()
 		{
-			Dispose(true);
-
+			_Dispose(true);
 			GC.SuppressFinalize(this); 
 		}
 
-		protected virtual void Dispose(bool disposing)
+		protected virtual void _Dispose(bool disposing)
 		{
 			if(m_disposed)
 			{

@@ -3,23 +3,21 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using R3;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace KZLib
 {
     public interface IUnitStateParam { }
 
-	public abstract class UnitStateController<TEnum> : MonoBehaviour where TEnum : struct,Enum
+	public abstract class UnitStateController<TEnum> : IDisposable where TEnum : struct,Enum
 	{
-		[SerializeField]
+		private readonly MonoBehaviour m_unitController = null;
 		private bool m_showLog = false;
 
 		protected bool m_changeAllowed = true;
 		protected CancellationTokenSource m_stateTokenSource = null;
 		private readonly Dictionary<TEnum,Func<CancellationToken,IUnitStateParam,UniTask<TEnum>>> m_stateFuncDict = new();
 
-		[ShowInInspector]
 		public TEnum StateType => m_stateType;
 
 		protected TEnum m_stateType = default;
@@ -29,21 +27,40 @@ namespace KZLib
 
 		protected abstract bool _CanChange(TEnum newStateTag,bool isForce);
 
-		public void Initialize()
+		public UnitStateController(MonoBehaviour unitController,bool showLog = false)
 		{
+			m_unitController = unitController;
+
+			SetShowLog(showLog);
 			m_stateFuncDict.Clear();
 		}
 
-		public void Release()
+		public void Dispose()
 		{
+			_Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void _Dispose(bool disposing)
+		{
+			if(!disposing)
+			{
+				return;
+			}
+
 			m_stateFuncDict.Clear();
 
 			KZExternalKit.KillTokenSource(ref m_stateTokenSource);
 		}
 
+		public void SetShowLog(bool showLog)
+		{
+			m_showLog = showLog;
+		}
+
 		public async UniTask EnterStateAsync(TEnum newState,IUnitStateParam param,bool isForce = false)
 		{
-			if(!isActiveAndEnabled)
+			if(!_IsActiveAndEnabled())
 			{
 				return;
 			}
@@ -52,19 +69,19 @@ namespace KZLib
 			{
 				if(m_showLog)
 				{
-					LogChannel.Develop.I($"{name} cannot change to {newState} (Force: {isForce})");
+					_ShowLog($"cannot change to {newState} (Force: {isForce})");
 				}
 
 				return;
 			}
 
-			KZExternalKit.RecycleTokenSourceInMono(ref m_stateTokenSource,this);
+			KZExternalKit.RecycleTokenSourceInMono(ref m_stateTokenSource,m_unitController);
 
             var token = m_stateTokenSource.Token;
 			var curNextState = newState;
 			var curParam = param;
 
-			while(!token.IsCancellationRequested && isActiveAndEnabled)
+			while(!token.IsCancellationRequested && _IsActiveAndEnabled())
 			{
 				if(!m_stateFuncDict.TryGetValue(curNextState,out var stateFunc))
 				{
@@ -81,7 +98,7 @@ namespace KZLib
 
 				if(m_showLog)
 				{
-					LogChannel.Develop.I($"[UnitState] {name} is entered {curNextState}");
+					_ShowLog($"is entered {curNextState}");
 				}
 
 				var (isCanceled,nextState) = await stateFunc.Invoke(m_stateTokenSource.Token,curParam).SuppressCancellationThrow();
@@ -135,5 +152,15 @@ namespace KZLib
 		}
 
 		protected virtual void _ReadyState() { }
+
+		private bool _IsActiveAndEnabled()
+		{
+			return m_unitController != null && m_unitController.isActiveAndEnabled;
+		}
+
+		private void _ShowLog(string text)
+		{
+			LogChannel.Develop.I($"[UnitState] {m_unitController.name} {text}");
+		}
 	}
 }

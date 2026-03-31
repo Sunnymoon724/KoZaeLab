@@ -9,11 +9,6 @@ namespace KZLib.Utilities
 		private CancellationTokenSource m_tokenSource = null;
 		private bool m_disposed = false;
 
-		~TimeTracker()
-		{
-			_Dispose(false);
-		}
-
 		public void Dispose()
 		{
 			_Dispose(true);
