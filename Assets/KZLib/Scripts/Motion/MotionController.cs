@@ -1,5 +1,4 @@
 using UnityEngine;
-using KZLib.Attributes;
 using KZLib.Data;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
@@ -22,9 +21,6 @@ namespace KZLib
 	{
 		[SerializeField]
 		private Animator m_animator = null;
-
-		[SerializeField,KZRichText]
-		protected string m_currentStateName = null;
 
 		private readonly Dictionary<int,MotionEntry> m_motionEntryDict = new();
 
@@ -83,8 +79,6 @@ namespace KZLib
 		{
 			SetSpeed(speed);
 
-			m_currentStateName = stateName;
-
 			m_animator.Play(stateName,layer,normalizedTime);
 		}
 
@@ -129,11 +123,6 @@ namespace KZLib
 			}
 
 			PlayAnimation(motionPrt.StateName,layer,0.0f);
-		}
-
-		public async UniTask WaitForCurrentAnimationFinishAsync(int layer,CancellationToken cancellationToken)
-		{
-			await WaitForAnimationFinishAsync(m_currentStateName,layer,cancellationToken);
 		}
 
 		public async UniTask WaitForAnimationFinishAsync(string stateName,int layer,CancellationToken cancellationToken)

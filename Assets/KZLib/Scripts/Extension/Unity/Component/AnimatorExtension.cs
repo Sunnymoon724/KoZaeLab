@@ -143,14 +143,19 @@ public static class AnimatorExtension
 				return false;
 			}
 
-			var normalizedTime = stateInfo.loop ? stateInfo.normalizedTime % 1.0f : stateInfo.normalizedTime;
+			var normalizedTime = stateInfo.loop ? stateInfo.normalizedTime%1.0f : stateInfo.normalizedTime;
+
+			if(animator.IsInTransition(layer))
+			{
+				return true;
+			}
 
 			return normalizedTime >= 0.99f;
 		}
 
 		await UniTask.WaitUntil(_IsAnimationFinished,cancellationToken : token).SuppressCancellationThrow();
 
-		while(animator.IsInTransition(layer))
+		while(_IsValid(animator) && animator.IsInTransition(layer))
 		{
 			await UniTask.Yield(cancellationToken : token);
 		}
