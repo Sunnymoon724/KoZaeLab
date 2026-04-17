@@ -136,10 +136,24 @@ public static class AnimatorExtension
 
 		bool _IsAnimationFinished()
 		{
-			return IsAnimationFinished(animator,animationHashName,layer);
+			var stateInfo = animator.GetCurrentAnimatorStateInfo(layer);
+
+			if(stateInfo.shortNameHash != animationHashName)
+			{
+				return false;
+			}
+
+			var normalizedTime = stateInfo.loop ? stateInfo.normalizedTime % 1.0f : stateInfo.normalizedTime;
+
+			return normalizedTime >= 0.99f;
 		}
 
 		await UniTask.WaitUntil(_IsAnimationFinished,cancellationToken : token).SuppressCancellationThrow();
+
+		while(animator.IsInTransition(layer))
+		{
+			await UniTask.Yield(cancellationToken : token);
+		}
 	}
 
 	public static bool IsAnimationFinished(this Animator animator,string animationName,int layer = 0)
@@ -161,7 +175,7 @@ public static class AnimatorExtension
 
 		var stateInfo = animator.GetCurrentAnimatorStateInfo(layer);
 
-		if(stateInfo.shortNameHash != animationHashName || animator.IsInTransition(layer))
+		if(stateInfo.shortNameHash != animationHashName)
 		{
 			return false;
 		}
