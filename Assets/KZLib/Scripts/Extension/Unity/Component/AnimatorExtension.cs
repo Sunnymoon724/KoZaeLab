@@ -161,7 +161,14 @@ public static class AnimatorExtension
 
 		var stateInfo = animator.GetCurrentAnimatorStateInfo(layer);
 
-		return stateInfo.shortNameHash == animationHashName && stateInfo.normalizedTime >= 0.99f;
+		if(stateInfo.shortNameHash != animationHashName || animator.IsInTransition(layer))
+		{
+			return false;
+		}
+
+		var normalizedTime = stateInfo.loop ? stateInfo.normalizedTime%1.0f : stateInfo.normalizedTime;
+
+		return normalizedTime >= 0.99f;
 	}
 
 	public static async UniTask WaitForAnimationStartAsync(this Animator animator,string animationName,int layer = 0,CancellationToken token = default)
