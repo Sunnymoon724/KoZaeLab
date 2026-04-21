@@ -16,7 +16,7 @@ public record NetworkRespondInfo(bool IsUpdate,string Type,string Content);
 
 public record NetworkPacketInfo(int Code,string Message,bool IsEncrypted);
 
-public record UnitStateInfo(Enum PreState,Enum CurState);
+public record ActorStateInfo(Enum PreState,Enum CurState);
 
 #region UINameTag
 public class CommonUINameTag : CustomTag

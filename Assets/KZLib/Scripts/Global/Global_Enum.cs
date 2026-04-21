@@ -13,6 +13,10 @@ public enum WindowPriorityType
 
 public enum SpaceType { xyz, xy, xz };
 
+public enum SideType { None, Team0, Team1, Team2, Team3, Team4, Team5, Team6, Team7, Team8, Team9 }
+
+public enum SideRelationType { None, Neutral, Ally, Enemy }
+
 public enum GraphicQualityPresetType { QualityLowest, QualityLow, QualityMiddle, QualityHigh, QualityHighest, }
 
 [Flags]

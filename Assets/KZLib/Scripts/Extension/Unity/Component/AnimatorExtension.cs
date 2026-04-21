@@ -155,7 +155,7 @@ public static class AnimatorExtension
 
 		await UniTask.WaitUntil(_IsAnimationFinished,cancellationToken : token).SuppressCancellationThrow();
 
-		while(_IsValid(animator) && animator.IsInTransition(layer))
+		while(animator && animator.IsInTransition(layer))
 		{
 			await UniTask.Yield(cancellationToken : token);
 		}
@@ -317,45 +317,51 @@ public static class AnimatorExtension
 
 	public static IEnumerable<string> FindStateNameGroup(this Animator animator)
 	{
-		if(_IsValid(animator))
+		if(!_IsValid(animator))
 		{
-			var controller = animator.GetAnimatorController(out var _);
+			yield break;
+		}
 
-			if(controller)
+		var controller = animator.GetAnimatorController(out var _);
+
+		if(!controller)
+		{
+			yield break;
+		}
+
+		var layerArray = controller.layers;
+
+		if(layerArray == null)
+		{
+			yield break;
+		}
+
+		for(var i=0;i<layerArray.Length;i++)
+		{
+			var stateMachine = layerArray[i].stateMachine;
+
+			if(!stateMachine)
 			{
-				var layerArray = controller.layers;
+				continue;
+			}
 
-				if(layerArray != null)
+			var animatorStateArray = stateMachine.states;
+
+			if(animatorStateArray == null)
+			{
+				continue;
+			}
+
+			for(var j=0;j<animatorStateArray.Length;j++)
+			{
+				var state = animatorStateArray[j].state;
+
+				if(!state)
 				{
-					for(var i=0;i<layerArray.Length;i++)
-					{
-						var stateMachine = layerArray[i].stateMachine;
-
-						if(!stateMachine)
-						{
-							continue;
-						}
-
-						var animatorStateArray = stateMachine.states;
-
-						if(animatorStateArray == null)
-						{
-							continue;
-						}
-
-						for(var j=0;j<animatorStateArray.Length;j++)
-						{
-							var state = animatorStateArray[j].state;
-
-							if(!state)
-							{
-								continue;
-							}
-
-							yield return state.name;
-						}
-					}
+					continue;
 				}
+
+				yield return state.name;
 			}
 		}
 	}

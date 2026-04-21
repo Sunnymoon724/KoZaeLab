@@ -3,21 +3,21 @@ using System.Text;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace KZLib
+namespace KZLib.Actors
 {
-	public class UnitStatController<TEnum> where TEnum : struct,Enum
+	public class ActorStatController<TEnum> where TEnum : struct,Enum
 	{
-		private readonly MonoBehaviour m_unitController = null;
+		private readonly MonoBehaviour m_actor = null;
 		private bool m_showLog = false;
 
 		private readonly StatProfile<TEnum> m_statProfile = null;
 		private readonly BuffController<TEnum> m_buffController = null;
 
-		public UnitStatController(MonoBehaviour unitController,StatEntry<TEnum>[] baseStatArray,StatEntry<TEnum>[] growthStatArray,bool showLog = false) : this(unitController,new StatProfile<TEnum>(baseStatArray,growthStatArray),showLog) { }
+		public ActorStatController(MonoBehaviour actor,StatEntry<TEnum>[] baseStatArray,StatEntry<TEnum>[] growthStatArray,bool showLog = false) : this(actor,new StatProfile<TEnum>(baseStatArray,growthStatArray),showLog) { }
 
-		public UnitStatController(MonoBehaviour unitController,StatProfile<TEnum> statProfile,bool showLog = false)
+		public ActorStatController(MonoBehaviour actor,StatProfile<TEnum> statProfile,bool showLog = false)
 		{
-			m_unitController = unitController;
+			m_actor = actor;
 			m_statProfile = statProfile;
 			m_buffController = new BuffController<TEnum>();
 
@@ -83,7 +83,7 @@ namespace KZLib
 
 		private void _ShowLog(string text)
 		{
-			LogChannel.Develop.I($"[UnitStat] {m_unitController.name} {text}");
+			LogChannel.Develop.I($"[ActorStat] {m_actor.name} {text}");
 		}
 	}
 }

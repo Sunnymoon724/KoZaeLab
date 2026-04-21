@@ -70,7 +70,7 @@ public class ObserveCamera : MonoBehaviour
 			m_mousePosition = Vector2.zero;
 		}
 	}
-	
+
 	public void SetTarget(GameObject target)
 	{
 		m_target = target;

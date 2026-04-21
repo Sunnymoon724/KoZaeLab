@@ -33,6 +33,8 @@ public static partial class Global
 	public const string LOCAL_PUSH_BLOCK_ENABLE = "LOCAL_PUSH_BLOCK_ENABLE";
 	public const string LOCAL_PUSH_BLOCK_START_HOUR = "LOCAL_PUSH_BLOCK_START";
 	public const string LOCAL_PUSH_BLOCK_END_HOUR = "LOCAL_PUSH_BLOCK_END";
+
+	public const float MinSqrMagnitude = 0.001f;
 }
 #endregion General
 
