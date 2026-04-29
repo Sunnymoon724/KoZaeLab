@@ -4,7 +4,12 @@ using UnityEngine;
 
 namespace KZLib.Actors
 {
-	public abstract class Actor<TState,TStat> : MonoBehaviour where TState : struct,Enum where TStat : struct,Enum
+	public interface IActor
+	{
+		Vector3 Position { get; }
+	}
+
+	public abstract class Actor<TState,TStat> : MonoBehaviour,IActor where TState : struct,Enum where TStat : struct,Enum
 	{
 		[SerializeField]
 		protected ActorAgentController m_actorAgentCon = null;
