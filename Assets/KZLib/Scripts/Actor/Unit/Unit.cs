@@ -2,7 +2,7 @@ using System;
 
 namespace KZLib.Actors
 {
-	public abstract class Unit<TState,TStat> : Actor<TState,TStat> where TState : struct,Enum where TStat : struct,Enum
+	public abstract class Unit<TState,TStat> : Actor<TState,TStat,UnitAgentController> where TState : struct,Enum where TStat : struct,Enum
 	{
 		protected override float _CalculateDamage(float damage)
 		{
@@ -16,5 +16,10 @@ namespace KZLib.Actors
 		protected float Attack => _GetStat(AttackStatType);
 		protected float Defense => _GetStat(DefenseStatType);
 		protected float AttackRange => _GetStat(AttackRangeStatType);
+
+		protected override void _InitializeAgent(bool updateRotation)
+		{
+			m_agentCon.Initialize(AttackRange,MoveSpeed,updateRotation);
+		}
 	}
 }
