@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using KZLib.Actors;
 using KZLib.Utilities;
 
 namespace KZLib
@@ -47,6 +49,17 @@ namespace KZLib
 
 			m_relationArray[indexA,indexB] = relation1;
 			m_relationArray[indexB,indexA] = relation2;
+		}
+
+		public IEnumerable<IActor> GetActorGroup(SideType mySide,SideRelationType relation,IEnumerable<IActor> actorGroup,bool includeDead = false)
+		{
+			foreach(var actor in actorGroup)
+			{
+				if((includeDead || !actor.IsDead) && GetRelation(mySide,actor.MySide) == relation)
+				{
+					yield return actor;
+				}
+			}
 		}
 
 		public SideRelationType GetRelation(SideType sideA,SideType sideB)

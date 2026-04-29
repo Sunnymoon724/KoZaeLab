@@ -9,16 +9,13 @@ namespace KZLib.Actors
 		Vector3 Position { get; }
 		bool IsDead { get; }
 		void TakeDamage(float damage);
+
+		SideType MySide { get; }
 	}
 
 	public abstract class Actor<TState,TStat,TAgent> : MonoBehaviour,IActor where TState : struct,Enum where TStat : struct,Enum where TAgent : ActorAgentController
 	{
-		[SerializeField]
-		protected TAgent m_agentCon = null;
-
-		private ActorStatController<TStat> m_statCon = null;
-		protected ActorStateController<TState> m_stateCon = null;
-
+		#region Debug
 		[SerializeField,HideInInspector]
 		private bool m_showLog = false;
 
@@ -38,40 +35,25 @@ namespace KZLib.Actors
 		{
 			m_stateCon?.SetShowLog(value);
 		}
+		#endregion Debug
 
-		protected int m_currentLevel = 1;
-		protected float m_currentHp = 0.0f;
-		protected float m_maxHp = 0.0f;
-
-		[ShowInInspector]
-		protected string HpInfo => $"Hp: {CurrentHp}/{MaxHp}";
+		#region State
+		protected ActorStateController<TState> m_stateCon = null;
+		protected string m_lastStateName = string.Empty;
 
 		[ShowInInspector]
 		public TState CurrentStateType => m_stateCon == null ? DefaultStateType : m_stateCon.StateType;
 		protected abstract TState DefaultStateType { get; }
-		protected string m_lastStateName = string.Empty;
+		#endregion State
 
-		public float CurrentHp => m_currentHp;
-		public float MaxHp => m_maxHp;
-		public bool IsDead => m_currentHp <= 0.0f;
+		#region Stat
+		private ActorStatController<TStat> m_statCon = null;
+		protected int m_currentLevel = 1;
 
-		public SideType MySide { get; protected set; } = SideType.None;
+		protected abstract TStat HpStatType { get; }
+		protected abstract TStat MoveSpeedStatType { get; }
 
-		public bool IsEnemy(Actor<TState,TStat,TAgent> other)
-		{
-			return _GetRelation(other) == SideRelationType.Enemy;
-		}
-		public bool IsAlly(Actor<TState,TStat,TAgent> other)
-		{
-			return _GetRelation(other) == SideRelationType.Ally;
-		}
-
-		private SideRelationType _GetRelation(Actor<TState,TStat,TAgent> other)
-		{
-			return SideRelationManager.In.GetRelation(MySide,other.MySide);
-		}
-
-		public Vector3 Position => transform.position;
+		protected float MoveSpeed => _GetStat(MoveSpeedStatType);
 
 		protected void _InitializeStat(StatProfile<TStat> statProfile)
 		{
@@ -88,10 +70,17 @@ namespace KZLib.Actors
 			return m_statCon.GetStat(statType,m_currentLevel);
 		}
 
-		protected abstract TStat HpStatType { get; }
-		protected abstract TStat MoveSpeedStatType { get; }
+		protected float m_currentHp = 0.0f;
+		protected float m_maxHp = 0.0f;
 
-		protected float MoveSpeed => _GetStat(MoveSpeedStatType);
+		public float CurrentHp => m_currentHp;
+		public float MaxHp => m_maxHp;
+		public bool IsDead => m_currentHp <= 0.0f;
+
+		[ShowInInspector]
+		protected string HpInfo => $"Hp: {CurrentHp}/{MaxHp}";
+
+		public Vector3 Position => transform.position;
 
 		public virtual void TakeDamage(float damage)
 		{
@@ -114,12 +103,45 @@ namespace KZLib.Actors
 		}
 
 		protected virtual void _OnDead() { }
+		#endregion Stat
 
-		protected abstract void _InitializeAgent(bool updateRotation);
+		#region Side
+		private SideType m_mySide = SideType.None;
+		public SideType MySide => m_mySide;
 
+		public void SetSideType(SideType sideType)
+		{
+			m_mySide = sideType;
+		}
+
+		public bool IsEnemy(Actor<TState,TStat,TAgent> other)
+		{
+			return _GetRelation(other) == SideRelationType.Enemy;
+		}
+
+		public bool IsAlly(Actor<TState,TStat,TAgent> other)
+		{
+			return _GetRelation(other) == SideRelationType.Ally;
+		}
+
+		private SideRelationType _GetRelation(Actor<TState,TStat,TAgent> other)
+		{
+			return SideRelationManager.In.GetRelation(MySide,other.MySide);
+		}
+		#endregion Side
+
+		#region Agent
+		[SerializeField]
+		protected TAgent m_agentCon = null;
+
+		protected abstract void _InitializeAgent(bool updateRotation = false);
+		#endregion Agent
+
+		#region Lifecycle
 		public virtual void Release()
 		{
 			m_stateCon?.Dispose();
 		}
+		#endregion Lifecycle
 	}
 }

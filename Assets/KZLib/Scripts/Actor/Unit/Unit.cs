@@ -17,7 +17,7 @@ namespace KZLib.Actors
 		protected float Defense => _GetStat(DefenseStatType);
 		protected float AttackRange => _GetStat(AttackRangeStatType);
 
-		protected override void _InitializeAgent(bool updateRotation)
+		protected override void _InitializeAgent(bool updateRotation = false)
 		{
 			m_agentCon.Initialize(AttackRange,MoveSpeed,updateRotation);
 		}
