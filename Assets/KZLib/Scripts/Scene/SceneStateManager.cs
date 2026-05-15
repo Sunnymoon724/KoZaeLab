@@ -15,6 +15,8 @@ using UnityEditor;
 
 namespace KZLib
 {
+	public record SceneChangeInfo(CommonUINameTag TransitionNameTag,bool UseLoading = true);
+
 	[SingletonConfig(AutoCreate = true,DontDestroy = true)]
 	public class SceneStateManager : SingletonMB<SceneStateManager>
 	{
@@ -63,17 +65,7 @@ namespace KZLib
 #endif
 		}
 
-		public void ReloadSceneWithLoading(CommonUINameTag transitionNameTag)
-		{
-			_ReloadScene(transitionNameTag,true);
-		}
-
-		public void ReloadSceneNoLoading(CommonUINameTag transitionNameTag)
-		{
-			_ReloadScene(transitionNameTag,false);
-		}
-
-		private void _ReloadScene(CommonUINameTag transitionNameTag,bool isLoading)
+		public void ReloadScene(SceneChangeInfo changeInfo)
 		{
 			var current = CurrentScene;
 
@@ -82,35 +74,32 @@ namespace KZLib
 				return;
 			}
 
-			_ChangeScene(current.SceneName,transitionNameTag,isLoading);
+			_ChangeSceneAsync(current.SceneName,changeInfo).Forget();
 		}
 
-		public void ChangeSceneWithLoading(string sceneName,CommonUINameTag transitionNameTag)
+		public UniTask ReloadSceneAsync(SceneChangeInfo changeInfo)
 		{
-			_ChangeScene(sceneName,transitionNameTag,true);
+			var current = CurrentScene;
+
+			if(current == null)
+			{
+				return UniTask.CompletedTask;
+			}
+
+			return _ChangeSceneAsync(current.SceneName,changeInfo);
 		}
 
-		public void ChangeSceneNoLoading(string sceneName,CommonUINameTag transitionNameTag)
+		public void ChangeScene(string sceneName,SceneChangeInfo changeInfo)
 		{
-			_ChangeScene(sceneName,transitionNameTag,false);
+			_ChangeSceneAsync(sceneName,changeInfo).Forget();
 		}
 
-		private void _ChangeScene(string sceneName,CommonUINameTag transitionNameTag,bool isLoading)
+		public UniTask ChangeSceneAsync(string sceneName,SceneChangeInfo changeInfo)
 		{
-			_ChangeSceneAsync(sceneName,transitionNameTag,isLoading).Forget();
+			return _ChangeSceneAsync(sceneName,changeInfo);
 		}
 
-		public async UniTask ChangeSceneWithLoadingAsync(string sceneName,CommonUINameTag transitionNameTag)
-		{
-			await _ChangeSceneAsync(sceneName,transitionNameTag,true);
-		}
-
-		public async UniTask ChangeSceneNoLoadingAsync(string sceneName,CommonUINameTag transitionNameTag)
-		{
-			await _ChangeSceneAsync(sceneName,transitionNameTag,false);
-		}
-
-		private async UniTask _ChangeSceneAsync(string sceneName,CommonUINameTag transitionNameTag,bool isLoading)
+		private async UniTask _ChangeSceneAsync(string sceneName,SceneChangeInfo changeInfo)
 		{
 			async UniTask _CreateTaskAsync(Action<float> onUpdateProgress)
 			{
@@ -122,80 +111,50 @@ namespace KZLib
 				await _DestroySceneAsync(false,onUpdateProgress);
 			}
 
-			await _PlaySceneAsync(transitionNameTag,isLoading,_CreateTaskAsync,_DestroyTaskAsync);
+			await _PlaySceneAsync(changeInfo,_CreateTaskAsync,_DestroyTaskAsync);
 		}
 
-		public void AddSceneWithLoading(string sceneName,CommonUINameTag transitionNameTag)
+		public void AddScene(string sceneName,SceneChangeInfo changeInfo)
 		{
-			_AddScene(sceneName,transitionNameTag,true);
+			_AddSceneAsync(sceneName,changeInfo).Forget();
 		}
 
-		public void AddSceneNoLoading(string sceneName,CommonUINameTag transitionNameTag)
+		public UniTask AddSceneAsync(string sceneName,SceneChangeInfo changeInfo)
 		{
-			_AddScene(sceneName,transitionNameTag,false);
+			return _AddSceneAsync(sceneName,changeInfo);
 		}
 
-		private void _AddScene(string sceneName,CommonUINameTag transitionNameTag,bool isLoading)
-		{
-			_AddSceneAsync(sceneName,transitionNameTag,isLoading).Forget();
-		}
-
-		public async UniTask AddSceneWithLoadingAsync(string sceneName,CommonUINameTag transitionNameTag)
-		{
-			await _AddSceneAsync(sceneName,transitionNameTag,true);
-		}
-
-		public async UniTask AddSceneNoLoadingAsync(string sceneName,CommonUINameTag transitionNameTag)
-		{
-			await _AddSceneAsync(sceneName,transitionNameTag,false);
-		}
-
-		private async UniTask _AddSceneAsync(string sceneName,CommonUINameTag transitionNameTag,bool isLoading)
+		private async UniTask _AddSceneAsync(string sceneName,SceneChangeInfo changeInfo)
 		{
 			async UniTask _CreateTaskAsync(Action<float> onUpdateProgress)
 			{
 				await _CreateSceneAsync(sceneName,onUpdateProgress);
 			}
 
-			await _PlaySceneAsync(transitionNameTag,isLoading,_CreateTaskAsync);
+			await _PlaySceneAsync(changeInfo,_CreateTaskAsync);
 		}
 
-		public void RemoveSceneWithLoading(CommonUINameTag transitionNameTag)
+		public void RemoveScene(SceneChangeInfo changeInfo)
 		{
-			_RemoveScene(transitionNameTag,true);
+			_RemoveSceneAsync(changeInfo).Forget();
 		}
 
-		public void RemoveSceneNoLoading(CommonUINameTag transitionNameTag)
+		public UniTask RemoveSceneAsync(SceneChangeInfo changeInfo)
 		{
-			_RemoveScene(transitionNameTag,false);
+			return _RemoveSceneAsync(changeInfo);
 		}
 
-		private void _RemoveScene(CommonUINameTag transitionNameTag,bool isLoading)
-		{
-			_RemoveSceneAsync(transitionNameTag,isLoading).Forget();
-		}
-
-		public async UniTask RemoveSceneWithLoadingAsync(CommonUINameTag transitionNameTag)
-		{
-			await _RemoveSceneAsync(transitionNameTag,true);
-		}
-
-		public async UniTask RemoveSceneNoLoadingAsync(CommonUINameTag transitionNameTag)
-		{
-			await _RemoveSceneAsync(transitionNameTag,false);
-		}
-
-		private async UniTask _RemoveSceneAsync(CommonUINameTag transitionNameTag,bool isLoading)
+		private async UniTask _RemoveSceneAsync(SceneChangeInfo changeInfo)
 		{
 			async UniTask _DestroyTaskAsync(Action<float> onUpdateProgress)
 			{
 				await _DestroySceneAsync(true,onUpdateProgress);
 			}
 
-			await _PlaySceneAsync(transitionNameTag,isLoading,_DestroyTaskAsync);
+			await _PlaySceneAsync(changeInfo,_DestroyTaskAsync);
 		}
 
-		private async UniTask _PlaySceneAsync(CommonUINameTag transitionNameTag,bool isLoading,params Func<Action<float>,UniTask>[] onPlayTaskArray)
+		private async UniTask _PlaySceneAsync(SceneChangeInfo changeInfo,params Func<Action<float>,UniTask>[] onPlayTaskArray)
 		{
 			if(IsSceneChanging)
 			{
@@ -206,10 +165,12 @@ namespace KZLib
 
 			KZInputKit.LockInput();
 
+			var transitionNameTag = changeInfo.TransitionNameTag;
+
 			// darker
 			await UIManager.In.PlayTransitionOutAsync(transitionNameTag,false);
 
-			if(isLoading)
+			if(changeInfo.UseLoading)
 			{
 				var panel = UIManager.In.Open(CommonUINameTag.LoadingPanel) as LoadingPanel;
 
@@ -347,7 +308,7 @@ namespace KZLib
 			KZMemoryKit.ClearUnloadedAssetMemory();
 		}
 		
-		private void _OnUnloadSceneAssetBundle(Scene scene, LoadSceneMode mode)
+		private void _OnUnloadSceneAssetBundle(Scene scene,LoadSceneMode mode)
 		{
 			// TODO 어드레서블로 바뀐거 넣기
 #if !UNITY_EDITOR

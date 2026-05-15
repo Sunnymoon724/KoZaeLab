@@ -96,3 +96,5 @@ crashlytics-build.properties
 
 # [Aa]ssets/[Rr]esources/[Tt]ext/[Ss]etting/[Rr]oute.yaml
 # [Aa]ssets/[Rr]esources/[Tt]ext/[Ss]etting/[Rr]oute.yaml.meta
+
+*.lscache
