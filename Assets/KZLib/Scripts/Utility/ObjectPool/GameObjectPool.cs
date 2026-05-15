@@ -1,8 +1,7 @@
 ﻿using System;
-using KZLib.Utilities;
 using UnityEngine;
 
-namespace KZLib.Development
+namespace KZLib.Utilities
 {
 	/// <summary>
 	/// Manage pool of GameObjects.

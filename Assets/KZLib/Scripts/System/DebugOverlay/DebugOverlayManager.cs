@@ -96,17 +96,11 @@ namespace KZLib
 		}
 
 
-		/// <summary>
-		/// 일정 주기(c_periodicUpdatePeriod)마다 평균을 내어 갱신해야 하는 정보를 처리합니다.
-		/// (예: FPS, 평균 프레임 시간)
-		/// </summary>
 		private void _RefreshPeriodic(DebugOverlayPanel debugPanel)
 		{
-			// 1. FPS 카운터 누적
 			m_deltaTime += Time.deltaTime;
 			m_frameCount++;
 
-			// 2. 갱신 주기가 되었는지 확인
 			if (m_deltaTime >= c_updatePeriod)
 			{
 				var frameRate = Mathf.RoundToInt(m_frameCount/m_deltaTime);

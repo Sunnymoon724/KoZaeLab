@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace KZLib.Development
+namespace KZLib.Utilities
 {
 	public class GameObjectPoolBinder<TItem,UData> : IDisposable where TItem : Component
 	{
