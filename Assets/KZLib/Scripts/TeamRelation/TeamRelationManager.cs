@@ -62,7 +62,22 @@ namespace KZLib
 			}
 		}
 
-		public IEnumerable<TeamType> GetTeamsByRelation(TeamType team,TeamRelationType relation)
+		public IEnumerable<TeamType> GetTeamGroupByNeutral(TeamType team)
+		{
+			return GetTeamGroupByRelation(team,TeamRelationType.Neutral);
+		}
+
+		public IEnumerable<TeamType> GetTeamGroupByAlly(TeamType team)
+		{
+			return GetTeamGroupByRelation(team,TeamRelationType.Ally);
+		}
+
+		public IEnumerable<TeamType> GetTeamGroupByEnemy(TeamType team)
+		{
+			return GetTeamGroupByRelation(team,TeamRelationType.Enemy);
+		}
+
+		public IEnumerable<TeamType> GetTeamGroupByRelation(TeamType team,TeamRelationType relation)
 		{
 			if(!_TryConvertIndex(team,out var index))
 			{
