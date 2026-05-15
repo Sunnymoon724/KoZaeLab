@@ -14,7 +14,6 @@ using System.Collections;
 using MessagePipe;
 using KZLib.Natives;
 
-
 #if UNITY_EDITOR
 
 using UnityEditor;
@@ -217,7 +216,7 @@ namespace KZLib
 #if UNITY_EDITOR
 				await _InitializeTestMode(m_tokenSource.Token);
 
-				SceneStateManager.In.AddSceneNoLoading(StartSceneName,CommonUINameTag.None);
+				SceneStateManager.In.AddScene(StartSceneName,new SceneChangeInfo(CommonUINameTag.None));
 #else
 				throw new Exception("This cannot be tested outside of the editor mode.");
 #endif
@@ -228,7 +227,7 @@ namespace KZLib
 
 				ContextManager.In.InitializeContext();
 
-				SceneStateManager.In.AddSceneNoLoading(StartSceneName,CommonUINameTag.None);
+				SceneStateManager.In.AddScene(StartSceneName,new SceneChangeInfo(CommonUINameTag.None));
 			}
 		}
 
@@ -346,7 +345,7 @@ namespace KZLib
 #if UNITY_EDITOR
 		private async UniTask _RefreshGame()
 		{
-			await SceneStateManager.In.RemoveSceneNoLoadingAsync(CommonUINameTag.None);
+			await SceneStateManager.In.RemoveSceneAsync(new SceneChangeInfo(CommonUINameTag.None));
 
 			await _StartMainAsync();
 		}

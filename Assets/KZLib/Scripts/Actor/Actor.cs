@@ -10,7 +10,7 @@ namespace KZLib.Actors
 		bool IsDead { get; }
 		void TakeDamage(float damage);
 
-		SideType MySide { get; }
+		TeamType MyTeam { get; }
 	}
 
 	public abstract class Actor<TState,TStat,TAgent> : MonoBehaviour,IActor where TState : struct,Enum where TStat : struct,Enum where TAgent : ActorAgentController
@@ -105,30 +105,30 @@ namespace KZLib.Actors
 		protected virtual void _OnDead() { }
 		#endregion Stat
 
-		#region Side
-		private SideType m_mySide = SideType.None;
-		public SideType MySide => m_mySide;
+		#region Team
+		private TeamType m_myTeam = TeamType.None;
+		public TeamType MyTeam => m_myTeam;
 
-		public void SetSideType(SideType sideType)
+		public void SetTeam(TeamType teamType)
 		{
-			m_mySide = sideType;
+			m_myTeam = teamType;
 		}
 
 		public bool IsEnemy(Actor<TState,TStat,TAgent> other)
 		{
-			return _GetRelation(other) == SideRelationType.Enemy;
+			return _GetRelation(other) == TeamRelationType.Enemy;
 		}
 
 		public bool IsAlly(Actor<TState,TStat,TAgent> other)
 		{
-			return _GetRelation(other) == SideRelationType.Ally;
+			return _GetRelation(other) == TeamRelationType.Ally;
 		}
 
-		private SideRelationType _GetRelation(Actor<TState,TStat,TAgent> other)
+		private TeamRelationType _GetRelation(Actor<TState,TStat,TAgent> other)
 		{
-			return SideRelationManager.In.GetRelation(MySide,other.MySide);
+			return TeamRelationManager.In.GetRelation(MyTeam,other.MyTeam);
 		}
-		#endregion Side
+		#endregion Team
 
 		#region Agent
 		[SerializeField]
