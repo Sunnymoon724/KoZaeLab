@@ -7,9 +7,9 @@ namespace KZLib.Data
 		string TargetSceneName { get; }
 	}
 
-	public abstract class SceneTransientStore : TransientStore<ISceneTransient>
+	public abstract class SceneTransientStore<TTransient> : TransientStore<TTransient> where TTransient : class,ISceneTransient
 	{
-		public static TTransient ConsumeValidData<TTransient>(string sceneName) where TTransient : class,ISceneTransient
+		public static TTransient ConsumeValidData(string sceneName)
 		{
 			var data = Consume();
 
@@ -22,7 +22,7 @@ namespace KZLib.Data
 
 			if(data.TargetSceneName == sceneName)
 			{
-				return data as TTransient;
+				return data;
 			}
 
 			LogChannel.Data.W($"data's target scene name({data.TargetSceneName}) is not match with current scene name({sceneName}).");
