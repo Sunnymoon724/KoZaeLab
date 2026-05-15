@@ -10,9 +10,9 @@ namespace KZLib.Development
 		private void _SetCurvePathInput(Event currentEvent)
 		{
 			var handleArray = m_pathCreator.HandleArray;
-			var handleIndex = (m_mouseOverHandleIndex == Global.INVALID_INDEX) ? 0 : m_mouseOverHandleIndex;
+			var handleIndex = (m_mouseOverHandleIndex == Global.InvalidIndex) ? 0 : m_mouseOverHandleIndex;
 
-			m_mouseOverHandleIndex = Global.INVALID_INDEX;
+			m_mouseOverHandleIndex = Global.InvalidIndex;
 
 			for(var i=0;i<handleArray.Length;i++)
 			{
@@ -43,7 +43,7 @@ namespace KZLib.Development
 
 							Undo.RecordObject(m_pathCreator,"Add Anchor");
 
-							if(m_selectedHandleIndex == Global.INVALID_INDEX)
+							if(m_selectedHandleIndex == Global.InvalidIndex)
 							{
 								m_pathCreator.AddAnchor(newPosition);
 							}
@@ -53,7 +53,7 @@ namespace KZLib.Development
 							}
 						}
 						//? Delete
-						else if(m_mouseOverHandleIndex != Global.INVALID_INDEX && (currentEvent.control || currentEvent.command))
+						else if(m_mouseOverHandleIndex != Global.InvalidIndex && (currentEvent.control || currentEvent.command))
 						{
 							Undo.RecordObject(m_pathCreator,"Delete Anchor");
 
@@ -61,17 +61,17 @@ namespace KZLib.Development
 
 							if(m_mouseOverHandleIndex == m_selectedHandleIndex)
 							{
-								m_selectedHandleIndex = Global.INVALID_INDEX;
+								m_selectedHandleIndex = Global.InvalidIndex;
 							}
 
-							m_mouseOverHandleIndex = Global.INVALID_INDEX;
+							m_mouseOverHandleIndex = Global.InvalidIndex;
 						}
 						//? Select
 						else
 						{
 							m_selectedHandleIndex = m_mouseOverHandleIndex;
 
-							if(m_mouseOverHandleIndex != Global.INVALID_INDEX)
+							if(m_mouseOverHandleIndex != Global.InvalidIndex)
 							{
 								m_dragHandleIndex = m_selectedHandleIndex;
 							}
@@ -79,7 +79,7 @@ namespace KZLib.Development
 					}
 					break;
 
-					case EventType.MouseDrag when m_dragHandleIndex != Global.INVALID_INDEX:
+					case EventType.MouseDrag when m_dragHandleIndex != Global.InvalidIndex:
 					{
 						var currentPosition = handleArray[m_dragHandleIndex];
 						var newPosition = _GetMousePosition();
@@ -96,7 +96,7 @@ namespace KZLib.Development
 					break;
 					case EventType.MouseUp:
 					{
-						m_dragHandleIndex = Global.INVALID_INDEX;
+						m_dragHandleIndex = Global.InvalidIndex;
 					}
 					break;
 				}

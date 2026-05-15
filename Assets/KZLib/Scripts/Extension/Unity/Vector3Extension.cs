@@ -245,7 +245,7 @@ public static class Vector3Extension
 
 	public static (Vector3 Position,int Index) CalculateGetClosestPosition(this Vector3 position,params Vector3[] positionArray)
 	{
-		var index = Global.INVALID_INDEX;
+		var index = Global.InvalidIndex;
 		var closestPosition = Vector3.zero;
 		var closestDistance = float.MaxValue;
 

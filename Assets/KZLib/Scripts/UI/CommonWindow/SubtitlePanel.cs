@@ -134,7 +134,7 @@ public class SubtitlePanel : BasePanel
 
 		var index = m_subtitleList.FindIndex(_FindIndex);
 
-		if(index == Global.INVALID_INDEX)
+		if(index == Global.InvalidIndex)
 		{
 			return;
 		}

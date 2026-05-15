@@ -81,7 +81,7 @@ namespace KZLib.Data
 
 			//? check custom. [only editor]
 #if UNITY_EDITOR
-			text = KZFileKit.ReadFileToText(Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,$"Custom{fileName}"));
+			text = KZFileKit.ReadFileToText(Path.Combine(Global.CustomConfigFolderPath,$"Custom{fileName}"));
 #endif
 			if(!text.IsEmpty())
 			{

@@ -67,7 +67,7 @@ public static class LongExtension
 			index++;
 		}
 
-		unit = Global.BYTE_UNIT_ARRAY[index];
+		unit = Global.ByteUnitArray[index];
 	}
 
 	public static long ByteScaleUpUnit(this long value)

@@ -6,6 +6,8 @@ namespace KZLib.UI.Widgets.Debug
 	public class AudioProfile : MonoBehaviour,IImmediateOverlay
 	{
 		private const int c_spectrumSize = 512;
+		private const float c_dbScale = 20.0f;
+		private const float c_minDecibel = -80.0f;
 
 		[SerializeField]
 		private TMP_Text m_decibelText = null;
@@ -15,12 +17,12 @@ namespace KZLib.UI.Widgets.Debug
 		private readonly float[] m_spectrumArray = new float[c_spectrumSize];
 		private float m_maxDecibel = 0.0f;
 		private AudioListener m_currentListener = null;
-		
+
 		private AudioListener CurrentListener
 		{
 			get
 			{
-				if(m_currentListener)
+				if(!m_currentListener)
 				{
 					m_currentListener = FindAnyObjectByType<AudioListener>();
 				}
@@ -49,7 +51,7 @@ namespace KZLib.UI.Widgets.Debug
 				sample += m_spectrumArray[i]*m_spectrumArray[i];
 			}
 
-			m_maxDecibel = Mathf.Clamp(20.0f*Mathf.Log10(Mathf.Sqrt(sample/m_spectrumArray.Length)),-80.0f,0.0f);
+			m_maxDecibel = Mathf.Clamp(c_dbScale*Mathf.Log10(Mathf.Sqrt(sample/m_spectrumArray.Length)),c_minDecibel,0.0f);
 
 			AudioListener.GetSpectrumData(m_spectrumArray,0,FFTWindow.Blackman);
 

@@ -20,7 +20,7 @@ public static partial class KZEditorKit
 	{
 		var packagePath = Path.Combine("Packages","com.bsheepstudio.kzlib","WorkResources","Templates",$"{fileName}");
 
-		if(KZFileKit.IsFileExist(Path.Combine(Global.PROJECT_PATH,packagePath)))
+		if(KZFileKit.IsFileExist(Path.Combine(Global.ProjectPath,packagePath)))
 		{
 			return packagePath;
 		}
@@ -46,7 +46,7 @@ public static partial class KZEditorKit
 	{
 		var templateFilePath = FindTemplateFilePath(fileName);
 
-		return templateFilePath.StartsWith("Assets") ? Path.GetFullPath(templateFilePath) : Path.Combine(Global.PROJECT_PATH,templateFilePath);
+		return templateFilePath.StartsWith("Assets") ? Path.GetFullPath(templateFilePath) : Path.Combine(Global.ProjectPath,templateFilePath);
 	}
 }
 #endif

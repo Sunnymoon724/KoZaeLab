@@ -30,9 +30,9 @@ namespace KZLib.UI
 		private bool m_isEditing = false;
 		private Tool m_previousTool = Tool.None;
 
-		protected int m_mouseOverKnotIndex = Global.INVALID_INDEX;
-		protected int m_selectedKnotIndex = Global.INVALID_INDEX;
-		protected int m_dragKnotIndex = Global.INVALID_INDEX;
+		protected int m_mouseOverKnotIndex = Global.InvalidIndex;
+		protected int m_selectedKnotIndex = Global.InvalidIndex;
+		protected int m_dragKnotIndex = Global.InvalidIndex;
 
 		private readonly Dictionary<int,KnotInfo> m_knotInfoDict = new();
 		private readonly HashSet<int> m_knotIndexHashSet = new();
@@ -198,7 +198,7 @@ namespace KZLib.UI
 				}
 			}
 
-			return Global.INVALID_INDEX;
+			return Global.InvalidIndex;
 		}
 
 		protected virtual void _DrawKnot()
@@ -238,7 +238,7 @@ namespace KZLib.UI
 			{
 				case EventType.MouseDown:
 				{
-					if(m_mouseOverKnotIndex == Global.INVALID_INDEX && !_IsInsideRect(mousePosition))
+					if(m_mouseOverKnotIndex == Global.InvalidIndex && !_IsInsideRect(mousePosition))
 					{
 						_StopEditing(true);
 					}
@@ -249,7 +249,7 @@ namespace KZLib.UI
 					shouldConsume = true;
 					break;
 				}
-				case EventType.MouseDrag when m_dragKnotIndex != Global.INVALID_INDEX:
+				case EventType.MouseDrag when m_dragKnotIndex != Global.InvalidIndex:
 				{
 					_SetMouseDrag(mousePosition);
 					shouldConsume = true;
@@ -285,7 +285,7 @@ namespace KZLib.UI
 		{
 			m_selectedKnotIndex = m_mouseOverKnotIndex;
 
-			if(m_mouseOverKnotIndex != Global.INVALID_INDEX)
+			if(m_mouseOverKnotIndex != Global.InvalidIndex)
 			{
 				m_dragKnotIndex = m_selectedKnotIndex;
 			}
@@ -308,7 +308,7 @@ namespace KZLib.UI
 
 		protected virtual void _SetMouseUp(Vector3 _)
 		{
-			m_dragKnotIndex = Global.INVALID_INDEX;
+			m_dragKnotIndex = Global.InvalidIndex;
 		}
 
 		protected bool _IsInsideRect(Vector3 mousePosition)

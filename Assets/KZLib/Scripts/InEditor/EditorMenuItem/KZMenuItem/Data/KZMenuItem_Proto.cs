@@ -12,7 +12,7 @@ namespace KZLib.EditorInternal.Menus
 		{
 			var environmentType = KZGameKit.GetCurrentEnvironmentType();
 
-			var batchFilePath = Path.Combine(Global.TOOL_FOLDER_PATH,"GenerateProto",$"GenerateProto_{environmentType}.bat");
+			var batchFilePath = Path.Combine(Global.ToolFolderPath,"GenerateProto",$"GenerateProto_{environmentType}.bat");
 
 			KZEditorKit.OpenBatchFile(batchFilePath);
 		}
@@ -20,7 +20,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Proto/Generate All Environment Proto",false,MenuOrder.Data.GENERATE)]
 		private static void _OnGenerateAllEnvironmentProto()
 		{
-			var batchFilePath = Path.Combine(Global.TOOL_FOLDER_PATH,"GenerateProto",$"GenerateProto_All.bat");
+			var batchFilePath = Path.Combine(Global.ToolFolderPath,"GenerateProto",$"GenerateProto_All.bat");
 
 			KZEditorKit.OpenBatchFile(batchFilePath);
 		}
@@ -28,7 +28,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Proto/Open Proto Folder",false,MenuOrder.Data.OPEN)]
 		private static void _OnOpenProtoFolder()
 		{
-			_OpenFolder("Proto",Global.PROTO_FOLDER_PATH);
+			_OpenFolder("Proto",Global.ProtoFolderPath);
 		}
 
 		[MenuItem("KZMenu/Proto/Open Proto Window",false,MenuOrder.Data.WINDOW)]

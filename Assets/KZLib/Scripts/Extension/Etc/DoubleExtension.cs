@@ -30,16 +30,16 @@ public static class DoubleExtension
 
 	public static double ToWrapAngle(this double angle)
 	{
-		angle %= Global.FULL_ANGLE;
+		angle %= Global.FullAngle;
 
-		while(angle > +Global.HALF_ANGLE)
+		while(angle > +Global.HalfAngle)
 		{
-			angle -= Global.FULL_ANGLE;
+			angle -= Global.FullAngle;
 		}
 
-		while(angle < -Global.HALF_ANGLE)
+		while(angle < -Global.HalfAngle)
 		{
-			angle += Global.FULL_ANGLE;
+			angle += Global.FullAngle;
 		}
 
 		return angle;

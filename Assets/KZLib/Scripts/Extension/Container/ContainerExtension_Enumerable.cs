@@ -41,7 +41,7 @@ public static partial class ContainerExtension
 
 	public static int FindMinIndex<TValue,TCompare>(this IEnumerable<TValue> enumerable,Func<TValue,TCompare> onFunc) where TCompare : IComparable
 	{
-		var minIndex = Global.INVALID_INDEX;
+		var minIndex = Global.InvalidIndex;
 
 		if(_IsValid(enumerable))
 		{
@@ -68,7 +68,7 @@ public static partial class ContainerExtension
 
 	public static int FindMaxIndex<TValue,TCompare>(this IEnumerable<TValue> enumerable,Func<TValue,TCompare> onFunc) where TCompare : IComparable
 	{
-		var maxIndex = Global.INVALID_INDEX;
+		var maxIndex = Global.InvalidIndex;
 
 		if(_IsValid(enumerable))
 		{
@@ -109,7 +109,7 @@ public static partial class ContainerExtension
 			}
 		}
 
-		return Global.INVALID_INDEX;
+		return Global.InvalidIndex;
 	}
 
 	public static bool Exist<TValue>(this IEnumerable<TValue> enumerable,Predicate<TValue> onPredicate)

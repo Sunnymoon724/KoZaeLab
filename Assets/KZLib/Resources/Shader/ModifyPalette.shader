@@ -40,16 +40,20 @@ Shader "KZLib/ModifyPalette"
 			TEXTURE2D(_MainTex);
 			SAMPLER(sampler_MainTex);
 
-			half4 _PixelColorArray[7];
+			static const float c_textureWidth = 256.0;
+			static const int c_paletteStartIndex = 248;
+			static const int c_paletteCount = 7;
 
-			v2f vert(appdata_t value)
+			half4 _PixelColorArray[c_paletteCount];
+
+			v2f vert(appdata_t input)
 			{
 				v2f output;
 
-				output.texcoord	= value.texcoord;
-				output.position	= TransformObjectToWorld(value.vertex.xyz);
-				output.normal	= TransformObjectToWorldNormal(value.normal);
-				output.vertex	= TransformObjectToHClip(value.vertex.xyz);
+				output.texcoord	= input.texcoord;
+				output.position	= TransformObjectToWorld(input.vertex.xyz);
+				output.normal	= TransformObjectToWorldNormal(input.normal);
+				output.vertex	= TransformObjectToHClip(input.vertex.xyz);
 
 				return output;
 			}
@@ -57,11 +61,11 @@ Shader "KZLib/ModifyPalette"
 			half4 frag(v2f input) : SV_Target
 			{
 				half4 color = SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex,input.texcoord);
-				float pixelIndex = floor(input.texcoord.x*256.0);
+				float pixelIndex = floor(input.texcoord.x * c_textureWidth);
 
-				int colorIndex = int(pixelIndex)-248;
+				int colorIndex = int(pixelIndex) - c_paletteStartIndex;
 
-				if(colorIndex >= 0 && colorIndex < 7)
+				if(colorIndex >= 0 && colorIndex < c_paletteCount)
 				{
 					half4 paletteColor = _PixelColorArray[colorIndex];
 
@@ -72,7 +76,6 @@ Shader "KZLib/ModifyPalette"
 				}
 
 				half3 normal = normalize(input.normal);
-				half3 viewDir = normalize(GetCameraPositionWS()-input.position);
 
 				Light mainLight = GetMainLight();
 

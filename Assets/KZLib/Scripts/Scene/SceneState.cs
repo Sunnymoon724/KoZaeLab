@@ -17,6 +17,8 @@ namespace KZLib
 
 	public abstract class SceneState : ISceneState
 	{
+		private const float c_sceneLoadThreshold = 0.9f;
+		private const float c_progressHalf = 0.5f;
 		public string SceneName => GetType().Name;
 
 		public async UniTask InitializeAsync(Action<float> onUpdateProgress)
@@ -27,10 +29,14 @@ namespace KZLib
 
 			operation.allowSceneActivation = false;
 
-			while(operation.progress < 0.9f)
+			while(operation.progress < c_sceneLoadThreshold)
 			{
-				onUpdateProgress?.Invoke(operation.progress*0.5f);
+				onUpdateProgress?.Invoke(operation.progress*c_progressHalf);
+
+				await UniTask.Yield();
 			}
+
+			onUpdateProgress?.Invoke(c_progressHalf);
 
 			operation.allowSceneActivation = true;
 
@@ -38,7 +44,7 @@ namespace KZLib
 
 			void _UpdateProgress(float progress)
 			{
-				onUpdateProgress?.Invoke(0.5f+progress*0.5f);
+				onUpdateProgress?.Invoke(c_progressHalf+progress*c_progressHalf);
 			}
 
 			await InitializeInnerAsync(_UpdateProgress);
@@ -68,7 +74,7 @@ namespace KZLib
 
 			void _UpdateProgress(float progress)
 			{
-				onUpdateProgress?.Invoke(progress*0.5f);
+				onUpdateProgress?.Invoke(progress*c_progressHalf);
 			}
 
 			await ReleaseInnerAsync(_UpdateProgress);
@@ -77,7 +83,9 @@ namespace KZLib
 
 			while(!operation.isDone)
 			{
-				onUpdateProgress?.Invoke(0.5f+operation.progress*0.5f);
+				onUpdateProgress?.Invoke(c_progressHalf+operation.progress*c_progressHalf);
+
+				await UniTask.Yield();
 			}
 
 			onUpdateProgress?.Invoke(1.0f);

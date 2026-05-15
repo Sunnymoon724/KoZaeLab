@@ -7,6 +7,13 @@ namespace KZLib
 {
 	public class ShaderManager : Singleton<ShaderManager>
 	{
+		private const float c_defaultBlurSize = 0.8f;
+		private const float c_enableSize = 1.0f;
+		private const float c_disableSize = 0.0f;
+		
+		private const string c_blurText = "_BlurSize";
+		private const string c_saturationText = "_Saturation";
+
 		private readonly Dictionary<string,Shader> m_ShaderDict = new();
 
 		private Material m_grayscale = null;
@@ -20,8 +27,8 @@ namespace KZLib
 				if(!m_grayscale)
 				{
 					m_grayscale = GetMaterial("KZLib/TextureGrayscaleBlur");
-					m_grayscale.SetFloat("_BlurSize",0.0f);
-					m_grayscale.SetFloat("_Saturation",1.0f);
+					m_grayscale.SetFloat(c_blurText,c_disableSize);
+					m_grayscale.SetFloat(c_saturationText,c_enableSize);
 				}
 
 				return m_grayscale;
@@ -35,8 +42,8 @@ namespace KZLib
 				if(!m_blur)
 				{
 					m_blur = GetMaterial("KZLib/TextureGrayscaleBlur");
-					m_blur.SetFloat("_BlurSize",0.8f);
-					m_blur.SetFloat("_Saturation",0.0f);
+					m_blur.SetFloat(c_blurText,c_defaultBlurSize);
+					m_blur.SetFloat(c_saturationText,c_disableSize);
 				}
 
 				return m_blur;
@@ -50,8 +57,8 @@ namespace KZLib
 				if(!m_grayscaleBlur)
 				{
 					m_grayscaleBlur = GetMaterial("KZLib/TextureGrayscaleBlur");
-					m_grayscaleBlur.SetFloat("_BlurSize",0.8f);
-					m_grayscaleBlur.SetFloat("_Saturation",1.0f);
+					m_grayscaleBlur.SetFloat(c_blurText,c_defaultBlurSize);
+					m_grayscaleBlur.SetFloat(c_saturationText,c_enableSize);
 				}
 
 				return m_grayscaleBlur;

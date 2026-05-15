@@ -300,7 +300,7 @@ namespace KZLib
 			Application.targetFrameRate = Global.FRAME_RATE_30;
 #elif UNITY_STANDALONE
 			QualitySettings.vSyncCount = 1;
-			Application.targetFrameRate = Global.FRAME_RATE_60;
+			Application.targetFrameRate = Global.FrameRate60;
 #endif
 			stringBuilder.AppendFormat($"Current FPS {Application.targetFrameRate}\n");
 		}

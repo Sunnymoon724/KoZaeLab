@@ -50,60 +50,66 @@
 
 				fixed4 _Color;
 
-				v2f vert(appdata_t _data)
+				v2f vert(appdata_t input)
 				{
 					v2f result;
-					result.vertex = UnityObjectToClipPos(_data.vertex);
-					result.texcoord = _data.texcoord;
-					result.color = _data.color*_Color;
+					result.vertex = UnityObjectToClipPos(input.vertex);
+					result.texcoord = input.texcoord;
+					result.color = input.color*_Color;
 
 					return result;
 				}
 
 				sampler2D _MainTex;
 
-				fixed4 SampleTexture(float2 _data)
+				fixed4 SampleTexture(float2 uv)
 				{
-					return tex2D(_MainTex,_data);
+					return tex2D(_MainTex,uv);
 				}
 
 				uniform float _GraphArray[512];
 				uniform float _GraphLength;
 
-				fixed4 frag(v2f _data) : SV_Target
-				{
-					fixed4 color = _data.color;
+				static const float GradientThickness	= 4.0;
+				static const float GradientIntensity 	= 0.3;
+				static const float FadeRange			= 0.03;
 
-					fixed x = _data.texcoord.x;
-					fixed y = _data.texcoord.y;
+				fixed4 frag(v2f input) : SV_Target
+				{
+					fixed4 color = input.color;
+
+					float x = input.texcoord.x;
+					float y = input.texcoord.y;
 
 					float value = _GraphArray[floor(x*_GraphLength)];
+
+					if(value < 0.0)
+					{
+						return fixed4(0.0,0.0,0.0,0.0);
+					}
+
 					float increment = 1.0/(_GraphLength-1.0);
 
-					if(value-y > increment*4.0)
+					if(value > 0.0 && value-y > increment*GradientThickness)
 					{
-						color.a *= y*0.3/value;
+						color.a *= y*GradientIntensity/value;
 					}
-					//else
-					//{
-					//	color.a = 0;
-					//}
 
 					if(y > value)
 					{
 						color.a = 0.0;
 					}
 
-					if(x < 0.03)
+					if(x < FadeRange)
 					{
-						color.a *= 1.0-(0.03-x)/0.03;
+						color.a *= 1.0-(FadeRange-x)/FadeRange;
 					}
-					else if(x>0.97)
+					else if(x > 1.0-FadeRange)
 					{
-						color.a *= (1.0-x)/0.03;
+						color.a *= (1.0-x)/FadeRange;
 					}
 
-					fixed4 result = SampleTexture(_data.texcoord)*color;
+					fixed4 result = SampleTexture(input.texcoord)*color;
 
 					result.rgb *= result.a;
 

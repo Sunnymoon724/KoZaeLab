@@ -2,6 +2,13 @@
 
 public class AudioGraphImage : GraphImage
 {
+	private const float c_dbScale = 20.0f;
+	private const float c_minDecibel = -160.0f;
+	private const float c_gapMarker = -1.0f;
+
+	private const int c_smoothingGroup = 3;
+	private const int c_defaultGraphLength = 81;
+
 	public override void RefreshGraph(float[] valueArray)
 	{
 		if(IsValidGraph)
@@ -22,13 +29,13 @@ public class AudioGraphImage : GraphImage
 
 			var normalized = _DecibelNormalized(_LinearToDecibel(current/iteration));
 
-			if((i+1)%3 == 0 && i>1)
+			if((i+1)%c_smoothingGroup == 0 && i>1)
 			{
-				var value = (normalized+m_graphArray[i-1]+m_graphArray[i-2])/3.0f;
+				var value = (normalized+m_graphArray[i-1]+m_graphArray[i-2])/(float)c_smoothingGroup;
 
 				m_graphArray[i] = value;
 				m_graphArray[i-1] = value;
-				m_graphArray[i-2] = -1;
+				m_graphArray[i-2] = c_gapMarker;
 			}
 			else
 			{
@@ -41,18 +48,18 @@ public class AudioGraphImage : GraphImage
 
 	private float _LinearToDecibel(float value)
 	{
-		return Mathf.Clamp(Mathf.Log10(value)*20.0f,-160.0f,0.0f);
+		return Mathf.Clamp(Mathf.Log10(value)*c_dbScale,c_minDecibel,0.0f);
 	}
 
 	private float _DecibelNormalized(float value)
 	{
-		return (value+160.0f)/160.0f;
+		return (value-c_minDecibel)/-c_minDecibel;
 	}
 
 	protected override void _Reset()
 	{
 		base._Reset();
 
-		m_graphLength = 81;
+		m_graphLength = c_defaultGraphLength;
 	}
 }

@@ -10,37 +10,37 @@ namespace KZLib.EditorInternal.Menus
 		{
 			public static class Option
 			{
-				private const int DEFAULT			= 0 * Global.MENU_ORDER_MAIN_SPACE;
+				private const int DEFAULT			= 0 * Global.MenuOrderMainSpace;
 
-				public const int DELETE				= DEFAULT + 0 * Global.MENU_ORDER_SUB_SPACE;
-				public const int FIND				= DEFAULT + 1 * Global.MENU_ORDER_SUB_SPACE;
-				public const int MODULE				= DEFAULT + 2 * Global.MENU_ORDER_SUB_SPACE;
-				public const int CHECK				= DEFAULT + 3 * Global.MENU_ORDER_SUB_SPACE;
+				public const int DELETE				= DEFAULT + 0 * Global.MenuOrderSubSpace;
+				public const int FIND				= DEFAULT + 1 * Global.MenuOrderSubSpace;
+				public const int MODULE				= DEFAULT + 2 * Global.MenuOrderSubSpace;
+				public const int CHECK				= DEFAULT + 3 * Global.MenuOrderSubSpace;
 			}
 
 			public static class Explorer
 			{
-				private const int DEFAULT			= 1 * Global.MENU_ORDER_MAIN_SPACE;
+				private const int DEFAULT			= 1 * Global.MenuOrderMainSpace;
 
-				public const int OPEN				= DEFAULT + 0 * Global.MENU_ORDER_SUB_SPACE;
+				public const int OPEN				= DEFAULT + 0 * Global.MenuOrderSubSpace;
 			}
 
 			public static class Data
 			{
-				private const int DEFAULT			= 2 * Global.MENU_ORDER_MAIN_SPACE;
+				private const int DEFAULT			= 2 * Global.MenuOrderMainSpace;
 
-				public const int GENERATE			= DEFAULT + 0 * Global.MENU_ORDER_SUB_SPACE;
-				public const int OPEN				= DEFAULT + 1 * Global.MENU_ORDER_SUB_SPACE;
-				public const int WINDOW				= DEFAULT + 2 * Global.MENU_ORDER_SUB_SPACE;
+				public const int GENERATE			= DEFAULT + 0 * Global.MenuOrderSubSpace;
+				public const int OPEN				= DEFAULT + 1 * Global.MenuOrderSubSpace;
+				public const int WINDOW				= DEFAULT + 2 * Global.MenuOrderSubSpace;
 			}
 
 			public static class Display
 			{
-				private const int DEFAULT			= 3 * Global.MENU_ORDER_MAIN_SPACE;
+				private const int DEFAULT			= 3 * Global.MenuOrderMainSpace;
 
-				public const int MANUAL				= DEFAULT + 0 * Global.MENU_ORDER_SUB_SPACE;
-				public const int CUSTOM				= DEFAULT + 1 * Global.MENU_ORDER_SUB_SPACE;
-				public const int TEST				= DEFAULT + 2 * Global.MENU_ORDER_SUB_SPACE;
+				public const int MANUAL				= DEFAULT + 0 * Global.MenuOrderSubSpace;
+				public const int CUSTOM				= DEFAULT + 1 * Global.MenuOrderSubSpace;
+				public const int TEST				= DEFAULT + 2 * Global.MenuOrderSubSpace;
 			}
 		}
 

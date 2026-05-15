@@ -18,7 +18,7 @@ namespace KZLib.EditorInternal.Menus
 			var templateFilePath = KZEditorKit.FindTemplateText("ConfigTemplate.txt");
 			var outputRoute = RouteManager.In.FetchRoute("generatedScript");
 
-			foreach(var configFilePath in KZFileKit.FindAllExcelFileGroupByFolderPath(Global.CONFIG_FOLDER_PATH))
+			foreach(var configFilePath in KZFileKit.FindAllExcelFileGroupByFolderPath(Global.ConfigFolderPath))
 			{
 				if(!KZFileKit.IsExcelFile(configFilePath))
 				{
@@ -182,9 +182,9 @@ namespace KZLib.EditorInternal.Menus
 
 		private static void _GenerateCustomConfigYamlFile(string fileName,IConfig config)
 		{
-			KZFileKit.CreateFolder(Global.CUSTOM_CONFIG_FOLDER_PATH);
+			KZFileKit.CreateFolder(Global.CustomConfigFolderPath);
 
-			var customFilePath = Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,fileName);
+			var customFilePath = Path.Combine(Global.CustomConfigFolderPath,fileName);
 
 			try
 			{
@@ -202,7 +202,7 @@ namespace KZLib.EditorInternal.Menus
 
 		private static bool _IsExistCustomConfigYamlFile(string fileName)
 		{
-			return !File.Exists(Path.Combine(Global.CUSTOM_CONFIG_FOLDER_PATH,fileName));
+			return !File.Exists(Path.Combine(Global.CustomConfigFolderPath,fileName));
 		}
 		#endregion Common
 
@@ -217,7 +217,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Config/Open Custom Config Folder",false,MenuOrder.Data.OPEN)]
 		private static void _OnOpenCustomConfigFolder()
 		{
-			_OpenFolder("CustomConfig",Global.CUSTOM_CONFIG_FOLDER_PATH);
+			_OpenFolder("CustomConfig",Global.CustomConfigFolderPath);
 		}
 	}
 }

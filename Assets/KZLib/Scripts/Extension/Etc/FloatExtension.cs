@@ -29,16 +29,16 @@ public static class FloatExtension
 	/// </summary>
 	public static float ToWrapAngle(this float angle)
 	{
-		angle %= Global.FULL_ANGLE;
+		angle %= Global.FullAngle;
 
-		while(angle > +Global.HALF_ANGLE)
+		while(angle > +Global.HalfAngle)
 		{
-			angle -= Global.FULL_ANGLE;
+			angle -= Global.FullAngle;
 		}
 
-		while(angle < -Global.HALF_ANGLE)
+		while(angle < -Global.HalfAngle)
 		{
-			angle += Global.FULL_ANGLE;
+			angle += Global.FullAngle;
 		}
 
 		return angle;

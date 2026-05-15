@@ -29,10 +29,11 @@
 				#include "UnityCG.cginc"
 				
 				sampler2D _MainTex;
+				float4 _MainTex_ST;
 				float4 _Color;
 				float _Progress;
-				bool _Horizontal;
-				bool _Reverse;
+				float _Horizontal;
+				float _Reverse;
 				
 				struct v2f
 				{
@@ -43,24 +44,24 @@
 				v2f vert(appdata_base v)
 				{
 					v2f result;
-					
+
 					result.pos = UnityObjectToClipPos(v.vertex);
-					result.uv = TRANSFORM_UV(0);
+					result.uv = TRANSFORM_TEX(v.texcoord,_MainTex);
 
 					return result;
 				}
 
-				fixed4 frag(v2f _data) : COLOR
+				float4 frag(v2f input) : SV_Target
 				{
-					fixed4 color = tex2D(_MainTex,_data.uv);
+					float4 color = tex2D(_MainTex,input.uv);
 
-					if(_Horizontal)
+					if(_Horizontal > 0.5)
 					{
-						color.a *= _Reverse ? _data.uv.x > 1.0-_Progress : _data.uv.x < _Progress;
+						color.a *= _Reverse > 0.5 ? step(1.0-_Progress,input.uv.x) : step(input.uv.x,_Progress);
 					}
 					else
 					{
-						color.a *= _Reverse ? _data.uv.y > 1.0-_Progress : _data.uv.y < _Progress;
+						color.a *= _Reverse > 0.5 ? step(1.0-_Progress,input.uv.y) : step(input.uv.y,_Progress);
 					}
 
 					return color * _Color;

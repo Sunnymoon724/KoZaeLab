@@ -30,7 +30,7 @@ namespace KZLib.Development
 		private void _GetShapePointArray()
 		{
 			m_pointArray = new Vector3[m_sideCount];
-			var degrees = (IsReverse ? -1 : +1)*Global.FULL_ANGLE/m_sideCount;
+			var degrees = (IsReverse ? -1 : +1)*Global.FullAngle/m_sideCount;
 
 			for(var i=0;i<m_sideCount;i++)
 			{

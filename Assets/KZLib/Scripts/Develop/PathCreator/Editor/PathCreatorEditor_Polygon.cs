@@ -13,7 +13,7 @@ namespace KZLib.Development
 		{
 			var handleArray = m_pathCreator.HandleArray;
 
-			m_mouseOverHandleIndex = Global.INVALID_INDEX;
+			m_mouseOverHandleIndex = Global.InvalidIndex;
 
 			for(var i=0;i<c_shapeCount;i++)
 			{
@@ -37,14 +37,14 @@ namespace KZLib.Development
 					{
 						m_selectedHandleIndex = m_mouseOverHandleIndex;
 
-						if(m_mouseOverHandleIndex != Global.INVALID_INDEX)
+						if(m_mouseOverHandleIndex != Global.InvalidIndex)
 						{
 							m_dragHandleIndex = m_selectedHandleIndex;
 						}
 					}
 					break;
 
-					case EventType.MouseDrag when m_dragHandleIndex != Global.INVALID_INDEX:
+					case EventType.MouseDrag when m_dragHandleIndex != Global.InvalidIndex:
 					{
 						var currentPosition = handleArray[m_dragHandleIndex];
 						var newPosition = _GetMousePosition();

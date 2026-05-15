@@ -9,7 +9,7 @@ namespace KZLib.Data
 
 	public abstract class SceneTransientStore<TTransient> : TransientStore<TTransient> where TTransient : class,ISceneTransient
 	{
-		public static TTransient ConsumeValidData(string sceneName)
+		public static TTransient ConsumeValid(string sceneName)
 		{
 			var data = Consume();
 

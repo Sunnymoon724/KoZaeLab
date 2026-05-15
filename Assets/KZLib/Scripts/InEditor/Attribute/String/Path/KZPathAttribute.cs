@@ -103,7 +103,7 @@ namespace KZLib.Attributes
 				rect = m_onClickedList[i](rect,isValid);
 			}
 
-			EditorGUI.LabelField(rect,ValueEntry.SmartValue,_GetValidationStyle(isValid,Global.WRONG_HEX_COLOR));
+			EditorGUI.LabelField(rect,ValueEntry.SmartValue,_GetValidationStyle(isValid,Global.WrongHexColor));
 		}
 
 		protected Rect DrawButton(Rect rect,SdfIconType iconType,bool active,Action onClicked)

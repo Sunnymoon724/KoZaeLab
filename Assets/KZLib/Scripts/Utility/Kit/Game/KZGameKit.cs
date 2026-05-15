@@ -109,7 +109,7 @@ public static partial class KZGameKit
 	public static EnvironmentType GetCurrentEnvironmentType()
 	{
 #if UNITY_EDITOR
-		var text = KZFileKit.ReadFileToText(Path.Combine(Global.PROJECT_PARENT_PATH,"BranchInfo.txt"));
+		var text = KZFileKit.ReadFileToText(Path.Combine(Global.ProjectParentPath,"BranchInfo.txt"));
 
 		if(text.TryToEnum<EnvironmentType>(out var environment))
 		{

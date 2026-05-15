@@ -27,7 +27,7 @@ namespace KZLib.Data
 				return;
 			}
 
-			var projectPath = Global.PROJECT_PATH;
+			var projectPath = Global.ProjectPath;
 
 			if(path.Contains(c_Assets))
 			{

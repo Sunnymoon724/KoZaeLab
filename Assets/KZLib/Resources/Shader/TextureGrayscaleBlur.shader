@@ -1,4 +1,3 @@
-// 블러 + 그레이 스케일 해주는 쉐이더
 Shader "KZLib/TextureGrayscaleBlur"
 {
 	Properties
@@ -61,7 +60,7 @@ Shader "KZLib/TextureGrayscaleBlur"
 				struct v2f
 				{
 					float2 texcoord	: TEXCOORD0;
-					fixed4 color	: COLOR;
+					float4 color	: COLOR;
 					float4 vertex	: SV_POSITION;
 				};
 
@@ -70,41 +69,46 @@ Shader "KZLib/TextureGrayscaleBlur"
 
 				float _Saturation;
 
-				v2f vert(appdata_t _data)
+				static const float c_blurSizeScale = 0.01;
+				static const float c_blurRadius = 4.0;
+				static const float c_blurSampleCount = 81.0; // (c_blurRadius*2+1)^2 = 9*9
+				static const float3 c_luminance = float3(0.299, 0.587, 0.114);
+
+				v2f vert(appdata_t input)
 				{
 					v2f result;
 
-					result.vertex = UnityObjectToClipPos(_data.vertex);
-					result.texcoord = _data.texcoord;
-					result.color = _data.color;
+					result.vertex = UnityObjectToClipPos(input.vertex);
+					result.texcoord = input.texcoord;
+					result.color = input.color;
 
 					return result;
 				}
 
-				fixed4 frag(v2f _data) : SV_Target
+				float4 frag(v2f input) : SV_Target
 				{
-					fixed4 texColor = tex2D(_MainTex,_data.texcoord)*_data.color;
+					float4 texColor = tex2D(_MainTex, input.texcoord) * input.color;
 
-					if(_BlurSize != 0.0)
+					if(_BlurSize > 0.0)
 					{
-						fixed4 blur = 0.0;
-						float size = _BlurSize*0.01;
+						float4 blur = 0.0;
+						float size = _BlurSize * c_blurSizeScale;
 
-						for(float i=-4.0;i<=4.0;i+=1.0)
+						for(float i=-c_blurRadius;i<=c_blurRadius;i+=1.0)
 						{
-							for(float j=-4.0;j<=4.0;j+=1.0)
+							for(float j=-c_blurRadius;j<=c_blurRadius;j+=1.0)
 							{
 								float2 offset = float2(i*size,j*size);
-								blur += tex2D(_MainTex,_data.texcoord+offset)*_data.color;
+								blur += tex2D(_MainTex, input.texcoord+offset)*input.color;
 							}
 						}
 
-						texColor = lerp(texColor,blur/81.0,_BlurSize);
+						texColor = lerp(texColor, blur/c_blurSampleCount, _BlurSize);
 					}
 
-					if(_Saturation != 0.0)
+					if(_Saturation > 0.0)
 					{
-						texColor.rgb = lerp(texColor.rgb,dot(texColor.rgb,float3(0.229,0.587,0.114)),_Saturation);
+						texColor.rgb = lerp(texColor.rgb,dot(texColor.rgb,c_luminance),_Saturation);
 					}
 
 					return texColor;

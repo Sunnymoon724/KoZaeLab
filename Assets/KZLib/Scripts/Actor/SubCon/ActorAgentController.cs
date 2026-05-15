@@ -32,7 +32,7 @@ namespace KZLib.Actors
 
 			direction.y = 0.0f;
 
-			if(direction.sqrMagnitude < Global.MinSqrMagnitude)
+			if(direction.sqrMagnitude < Global.SqrMagnitudeThreshold)
 			{
 				return;
 			}

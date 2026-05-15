@@ -17,7 +17,7 @@ namespace KZLib.Data
 		}
 
 
-		private int m_frameRate = Global.FRAME_RATE_60;
+		private int m_frameRate = Global.FrameRate60;
 		public int CurrentFrameRate => m_frameRate;
 
 		public Observable<int> OnChangedFrameRate => OnChangedWithStart(nameof(m_frameRate)).Select(_GetFrameRate);
@@ -41,7 +41,7 @@ namespace KZLib.Data
 		protected override void _LoadAll()
 		{
 			m_resolution		= _LoadValue(nameof(m_resolution),ScreenResolution.TryParse,ScreenResolution.fhd);
-			m_frameRate			= _LoadValue(nameof(m_frameRate),int.TryParse,Global.FRAME_RATE_60);
+			m_frameRate			= _LoadValue(nameof(m_frameRate),int.TryParse,Global.FrameRate60);
 			m_graphicQuality	= _LoadValue(nameof(m_graphicQuality),long.TryParse,GraphicQualityOption.Highest);
 		}
 
@@ -82,9 +82,9 @@ namespace KZLib.Data
 
 		private void _CheckGraphicQuality()
 		{
-			QualitySettings.globalTextureMipmapLimit = GraphicQualityOption.In.GetOptionValue<int>(m_graphicQuality,Global.GLOBAL_TEXTURE_MIPMAP_LIMIT);
-			QualitySettings.anisotropicFiltering = GraphicQualityOption.In.GetOptionValue<AnisotropicFiltering>(m_graphicQuality,Global.ANISOTROPIC_FILTERING);
-			QualitySettings.vSyncCount = GraphicQualityOption.In.GetOptionValue<int>(m_graphicQuality,Global.VERTICAL_SYNC_COUNT);
+			QualitySettings.globalTextureMipmapLimit = GraphicQualityOption.In.GetOptionValue<int>(m_graphicQuality,Global.GlobalTextureMipmapLimit);
+			QualitySettings.anisotropicFiltering = GraphicQualityOption.In.GetOptionValue<AnisotropicFiltering>(m_graphicQuality,Global.AnisotropicFiltering);
+			QualitySettings.vSyncCount = GraphicQualityOption.In.GetOptionValue<int>(m_graphicQuality,Global.VerticalSyncCount);
 		}
 	}
 }

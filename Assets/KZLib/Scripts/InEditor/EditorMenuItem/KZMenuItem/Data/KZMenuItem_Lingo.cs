@@ -41,7 +41,7 @@ namespace KZLib.EditorInternal.Menus
 
 			var lingoRoute = RouteManager.In.FetchRoute("defaultRes:lingo");
 
-			foreach(var lingoFilePath in KZFileKit.FindAllExcelFileGroupByFolderPath(Global.LINGO_FOLDER_PATH))
+			foreach(var lingoFilePath in KZFileKit.FindAllExcelFileGroupByFolderPath(Global.LingoFolderPath))
 			{
 				if(!KZFileKit.IsExcelFile(lingoFilePath))
 				{
@@ -439,7 +439,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Lingo/Open Lingo Folder",false,MenuOrder.Data.OPEN)]
 		private static void _OnOpenLingoFolder()
 		{
-			_OpenFolder("Lingo",Global.LINGO_FOLDER_PATH);
+			_OpenFolder("Lingo",Global.LingoFolderPath);
 		}
 	}
 }

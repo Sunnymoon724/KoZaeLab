@@ -79,7 +79,7 @@ namespace KZLib
 
 		private void _OnChangeFarClipPlane(long graphicQuality)
 		{
-			var value = GraphicQualityOption.In.FindValue(graphicQuality,Global.DISABLE_CAMERA_FAR_HALF);
+			var value = GraphicQualityOption.In.FindValue(graphicQuality,Global.DisableCameraFarHalf);
 
 			if(!float.TryParse(value,out var factor))
 			{

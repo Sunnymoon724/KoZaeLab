@@ -11,17 +11,17 @@ namespace KZLib.EditorInternal.Menus
 		{
 			public class Explorer
 			{
-				private const int DEFAULT			= 1 * Global.MENU_ORDER_MAIN_SPACE;
+				private const int DEFAULT			= 1 * Global.MenuOrderMainSpace;
 
-				public const int LIBRARY			= DEFAULT + 1 * Global.MENU_ORDER_SUB_SPACE;
-				public const int VENDER				= DEFAULT + 2 * Global.MENU_ORDER_SUB_SPACE;
+				public const int LIBRARY			= DEFAULT + 1 * Global.MenuOrderSubSpace;
+				public const int VENDER				= DEFAULT + 2 * Global.MenuOrderSubSpace;
 			}
 		}
 
 		[MenuItem("KZMenu/Explorer/Open Library Project",false,MenuOrder.Explorer.LIBRARY)]
 		private static void _OnOpenLibraryProject()
 		{
-			var solutionPath = Path.Combine(Global.PROJECT_PARENT_PATH,"KoZaeLibrary");
+			var solutionPath = Path.Combine(Global.ProjectParentPath,"KoZaeLibrary");
 
 			Process.Start(new ProcessStartInfo
 			{
@@ -34,7 +34,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Explorer/Build Library Project",false,MenuOrder.Explorer.LIBRARY+1)]
 		private static void _OnBuildLibraryProject()
 		{
-			var batchFilePath = Path.Combine(Global.PROJECT_PARENT_PATH,"KoZaeBuilding","BuildLibrary.bat");
+			var batchFilePath = Path.Combine(Global.ProjectParentPath,"KoZaeBuilding","BuildLibrary.bat");
 
 			KZEditorKit.OpenBatchFile(batchFilePath);
 		}

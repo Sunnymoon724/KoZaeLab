@@ -239,7 +239,7 @@ namespace KZLib.Networking
 				}
 			}
 
-			var filePath = Path.Combine(Global.PROJECT_PARENT_PATH,"NetworkDump",$"{requestMethodName}.log");
+			var filePath = Path.Combine(Global.ProjectParentPath,"NetworkDump",$"{requestMethodName}.log");
 
 			KZFileKit.WriteTextToFile(filePath,dumpBuilder.ToString());
 		}

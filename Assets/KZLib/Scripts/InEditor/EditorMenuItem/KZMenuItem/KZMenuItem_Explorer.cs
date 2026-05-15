@@ -18,13 +18,13 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Explorer/Open Documents Folder",false,MenuOrder.Explorer.OPEN)]
 		private static void _OnOpenDocumentFolder()
 		{
-			_OpenFolder("Documents",Global.DOCUMENT_FOLDER_PATH);
+			_OpenFolder("Documents",Global.DocumentFolderPath);
 		}
 
 		[MenuItem("KZMenu/Explorer/Open Tools Folder",false,MenuOrder.Explorer.OPEN)]
 		private static void _OnOpenToolFolder()
 		{
-			_OpenFolder("Tools",Global.TOOL_FOLDER_PATH);
+			_OpenFolder("Tools",Global.ToolFolderPath);
 		}
 
 		[MenuItem("KZMenu/Explorer/Open DataPath Folder",false,MenuOrder.Explorer.OPEN)]

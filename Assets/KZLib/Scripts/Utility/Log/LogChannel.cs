@@ -257,7 +257,7 @@ public partial class LogChannel
 
 			var index = stackTraceArray.IndexOf(_FindIndex);
 
-			if(index == Global.INVALID_INDEX)
+			if(index == Global.InvalidIndex)
 			{
 				body = condition;
 			}

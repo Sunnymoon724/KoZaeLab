@@ -281,10 +281,10 @@ namespace KZLib.Development
 #if UNITY_EDITOR
 		protected override void OnCreate()
 		{
-			_TryAddOption(Global.GLOBAL_TEXTURE_MIPMAP_LIMIT,"0","1");
-			_TryAddOption(Global.ANISOTROPIC_FILTERING,"Enable","Disable");
-			_TryAddOption(Global.VERTICAL_SYNC_COUNT,"1","0");
-			_TryAddOption(Global.DISABLE_CAMERA_FAR_HALF,"1.0","0.5");
+			_TryAddOption(Global.GlobalTextureMipmapLimit,"0","1");
+			_TryAddOption(Global.AnisotropicFiltering,"Enable","Disable");
+			_TryAddOption(Global.VerticalSyncCount,"1","0");
+			_TryAddOption(Global.DisableCameraFarHalf,"1.0","0.5");
 		}
 #endif
 
@@ -316,11 +316,11 @@ namespace KZLib.Development
 
 			return optionName switch
 			{
-				Global.GLOBAL_TEXTURE_MIPMAP_LIMIT or 
-				Global.VERTICAL_SYNC_COUNT or 
-				Global.DISABLE_CAMERA_FAR_HALF => (TValue) Convert.ChangeType(value,typeof(TValue)),
+				Global.GlobalTextureMipmapLimit or 
+				Global.VerticalSyncCount or 
+				Global.DisableCameraFarHalf => (TValue) Convert.ChangeType(value,typeof(TValue)),
 
-				Global.ANISOTROPIC_FILTERING => (TValue) Enum.Parse(typeof(TValue),value,true),
+				Global.AnisotropicFiltering => (TValue) Enum.Parse(typeof(TValue),value,true),
 
 				_ => (TValue)(object)value,
 			};

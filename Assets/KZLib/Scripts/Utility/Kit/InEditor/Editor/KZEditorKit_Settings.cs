@@ -43,25 +43,25 @@ public static partial class KZEditorKit
 
 		var layerProperty = serialized.FindProperty("layers");
 		var layerCount = layerProperty.arraySize;
-		var index = Global.INVALID_INDEX;
+		var index = Global.InvalidIndex;
 		
 		for(var i=8;i<layerCount;i++)
 		{
 			var value = layerProperty.GetArrayElementAtIndex(i).stringValue;
 
-			if(index == Global.INVALID_INDEX && value.IsEmpty())
+			if(index == Global.InvalidIndex && value.IsEmpty())
 			{
 				index = i;
 			}			
 			else if(value.IsEqual(layerName))
 			{
-				index = Global.INVALID_INDEX;
+				index = Global.InvalidIndex;
 
 				break;
 			}
 		}
 		
-		if(index != Global.INVALID_INDEX)
+		if(index != Global.InvalidIndex)
 		{
 			var property = layerProperty.GetArrayElementAtIndex(index);
 			property.stringValue = layerName;

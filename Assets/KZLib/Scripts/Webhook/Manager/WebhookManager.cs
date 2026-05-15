@@ -102,7 +102,7 @@ namespace KZLib.Webs
 				dumpBuilder.Append($"[RESPONSE ERROR MESSAGE]\n{responseInfo.Error}\n");
 			}
 
-			var filePath = Path.Combine(Global.PROJECT_PARENT_PATH,"NetworkDump",$"{dumpInfo.Uri.AbsolutePath.Replace("/","#")}.log");
+			var filePath = Path.Combine(Global.ProjectParentPath,"NetworkDump",$"{dumpInfo.Uri.AbsolutePath.Replace("/","#")}.log");
 
 			KZFileKit.WriteTextToFile(filePath,dumpBuilder.ToString());
 		}

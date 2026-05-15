@@ -37,7 +37,7 @@ namespace KZLib.UI
 
 		[Space(10)]
 		[BoxGroup("0",ShowLabel = false,Order = 99),SerializeField,KZRichText]
-		private int m_focusIndex = Global.INVALID_INDEX;
+		private int m_focusIndex = Global.InvalidIndex;
 
 		[BoxGroup("0",ShowLabel = false,Order = 99),SerializeField,KZRichText]
 		private float m_currentLocation = 0.0f;

@@ -59,31 +59,30 @@
 				struct v2f
 				{
 					float4 vertex	: SV_POSITION;
-					fixed4 color	: COLOR;
-					half2 texcoord	: TEXCOORD0;
+					float4 color	: COLOR;
+					float2 texcoord	: TEXCOORD0;
 				};
 
 				sampler2D _MainTex;
-				fixed4 _FlashColor;
+				float4 _FlashColor;
 				float _FlashAmount;
 
-				v2f vert(appdata_t _data)
+				v2f vert(appdata_t input)
 				{
 					v2f result;
 
-					result.vertex = UnityObjectToClipPos(_data.vertex);
-					result.texcoord = _data.texcoord;
-					result.color = _data.color;
+					result.vertex = UnityObjectToClipPos(input.vertex);
+					result.texcoord = input.texcoord;
+					result.color = input.color;
 
 					return result;
 				}
 
-				fixed4 frag(v2f _data) : COLOR
+				float4 frag(v2f input) : SV_Target
 				{
-					fixed4 texColor = tex2D(_MainTex,_data.texcoord)*_data.color;
+					float4 texColor = tex2D(_MainTex,input.texcoord)*input.color;
 
 					texColor.rgb = lerp(texColor.rgb,_FlashColor.rgb,_FlashAmount);
-					texColor.rgb *= texColor.a;
 
 					return texColor;
 				}

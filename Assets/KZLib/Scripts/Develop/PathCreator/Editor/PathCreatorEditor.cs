@@ -13,9 +13,9 @@ namespace KZLib.Development
 
 		private PathCreator m_pathCreator = null;
 
-		private int m_selectedHandleIndex = Global.INVALID_INDEX;
-		private int m_dragHandleIndex = Global.INVALID_INDEX;
-		private int m_mouseOverHandleIndex = Global.INVALID_INDEX;
+		private int m_selectedHandleIndex = Global.InvalidIndex;
+		private int m_dragHandleIndex = Global.InvalidIndex;
+		private int m_mouseOverHandleIndex = Global.InvalidIndex;
 
 		private Color m_handleSelectColor = "#FFFF00FF".ToColor();
 
@@ -64,7 +64,7 @@ namespace KZLib.Development
 
 		private void _OnResetState(Unit _)
 		{
-			m_mouseOverHandleIndex = Global.INVALID_INDEX;
+			m_mouseOverHandleIndex = Global.InvalidIndex;
 		}
 
 		public override void OnInspectorGUI()

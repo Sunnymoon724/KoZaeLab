@@ -135,7 +135,7 @@ public static class StringExtension
 		var count = 0;
 		var index = text.IndexOf(character);
 
-		while(index != Global.INVALID_INDEX)
+		while(index != Global.InvalidIndex)
 		{
 			count++;
 			index = text.IndexOf(character,index+1);
@@ -154,15 +154,15 @@ public static class StringExtension
 			return -1;
 		}
 
-		var index = Global.INVALID_INDEX;
+		var index = Global.InvalidIndex;
 
 		for(var i=0;i<order;i++)
 		{
 			index = text.IndexOf(character,index+1);
 
-			if(index == Global.INVALID_INDEX)
+			if(index == Global.InvalidIndex)
 			{
-				return Global.INVALID_INDEX;
+				return Global.InvalidIndex;
 			}
 		}
 		return index;
@@ -882,7 +882,7 @@ public static class StringExtension
 		var layer = LayerMask.NameToLayer(layerName);
 
 #if UNITY_EDITOR
-		if(layer == Global.INVALID_INDEX && isAutoCreate)
+		if(layer == Global.InvalidIndex && isAutoCreate)
 		{
 			KZEditorKit.AddLayer(layerName);
 

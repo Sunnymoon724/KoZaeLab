@@ -139,7 +139,7 @@ public static class CameraExtension
 			return false;
 		}
 
-		var ray = camera.ViewportPointToRay(Global.CENTER_VIEWPORT_POINT);
+		var ray = camera.ViewportPointToRay(Global.CenterViewportPoint);
 		var hit = plane.Raycast(ray,out distance);
 
 		distance += camera.nearClipPlane;
