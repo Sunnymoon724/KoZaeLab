@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -34,7 +33,7 @@ namespace KZLib.Utilities
 			}
 		}
 
-		private bool IsPlayable => m_textList.Any();
+		private bool IsPlayable => m_textList.Count > 0;
 		private int MaxIndex => m_textList.Count-1;
 
 		private readonly List<int> m_indexList = new();
@@ -42,7 +41,11 @@ namespace KZLib.Utilities
 		protected async override UniTask _DoPlayAsync(Param _)
 		{
 			m_indexList.Clear();
-			m_indexList.AddRange(Enumerable.Range(0,MaxIndex+1));
+
+			for(var i=0;i<=MaxIndex;i++)
+			{
+				m_indexList.Add(i);
+			}
 
 			if(m_randomMode)
 			{

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -68,7 +67,7 @@ public abstract class Repository : MonoBehaviour
 
 	public void RemoveAll(IEnumerable<CommonUINameTag> excludeNameTagGroup,bool isRelease)
 	{
-		var nameTagHashSet = new HashSet<CommonUINameTag>(excludeNameTagGroup ?? Enumerable.Empty<CommonUINameTag>());
+		var nameTagHashSet = new HashSet<CommonUINameTag>(excludeNameTagGroup ?? new CommonUINameTag[0]);
 
 		for(var i=m_windowList.Count-1;i>=0;i--)
 		{
@@ -85,8 +84,8 @@ public abstract class Repository : MonoBehaviour
 
 	public void HideAllGroup(bool isHidden,IEnumerable<CommonUINameTag> includeNameTagGroup = null,IEnumerable<CommonUINameTag> excludeNameTagGroup = null)
 	{
-		var includeNameTagHashSet = new HashSet<CommonUINameTag>(includeNameTagGroup ?? Enumerable.Empty<CommonUINameTag>());
-		var excludeNameTagHashSet = new HashSet<CommonUINameTag>(excludeNameTagGroup ?? Enumerable.Empty<CommonUINameTag>())
+		var includeNameTagHashSet = new HashSet<CommonUINameTag>(includeNameTagGroup ?? new CommonUINameTag[0]);
+		var excludeNameTagHashSet = new HashSet<CommonUINameTag>(excludeNameTagGroup ?? new CommonUINameTag[0])
 		{
 			CommonUINameTag.CommonTransitionPanel,
 			CommonUINameTag.DebugOverlayPanel,

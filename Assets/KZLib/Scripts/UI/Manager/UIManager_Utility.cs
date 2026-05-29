@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using KZLib.Utilities;
+﻿using KZLib.Utilities;
 
 namespace KZLib
 {
@@ -15,7 +13,15 @@ namespace KZLib
 
 		private bool _IsDefinedWindow(CommonUINameTag nameTag)
 		{
-			return s_definedTagArray.Contains(nameTag);
+			foreach(var tag in s_definedTagArray)
+			{
+				if(tag.Equals(nameTag))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }

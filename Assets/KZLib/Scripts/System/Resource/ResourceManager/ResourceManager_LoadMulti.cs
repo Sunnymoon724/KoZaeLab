@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.Video;
 using System;
-using System.Linq;
 using KZLib.Utilities;
 using System.IO;
+
 using Object = UnityEngine.Object;
 
 namespace KZLib
@@ -156,7 +156,7 @@ namespace KZLib
 			}
 
 #if UNITY_EDITOR
-			return KZAssetKit.FindAssetGroupInFolder<TObject>(assetPath).ToArray();
+			return KZAssetKit.FindAssetArrayInFolder<TObject>(assetPath);
 #else
 			return null;
 #endif

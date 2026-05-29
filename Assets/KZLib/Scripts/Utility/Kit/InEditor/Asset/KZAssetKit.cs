@@ -121,7 +121,7 @@ public static class KZAssetKit
 		}
 	}
 
-	public static TObject[] FindAssetListInFolder<TObject>(string folderPath) where TObject : Object
+	public static TObject[] FindAssetArrayInFolder<TObject>(string folderPath) where TObject : Object
 	{
 		var list = new List<TObject>();
 

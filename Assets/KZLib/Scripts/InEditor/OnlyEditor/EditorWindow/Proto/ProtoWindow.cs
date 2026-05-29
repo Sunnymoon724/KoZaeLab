@@ -3,7 +3,6 @@ using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 using System;
 using KZLib.Attributes;
 using KZLib.Data;
@@ -79,7 +78,7 @@ namespace KZLib.Windows
 
 			if(IsExistProto)
 			{
-				ProtoType = ProtoTypeList.First();
+				ProtoType = ProtoTypeList[0];
 			}
 		}
 	}

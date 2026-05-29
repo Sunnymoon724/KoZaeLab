@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using System.Diagnostics;
-using System.Linq;
 
 #if UNITY_EDITOR
 
@@ -27,7 +26,9 @@ namespace KZLib.Attributes
 
 			EditorGUI.BeginChangeCheck();
 
-			var index = tagArray.Contains(ValueEntry.SmartValue) ? Array.IndexOf(tagArray,ValueEntry.SmartValue) : 0;
+			var index = Array.IndexOf(tagArray,ValueEntry.SmartValue);
+
+			index = index >= 0 ? index : 0;
 
 			index = EditorGUI.Popup(rect,index,InternalEditorUtility.tags);
 

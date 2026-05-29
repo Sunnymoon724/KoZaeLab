@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace KZLib.Development
+namespace KZLib.Utilities
 {
 	public class InfiniteBackground : MonoBehaviour
 	{
@@ -30,7 +30,7 @@ namespace KZLib.Development
 				throw new NullReferenceException("Pivot is null.");
 			}
 
-			m_width = m_pivot.bounds.size.x*m_pivot.transform.lossyScale.x;
+			m_width = m_pivot.bounds.size.x;
 
 			m_pivot.gameObject.EnsureActive(false);
 
@@ -54,22 +54,31 @@ namespace KZLib.Development
 				return;
 			}
 
-			var scrolling = m_speed > 0.0f;
-			var point = m_backgroundList[0].position.x;
+			var delta = m_speed*Time.deltaTime;
 
-			if((scrolling && point-m_width/2.0f > m_startPoint.x) || (!scrolling && point+m_width/2.0f < m_startPoint.x))
+			foreach(var background in m_backgroundList)
 			{
-				var background = m_backgroundList[0];
-
-				m_backgroundList.RemoveAt(0);
-				m_backgroundList.Add(background);
+				background.Translate(delta*Vector3.right);
 			}
 
-			m_backgroundList[0].Translate(m_speed*Time.deltaTime*Vector3.right);
+			var scrolling = m_speed > 0.0f;
 
-			for(var i=1;i<m_backgroundList.Count;i++)
+			while(true)
 			{
-				m_backgroundList[i].SetLocalPositionX(m_backgroundList[0].localPosition.x-i*m_width*Mathf.Sign(m_speed));
+				var first = m_backgroundList[0];
+				var outOfBounds = scrolling ? first.position.x-m_width/2.0f > m_startPoint.x: first.position.x+m_width/2.0f < m_startPoint.x;
+
+				if(!outOfBounds)
+				{
+					break;
+				}
+
+				var last = m_backgroundList[^1];
+
+				first.SetLocalPositionX(last.localPosition.x+m_width*Mathf.Sign(m_speed));
+
+				m_backgroundList.RemoveAt(0);
+				m_backgroundList.Add(first);
 			}
 		}
 	}
