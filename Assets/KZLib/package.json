@@ -3,7 +3,7 @@
   "displayName": "KoZaeLibrary",
   "author": { "name": "Ko KoZae", "url": "https://github.com/Sunnymoon724" },
   "description": "KoZae Library \nIt is using 'UniTask'.",
-  "version": "1.0.2605160551",
+  "version": "1.0530.0053",
   "unity": "6000.3",
   "license": "MIT",
   "dependencies": {
@@ -50,9 +50,9 @@
     },
 
     {
-      "displayName": "TaskSequenceSample",
-      "description": "TaskSequence Sample",
-      "path": "Samples~/TaskSequenceSample"
+      "displayName": "StanzaSample",
+      "description": "Stanza Sample",
+      "path": "Samples~/StanzaSample"
     },
 
     {

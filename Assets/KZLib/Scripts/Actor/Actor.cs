@@ -7,13 +7,14 @@ namespace KZLib.Actors
 	public interface IActor
 	{
 		Vector3 Position { get; }
+		bool IsInvincible { get; }
 		bool IsDead { get; }
 		void TakeDamage(float damage);
 
 		TeamType MyTeam { get; }
 	}
 
-	public abstract class Actor<TState,TStat,TAgent> : MonoBehaviour,IActor where TState : struct,Enum where TStat : struct,Enum where TAgent : ActorAgentController
+	public abstract class Actor<TState,TStat> : MonoBehaviour,IActor where TState : struct,Enum where TStat : struct,Enum
 	{
 		#region Debug
 		[SerializeField,HideInInspector]
@@ -51,9 +52,14 @@ namespace KZLib.Actors
 		protected int m_currentLevel = 1;
 
 		protected abstract TStat HpStatType { get; }
-		protected abstract TStat MoveSpeedStatType { get; }
 
-		protected float MoveSpeed => _GetStat(MoveSpeedStatType);
+		protected abstract TStat AttackStatType { get; }
+		protected abstract TStat DefenseStatType { get; }
+		protected abstract TStat AttackRangeStatType { get; }
+
+		protected float Attack => _GetStat(AttackStatType);
+		protected float Defense => _GetStat(DefenseStatType);
+		protected float AttackRange => _GetStat(AttackRangeStatType);
 
 		protected void _InitializeStat(StatProfile<TStat> statProfile)
 		{
@@ -77,6 +83,9 @@ namespace KZLib.Actors
 		public float MaxHp => m_maxHp;
 		public bool IsDead => m_currentHp <= 0.0f;
 
+		private int m_invincibleStack = 0;
+		public bool IsInvincible => m_invincibleStack > 0;
+
 		[ShowInInspector]
 		protected string HpInfo => $"Hp: {CurrentHp}/{MaxHp}";
 
@@ -99,10 +108,20 @@ namespace KZLib.Actors
 
 		protected virtual float _CalculateDamage(float damage)
 		{
-			return damage;
+			return damage*(100.0f/(100.0f+Defense));
 		}
 
 		protected virtual void _OnDead() { }
+		
+		public void AddInvincible()
+		{
+			m_invincibleStack++;
+		}
+
+		public void RemoveInvincible()
+		{
+			m_invincibleStack = Math.Max(0,m_invincibleStack-1);
+		}
 		#endregion Stat
 
 		#region Team
@@ -114,28 +133,21 @@ namespace KZLib.Actors
 			m_myTeam = teamType;
 		}
 
-		public bool IsEnemy(Actor<TState,TStat,TAgent> other)
+		public bool IsEnemy(Actor<TState,TStat> other)
 		{
 			return _GetRelation(other) == TeamRelationType.Enemy;
 		}
 
-		public bool IsAlly(Actor<TState,TStat,TAgent> other)
+		public bool IsAlly(Actor<TState,TStat> other)
 		{
 			return _GetRelation(other) == TeamRelationType.Ally;
 		}
 
-		private TeamRelationType _GetRelation(Actor<TState,TStat,TAgent> other)
+		private TeamRelationType _GetRelation(Actor<TState,TStat> other)
 		{
 			return TeamRelationManager.In.GetRelation(MyTeam,other.MyTeam);
 		}
 		#endregion Team
-
-		#region Agent
-		[SerializeField]
-		protected TAgent m_agentCon = null;
-
-		protected abstract void _InitializeAgent(bool updateRotation = false);
-		#endregion Agent
 
 		#region Lifecycle
 		public virtual void Release()

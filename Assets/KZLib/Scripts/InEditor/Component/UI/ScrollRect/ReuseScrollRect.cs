@@ -60,7 +60,7 @@ public class ReuseScrollRect : MonoBehaviour
 		}
 
 		m_slotPool = new GameObjectPool<Slot>(m_pivot,m_scrollRect.viewport,m_poolCapacity,false);
-		
+
 		var content = m_scrollRect.content;
 		var viewport = m_scrollRect.viewport;
 

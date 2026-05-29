@@ -15,7 +15,7 @@ public class LoadingPanel : BasePanel
 	[SerializeField]
 	private List<ILoadingWidget> m_loadingWidgetList = new();
 
-    public void SetLoadingProgress(float progress)
+	public void SetLoadingProgress(float progress)
 	{
 		for(var i=0;i<m_loadingWidgetList.Count;i++)
 		{

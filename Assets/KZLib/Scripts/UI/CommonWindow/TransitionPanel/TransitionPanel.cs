@@ -1,17 +1,17 @@
 ﻿using Cysharp.Threading.Tasks;
-using KZLib.Development;
+using KZLib.Utilities;
 using UnityEngine;
 
 public class TransitionPanel : BasePanel
 {
 	[SerializeField]
-	private TransitionProgressTaskSequence m_progressTask = null;
+	private TransitionStanzaLerp m_progressTask = null;
 
 	public async UniTask PlayTransitionAsync(bool isAutoHide,bool isReverse)
 	{
 		Hide(false);
 
-		await m_progressTask.PlaySequenceAsync(new ProgressTaskSequence.Param(null,isReverse));
+		await m_progressTask.PlayAsync(new StanzaLerp.Param(null,isReverse));
 
 		if(isAutoHide)
 		{
