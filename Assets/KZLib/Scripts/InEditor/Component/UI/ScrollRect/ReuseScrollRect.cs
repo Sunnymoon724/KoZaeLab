@@ -1,20 +1,16 @@
 using System;
 using System.Collections.Generic;
-using DG.Tweening;
+using Cysharp.Threading.Tasks;
+using System.Threading;
 using KZLib.Attributes;
 using KZLib.UI;
 using KZLib.Utilities;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.UI;
 
-[RequireComponent(typeof(ScrollRect))]
-public class ReuseScrollRect : MonoBehaviour
+public class ReuseScrollRect : BaseScrollRect
 {
 	private enum ScrollToType { Top, Center, Bottom, }
-
-	[SerializeField]
-	private ScrollRect m_scrollRect = null;
 
 	[ShowInInspector,ReadOnly]
 	private bool IsVertical => m_scrollRect != null && m_scrollRect.vertical;
@@ -43,7 +39,7 @@ public class ReuseScrollRect : MonoBehaviour
 	private int m_headIndex = 0;
 	private int m_tailIndex = 0;
 
-	private Tween m_tween = null;
+	private CancellationTokenSource m_tokenSource = null;
 
 	private bool m_initialize = false;
 
@@ -103,14 +99,12 @@ public class ReuseScrollRect : MonoBehaviour
 	private void OnDisable()
 	{
 		m_scrollRect.onValueChanged.RemoveAction(_OnScrollChanged);
-
-		KZExternalKit.KillTween(m_tween);
+		KZExternalKit.RecycleTokenSource(ref m_tokenSource);
 	}
 
 	private void OnDestroy()
 	{
-		KZExternalKit.KillTween(m_tween);
-
+		KZExternalKit.RecycleTokenSource(ref m_tokenSource);
 		Clear();
 	}
 
@@ -177,19 +171,29 @@ public class ReuseScrollRect : MonoBehaviour
 		if(duration <= 0.0f || !gameObject.activeInHierarchy)
 		{
 			SetContentLocation(location);
-
 			onComplete?.Invoke();
-
 			return;
 		}
 
 		var current = _GetContentLocation();
 
-		KZExternalKit.KillTween(m_tween);
+		KZExternalKit.RecycleTokenSource(ref m_tokenSource);
+		_SmoothMoveAsync(current, location, duration, onComplete, m_tokenSource.Token).Forget();
+	}
 
-		m_tween = KZExternalKit.SetTweenProgress(current,location,duration,SetContentLocation,onComplete);
-
-		m_tween.Play();
+	private async UniTaskVoid _SmoothMoveAsync(float from, float to, float duration, Action onComplete, CancellationToken token)
+	{
+		float time = 0f;
+		while (time < duration)
+		{
+			time += Time.deltaTime;
+			float t = Mathf.Clamp01(time / duration);
+			float value = Mathf.Lerp(from, to, t);
+			SetContentLocation(value);
+			await UniTask.Yield(token);
+		}
+		SetContentLocation(to);
+		onComplete?.Invoke();
 	}
 
 	private float _CalculateTargetLocation(int targetIndex,ScrollToType ScrollToType)
@@ -283,6 +287,7 @@ public class ReuseScrollRect : MonoBehaviour
 			}
 
 			var rectTransform = currentSlot.GetComponent<RectTransform>();
+
 			rectTransform.anchoredPosition = _GetSlotLocation(i);
 
 			slotLocation += size;
@@ -414,13 +419,5 @@ public class ReuseScrollRect : MonoBehaviour
 	private float _GetSizeToIndex(int index)
 	{
 		return (m_slotSize+m_space)*index;
-	}
-
-	private void Reset()
-	{
-		if(!m_scrollRect)
-		{
-			m_scrollRect = GetComponent<ScrollRect>();
-		}
 	}
 }

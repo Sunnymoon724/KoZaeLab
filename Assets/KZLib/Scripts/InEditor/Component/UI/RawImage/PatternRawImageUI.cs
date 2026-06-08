@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PatternRawImageUI : BaseRawImageUI
 {
-	private enum TilingPatternType { MANUAL, CHILD, SELF, }
+	private enum TilingPatternType { Manual, Child, Self, }
 
 	[SerializeField,Range(-1.0f,1.0f)]
 	private float m_scrollSpeedX = 0.0f;
@@ -14,7 +14,7 @@ public class PatternRawImageUI : BaseRawImageUI
 	private float m_scrollSpeedY = 0.0f;
 
 	[SerializeField]
-	private TilingPatternType m_tilingType = TilingPatternType.MANUAL;
+	private TilingPatternType m_tilingType = TilingPatternType.Manual;
 
 	[SerializeField,ShowIf(nameof(IsChildPatternType))]
 	private float m_childValue = 1.0f;
@@ -24,8 +24,8 @@ public class PatternRawImageUI : BaseRawImageUI
 	[SerializeField]
 	private bool m_ignoreTimescale = false;
 
-	private bool IsSelfPatternType => m_tilingType == TilingPatternType.SELF;
-	private bool IsChildPatternType => m_tilingType == TilingPatternType.CHILD;
+	private bool IsSelfPatternType => m_tilingType == TilingPatternType.Self;
+	private bool IsChildPatternType => m_tilingType == TilingPatternType.Child;
 
 	private CancellationTokenSource m_tokenSource = null;
 
@@ -57,7 +57,7 @@ public class PatternRawImageUI : BaseRawImageUI
 
 		switch(m_tilingType)
 		{
-			case TilingPatternType.CHILD:
+			case TilingPatternType.Child:
 				{
 					var parentRectTrans = transform.parent.GetComponent<RectTransform>();
 
@@ -65,7 +65,7 @@ public class PatternRawImageUI : BaseRawImageUI
 
 					break;
 				}
-			case TilingPatternType.SELF:
+			case TilingPatternType.Self:
 				{
 					var currentRectTrans = transform.GetComponent<RectTransform>();
 
@@ -73,7 +73,7 @@ public class PatternRawImageUI : BaseRawImageUI
 
 					break;
 				}
-			case TilingPatternType.MANUAL:
+			case TilingPatternType.Manual:
 			default:
 				{
 					break;

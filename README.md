@@ -1,62 +1,35 @@
 # KoZae's Code Lab
 
-A research lab focused on developing various codes into a reusable library.
-<br>
-The library requires the following Unity Assets: **DotweenPro** and **Odin Inspector** to function.
+**[English](README.en.md)** | **[한국어](README.ko.md)**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blueviolet.svg)](https://github.com/Sunnymoon724/KoZaeLab/blob/master/LICENSE)
-[![Unity Version](https://img.shields.io/badge/Unity-6.3%20or%20later-important)](https://unity3d.com/)
+A Unity 6 research lab for **KoZaeLibrary (KZLib)** — a reusable game development library.
 
-***
+[![License: MIT](https://img.shields.io/badge/License-MIT-blueviolet.svg)](LICENSE)
+[![Unity Version](https://img.shields.io/badge/Unity-6000.3.7f1-important)](https://unity3d.com/)
 
-## 🧭Table of Contents
-* [Getting Started](#getting-started)
-* [Dependencies](#dependencies)
+---
 
-***
+## Quick Start
 
-<a id="getting-started"></a>
-## 🚀 Getting Started
+| | |
+|---|---|
+| **Unity** | 6000.3.7f1 or later |
+| **UPM Git URL** | `https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib` |
+| **Required Assets** | [DOTween Pro](https://assetstore.unity.com/packages/tools/visual-scripting/dotween-pro-32416), [Odin Inspector](https://assetstore.unity3d.com/packages/tools/utilities/odin-inspector-and-serializer-89041) |
 
-### 1. Unity Version
-This project is developed based on **Unity 6.3.0f1**.
+---
 
-### 2. Git URL
-You can add the project via the Unity Package Manager (UPM) using the following Git URL:
+## Documentation
 
-```
-https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
-```
+| Language | File |
+|----------|------|
+| English | [README.en.md](README.en.md) |
+| 한국어 | [README.ko.md](README.ko.md) |
 
-***
+Full documentation covers project structure, KZLib architecture, samples, config system, editor tools, optional modules (PlayFab, IAP), and dependencies.
 
-<a id="dependencies"></a>
-## 🛠️Dependencies
+---
 
-### Required Unity Assets
-* **DotweenPro**: [Asset Store Link](https://assetstore.unity.com/packages/tools/visual-scripting/dotween-pro-32416)
-* **Odin Inspector**: [Asset Store Link](https://assetstore.unity3d.com/packages/tools/utilities/odin-inspector-and-serializer-89041)
+## License
 
-### Required GitHub Package
-* **UniTask**: [GitHub Link](https://github.com/Cysharp/UniTask?tab=readme-ov-file#upm-package)
-```
-https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
-```
-* **UIEffect**: [GitHub Link](https://github.com/mob-sakai/UIEffect?tab=readme-ov-file#-installation)
-```
-https://github.com/mob-sakai/UIEffect.git?path=Packages/src
-```
-* **SoftMaskForUGUI**: [GitHub Link](https://github.com/mob-sakai/SoftMaskForUGUI?tab=readme-ov-file#-installation)
-```
-https://github.com/mob-sakai/SoftMaskForUGUI.git?path=Packages/src
-```
-* **ParticleEffectForUGUI**: [GitHub Link](https://github.com/mob-sakai/ParticleEffectForUGUI?tab=readme-ov-file#-installation)
-```
-https://github.com/mob-sakai/ParticleEffectForUGUI.git
-```
-
-### Etc
-This project references the following repository as a compiled DLL:
-* [KoZaeLibrary](https://github.com/Sunnymoon724/KoZaeLibrary)
-
-***
+MIT License — see [LICENSE](LICENSE)
