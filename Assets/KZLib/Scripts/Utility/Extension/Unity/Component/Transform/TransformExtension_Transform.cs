@@ -1,6 +1,9 @@
 using KZLib;
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for <see cref="Transform"/> position, rotation, scale, and camera-space conversion.
+/// </summary>
 public static partial class TransformExtension
 {
 	#region Set Position
@@ -127,6 +130,9 @@ public static partial class TransformExtension
 	}
 	#endregion Set Local Position
 
+	/// <summary>
+	/// Returns screen-space pixel coordinates using <see cref="CameraManager.In.CurrentCamera"/> or <see cref="Camera.main"/>.
+	/// </summary>
 	public static Vector2 ScreenPosition(this Transform transform)
 	{
 		if(!_IsValid(transform))
@@ -152,6 +158,9 @@ public static partial class TransformExtension
 		return RectTransformUtility.WorldToScreenPoint(camera,transform.position);
 	}
 
+	/// <summary>
+	/// Returns normalized viewport coordinates (0–1) using <see cref="CameraManager.In.CurrentCamera"/> or <see cref="Camera.main"/>.
+	/// </summary>
 	public static Vector3 ViewportPosition(this Transform transform)
 	{
 		if(!_IsValid(transform))
@@ -174,7 +183,7 @@ public static partial class TransformExtension
 			return Vector3.zero;
 		}
 
-		return RectTransformUtility.WorldToScreenPoint(camera,transform.position);
+		return camera.WorldToViewportPoint(transform.position);
 	}
 	
 	private static bool _IsValidCamera(Camera camera)
@@ -313,6 +322,9 @@ public static partial class TransformExtension
 	}
 	#endregion Set Local Rotation
 
+	/// <summary>
+	/// Orbits around <paramref name="target"/> at <paramref name="speed"/> degrees per call; optionally aligns rotation to face the orbit path.
+	/// </summary>
 	public static void RotateAroundTarget(this Transform transform,Vector3 target,Vector3 axis,float speed,bool isLook)
 	{
 		if(!_IsValid(transform))
@@ -393,6 +405,9 @@ public static partial class TransformExtension
 	}
 	#endregion Set Local Scale
 
+	/// <summary>
+	/// Sets world (<see cref="Transform.lossyScale"/>) scale by adjusting <see cref="Transform.localScale"/> relative to the current lossy scale.
+	/// </summary>
 	public static void SetLossyScale(this Transform transform,Vector3 scale)
 	{
 		if(!_IsValid(transform))
@@ -404,6 +419,10 @@ public static partial class TransformExtension
 
 		var lossyScale = transform.lossyScale;
 
-		transform.localScale = new Vector3(scale.x/lossyScale.x,scale.y/lossyScale.y,scale.z/lossyScale.z);
+		var x = lossyScale.x.ApproximatelyZero() ? 1.0f : scale.x/lossyScale.x;
+		var y = lossyScale.y.ApproximatelyZero() ? 1.0f : scale.y/lossyScale.y;
+		var z = lossyScale.z.ApproximatelyZero() ? 1.0f : scale.z/lossyScale.z;
+
+		transform.localScale = new Vector3(x,y,z);
 	}
 }

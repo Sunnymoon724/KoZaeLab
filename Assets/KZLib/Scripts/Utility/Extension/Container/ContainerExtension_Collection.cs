@@ -1,39 +1,49 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for collections, dictionaries, enumerables, and lists.
+/// Provides safe mutation, indexing, searching, and formatting helpers.
+/// </summary>
 public static partial class ContainerExtension
 {
-	public static void AddNotOverlap<TValue>(this ICollection<TValue> collection,TValue value)
+	/// <summary>
+	/// Adds a value only when it is not already contained in the collection.
+	/// </summary>
+	public static void AddNotOverlap<TValue>(this ICollection<TValue> collection,TValue val)
 	{
 		if(!_IsValid(collection))
 		{
 			return;
 		}
 
-		if(!collection.Contains(value))
+		if(!collection.Contains(val))
 		{
-			collection.Add(value);
+			collection.Add(val);
 		}
 	}
 
-	public static void AddCount<TValue>(this ICollection<TValue> collection,TValue value,int count)
+	public static void AddCount<TValue>(this ICollection<TValue> collection,TValue val,int cnt)
 	{
 		if(!_IsValid(collection))
 		{
 			return;
 		}
 
-		for(var i=0;i<count;i++)
+		for(var i=0;i<cnt;i++)
 		{
-			collection.Add(value);
+			collection.Add(val);
 		}
 	}
 
-	public static bool ContainsIndex<TValue>(this ICollection<TValue> collection,int index)
+	public static bool ContainsIndex<TValue>(this ICollection<TValue> collection,int idx)
 	{
-		return _IsValid(collection) && 0 <= index && index < collection.Count;
+		return _IsValid(collection) && 0 <= idx && idx < collection.Count;
 	}
 
+	/// <summary>
+	/// Returns the middle element, using floor division for even counts.
+	/// </summary>
 	public static TValue Middle<TValue>(this ICollection<TValue> collection)
 	{
 		if(!_IsValid(collection))
@@ -52,17 +62,17 @@ public static partial class ContainerExtension
 
 		if(count == 1)
 		{
-			return collection._GetValue(1);
+			return collection._GetValue(0);
 		}
 
-		var index = Mathf.RoundToInt(collection.Count/2);
+		var index = collection.Count/2;
 
 		return collection._GetValue(index);
 	}
 
-	public static bool RemoveSafe<TValue>(this ICollection<TValue> collection,TValue value)
+	public static bool RemoveSafe<TValue>(this ICollection<TValue> collection,TValue val)
 	{
-		return _IsValid(collection) && collection.Contains(value) && collection.Remove(value);
+		return _IsValid(collection) && collection.Contains(val) && collection.Remove(val);
 	}
 
 	public static void RemoveRange<TValue>(this ICollection<TValue> collection,IList<TValue> valueList)
@@ -78,9 +88,12 @@ public static partial class ContainerExtension
 		}
 	}
 
-	public static TValue GetValueByIndex<TValue>(this ICollection<TValue> collection,int index)
+	/// <summary>
+	/// Gets an element by index for collections that do not expose list indexing directly.
+	/// </summary>
+	public static TValue GetValueByIndex<TValue>(this ICollection<TValue> collection,int idx)
 	{
-		return _IsValid(collection) && collection.TryGetValueByIndex(index, out var value) ? value : default;
+		return _IsValid(collection) && collection.TryGetValueByIndex(idx, out var value) ? value : default;
 	}
 
 	public static bool TryGetValueByIndex<TValue>(this ICollection<TValue> collection,int index,out TValue value)
@@ -97,6 +110,9 @@ public static partial class ContainerExtension
 		return true;
 	}
 
+	/// <summary>
+	/// Clears the collection and inserts a single replacement value.
+	/// </summary>
 	public static void Initialize<TValue>(this ICollection<TValue> collection,TValue value)
 	{
 		if(!_IsValid(collection))

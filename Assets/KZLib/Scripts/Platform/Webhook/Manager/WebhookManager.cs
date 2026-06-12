@@ -1,12 +1,10 @@
 using System.Diagnostics;
-using System.IO;
-using System.Text;
 using Cysharp.Threading.Tasks;
 using KZLib.Data;
 using KZLib.Utilities;
 using R3;
 
-namespace KZLib.Webs
+namespace KZLib.Webhooks
 {
 	public partial class WebhookManager : Singleton<WebhookManager>
 	{
@@ -34,7 +32,7 @@ namespace KZLib.Webs
 		{
 			if(webRequest == null)
 			{
-				LogChannel.Web.E("WebRequest is null");
+				LogChannel.Webhook.E("WebRequest is null");
 
 				return null;
 			}
@@ -48,64 +46,21 @@ namespace KZLib.Webs
 #if UNITY_EDITOR
 			stopwatch.Stop();
 
-			_WriteDump(responseInfo,dumpInfo,stopwatch.ElapsedMilliseconds);
+			KZDumpKit.WriteHttpDump($"{dumpInfo.Uri.AbsolutePath.Replace("/","#")}.log",stopwatch.ElapsedMilliseconds,responseInfo.Result,responseInfo.Code,responseInfo.Content,responseInfo.Error,dumpInfo.Uri.AbsoluteUri,dumpInfo.Method,dumpInfo.Payload,dumpInfo.ContentType);
 #endif
 
 			if(responseInfo.Result)
 			{
-				LogChannel.Web.I($"{webRequest.Name} is Success");
+				LogChannel.Webhook.I($"{webRequest.Name} is Success");
 			}
 			else
 			{
-				LogChannel.Web.E($"{webRequest.Name} is Failed");
+				LogChannel.Webhook.E($"{webRequest.Name} is Failed");
 
 				m_networkErrorSubject.OnNext(responseInfo.Error);
 			}
 
 			return responseInfo;
 		}
-
-#if UNITY_EDITOR
-		private void _WriteDump(ResponseInfo responseInfo,DumpInfo dumpInfo,long responseTime)
-		{
-			var dumpBuilder = new StringBuilder();
-			var currentTime = GameTimeManager.In.GetCurrentTime(true);
-
-			dumpBuilder.Append("================= [Webhook Dump] =================\n\n");
-			dumpBuilder.Append($"[TIME]\n{currentTime:yyyy\\/MM\\/dd\\ HH:mm:ss}\n\n");
-			dumpBuilder.Append($"[FULL URL]\n{dumpInfo.Uri.AbsoluteUri}\n\n");
-			dumpBuilder.Append($"[REQUEST]\n");
-			dumpBuilder.Append($"[REQUEST METHOD]\n{dumpInfo.Method}\n\n");
-
-			if(!dumpInfo.ContentType.IsEmpty())
-			{
-				if(!dumpInfo.Payload.IsEmpty())
-				{
-					dumpBuilder.Append($"[REQUEST PAYLOAD]\n{KZExternalKit.PrettifyJson(dumpInfo.Payload)}\n");
-				}
-	
-				dumpBuilder.Append($"\n[REQUEST CONTENT]\n{dumpInfo.ContentType}\n");
-			}
-
-			dumpBuilder.Append("\n[RESPONSE]\n");
-			dumpBuilder.Append($"[RESPONSE TIME]\n{responseTime}\n");
-			dumpBuilder.Append($"[RESPONSE RESULT]\n{(responseInfo.Result ? "SUCCESS" : "FAILURE")}\n");
-			dumpBuilder.Append($"[RESPONSE CODE]\n{responseInfo.Code}\n");
-
-			if(!responseInfo.Content.IsEmpty())
-			{
-				dumpBuilder.Append($"[RESPONSE CONTENT]\n{KZExternalKit.PrettifyJson(responseInfo.Content)}\n");
-			}
-
-			if(!responseInfo.Result)
-			{
-				dumpBuilder.Append($"[RESPONSE ERROR MESSAGE]\n{responseInfo.Error}\n");
-			}
-
-			var filePath = Path.Combine(Global.ProjectParentPath,"NetworkDump",$"{dumpInfo.Uri.AbsolutePath.Replace("/","#")}.log");
-
-			KZFileKit.WriteTextToFile(filePath,dumpBuilder.ToString());
-		}
-#endif
 	}
 }

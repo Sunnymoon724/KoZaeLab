@@ -1,8 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Extension methods for <see cref="LayoutGroup"/> layout rebuild and dirty marking.
+/// </summary>
 public static class LayoutGroupExtension
 {
+	/// <summary>
+	/// Forces an immediate layout rebuild; when <paramref name="isRecursive"/> is true, rebuilds descendants first.
+	/// </summary>
 	public static void ForceRebuild(this LayoutGroup layoutGroup,bool isRecursive = true)
 	{
 		if(!_IsValid(layoutGroup))
@@ -10,16 +16,28 @@ public static class LayoutGroupExtension
 			return;
 		}
 
+		var rectTrans = layoutGroup.transform as RectTransform;
+
+		if(!rectTrans)
+		{
+			LogChannel.Kit.E("LayoutGroup transform is not a RectTransform.");
+
+			return;
+		}
+
 		if(isRecursive)
 		{
-			_RecursiveLayoutRebuild(layoutGroup.transform as RectTransform);
+			_RecursiveLayoutRebuild(rectTrans);
 		}
 		else
 		{
-			LayoutRebuilder.ForceRebuildLayoutImmediate(layoutGroup.transform as RectTransform);
+			LayoutRebuilder.ForceRebuildLayoutImmediate(rectTrans);
 		}
 	}
 
+	/// <summary>
+	/// Marks layout dirty for rebuild on the next canvas update; when <paramref name="isRecursive"/> is true, marks descendants first.
+	/// </summary>
 	public static void MarkForRebuild(this LayoutGroup layoutGroup,bool isRecursive = true)
 	{
 		if(!_IsValid(layoutGroup))
@@ -27,13 +45,22 @@ public static class LayoutGroupExtension
 			return;
 		}
 
+		var rectTrans = layoutGroup.transform as RectTransform;
+
+		if(!rectTrans)
+		{
+			LogChannel.Kit.E("LayoutGroup transform is not a RectTransform.");
+
+			return;
+		}
+
 		if(isRecursive)
 		{
-			_RecursiveMarkForRebuild(layoutGroup.transform as RectTransform);
+			_RecursiveMarkForRebuild(rectTrans);
 		}
 		else
 		{
-			LayoutRebuilder.MarkLayoutForRebuild(layoutGroup.transform as RectTransform);
+			LayoutRebuilder.MarkLayoutForRebuild(rectTrans);
 		}
 	}
 

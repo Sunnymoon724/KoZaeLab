@@ -6,12 +6,6 @@ using UnityEngine.Localization;
 using System.Threading;
 using R3;
 
-#if UNITY_EDITOR
-
-using UnityEditor.Localization;
-
-#endif
-
 using Object = UnityEngine.Object;
 
 namespace KZLib.Data
@@ -48,13 +42,6 @@ namespace KZLib.Data
 			{
 				return true;
 			}
-
-#if UNITY_EDITOR
-			if(!LocalizationEditorSettings.ActiveLocalizationSettings)
-			{
-				return false;
-			}
-#endif
 
 			if(!LocalizationSettings.Instance)
 			{

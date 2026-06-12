@@ -1,6 +1,9 @@
 #if UNITY_EDITOR
 using UnityEngine;
 
+/// <summary>
+/// Editor-only extension methods for toggling <see cref="MonoBehaviour.runInEditMode"/>.
+/// </summary>
 public static class MonoBehaviourExtension
 {
 	public static void StartRunInEditMode(this MonoBehaviour behaviour)
@@ -13,6 +16,9 @@ public static class MonoBehaviourExtension
 		behaviour.runInEditMode = true;
 	}
 	
+	/// <summary>
+	/// Disables run-in-edit-mode and briefly toggles enabled to force the component to refresh.
+	/// </summary>
 	public static void StopRunInEditMode(this MonoBehaviour behaviour)
 	{
 		if(!_IsValid(behaviour))

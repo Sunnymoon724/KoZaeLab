@@ -1,9 +1,15 @@
-﻿using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+﻿using System.Text;
+using Newtonsoft.Json;
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for Unity <see cref="Object"/> instantiation, destruction, and serialization.
+/// </summary>
 public static class ObjectExtension
 {
+	/// <summary>
+	/// Instantiates a copy of the object, optionally parented, preserving the original name.
+	/// </summary>
 	public static Object CopyObject(this Object origin,Transform parent = null)
 	{
 		if(!_IsValid(origin,true))
@@ -18,6 +24,9 @@ public static class ObjectExtension
 		return instance;
 	}
 
+	/// <summary>
+	/// Destroys the object immediately in edit mode or at end of frame during play mode.
+	/// </summary>
 	public static void DestroyObject(this Object target)
 	{
 		if(!_IsValid(target,false))
@@ -35,6 +44,9 @@ public static class ObjectExtension
 		}
 	}
 
+	/// <summary>
+	/// Serializes the object to JSON and returns the result as UTF-8 bytes.
+	/// </summary>
 	public static byte[] ToByte(this Object target)
 	{
 		if(!_IsValid(target,true))
@@ -42,12 +54,14 @@ public static class ObjectExtension
 			return null;
 		}
 
-		using var stream = new MemoryStream();
-		var binary = new BinaryFormatter();
+		var json = JsonConvert.SerializeObject(target);
 
-		binary.Serialize(stream,target);
+		if(json.IsEmpty(true) || json == "{}")
+		{
+			LogChannel.Kit.W($"{target.GetType().Name} serialized to empty JSON. Check that public fields or properties are exposed for serialization.");
+		}
 
-		return stream.ToArray();
+		return Encoding.UTF8.GetBytes(json);
 	}
 
 	private static bool _IsValid(Object value,bool isShowLog)

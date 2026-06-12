@@ -45,9 +45,12 @@ namespace KZLib
 
 			enabled = true;
 
-			UIManager.In.Open(CommonUINameTag.DebugOverlayPanel);
+			if(UIManager.HasInstance)
+			{
+				UIManager.In.Open(CommonUINameTag.DebugOverlayPanel);
+			}
 		}
-		
+
 		private bool _IsOpenedPanel()
 		{
 			return UIManager.HasInstance && UIManager.In.IsOpened(CommonUINameTag.DebugOverlayPanel);
@@ -74,7 +77,10 @@ namespace KZLib
 
 			enabled = false;
 
-			UIManager.In.Close(CommonUINameTag.DebugOverlayPanel);
+			if(UIManager.HasInstance)
+			{
+				UIManager.In.Close(CommonUINameTag.DebugOverlayPanel);
+			}
 		}
 
 		private void Update()

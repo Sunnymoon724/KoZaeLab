@@ -1,0 +1,120 @@
+#if UNITY_EDITOR
+using UnityEngine;
+using System.Collections.Generic;
+using UnityEditor;
+
+namespace KZLib.Attributes
+{
+	public abstract class KZListAttributeDrawer<TValue> : KZAttributeDrawer<KZListAttribute,TValue>
+	{
+		private const float c_width = 30.0f;
+		protected const float c_space = 5.0f;
+
+		protected int m_listCount = 0;
+
+		protected override void _DoDrawPropertyLayout(GUIContent label)
+		{
+			var rect = _DrawPrefixLabel(label);
+			var countRect = new Rect(rect.x,rect.y,c_width,rect.height);
+
+			m_listCount = Mathf.Max(EditorGUI.IntField(countRect,"",m_listCount),0);
+
+			if(m_listCount <= 0)
+			{
+				return;
+			}
+
+			DrawField(new Rect(rect.x+50,rect.y,rect.width-50,rect.height));
+		}
+
+		protected void AdjustList<UValue>(List<UValue> valueList,UValue value,int count)
+		{
+			if(count < m_listCount)
+			{
+				valueList.AddCount(value,m_listCount-count);
+			}
+			else if(count > m_listCount)
+			{
+				valueList.RemoveRange(m_listCount,count-m_listCount);
+			}
+		}
+
+		protected abstract void DrawField(Rect rect);
+	}
+
+	public class KZIntListAttributeDrawer : KZListAttributeDrawer<List<int>>
+	{
+		protected override void Initialize()
+		{
+			if(ValueEntry.SmartValue == null)
+			{
+				ValueEntry.SmartValue = new List<int>();
+			}
+
+			m_listCount = ValueEntry.SmartValue.Count;
+		}
+
+		protected override void DrawField(Rect rect)
+		{
+			AdjustList(ValueEntry.SmartValue,0,ValueEntry.SmartValue.Count);
+
+			var rectArray = _GetRectArray(rect,m_listCount,c_space);
+
+			for(var i=0;i<m_listCount;i++)
+			{
+				ValueEntry.SmartValue[i] = EditorGUI.IntField(rectArray[i],ValueEntry.SmartValue[i]);
+			}
+		}
+	}
+
+	public class KZFloatListAttributeDrawer : KZListAttributeDrawer<List<float>>
+	{
+		protected override void Initialize()
+		{
+			if(ValueEntry.SmartValue == null)
+			{
+				ValueEntry.SmartValue = new List<float>();
+			}
+
+			m_listCount = ValueEntry.SmartValue.Count;
+		}
+
+		protected override void DrawField(Rect rect)
+		{
+			AdjustList(ValueEntry.SmartValue,0.0f,ValueEntry.SmartValue.Count);
+
+			var rectArray = _GetRectArray(rect,m_listCount,c_space);
+
+			for(var i=0;i<m_listCount;i++)
+			{
+				ValueEntry.SmartValue[i] = EditorGUI.FloatField(rectArray[i],ValueEntry.SmartValue[i]);
+			}
+		}
+	}
+
+	public class KZStringListAttributeDrawer : KZListAttributeDrawer<List<string>>
+	{
+		protected override void Initialize()
+		{
+			if(ValueEntry.SmartValue == null)
+			{
+				ValueEntry.SmartValue = new List<string>();
+			}
+
+			m_listCount = ValueEntry.SmartValue.Count;
+		}
+
+		protected override void DrawField(Rect rect)
+		{
+			AdjustList(ValueEntry.SmartValue,string.Empty,ValueEntry.SmartValue.Count);
+
+			var rectArray = _GetRectArray(rect,m_listCount,c_space);
+
+			for(var i=0;i<m_listCount;i++)
+			{
+				ValueEntry.SmartValue[i] = EditorGUI.TextField(rectArray[i],ValueEntry.SmartValue[i]);
+			}
+		}
+	}
+}
+#endif

@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 using KZLib.Utilities;
 using UnityEngine;
 
-namespace KZLib.Webs
+namespace KZLib.Webhooks
 {
 	public partial class WebhookManager : Singleton<WebhookManager>
 	{

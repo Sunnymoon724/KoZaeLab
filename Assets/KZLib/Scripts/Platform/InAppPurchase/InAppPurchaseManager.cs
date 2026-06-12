@@ -8,7 +8,7 @@ using Cysharp.Threading.Tasks;
 using System.Threading;
 using R3;
 using System.Text;
-using KZLib.Networking;
+using KZLib.Networks;
 
 #if !UNITY_EDITOR
 

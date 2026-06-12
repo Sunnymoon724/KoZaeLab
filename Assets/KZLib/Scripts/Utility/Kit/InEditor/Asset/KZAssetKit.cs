@@ -5,8 +5,14 @@ using UnityEditor;
 
 using Object = UnityEngine.Object;
 
+/// <summary>
+/// Editor-only utility methods for Unity asset database operations.
+/// </summary>
 public static class KZAssetKit
 {
+	/// <summary>
+	/// Returns a stable unique identifier combining the asset GUID and local file identifier.
+	/// </summary>
 	public static string GetObjectUniqueID(Object target)
 	{
 
@@ -18,6 +24,10 @@ public static class KZAssetKit
 		return $"{guid}_{localId}";
 	}
 
+	/// <summary>
+	/// Iterates asset paths matched by the given filter and invokes the callback for each file path.
+	/// Stops early when the callback returns false.
+	/// </summary>
 	public static void ExecuteMatchedAssetPath(string filter = null,string[] searchInFolderArray = null,Func<string,int,int,bool> onFunc = null)
 	{
 		var guidArray = AssetDatabase.FindAssets(filter,searchInFolderArray);
@@ -41,6 +51,9 @@ public static class KZAssetKit
 		}
 	}
 
+	/// <summary>
+	/// Iterates assets of type TObject matched by the given filter and invokes the callback for each loaded asset.
+	/// </summary>
 	public static void ExecuteMatchedAsset<TObject>(string filter = null,string[] searchInFolderArray = null,Func<TObject,int,int,bool> onFunc = null) where TObject : Object
 	{
 		bool _Execute(string assetPath,int index,int totalCount)
@@ -63,6 +76,9 @@ public static class KZAssetKit
 		ExecuteMatchedAssetPath(filter,searchInFolderArray,_Execute);
 	}
 
+	/// <summary>
+	/// Creates or replaces an asset at the given path, creating parent folders as needed.
+	/// </summary>
 	public static void CreateAsset(string path,Object asset,bool isOverride)
 	{
 		if(path.IsEmpty() || !asset)
@@ -97,17 +113,26 @@ public static class KZAssetKit
 		LogChannel.Kit.I($"{asset.name} is saved in {path}.");
 	}
 
+	/// <summary>
+	/// Saves all pending asset changes and refreshes the asset database.
+	/// </summary>
 	public static void SaveAsset()
 	{
 		AssetDatabase.SaveAssets();
 		AssetDatabase.Refresh();
 	}
 
+	/// <summary>
+	/// Returns whether any assets match the given search filter.
+	/// </summary>
 	public static bool IsExistAsset(string filter = null,string[] searchInFolderArray = null)
 	{
 		return AssetDatabase.FindAssets(filter,searchInFolderArray).Length > 0;
 	}
 
+	/// <summary>
+	/// Lazily yields all assets of type TObject found under the given folder path.
+	/// </summary>
 	public static IEnumerable<TObject> FindAssetGroupInFolder<TObject>(string folderPath) where TObject : Object
 	{
 		foreach(var path in KZFileKit.FindFilePathGroup(KZFileKit.GetAbsolutePath(folderPath,true)))
@@ -121,6 +146,9 @@ public static class KZAssetKit
 		}
 	}
 
+	/// <summary>
+	/// Returns all assets of type TObject found under the given folder path as an array.
+	/// </summary>
 	public static TObject[] FindAssetArrayInFolder<TObject>(string folderPath) where TObject : Object
 	{
 		var list = new List<TObject>();

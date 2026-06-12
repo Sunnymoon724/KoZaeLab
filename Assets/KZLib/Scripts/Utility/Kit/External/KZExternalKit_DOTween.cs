@@ -1,10 +1,14 @@
 using System;
 using DG.Tweening;
-using KZLib;
 
 // https://dotween.demigiant.com/
 public static partial class KZExternalKit
 {
+	private static int s_tweenId = 0;
+
+	/// <summary>
+	/// Creates a float progress tween from start to finish over the given duration.
+	/// </summary>
 	public static Tween SetTweenProgress(float start,float finish,float duration,Action<float> onProgress,Action onComplete = null)
 	{
 		return _SetTween(start,finish,duration,onProgress,onComplete).SetId(_GetTag("Progress"));
@@ -43,7 +47,8 @@ public static partial class KZExternalKit
 	}
 
 	/// <summary>
-	/// Play Delay
+	/// Creates a delayed-call tween that repeats for the given loop count.
+	/// Returns null when count is zero.
 	/// </summary>
 	public static Tween PlayTimer(float duration,int count,TweenCallback onComplete)
 	{
@@ -55,6 +60,9 @@ public static partial class KZExternalKit
 		return DOVirtual.DelayedCall(duration,onComplete).SetLoops(count).SetId(_GetTag("Timer"));
 	}
 
+	/// <summary>
+	/// Returns whether the tween exists and is currently playing.
+	/// </summary>
 	public static bool IsTweenPlaying(Tween tween)
 	{
 		return tween != null && tween.IsPlaying();
@@ -62,11 +70,12 @@ public static partial class KZExternalKit
 
 	private static string _GetTag(string prefix)
 	{
-		var currentTime = GameTimeManager.In.GetCurrentTime(true);
-
-		return $"{prefix}_{currentTime:mm:ss}";
+		return $"{prefix}_{s_tweenId++}";
 	}
 
+	/// <summary>
+	/// Kills the tween if it is active, optionally completing it first.
+	/// </summary>
 	public static void KillTween(Tween tween,bool complete = false)
 	{
 		if(tween != null && tween.IsActive())

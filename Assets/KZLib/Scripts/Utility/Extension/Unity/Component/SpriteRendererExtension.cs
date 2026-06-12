@@ -1,7 +1,13 @@
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for safely assigning sprites to a <see cref="SpriteRenderer"/>.
+/// </summary>
 public static class SpriteRendererExtension
 {
+	/// <summary>
+	/// Assigns the sprite and optional color, deactivating the object when the sprite is null.
+	/// </summary>
 	public static void SetSafeSpriteRenderer(this SpriteRenderer spriteRenderer,Sprite sprite,Color? color = null)
 	{
 		if(!_IsValid(spriteRenderer))

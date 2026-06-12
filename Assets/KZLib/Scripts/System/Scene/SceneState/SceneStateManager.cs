@@ -48,15 +48,17 @@ namespace KZLib
 			base._Initialize();
 
 			Application.lowMemory += _OnLowMemory;
-			SceneManager.sceneLoaded += _OnUnloadSceneAssetBundle;
+			SceneManager.sceneUnloaded += _OnUnloadSceneResources;
 		}
 
 		protected override void _Release()
 		{
-			base._Release();
+			_DrainSceneStack();
 
 			Application.lowMemory -= _OnLowMemory;
-			SceneManager.sceneLoaded -= _OnUnloadSceneAssetBundle;
+			SceneManager.sceneUnloaded -= _OnUnloadSceneResources;
+
+			base._Release();
 
 			KZMemoryKit.ClearUnloadedAssetMemory();
 
@@ -67,24 +69,14 @@ namespace KZLib
 
 		public void ReloadScene(SceneChangeInfo changeInfo)
 		{
-			var current = CurrentScene;
-
-			if(current == null)
-			{
-				return;
-			}
+			var current = CurrentScene ?? throw new InvalidOperationException("No current scene to reload.");
 
 			_ChangeSceneAsync(current.SceneName,changeInfo).Forget();
 		}
 
 		public UniTask ReloadSceneAsync(SceneChangeInfo changeInfo)
 		{
-			var current = CurrentScene;
-
-			if(current == null)
-			{
-				return UniTask.CompletedTask;
-			}
+			var current = CurrentScene ?? throw new InvalidOperationException("No current scene to reload.");
 
 			return _ChangeSceneAsync(current.SceneName,changeInfo);
 		}
@@ -111,7 +103,7 @@ namespace KZLib
 				await _DestroySceneAsync(false,onUpdateProgress);
 			}
 
-			await _PlaySceneAsync(changeInfo,_CreateTaskAsync,_DestroyTaskAsync);
+			await _PlaySceneAsync(changeInfo,_DestroyTaskAsync,_CreateTaskAsync);
 		}
 
 		public void AddScene(string sceneName,SceneChangeInfo changeInfo)
@@ -136,11 +128,15 @@ namespace KZLib
 
 		public void RemoveScene(SceneChangeInfo changeInfo)
 		{
+			_ = CurrentScene ?? throw new InvalidOperationException("No current scene to remove.");
+
 			_RemoveSceneAsync(changeInfo).Forget();
 		}
 
 		public UniTask RemoveSceneAsync(SceneChangeInfo changeInfo)
 		{
+			_ = CurrentScene ?? throw new InvalidOperationException("No current scene to remove.");
+
 			return _RemoveSceneAsync(changeInfo);
 		}
 
@@ -158,7 +154,9 @@ namespace KZLib
 		{
 			if(IsSceneChanging)
 			{
-				return;
+				LogChannel.Scene.W("Scene change is already in progress.");
+
+				throw new InvalidOperationException("Scene change is already in progress.");
 			}
 
 			m_isSceneChanging = true;
@@ -166,83 +164,104 @@ namespace KZLib
 			KZInputKit.LockInput();
 
 			var transitionNameTag = changeInfo.TransitionNameTag;
+			var needsTransitionIn = false;
 
-			// darker
-			await UIManager.In.PlayTransitionOutAsync(transitionNameTag,false);
-
-			if(changeInfo.UseLoading)
+			try
 			{
-				var panel = UIManager.In.Open(CommonUINameTag.LoadingPanel) as LoadingPanel;
-
-				// brighter
-				await UIManager.In.PlayTransitionInAsync(transitionNameTag,false);
-
-				var count = (float) onPlayTaskArray.Length;
-				var percent = 0.0f;
-
-				for(var i=0;i<onPlayTaskArray.Length;i++)
-				{
-					void _UpdateProgress(float progress)
-					{
-						percent += progress/count;
-
-						panel.SetLoadingProgress(percent);
-					}
-
-					await onPlayTaskArray[i].Invoke(_UpdateProgress);
-				}
-
 				// darker
 				await UIManager.In.PlayTransitionOutAsync(transitionNameTag,false);
 
-				UIManager.In.Close(CommonUINameTag.LoadingPanel);
-			}
-			else
-			{
-				for(var i=0;i<onPlayTaskArray.Length;i++)
+				needsTransitionIn = true;
+
+				if(changeInfo.UseLoading)
 				{
-					await onPlayTaskArray[i].Invoke(null);
+					var panel = UIManager.In.Open(CommonUINameTag.LoadingPanel) as LoadingPanel;
+
+					if(panel == null)
+					{
+						throw new NullReferenceException("LoadingPanel is null.");
+					}
+
+					try
+					{
+						// brighter
+						await UIManager.In.PlayTransitionInAsync(transitionNameTag,false);
+
+						needsTransitionIn = false;
+
+						var count = (float) onPlayTaskArray.Length;
+
+						for(var i=0;i<onPlayTaskArray.Length;i++)
+						{
+							var taskIndex = i;
+
+							void _UpdateProgress(float progress)
+							{
+								panel.SetLoadingProgress((taskIndex+progress)/count);
+							}
+
+							await onPlayTaskArray[i].Invoke(_UpdateProgress);
+						}
+
+						// darker
+						await UIManager.In.PlayTransitionOutAsync(transitionNameTag,false);
+
+						needsTransitionIn = true;
+					}
+					finally
+					{
+						UIManager.In.Close(CommonUINameTag.LoadingPanel);
+					}
 				}
+				else
+				{
+					for(var i=0;i<onPlayTaskArray.Length;i++)
+					{
+						await onPlayTaskArray[i].Invoke(null);
+					}
+				}
+
+				// brighter
+				await UIManager.In.PlayTransitionInAsync(transitionNameTag,true);
+
+				needsTransitionIn = false;
 			}
+			catch
+			{
+				if(needsTransitionIn)
+				{
+					try
+					{
+						await UIManager.In.PlayTransitionInAsync(transitionNameTag,true);
+					}
+					catch(Exception exception)
+					{
+						LogChannel.Scene.W($"Failed to restore transition: {exception.Message}");
+					}
+				}
 
-			// brighter
-			await UIManager.In.PlayTransitionInAsync(transitionNameTag,true);
+				throw;
+			}
+			finally
+			{
+				KZInputKit.UnLockInput();
 
-			KZInputKit.UnLockInput();
-
-			m_isSceneChanging = false;
+				m_isSceneChanging = false;
+			}
 		}
 
 		private async UniTask _CreateSceneAsync(string sceneName,Action<float> onUpdateProgress)
 		{
 			if(sceneName.IsEmpty())
 			{
-				LogChannel.Scene.E("Scene name is empty.");
-
-				return;
+				throw new ArgumentException("Scene name is empty.");
 			}
 
 			onUpdateProgress?.Invoke(0.0f);
 
 			LogChannel.Scene.I($"{sceneName} create start.");
 
-			var sceneType = Type.GetType($"{sceneName}, Assembly-CSharp");
-
-			if(sceneType == null)
-			{
-				LogChannel.Scene.E($"{sceneName} is not exists.");
-
-				return;
-			}
-
-			if(Activator.CreateInstance(sceneType) is not SceneState sceneState)
-			{
-				LogChannel.Scene.E($"{sceneName} create failed.");
-
-				return;
-			}
-
-			m_sceneStateStack.Push(sceneState);
+			var sceneState = SceneStateRegistry.Create(sceneName);
 
 			void _UpdateProgress(float progress)
 			{
@@ -250,6 +269,8 @@ namespace KZLib
 			}
 
 			await sceneState.InitializeAsync(_UpdateProgress);
+
+			m_sceneStateStack.Push(sceneState);
 
 			LogChannel.Scene.I($"{sceneName} create end.");
 
@@ -269,21 +290,17 @@ namespace KZLib
 
 			LogChannel.Scene.I($"{current.SceneName} destroy start.");
 
-			// remove current scene
-			m_sceneStateStack.Pop();
-
-			var previousSceneName = activePreviousScene ? CurrentScene?.SceneName : null;
+			var previousSceneName = _FetchPreviousSceneName(activePreviousScene);
 
 			void _UpdateProgress(float progress)
 			{
 				_UpdateProgressCommon(onUpdateProgress,progress);
 			}
 
-            // Release current scene & Active on previous scene (if you want)
-            await current.ReleaseAsync(previousSceneName,_UpdateProgress);
+			await current.ReleaseAsync(previousSceneName,_UpdateProgress);
 
-			// TODO 씬 전환시 사용하지 않는 어셋 삭제
-			// AssetBundleManager.Instance.UnloadLoadeAssetBundle();
+			m_sceneStateStack.Pop();
+
 			KZMemoryKit.ClearUnloadedAssetMemory();
 
 #if UNITY_EDITOR
@@ -294,6 +311,31 @@ namespace KZLib
 			_OnLowMemory();
 
 			onUpdateProgress?.Invoke(1.0f);
+		}
+
+		private string _FetchPreviousSceneName(bool activePreviousScene)
+		{
+			if(!activePreviousScene || m_sceneStateStack.Count <= 1)
+			{
+				return null;
+			}
+
+			var stackArray = m_sceneStateStack.ToArray();
+
+			return stackArray[1].SceneName;
+		}
+
+		private void _DrainSceneStack()
+		{
+			while(m_sceneStateStack.Count > 0)
+			{
+				var current = m_sceneStateStack.Peek();
+				var previousSceneName = _FetchPreviousSceneName(true);
+
+				current.ReleaseAsync(previousSceneName,null).GetAwaiter().GetResult();
+
+				m_sceneStateStack.Pop();
+			}
 		}
 
 		private void _OnLowMemory()
@@ -307,23 +349,18 @@ namespace KZLib
 
 			KZMemoryKit.ClearUnloadedAssetMemory();
 		}
-		
-		private void _OnUnloadSceneAssetBundle(Scene scene,LoadSceneMode mode)
+
+		private void _OnUnloadSceneResources(Scene scene)
 		{
-			// TODO 어드레서블로 바뀐거 넣기
-#if !UNITY_EDITOR
-			AssetBundleManager.Instance.UnLoadAssetBundle(scene.name + ConfigData.AssetBundleExpend, false);
-#endif
+			if(AddressablesManager.HasInstance)
+			{
+				AddressablesManager.In.ReleaseResources(scene.name);
+			}
 		}
-		
+
 		private void _UpdateProgressCommon(Action<float> onUpdateProgress,float progress)
 		{
 			onUpdateProgress?.Invoke(progress*0.99f);
-		}
-
-		private async UniTask _CreateSceneCommonAsync(string sceneName,Action<float> onUpdateProgress)
-		{
-			await _CreateSceneAsync(sceneName,onUpdateProgress);
 		}
 	}
 }

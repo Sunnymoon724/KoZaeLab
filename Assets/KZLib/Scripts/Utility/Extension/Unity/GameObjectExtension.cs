@@ -3,8 +3,14 @@ using KZLib;
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for <see cref="GameObject"/> hierarchy, layer, and component management.
+/// </summary>
 public static class GameObjectExtension
 {
+	/// <summary>
+	/// Disables all <see cref="Renderer"/> components on this object and its children.
+	/// </summary>
 	public static void SetRenderOff(this GameObject gameObject)
 	{
 		if(!_IsValid(gameObject))
@@ -72,6 +78,9 @@ public static class GameObjectExtension
 		gameObject.transform.RecursiveChildren(_SetActive);
 	}
 
+	/// <summary>
+	/// Assigns the given layer to this object and every child in the hierarchy.
+	/// </summary>
 	public static void SetAllLayer(this GameObject gameObject,int layer)
 	{
 		if(!_IsValid(gameObject))
@@ -99,6 +108,9 @@ public static class GameObjectExtension
 		SetAllLayer(gameObject,LayerMask.NameToLayer(layerName));
 	}
 
+	/// <summary>
+	/// Returns whether the object is an asset prefab rather than a scene instance.
+	/// </summary>
 	public static bool IsPrefab(this GameObject gameObject)
 	{
 		if(!_IsValid(gameObject))
@@ -109,6 +121,9 @@ public static class GameObjectExtension
 		return !gameObject.scene.IsValid() && !gameObject.scene.isLoaded && gameObject.GetInstanceID() >= 0 && !gameObject.hideFlags.HasFlag(HideFlags.HideInHierarchy);
 	}
 
+	/// <summary>
+	/// Returns whether every <see cref="MeshFilter"/> in the hierarchy has a non-null shared mesh.
+	/// </summary>
 	public static bool IsExistMeshFilter(this GameObject gameObject)
 	{
 		if(!_IsValid(gameObject))
@@ -154,13 +169,15 @@ public static class GameObjectExtension
 		return gameObject.GetComponent<TComponent>();
 	}
 
+	/// <summary>
+	/// Re-resolves shaders on all child renderers and TMP text materials via <see cref="ShaderManager"/>.
+	/// </summary>
 	public static void ReAssignShader(this GameObject gameObject)
 	{
 		if(!_IsValid(gameObject))
 		{
 			return;
 		}
-
 
 		var textGraphicArray = gameObject.GetComponentsInChildren<TMP_Text>(true);
 
@@ -187,13 +204,16 @@ public static class GameObjectExtension
 				continue;
 			}
 
-			for(var j=0;i<materialArray.Length;j++)
+			for(var j=0;j<materialArray.Length;j++)
 			{
 				materialArray[j].shader = ShaderManager.In.FindShader(materialArray[j].shader.name);
 			}
 		}
 	}
 
+	/// <summary>
+	/// Disables transparent-mesh culling on the root <see cref="CanvasRenderer"/>.
+	/// </summary>
 	public static void SetCanvasCullTransparentMeshOff(this GameObject gameObject)
 	{
 		if(!_IsValid(gameObject))
@@ -219,7 +239,16 @@ public static class GameObjectExtension
 			return;
 		}
 
-		var mesh = gameObject.GetComponent<SkinnedMeshRenderer>().sharedMesh;
+		var skinnedMeshRenderer = gameObject.GetComponent<SkinnedMeshRenderer>();
+
+		if(!skinnedMeshRenderer)
+		{
+			LogChannel.Kit.E("SkinnedMeshRenderer is null.");
+
+			return;
+		}
+
+		var mesh = skinnedMeshRenderer.sharedMesh;
 		var vertexArray = mesh.vertices;
 
 		for(var i=0;i<vertexArray.Length;i++)
@@ -237,12 +266,13 @@ public static class GameObjectExtension
 		
 		var normalArray = mesh.normals;
 		var tangentArray = mesh.tangents;
+		var uv = mesh.uv;
 
 		for(var i=0;i<vertexArray.Length;i++)
 		{
 			verticesList.Add(vertexArray[i]);
 			normalList.Add(normalArray[i]);
-			uvList.Add(mesh.uv[i]);
+			uvList.Add(uv[i]);
 			tangentList.Add(tangentArray[i]);
 		}
 

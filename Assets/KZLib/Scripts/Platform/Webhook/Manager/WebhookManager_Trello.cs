@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 using KZLib.Utilities;
 using Newtonsoft.Json.Linq;
 
-namespace KZLib.Webs
+namespace KZLib.Webhooks
 {
 	public partial class WebhookManager : Singleton<WebhookManager>
 	{
@@ -106,6 +106,11 @@ namespace KZLib.Webs
 
 		private static List<string> _ParseTrelloData(ResponseInfo responseInfo,string key)
 		{
+			if(responseInfo == null)
+			{
+				return null;
+			}
+
 			if(responseInfo.Result)
 			{
 				try
@@ -132,12 +137,12 @@ namespace KZLib.Webs
 				}
 				catch(Exception exception)
 				{
-					LogChannel.Web.E($"Parse is failed - {exception}");
+					LogChannel.Webhook.E($"Parse is failed - {exception}");
 				}
 			}
 			else
 			{
-				LogChannel.Web.E("Result is failed");
+				LogChannel.Webhook.E("Result is failed");
 			}
 
 			return null;
@@ -190,9 +195,19 @@ namespace KZLib.Webs
 				return;
 			}
 
+			if(!_IsValidTrelloListId(listId))
+			{
+				return;
+			}
+
 			var cardInfo = await _SendWebRequest(PostTrelloCardWebRequest.Create(trelloKey,listId,name,description));
 
 			if(file == null)
+			{
+				return;
+			}
+
+			if(cardInfo == null || !cardInfo.Result || cardInfo.Content.IsEmpty())
 			{
 				return;
 			}
@@ -250,10 +265,12 @@ namespace KZLib.Webs
 				return;
 			}
 
-			var listList = await GetTrelloListAsync(boardId);
+			var listList = await GetTrelloListAsync(trelloKey,boardId);
 
-			if(!_IsValidTrelloListId(boardId))
+			if(listList.IsNullOrEmpty())
 			{
+				LogChannel.Webhook.W("Trello list is empty");
+
 				return;
 			}
 
@@ -261,10 +278,18 @@ namespace KZLib.Webs
 
 			if(listId.IsEmpty())
 			{
-				await PostTrelloListAsync(boardId,listName);
+				await PostTrelloListAsync(trelloKey,boardId,listName);
+
+				listList = await GetTrelloListAsync(trelloKey,boardId);
+				listId = _FindId(listList,listName);
 			}
 
-			await PostTrelloCardAsync(listId,cardName,cardDescription,file);
+			if(!_IsValidTrelloListId(listId))
+			{
+				return;
+			}
+
+			await PostTrelloCardAsync(trelloKey,listId,cardName,cardDescription,file);
 		}
 
 		private string _FindId(List<string> dataList,string name)
@@ -290,7 +315,7 @@ namespace KZLib.Webs
 			}
 			catch(Exception exception)
 			{
-				LogChannel.Web.E($"Convert is failed - {exception}");
+				LogChannel.Webhook.E($"Convert is failed - {exception}");
 			}
 
 			return null;
@@ -300,7 +325,7 @@ namespace KZLib.Webs
 		{
 			if(trelloKey.IsEmpty())
 			{
-				LogChannel.Web.E("TrelloKey is empty");
+				LogChannel.Webhook.E("TrelloKey is empty");
 
 				return false;
 			}
@@ -312,7 +337,7 @@ namespace KZLib.Webs
 		{
 			if(boardId.IsEmpty())
 			{
-				LogChannel.Web.E("Trello boardId is empty");
+				LogChannel.Webhook.E("Trello boardId is empty");
 
 				return false;
 			}
@@ -324,7 +349,7 @@ namespace KZLib.Webs
 		{
 			if(boardList.IsNullOrEmpty())
 			{
-				LogChannel.Web.W("Trello board is empty");
+				LogChannel.Webhook.E("Trello board is empty");
 
 				return false;
 			}
@@ -336,7 +361,7 @@ namespace KZLib.Webs
 		{
 			if(listId.IsEmpty())
 			{
-				LogChannel.Web.E("Trello listId is empty");
+				LogChannel.Webhook.E("Trello listId is empty");
 
 				return false;
 			}
@@ -348,7 +373,7 @@ namespace KZLib.Webs
 		{
 			if(cardId.IsEmpty())
 			{
-				LogChannel.Web.E("Card id is empty");
+				LogChannel.Webhook.E("Card id is empty");
 
 				return false;
 			}

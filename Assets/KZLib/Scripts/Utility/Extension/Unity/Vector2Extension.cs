@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for <see cref="Vector2"/> component access, rotation, and canvas input conversion.
+/// </summary>
 public static class Vector2Extension
 {
 	#region Set
@@ -83,9 +86,12 @@ public static class Vector2Extension
 		return vector.x.ApproximatelyZero() && vector.y.ApproximatelyZero();
 	}
 
+	/// <summary>
+	/// Returns the component-wise reciprocal, treating near-zero components as zero.
+	/// </summary>
 	public static Vector2 Reciprocal(this Vector2 vector)
 	{
-		return new Vector2(1.0f/vector.x,1.0f/vector.y);
+		return new Vector2(vector.x.ApproximatelyZero() ? 0.0f : 1.0f/vector.x,vector.y.ApproximatelyZero() ? 0.0f : 1.0f/vector.y);
 	}
 
 	public static Vector2 DistanceEach(this Vector2 vector1,Vector2 vector2)
@@ -140,7 +146,7 @@ public static class Vector2Extension
 
 	public static Vector2 MiddleVector(this Vector2 vector1,Vector2 vector2)
 	{
-		return new Vector2((vector2.x-vector1.x)/2.0f,(vector2.y-vector1.y)/2.0f);
+		return new Vector2((vector1.x+vector2.x)/2.0f,(vector1.y+vector2.y)/2.0f);
 	}
 
 	public static Vector2 Rotate(this Vector2 vector,float angle)
@@ -148,11 +154,17 @@ public static class Vector2Extension
 		return Quaternion.AngleAxis(angle,Vector3.forward)*vector;
 	}
 
+	/// <summary>
+	/// Returns the signed angle in degrees from the positive X axis to this vector.
+	/// </summary>
 	public static float Angle(this Vector2 vector)
 	{
 		return vector.y > 0.0f ? Vector2.Angle(Vector2.right,vector) : -Vector2.Angle(Vector2.right,vector);
 	}
 
+	/// <summary>
+	/// Rotates this point around an origin by the given angle in radians.
+	/// </summary>
 	public static Vector2 RotateAround(this Vector2 point,Vector2 origin,float theta)
 	{
 		var sin = Mathf.Sin(theta);
@@ -163,6 +175,9 @@ public static class Vector2Extension
 		return new Vector2(point.x*cos-point.y*sin+origin.x,point.x*sin+point.y*cos+origin.y);
 	}
 
+	/// <summary>
+	/// Finds the nearest point in the array and returns it with its index.
+	/// </summary>
 	public static (Vector2 Point,int Index) CalculateClosestPoint(this Vector2 point,params Vector2[] pointArray)
 	{
 		var index = Global.InvalidIndex;
@@ -185,6 +200,9 @@ public static class Vector2Extension
 		return (closestPoint,index);
 	}
 
+	/// <summary>
+	/// Projects this point onto an infinite ray and returns the closest point and signed distance along the ray.
+	/// </summary>
 	public static (Vector2 point,float distance) CalculateClosestPointOnRay(this Vector2 point,Vector2 origin,Vector2 direction)
 	{
 		var distance = Vector2.Dot(point-origin,direction);
@@ -204,6 +222,9 @@ public static class Vector2Extension
 	// 	return (_start+direction*distance,distance);
 	// }
 
+	/// <summary>
+	/// Converts screen input to world space based on the parent canvas render mode.
+	/// </summary>
 	public static Vector3 TransformInputBasedOnCanvasType(this Vector2 point,RectTransform rectTrans)
 	{
 		var canvas = rectTrans.FindParentCanvas();
@@ -218,9 +239,24 @@ public static class Vector2Extension
 		return canvas.transform.TransformPoint(movePos);
 	}
 
+	/// <summary>
+	/// Converts screen input to world space for the given canvas render mode.
+	/// </summary>
 	public static Vector2 TransformInputBasedOnCanvasType(this Vector2 input,Canvas canvas)
 	{
-		return canvas.renderMode != RenderMode.ScreenSpaceOverlay ? input : canvas.GetEventCamera().ScreenToWorldPoint(input);
+		if(canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+		{
+			return input;
+		}
+
+		var eventCamera = canvas.GetEventCamera();
+
+		if(!eventCamera)
+		{
+			return input;
+		}
+
+		return eventCamera.ScreenToWorldPoint(input);
 	}
 
 	public static Vector2 To(this Vector2 source,Vector2 destination)

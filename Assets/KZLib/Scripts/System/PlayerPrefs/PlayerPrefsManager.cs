@@ -122,27 +122,25 @@ namespace KZLib
 		{
 			if(_TryGetValue(key,out var result))
 			{
-				// TODO json의 내용이 더 있으면 기존과 달라졌을때 수정하기!
-
 				var deserialize = JsonConvert.DeserializeObject(result,type);
-				var serialize = JsonConvert.SerializeObject(result);
+					var serialize = JsonConvert.SerializeObject(deserialize);
 
-				if(!serialize.IsEqual(result))
-				{
-					_SetValue(key,serialize);
+					if(!serialize.IsEqual(result))
+					{
+						_SetValue(key,serialize);
+					}
+
+					value = deserialize;
+
+					return true;
 				}
+				else
+				{
+					value = default;
 
-				value = deserialize;
-
-				return true;
+					return false;
+				}
 			}
-			else
-			{
-				value = default;
-
-				return false;
-			}
-		}
 
 		private bool _TryGetValue(string key,out string result)
 		{
@@ -228,6 +226,7 @@ namespace KZLib
 			}
 
 			PlayerPrefs.SetString(key,value);
+			PlayerPrefs.Save();
 
 			m_cacheDict[key] = value;
 		}
@@ -240,13 +239,17 @@ namespace KZLib
 			}
 
 			m_cacheDict.Remove(key);
+
 			PlayerPrefs.DeleteKey(key);
+			PlayerPrefs.Save();
 		}
 
 		public void Clear()
 		{
 			m_cacheDict.Clear();
+
 			PlayerPrefs.DeleteAll();
+			PlayerPrefs.Save();
 		}
 	}
 }

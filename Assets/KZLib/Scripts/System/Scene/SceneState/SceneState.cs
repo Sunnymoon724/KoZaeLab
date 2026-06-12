@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 namespace KZLib
 {
 	/// <summary>
-	/// Unity Scene + Initialize asset 
+	/// Unity scene load/unload and scene content setup/teardown.
 	/// </summary>
 	public interface ISceneState
 	{
@@ -25,8 +25,55 @@ namespace KZLib
 		{
 			onUpdateProgress?.Invoke(0.0f);
 
-			var operation = SceneManager.LoadSceneAsync(SceneName,LoadSceneMode.Additive);
+			var isSceneLoaded = false;
 
+			try
+			{
+				var loadedScene = await _LoadSceneAsync(onUpdateProgress);
+
+				isSceneLoaded = true;
+
+				onUpdateProgress?.Invoke(c_progressHalf);
+
+				void _UpdateProgress(float progress)
+				{
+					onUpdateProgress?.Invoke(c_progressHalf+progress*c_progressHalf);
+				}
+
+				await SetupAsync(_UpdateProgress);
+
+				SceneManager.SetActiveScene(loadedScene);
+
+				onUpdateProgress?.Invoke(1.0f);
+			}
+			catch
+			{
+				if(isSceneLoaded)
+				{
+					await _RevertInitializeAsync();
+				}
+
+				throw;
+			}
+		}
+
+		private async UniTask _RevertInitializeAsync()
+		{
+			try
+			{
+				await TeardownAsync(null);
+			}
+			catch(Exception exception)
+			{
+				LogChannel.Scene.W($"Teardown failed during initialize revert: {exception.Message}");
+			}
+
+			await _UnloadSceneAsync(SceneName,null,0.0f);
+		}
+
+		private async UniTask<Scene> _LoadSceneAsync(Action<float> onUpdateProgress)
+		{
+			var operation = SceneManager.LoadSceneAsync(SceneName,LoadSceneMode.Additive) ?? throw new InvalidOperationException($"{SceneName} load operation is null. Scene must be added to build settings.");
 			operation.allowSceneActivation = false;
 
 			while(operation.progress < c_sceneLoadThreshold)
@@ -36,22 +83,18 @@ namespace KZLib
 				await UniTask.Yield();
 			}
 
-			onUpdateProgress?.Invoke(c_progressHalf);
-
 			operation.allowSceneActivation = true;
 
 			await operation.ToUniTask();
 
-			void _UpdateProgress(float progress)
+			var loadedScene = SceneManager.GetSceneByName(SceneName);
+
+			if(!loadedScene.IsValid())
 			{
-				onUpdateProgress?.Invoke(c_progressHalf+progress*c_progressHalf);
+				throw new InvalidOperationException($"{SceneName} scene is not valid after load.");
 			}
 
-			await InitializeInnerAsync(_UpdateProgress);
-
-			SceneManager.SetActiveScene(SceneManager.GetSceneByName(SceneName));
-
-			onUpdateProgress?.Invoke(1.0f);
+			return loadedScene;
 		}
 
 		public async UniTask ReleaseAsync(string previousSceneName,Action<float> onUpdateProgress)
@@ -60,14 +103,14 @@ namespace KZLib
 			{
 				var previousScene = SceneManager.GetSceneByName(previousSceneName);
 
-				if(!previousScene.IsValid())
+				if(previousScene.IsValid())
 				{
-					LogChannel.Scene.E($"{previousSceneName} is not in the scene.");
-
-					return;
+					SceneManager.SetActiveScene(previousScene);
 				}
-
-				SceneManager.SetActiveScene(previousScene);
+				else
+				{
+					LogChannel.Scene.W($"{previousSceneName} is not in the scene.");
+				}
 			}
 
 			onUpdateProgress?.Invoke(0.0f);
@@ -77,21 +120,26 @@ namespace KZLib
 				onUpdateProgress?.Invoke(progress*c_progressHalf);
 			}
 
-			await ReleaseInnerAsync(_UpdateProgress);
+			await TeardownAsync(_UpdateProgress);
 
-			var operation = SceneManager.UnloadSceneAsync(SceneName);
-
-			while(!operation.isDone)
-			{
-				onUpdateProgress?.Invoke(c_progressHalf+operation.progress*c_progressHalf);
-
-				await UniTask.Yield();
-			}
+			await _UnloadSceneAsync(SceneName,onUpdateProgress,c_progressHalf);
 
 			onUpdateProgress?.Invoke(1.0f);
 		}
 
-		protected async virtual UniTask InitializeInnerAsync(Action<float> onUpdateProgress) { await UniTask.Yield(); }
-		protected async virtual UniTask ReleaseInnerAsync(Action<float> onUpdateProgress) { await UniTask.Yield(); }
+		private static async UniTask _UnloadSceneAsync(string sceneName,Action<float> onUpdateProgress,float progressStart)
+		{
+			var operation = SceneManager.UnloadSceneAsync(sceneName) ?? throw new InvalidOperationException($"{sceneName} unload operation is null.");
+
+			while(!operation.isDone)
+			{
+				onUpdateProgress?.Invoke(progressStart+operation.progress*c_progressHalf);
+
+				await UniTask.Yield();
+			}
+		}
+
+		protected async virtual UniTask SetupAsync(Action<float> onUpdateProgress) { await UniTask.Yield(); }
+		protected async virtual UniTask TeardownAsync(Action<float> onUpdateProgress) { await UniTask.Yield(); }
 	}
 }

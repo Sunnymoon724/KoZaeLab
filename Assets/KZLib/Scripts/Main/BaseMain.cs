@@ -130,7 +130,7 @@ namespace KZLib
 
 				return IsTestMode ? m_startSceneName : c_titleScene;
 #else
-				return c_TitleScene;
+				return c_titleScene;
 #endif
 			}
 			set

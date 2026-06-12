@@ -2,15 +2,14 @@
     "name": "KZLib",
     "rootNamespace": "",
     "references": [
+        "KZLib.Shared",
         "UniTask",
         "Unity.TextMeshPro",
         "Unity.InputSystem",
         "Unity.Addressables",
-        "Unity.Addressables.Editor",
         "Unity.ResourceManager",
         "Unity.RenderPipelines.Universal.Runtime",
         "Unity.Localization",
-        "Unity.Localization.Editor",
         "PlayFab",
         "Coffee.UIEffect"
     ],
@@ -18,7 +17,10 @@
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
-    "precompiledReferences": [],
+    "precompiledReferences": [
+        "KZData.dll",
+        "KZUtility.dll"
+    ],
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],

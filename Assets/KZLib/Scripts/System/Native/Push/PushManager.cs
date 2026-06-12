@@ -1,4 +1,5 @@
 using System;
+using KZLib;
 using KZLib.Data;
 using KZLib.Utilities;
 
@@ -57,7 +58,12 @@ namespace KZLib.Natives
 
 		public void SendLocalPush(int id,string title,string body,long targetTimestamp)
 		{
-			var serverTime = GameTimeManager.In.GetCurrentTime(false);
+			if(!m_isInitialized)
+			{
+				return;
+			}
+
+			var serverTime = ServerClockManager.In.UtcNow;
 			var targetTime = DateTimeOffset.FromUnixTimeSeconds(targetTimestamp).UtcDateTime;
 
 			var second = (targetTime - serverTime).TotalSeconds;
@@ -135,6 +141,11 @@ namespace KZLib.Natives
 
 		public void CancelPush(int id)
 		{
+			if(!m_isInitialized)
+			{
+				return;
+			}
+
 #if UNITY_ANDROID && !UNITY_EDITOR
 			AndroidNotificationCenter.CancelNotification(id);
 #elif UNITY_IOS && !UNITY_EDITOR

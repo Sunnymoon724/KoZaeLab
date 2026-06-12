@@ -4,6 +4,10 @@ using UnityEngine;
 
 public static partial class ContainerExtension
 {
+	/// <summary>
+	/// Returns the element at a clamped index after counting the sequence once.
+	/// When the sequence has one item, that item is always returned.
+	/// </summary>
 	public static TValue FindValueInRange<TValue>(this IEnumerable<TValue> enumerable,int index)
 	{
 		if(!_IsValid(enumerable))
@@ -21,6 +25,9 @@ public static partial class ContainerExtension
 		return enumerable._GetValue(count == 1 ? 0 : Mathf.Clamp(index,0,count-1));
 	}
 
+	/// <summary>
+	/// Returns the first matching value, or the first element when no match is found.
+	/// </summary>
 	public static TValue FindOrFirst<TValue>(this IEnumerable<TValue> enumerable,Func<TValue,bool> onFunc)
 	{
 		if(!_IsValid(enumerable))
@@ -43,20 +50,24 @@ public static partial class ContainerExtension
 	{
 		var minIndex = Global.InvalidIndex;
 
-		if(_IsValid(enumerable))
+		if(_IsValid(enumerable) && !_IsEmpty(enumerable))
 		{
+			minIndex = 0;
+
 			var minValue = onFunc(enumerable._GetFirstValue());
-		
 			var curIndex = 0;
 
 			foreach(var value in enumerable)
 			{
-				var compareValue = onFunc(value);
-
-				if(minValue.CompareTo(compareValue) > 0)
+				if(curIndex > 0)
 				{
-					minValue = compareValue;
-					minIndex = curIndex;
+					var compareValue = onFunc(value);
+
+					if(minValue.CompareTo(compareValue) > 0)
+					{
+						minValue = compareValue;
+						minIndex = curIndex;
+					}
 				}
 
 				curIndex++;
@@ -70,19 +81,24 @@ public static partial class ContainerExtension
 	{
 		var maxIndex = Global.InvalidIndex;
 
-		if(_IsValid(enumerable))
+		if(_IsValid(enumerable) && !_IsEmpty(enumerable))
 		{
+			maxIndex = 0;
+
 			var maxValue = onFunc(enumerable._GetFirstValue());
 			var curIndex = 0;
 
 			foreach(var value in enumerable)
 			{
-				var compareValue = onFunc(value);
-
-				if(maxValue.CompareTo(compareValue) < 0)
+				if(curIndex > 0)
 				{
-					maxValue = compareValue;
-					maxIndex = curIndex;
+					var compareValue = onFunc(value);
+
+					if(maxValue.CompareTo(compareValue) < 0)
+					{
+						maxValue = compareValue;
+						maxIndex = curIndex;
+					}
 				}
 
 				curIndex++;
@@ -94,7 +110,7 @@ public static partial class ContainerExtension
 
 	public static int IndexOf<TValue>(this IEnumerable<TValue> enumerable,Predicate<TValue> onPredicate)
 	{
-		if(_IsValid(enumerable) && _IsEmpty(enumerable))
+		if(_IsValid(enumerable) && !_IsEmpty(enumerable))
 		{
 			var index = 0;
 
@@ -114,6 +130,11 @@ public static partial class ContainerExtension
 
 	public static bool Exist<TValue>(this IEnumerable<TValue> enumerable,Predicate<TValue> onPredicate)
 	{
+		if(!_IsValid(enumerable))
+		{
+			return false;
+		}
+
 		foreach(var value in enumerable)
 		{
 			if(onPredicate(value))
@@ -149,6 +170,10 @@ public static partial class ContainerExtension
 		}
 	}
 
+	/// <summary>
+	/// Returns whether every comparable value equals the first value.
+	/// Returns false when the sequence is null; returns true for an empty sequence.
+	/// </summary>
 	public static bool? AllEqual<TCompare>(this IEnumerable<TCompare> enumerable) where TCompare : IComparable
 	{
 		if(!_IsValid(enumerable))
@@ -169,6 +194,9 @@ public static partial class ContainerExtension
 		return true;
 	}
 
+	/// <summary>
+	/// Compares two sequences for equal length and element-wise equality.
+	/// </summary>
 	public static bool IsEquals<TValue>(this IEnumerable<TValue> enumerable1,IEnumerable<TValue> enumerable2)
 	{
 		var result1 = enumerable1.IsNullOrEmpty();
@@ -217,6 +245,9 @@ public static partial class ContainerExtension
 		return count == 0 ? $"Empty - [{enumerable}]" : $"{count} - [{string.Join(separator,enumerable)}]";
 	}
 
+	/// <summary>
+	/// Creates a shallow clone of each element that implements <see cref="ICloneable"/>.
+	/// </summary>
 	public static IEnumerable<TValue> DeepCopy<TValue>(this IEnumerable<TValue> enumerable) where TValue : ICloneable
 	{
 		if(_IsValid(enumerable))
@@ -228,6 +259,9 @@ public static partial class ContainerExtension
 		}
 	}
 
+	/// <summary>
+	/// Builds a dictionary that maps each value to its zero-based index in the sequence.
+	/// </summary>
 	public static Dictionary<TValue,int> ToDictionary<TValue>(this IEnumerable<TValue> enumerable)
 	{
 		var dictionary = new Dictionary<TValue,int>();

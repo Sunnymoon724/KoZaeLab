@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for <see cref="LayerMask"/> layer membership checks.
+/// </summary>
 public static class LayerMaskExtension
 {
 	public static bool Contains(this LayerMask layerMask,int layer)

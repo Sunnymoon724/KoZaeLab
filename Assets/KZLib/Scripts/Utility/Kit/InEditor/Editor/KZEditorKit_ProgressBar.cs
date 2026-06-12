@@ -1,6 +1,9 @@
 #if UNITY_EDITOR
 using UnityEditor;
 
+/// <summary>
+/// Partial editor utility for displaying and clearing cancelable progress bars.
+/// </summary>
 public static partial class KZEditorKit
 {
 	public static bool DisplayCancelableProgressBar(string title,string info,int current,int total)

@@ -11,21 +11,37 @@ using KZLib.Utilities;
 using Newtonsoft.Json;
 using UnityEngine;
 
+#if UNITY_EDITOR
+
+using UnityEditor;
+
+#endif
+
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
+/// <summary>
+/// Extension methods for string.
+/// Provides parsing, formatting, path handling, localization, and text manipulation helpers.
+/// </summary>
 public static class StringExtension
 {
 	private static readonly Dictionary<string,Color> s_hexColorDict = new();
 
+	private const string c_tagManagerLayersProperty = "layers";
+	private const int c_hexColorRgbLength = 7;
+
 	#region Normalize
+	/// <summary>
+	/// Replaces escaped newline sequences with platform line breaks.
+	/// </summary>
 	public static string NormalizeNewLines(this string text)
 	{
 		return text.Replace("\\n",Environment.NewLine);
 	}
 
 	/// <summary>
-	/// Change path slash
+	/// Converts path separators to the platform directory separator.
 	/// </summary>
 	public static string PathConvertSlash(this string path)
 	{
@@ -40,6 +56,9 @@ public static class StringExtension
 	#endregion Normalize
 	
 	#region Localize
+	/// <summary>
+	/// Looks up the string in the localization manager.
+	/// </summary>
 	public static string ToLocalize(this string text)
 	{
 		return LingoManager.In.FindString(text);
@@ -47,6 +66,9 @@ public static class StringExtension
 	#endregion Localize
 
 	#region Encoding
+	/// <summary>
+	/// Converts CP949 (Korean) encoded text to UTF-8.
+	/// </summary>
 	public static string CP949ToUTF8(this string text)
 	{
 		var cp949 = Encoding.GetEncoding("ks_c_5601-1987");
@@ -58,7 +80,7 @@ public static class StringExtension
 
 	#region Character
 	/// <summary>
-	/// Check character in string
+	/// Returns whether any character from the array appears in the string.
 	/// </summary>
 	public static bool IsContainsCharacterArray(this string text,params char[] characterArray)
 	{
@@ -82,7 +104,7 @@ public static class StringExtension
 		return false;
 	}
 	/// <summary>
-	/// Convert first character to uppercase
+	/// Uppercases only the first character, leaving the remainder unchanged.
 	/// </summary>
 	public static string ToFirstCharacterToUpper(this string text)
 	{
@@ -97,7 +119,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Convert first character to lowercase
+	/// Lowercases only the first character, leaving the remainder unchanged.
 	/// </summary>
 	public static string ToFirstCharacterToLower(this string text)
 	{
@@ -112,7 +134,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Get character 0 to count from first
+	/// Returns up to the first <paramref name="count"/> characters.
 	/// </summary>
 	public static string GetStartCharacter(this string text,int count)
 	{
@@ -120,7 +142,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Get character 0 to count from last
+	/// Returns up to the last <paramref name="count"/> characters.
 	/// </summary>
 	public static string GetEndCharacter(this string text,int count)
 	{
@@ -128,7 +150,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Count character in string
+	/// Counts non-overlapping occurrences of a character.
 	/// </summary>
 	public static int CountOf(this string text,char character)
 	{
@@ -145,8 +167,9 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Get index of character in string
+	/// Returns the index of the nth occurrence of a character.
 	/// </summary>
+	/// <param name="order">1-based occurrence index.</param>
 	public static int IndexOfOrder(this string text,char character,int order)
 	{
 		if(text.IsEmpty())
@@ -171,9 +194,8 @@ public static class StringExtension
 
 	#region Compare
 	/// <summary>
-	/// Check empty text
+	/// Returns whether the string is null, empty, or optionally whitespace-only.
 	/// </summary>
-	/// <param name="_text"></param>
 	public static bool IsEmpty(this string text,bool includeSpace = false)
 	{
 		return includeSpace ? string.IsNullOrWhiteSpace(text) : string.IsNullOrEmpty(text);
@@ -185,7 +207,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Check match at index
+	/// Returns whether a substring at the given index equals the match text.
 	/// </summary>
 	public static bool IsMatchAt(this string text,int index,string matchText,bool ignoreCase = false)
 	{
@@ -262,7 +284,7 @@ public static class StringExtension
 
 	#region Convert Color
 	/// <summary>
-	/// HexCode to Color
+	/// Parses a hex color string into a Unity color.
 	/// </summary>
 	public static Color ToColor(this string hexCode)
 	{
@@ -276,13 +298,17 @@ public static class StringExtension
 		return value;
 	}
 
+	/// <summary>
+	/// Parses a hex color string and caches successful results.
+	/// Appends default alpha when a 6-digit RGB code is supplied.
+	/// </summary>
 	public static bool TryToColor(this string hexCode,out Color value)
 	{
 		if(!hexCode.IsEmpty())
 		{
-			if(hexCode.Length == 7)
+			if(hexCode.Length == c_hexColorRgbLength)
 			{
-				hexCode = $"{hexCode}FF";
+				hexCode = $"{hexCode}{Global.DefaultAlphaHex}";
 			}
 
 			if(s_hexColorDict.TryGetValue(hexCode,out value))
@@ -304,7 +330,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Add richText
+	/// Wraps text in a Unity rich-text color tag using a Color value.
 	/// </summary>
 	public static string ToColorText(this string text,Color color)
 	{
@@ -312,7 +338,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Add richText
+	/// Wraps text in a Unity rich-text color tag using a hex code.
 	/// </summary>
 	public static string ToColorText(this string text,string hexCode)
 	{
@@ -333,11 +359,21 @@ public static class StringExtension
 		return value;
 	}
 
+	/// <summary>
+	/// Parses common boolean aliases such as t/f, 1/0, yes/no, and y/n.
+	/// </summary>
 	public static bool TryToBool(this string text,out bool value)
 	{
-		if(!text.IsEmpty() && bool.TryParse(text,out value))
+		value = false;
+
+		if(text.IsEmpty())
 		{
-			return value;
+			return false;
+		}
+
+		if(bool.TryParse(text,out value))
+		{
+			return true;
 		}
 
 		var lower = text.ToLower();
@@ -399,11 +435,14 @@ public static class StringExtension
 		return value;
 	}
 
+	/// <summary>
+	/// Parses decimal integers and hex values prefixed with <see cref="Global.HexPrefix"/>.
+	/// </summary>
 	public static bool TryToInt(this string text,out int value)
 	{
 		if(!text.IsEmpty())
 		{
-			if(text.StartsWith("0x",StringComparison.OrdinalIgnoreCase))
+			if(text.StartsWith(Global.HexPrefix,StringComparison.OrdinalIgnoreCase))
 			{
 				value = text.ToHexInt();
 
@@ -485,7 +524,7 @@ public static class StringExtension
 	{
 		if(!text.IsEmpty())
 		{
-			if(text.StartsWith("0x",StringComparison.OrdinalIgnoreCase))
+			if(text.StartsWith(Global.HexPrefix,StringComparison.OrdinalIgnoreCase))
 			{
 				value = Convert.ToByte(text,16);
 
@@ -505,7 +544,7 @@ public static class StringExtension
 
 	public static int ToHexInt(this string text)
 	{
-		var result = text.TryToByte(out var value);
+		var result = text.TryToHexInt(out var value);
 
 		if(!result)
 		{
@@ -527,9 +566,9 @@ public static class StringExtension
 		return false;
 	}
 
-	public static float ToHexFloat(string text)
+	public static float ToHexFloat(this string text)
 	{
-		var result = text.TryToByte(out var value);
+		var result = text.TryToHexFloat(out var value);
 
 		if(!result)
 		{
@@ -539,6 +578,9 @@ public static class StringExtension
 		return value;
 	}
 
+	/// <summary>
+	/// Reinterprets a hex integer bit pattern as a float.
+	/// </summary>
 	public static bool TryToHexFloat(this string text,out float value)
 	{
 		if(!text.IsEmpty() && uint.TryParse(text,NumberStyles.AllowHexSpecifier,CultureInfo.CurrentCulture,out var integer))
@@ -567,11 +609,14 @@ public static class StringExtension
 		return value;
 	}
 
+	/// <summary>
+	/// Parses a date/time string using <see cref="Global.DefaultDateTimeFormat"/>.
+	/// </summary>
 	public static bool TryToDateTime(this string text,out DateTime value,CultureInfo cultureInfo = null,DateTimeStyles dateTimeStyles = DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal)
 	{
 		var defaultCulture = cultureInfo ?? CultureInfo.InvariantCulture;
 
-		if(!text.IsEmpty() && DateTime.TryParseExact(text,"yyyy-MM-dd HH:mm",defaultCulture,dateTimeStyles,out value))
+		if(!text.IsEmpty() && DateTime.TryParseExact(text,Global.DefaultDateTimeFormat,defaultCulture,dateTimeStyles,out value))
 		{
 			return true;
 		}
@@ -595,6 +640,9 @@ public static class StringExtension
 		return value;
 	}
 
+	/// <summary>
+	/// Parses a parenthesized comma-separated pair into a Vector2.
+	/// </summary>
 	public static bool TryToVector2(this string text,out Vector2 value)
 	{
 		if(!text.IsEmpty())
@@ -626,6 +674,9 @@ public static class StringExtension
 		return value;
 	}
 
+	/// <summary>
+	/// Parses a parenthesized comma-separated triple into a Vector3.
+	/// </summary>
 	public static bool TryToVector3(this string text,out Vector3 value)
 	{
 		if(!text.IsEmpty())
@@ -806,7 +857,8 @@ public static class StringExtension
 
 	#region Extract
 	/// <summary>
-	/// Extract start to end
+	/// Removes a leading marker and trailing marker when both are present.
+	/// Returns the original string when either marker is missing.
 	/// </summary>
 	public static string ExtractText(this string text,string startText,string endText)
 	{
@@ -877,6 +929,10 @@ public static class StringExtension
 	#endregion Extract
 
 	#region Layer
+	/// <summary>
+	/// Resolves a Unity layer index by name.
+	/// In the editor, can create an unused user layer slot when <paramref name="isAutoCreate"/> is true.
+	/// </summary>
 	public static int FindLayerByName(this string layerName,bool isAutoCreate = false)
 	{
 		var layer = LayerMask.NameToLayer(layerName);
@@ -884,7 +940,31 @@ public static class StringExtension
 #if UNITY_EDITOR
 		if(layer == Global.InvalidIndex && isAutoCreate)
 		{
-			KZEditorKit.AddLayer(layerName);
+			var serialized = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
+			var layerProperty = serialized.FindProperty(c_tagManagerLayersProperty);
+			var layerCount = layerProperty.arraySize;
+			var slotIndex = Global.InvalidIndex;
+
+			for(var i = 8;i < layerCount;i++)
+			{
+				var value = layerProperty.GetArrayElementAtIndex(i).stringValue;
+
+				if(slotIndex == Global.InvalidIndex && value.IsEmpty())
+				{
+					slotIndex = i;
+				}
+				else if(value.IsEqual(layerName))
+				{
+					slotIndex = Global.InvalidIndex;
+					break;
+				}
+			}
+
+			if(slotIndex != Global.InvalidIndex)
+			{
+				layerProperty.GetArrayElementAtIndex(slotIndex).stringValue = layerName;
+				serialized.ApplyModifiedProperties();
+			}
 
 			layer = LayerMask.NameToLayer(layerName);
 		}
@@ -894,6 +974,9 @@ public static class StringExtension
 	}
 	#endregion Layer
 
+	/// <summary>
+	/// Converts an XML document string to JSON using Newtonsoft.Json.
+	/// </summary>
 	public static string XmlToJson(this string xmlText)
 	{
 		using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xmlText));

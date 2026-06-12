@@ -1,7 +1,13 @@
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for <see cref="Rect"/> pixel, texture-coordinate, and alignment conversions.
+/// </summary>
 public static class RectExtension
 {
+	/// <summary>
+	/// Converts pixel-space rect coordinates to normalized texture coordinates with a flipped Y axis.
+	/// </summary>
 	public static Rect ToTexCoords(this Rect rect,int width,int height)
 	{
 		var result = rect;
@@ -17,6 +23,9 @@ public static class RectExtension
 		return result;
 	}
 
+	/// <summary>
+	/// Converts normalized texture coordinates to pixel-space rect coordinates with a flipped Y axis.
+	/// </summary>
 	public static Rect ToPixels(this Rect rect,int width,int height,bool round = false)
 	{
 		var result = rect;
@@ -48,6 +57,9 @@ public static class RectExtension
 		return rect;
 	}
 
+	/// <summary>
+	/// Converts a normalized rect to pixels, snaps edges to integers, then converts back to texture coordinates.
+	/// </summary>
 	public static Rect MakePixelPerfect(this Rect rect,int width,int height)
 	{
 		rect = ToPixels(rect,width,height,true);

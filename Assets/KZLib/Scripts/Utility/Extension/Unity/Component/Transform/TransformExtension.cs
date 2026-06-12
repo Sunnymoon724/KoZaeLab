@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for <see cref="Transform"/> orientation, spatial checks, and reset.
+/// </summary>
 public static partial class TransformExtension
 {
 	public static void ResetTransform(this Transform transform,Transform parent = null)
@@ -18,6 +21,9 @@ public static partial class TransformExtension
 		transform.localScale = Vector3.one;
 	}
 
+	/// <summary>
+	/// Returns whether <paramref name="target"/> lies in front of this transform's forward direction.
+	/// </summary>
 	public static bool IsFront(this Transform transform,Vector3 target)
 	{
 		if(!_IsValid(transform))
@@ -28,6 +34,9 @@ public static partial class TransformExtension
 		return Vector3.Dot(transform.forward,target-transform.position) >= 0.0f;
 	}
 
+	/// <summary>
+	/// Returns whether <paramref name="target"/> lies to the right of this transform's forward direction.
+	/// </summary>
 	public static bool IsRight(this Transform transform,Vector3 target)
 	{
 		if(!_IsValid(transform))
@@ -38,6 +47,9 @@ public static partial class TransformExtension
 		return Vector3.Cross(transform.forward,target-transform.position).y >= 0.0f;
 	}
 
+	/// <summary>
+	/// Smoothly rotates toward <paramref name="target"/>; axis hold flags zero the corresponding direction component before look rotation.
+	/// </summary>
 	public static void LookAtSlowly(this Transform transform,Transform target,float speed = 1.0f,bool isHoldX = false,bool isHoldY = false,bool isHoldZ = false)
 	{
 		if(!_IsValid(transform))
@@ -80,6 +92,9 @@ public static partial class TransformExtension
 		return transform.position.IsInside(collider);
 	}
 
+	/// <summary>
+	/// Returns whether forward direction aligns with the target within <paramref name="cosineThreshold"/> (dot product).
+	/// </summary>
 	public static bool IsNearlyFacingTowards(this Transform transform,Vector3 targetPosition,float cosineThreshold = 0.95f,bool ignoreHeight = false)
 	{
 		if(!_IsValid(transform))
@@ -99,6 +114,9 @@ public static partial class TransformExtension
 		return Vector3.Dot(transform.forward,directionToTarget.normalized) >= cosineThreshold;
 	}
 
+	/// <summary>
+	/// Rotates to face <paramref name="target"/> on the XY plane (2D sprite orientation).
+	/// </summary>
 	public static void LookAt2D(this Transform transform,Vector3 target)
 	{
 		if(!_IsValid(transform))

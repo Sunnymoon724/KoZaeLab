@@ -13,7 +13,7 @@ namespace KZLib
 		{
 			base._Initialize();
 
-			if(m_bgmSource)
+			if(!m_bgmSource)
 			{
 				m_bgmSource = GetComponent<AudioSource>();
 			}
@@ -66,17 +66,12 @@ namespace KZLib
 		{
 			audioSource.time = time;
 
-			if(delay == 0.0f)
+			if(delay <= 0.0f)
 			{
 				audioSource.Play();
 			}
 			else
 			{
-				if(delay < 0.0f)
-				{
-					LogChannel.Sound.W($"Delay time is negative: {delay}");
-				}
-
 				audioSource.PlayDelayed(delay);
 			}
 		}

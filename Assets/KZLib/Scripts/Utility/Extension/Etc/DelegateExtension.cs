@@ -1,7 +1,14 @@
 using System;
 
+/// <summary>
+/// Extension methods for Delegate.
+/// Provides invocation-list inspection helpers.
+/// </summary>
 public static class DelegateExtension
 {
+	/// <summary>
+	/// Checks whether the second delegate's method and target appear in the first delegate's invocation list.
+	/// </summary>
 	public static bool HasDelegate(this Delegate onAction1,Delegate onAction2)
 	{
 		if(onAction1 != null && onAction2 != null)

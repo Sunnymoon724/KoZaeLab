@@ -23,6 +23,11 @@ namespace KZLib
 		{
 			if(disposing)
 			{
+				foreach(var pair in m_assetInfoDict)
+				{
+					Addressables.Release(pair.Value.Asset);
+				}
+
 				m_assetInfoDict.Clear();
 			}
 
@@ -165,7 +170,7 @@ namespace KZLib
 
 					if(assetInfo.Label.IsEqual(label))
 					{
-						keyList.Add(label);
+						keyList.Add(pair.Key);
 					}
 				}
 			}

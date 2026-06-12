@@ -1,7 +1,13 @@
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for <see cref="Material"/> shader keywords and renderer assignment.
+/// </summary>
 public static class MaterialExtension
 {
+	/// <summary>
+	/// Enables or disables a shader keyword and returns the material for chaining.
+	/// </summary>
 	public static Material SetKeyword(this Material material,string keyword,bool enable)
 	{
 		if(!_IsValid(material))
@@ -21,6 +27,9 @@ public static class MaterialExtension
 		return material;
 	}
 
+	/// <summary>
+	/// Replaces every material slot on each renderer with this material.
+	/// </summary>
 	public static void SetMaterialToRendererArray(this Material material,params Renderer[] rendererArray)
 	{
 		if(!_IsValid(material))
@@ -31,6 +40,12 @@ public static class MaterialExtension
 		for(var i=0;i<rendererArray.Length;i++)
 		{
 			var renderer = rendererArray[i];
+
+			if(!renderer)
+			{
+				continue;
+			}
+
 			var materialArray = renderer.materials;
 
 			for(var j=0;j<materialArray.Length;j++)
@@ -46,7 +61,7 @@ public static class MaterialExtension
 	{
 		if(!material)
 		{
-			LogChannel.Kit.E("Material is null");
+			LogChannel.Kit.E("Material is null. Material must be assigned.");
 
 			return false;
 		}

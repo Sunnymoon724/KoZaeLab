@@ -1,0 +1,34 @@
+{
+    "name": "KZLib.Editor",
+    "rootNamespace": "",
+    "references": [
+        "KZLib.Shared",
+        "KZLib",
+        "UniTask",
+        "Unity.TextMeshPro",
+        "Unity.InputSystem",
+        "Unity.Addressables",
+        "Unity.Addressables.Editor",
+        "Unity.ResourceManager",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.Localization",
+        "Unity.Localization.Editor",
+        "PlayFab",
+        "Coffee.UIEffect"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [
+        "KZData.dll",
+        "KZToolKit.dll",
+        "KZUtility.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,11 +1,14 @@
+using System;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using MessagePipe;
 using Microsoft.Extensions.DependencyInjection;
 using KZLib;
 using KZLib.Collections.Generic;
+using KZLib.Diagnostics;
 
 #if UNITY_EDITOR
 
@@ -13,17 +16,23 @@ using UnityEditor.Callbacks;
 using UnityEditorInternal;
 using UnityEditor;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 #else
 
 using Cysharp.Threading.Tasks;
-using KZLib.Networking;
+using KZLib.Networks;
+using KZLib.Webhooks;
 
 #endif
 
 using Debug = UnityEngine.Debug;
 
+/// <summary>
+/// Named logging channel used to tag and filter log output by domain (Game, Scene, Network, etc.).
+/// Part of a tagged logging hub that enriches messages with caller info, supports once-only deduplication,
+/// captures runtime logs into a circular queue, enables editor double-click navigation to source,
+/// and posts build-time exception reports via webhook.
+/// </summary>
 public partial class LogChannel
 {
 	public static readonly LogChannel None			= new(nameof(None));
@@ -36,7 +45,8 @@ public partial class LogChannel
 	public static readonly LogChannel Build			= new(nameof(Build));
 
 
-	public static readonly LogChannel Web			= new(nameof(Web));
+	public static readonly LogChannel Webhook		= new(nameof(Webhook));
+	public static readonly LogChannel Network		= new(nameof(Network));
 	public static readonly LogChannel Server		= new(nameof(Server));
 	public static readonly LogChannel Client		= new(nameof(Client));
 
@@ -76,18 +86,21 @@ public partial class LogChannel
 	internal static HashSet<string> LogHashSet => s_logHashSet;
 }
 
+/// <summary>
+/// Extension methods for writing tagged logs through <see cref="LogChannel"/> instances.
+/// </summary>
 public static class LogChannelExtension
 {
-#if !UNITY_EDITOR
 	private static readonly Regex s_fileNameExtractor = new(@"([^\\\/]+)(?=\.[^.\\\/]+$)",RegexOptions.Compiled);
-#endif
 
 	#region I : Info Log
+	/// <summary>Writes an info log with caller context.</summary>
 	public static void I(this LogChannel channel,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
 		_Log(channel,message,LogType.Log,false,memberName,filePath,lineNum);
 	}
 
+	/// <summary>Writes an info log once per unique message string.</summary>
 	public static void IOnce(this LogChannel channel,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
 		_Log(channel,message,LogType.Log,true,memberName,filePath,lineNum);
@@ -95,11 +108,13 @@ public static class LogChannelExtension
 	#endregion I : Info Log
 
 	#region W : Warning Log
+	/// <summary>Writes a warning log with caller context.</summary>
 	public static void W(this LogChannel channel,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
 		_Log(channel,message,LogType.Warning,false,memberName,filePath,lineNum);
 	}
 
+	/// <summary>Writes a warning log once per unique message string.</summary>
 	public static void WOnce(this LogChannel channel,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
 		_Log(channel,message,LogType.Warning,true,memberName,filePath,lineNum);
@@ -107,11 +122,13 @@ public static class LogChannelExtension
 	#endregion W : Warning Log
 	
 	#region E : Error Log
+	/// <summary>Writes an error log with caller context.</summary>
 	public static void E(this LogChannel channel,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
 		_Log(channel,message,LogType.Error,false,memberName,filePath,lineNum);
 	}
 
+	/// <summary>Writes an error log once per unique message string.</summary>
 	public static void EOnce(this LogChannel channel,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
 		_Log(channel,message,LogType.Error,true,memberName,filePath,lineNum);
@@ -119,6 +136,7 @@ public static class LogChannelExtension
 	#endregion E : Error Log
 
 	#region A : Assert Log
+	/// <summary>Logs an assertion failure when <paramref name="condition"/> is false.</summary>
 	public static void A(this LogChannel channel,bool condition,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
 	{
 		if(condition)
@@ -127,6 +145,17 @@ public static class LogChannelExtension
 		}
 
 		_Log(channel,message,LogType.Assert,false,memberName,filePath,lineNum);
+	}
+
+	/// <summary>Logs an assertion failure once per unique message string when <paramref name="condition"/> is false.</summary>
+	public static void AOnce(this LogChannel channel,bool condition,object message,[CallerMemberName] string memberName = null,[CallerFilePath] string filePath = null,[CallerLineNumber] int lineNum = 0)
+	{
+		if(condition)
+		{
+			return;
+		}
+
+		_Log(channel,message,LogType.Assert,true,memberName,filePath,lineNum);
 	}
 	#endregion A : Assert Log
 
@@ -139,19 +168,26 @@ public static class LogChannelExtension
 			return;
 		}
 
-#if UNITY_EDITOR || DEBUG
-		switch(logType)
+		if(logType == LogType.Assert)
 		{
-			case LogType.Warning:
-				Debug.LogWarning(log);
-				break;
-			case LogType.Error:
-			case LogType.Assert:
-				Debug.LogError(log);
-				break;
-			default:
-				Debug.Log(log);
-				break;
+			Debug.LogError(log);
+		}
+
+#if UNITY_EDITOR || DEBUG
+		else
+		{
+			switch(logType)
+			{
+				case LogType.Warning:
+					Debug.LogWarning(log);
+					break;
+				case LogType.Error:
+					Debug.LogError(log);
+					break;
+				default:
+					Debug.Log(log);
+					break;
+			}
 		}
 #endif
 	}
@@ -162,7 +198,6 @@ public static class LogChannelExtension
 
 		builder.Append($"[<b>{logger.m_logTag}</b>] {message}");
 
-#if !UNITY_EDITOR
 		if(!memberName.IsEmpty() || !filePath.IsEmpty())
 		{
 			builder.Append(" [");
@@ -183,6 +218,13 @@ public static class LogChannelExtension
 			}
 
 			builder.Append("]");
+		}
+
+#if UNITY_EDITOR
+		// Unity Console double-click navigation expects "(at path:line)" in a separate line.
+		if(!filePath.IsEmpty() && lineNum > 0)
+		{
+			builder.Append("\n(at ").Append(filePath.Replace('\\','/')).Append(':').Append(lineNum).Append(')');
 		}
 #endif
 
@@ -236,9 +278,13 @@ public partial class LogChannel
 		External.E(message);
 	}
 
+	/// <summary>
+	/// Captures Unity console output, trims LogChannel frames from the stack trace,
+	/// and publishes entries to the debug overlay queue.
+	/// </summary>
 	private static void _HandleLogMessage(string condition,string stackTrace,LogType logType)
 	{
-		var currentTime = GameTimeManager.In.GetCurrentTime(true);
+		var currentTime = ServerClockManager.In.GetNow(true);
 		var header = $"<{_ConvertType(logType)}> {currentTime:MM/dd HH:mm:ss}";
 		var body = string.Empty;
 
@@ -261,11 +307,15 @@ public partial class LogChannel
 			{
 				body = condition;
 			}
-			else
+			else if(index + 1 < stackTraceArray.Length)
 			{
 				var stack = stackTraceArray[index+1];
 
 				body = $"{condition}\n\n{stack}";
+			}
+			else
+			{
+				body = condition;
 			}
 		}
 
@@ -307,7 +357,7 @@ public partial class LogChannel
 
 		var texture = CommonUtility.GetScreenShot();
 
-		await WebRequestManager.In.PostBugReportWebRequestAsync(m_logMessageInfoQueue,texture.EncodeToPNG());
+		await WebhookManager.In.PostBugReportWebRequestAsync(m_logMessageInfoQueue,texture.EncodeToPNG());
 
 		//? Send once and wait for 30 seconds -> If sent too frequently, it can cause a load.
 		await UniTask.Delay(TimeSpan.FromSeconds(c_coolTimeTimer)).SuppressCancellationThrow();
@@ -320,52 +370,87 @@ public partial class LogChannel
 public partial class LogChannel
 {
 #if UNITY_EDITOR
+	private static Type s_consoleWindowType = null;
+	private static FieldInfo s_consoleWindowFieldInfo = null;
+	private static FieldInfo[] s_activeTextFieldInfoGroup = null;
+
+	private static readonly Regex s_stackFrameExtractor = new(@"\(at (.+)\)",RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+	/// <summary>
+	/// Opens the caller source file when a LogChannel log entry is double-clicked in the Unity Console.
+	/// </summary>
 	[OnOpenAsset(0)]
 	internal static bool _OnOpenDebugLog(int instance,int _)
 	{
-		var objectName = EditorUtility.EntityIdToObject(instance).name;
+		var entity = EditorUtility.EntityIdToObject(instance);
 
-		if(objectName.IsEmpty() || !objectName.IsEqual(nameof(LogChannel)))
+		if(entity == null || entity.name.IsEmpty() || !entity.name.IsEqual(nameof(LogChannel)))
 		{
 			return false;
 		}
 
-		var stackTrace = _FindStackTrace();
+		var stackTrace = _FindConsoleStackTrace();
 
 		if(stackTrace.IsEmpty())
 		{
 			return false;
 		}
 
-		var textMatch = Regex.Match(stackTrace,@"\(at (.+)\)",RegexOptions.IgnoreCase);
+		return _TryOpenCallerSource(stackTrace);
+	}
+
+	// Skips LogChannel frames and opens the first external caller location found in the stack trace.
+	private static bool _TryOpenCallerSource(string stackTrace)
+	{
+		var textMatch = s_stackFrameExtractor.Match(stackTrace);
 
 		while(textMatch.Success)
 		{
 			var content = textMatch.Groups[1].Value;
 
-			if(!_IsLogChannelFrame(content))
+			if(!_IsLogChannelFrame(content) && _TryParseSourceLocation(content,out var filePath,out var lineNumber))
 			{
-				break;
+				var absolutePath = KZFileKit.GetAbsolutePath(filePath,true);
+
+				if(!absolutePath.IsEmpty())
+				{
+					InternalEditorUtility.OpenFileAtLineExternal(absolutePath,lineNumber);
+
+					return true;
+				}
 			}
 
 			textMatch = textMatch.NextMatch();
 		}
 
-		if(!textMatch.Success)
+		return false;
+	}
+
+	private static bool _TryParseSourceLocation(string content,out string filePath,out int lineNumber)
+	{
+		filePath = null;
+		lineNumber = 0;
+
+		if(content.IsEmpty())
 		{
 			return false;
 		}
 
-		var pathArray = textMatch.Groups[1].Value.Split(':');
+		var lastColonIndex = content.LastIndexOf(':');
 
-		if(pathArray.Length < 2 || !int.TryParse(pathArray[1], out int lineNumber))
+		if(lastColonIndex <= 0 || lastColonIndex >= content.Length - 1)
 		{
 			return false;
 		}
 
-		InternalEditorUtility.OpenFileAtLineExternal(KZFileKit.GetAbsolutePath(pathArray[0], true), lineNumber);
+		if(!int.TryParse(content[(lastColonIndex + 1)..],out lineNumber) || lineNumber <= 0)
+		{
+			return false;
+		}
 
-		return true;
+		filePath = content[..lastColonIndex];
+
+		return !filePath.IsEmpty();
 	}
 
 	private static bool _IsLogChannelFrame(string content)
@@ -373,44 +458,71 @@ public partial class LogChannel
 		return content.Contains(nameof(LogChannel)) || content.Contains(nameof(LogChannelExtension));
 	}
 
-	private static string _FindStackTrace()
+	// Caches ConsoleWindow reflection fields because Unity does not expose them publicly.
+	private static void _EnsureConsoleReflection()
 	{
+		if(s_consoleWindowType != null)
+		{
+			return;
+		}
+
 		var assembly = Assembly.GetAssembly(typeof(EditorWindow));
 
 		if(assembly == null)
 		{
-			return null;
+			return;
 		}
 
-		var windowType = assembly.GetType("UnityEditor.ConsoleWindow");
+		s_consoleWindowType = assembly.GetType("UnityEditor.ConsoleWindow");
 
-		if(windowType == null)
+		if(s_consoleWindowType == null)
+		{
+			return;
+		}
+
+		s_consoleWindowFieldInfo = s_consoleWindowType.GetField("ms_ConsoleWindow",BindingFlags.Static | BindingFlags.NonPublic);
+
+		var activeTextFieldNameGroup = new[] { "m_ActiveText","m_ActiveMessage" };
+		var fieldInfoList = new List<FieldInfo>(activeTextFieldNameGroup.Length);
+
+		foreach(var fieldName in activeTextFieldNameGroup)
+		{
+			var fieldInfo = s_consoleWindowType.GetField(fieldName,BindingFlags.Instance | BindingFlags.NonPublic);
+
+			if(fieldInfo != null)
+			{
+				fieldInfoList.Add(fieldInfo);
+			}
+		}
+
+		s_activeTextFieldInfoGroup = fieldInfoList.ToArray();
+	}
+
+	private static string _FindConsoleStackTrace()
+	{
+		_EnsureConsoleReflection();
+
+		if(s_consoleWindowType == null || s_consoleWindowFieldInfo == null || s_activeTextFieldInfoGroup.IsNullOrEmpty())
 		{
 			return null;
 		}
 
-		var windowFieldInfo = windowType.GetField("ms_ConsoleWindow",BindingFlags.Static | BindingFlags.NonPublic);
+		var window = s_consoleWindowFieldInfo.GetValue(null);
 
-		if(windowFieldInfo == null)
+		if(window == null)
 		{
 			return null;
 		}
 
-		var window = windowFieldInfo.GetValue(null);
-
-		if(window != (object)EditorWindow.focusedWindow)
+		foreach(var fieldInfo in s_activeTextFieldInfoGroup)
 		{
-			return null;
+			if(fieldInfo.GetValue(window) is string text && !text.IsEmpty())
+			{
+				return text;
+			}
 		}
 
-		var activeFieldInfo = windowType.GetField("m_ActiveText",BindingFlags.Instance | BindingFlags.NonPublic);
-
-		if(activeFieldInfo == null)
-		{
-			return null;
-		}
-
-		return activeFieldInfo.GetValue(window).ToString();
+		return null;
 	}
 #endif
 }

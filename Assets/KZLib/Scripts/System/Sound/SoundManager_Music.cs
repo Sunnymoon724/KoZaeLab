@@ -23,7 +23,12 @@ namespace KZLib
 
 		public float GetBGMTime()
 		{
-			return (float)m_bgmSource.timeSamples/m_bgmSource.clip.frequency;
+			if(m_bgmSource.clip == null || m_bgmSource.clip.frequency == 0)
+			{
+				return 0.0f;
+			}
+
+			return (float) m_bgmSource.timeSamples/m_bgmSource.clip.frequency;
 		}
 
 		public AudioSource SetBGM(string audioPath)

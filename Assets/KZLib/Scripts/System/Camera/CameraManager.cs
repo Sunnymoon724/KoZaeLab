@@ -34,6 +34,7 @@ namespace KZLib
 		{
 			if(disposing)
 			{
+				ClearAllSubCameras();
 				m_disposable.Dispose();
 			}
 
@@ -62,6 +63,8 @@ namespace KZLib
 			foreach(var pair in m_subCameraDict)
 			{
 				var subCamera = pair.Key;
+
+				subCamera.depth = m_mainCamera.depth+1;
 
 				if(cameraList.Contains(subCamera))
 				{
@@ -130,12 +133,7 @@ namespace KZLib
 
 		public void ClearAllSubCameras()
 		{
-			if(m_mainCamera == null)
-			{
-				return;
-			}
-
-			var mainCameraData = m_mainCamera.GetUniversalAdditionalCameraData();
+			var mainCameraData = m_mainCamera != null ? m_mainCamera.GetUniversalAdditionalCameraData() : null;
 
 			foreach(var pair in m_subCameraDict)
 			{
@@ -145,7 +143,10 @@ namespace KZLib
 				subCamera.depth = cameraInfo.Depth;
 				subCamera.clearFlags = cameraInfo.ClearFlag;
 
-				mainCameraData.cameraStack.RemoveSafe(subCamera);
+				if(!mainCameraData)
+				{
+					mainCameraData.cameraStack.RemoveSafe(subCamera);
+				}
 			}
 
 			m_subCameraDict.Clear();

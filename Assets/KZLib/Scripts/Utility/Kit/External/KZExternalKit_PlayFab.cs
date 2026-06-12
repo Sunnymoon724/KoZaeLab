@@ -6,6 +6,11 @@ using UnityEngine;
 
 public static partial class KZExternalKit
 {
+	private static readonly Regex s_emailRegex = new Regex(@"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$",RegexOptions.Compiled);
+
+	/// <summary>
+	/// Returns whether the given string is a valid email address format.
+	/// </summary>
 	public static bool IsValidEmailAddress(string emailAddress)
 	{
 		if(emailAddress.IsEmpty())
@@ -13,11 +18,12 @@ public static partial class KZExternalKit
 			return false;
 		}
 
-		var regex = new Regex(@"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$");
-
-		return regex.IsMatch(emailAddress);
+		return s_emailRegex.IsMatch(emailAddress);
 	}
 
+	/// <summary>
+	/// Returns whether the text length falls within the inclusive range defined by range.x and range.y.
+	/// </summary>
 	public static bool IsValidSize(string text,Vector2Int range)
 	{
 		if(text.IsEmpty())
@@ -30,6 +36,9 @@ public static partial class KZExternalKit
 		return range.x <= size && size <= range.y;
 	}
 
+	/// <summary>
+	/// Formats a PlayFabError into a readable string including error details when available.
+	/// </summary>
 	public static string GetErrorMessage(PlayFabError playFabError)
 	{
 		var builder = new StringBuilder();

@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for <see cref="Quaternion"/> axis masking, offsets, and comparisons.
+/// </summary>
 public static class QuaternionExtension
 {
 	#region Mask
@@ -88,9 +91,7 @@ public static class QuaternionExtension
 	#region Invert
 	public static Quaternion Invert(this Quaternion quaternion)
 	{
-		var angle = quaternion.eulerAngles;
-
-		return Quaternion.Euler(-angle.x,-angle.y,-angle.z);
+		return Quaternion.Inverse(quaternion);
 	}
 
 	public static Quaternion InvertX(this Quaternion quaternion)
@@ -188,17 +189,20 @@ public static class QuaternionExtension
 		return Quaternion.Euler(Mathf.Clamp01(angle.x),Mathf.Clamp01(angle.y),Mathf.Clamp01(angle.z));
 	}
 
+	/// <summary>
+	/// Returns the forward direction scaled by the given distance.
+	/// </summary>
 	public static Vector3 Normalized(this Quaternion quaternion,float _distance = 1.0f)
 	{
 		return quaternion*Vector3.forward*_distance;
 	}
 
+	/// <summary>
+	/// Returns the halfway rotation between two quaternions via spherical interpolation.
+	/// </summary>
 	public static Quaternion MiddleVector(this Quaternion quaternion1,Quaternion quaternion2)
 	{
-		var angle1 = quaternion1.eulerAngles;
-		var angle2 = quaternion2.eulerAngles;
-
-		return Quaternion.Euler((angle2.x-angle1.x)/2.0f,(angle2.y-angle1.y)/2.0f,(angle2.z-angle1.z)/2.0f);
+		return Quaternion.Slerp(quaternion1,quaternion2,0.5f);
 	}
 
 	public static string ToQuaternionString(this Quaternion quaternion,int decimalPoint = 2)

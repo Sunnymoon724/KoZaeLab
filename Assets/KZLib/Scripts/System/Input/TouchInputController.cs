@@ -11,6 +11,8 @@ namespace KZLib
 	{
 		private const string c_touchPress = "TouchPress";
 
+		private readonly List<RaycastResult> m_raycastResultList = new();
+
 		[VerticalGroup("1",Order = 1),SerializeField]
 		private bool m_useTouchEffect = false;
 
@@ -106,19 +108,11 @@ namespace KZLib
 				position = point
 			};
 
-			var resultList = new List<RaycastResult>();
+			m_raycastResultList.Clear();
 
-			EventSystem.current.RaycastAll(eventData,resultList);
+			EventSystem.current.RaycastAll(eventData,m_raycastResultList);
 
-			return resultList.Count > 0;
-		}
-
-		private void OnPressedBackButton(InputAction.CallbackContext _)
-		{
-			if(UIManager.HasInstance)
-			{
-				UIManager.In.PressBackButton();
-			}
+			return m_raycastResultList.Count > 0;
 		}
 	}
 }

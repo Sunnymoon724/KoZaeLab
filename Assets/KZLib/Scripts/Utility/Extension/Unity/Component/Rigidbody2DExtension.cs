@@ -1,17 +1,33 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for <see cref="Rigidbody2D"/> overlap detection and velocity redirection.
+/// </summary>
 public static class Rigidbody2DExtension
 {
 	private static readonly RaycastHit2D[] s_cachedRaycast2DArray = new RaycastHit2D[1];
 
 	public static bool IsOverlapping(this Rigidbody2D rigidbody2D,Collider2D collider2D)
 	{
+		if(!_IsValid(rigidbody2D) || !collider2D)
+		{
+			return false;
+		}
+
 		return rigidbody2D.Distance(collider2D).isOverlapped;
 	}
 
+	/// <summary>
+	/// Returns whether the colliders overlap or are separated by approximately zero distance.
+	/// </summary>
 	public static bool IsTouchingNow(this Rigidbody2D rigidbody2D,Collider2D collider2D)
 	{
+		if(!_IsValid(rigidbody2D) || !collider2D)
+		{
+			return false;
+		}
+
 		var colliderDistance = rigidbody2D.Distance(collider2D);
 
 		if(colliderDistance.isOverlapped)
@@ -37,8 +53,18 @@ public static class Rigidbody2DExtension
 		return IsOverlapping(rigidbody2D,layerMask,offset,default,out raycastHit);
 	}
 
+	/// <summary>
+	/// Casts the rigidbody along an offset vector and returns whether a collider on the layer mask was hit.
+	/// </summary>
 	public static bool IsOverlapping(this Rigidbody2D rigidbody2D,LayerMask layerMask,Vector2 offset,ContactFilter2D contactFilter2D,out RaycastHit2D raycastHit)
 	{
+		raycastHit = default;
+
+		if(!_IsValid(rigidbody2D))
+		{
+			return false;
+		}
+
 		contactFilter2D.SetLayerMask(layerMask | contactFilter2D.layerMask);
 
 		var distance = offset.magnitude;
@@ -57,6 +83,23 @@ public static class Rigidbody2DExtension
 
 	public static void ChangeDirection(this Rigidbody2D rigidbody2D,Vector2 direction)
 	{
+		if(!_IsValid(rigidbody2D))
+		{
+			return;
+		}
+
 		rigidbody2D.linearVelocity = direction*rigidbody2D.linearVelocity.magnitude;
+	}
+
+	private static bool _IsValid(Rigidbody2D rigidbody2D)
+	{
+		if(!rigidbody2D)
+		{
+			LogChannel.Kit.E("Rigidbody2D is null.");
+
+			return false;
+		}
+
+		return true;
 	}
 }

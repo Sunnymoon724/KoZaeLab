@@ -1,8 +1,14 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Extension methods for <see cref="Camera"/> bounds, culling masks, and projection helpers.
+/// </summary>
 public static class CameraExtension
 {
+	/// <summary>
+	/// Returns the world-space bounds visible by an orthographic camera at the current screen aspect.
+	/// </summary>
 	public static Bounds OrthographicBounds(this Camera camera)
 	{
 		if(!_IsValid(camera))
@@ -130,6 +136,9 @@ public static class CameraExtension
 		}
 	}
 
+	/// <summary>
+	/// Casts a viewport-center ray against a plane and returns the hit distance including the near clip plane.
+	/// </summary>
 	public static bool TryGetDistanceToPlane(this Camera camera,Plane plane,out float distance)
 	{
 		if(!_IsValid(camera))
@@ -182,6 +191,9 @@ public static class CameraExtension
 		return TryGetDistanceToPositionPlane(camera,target.position,out distance);
 	}
 
+	/// <summary>
+	/// Computes the scale ratio needed to keep an object the same apparent size at two different depths.
+	/// </summary>
 	public static bool TryGetScaleForConsistentSize(this Camera camera,Transform transform,Transform target,out float scale)
 	{
 		if(!_IsValid(camera))
@@ -198,7 +210,7 @@ public static class CameraExtension
 			return true;
 		}
 		
-		if(!TryGetDistanceToObjectPlane(camera,transform,out var source) || TryGetDistanceToObjectPlane(camera,target,out var destination))
+		if(!TryGetDistanceToObjectPlane(camera,transform,out var source) || !TryGetDistanceToObjectPlane(camera,target,out var destination))
 		{
 			scale = 0.0f;
 
@@ -231,6 +243,9 @@ public static class CameraExtension
 		return TryCastPositionToTargetPlane(camera,transform.position,target,out position);
 	}
 
+	/// <summary>
+	/// Projects a world position onto the plane facing the camera at the target's depth.
+	/// </summary>
 	public static bool TryCastPositionToTargetPlane(this Camera camera,Vector3 position1,Transform target,out Vector3 position2)
 	{
 		if(!_IsValid(camera))
@@ -283,7 +298,7 @@ public static class CameraExtension
 
 		rectTrans.GetWorldCorners(positionArray);
 
-		for(var i=0;i<4;i++)
+		for(var i=0;i<Global.RectCornerCount;i++)
 		{
 			positionArray[i] = camera.WorldToScreenPoint(positionArray[i])/factor;
 		}

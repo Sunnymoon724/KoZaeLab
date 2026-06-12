@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using Sirenix.Utilities;
 
+/// <summary>
+/// Utility methods for runtime type discovery, attribute inspection, and member value access.
+/// </summary>
 public static class KZReflectionKit
 {
 	private static readonly Dictionary<string,Type> s_typeDict = new();
@@ -13,6 +16,10 @@ public static class KZReflectionKit
 		return AppDomain.CurrentDomain.GetAssemblies();
 	}
 
+	/// <summary>
+	/// Finds a type by name across all loaded assemblies, optionally prefixed with a namespace.
+	/// Results are cached for subsequent lookups.
+	/// </summary>
 	public static Type FindType(string typeName,string namespaceName = null)
 	{
 		var fullName = namespaceName.IsEmpty() ? typeName : $"{namespaceName}.{typeName}";
@@ -39,6 +46,9 @@ public static class KZReflectionKit
 		return null;
 	}
 
+	/// <summary>
+	/// Yields all types in loaded assemblies that belong to the given namespace.
+	/// </summary>
 	public static IEnumerable<Type> FindTypeGroup(string namespaceName)
 	{
 		var assemblyArray = s_lazyAssemblyArray.Value;
@@ -51,7 +61,7 @@ public static class KZReflectionKit
 			{
 				var type = typeArray[j];
 
-				if(type.Namespace.IsEqual(namespaceName))
+				if(type.Namespace != null && type.Namespace.IsEqual(namespaceName))
 				{
 					yield return type;
 				}
@@ -59,6 +69,9 @@ public static class KZReflectionKit
 		}
 	}
 
+	/// <summary>
+	/// Yields all types assignable from the given base type across all loaded assemblies.
+	/// </summary>
 	public static IEnumerable<Type> FindDerivedTypeGroup(Type type,bool instantiableOnly = false)
 	{
 		var assemblyArray = s_lazyAssemblyArray.Value;
@@ -72,11 +85,17 @@ public static class KZReflectionKit
 		}
 	}
 
+	/// <summary>
+	/// Yields all types assignable from the given base type within a single assembly.
+	/// </summary>
 	public static IEnumerable<Type> FindDerivedTypeGroup(Type type,Assembly assembly,bool instantiableOnly = false)
 	{
 		return FindDerivedTypeGroup(type,_GetSafeTypeArray(assembly),instantiableOnly);
 	}
 
+	/// <summary>
+	/// Yields all types assignable from the given base type within the provided type collection.
+	/// </summary>
 	public static IEnumerable<Type> FindDerivedTypeGroup(Type type,IEnumerable<Type> assemblyTypeGroup,bool instantiableOnly = false)
 	{
 		foreach(var assemblyType in assemblyTypeGroup)
@@ -95,6 +114,9 @@ public static class KZReflectionKit
 		}
 	}
 
+	/// <summary>
+	/// Returns the inheritance depth of the given type, counting the type itself.
+	/// </summary>
 	public static int CalculateTypeDepth(Type type)
 	{
 		var depth = 0;
@@ -108,6 +130,9 @@ public static class KZReflectionKit
 		return depth;
 	}
 
+	/// <summary>
+	/// Returns the root base type in the inheritance chain (the type with no base type).
+	/// </summary>
 	public static Type FindRootBaseType(Type type)
 	{
 		while(type.BaseType != null)
@@ -118,6 +143,9 @@ public static class KZReflectionKit
 		return type;
 	}
 
+	/// <summary>
+	/// Yields all attributes of type TAttribute defined on the given provider.
+	/// </summary>
 	public static IEnumerable<TAttribute> FindAttributeGroup<TAttribute>(ICustomAttributeProvider attributeProvider,bool inherit = false) where TAttribute : Attribute
 	{
 		var attributeType = typeof(TAttribute);
@@ -133,11 +161,17 @@ public static class KZReflectionKit
 		}
 	}
 
+	/// <summary>
+	/// Returns whether the given provider defines an attribute of type TAttribute.
+	/// </summary>
 	public static bool IsDefined<TAttribute>(ICustomAttributeProvider attributeProvider,bool inherit = false) where TAttribute : Attribute
 	{
 		return attributeProvider.IsDefined(typeof(TAttribute),inherit);
 	}
 
+	/// <summary>
+	/// Returns the first attribute of type TAttribute defined on the given provider, or null if none exist.
+	/// </summary>
 	public static TAttribute FindAttribute<TAttribute>(ICustomAttributeProvider attributeProvider,bool inherit = false) where TAttribute : Attribute
 	{
 		var attributeArray = attributeProvider.GetCustomAttributes(typeof(TAttribute),inherit);
@@ -145,8 +179,16 @@ public static class KZReflectionKit
 		return attributeArray.Length > 0 ? attributeArray[0] as TAttribute : null;
 	}
 
+	/// <summary>
+	/// Reads a property or field value from an object by member name and casts it to TMember.
+	/// </summary>
 	public static TMember FindValueInObject<TMember>(string memberName,object value,BindingFlags bindingFlag = Flags.InstanceAnyVisibility)
 	{
+		if(value == null)
+		{
+			return default;
+		}
+
 		var valueType = value.GetType();
 
 		var propertyInfo = valueType.GetProperty(memberName,bindingFlag);
@@ -166,6 +208,9 @@ public static class KZReflectionKit
 		return default;
 	}
 
+	/// <summary>
+	/// Safely retrieves all types from an assembly, returning only successfully loaded types on partial load failures.
+	/// </summary>
 	private static Type[] _GetSafeTypeArray(Assembly assembly)
 	{
 		try

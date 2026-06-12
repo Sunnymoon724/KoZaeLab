@@ -1,8 +1,14 @@
 using UnityEngine;
 using TMPro;
 
+/// <summary>
+/// Extension methods for <see cref="TMP_Text"/> safe assignment and localization.
+/// </summary>
 public static class TextMeshProExtension
 {
+	/// <summary>
+	/// Sets text and optional color; deactivates the GameObject when <paramref name="text"/> is empty.
+	/// </summary>
 	public static void SetSafeTextMeshPro(this TMP_Text textMesh,string text,Color? color = null)
 	{
 		if(!_IsValid(textMesh,text))
@@ -13,6 +19,9 @@ public static class TextMeshProExtension
 		_SetSafeTextMeshPro(textMesh,text,color);
 	}
 
+	/// <summary>
+	/// Sets a localization key via <see cref="LocalizeTextUI"/> when present; otherwise assigns text directly.
+	/// </summary>
 	public static void SetLocalizeText(this TMP_Text textMesh,string text)
 	{
 		if(!_IsValid(textMesh,text))
@@ -49,8 +58,6 @@ public static class TextMeshProExtension
 		if(!textMesh)
 		{
 			LogChannel.Kit.E("TextMeshPro is null");
-
-			textMesh.gameObject.EnsureActive(false);
 
 			return false;
 		}

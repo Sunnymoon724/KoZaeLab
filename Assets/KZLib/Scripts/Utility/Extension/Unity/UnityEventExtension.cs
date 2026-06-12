@@ -1,5 +1,8 @@
 using UnityEngine.Events;
 
+/// <summary>
+/// Extension methods for safely adding, replacing, and clearing <see cref="UnityEvent"/> listeners.
+/// </summary>
 public static class UnityEventExtension
 {
 	/// <summary>

@@ -3,8 +3,8 @@ using UnityEngine;
 using KZLib.Utilities;
 using System.IO;
 using KZLib.Data;
-using KZLib.Networking;
-using KZLib.Webs;
+using KZLib.Networks;
+using KZLib.Webhooks;
 using KZLib.Natives;
 
 
@@ -14,25 +14,40 @@ using UnityEditor;
 
 #endif
 
+/// <summary>
+/// Utility methods for game lifecycle control, manager teardown, and environment detection.
+/// </summary>
 public static partial class KZGameKit
 {
+	/// <summary>
+	/// Pauses the game by setting time scale to zero and pausing the audio listener.
+	/// </summary>
 	public static void PauseGame()
 	{
 		Time.timeScale = 0.0f;
 		AudioListener.pause = true;
 	}
 
+	/// <summary>
+	/// Resumes the game by restoring time scale and unpausing the audio listener.
+	/// </summary>
 	public static void UnPauseGame()
 	{
 		Time.timeScale = 1.0f;
 		AudioListener.pause = false;
 	}
 
+	/// <summary>
+	/// Returns whether the game is currently paused (time scale is zero).
+	/// </summary>
 	public static bool IsPaused()
 	{
 		return Time.timeScale == 0.0f;
 	}
 
+	/// <summary>
+	/// Stops play mode in the editor or quits the application at runtime.
+	/// </summary>
 	public static void Quit()
 	{
 #if UNITY_EDITOR
@@ -42,6 +57,9 @@ public static partial class KZGameKit
 #endif
 	}
 
+	/// <summary>
+	/// Disposes all registered singleton managers in a defined release order.
+	/// </summary>
 	public static void ReleaseManager()
 	{
 		//? Release SingletonMB
@@ -71,6 +89,7 @@ public static partial class KZGameKit
 
 		_ReleaseSingleton<ShaderManager>();
 		_ReleaseSingleton<GameTimeManager>();
+		_ReleaseSingleton<ServerClockManager>();
 
 		_ReleaseSingleton<TimeManager>();
 		_ReleaseSingleton<LuaManager>();
@@ -106,6 +125,10 @@ public static partial class KZGameKit
 		}
 	}
 
+	/// <summary>
+	/// Returns the current build environment type.
+	/// In the editor, reads BranchInfo.txt from the project parent path; defaults to DEV otherwise.
+	/// </summary>
 	public static EnvironmentType GetCurrentEnvironmentType()
 	{
 #if UNITY_EDITOR

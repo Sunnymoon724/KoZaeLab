@@ -2,6 +2,9 @@
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// Editor-only scene view drawing utilities for path knots, borders, and labels.
+/// </summary>
 public static class KZKnotKit
 {
 	private const float c_majorSize = 10.0f;
@@ -23,11 +26,17 @@ public static class KZKnotKit
 	private readonly static Color s_normalLineColor = "#00FF00FF".ToColor();
 	private readonly static Color s_guideLineColor = "#FFFFFFFF".ToColor();
 
+	/// <summary>
+	/// Draws a non-interactive knot at the given position using the fixed knot color.
+	/// </summary>
 	public static void DrawFixedKnot(int index,Vector3 position)
 	{
 		_DrawKnot(index,false,position,s_fixedColor);
 	}
 
+	/// <summary>
+	/// Draws an interactive control knot whose color reflects major/minor type, hover, and selection state.
+	/// </summary>
 	public static void DrawControlKnot(int index,Vector3 position,bool isMouseOver,bool isSelected,bool isMajor)
 	{
 		var highlightColor = isMajor ? s_highlightMajorColor : s_highlightMinorColor;
@@ -53,6 +62,9 @@ public static class KZKnotKit
 		Handles.color = cachedColor;
 	}
 
+	/// <summary>
+	/// Returns whether the mouse cursor is over the handle circle at the given position.
+	/// </summary>
 	public static bool IsMouseOverHandle(bool isMajor,Vector3 position)
 	{
 		var diameterSize = _GetKnotDiameterSize(isMajor,position)/2.0f;
@@ -67,6 +79,9 @@ public static class KZKnotKit
 		return knotSize*0.01f*HandleUtility.GetHandleSize(position)*2.5f;
 	}
 
+	/// <summary>
+	/// Draws a border polyline through the given positions, using the editing color when isEditing is true.
+	/// </summary>
 	public static void DrawBorderLine(Vector3[] positionArray,float width,bool isEditing)
 	{
 		_DrawLine(positionArray,width,isEditing ? s_editingBorderLineColor : s_normalBorderLineColor);
@@ -83,6 +98,9 @@ public static class KZKnotKit
 		Handles.color = cachedColor;
 	}
 
+	/// <summary>
+	/// Draws a label in the scene view at the given world position, optionally with a shadow offset.
+	/// </summary>
 	public static void DrawText(string labelText,Vector3 position,Color textColor,bool hasShadow)
 	{
 		var cachedColor = Handles.color;

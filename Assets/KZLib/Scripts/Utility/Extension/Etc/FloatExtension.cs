@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for float.
+/// Provides formatting, angle wrapping, vector conversion, and approximate comparison helpers.
+/// </summary>
 public static class FloatExtension
 {
 	public static string ToStringComma(this float number)
@@ -17,33 +21,33 @@ public static class FloatExtension
 		return $"{(number > 0.0 ? "+" : "")}{number}";
 	}
 
+	/// <summary>
+	/// Truncates toward zero to the given number of decimal places.
+	/// </summary>
 	public static float ToLimit(this float number,int decimalPoint)
 	{
 		var factor = Mathf.Pow(10.0f,decimalPoint);
 
-		return Mathf.Floor(number*factor)/factor;
+		return Mathf.Sign(number)*Mathf.Floor(Mathf.Abs(number)*factor)/factor;
 	}
 
 	/// <summary>
-	/// -180.0f ~ +180.0f
+	/// Wraps an angle into the range -180.0f ~ +180.0f.
 	/// </summary>
 	public static float ToWrapAngle(this float angle)
 	{
-		angle %= Global.FullAngle;
+		var fullAngle = Global.FullAngle;
 
-		while(angle > +Global.HalfAngle)
-		{
-			angle -= Global.FullAngle;
-		}
+		angle = ((angle % fullAngle)+fullAngle)%fullAngle;
 
-		while(angle < -Global.HalfAngle)
-		{
-			angle += Global.FullAngle;
-		}
-
-		return angle;
+		return angle > fullAngle ? angle-fullAngle : angle;
 	}
 
+	/// <summary>
+	/// Builds an XZ-plane position from polar coordinates.
+	/// </summary>
+	/// <param name="radius">Distance from the origin.</param>
+	/// <param name="degree">Angle in degrees.</param>
 	public static Vector3 ToVector(this float radius,float degree)
 	{
 		return new Vector3(radius*Mathf.Cos(degree*Mathf.Deg2Rad),0,radius*Mathf.Sin(degree*Mathf.Deg2Rad));
@@ -59,6 +63,9 @@ public static class FloatExtension
 		return Approximately(number,0.0f);
 	}
 
+	/// <summary>
+	/// Splits a value into its integer and absolute fractional parts.
+	/// </summary>
 	public static void SeparateDecimal(this float number,out int integer,out float fraction)
 	{
 		integer = Mathf.FloorToInt(number);

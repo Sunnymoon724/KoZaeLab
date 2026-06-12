@@ -30,6 +30,13 @@ namespace KZLib
 		{
 			InputManager.In.AddInputCon(this);
 
+			if(m_inputActionAsset == null)
+			{
+				LogChannel.Input.E($"InputActionAsset is not assigned in {gameObject.name}.");
+
+				return;
+			}
+
 			var actionMapArray = m_inputActionAsset.actionMaps;
 
 			for(var i=0;i<actionMapArray.Count;i++)
@@ -57,7 +64,7 @@ namespace KZLib
 			_SetEnable(false);
 		}
 
-		private void _Release()
+		private void OnDestroy()
 		{
 			UnsubscribeInputAction();
 

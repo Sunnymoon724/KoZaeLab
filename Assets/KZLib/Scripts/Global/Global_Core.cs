@@ -38,6 +38,28 @@ public static partial class Global
 
 
 	public const float ColorMaxValue = 255.0f;
+
+
+	public const int BytesPerKilobyte = 1024;
+	public const int MillisecondsPerSecond = 1000;
+
+
+	public const int HexLetterOffset = 10;
+
+
+	public const float AnimationFinishThreshold = 0.99f;
+
+
+	public const float DefaultPixelsPerUnit = 100.0f;
+
+
+	public const int RectCornerCount = 4;
+
+
+	public const string HexPrefix = "0x";
+	public const string HexColorPrefix = "#";
+	public const string DefaultAlphaHex = "FF";
+	public const string DefaultDateTimeFormat = "yyyy-MM-dd HH:mm";
 }
 #endregion General
 

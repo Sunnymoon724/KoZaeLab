@@ -10,6 +10,9 @@ public static partial class ContainerExtension
 		return _IsValid(dictionary) && key != null && dictionary.ContainsKey(key) && dictionary.Remove(key);
 	}
 
+	/// <summary>
+	/// Removes a key and outputs its value when the key exists.
+	/// </summary>
 	public static bool RemoveOut<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,TKey key,out TValue value)
 	{
 		value = default;
@@ -19,7 +22,10 @@ public static partial class ContainerExtension
 			return false;
 		}
 
-		value = dictionary[key];
+		if(!dictionary.TryGetValue(key,out value))
+		{
+			return false;
+		}
 
 		return dictionary.Remove(key);
 	}
@@ -52,6 +58,9 @@ public static partial class ContainerExtension
 		}
 	}
 
+	/// <summary>
+	/// Adds values from a collection, skipping entries whose derived key is null or already present.
+	/// </summary>
 	public static void AddRange<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,ICollection<TValue> valueCollection,Func<TValue,TKey> onFunc,Action onAction = null)
 	{
 		if(!_IsValid(dictionary))
@@ -73,6 +82,9 @@ public static partial class ContainerExtension
 		}
 	}
 
+	/// <summary>
+	/// Adds Unity objects to a dictionary keyed by their <see cref="Object.name"/>.
+	/// </summary>
 	public static void AddRange<TValue>(this IDictionary<string,TValue> dictionary,ICollection<TValue> valueCollection,Action onAction = null) where TValue : Object
 	{
 		if(_IsValid(dictionary))
@@ -86,6 +98,9 @@ public static partial class ContainerExtension
 		}
 	}
 
+	/// <summary>
+	/// Ensures a nested collection exists for the key, then appends the value to it.
+	/// </summary>
 	public static void AddOrCreate<TKey,TValue,TCollection>(this IDictionary<TKey,TCollection> dictionary,TKey key,TValue value) where TCollection : ICollection<TValue>,new()
 	{
 		if(!_IsValid(dictionary))
@@ -102,6 +117,9 @@ public static partial class ContainerExtension
 		collection.Add(value);
 	}
 
+	/// <summary>
+	/// Sorts each nested list or array value in place using the supplied comparer.
+	/// </summary>
 	public static void SortEachList<TKey,TValue>(this IDictionary<TKey,IList<TValue>> dictionary,IComparer<TValue> comparer)
 	{
 		if(!_IsValid(dictionary))
@@ -123,11 +141,14 @@ public static partial class ContainerExtension
 			{
 				LogChannel.Kit.E("Not Supported");
 
-				return;
+				continue;
 			}
 		}
 	}
 
+	/// <summary>
+	/// Merges additional dictionaries without overwriting existing keys.
+	/// </summary>
 	public static void AddDictionary<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,params IDictionary<TKey,TValue>[] otherDictionaryArray)
 	{
 		if(!_IsValid(dictionary))
@@ -152,6 +173,9 @@ public static partial class ContainerExtension
 		}
 	}
 
+	/// <summary>
+	/// Yields key/value pairs from nested collections whose values satisfy the predicate.
+	/// </summary>
 	public static IEnumerable<(TKey,TValue)> FindAllPairGroup<TKey,TValue>(this IDictionary<TKey,ICollection<TValue>> dictionary,Func<TValue,bool> onFunc)
 	{
 		if(_IsValid(dictionary))
@@ -169,6 +193,9 @@ public static partial class ContainerExtension
 		}
 	}
 
+	/// <summary>
+	/// Flattens all nested enumerable values into a single sequence.
+	/// </summary>
 	public static IEnumerable<TValue> MergeToGroup<TKey,TEnumerable,TValue>(this IDictionary<TKey,TEnumerable> dictionary) where TEnumerable : IEnumerable<TValue>
 	{
 		if(_IsValid(dictionary))
@@ -188,6 +215,9 @@ public static partial class ContainerExtension
 		}
 	}
 
+	/// <summary>
+	/// Formats every key/value pair with a template containing {0} and {1} placeholders.
+	/// </summary>
 	public static string ToString<TKey,TValue>(this IDictionary<TKey,TValue> dictionary,string format)
 	{
 		if(!_IsValid(dictionary))

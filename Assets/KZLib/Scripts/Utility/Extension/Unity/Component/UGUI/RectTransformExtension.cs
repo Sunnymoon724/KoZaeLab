@@ -1,7 +1,13 @@
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for <see cref="RectTransform"/> coordinate conversion, bounds calculation, and layout helpers.
+/// </summary>
 public static partial class RectTransformExtension
 {
+	/// <summary>
+	/// Converts a world-space point to local coordinates within this rect using the UI camera.
+	/// </summary>
 	public static Vector2 WorldToCanvasLocalPosition(this RectTransform rectTrans,Vector2 point,Camera uiCamera)
 	{
 		var screen = RectTransformUtility.WorldToScreenPoint(uiCamera,point);
@@ -16,6 +22,9 @@ public static partial class RectTransformExtension
 		return point;
 	}
 
+	/// <summary>
+	/// Projects a world position through <paramref name="worldCamera"/> and maps it to local canvas coordinates.
+	/// </summary>
 	public static Vector2 ConvertWorldPositionToCanvasPosition(this RectTransform rectTrans,Vector3 position,Camera worldCamera, Camera uiCamera )
 	{
 		var point = worldCamera.WorldToScreenPoint(position);
@@ -23,6 +32,9 @@ public static partial class RectTransformExtension
 		return GetLocalCanvasPositionFromScreenPosition(rectTrans,point,uiCamera);
 	}
 
+	/// <summary>
+	/// Returns the axis-aligned world-space bounds derived from <see cref="RectTransform.GetWorldCorners"/>.
+	/// </summary>
 	public static Rect CalculateWorldRect(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -155,6 +167,9 @@ public static partial class RectTransformExtension
 		return new Vector2(cornerArray[2].x,cornerArray[0].y);
 	}
 
+	/// <summary>
+	/// Returns a screen-space rect with Y flipped from Unity world coordinates to screen coordinates.
+	/// </summary>
 	public static Rect ToScreenSpace(this RectTransform rectTrans) 
 	{
 		var size = Vector2.Scale(rectTrans.rect.size,rectTrans.lossyScale);
@@ -166,6 +181,9 @@ public static partial class RectTransformExtension
 		return rect;
 	}
 
+	/// <summary>
+	/// Maps the world rect of this transform to screen pixels relative to the parent canvas size.
+	/// </summary>
 	public static Rect CalculateScreenRect(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -176,8 +194,21 @@ public static partial class RectTransformExtension
 		var worldRect = rectTrans.CalculateWorldRect();
 
 		var canvas = rectTrans.GetComponentInParent<Canvas>();
+
+		if(!canvas)
+		{
+			LogChannel.Kit.E("Canvas not found in parent.");
+
+			return default;
+		}
+
 		var canvasRectTrans = canvas.GetComponent<RectTransform>();
 		var canvasRect = canvasRectTrans.CalculateWorldRect();
+
+		if(canvasRect.size.x.ApproximatelyZero() || canvasRect.size.y.ApproximatelyZero())
+		{
+			return default;
+		}
 
 		var screenWidth = Screen.width;
 		var screenHeight = Screen.height;
@@ -187,6 +218,9 @@ public static partial class RectTransformExtension
 		return new Rect(screenWidth*((worldRect.x-canvasRect.x)/canvasRect.size.x),screenHeight*((-canvasRect.y+worldRect.y)/canvasRect.size.y),size.x,size.y);
 	}
 
+	/// <summary>
+	/// Returns the rect in the local space of the parent canvas.
+	/// </summary>
 	public static Rect CalculateCanvasRect(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -219,6 +253,9 @@ public static partial class RectTransformExtension
 		return new Rect(x,y,width,height);
 	}
 
+	/// <summary>
+	/// Walks up the hierarchy to find a <see cref="Canvas"/>, with a depth limit of 50 levels.
+	/// </summary>
 	public static Canvas FindParentCanvas(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -247,13 +284,16 @@ public static partial class RectTransformExtension
 			return null;
 		}
 
-		var cornerArray = new Vector3[4];
+		var cornerArray = new Vector3[Global.RectCornerCount];
 
 		rectTrans.GetWorldCorners(cornerArray);
 
 		return cornerArray;
 	}
 
+	/// <summary>
+	/// Stretches anchors to fill the parent and clears <see cref="RectTransform.sizeDelta"/>.
+	/// </summary>
 	public static void ExpandAnchorSize(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -266,6 +306,9 @@ public static partial class RectTransformExtension
 		rectTrans.sizeDelta = Vector2.zero;
 	}
 
+	/// <summary>
+	/// Resets anchors to full stretch and clears offset min/max for a zero-margin fill layout.
+	/// </summary>
 	public static void ResetTransform(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -339,6 +382,9 @@ public static partial class RectTransformExtension
 		rectTrans.SetSizeDelta(new(rectTrans.sizeDelta.x,height));
 	}
 
+	/// <summary>
+	/// Sets <see cref="RectTransform.anchorMin.x"/> while preserving the current y anchor.
+	/// </summary>
 	public static void SetLeftAnchorOffset(this RectTransform rectTrans,float left)
 	{
 		if(!_IsValid(rectTrans))
@@ -349,6 +395,9 @@ public static partial class RectTransformExtension
 		rectTrans.anchorMin = new Vector2(left,rectTrans.anchorMin.y);
 	}
 
+	/// <summary>
+	/// Sets <see cref="RectTransform.anchorMax.x"/> as <c>1 - right</c> while preserving the current y anchor.
+	/// </summary>
 	public static void SetRightAnchorOffset(this RectTransform rectTrans,float right)
 	{
 		if(!_IsValid(rectTrans))
@@ -359,6 +408,9 @@ public static partial class RectTransformExtension
 		rectTrans.anchorMax = new Vector2(1.0f-right,rectTrans.anchorMax.y);
 	}
 
+	/// <summary>
+	/// Sets <see cref="RectTransform.anchorMax.y"/> as <c>1 - top</c> while preserving the current x anchor.
+	/// </summary>
 	public static void SetTopAnchorOffset(this RectTransform rectTrans,float top)
 	{
 		if(!_IsValid(rectTrans))
@@ -369,6 +421,9 @@ public static partial class RectTransformExtension
 		rectTrans.anchorMax = new Vector2(rectTrans.anchorMax.x,1.0f-top);
 	}
 
+	/// <summary>
+	/// Sets <see cref="RectTransform.anchorMin.y"/> while preserving the current x anchor.
+	/// </summary>
 	public static void SetBottomAnchorOffset(this RectTransform rectTrans,float bottom)
 	{
 		if(!_IsValid(rectTrans))
@@ -379,6 +434,9 @@ public static partial class RectTransformExtension
 		rectTrans.anchorMin = new Vector2(rectTrans.anchorMin.x,bottom);
 	}
 
+	/// <summary>
+	/// Sets all four anchor offsets (left, top, right, bottom) as normalized fractions from each edge.
+	/// </summary>
 	public static void SetAnchorOffset(this RectTransform rectTrans,float left,float top,float right,float bottom)
 	{
 		if(!_IsValid(rectTrans))
@@ -390,6 +448,9 @@ public static partial class RectTransformExtension
 		rectTrans.anchorMax = new Vector2(1.0f-right,1.0f-top);
 	}
 
+	/// <summary>
+	/// Sets <see cref="RectTransform.offsetMin.x"/> (left margin in offset space).
+	/// </summary>
 	public static void SetLeft(this RectTransform rectTrans,float left)
 	{
 		if(!_IsValid(rectTrans))
@@ -400,6 +461,9 @@ public static partial class RectTransformExtension
 		rectTrans.offsetMin = new Vector2(left,rectTrans.offsetMin.y);
 	}
 	
+	/// <summary>
+	/// Sets <see cref="RectTransform.offsetMax.x"/> as <c>-right</c> (right margin in offset space).
+	/// </summary>
 	public static void SetRight(this RectTransform rectTrans,float right)
 	{
 		if(!_IsValid(rectTrans))
@@ -410,6 +474,9 @@ public static partial class RectTransformExtension
 		rectTrans.offsetMax = new Vector2(-right,rectTrans.offsetMax.y);
 	}
 
+	/// <summary>
+	/// Sets <see cref="RectTransform.offsetMax.y"/> as <c>-top</c> (top margin in offset space).
+	/// </summary>
 	public static void SetTop(this RectTransform rectTrans,float top)
 	{
 		if(!_IsValid(rectTrans))
@@ -420,6 +487,9 @@ public static partial class RectTransformExtension
 		rectTrans.offsetMax = new Vector2(rectTrans.offsetMax.x,-top);
 	}
 
+	/// <summary>
+	/// Sets <see cref="RectTransform.offsetMin.y"/> (bottom margin in offset space).
+	/// </summary>
 	public static void SetBottom(this RectTransform rectTrans,float bottom)
 	{
 		if(!_IsValid(rectTrans))

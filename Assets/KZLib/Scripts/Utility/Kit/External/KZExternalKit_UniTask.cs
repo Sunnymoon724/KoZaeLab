@@ -6,6 +6,9 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 public static partial class KZExternalKit
 {
+	/// <summary>
+	/// Cancels and disposes the given token source, then clears the reference.
+	/// </summary>
 	public static void KillTokenSource(ref CancellationTokenSource tokenSource)
 	{
 		if(tokenSource == null)
@@ -22,11 +25,22 @@ public static partial class KZExternalKit
 		tokenSource = null;
 	}
 
+	/// <summary>
+	/// Recreates the token source linked to the MonoBehaviour destroy cancellation token.
+	/// </summary>
 	public static void RecycleTokenSourceInMono(ref CancellationTokenSource tokenSource,MonoBehaviour monoBehaviour)
 	{
+		if(!monoBehaviour)
+		{
+			throw new ArgumentNullException($"{nameof(monoBehaviour)} is null. MonoBehaviour must be assigned.");
+		}
+
 		RecycleTokenSource(ref tokenSource,monoBehaviour.GetCancellationTokenOnDestroy());
 	}
 
+	/// <summary>
+	/// Recreates the token source linked to the given parent cancellation token.
+	/// </summary>
 	public static void RecycleTokenSource(ref CancellationTokenSource tokenSource,CancellationToken parentToken)
 	{
 		KillTokenSource(ref tokenSource);
@@ -34,6 +48,9 @@ public static partial class KZExternalKit
 		tokenSource = CancellationTokenSource.CreateLinkedTokenSource(parentToken);
 	}
 
+	/// <summary>
+	/// Disposes the current token source and creates a fresh standalone one.
+	/// </summary>
 	public static void RecycleTokenSource(ref CancellationTokenSource tokenSource)
 	{
 		KillTokenSource(ref tokenSource);
@@ -41,8 +58,16 @@ public static partial class KZExternalKit
 		tokenSource = new CancellationTokenSource();
 	}
 
+	/// <summary>
+	/// Runs the given UniTask delegates sequentially, stopping early on cancellation.
+	/// </summary>
 	public static async UniTask MergeUniTaskAsync(Func<UniTask>[] onPlayTaskArray,CancellationToken token)
 	{
+		if(onPlayTaskArray == null)
+		{
+			return;
+		}
+
 		foreach(var onPlayTask in onPlayTaskArray)
 		{
 			if(token.IsCancellationRequested)
@@ -57,16 +82,23 @@ public static partial class KZExternalKit
 		}
 	}
 
+	/// <summary>
+	/// Repeats the given UniTask delegate for the specified count.
+	/// A count of -1 repeats indefinitely until cancelled.
+	/// </summary>
 	public static async UniTask LoopUniTaskAsync(Func<UniTask> onPlayTask,int count,CancellationToken token)
 	{
 		await _LoopPlayAsync(onPlayTask,count,token);
 	}
 
+	/// <summary>
+	/// Invokes an action and waits for the given seconds, repeating for the specified count.
+	/// </summary>
 	public static async UniTask LoopActionAndWaitForSecondAsync(Action onAction,float second,bool ignoreTimeScale,int count,CancellationToken token)
 	{
 		async UniTask _PlayAndDelayAsync()
 		{
-			onAction();
+			onAction?.Invoke();
 
 			await UniTask.Delay(TimeSpan.FromSeconds(second),ignoreTimeScale,cancellationToken : token).SuppressCancellationThrow();
 		}
@@ -74,11 +106,14 @@ public static partial class KZExternalKit
 		await _LoopPlayAsync(_PlayAndDelayAsync,count,token);
 	}
 
+	/// <summary>
+	/// Invokes an action and waits one frame, repeating for the specified count.
+	/// </summary>
 	public static async UniTask LoopActionAndWaitForFrameAsync(Action onAction,int count,CancellationToken token)
 	{
 		async UniTask _PlayAndWaitAsync()
 		{
-			onAction();
+			onAction?.Invoke();
 
 			await UniTask.Yield(token).SuppressCancellationThrow();
 		}
@@ -86,13 +121,16 @@ public static partial class KZExternalKit
 		await _LoopPlayAsync(_PlayAndWaitAsync,count,token);
 	}
 
+	/// <summary>
+	/// Invokes an update callback with delta time each frame, repeating for the specified count.
+	/// </summary>
 	public static async UniTask LoopUpdateAndWaitForFrameAsync(Action<float> onUpdate,bool ignoreTimescale,int count,CancellationToken token)
 	{
 		async UniTask _PlayAndWaitAsync()
 		{
 			var deltaTime = _GetDeltaTime(ignoreTimescale);
 
-			onUpdate(deltaTime);
+			onUpdate?.Invoke(deltaTime);
 
 			await UniTask.Yield(token).SuppressCancellationThrow();
 		}
@@ -100,6 +138,9 @@ public static partial class KZExternalKit
 		await _LoopPlayAsync(_PlayAndWaitAsync,count,token);
 	}
 
+	/// <summary>
+	/// Repeats the delegate until count reaches zero, or indefinitely when count is negative.
+	/// </summary>
 	private static async UniTask _LoopPlayAsync(Func<UniTask> onPlayTask,int count,CancellationToken token)
 	{
 		if(count == 0)
@@ -109,7 +150,7 @@ public static partial class KZExternalKit
 
 		var totalCount = count;
 
-		while(totalCount == -1 || totalCount-- > 0)
+		while(totalCount < 0 || totalCount-- > 0)
 		{
 			if(token.IsCancellationRequested)
 			{
@@ -124,13 +165,23 @@ public static partial class KZExternalKit
 	}
 
 	/// <summary>
-	/// Wait time or condition
+	/// Waits until either the duration elapses or the condition becomes true, whichever comes first.
 	/// </summary>
 	public static async UniTask WaitForSecondsOrConditionAsync(float duration,Func<bool> onCondition,bool ignoreTimescale,CancellationToken token)
 	{
+		if(onCondition == null)
+		{
+			await UniTask.Delay(TimeSpan.FromSeconds(duration),ignoreTimescale,cancellationToken : token).SuppressCancellationThrow();
+
+			return;
+		}
+
 		await UniTask.WhenAny(UniTask.Delay(TimeSpan.FromSeconds(duration),ignoreTimescale,cancellationToken : token),UniTask.WaitUntil(onCondition,cancellationToken : token)).SuppressCancellationThrow();
 	}
 
+	/// <summary>
+	/// Waits until the condition becomes true, invoking onUpdate each frame with elapsed time.
+	/// </summary>
 	public static async UniTask WaitForConditionAsync(Func<bool> onCondition,Action<float> onUpdate,bool ignoreTimescale,CancellationToken token)
 	{
 		if(onCondition == null)
@@ -169,6 +220,9 @@ public static partial class KZExternalKit
 		onUpdate?.Invoke(elapsedTime);
 	}
 
+	/// <summary>
+	/// Interpolates from start to finish over duration using the given animation curve, invoking onProgress each frame.
+	/// </summary>
 	public static async UniTask ExecuteProgressAsync(float start,float finish,float duration,Action<float> onProgress,bool ignoreTimescale,AnimationCurve animationCurve,CancellationToken token)
 	{
 		if(duration <= 0.0f)
@@ -200,6 +254,9 @@ public static partial class KZExternalKit
 		onProgress?.Invoke(finish);
 	}
 
+	/// <summary>
+	/// Invokes onUpdate at fixed period intervals until the total duration elapses.
+	/// </summary>
 	public static async UniTask ExecutePeriodAsync(float duration,float period,Action<float> onUpdate,bool ignoreTimescale,CancellationToken token)
 	{
 		if(duration <= 0.0f || period <= 0.0f)
@@ -240,6 +297,9 @@ public static partial class KZExternalKit
 		return ignoreTimescale ? Time.unscaledDeltaTime : Time.deltaTime;
 	}
 
+	/// <summary>
+	/// Awaits an Addressables handle, throws on failure, releases the handle, and returns the result.
+	/// </summary>
 	public static async UniTask<T> LoadHandleSafeAsync<T>(AsyncOperationHandle<T> handle)
 	{
 		await handle;

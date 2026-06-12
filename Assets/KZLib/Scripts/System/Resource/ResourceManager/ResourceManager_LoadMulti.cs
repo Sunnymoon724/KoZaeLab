@@ -28,6 +28,11 @@ namespace KZLib
 			{
 				var gameObjectArray = _GetResourceArray<GameObject>(folderPath);
 
+				if(gameObjectArray == null)
+				{
+					return null;
+				}
+
 				for(var i=0;i<gameObjectArray.Length;i++)
 				{
 					gameObjectArray[i].transform.SetParent(parent);

@@ -10,11 +10,11 @@ namespace KZLib
 		private const float c_defaultBlurSize = 0.8f;
 		private const float c_enableSize = 1.0f;
 		private const float c_disableSize = 0.0f;
-		
-		private const string c_blurText = "_BlurSize";
-		private const string c_saturationText = "_Saturation";
 
-		private readonly Dictionary<string,Shader> m_ShaderDict = new();
+		private static readonly int s_blurSizeId = Shader.PropertyToID("_BlurSize");
+		private static readonly int s_saturationId = Shader.PropertyToID("_Saturation");
+
+		private readonly Dictionary<string,Shader> m_shaderDict = new();
 
 		private Material m_grayscale = null;
 		private Material m_blur = null;
@@ -27,8 +27,8 @@ namespace KZLib
 				if(!m_grayscale)
 				{
 					m_grayscale = GetMaterial("KZLib/TextureGrayscaleBlur");
-					m_grayscale.SetFloat(c_blurText,c_disableSize);
-					m_grayscale.SetFloat(c_saturationText,c_enableSize);
+					m_grayscale.SetFloat(s_blurSizeId,c_disableSize);
+					m_grayscale.SetFloat(s_saturationId,c_enableSize);
 				}
 
 				return m_grayscale;
@@ -42,8 +42,8 @@ namespace KZLib
 				if(!m_blur)
 				{
 					m_blur = GetMaterial("KZLib/TextureGrayscaleBlur");
-					m_blur.SetFloat(c_blurText,c_defaultBlurSize);
-					m_blur.SetFloat(c_saturationText,c_disableSize);
+					m_blur.SetFloat(s_blurSizeId,c_defaultBlurSize);
+					m_blur.SetFloat(s_saturationId,c_disableSize);
 				}
 
 				return m_blur;
@@ -57,8 +57,8 @@ namespace KZLib
 				if(!m_grayscaleBlur)
 				{
 					m_grayscaleBlur = GetMaterial("KZLib/TextureGrayscaleBlur");
-					m_grayscaleBlur.SetFloat(c_blurText,c_defaultBlurSize);
-					m_grayscaleBlur.SetFloat(c_saturationText,c_enableSize);
+					m_grayscaleBlur.SetFloat(s_blurSizeId,c_defaultBlurSize);
+					m_grayscaleBlur.SetFloat(s_saturationId,c_enableSize);
 				}
 
 				return m_grayscaleBlur;
@@ -71,21 +71,24 @@ namespace KZLib
 		{
 			if(disposing)
 			{
-				m_ShaderDict.Clear();
+				m_shaderDict.Clear();
 
 				if(m_grayscale)
 				{
 					m_grayscale.DestroyObject();
+					m_grayscale = null;
 				}
 
 				if(m_blur)
 				{
 					m_blur.DestroyObject();
+					m_blur = null;
 				}
 
 				if(m_grayscaleBlur)
 				{
 					m_grayscaleBlur.DestroyObject();
+					m_grayscaleBlur = null;
 				}
 			}
 
@@ -94,7 +97,7 @@ namespace KZLib
 
 		public Shader FindShader(string shaderName)
 		{
-			if(!m_ShaderDict.ContainsKey(shaderName))
+			if(!m_shaderDict.ContainsKey(shaderName))
 			{
 				var shader = Shader.Find(shaderName);
 
@@ -106,16 +109,20 @@ namespace KZLib
 
 					if(shader == null)
 					{
-						throw new NullReferenceException($"Shader {shaderName} not found.");
+						throw new NullReferenceException($"Shader {shaderName} not found. ShaderName must be assigned.");
 					}
 				}
 
-				m_ShaderDict.Add(shaderName,shader);
+				m_shaderDict.Add(shaderName,shader);
 			}
 
-			return m_ShaderDict[shaderName];
+			return m_shaderDict[shaderName];
 		}
 
+		/// <summary>
+		/// Creates and returns a new Material instance from the specified shader.
+		/// The caller is responsible for destroying the returned Material via DestroyObject() when it is no longer needed.
+		/// </summary>
 		public Material GetMaterial(string shaderName)
 		{
 			return new Material(FindShader(shaderName));

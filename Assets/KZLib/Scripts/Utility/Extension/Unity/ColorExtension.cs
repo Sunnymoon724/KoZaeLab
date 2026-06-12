@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for <see cref="Color"/> conversion, masking, and brightness adjustments.
+/// </summary>
 public static class ColorExtension
 {
 	private static readonly Dictionary<Color,string> s_colorDict = new();
@@ -14,7 +17,7 @@ public static class ColorExtension
 	{
 		if(!s_colorDict.ContainsKey(color))
 		{
-			s_colorDict.Add(color,$"#{ColorUtility.ToHtmlStringRGBA(color)}");
+			s_colorDict.Add(color,$"{Global.HexColorPrefix}{ColorUtility.ToHtmlStringRGBA(color)}");
 		}
 
 		return s_colorDict[color];
@@ -44,14 +47,17 @@ public static class ColorExtension
 
 	public static Color InvertColor(this Color color) => new(1.0f-color.r,1.0f-color.g,1.0f-color.b);
 
+	/// <summary>
+	/// Packs RGBA channel values into a single 32-bit integer (ARGB byte order).
+	/// </summary>
 	public static int ToInt(this Color color)
 	{
 		var result = 0;
 
-		result |= Mathf.RoundToInt(color.r*255.0f) << 24;
-		result |= Mathf.RoundToInt(color.g*255.0f) << 16;
-		result |= Mathf.RoundToInt(color.b*255.0f) << 8;
-		result |= Mathf.RoundToInt(color.a*255.0f);
+		result |= Mathf.RoundToInt(color.r*Global.ColorMaxValue) << 24;
+		result |= Mathf.RoundToInt(color.g*Global.ColorMaxValue) << 16;
+		result |= Mathf.RoundToInt(color.b*Global.ColorMaxValue) << 8;
+		result |= Mathf.RoundToInt(color.a*Global.ColorMaxValue);
 
 		return result;
 	}
@@ -78,7 +84,7 @@ public static class ColorExtension
 	{
 		var gradient = new Gradient();
 
-		gradient.SetKeys(new[] { new GradientColorKey(color1,0.0f), new GradientColorKey(color2,1.0f) },new[] { new GradientAlphaKey(color1.a,0.0f), new GradientAlphaKey(color1.a,1.0f) });
+		gradient.SetKeys(new[] { new GradientColorKey(color1,0.0f), new GradientColorKey(color2,1.0f) },new[] { new GradientAlphaKey(color1.a,0.0f), new GradientAlphaKey(color2.a,1.0f) });
 
 		return gradient;
 	}

@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine.Networking;
 using System.Text;
 
-namespace KZLib.Webs
+namespace KZLib.Webhooks
 {
 	public record ResponseInfo(bool Result,long Code,string Content,string Error);
 	public record DumpInfo(Uri Uri,string Method,string Payload,string ContentType);
@@ -87,7 +87,7 @@ namespace KZLib.Webs
 			}
 			catch(Exception exception)
 			{
-				LogChannel.Web.E($"Exception : {exception.Message}");
+				LogChannel.Webhook.E($"Exception : {exception.Message}");
 
 				return new ResponseInfo(false,c_internalServerError,string.Empty,exception.Message);
 			}

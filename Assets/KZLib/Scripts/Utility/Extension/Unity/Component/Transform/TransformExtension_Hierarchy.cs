@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for <see cref="Transform"/> hierarchy traversal, search, and child management.
+/// </summary>
 public static partial class TransformExtension
 {
 	/// <summary>
@@ -32,6 +35,9 @@ public static partial class TransformExtension
 		return stringBuilder.ToString();
 	}
 
+	/// <summary>
+	/// Finds a direct child of the scene root by name, not relative to <paramref name="origin"/>.
+	/// </summary>
 	public static Transform FindFromRoot(this Transform origin,string name)
 	{
 		if(!_IsValid(origin))
@@ -42,6 +48,9 @@ public static partial class TransformExtension
 		return origin.root.Find(name);
 	}
 
+	/// <summary>
+	/// Finds a sibling transform with the given name under the same parent.
+	/// </summary>
 	public static Transform FindSibling(this Transform origin,string name)
 	{
 		if(!_IsValid(origin))
@@ -52,6 +61,9 @@ public static partial class TransformExtension
 		return origin.parent ? origin.parent.Find(name) : null;
 	}
 
+	/// <summary>
+	/// Walks up the parent chain and returns the first transform whose name matches.
+	/// </summary>
 	public static Transform FindInParentHierarchy(this Transform origin,string name)
 	{
 		if(!_IsValid(origin))
@@ -128,6 +140,9 @@ public static partial class TransformExtension
 		return AddChildren(origin,nameArray);
 	}
 
+	/// <summary>
+	/// Parents <paramref name="child"/> under <paramref name="origin"/> and optionally matches the layer.
+	/// </summary>
 	public static void SetChild(this Transform origin,Transform child,bool worldPositionStays = true,bool isSameLayer = true)
 	{
 		if(!_IsValid(origin) || !_IsValid(child))
@@ -194,6 +209,9 @@ public static partial class TransformExtension
 		return childArray;
 	}
 
+	/// <summary>
+	/// Instantiates a prefab child with <c>worldPositionStays = false</c> for UI layout.
+	/// </summary>
 	public static Transform AddUIChild(this Transform origin,GameObject prefab,bool isSameLayer = true)
 	{
 		if(!_IsValid(origin))
@@ -221,6 +239,9 @@ public static partial class TransformExtension
 		return childArray;
 	}
 
+	/// <summary>
+	/// Depth-first search for a descendant transform with the given name.
+	/// </summary>
 	public static Transform RecursiveFindChild(this Transform origin,string name)
 	{
 		if(!_IsValid(origin))
@@ -249,6 +270,9 @@ public static partial class TransformExtension
 		return null;
 	}
 
+	/// <summary>
+	/// Yields all descendants, or only those whose name matches when <paramref name="name"/> is provided.
+	/// </summary>
 	public static IEnumerable<Transform> FindChildGroup(this Transform origin,string name = null)
 	{
 		if(!_IsValid(origin))
@@ -275,6 +299,9 @@ public static partial class TransformExtension
 		}
 	}
 
+	/// <summary>
+	/// Destroys all children except those listed in <paramref name="exceptionArray"/>; optionally skips inactive children.
+	/// </summary>
 	public static Transform DestroyChildren(this Transform origin,bool isActiveOnly = false,params Transform[] exceptionArray)
 	{
 		if(!_IsValid(origin))

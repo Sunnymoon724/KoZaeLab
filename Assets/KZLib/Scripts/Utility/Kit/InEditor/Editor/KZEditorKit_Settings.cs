@@ -4,6 +4,9 @@ using UnityEditor;
 using UnityEditor.Build;
 using UnityEditorInternal;
 
+/// <summary>
+/// Partial editor utility for project tag, layer, and player settings management.
+/// </summary>
 public static partial class KZEditorKit
 {
 	#region Tag & Layer
@@ -32,6 +35,9 @@ public static partial class KZEditorKit
 		return new SerializedObject(assetArray[0]);
 	}
 
+	/// <summary>
+	/// Adds a layer name to the first empty user layer slot (index 8 and above) when it does not already exist.
+	/// </summary>
 	public static void AddLayer(string layerName)
 	{
 		var serialized = _FindTagManagerObject();
@@ -97,6 +103,9 @@ public static partial class KZEditorKit
 		PlayerSettings.SetScriptingDefineSymbols(buildTargetGroup,symbolText.Replace(defineSymbol,"").Replace(";;",";"));
 	}
 
+	/// <summary>
+	/// Merges the given old and new define symbols into the scripting define symbols for each supported build target.
+	/// </summary>
 	public static void ChangeDefineSymbol(string[] oldDefineSymbolArray,string[] newDefineSymbolArray)
 	{
 		foreach(var target in BuildTargetGroup)
@@ -124,6 +133,9 @@ public static partial class KZEditorKit
 		}
 	}
 
+	/// <summary>
+	/// Sets the application identifier (package name) for all supported build targets.
+	/// </summary>
 	public static void ChangePackageName(string packageName)
 	{
 		foreach(var target in BuildTargetGroup)

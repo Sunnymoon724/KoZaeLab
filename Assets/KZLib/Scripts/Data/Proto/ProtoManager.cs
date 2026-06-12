@@ -242,32 +242,32 @@ namespace KZLib.Data
 
 				if(textAsset.bytes == null)
 				{
-					throw new InvalidCastException($"{protoName} is empty.");
+					throw new InvalidCastException($"{protoName} is empty. TextAsset must be assigned.");
 				}
 
 				var protoTypeName = $"KZLib.Data.{protoName}Proto";
-				var protoType = KZReflectionKit.FindType(protoTypeName) ?? throw new InvalidOperationException($"{protoTypeName} is not exist.");
+				var protoType = KZReflectionKit.FindType(protoTypeName) ?? throw new InvalidOperationException($"{protoTypeName} is not exist. TypeName must be assigned.");
 				var deserialize = MemoryPackSerializer.Deserialize(protoType.MakeArrayType(),textAsset.bytes);
 
 				if(deserialize is not object[] resultArray)
 				{
-					throw new InvalidOperationException($"{protoName} is not array.");
+					throw new InvalidOperationException($"{protoName} is not array. TextAsset must be assigned.");
 				}
 
 				var protoDict = new Dictionary<int,IProto>();
 
 				for(var i=0;i<resultArray.Length;i++)
 				{
-					var proto = resultArray[i] as IProto ?? throw new InvalidOperationException($"{protoTypeName} is not exist.");
+					var proto = resultArray[i] as IProto ?? throw new InvalidOperationException($"{protoTypeName} is not exist. TypeName must be assigned.");
 
 					if(proto.Num == c_invalidNumber)
 					{
-						throw new ArgumentException($"Num is zero in {proto}.");
+						throw new ArgumentException($"Num is zero in {proto}. Proto must be assigned.");
 					}
 
 					if(protoDict.ContainsKey(proto.Num))
 					{
-						throw new ArgumentException($"{proto.Num} is already added in {proto}.");
+						throw new ArgumentException($"{proto.Num} is already added in {proto}. Proto must be assigned.");
 					}
 
 					protoDict.Add(proto.Num,proto);
@@ -313,7 +313,7 @@ namespace KZLib.Data
 
 				if(textAsset == null)
 				{
-					LogChannel.Data.W($"TextAsset is null in {i}");
+					LogChannel.Data.W($"TextAsset is null in {i}. TextAsset must be assigned.");
 
 					continue;
 				}
@@ -335,7 +335,7 @@ namespace KZLib.Data
 
 			if(textAssetArray.IsNullOrEmpty())
 			{
-				LogChannel.Data.E("Load failed, textAsset is null.");
+				LogChannel.Data.E("Load failed, textAsset is null. TextAsset must be assigned.");
 
 				return false;
 			}

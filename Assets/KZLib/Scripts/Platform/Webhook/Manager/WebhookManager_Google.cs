@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 using KZLib.Utilities;
 using Newtonsoft.Json.Linq;
 
-namespace KZLib.Webs
+namespace KZLib.Webhooks
 {
 	public partial class WebhookManager : Singleton<WebhookManager>
 	{
@@ -107,12 +107,12 @@ namespace KZLib.Webs
 				}
 				catch(Exception exception)
 				{
-					LogChannel.Web.E($"Convert is failed - {exception}");
+					LogChannel.Webhook.E($"Convert is failed - {exception}");
 				}
 			}
 			else
 			{
-				LogChannel.Web.E("Result is failed");
+				LogChannel.Webhook.E("Result is failed");
 			}
 
 			return null;
@@ -124,7 +124,7 @@ namespace KZLib.Webs
 
 			if(sheetId.IsEmpty())
 			{
-				LogChannel.Web.E("Sheet id is empty");
+				LogChannel.Webhook.E("Sheet id is empty");
 
 				return false;
 			}
@@ -138,7 +138,7 @@ namespace KZLib.Webs
 
 			if(url.IsEmpty())
 			{
-				LogChannel.Web.E("Google Sheet URL is empty");
+				LogChannel.Webhook.E("Google Sheet URL is empty");
 
 				return false;
 			}
@@ -152,7 +152,7 @@ namespace KZLib.Webs
 
 			if(folderId.IsEmpty())
 			{
-				LogChannel.Web.E("Folder id is empty");
+				LogChannel.Webhook.E("Folder id is empty");
 
 				return false;
 			}
@@ -166,7 +166,7 @@ namespace KZLib.Webs
 
 			if(url.IsEmpty())
 			{
-				LogChannel.Web.E("Google Drive URL is empty");
+				LogChannel.Webhook.E("Google Drive URL is empty");
 
 				return false;
 			}

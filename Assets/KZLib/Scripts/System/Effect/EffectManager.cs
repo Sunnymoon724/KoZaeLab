@@ -53,7 +53,7 @@ namespace KZLib
 
 				if(!effectClip)
 				{
-					throw new NullReferenceException($"{name} is not exist. [{effectPath}]");
+					throw new NullReferenceException($"{name} is not exist. [{effectPath}]. Name and EffectPath must be assigned.");
 				}
 			}
 

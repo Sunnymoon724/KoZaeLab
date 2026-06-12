@@ -1,17 +1,12 @@
-﻿using System.ComponentModel;
-using System;
+﻿using System;
 using KZLib.Utilities;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
-namespace System.Runtime.CompilerServices
-{
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	internal class IsExternalInit { }
-}
+[assembly: InternalsVisibleTo("KZLib.Editor")]
 
 public record MessageInfo(string Header,string Body);
-
 public record NetworkRespondInfo(bool IsUpdate,string Type,string Content);
 
 public record NetworkPacketInfo(int Code,string Message,bool IsEncrypted);

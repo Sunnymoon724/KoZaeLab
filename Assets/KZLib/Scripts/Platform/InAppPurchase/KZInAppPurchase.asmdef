@@ -2,6 +2,7 @@
     "name": "KZInAppPurchase",
     "rootNamespace": "",
     "references": [
+        "KZLib.Shared",
         "KZLib",
         "Unity.Purchasing",
         "UniTask",

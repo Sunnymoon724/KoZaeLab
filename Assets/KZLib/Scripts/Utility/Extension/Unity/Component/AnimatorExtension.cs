@@ -10,8 +10,14 @@ using UnityEditor.Animations;
 
 #endif
 
+/// <summary>
+/// Extension methods for <see cref="Animator"/> state queries and async playback helpers.
+/// </summary>
 public static class AnimatorExtension
 {
+	/// <summary>
+	/// Returns whether the animator is currently in the named state on the given layer.
+	/// </summary>
 	public static bool IsState(this Animator animator,string animationName,int layer = 0)
 	{
 		if(!_IsValid(animator))
@@ -59,6 +65,9 @@ public static class AnimatorExtension
 		animator.Play(animationHashName,layer,normalizedTime);
 	}
 
+	/// <summary>
+	/// Returns the current state, or the next state when a transition is in progress.
+	/// </summary>
 	public static AnimatorStateInfo GetCurrentState(this Animator animator,int layer = 0)
 	{
 		if(!_IsValid(animator))
@@ -69,6 +78,9 @@ public static class AnimatorExtension
 		return animator.GetNextAnimatorStateInfo(layer).shortNameHash == 0 ? animator.GetCurrentAnimatorStateInfo(layer) : animator.GetNextAnimatorStateInfo(layer);
 	}
 
+	/// <summary>
+	/// Waits until the named state is active, invokes callbacks during playback, then fires on complete at exit time.
+	/// </summary>
 	public static async UniTask PlayActionInAnimationAsync(this Animator animator,string animationName,int layer,float exitTime,Action onChange,Action onPlay,Action onComplete)
 	{
 		await PlayActionInAnimationAsync(animator,Animator.StringToHash(animationName),layer,exitTime,onChange,onPlay,onComplete);
@@ -95,6 +107,9 @@ public static class AnimatorExtension
 		onComplete?.Invoke();
 	}
 
+	/// <summary>
+	/// Plays the animation and awaits until it finishes or a transition begins.
+	/// </summary>
 	public static async UniTask PlayAndWaitAsync(this Animator animator,string animationName,int layer = 0,CancellationToken token = default)
 	{
 		if(!_IsValid(animator))
@@ -117,6 +132,9 @@ public static class AnimatorExtension
 		await WaitForAnimationFinishAsync(animator,animationHashName,layer,token);
 	}
 
+	/// <summary>
+	/// Awaits until the named animation reaches its finish threshold or begins transitioning out.
+	/// </summary>
 	public static async UniTask WaitForAnimationFinishAsync(this Animator animator,string animationName,int layer = 0,CancellationToken token = default)
 	{
 		if(!_IsValid(animator))
@@ -150,7 +168,7 @@ public static class AnimatorExtension
 				return true;
 			}
 
-			return normalizedTime >= 0.99f;
+			return normalizedTime >= Global.AnimationFinishThreshold;
 		}
 
 		await UniTask.WaitUntil(_IsAnimationFinished,cancellationToken : token).SuppressCancellationThrow();
@@ -187,9 +205,12 @@ public static class AnimatorExtension
 
 		var normalizedTime = stateInfo.loop ? stateInfo.normalizedTime%1.0f : stateInfo.normalizedTime;
 
-		return normalizedTime >= 0.99f;
+		return normalizedTime >= Global.AnimationFinishThreshold;
 	}
 
+	/// <summary>
+	/// Awaits until the named animation has started playing (normalized time greater than zero).
+	/// </summary>
 	public static async UniTask WaitForAnimationStartAsync(this Animator animator,string animationName,int layer = 0,CancellationToken token = default)
 	{
 		if(!_IsValid(animator))
@@ -234,7 +255,7 @@ public static class AnimatorExtension
 
 		var stateInfo = animator.GetCurrentAnimatorStateInfo(layer);
 
-		return stateInfo.shortNameHash == animationHashName && stateInfo.normalizedTime <= 0.0f;
+		return stateInfo.shortNameHash == animationHashName && stateInfo.normalizedTime > 0.0f;
 	}
 
 	public static AnimationClip[] GetAnimationClipArray(this Animator animator)
@@ -287,6 +308,9 @@ public static class AnimatorExtension
 	}
 
 #if UNITY_EDITOR
+	/// <summary>
+	/// Resolves the underlying <see cref="AnimatorController"/>, including override controllers.
+	/// </summary>
 	public static AnimatorController GetAnimatorController(this Animator animator,out bool isOverride)
 	{
 		if(!_IsValid(animator))

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using KZLib.Utilities;
 
-namespace KZLib.Webs
+namespace KZLib.Webhooks
 {
 	public partial class WebhookManager : Singleton<WebhookManager>
 	{
@@ -25,7 +25,7 @@ namespace KZLib.Webs
 		{
 			if(link.IsEmpty())
 			{
-				LogChannel.Web.E("Link is empty");
+				LogChannel.Webhook.E("Link is empty");
 
 				return;
 			}

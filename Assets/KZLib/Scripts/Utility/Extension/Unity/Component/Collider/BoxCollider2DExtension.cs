@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for <see cref="BoxCollider2D"/> bounds, radius, and scale calculations.
+/// </summary>
 public static class BoxCollider2DExtension
 {
 	public static Bounds CalculateLocalBounds(this BoxCollider2D boxCollider2D)
@@ -12,6 +15,9 @@ public static class BoxCollider2DExtension
 		return new Bounds(boxCollider2D.offset,boxCollider2D.size);
 	}
 
+	/// <summary>
+	/// Returns the half-diagonal extent of the box plus <see cref="BoxCollider2D.edgeRadius"/>.
+	/// </summary>
 	public static float CalculateRadius(this BoxCollider2D boxCollider2D,out Vector2 localCenter)
 	{
 		if(!_IsValid(boxCollider2D))
@@ -29,6 +35,9 @@ public static class BoxCollider2DExtension
 		return Mathf.Sqrt(halfWidth*halfWidth+halfHeight*halfHeight)+boxCollider2D.edgeRadius;
 	}
 
+	/// <summary>
+	/// Scales offset and size by the given vector; size components use absolute scale values.
+	/// </summary>
 	public static bool ApplyScale(this BoxCollider2D boxCollider2D,Vector3 scale)
 	{
 		if(!_IsValid(boxCollider2D))

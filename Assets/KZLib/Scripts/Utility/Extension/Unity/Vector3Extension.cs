@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for <see cref="Vector3"/> transforms, plane math, and spatial queries.
+/// </summary>
 public static class Vector3Extension
 {
 	#region Set
@@ -142,14 +145,20 @@ public static class Vector3Extension
 	}
 	#endregion ToVector
 
+	/// <summary>
+	/// Returns the normalized horizontal direction from this position to the target (Y flattened to zero).
+	/// </summary>
 	public static Vector3 PlaneDirection(this Vector3 vector,Vector3 target)
 	{
 		var pivot = vector.SetY();
 		var result = target.SetY();
 		
-		return (pivot-result).normalized;
+		return (result-pivot).normalized;
 	}
 
+	/// <summary>
+	/// Returns the horizontal distance between this position and the target (Y flattened to zero).
+	/// </summary>
 	public static float PlaneDistance(this Vector3 vector,Vector3 target)
 	{
 		var pivot = vector.SetY();
@@ -168,9 +177,12 @@ public static class Vector3Extension
 		return vector.x.ApproximatelyZero() && vector.y.ApproximatelyZero() && vector.z.ApproximatelyZero();
 	}
 
+	/// <summary>
+	/// Returns the component-wise reciprocal, treating near-zero components as zero.
+	/// </summary>
 	public static Vector3 Reciprocal(this Vector3 vector)
 	{
-		return new Vector3(1.0f/vector.x,1.0f/vector.y,1.0f/vector.z);
+		return new Vector3(vector.x.ApproximatelyZero() ? 0.0f : 1.0f/vector.x,vector.y.ApproximatelyZero() ? 0.0f : 1.0f/vector.y,vector.z.ApproximatelyZero() ? 0.0f : 1.0f/vector.z);
 	}
 
 	public static Vector3 DistanceEach(this Vector3 vector1,Vector3 vector2)
@@ -225,24 +237,33 @@ public static class Vector3Extension
 
 	public static Vector3 MiddleVector(this Vector3 vector1,Vector3 vector2)
 	{
-		return new Vector3((vector2.x-vector1.x)/2.0f,(vector2.y-vector1.y)/2.0f,(vector2.z-vector1.z)/2.0f);
+		return new Vector3((vector1.x+vector2.x)/2.0f,(vector1.y+vector2.y)/2.0f,(vector1.z+vector2.z)/2.0f);
 	}
 
+	/// <summary>
+	/// Converts an HSV vector (hue, saturation, value) to an RGB <see cref="Color"/>.
+	/// </summary>
 	public static Color ToRGB(this Vector3 hsv)
 	{
 		return Color.HSVToRGB(hsv.x,hsv.y,hsv.z);
 	}
 
+	/// <summary>
+	/// Converts byte-scaled RGB components to a fully opaque <see cref="Color"/>.
+	/// </summary>
 	public static Color ToColor(this Vector3 vector)
 	{
-		return new Color(vector.x/255.0f,vector.y/255.0f,vector.z/255.0f,1.0f);
+		return new Color(vector.x/Global.ColorMaxValue,vector.y/Global.ColorMaxValue,vector.z/Global.ColorMaxValue,1.0f);
 	}
 
 	public static float ToAngle(this Vector3 vector)
 	{
-		return Mathf.Atan2( vector.y, vector.x ) * Mathf.Rad2Deg;
+		return Mathf.Atan2(vector.y,vector.x)*Mathf.Rad2Deg;
 	}
 
+	/// <summary>
+	/// Finds the nearest position in the array and returns it with its index.
+	/// </summary>
 	public static (Vector3 Position,int Index) CalculateGetClosestPosition(this Vector3 position,params Vector3[] positionArray)
 	{
 		var index = Global.InvalidIndex;
@@ -265,6 +286,9 @@ public static class Vector3Extension
 		return (closestPosition,index);
 	}
 
+	/// <summary>
+	/// Projects this position onto an infinite ray and returns the closest point and signed distance along the ray.
+	/// </summary>
 	public static (Vector3 Position,float Distance) CalculateClosestPositionOnRay(this Vector3 position,Vector3 origin,Vector3 direction)
 	{
 		var distance = Vector3.Dot(position-origin,direction);
@@ -284,6 +308,9 @@ public static class Vector3Extension
 	// 	return (start+direction*distance,distance);
 	// }
 
+	/// <summary>
+	/// Computes pitch and yaw angles (in degrees) from this direction toward a comparison direction.
+	/// </summary>
 	public static Vector2 CalculateAnglesTo(this Vector3 vector,Vector3 compare)
 	{
 		return new Vector2(-Mathf.Asin(Vector3.Cross(compare,vector).y)*Mathf.Rad2Deg,-Mathf.Asin(Vector3.Cross(compare,vector).x)*Mathf.Rad2Deg);
@@ -298,6 +325,9 @@ public static class Vector3Extension
 		return vector.Transform(transform.position,transform.rotation,transform.lossyScale);
 	}
 	
+	/// <summary>
+	/// Applies scale, rotation, and translation to this local-space vector.
+	/// </summary>
 	public static Vector3 Transform(this Vector3 vector,Vector3 position,Quaternion rotation,Vector3 _scale)
 	{
 		vector = Vector3.Scale(vector,new Vector3(_scale.x,_scale.y,_scale.z));
@@ -312,6 +342,9 @@ public static class Vector3Extension
 		return vector.InverseTransform(transform.position,transform.rotation,transform.lossyScale);
 	}
 
+	/// <summary>
+	/// Reverses scale, rotation, and translation applied by <see cref="Transform"/>.
+	/// </summary>
 	public static Vector3 InverseTransform(this Vector3 vector,Vector3 position,Quaternion rotation,Vector3 scale)
 	{
 		vector -= position;
@@ -321,6 +354,9 @@ public static class Vector3Extension
 		return vector;
 	}
 
+	/// <summary>
+	/// Converts a world position from one camera space to local space relative to a UI transform.
+	/// </summary>
 	public static Vector3 ToLocalPosition(Vector3 position,Camera worldCam,Camera uiCam,Transform relativeTo)
 	{
 		position = worldCam.WorldToViewportPoint(position);
@@ -334,6 +370,9 @@ public static class Vector3Extension
 		return relativeTo.parent.InverseTransformPoint(position);
 	}
 
+	/// <summary>
+	/// Transforms a direction vector by the target's rotation and adds its world position.
+	/// </summary>
 	public static Vector3 VectorByTransform(this Vector3 vector,Transform target)
 	{
 		var matrix = Matrix4x4.TRS(Vector3.zero,target.rotation,Vector3.one);
@@ -344,13 +383,24 @@ public static class Vector3Extension
 		return result;
 	}
 
+	/// <summary>
+	/// Smoothly damps each Euler angle component toward the target angles.
+	/// </summary>
 	public static Vector3 SmoothDampAngle(this Vector3 vector,Vector3 target,ref Vector3 velocity,float smoothTime)
 	{
 		return new Vector3(Mathf.SmoothDampAngle(vector.x,target.x,ref velocity.x,smoothTime),Mathf.SmoothDampAngle(vector.y,target.y,ref velocity.y,smoothTime),Mathf.SmoothDampAngle(vector.z,target.z,ref velocity.z,smoothTime));
 	}
 
+	/// <summary>
+	/// Returns whether this point lies inside the collider (not merely within its bounds).
+	/// </summary>
 	public static bool IsInside(this Vector3 vector,Collider collider)
 	{
+		if(!collider.bounds.Contains(vector))
+		{
+			return false;
+		}
+
 		return vector == collider.ClosestPoint(vector);
 	}
 
@@ -359,33 +409,27 @@ public static class Vector3Extension
 		return destination-source;
 	}
 
+	/// <summary>
+	/// Transforms a local point using a space matrix that may flatten an axis or unify scale.
+	/// </summary>
 	public static Vector3 TransformPoint(this Vector3 position,Transform transform,SpaceType spaceType)
 	{
-		var (Position,Rotation,Scale) = _LockTransformToSpace(transform,spaceType);
-		var resultPoint = transform.TransformPoint(position);
-
-		transform.SetPositionAndRotation(Position,Rotation);
-		transform.localScale = Scale;
-
-		return resultPoint;
+		return _BuildSpaceMatrix(transform,spaceType).MultiplyPoint3x4(position);
 	}
 
-	public static Vector3 InverseTransformPoint(this Vector3 _position,Transform _transform,SpaceType spaceType)
+	/// <summary>
+	/// Inverse-transforms a world point using a space matrix that may flatten an axis or unify scale.
+	/// </summary>
+	public static Vector3 InverseTransformPoint(this Vector3 position,Transform transform,SpaceType spaceType)
 	{
-		var (Position,Rotation,Scale) = _LockTransformToSpace(_transform,spaceType);
-		var position = _transform.InverseTransformPoint(_position);
-
-		_transform.SetPositionAndRotation(Position,Rotation);
-		_transform.localScale = Scale;
-
-		return position;
+		return _BuildSpaceMatrix(transform,spaceType).inverse.MultiplyPoint3x4(position);
 	}
 
-	private static (Vector3 Position,Quaternion Rotation,Vector3 Scale) _LockTransformToSpace(Transform transform,SpaceType spaceType)
+	private static Matrix4x4 _BuildSpaceMatrix(Transform transform,SpaceType spaceType)
 	{
 		transform.GetPositionAndRotation(out var position,out var rotation);
 
-        var scale = transform.localScale;
+		var scale = transform.localScale;
 
 		if(spaceType == SpaceType.xy)
 		{
@@ -398,9 +442,6 @@ public static class Vector3Extension
 
 		var max = Mathf.Max(scale.x,scale.y,scale.z);
 
-		transform.SetPositionAndRotation(position,rotation);
-		transform.localScale = Vector3.one*max;
-
-		return (position,rotation,scale);
+		return Matrix4x4.TRS(position,rotation,Vector3.one*max);
 	}
 }

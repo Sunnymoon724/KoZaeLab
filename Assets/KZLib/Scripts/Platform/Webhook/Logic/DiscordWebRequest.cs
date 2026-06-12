@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace KZLib.Webs
+namespace KZLib.Webhooks
 {
 	//? https://discohook.org/ -> webhook test link
 
@@ -82,19 +82,20 @@ namespace KZLib.Webs
 
 				while(index < body.Length)
 				{
-					var text = body.Substring(index,Mathf.Min(body.Length-index,maxSize));
+					var length = Mathf.Min(body.Length-index,maxSize);
+					var text = body.Substring(index,length);
 
 					newMessageInfoQueue.Enqueue(new MessageInfo(header,text));
 					logCount += header.Length+text.Length;
 
-					while(logCount >= c_embedMaxTextSize)
+					while(logCount >= c_embedMaxTextSize && newMessageInfoQueue.Count > 0)
 					{
 						var newMessageInfo = newMessageInfoQueue.Dequeue();
 
 						logCount -= newMessageInfo.Header.Length+newMessageInfo.Body.Length;
 					}
 
-					index += body.Length;
+					index += length;
 				}
 			}
 

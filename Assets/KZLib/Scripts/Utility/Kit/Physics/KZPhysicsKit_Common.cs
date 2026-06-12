@@ -1,8 +1,14 @@
 using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// Shared internal helpers for 2D and 3D physics raycast result processing.
+/// </summary>
 public static partial class KZPhysicsKit
 {
+	/// <summary>
+	/// Finds the closest raycast hit that passes the given filter predicate.
+	/// </summary>
 	private static TRaycastHit _ClosestHit<TRaycastHit>(TRaycastHit[] raycastHitArray,int count,Func<TRaycastHit,bool> onCheckHit,Func<TRaycastHit,float> onGetDistance)
 	{
 		var loopCount = Math.Min(count,raycastHitArray.Length);
@@ -24,6 +30,9 @@ public static partial class KZPhysicsKit
 		return closestHit;
 	}
 
+	/// <summary>
+	/// Collects all entries whose collider matches the given filter collider.
+	/// </summary>
 	private static List<TValue> _ExtractCollider<TValue,UCollider>(TValue[] valueArray,int count,UCollider filterCollider,Func<TValue,UCollider> onGetCollider)
 	{
 		var filteredList = new List<TValue>(count);

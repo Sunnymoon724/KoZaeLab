@@ -2,8 +2,14 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Extension methods for <see cref="Image"/> assignment, defaults, and color fading.
+/// </summary>
 public static class ImageExtension
 {
+	/// <summary>
+	/// Sets color to white or transparent depending on <paramref name="isClearColor"/>.
+	/// </summary>
 	public static void SetDefaultImage(this Image image,bool isClearColor)
 	{
 		if(!_IsValid(image))
@@ -14,6 +20,9 @@ public static class ImageExtension
 		image.color = isClearColor ? Color.clear : Color.white;
 	}
 
+	/// <summary>
+	/// Assigns sprite and material; deactivates the GameObject when <paramref name="sprite"/> is null.
+	/// </summary>
 	public static void SetSafeImage(this Image image,Sprite sprite,Material material = null,Color? color = null)
 	{
 		if(!_IsValid(image))
@@ -43,6 +52,11 @@ public static class ImageExtension
 
 	public static async UniTask FadeImageAsync(this Image image,float duration,Color prevColor,Color nextColor)
 	{
+		if(!_IsValid(image))
+		{
+			return;
+		}
+
 		void _ProgressColor(float progress)
 		{
 			image.color = Color.Lerp(prevColor,nextColor,progress);

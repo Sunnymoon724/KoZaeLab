@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Extension methods for <see cref="CircleCollider2D"/> bounds, radius, and scale calculations.
+/// </summary>
 public static class CircleCollider2DExtension
 {
 	public static Bounds CalculateLocalBounds(this CircleCollider2D circleCollider2D)
@@ -28,6 +31,9 @@ public static class CircleCollider2DExtension
 		return circleCollider2D.radius;
 	}
 
+	/// <summary>
+	/// Scales radius by the largest absolute x or y scale component.
+	/// </summary>
 	public static bool ApplyScale(this CircleCollider2D circleCollider2D,Vector3 scale)
 	{
 		if(!_IsValid(circleCollider2D))

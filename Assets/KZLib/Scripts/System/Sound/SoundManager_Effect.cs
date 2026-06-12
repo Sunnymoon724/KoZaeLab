@@ -41,8 +41,6 @@ namespace KZLib
 
 			audioSource.ignoreListenerPause = ignoreTime;
 
-			audioSource.PlayOneShot(audioClip,m_sfxVolume.level);
-
 			_PlaySound(audioSource);
 
 			return audioSource;
@@ -60,7 +58,7 @@ namespace KZLib
 		{
 			bool _FindSource(AudioSource source)
 			{
-				return source.clip.name.IsEqual(sfxName);
+				return source.clip != null && source.clip.name.IsEqual(sfxName);
 			}
 
 			var effect = m_sfxList.Find(_FindSource);
@@ -75,7 +73,7 @@ namespace KZLib
 		{
 			bool _FindSource(AudioSource source)
 			{
-				return source.clip.Equals(clip);
+				return source.clip != null && source.clip.Equals(clip);
 			}
 
 			var effect = m_sfxList.Find(_FindSource);

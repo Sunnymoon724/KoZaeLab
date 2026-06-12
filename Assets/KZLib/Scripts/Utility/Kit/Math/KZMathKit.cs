@@ -2,9 +2,15 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Utility methods for distance, clamping, slope conversion, grid alignment, parabolic motion, and Bezier curves.
+/// </summary>
 public static partial class KZMathKit
 {
 	#region Distance
+	/// <summary>
+	/// Returns the total path length along a sequence of 3D positions.
+	/// </summary>
 	public static float GetTotalDistance(IEnumerable<Vector3> positionGroup)
 	{
 		if(positionGroup == null)
@@ -34,6 +40,9 @@ public static partial class KZMathKit
 	#endregion Distance
 
 	#region Clamp
+	/// <summary>
+	/// Wraps an integer index into the range [0, size) using modular arithmetic.
+	/// </summary>
 	public static int LoopClamp(int index,int size)
 	{
 		if(size <= 0)
@@ -44,6 +53,9 @@ public static partial class KZMathKit
 		return (index%size+size)%size;
 	}
 
+	/// <summary>
+	/// Wraps a float index into the range [0, size) using modular arithmetic.
+	/// </summary>
 	public static float LoopClamp(float index,int size)
 	{
 		if(size <= 0)
@@ -54,6 +66,9 @@ public static partial class KZMathKit
 		return (index%size+size)%size;
 	}
 
+	/// <summary>
+	/// Clamps a comparable value between min and max bounds.
+	/// </summary>
 	public static TCompare Clamp<TCompare>(TCompare value,TCompare minValue,TCompare maxValue) where TCompare : IComparable<TCompare>
 	{
 		return value.CompareTo(minValue) < 0 ? minValue : value.CompareTo(maxValue) > 0 ? maxValue : value;
@@ -61,31 +76,49 @@ public static partial class KZMathKit
 	#endregion Clamp
 
 	#region Slope
+	/// <summary>
+	/// Converts a slope (x, y) to radians using Atan2.
+	/// </summary>
 	public static float SlopeToRadian(float x,float y)
 	{
 		return SlopeToRadian(new Vector2(x,y));
 	}
 
+	/// <summary>
+	/// Converts a slope gradient to radians using Atan2.
+	/// </summary>
 	public static float SlopeToRadian(Vector2 gradient)
 	{
 		return Mathf.Atan2(gradient.y,gradient.x);
 	}
 
+	/// <summary>
+	/// Converts radians to a unit slope vector (cos, sin).
+	/// </summary>
 	public static Vector2 RadianToSlope(float angle)
 	{
 		return new Vector2(Mathf.Cos(angle),Mathf.Sin(angle));
 	}
 
+	/// <summary>
+	/// Converts a slope (x, y) to degrees.
+	/// </summary>
 	public static float SlopeToDegree(float x,float y)
 	{
 		return SlopeToDegree(new Vector2(x,y));
 	}
 
+	/// <summary>
+	/// Converts a slope gradient to degrees.
+	/// </summary>
 	public static float SlopeToDegree(Vector2 gradient)
 	{
 		return SlopeToRadian(gradient)*Mathf.Rad2Deg;
 	}
 
+	/// <summary>
+	/// Converts degrees to a unit slope vector (cos, sin).
+	/// </summary>
 	public static Vector2 DegreeToSlope(float angle)
 	{
 		return new Vector2(Mathf.Cos(angle*Mathf.Deg2Rad),Mathf.Sin(angle*Mathf.Deg2Rad));
@@ -94,7 +127,7 @@ public static partial class KZMathKit
 
 	#region Alignment
 	/// <summary>
-	/// Set alignment ( 0 / -0.5 +0.5 / -1 0 +1 / -1.5 -0.5 +0.5 +1.5)
+	/// Returns a centered alignment offset array for the given length (e.g. 0 / -0.5 +0.5 / -1 0 +1).
 	/// </summary>
 	public static float[] MiddleAlignment(int length)
 	{
@@ -121,6 +154,9 @@ public static partial class KZMathKit
         return resultArray;
 	}
 
+	/// <summary>
+	/// Arranges GameObjects in a centered grid using MiddleAlignment offsets and the given gaps.
+	/// </summary>
 	public static void SetAlignmentGameObjectList(List<GameObject> objectList,int countX,int countZ,float gapX,float gapZ,float positionY = 0.0f)
 	{
 		if(objectList.IsNullOrEmpty())
@@ -139,12 +175,16 @@ public static partial class KZMathKit
 
 
 		var xArray  = MiddleAlignment(countX);
-
 		var zSize = Mathf.Max(1,Mathf.CeilToInt(objectList.Count/(float)countZ));
 		var zArray = MiddleAlignment(zSize);
 
 		for(var i=0;i<objectList.Count;i++)
 		{
+			if(!objectList[i])
+			{
+				continue;
+			}
+
 			var positionX = xArray[i%countX]*gapX;
 			var positionZ = zArray[i%zSize]*gapZ;
 
@@ -154,6 +194,9 @@ public static partial class KZMathKit
 	#endregion Alignment
 	
 	#region Parabola
+	/// <summary>
+	/// Returns the position of a projectile at the given time under uniform gravity.
+	/// </summary>
 	public static Vector3 Parabola(Vector3 start,Vector3 velocity,float time,float? gravity = null)
 	{
 		var result = Vector3.zero;
@@ -165,10 +208,19 @@ public static partial class KZMathKit
 
 		return result;
 	}
-	#endregion Parabola
 
+	/// <summary>
+	/// Calculates the launch velocity needed to reach a target at the given angle.
+	/// </summary>
 	public static Vector3 CalculateLaunchVelocity(Transform projectile,Transform target,float launchAngle,float? gravity = null)
 	{
+		if(!projectile || !target)
+		{
+			LogChannel.Kit.E("CalculateLaunchVelocity: projectile or target is null.");
+
+			return Vector3.zero;
+		}
+
 		var startPosition = projectile.position.SetY(0);
 		var targetPosition = target.position.SetY(0);
 
@@ -178,10 +230,21 @@ public static partial class KZMathKit
 		var effectiveGravity = _GetGravity(gravity);
 		var launchAngleTan = Mathf.Tan(launchAngle*Mathf.Deg2Rad);
 		var heightDifference = target.position.y-projectile.position.y;
-		var velocity = Mathf.Sqrt(effectiveGravity*horizontalDistance*horizontalDistance/(2.0f*(heightDifference-horizontalDistance*launchAngleTan)));
+		var denominator = 2.0f*(heightDifference-horizontalDistance*launchAngleTan);
+		var sqrtArg = effectiveGravity*horizontalDistance*horizontalDistance/denominator;
+
+		if(denominator.ApproximatelyZero() || sqrtArg < 0.0f)
+		{
+			LogChannel.Kit.E("CalculateLaunchVelocity: invalid parameters (division by zero or negative sqrt argument).");
+
+			return Vector3.zero;
+		}
+
+		var velocity = Mathf.Sqrt(sqrtArg);
 
 		return projectile.TransformDirection(new Vector3(0.0f,launchAngleTan*velocity,velocity));
 	}
+	#endregion Parabola
 
 	private static float _GetGravity(float? gravity = null)
 	{
@@ -189,13 +252,24 @@ public static partial class KZMathKit
 	}
 
 	#region Bezier Curve
+	/// <summary>
+	/// Returns whether the control point count is valid for a cubic Bezier curve (open or closed).
+	/// </summary>
 	public static bool IsValidCubicBezier(int _count,bool isClosed)
 	{
 		return _count >= (isClosed ? 6 : 4);
 	}
 
+	/// <summary>
+	/// Samples a multi-segment cubic Bezier curve defined by the given control points.
+	/// </summary>
 	public static Vector3[] CalculateCubicBezierCurve(Vector3[] pointArray,bool isClosed,float resolution)
 	{
+		if(pointArray == null)
+		{
+			throw new ArgumentNullException(nameof(pointArray));
+		}
+
 		var length = pointArray.Length;
 
 		if(!IsValidCubicBezier(length,isClosed))
@@ -203,14 +277,26 @@ public static partial class KZMathKit
 			return null;
 		}
 
+		if(resolution <= 0.0f)
+		{
+			LogChannel.Kit.E($"CalculateCubicBezierCurve: resolution must be greater than zero, but got {resolution}.");
+
+			return null;
+		}
+
 		var count = isClosed ? length/3 : (length-1)/3;
 		var index = 0;
-		var resultArray = new Vector3[count*(Mathf.FloorToInt(1.0f*resolution)+1)];
+		var resultArray = new Vector3[count*(Mathf.FloorToInt(resolution)+1)];
 
 		for(var i=0;i<count;i++)
 		{
 			var segmentPointArray = CalculateCubicBezierCurve(pointArray[i*3+0],pointArray[i*3+1],pointArray[i*3+2],pointArray[LoopClamp(i*3+3,length)],resolution);
-			
+
+			if(segmentPointArray == null)
+			{
+				return null;
+			}
+
 			Array.Copy(segmentPointArray,0,resultArray,index,segmentPointArray.Length);
 			index += segmentPointArray.Length;
 		}
@@ -218,9 +304,19 @@ public static partial class KZMathKit
 		return resultArray;
 	}
 
+	/// <summary>
+	/// Samples a single cubic Bezier segment at the given resolution.
+	/// </summary>
 	public static Vector3[] CalculateCubicBezierCurve(Vector3 point0,Vector3 point1,Vector3 point2,Vector3 point3,float resolution)
 	{
-		var count = Mathf.FloorToInt(1.0f*resolution);
+		if(resolution <= 0.0f)
+		{
+			LogChannel.Kit.E($"CalculateCubicBezierCurve: resolution must be greater than zero, but got {resolution}.");
+
+			return null;
+		}
+
+		var count = Mathf.FloorToInt(resolution);
 		var pointArray = new Vector3[count+1];
 
 		for(var i=0;i<=count;i++)

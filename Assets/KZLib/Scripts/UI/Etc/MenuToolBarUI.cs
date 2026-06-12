@@ -18,7 +18,7 @@ public class MenuToolBarUI : MonoBehaviour
 		public CommonUIMenuTag MenuType => CustomTag.Parse<CommonUIMenuTag>(m_menuName);
 
 		private List<CommonUIMenuTag> m_menuTagList = null;
-		private IEnumerable MenuTagGroup => m_menuTagList ??= CustomTag.CollectCustomTagList<CommonUIMenuTag>(true);
+		private IEnumerable MenuTagGroup => m_menuTagList ??= CustomTag.CollectCustomTagList<CommonUIMenuTag>();
 
 		[SerializeField,HideIf(nameof(m_UseCommonSprite))]
 		private Sprite m_MenuSprite = null;

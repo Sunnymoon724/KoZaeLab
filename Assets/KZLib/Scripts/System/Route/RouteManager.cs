@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using KZLib.Utilities;
@@ -9,7 +10,6 @@ namespace KZLib.Data
 	public class RouteManager : Singleton<RouteManager>
 	{
 		private readonly LazyRegistry<string,Route> m_registry = new();
-
 		private readonly Dictionary<string,string> m_definedPathDict = new();
 
 		private string m_routePath = "";
@@ -23,6 +23,12 @@ namespace KZLib.Data
 			_CreateRouteFile();
 
 			var textAsset = Resources.Load<TextAsset>(m_routePath);
+
+			if(textAsset == null)
+			{
+				throw new NullReferenceException($"Route file not found at '{m_routePath}'. RoutePath must be assigned.");
+			}
+
 			var deserializer = new DeserializerBuilder().Build();
 
 			foreach(var pair in deserializer.Deserialize<Dictionary<string,string>>(textAsset.text))
@@ -49,28 +55,29 @@ namespace KZLib.Data
 			if(!KZFileKit.IsFileExist(routeFilePath))
 			{
 				// add default route
-				var content = @"# resources folder
-				defaultRes : Assets/Resources
+				var content =
+								"# resources folder\n" +
+								"defaultRes : Assets/Resources\n" +
+								"\n" +
+								"# addressable folder\n" +
+								"gameRes : Assets/GameResources\n" +
+								"\n" +
+								"# for indirect references\n" +
+								"workRes : Assets/WorkResources\n" +
+								"\n" +
+								"# config folder\n" +
+								"config : Text/Config\n" +
+								"\n" +
+								"# proto folder\n" +
+								"proto : Text/Proto\n" +
+								"\n" +
+								"# lingo folder\n" +
+								"lingo : ScriptableObject/Lingo\n" +
+								"\n" +
+								"# generated script folder\n" +
+								"generatedScript : Assets/Scripts/Generated";
 
-				# addressable folder
-				gameRes : Assets/GameResources
-
-				# for indirect references
-				workRes : Assets/WorkResources
-
-				# config folder
-				config : Text/Config
-
-				# proto folder
-				proto : Text/Proto
-
-				# lingo folder
-				lingo : ScriptableObject/Lingo
-
-				# generated script folder
-				generatedScript : Assets/Scripts/Generated";
-
-				KZFileKit.WriteTextToFile(routeFilePath,content.Replace("\t",""));
+				KZFileKit.WriteTextToFile(routeFilePath,content);
 			}
 		}
 
@@ -89,6 +96,11 @@ namespace KZLib.Data
 		/// <returns></returns>
 		public Route FetchRoute(string path)
 		{
+			if(path.IsEmpty())
+			{
+				throw new NullReferenceException("Path cannot be null or empty.");
+			}
+
 			return m_registry.Fetch(path,_TryCreateRoute);
 		}
 
@@ -96,7 +108,7 @@ namespace KZLib.Data
 		{
 			var pathArray = path.Split(":");
 
-			if(pathArray.Length == 0)
+			if(pathArray.Length == 1)
 			{
 				// definedPath or path
 				route = new Route(_ConvertDefinedPath(path));

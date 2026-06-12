@@ -1,5 +1,4 @@
 using System;
-using KZLib.Data;
 using KZLib.Utilities;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -37,12 +36,12 @@ namespace KZLib
 		{
 			if(cutScenePath.IsEmpty())
 			{
-				throw new NullReferenceException("CutScenePath is null.");
+				throw new NullReferenceException("CutScenePath is null. CutScenePath must be assigned.");
 			}
 
 			if(m_currentCutScenePath == cutScenePath)
 			{
-				// already played
+				// already loaded
 				return;
 			}
 
@@ -50,34 +49,18 @@ namespace KZLib
 
 			if(m_cutSceneObject == null)
 			{
-				throw new NullReferenceException($"CutScene is null. [{cutScenePath}]");
+				throw new NullReferenceException($"CutScene is null. [{cutScenePath}]. CutScenePath must be assigned.");
 			}
 
 			m_director = m_cutSceneObject.GetComponentInChildren<PlayableDirector>();
 
 			if(m_director == null)
 			{
-				throw new NullReferenceException($"director is not exist in {cutScenePath}");
-			}
-			
-			void _EndCutScene(PlayableDirector _)
-			{
-				m_cutScenePause = false;
-
-				_RemoveCutScene();
-				
-				if(m_useSkip)
-				{
-					UIManager.In.Close(CommonUINameTag.SkipPanel);
-				}
-
-				m_playingCutScene = false;
-
-				KZInputKit.UnLockInput();
+				throw new NullReferenceException($"Director is not exist in {cutScenePath}. CutScenePath must be assigned.");
 			}
 
 			m_director.extrapolationMode = DirectorWrapMode.None;
-			m_director.stopped += _EndCutScene;
+			m_director.stopped += _OnCutSceneStopped;
 
 			m_currentCutScenePath = cutScenePath;
 			m_useSkip = useSkip;
@@ -88,6 +71,22 @@ namespace KZLib
 			}
 
 			_PlayCutScene();
+		}
+
+		private void _OnCutSceneStopped(PlayableDirector _)
+		{
+			m_cutScenePause = false;
+
+			_RemoveCutScene();
+
+			if(m_useSkip)
+			{
+				UIManager.In.Close(CommonUINameTag.SkipPanel);
+			}
+
+			m_playingCutScene = false;
+
+			KZInputKit.UnLockInput();
 		}
 
 		private void _PlayCutScene()
@@ -102,6 +101,11 @@ namespace KZLib
 
 		public void Stop()
 		{
+			if(m_director == null)
+			{
+				return;
+			}
+
 			m_director.Stop();
 		}
 
@@ -111,6 +115,8 @@ namespace KZLib
 			{
 				return;
 			}
+
+			m_director.stopped -= _OnCutSceneStopped;
 
 			m_cutSceneObject.DestroyObject();
 

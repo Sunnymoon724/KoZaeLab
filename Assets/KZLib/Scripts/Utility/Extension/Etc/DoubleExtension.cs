@@ -1,5 +1,9 @@
 using System;
 
+/// <summary>
+/// Extension methods for double.
+/// Provides formatting, angle wrapping, truncation, and approximate comparison helpers.
+/// </summary>
 public static class DoubleExtension
 {
 	public static string ToStringComma(this double number)
@@ -17,37 +21,31 @@ public static class DoubleExtension
 		return $"{(number > 0.0d ? "+" : "")}{number}";
 	}
 
+	/// <summary>
+	/// Truncates toward zero to the given number of decimal places.
+	/// </summary>
 	public static double ToLimit(this double number,int decimalPoint)
 	{
 		var factor = Math.Pow(10.0d,decimalPoint);
 
-		return Math.Floor(number*factor)/factor;
+		return Math.Sign(number)*Math.Floor(Math.Abs(number)*factor)/factor;
 	}
 
 	/// <summary>
-	/// -180.0d ~ +180.0d
+	/// Wraps an angle into the range -180.0d ~ +180.0d.
 	/// </summary>
-
 	public static double ToWrapAngle(this double angle)
 	{
-		angle %= Global.FullAngle;
+		var fullAngle = (double) Global.FullAngle;
 
-		while(angle > +Global.HalfAngle)
-		{
-			angle -= Global.FullAngle;
-		}
+		angle = ((angle%fullAngle)+fullAngle)%fullAngle;
 
-		while(angle < -Global.HalfAngle)
-		{
-			angle += Global.FullAngle;
-		}
-
-		return angle;
+		return angle > fullAngle ? angle-fullAngle : angle;
 	}
 
 	public static long ToMilliseconds(this double second)
 	{
-		return (long) second*1000L;
+		return (long) second*Global.MillisecondsPerSecond;
 	}
 
 	public static bool Approximately(this double number1,double number2,double delta = 1e-15d)
@@ -60,6 +58,9 @@ public static class DoubleExtension
 		return Approximately(number,0.0d,delta);
 	}
 
+	/// <summary>
+	/// Splits a value into its integer and absolute fractional parts.
+	/// </summary>
 	public static void SeparateDecimal(this double number,out int integer,out double fraction)
 	{
 		integer = (int) Math.Truncate(number);
