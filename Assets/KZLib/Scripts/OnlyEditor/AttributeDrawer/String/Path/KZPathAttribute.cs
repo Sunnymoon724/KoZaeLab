@@ -104,7 +104,7 @@ namespace KZLib.Attributes
 			{
 				void _ClickButton()
 				{
-					KZEditorKit.Open(KZFileKit.GetParentPath(AbsolutePath));
+					KZEditorKit.OpenFolder(KZFileKit.GetParentPath(AbsolutePath));
 				}
 
 				return DrawButton(rect,SdfIconType.Folder2,isValid,_ClickButton);

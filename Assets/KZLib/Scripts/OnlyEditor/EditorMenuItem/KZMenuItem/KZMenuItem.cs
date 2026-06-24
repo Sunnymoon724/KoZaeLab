@@ -90,7 +90,7 @@ namespace KZLib.EditorInternal.Menus
 				KZFileKit.CreateFolder(folderPath);
 			}
 
-			KZEditorKit.Open(folderPath);
+			KZEditorKit.OpenFolder(folderPath);
 		}
 
 		private static void _DisplayGenerateEnd()

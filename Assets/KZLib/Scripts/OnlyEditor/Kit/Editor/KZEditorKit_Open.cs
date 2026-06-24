@@ -14,23 +14,45 @@ public static partial class KZEditorKit
 	/// <summary>
 	/// Opens a file with the OS default application when it exists on disk.
 	/// </summary>
-	public static void Open(string absolutePath)
+	public static void OpenFile(string absolutePath)
 	{
 		if(absolutePath.IsEmpty())
 		{
-			LogChannel.Kit.W("Open: path is null or empty.");
+			LogChannel.Kit.W("OpenFile: path is null or empty.");
 
 			return;
 		}
 
 		if(!KZFileKit.IsFileExist(absolutePath))
 		{
-			LogChannel.Kit.W($"Open: file does not exist. {absolutePath}");
+			LogChannel.Kit.W($"OpenFile: file does not exist. {absolutePath}");
 
 			return;
 		}
 
 		EditorUtility.OpenWithDefaultApp(absolutePath);
+	}
+
+	/// <summary>
+	/// Reveals a folder in the OS file browser when it exists on disk.
+	/// </summary>
+	public static void OpenFolder(string absolutePath)
+	{
+		if(absolutePath.IsEmpty())
+		{
+			LogChannel.Kit.W("OpenFolder: path is null or empty.");
+
+			return;
+		}
+
+		if(!KZFileKit.IsFolderExist(absolutePath))
+		{
+			LogChannel.Kit.W($"OpenFolder: folder does not exist. {absolutePath}");
+
+			return;
+		}
+
+		EditorUtility.RevealInFinder(absolutePath);
 	}
 
 	/// <summary>

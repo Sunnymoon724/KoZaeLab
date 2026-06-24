@@ -10,7 +10,7 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Explorer/Open Route File",false,MenuOrder.Explorer.OPEN_ROUTE_FILE)]
 		private static void _OnOpenRouteFile()
 		{
-			KZEditorKit.Open(RouteManager.In.RouteFileAbsolutePath);
+			KZEditorKit.OpenFile(RouteManager.In.RouteFileAbsolutePath);
 		}
 
 		[MenuItem("KZMenu/Explorer/Open Documents Folder",false,MenuOrder.Explorer.OPEN_DOCUMENTS)]

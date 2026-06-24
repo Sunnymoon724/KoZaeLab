@@ -11,7 +11,7 @@ namespace KZLib.Attributes
 
 		protected override Rect OnClickToOpen(Rect rect,bool isValid)
 		{
-			void _ClickButton() => KZEditorKit.Open(AbsolutePath);
+			void _ClickButton() => KZEditorKit.OpenFolder(AbsolutePath);
 
 			return DrawButton(rect,SdfIconType.Folder2,isValid,_ClickButton);
 		}

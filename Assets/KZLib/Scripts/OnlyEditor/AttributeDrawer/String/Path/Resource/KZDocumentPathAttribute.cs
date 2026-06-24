@@ -12,7 +12,7 @@ namespace KZLib.Attributes
 
 		protected override void OnOpenResource()
 		{
-			KZEditorKit.Open(AbsolutePath);
+			KZEditorKit.OpenFile(AbsolutePath);
 		}
 	}
 }
