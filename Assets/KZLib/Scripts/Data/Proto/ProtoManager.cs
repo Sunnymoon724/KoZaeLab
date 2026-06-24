@@ -204,12 +204,6 @@ namespace KZLib.Data
 			throw new InvalidOperationException($"Proto [{prtType.Name}] with num {num} was not found.");
 		}
 
-		/// <inheritdoc cref="TryGet(int, Type, out IProto)"/>
-		public bool TryGet<TProto>(int num,out IProto prt)
-		{
-			return TryGet(num,typeof(TProto),out prt);
-		}
-
 		/// <summary>
 		/// Returns a proto row without throwing.
 		/// Returns <c>false</c> when not loaded, Num is invalid, <paramref name="prtType"/> is null or an interface,
