@@ -47,7 +47,7 @@ public static class StringExtension
 	{
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
 		return path.Replace('/',Path.DirectorySeparatorChar);
-#elif UNITY_EDITOR_OSX || UNITY_Standalone_OSX || UNITY_IOS || UNITY_ANDROID
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS || UNITY_ANDROID
 		return path.Replace('\\',Path.DirectorySeparatorChar);
 #else
 		return path.Replace('\\','/');
@@ -82,7 +82,7 @@ public static class StringExtension
 	/// <summary>
 	/// Returns whether any character from the array appears in the string.
 	/// </summary>
-	public static bool IsContainsCharacterArray(this string text,params char[] characterArray)
+	public static bool ContainsAny(this string text,params char[] characterArray)
 	{
 		if(text.IsEmpty() || characterArray.IsNullOrEmpty())
 		{
@@ -106,7 +106,7 @@ public static class StringExtension
 	/// <summary>
 	/// Uppercases only the first character, leaving the remainder unchanged.
 	/// </summary>
-	public static string ToFirstCharacterToUpper(this string text)
+	public static string Capitalize(this string text)
 	{
 		if(text.IsEmpty())
 		{
@@ -121,7 +121,7 @@ public static class StringExtension
 	/// <summary>
 	/// Lowercases only the first character, leaving the remainder unchanged.
 	/// </summary>
-	public static string ToFirstCharacterToLower(this string text)
+	public static string Decapitalize(this string text)
 	{
 		if(text.IsEmpty())
 		{
@@ -138,7 +138,17 @@ public static class StringExtension
 	/// </summary>
 	public static string GetStartCharacter(this string text,int count)
 	{
-		return text.IsEmpty() || count <= 0 ? text : text[..Mathf.Min(count, text.Length)];
+		if(text.IsEmpty())
+		{
+			return text;
+		}
+
+		if(count <= 0)
+		{
+			return string.Empty;
+		}
+
+		return text[..Mathf.Min(count,text.Length)];
 	}
 
 	/// <summary>
@@ -146,7 +156,17 @@ public static class StringExtension
 	/// </summary>
 	public static string GetEndCharacter(this string text,int count)
 	{
-		return text.IsEmpty() || count <= 0 ? text : text[^(Mathf.Min(count,text.Length))..];
+		if(text.IsEmpty())
+		{
+			return text;
+		}
+
+		if(count <= 0)
+		{
+			return string.Empty;
+		}
+
+		return text[^(Mathf.Min(count,text.Length))..];
 	}
 
 	/// <summary>
@@ -201,6 +221,9 @@ public static class StringExtension
 		return includeSpace ? string.IsNullOrWhiteSpace(text) : string.IsNullOrEmpty(text);
 	}
 
+	/// <summary>
+	/// Returns whether two strings are equal using ordinal comparison.
+	/// </summary>
 	public static bool IsEqual(this string text1,string text2)
 	{
 		return string.Equals(text1,text2);
@@ -221,11 +244,17 @@ public static class StringExtension
 	#endregion Compare
 
 	#region Convert Enum
+	/// <summary>
+	/// Returns whether the string names a defined value of <typeparamref name="TEnum"/>.
+	/// </summary>
 	public static bool IsEnumDefined<TEnum>(this string text) where TEnum : struct
 	{
 		return Enum.IsDefined(typeof(TEnum),text);
 	}
 
+	/// <summary>
+	/// Parses the string to <typeparamref name="TEnum"/>, logging a warning on failure.
+	/// </summary>
 	public static TEnum ToEnum<TEnum>(this string text) where TEnum : struct
 	{
 		var result = text.TryToEnum<TEnum>(out var value);
@@ -238,6 +267,9 @@ public static class StringExtension
 		return value;
 	}
 
+	/// <summary>
+	/// Attempts to parse the string as <typeparamref name="TEnum"/> (case-insensitive).
+	/// </summary>
 	public static bool TryToEnum<TEnum>(this string text,out TEnum value) where TEnum : struct
 	{
 		if(!text.IsEmpty() && Enum.TryParse(text,true,out value))
@@ -252,11 +284,17 @@ public static class StringExtension
 	#endregion Convert Enum
 
 	#region Convert CustomTag
+	/// <summary>
+	/// Returns whether the string is a defined <typeparamref name="TCustomTag"/> value.
+	/// </summary>
 	public static bool IsCustomTagDefined<TCustomTag>(this string text) where TCustomTag : CustomTag
 	{
 		return CustomTag.IsDefined<TCustomTag>(text);
 	}
 
+	/// <summary>
+	/// Parses the string to <typeparamref name="TCustomTag"/>, logging a warning on failure.
+	/// </summary>
 	public static TCustomTag ToCustomTag<TCustomTag>(this string text) where TCustomTag : CustomTag
 	{
 		var result = text.TryToCustomTag<TCustomTag>(out var value);
@@ -269,6 +307,9 @@ public static class StringExtension
 		return value;
 	}
 
+	/// <summary>
+	/// Attempts to parse the string as <typeparamref name="TCustomTag"/>.
+	/// </summary>
 	public static bool TryToCustomTag<TCustomTag>(this string text,out TCustomTag value) where TCustomTag : CustomTag
 	{
 		if(!text.IsEmpty() && CustomTag.TryParse(text,out value))
@@ -334,7 +375,7 @@ public static class StringExtension
 	/// </summary>
 	public static string ToColorText(this string text,Color color)
 	{
-		return ToColorText(color.ToHexCode(),text);
+		return text.ToColorText(color.ToHexCode());
 	}
 
 	/// <summary>
@@ -342,11 +383,19 @@ public static class StringExtension
 	/// </summary>
 	public static string ToColorText(this string text,string hexCode)
 	{
+		if(hexCode.StartsWith(Global.HexColorPrefix,StringComparison.Ordinal))
+		{
+			hexCode = hexCode[Global.HexColorPrefix.Length..];
+		}
+
 		return $"<color=#{hexCode}>{text}</color>";
 	}
 	#endregion Convert Color
 
 	#region Convert Bool
+	/// <summary>
+	/// Parses the string to a bool, logging a warning on failure.
+	/// </summary>
 	public static bool ToBool(this string text)
 	{
 		var result = text.TryToBool(out var value);
@@ -399,6 +448,9 @@ public static class StringExtension
 	#endregion Convert Bool
 
 	#region Convert Number
+	/// <summary>
+	/// Parses the string to a BigInteger, logging a warning on failure.
+	/// </summary>
 	public static BigInteger ToBigInteger(this string text)
 	{
 		var result = TryToBigInteger(text,out var value);
@@ -411,6 +463,9 @@ public static class StringExtension
 		return value;
 	}
 
+	/// <summary>
+	/// Attempts to parse the string as a BigInteger.
+	/// </summary>
 	public static bool TryToBigInteger(this string text,out BigInteger bigInteger)
 	{
 		if(!text.IsEmpty() && BigInteger.TryParse(text,out bigInteger))
@@ -423,6 +478,9 @@ public static class StringExtension
 		return false;
 	}
 
+	/// <summary>
+	/// Parses the string to an int, logging a warning on failure.
+	/// </summary>
 	public static int ToInt(this string text)
 	{
 		var result = text.TryToInt(out var value);
@@ -444,9 +502,7 @@ public static class StringExtension
 		{
 			if(text.StartsWith(Global.HexPrefix,StringComparison.OrdinalIgnoreCase))
 			{
-				value = text.ToHexInt();
-
-				return true;
+				return text[Global.HexPrefix.Length..].TryToHexInt(out value);
 			}
 
 			if(int.TryParse(text,out value))
@@ -460,6 +516,9 @@ public static class StringExtension
 		return false;
 	}
 
+	/// <summary>
+	/// Parses the string to a float, logging a warning on failure.
+	/// </summary>
 	public static float ToFloat(this string text)
 	{
 		var result = text.TryToFloat(out var value);
@@ -472,6 +531,9 @@ public static class StringExtension
 		return value;
 	}
 
+	/// <summary>
+	/// Attempts to parse the string as a float.
+	/// </summary>
 	public static bool TryToFloat(this string text,out float value)
 	{
 		if(!text.IsEmpty() && float.TryParse(text,out value))
@@ -484,6 +546,9 @@ public static class StringExtension
 		return false;
 	}
 
+	/// <summary>
+	/// Parses the string to a double, logging a warning on failure.
+	/// </summary>
 	public static double ToDouble(this string text)
 	{
 		var result = text.TryToDouble(out var value);
@@ -496,6 +561,9 @@ public static class StringExtension
 		return value;
 	}
 
+	/// <summary>
+	/// Attempts to parse the string as a double.
+	/// </summary>
 	public static bool TryToDouble(this string text,out double value)
 	{
 		if(!text.IsEmpty() && double.TryParse(text,out value))
@@ -508,6 +576,9 @@ public static class StringExtension
 		return false;
 	}
 
+	/// <summary>
+	/// Parses the string to a byte, logging a warning on failure.
+	/// </summary>
 	public static byte ToByte(this string text)
 	{
 		var result = text.TryToByte(out var value);
@@ -520,15 +591,16 @@ public static class StringExtension
 		return value;
 	}
 
+	/// <summary>
+	/// Parses decimal bytes and hex values prefixed with <see cref="Global.HexPrefix"/>.
+	/// </summary>
 	public static bool TryToByte(this string text,out byte value)
 	{
 		if(!text.IsEmpty())
 		{
 			if(text.StartsWith(Global.HexPrefix,StringComparison.OrdinalIgnoreCase))
 			{
-				value = Convert.ToByte(text,16);
-
-				return true;
+				return byte.TryParse(text[Global.HexPrefix.Length..],NumberStyles.HexNumber,CultureInfo.InvariantCulture,out value);
 			}
 
 			if(byte.TryParse(text,out value))
@@ -542,6 +614,9 @@ public static class StringExtension
 		return false;
 	}
 
+	/// <summary>
+	/// Parses the string as a hexadecimal int, logging a warning on failure.
+	/// </summary>
 	public static int ToHexInt(this string text)
 	{
 		var result = text.TryToHexInt(out var value);
@@ -554,6 +629,9 @@ public static class StringExtension
 		return value;
 	}
 
+	/// <summary>
+	/// Attempts to parse the string as a hexadecimal integer.
+	/// </summary>
 	public static bool TryToHexInt(this string text,out int value)
 	{
 		if(!text.IsEmpty() && int.TryParse(text,NumberStyles.HexNumber,CultureInfo.CurrentCulture,out value))
@@ -566,6 +644,9 @@ public static class StringExtension
 		return false;
 	}
 
+	/// <summary>
+	/// Reinterprets a hex integer bit pattern as a float, logging a warning on failure.
+	/// </summary>
 	public static float ToHexFloat(this string text)
 	{
 		var result = text.TryToHexFloat(out var value);
@@ -597,6 +678,9 @@ public static class StringExtension
 	#endregion Convert Number
 
 	#region Convert DateTime
+	/// <summary>
+	/// Parses the string to a DateTime, logging a warning on failure.
+	/// </summary>
 	public static DateTime ToDateTime(this string text,CultureInfo cultureInfo = null,DateTimeStyles dateTimeStyles = DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal)
 	{
 		var result = text.TryToDateTime(out var value,cultureInfo,dateTimeStyles);
@@ -628,6 +712,9 @@ public static class StringExtension
 	#endregion Convert DateTime
 
 	#region Convert Vector
+	/// <summary>
+	/// Parses the string to a Vector2, logging a warning on failure.
+	/// </summary>
 	public static Vector2 ToVector2(this string text)
 	{
 		var result = text.TryToVector2(out var value);
@@ -649,7 +736,7 @@ public static class StringExtension
 		{
 			var vectorArray = _ConvertVectorArray(text);
 
-			if(!vectorArray.IsNullOrEmpty())
+			if(vectorArray is { Length: >= 2 })
 			{
 				value = new Vector2(_GetNumberInArray(vectorArray,0),_GetNumberInArray(vectorArray,1));
 
@@ -662,6 +749,9 @@ public static class StringExtension
 		return false;
 	}
 
+	/// <summary>
+	/// Parses the string to a Vector3, logging a warning on failure.
+	/// </summary>
 	public static Vector3 ToVector3(this string text)
 	{
 		var result = text.TryToVector3(out var value);
@@ -683,7 +773,7 @@ public static class StringExtension
 		{
 			var vectorArray = _ConvertVectorArray(text);
 
-			if(!vectorArray.IsNullOrEmpty())
+			if(vectorArray is { Length: >= 3 })
 			{
 				value = new Vector3(_GetNumberInArray(vectorArray,0),_GetNumberInArray(vectorArray,1),_GetNumberInArray(vectorArray,2));
 
@@ -699,7 +789,7 @@ public static class StringExtension
 
 	#region Remove
 	/// <summary>
-	/// Remove text from first
+	/// Removes a leading substring when <paramref name="text"/> starts with <paramref name="removeText"/>.
 	/// </summary>
 	public static string RemoveStart(this string text,string removeText)
 	{
@@ -707,7 +797,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Remove text from last
+	/// Removes a trailing substring when <paramref name="text"/> ends with <paramref name="removeText"/>.
 	/// </summary>
 	public static string RemoveEnd(this string text,string removeText)
 	{
@@ -715,7 +805,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Remove text by count from first
+	/// Removes the first <paramref name="count"/> characters from the string.
 	/// </summary>
 	public static string RemoveStartCharacter(this string text,int count)
 	{
@@ -723,7 +813,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Remove text by count from last
+	/// Removes the last <paramref name="count"/> characters from the string.
 	/// </summary>
 	public static string RemoveEndCharacter(this string text,int count)
 	{
@@ -731,17 +821,22 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Remove richText
+	/// Strips HTML-style rich text tags from the string.
 	/// </summary>
 	public static string RemoveRichText(this string text)
 	{
+		if(text.IsEmpty())
+		{
+			return text;
+		}
+
 		return Regex.Replace(text,"<.*?>",string.Empty);
 	}
 	#endregion Remove
 
 	#region Trim
 	/// <summary>
-	/// Trim text from first
+	/// Repeatedly removes <paramref name="trimText"/> from the start of the string.
 	/// </summary>
 	public static string TrimTextStart(this string text,string trimText)
 	{
@@ -759,7 +854,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Trim text from last
+	/// Repeatedly removes <paramref name="trimText"/> from the end of the string.
 	/// </summary>
 	public static string TrimTextEnd(this string text,string trimText)
 	{
@@ -777,7 +872,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Trim all space
+	/// Removes every space character from the string.
 	/// </summary>
 	public static string TrimAllSpace(this string text)
 	{
@@ -785,24 +880,40 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Trim all brackets
+	/// Trims any leading or trailing bracket characters.
 	/// </summary>
 	public static string TrimBrackets(this string text)
 	{
 		return text.Trim('(',')','[',']','{','}','<','>');
 	}
+
+	/// <summary>
+	/// Trims leading and trailing parentheses.
+	/// </summary>
 	public static string TrimParentheses(this string text)
 	{
 		return text.Trim('(',')');
 	}
+
+	/// <summary>
+	/// Trims leading and trailing braces.
+	/// </summary>
 	public static string TrimBraces(this string text)
 	{
 		return text.Trim('{','}');
 	}
+
+	/// <summary>
+	/// Trims leading and trailing square brackets.
+	/// </summary>
 	public static string TrimSquareBrackets(this string text)
 	{
 		return text.Trim('[',']');
 	}
+
+	/// <summary>
+	/// Trims leading and trailing angle brackets.
+	/// </summary>
 	public static string TrimAngleBrackets(this string text)
 	{
 		return text.Trim('<','>');
@@ -810,18 +921,33 @@ public static class StringExtension
 	#endregion Trim
 
 	#region Wrap
+	/// <summary>
+	/// Wraps the string in parentheses.
+	/// </summary>
 	public static string WrapParentheses(this string text)
 	{
 		return $"({text})";
 	}
+
+	/// <summary>
+	/// Wraps the string in braces.
+	/// </summary>
 	public static string WrapBraces(this string text)
 	{
 		return $"{{{text}}}";
 	}
+
+	/// <summary>
+	/// Wraps the string in square brackets.
+	/// </summary>
 	public static string WrapSquareBrackets(this string text)
 	{
 		return $"[{text}]";
 	}
+
+	/// <summary>
+	/// Wraps the string in angle brackets.
+	/// </summary>
 	public static string WrapAngleBrackets(this string text)
 	{
 		return $"<{text}>";
@@ -829,26 +955,41 @@ public static class StringExtension
 	#endregion Wrap
 
 	#region Split
+	/// <summary>
+	/// Splits the string on any bracket character.
+	/// </summary>
 	public static string[] SplitTextByBrackets(this string text,StringSplitOptions stringSplitOption = StringSplitOptions.None)
 	{
 		return text.Split(new char[] { '(', ')', '[', ']', '{', '}', '<', '>' }, stringSplitOption);
 	}
 
+	/// <summary>
+	/// Splits the string on parentheses.
+	/// </summary>
 	public static string[] SplitTextByParentheses(this string text,StringSplitOptions stringSplitOption = StringSplitOptions.None)
 	{
 		return text.Split(new char[] { '(', ')' }, stringSplitOption);
 	}
 
+	/// <summary>
+	/// Splits the string on braces.
+	/// </summary>
 	public static string[] SplitTextByBraces(this string text,StringSplitOptions stringSplitOption = StringSplitOptions.None)
 	{
 		return text.Split(new char[] { '{', '}' }, stringSplitOption);
 	}
 
+	/// <summary>
+	/// Splits the string on square brackets.
+	/// </summary>
 	public static string[] SplitTextBySquareBrackets(this string text,StringSplitOptions stringSplitOption = StringSplitOptions.None)
 	{
 		return text.Split(new char[] { '[', ']' }, stringSplitOption);
 	}
 
+	/// <summary>
+	/// Splits the string on angle brackets.
+	/// </summary>
 	public static string[] SplitTextByAngleBrackets(this string text,StringSplitOptions stringSplitOption = StringSplitOptions.None)
 	{
 		return text.Split(new char[] { '<', '>' }, stringSplitOption);
@@ -875,7 +1016,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Extract start to end
+	/// Extracts text between character markers when both are present.
 	/// </summary>
 	public static string ExtractText(this string text,char startMark,char endMark)
 	{
@@ -883,7 +1024,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Extract start to end
+	/// Extracts text after a character start marker up to <paramref name="endText"/>.
 	/// </summary>
 	public static string ExtractText(this string text,char startMark,string endText)
 	{
@@ -891,7 +1032,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Extract start to end
+	/// Extracts text after <paramref name="startText"/> up to a character end marker.
 	/// </summary>
 	public static string ExtractText(this string text,string startText,char endMark)
 	{
@@ -899,7 +1040,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Extract Letters
+	/// Keeps only ASCII letters.
 	/// </summary>
 	public static string ExtractOnlyLetter(this string text)
 	{
@@ -907,7 +1048,7 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Extract Digits
+	/// Keeps only digits.
 	/// </summary>
 	public static string ExtractOnlyDigit(this string text)
 	{
@@ -915,13 +1056,16 @@ public static class StringExtension
 	}
 
 	/// <summary>
-	/// Extract Alphanumeric
+	/// Keeps only letters, digits, and underscores.
 	/// </summary>
 	public static string ExtractAlphanumeric(this string text)
 	{
 		return text.IsEmpty() ? null : Regex.Replace(text,@"[^0-9a-zA-Z_]+",string.Empty);
 	}
 
+	/// <summary>
+	/// Extracts digits and parses the result as an int.
+	/// </summary>
 	public static int ExtractOnlyDigitToInt(this string text)
 	{
 		return ExtractOnlyDigit(text).ToInt();

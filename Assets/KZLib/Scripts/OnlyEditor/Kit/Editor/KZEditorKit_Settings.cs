@@ -4,9 +4,15 @@ using UnityEditor;
 using UnityEditor.Build;
 using UnityEditorInternal;
 
+/// <summary>
+/// Editor-only utility methods for project tags, layers, define symbols, and package identifiers.
+/// </summary>
 public static partial class KZEditorKit
 {
 	#region Tag & Layer
+	/// <summary>
+	/// Adds a tag when it is not already registered in the project.
+	/// </summary>
 	public static void AddTag(string newTag)
 	{
 		foreach(var tag in InternalEditorUtility.tags)
@@ -32,6 +38,9 @@ public static partial class KZEditorKit
 		return new SerializedObject(assetArray[0]);
 	}
 
+	/// <summary>
+	/// Assigns a user layer name to the first empty slot. Skips when the name already exists.
+	/// </summary>
 	public static void AddLayer(string layerName)
 	{
 		var serialized = _FindTagManagerObject();
@@ -71,6 +80,9 @@ public static partial class KZEditorKit
 	#endregion Tag & Layer
 
 	#region Player Settings
+	/// <summary>
+	/// Appends a scripting define symbol to the given build target when it is not already present.
+	/// </summary>
 	public static void AddDefineSymbol(string defineSymbol,NamedBuildTarget buildTargetGroup)
 	{
 		var symbolText = PlayerSettings.GetScriptingDefineSymbols(buildTargetGroup);
@@ -88,6 +100,20 @@ public static partial class KZEditorKit
 		LogChannel.Kit.I($"Add Define Symbol : {defineSymbol}");
 	}
 
+	/// <summary>
+	/// Appends a scripting define symbol to Standalone, Android, and iOS when it is not already present.
+	/// </summary>
+	public static void AddDefineSymbolForAllBuildTargets(string defineSymbol)
+	{
+		foreach(var target in BuildTargetGroup)
+		{
+			AddDefineSymbol(defineSymbol,target);
+		}
+	}
+
+	/// <summary>
+	/// Removes a scripting define symbol from the given build target when it exists.
+	/// </summary>
 	public static void RemoveDefineSymbol(string defineSymbol,NamedBuildTarget buildTargetGroup)
 	{
 		var symbolText = PlayerSettings.GetScriptingDefineSymbols(buildTargetGroup);
@@ -125,6 +151,9 @@ public static partial class KZEditorKit
 		return result;
 	}
 
+	/// <summary>
+	/// Replaces old define symbols with new ones across Standalone, Android, and iOS targets.
+	/// </summary>
 	public static void ChangeDefineSymbol(string[] oldDefineSymbolArray,string[] newDefineSymbolArray)
 	{
 		foreach(var target in BuildTargetGroup)
@@ -152,6 +181,9 @@ public static partial class KZEditorKit
 		}
 	}
 
+	/// <summary>
+	/// Sets the application identifier for all supported build targets.
+	/// </summary>
 	public static void ChangePackageName(string packageName)
 	{
 		foreach(var target in BuildTargetGroup)

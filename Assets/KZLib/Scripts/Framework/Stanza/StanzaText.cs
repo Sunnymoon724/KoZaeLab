@@ -7,6 +7,10 @@ using UnityEngine;
 
 namespace KZLib.Utilities
 {
+	/// <summary>
+	/// Cycles through localized strings on a <see cref="TMP_Text"/> at a fixed interval.
+	/// Supports sequential or randomized order via <see cref="m_randomMode"/>.
+	/// </summary>
 	public class StanzaText : Stanza
 	{
 		[SerializeField]
@@ -21,6 +25,7 @@ namespace KZLib.Utilities
 
 		private int m_index = 0;
 
+		/// <summary>Current text index; clamped and applied immediately in the inspector when playable.</summary>
 		[VerticalGroup("Index",Order = 99),ShowInInspector,PropertyRange(0,nameof(MaxIndex)),ShowIf(nameof(IsPlayable))]
 		public virtual int Index
 		{
@@ -36,6 +41,7 @@ namespace KZLib.Utilities
 		private bool IsPlayable => m_textList.Count > 0;
 		private int MaxIndex => m_textList.Count-1;
 
+		/// <summary>Shuffled or sequential playback order built at play time.</summary>
 		private readonly List<int> m_indexList = new();
 
 		protected async override UniTask _DoPlayAsync(Param _)
@@ -62,6 +68,7 @@ namespace KZLib.Utilities
 			}
 		}
 
+		/// <summary>Applies the localized string at <paramref name="index"/> to <see cref="m_textMesh"/>.</summary>
 		private void _SetIndex(int index)
 		{
 			if(!m_textMesh)

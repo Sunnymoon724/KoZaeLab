@@ -16,29 +16,31 @@ namespace KZLib.UI
 			get => m_polygonSideCount;
 			set
 			{
+				value = Mathf.Clamp(value,c_minPolygonCount,c_maxPolygonCount);
+
 				int _CalculateExpectedVertexCount_PolygonSideCount(int polygonSideCount)
 				{
 					return _CalculateExpectedVertexCount_Inner(segmentCount:polygonSideCount);
 				}
 
-				void _SetVertexDistanceList()
+				_SetValueWithVertexCheck(ref m_polygonSideCount,value,_CalculateExpectedVertexCount_PolygonSideCount,_SyncPolygonVertexDistanceList);
+			}
+		}
+
+		private void _SyncPolygonVertexDistanceList()
+		{
+			var listCount = m_polygonVertexDistanceList.Count;
+
+			if(listCount < m_polygonSideCount)
+			{
+				for(var i=listCount;i<m_polygonSideCount;i++)
 				{
-					var listCount = m_polygonVertexDistanceList.Count;
-
-					if(listCount < m_polygonSideCount)
-					{
-						for(var i=listCount;i<m_polygonSideCount;i++)
-						{
-							m_polygonVertexDistanceList.Add(1);
-						}
-					}
-					else if(listCount > m_polygonSideCount)
-					{
-						m_polygonVertexDistanceList.RemoveRange(m_polygonSideCount,listCount-m_polygonSideCount);
-					}
+					m_polygonVertexDistanceList.Add(1.0f);
 				}
-
-				_SetValueWithVertexCheck(ref m_polygonSideCount,value,_CalculateExpectedVertexCount_PolygonSideCount,_SetVertexDistanceList);
+			}
+			else if(listCount > m_polygonSideCount)
+			{
+				m_polygonVertexDistanceList.RemoveRange(m_polygonSideCount,listCount-m_polygonSideCount);
 			}
 		}
 
@@ -117,8 +119,12 @@ namespace KZLib.UI
 
 		private Vector2[] _CalculatePolygonOuterVertexArray()
 		{
+			if(m_outerVertArray.Length < PolygonSideCount)
+			{
+				m_outerVertArray = new Vector2[PolygonSideCount];
+			}
+
 			var segmentAngle = _CalculateSegmentAngle(c_fullAngle,PolygonSideCount);
-			var vertArray = new Vector2[PolygonSideCount];
 
 			for(var i=0;i<PolygonSideCount;i++)
 			{
@@ -129,10 +135,10 @@ namespace KZLib.UI
 				var cos = Mathf.Cos(angle)*distRatio;
 				var sin = Mathf.Sin(angle)*distRatio;
 
-				vertArray[i] = _CalculateLocalVertex(cos,sin,Radius);
+				m_outerVertArray[i] = _CalculateLocalVertex(cos,sin,Radius);
 			}
 
-			return vertArray;
+			return m_outerVertArray;
 		}
 
 		private void _AddFillPolygonTriangles(VertexHelper vertexHelper,int vertCnt,bool canDrawAntiAliasing)

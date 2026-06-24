@@ -8,6 +8,9 @@ public static class Collider2DExtension
 {
 	private static readonly RaycastHit2D[] s_cachedRaycast2DArray = new RaycastHit2D[1];
 
+	/// <summary>
+	/// Returns whether this collider overlaps the target collider.
+	/// </summary>
 	public static bool IsOverlapping(this Collider2D collider2D,Collider2D target)
 	{
 		if(!collider2D || !target)
@@ -38,16 +41,25 @@ public static class Collider2DExtension
 		return colliderDistance.distance.ApproximatelyZero();
 	}
 
+	/// <summary>
+	/// Casts from this collider along <paramref name="offset"/> and returns whether another collider is hit on the layer mask.
+	/// </summary>
 	public static bool IsOverlapping(this Collider2D collider2D,LayerMask layerMask,Vector2 offset)
 	{
 		return IsOverlapping(collider2D,layerMask,offset,default);
 	}
 
+	/// <summary>
+	/// Casts from this collider along <paramref name="offset"/> using the given contact filter.
+	/// </summary>
 	public static bool IsOverlapping(this Collider2D collider2D,LayerMask layerMask,Vector2 offset,ContactFilter2D contactFilter2D)
 	{
 		return IsOverlapping(collider2D,layerMask,offset,contactFilter2D,out _);
 	}
 
+	/// <summary>
+	/// Casts from this collider along <paramref name="offset"/> and outputs the first hit when found.
+	/// </summary>
 	public static bool IsOverlapping(this Collider2D collider2D,LayerMask layerMask,Vector2 offset,out RaycastHit2D raycastHit)
 	{
 		return IsOverlapping(collider2D,layerMask,offset,default,out raycastHit);

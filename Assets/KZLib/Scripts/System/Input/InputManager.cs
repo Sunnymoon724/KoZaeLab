@@ -4,8 +4,12 @@ using KZLib.Utilities;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace KZLib
+namespace KZLib.Inputs
 {
+	/// <summary>
+	/// Singleton hub that registers <see cref="InputController"/> instances and applies a global input block.
+	/// Game code should lock via <see cref="KZInputKit"/>, which reference-counts and also blocks <see cref="UIManager.BlockUI"/>.
+	/// </summary>
 	[SingletonConfig(AutoCreate = true,PrefabPath = "Prefab/InputManager",DontDestroy = true)]
 	public class InputManager : SingletonMB<InputManager>
 	{
@@ -17,11 +21,6 @@ namespace KZLib
 
 		private readonly List<InputController> m_activeConList = new();
 
-		// protected override void _Initialize()
-		// {
-		// 	base._Initialize();
-		// }
-
 		protected override void _Release()
 		{
 			base._Release();
@@ -29,48 +28,21 @@ namespace KZLib
 			m_activeConList.Clear();
 		}
 
+		/// <summary>Called from <see cref="InputController"/> on <c>Awake</c>. Syncs the controller with the current block state.</summary>
 		public void AddInputCon(InputController controller)
 		{
-			m_activeConList.AddNotOverlap(controller);
+			m_activeConList.AddIfAbsent(controller);
 
 			controller.BlockInput(IsBlocked);
 		}
 
+		/// <summary>Called from <see cref="InputController"/> on <c>OnDestroy</c>.</summary>
 		public void RemoveInputCon(InputController controller)
 		{
 			m_activeConList.RemoveSafe(controller);
 		}
 
-		// public void ActivateTopController()
-		// {
-		// 	static int _FindMax(InputController controller)
-		// 	{
-		// 		return controller.Priority;
-		// 	}
-
-		// 	var maxIndex = m_activeConList.FindMaxIndex(_FindMax);
-			
-		// 	if(maxIndex != Global.INVALID_INDEX)
-		// 	{
-		// 		ActivateOnlyOneController(m_activeConList[maxIndex]);
-		// 	}
-		// }
-
-		// public void ActivateOnlyOneController(InputController controller)
-		// {
-		// 	if(m_activeConList.Count == 0)
-		// 	{
-		// 		return;
-		// 	}
-
-		// 	for(var i=0;i<m_activeConList.Count;i++)
-		// 	{
-		// 		var activeCon = m_activeConList[i];
-
-		// 		activeCon.BlockInput(activeCon != controller); 
-		// 	}
-		// }
-
+		/// <summary>Disables every registered controller's <see cref="UnityEngine.InputSystem.InputAction"/> set. Called from <see cref="KZInputKit"/> only.</summary>
 		public void BlockInput(bool isBlocked)
 		{
 			m_blocked = isBlocked;

@@ -1,15 +1,19 @@
 #if UNITY_EDITOR
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
-using UnityEngine;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using KZLib.Attributes;
 using KZLib.Data;
+using UnityEngine;
 using System.Collections;
 
 namespace KZLib.Windows
 {
+	/// <summary>
+	/// Editor window for browsing loaded MemoryPack proto rows grouped by proto type.
+	/// Data is read from <see cref="ProtoManager"/>; list items use <see cref="ProtoDrawer"/>.
+	/// </summary>
 	public class ProtoWindow : OdinEditorWindow
 	{
 		private Type m_protoType = null;
@@ -26,7 +30,6 @@ namespace KZLib.Windows
 				}
 
 				m_protoType = value;
-
 				m_protoList.Clear();
 
 				if(m_protoType == null)
@@ -34,13 +37,13 @@ namespace KZLib.Windows
 					return;
 				}
 
-				m_protoList.AddRange(ProtoManager.In.FindProtoGroup(value));
+				m_protoList.AddRange(ProtoManager.In.FindGroup(value));
 			}
 		}
 
 		private bool IsSelected => IsExistProto && ProtoType != null;
 
-		[VerticalGroup("1",Order = 1),LabelText(" "),SerializeReference,ListDrawerSettings(ShowFoldout = false,DraggableItems = false,HideAddButton = true,HideRemoveButton = true,ShowIndexLabels = true),ShowIf(nameof(IsSelected))]
+		[VerticalGroup("1",Order = 1),LabelText(" "),SerializeField,ListDrawerSettings(ShowFoldout = false,DraggableItems = false,HideAddButton = true,HideRemoveButton = true,ShowIndexLabels = true),ShowIf(nameof(IsSelected))]
 		private List<IProto> m_protoList = new();
 
 		[VerticalGroup("1",Order = 1),HideLabel,ShowInInspector,HideIf(nameof(IsExistProto)),KZRichText]
@@ -52,6 +55,9 @@ namespace KZLib.Windows
 
 		private List<Type> ProtoTypeList => ProtoTypeGroup as List<Type>;
 
+		/// <summary>
+		/// Lazily reloads proto assets and caches the available proto types for the dropdown.
+		/// </summary>
 		private IEnumerable ProtoTypeGroup
 		{
 			get
@@ -62,7 +68,7 @@ namespace KZLib.Windows
 
 					m_protoTypeList = new List<Type>();
 
-					foreach(var type in ProtoManager.In.FindProtoTypeGroup())
+					foreach(var type in ProtoManager.In.FindTypeGroup())
 					{
 						m_protoTypeList.Add(type);
 					}
@@ -70,6 +76,13 @@ namespace KZLib.Windows
 
 				return m_protoTypeList;
 			}
+		}
+
+		protected override void OnEnable()
+		{
+			base.OnEnable();
+
+			m_protoTypeList.Clear();
 		}
 
 		protected override void Initialize()

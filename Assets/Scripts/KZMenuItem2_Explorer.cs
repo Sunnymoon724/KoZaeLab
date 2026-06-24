@@ -13,8 +13,9 @@ namespace KZLib.EditorInternal.Menus
 			{
 				private const int DEFAULT			= 1 * Global.MenuOrderMainSpace;
 
-				public const int LIBRARY			= DEFAULT + 1 * Global.MenuOrderSubSpace;
-				public const int VENDER				= DEFAULT + 2 * Global.MenuOrderSubSpace;
+				public const int LIBRARY			= DEFAULT + 2 * Global.MenuOrderSubSpace;
+				public const int LIBRARY_BUILD		= LIBRARY + 1;
+				public const int VENDER				= DEFAULT + 3 * Global.MenuOrderSubSpace;
 			}
 		}
 
@@ -31,7 +32,7 @@ namespace KZLib.EditorInternal.Menus
 			});
 		}
 
-		[MenuItem("KZMenu/Explorer/Build Library Project",false,MenuOrder.Explorer.LIBRARY+1)]
+		[MenuItem("KZMenu/Explorer/Build Library Project",false,MenuOrder.Explorer.LIBRARY_BUILD)]
 		private static void _OnBuildLibraryProject()
 		{
 			var batchFilePath = Path.Combine(Global.ProjectParentPath,"KoZaeBuilding","BuildLibrary.bat");

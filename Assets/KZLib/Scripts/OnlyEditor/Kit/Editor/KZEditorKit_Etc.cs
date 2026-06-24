@@ -2,9 +2,15 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Editor-only utility methods for iterating components in scenes and prefabs.
+/// </summary>
 public static partial class KZEditorKit
 {
 	#region Component
+	/// <summary>
+	/// Invokes an action on every matching component in the active scene and in all prefab assets.
+	/// </summary>
 	public static void ExecuteMatchedComponentInUnity<TComponent>(System.Action<TComponent> onAction = null) where TComponent : Component
 	{
 		ExecuteMatchedComponentInActiveScene(onAction);
@@ -24,6 +30,9 @@ public static partial class KZEditorKit
 		KZAssetKit.ExecuteMatchedAsset<GameObject>("t:prefab",null,_Execute);
 	}
 
+	/// <summary>
+	/// Invokes an action on every matching component under the active scene's root objects.
+	/// </summary>
 	public static void ExecuteMatchedComponentInActiveScene<TComponent>(System.Action<TComponent> onAction = null) where TComponent : Component
 	{
 		var activeScene = SceneManager.GetActiveScene();

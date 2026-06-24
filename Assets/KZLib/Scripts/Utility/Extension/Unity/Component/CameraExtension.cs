@@ -22,6 +22,9 @@ public static class CameraExtension
 		return new Bounds(camera.transform.position,new Vector3(height*aspect,height,0.0f));
 	}
 
+	/// <summary>
+	/// Adds the layer at <paramref name="layerIndex"/> to the camera culling mask.
+	/// </summary>
 	public static void ShowLayer(this Camera camera,int layerIndex)
 	{
 		if(!_IsValid(camera))
@@ -32,6 +35,9 @@ public static class CameraExtension
 		camera.cullingMask = camera.cullingMask.AddFlag(1 << layerIndex);
 	}
 
+	/// <summary>
+	/// Adds the layers named in <paramref name="layerNameArray"/> to the camera culling mask.
+	/// </summary>
 	public static void ShowLayer(this Camera camera,params string[] layerNameArray)
 	{
 		if(!_IsValid(camera))
@@ -42,6 +48,9 @@ public static class CameraExtension
 		camera.cullingMask = camera.cullingMask.AddFlag(LayerMask.GetMask(layerNameArray));
 	}
 
+	/// <summary>
+	/// Removes the layer at <paramref name="layerIndex"/> from the camera culling mask.
+	/// </summary>
 	public static void HideLayer(this Camera camera,int layerIndex)
 	{
 		if(!_IsValid(camera))
@@ -52,6 +61,9 @@ public static class CameraExtension
 		camera.cullingMask = camera.cullingMask.RemoveFlag(1 << layerIndex);
 	}
 
+	/// <summary>
+	/// Removes the layers named in <paramref name="layerNameArray"/> from the camera culling mask.
+	/// </summary>
 	public static void HideLayer(this Camera camera,params string[] layerNameArray)
 	{
 		if(!_IsValid(camera))
@@ -62,6 +74,9 @@ public static class CameraExtension
 		camera.cullingMask = camera.cullingMask.RemoveFlag(LayerMask.GetMask(layerNameArray));
 	}
 
+	/// <summary>
+	/// Toggles visibility of the layer at <paramref name="layerIndex"/> in the culling mask.
+	/// </summary>
 	public static void ToggleLayerVisibility(this Camera camera,int layerIndex)
 	{
 		if(!_IsValid(camera))
@@ -72,6 +87,9 @@ public static class CameraExtension
 		camera.cullingMask ^= 1 << layerIndex;
 	}
 
+	/// <summary>
+	/// Toggles visibility of the layers named in <paramref name="layerNameArray"/> in the culling mask.
+	/// </summary>
 	public static void ToggleLayerVisibility(this Camera camera,params string[] layerNameArray)
 	{
 		if(!_IsValid(camera))
@@ -82,6 +100,9 @@ public static class CameraExtension
 		camera.cullingMask ^= LayerMask.GetMask(layerNameArray);
 	}
 
+	/// <summary>
+	/// Returns whether the layer at <paramref name="layerIndex"/> is included in the culling mask.
+	/// </summary>
 	public static bool IsLayerShown(this Camera camera,int layerIndex)
 	{
 		if(!_IsValid(camera))
@@ -89,9 +110,12 @@ public static class CameraExtension
 			return default;
 		}
 
-		return camera.cullingMask.HasFlag(1 << layerIndex);
+		return camera.cullingMask.HasAnyFlag(1 << layerIndex);
 	}
 
+	/// <summary>
+	/// Returns whether all layers named in <paramref name="layerNameArray"/> are included in the culling mask.
+	/// </summary>
 	public static bool IsLayerShown(this Camera camera,params string[] layerNameArray)
 	{
 		if(!_IsValid(camera))
@@ -99,9 +123,12 @@ public static class CameraExtension
 			return default;
 		}
 
-		return camera.cullingMask.HasFlag(LayerMask.GetMask(layerNameArray));
+		return camera.cullingMask.HasAllFlags(LayerMask.GetMask(layerNameArray));
 	}
 
+	/// <summary>
+	/// Shows or hides the layer at <paramref name="layerIndex"/> in the culling mask.
+	/// </summary>
 	public static void SetLayerVisibility(this Camera camera,bool isShow,int layerIndex)
 	{
 		if(!_IsValid(camera))
@@ -119,6 +146,9 @@ public static class CameraExtension
 		}
 	}
 
+	/// <summary>
+	/// Shows or hides the layers named in <paramref name="layerNameArray"/> in the culling mask.
+	/// </summary>
 	public static void SetLayerVisibility(this Camera camera,bool isShow,params string[] layerNameArray)
 	{
 		if(!_IsValid(camera))
@@ -156,6 +186,9 @@ public static class CameraExtension
 		return hit;
 	}
 
+	/// <summary>
+	/// Casts a viewport-center ray against a plane through <paramref name="position"/> and returns the hit distance.
+	/// </summary>
 	public static bool TryGetDistanceToPositionPlane(this Camera camera,Vector3 position,out float distance)
 	{
 		if(!_IsValid(camera))
@@ -170,6 +203,9 @@ public static class CameraExtension
 		return TryGetDistanceToPlane(camera,plane,out distance);
 	}
 
+	/// <summary>
+	/// Casts a viewport-center ray against a plane through <paramref name="target"/> and returns the hit distance.
+	/// </summary>
 	public static bool TryGetDistanceToObjectPlane(this Camera camera,Transform target,out float distance)
 	{
 		if(!_IsValid(camera))
@@ -222,6 +258,9 @@ public static class CameraExtension
 		return !float.IsInfinity(scale) && !float.IsNaN(scale);
 	}
 
+	/// <summary>
+	/// Projects <paramref name="transform"/>'s position onto the plane facing the camera at <paramref name="target"/>'s depth.
+	/// </summary>
 	public static bool TryCastPositionToTargetPlane(this Camera camera,Transform transform,Transform target,out Vector3 position)
 	{
 		if(!_IsValid(camera))
@@ -304,6 +343,9 @@ public static class CameraExtension
 		}
 	}
 
+	/// <summary>
+	/// Returns whether <paramref name="position"/> lies inside the camera pixel rect.
+	/// </summary>
 	public static bool IsInsideViewport(this Camera camera,Vector2 position)
 	{
 		if(!_IsValid(camera))

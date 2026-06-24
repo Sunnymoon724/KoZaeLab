@@ -1,22 +1,30 @@
 #if UNITY_EDITOR
-using System;
 using System.IO;
-using UnityEditor;
-using UnityEngine;
 
+/// <summary>
+/// Editor-only utility methods for resolving template files shipped with KZLib.
+/// </summary>
 public static partial class KZEditorKit
 {
-	public static string FindTemplateText(string absoluteFilePath)
+	/// <summary>
+	/// Reads and returns the text contents of a template file resolved by file name.
+	/// </summary>
+	public static string ReadTemplateText(string fileName)
 	{
-		if(!KZFileKit.IsPathExist(absoluteFilePath))
+		var absoluteFilePath = GetTemplateFileAbsolutePath(fileName);
+
+		if(!KZFileKit.IsFileExist(absoluteFilePath))
 		{
 			return null;
 		}
 
-		return KZFileKit.ReadFileToText(absoluteFilePath);
+		return KZFileKit.ReadTextFromFile(absoluteFilePath);
 	}
 
-	public static string FindTemplateFilePath(string fileName)
+	/// <summary>
+	/// Resolves a template file path in the UPM package first, then in the local Assets/KZLib copy.
+	/// </summary>
+	public static string ResolveTemplateFilePath(string fileName)
 	{
 		var packagePath = Path.Combine("Packages","com.bsheepstudio.kzlib","WorkResources","Templates",$"{fileName}");
 
@@ -27,24 +35,42 @@ public static partial class KZEditorKit
 
 		var assetPath = Path.Combine("Assets","KZLib","WorkResources","Templates",$"{fileName}");
 
-		if(KZFileKit.IsFileExist(Path.GetFullPath(assetPath)))
+		if(KZFileKit.IsFileExist(Path.Combine(Global.ProjectPath,assetPath)))
 		{
 			return assetPath;
 		}
 
-		throw new NullReferenceException($"{fileName} is not exist in template folder. FileName must be assigned.");
+		LogChannel.Kit.E($"{fileName} does not exist in template folder. FileName must be assigned.");
+
+		return null;
 	}
 
-	public static byte[] FindTestImage()
+	/// <summary>
+	/// Loads the built-in Ostrich.png template and returns its PNG byte data.
+	/// </summary>
+	public static byte[] ReadTemplateTestImage()
 	{
-		var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(FindTemplateFilePath("Ostrich.png"));
+		var absoluteFilePath = GetTemplateFileAbsolutePath("Ostrich.png");
 
-		return sprite != null ? sprite.texture.EncodeToPNG() : null;
+		if(absoluteFilePath.IsEmpty() || !KZFileKit.IsFileExist(absoluteFilePath))
+		{
+			return null;
+		}
+
+		return KZFileKit.ReadBytesFromFile(absoluteFilePath);
 	}
 
-	public static string FindTemplateFileAbsolutePath(string fileName)
+	/// <summary>
+	/// Returns the absolute filesystem path for a template file resolved by file name.
+	/// </summary>
+	public static string GetTemplateFileAbsolutePath(string fileName)
 	{
-		var templateFilePath = FindTemplateFilePath(fileName);
+		var templateFilePath = ResolveTemplateFilePath(fileName);
+
+		if(templateFilePath.IsEmpty())
+		{
+			return null;
+		}
 
 		return templateFilePath.StartsWith("Assets") ? Path.GetFullPath(templateFilePath) : Path.Combine(Global.ProjectPath,templateFilePath);
 	}

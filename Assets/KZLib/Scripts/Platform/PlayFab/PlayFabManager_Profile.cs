@@ -11,6 +11,9 @@ namespace KZLib
 {
 	public partial class PlayFabManager : Singleton<PlayFabManager>
 	{
+		/// <summary>
+		/// Fetches a PlayFab player profile including the display name.
+		/// </summary>
 		public async UniTask<PlayFabPacketInfo> GetPlayerProfileAsync(string playFabId)
 		{
 			void _SendPacket(PlayFabRequestCommon commonRequest,Action<PlayFabResultCommon> onSendResult,Action<PlayFabError> onSendError)

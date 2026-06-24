@@ -6,6 +6,7 @@ using UnityEditor;
 
 namespace KZLib.Attributes
 {
+	/// <summary><see cref="KZTexturePathAttribute"/> drawer. Opens TextureWindow preview.</summary>
 	public class KZTexturePathAttributeDrawer : KZResourcePathAttributeDrawer<KZTexturePathAttribute>
 	{
 		protected override SdfIconType IconType => SdfIconType.Image;

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace KZLib.UI.Widgets.Debug
 {
-	public class AudioProfile : MonoBehaviour,IImmediateOverlay
+	public class AudioProfile : ImmediateOverlayBehaviour
 	{
 		private const int c_spectrumSize = 512;
 		private const float c_dbScale = 20.0f;
@@ -31,9 +31,7 @@ namespace KZLib.UI.Widgets.Debug
 			}
 		}
 
-		public bool IsActive => gameObject.activeInHierarchy;
-
-		public void Refresh()
+		public override void Refresh()
 		{
 			var listener = CurrentListener;
 

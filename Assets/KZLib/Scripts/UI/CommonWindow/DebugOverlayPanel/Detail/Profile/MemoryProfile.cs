@@ -3,10 +3,8 @@ using UnityEngine.Profiling;
 
 namespace KZLib.UI.Widgets.Debug
 {
-	public class MemoryProfile : MonoBehaviour,IImmediateOverlay
+	public class MemoryProfile : ImmediateOverlayBehaviour
 	{
-		public bool IsActive => gameObject.activeInHierarchy;
-
 		[SerializeField]
 		private MemoryMonitor m_reservedMemory = null;
 		[SerializeField]
@@ -25,7 +23,7 @@ namespace KZLib.UI.Widgets.Debug
 		[SerializeField]
 		private ShiftGraphImage m_monoGraph = null;
 
-		public void Refresh()
+		public override void Refresh()
 		{
 			var reserved = Profiler.GetTotalReservedMemoryLong();
 			var allocated = Profiler.GetTotalAllocatedMemoryLong();

@@ -20,6 +20,10 @@ using Newtonsoft.Json;
 
 namespace KZLib.Purchasing
 {
+	/// <summary>
+	/// Unity IAP integration that initializes the store, fetches products, validates receipts,
+	/// sends purchase tokens to the backend, and confirms pending transactions.
+	/// </summary>
 	public class InAppPurchaseManager : Singleton<InAppPurchaseManager>
 	{
 #if !UNITY_EDITOR
@@ -92,6 +96,9 @@ namespace KZLib.Purchasing
 			base._Release(disposing);
 		}
 
+		/// <summary>
+		/// Initializes Unity IAP, registers callbacks, and fetches the configured SKU list.
+		/// </summary>
 		public void SetInAppPurchase(List<string> skuList,Func<string,string> onConvertToSkuFromPid)
 		{
 			m_onConvertToSkuFromPid = onConvertToSkuFromPid;
@@ -101,7 +108,7 @@ namespace KZLib.Purchasing
 
 			m_storeController.OnStoreDisconnected += _OnStoreDisconnected;
 
-			// 초기화 끝나고 상품 세팅
+			// Fetch products after initialization callbacks are registered.
 			m_storeController.OnProductsFetchFailed += _OnProductsFetchFailed;
 			m_storeController.OnProductsFetched += _OnProductsFetched;
 
@@ -161,7 +168,7 @@ namespace KZLib.Purchasing
 			}
 			else
 			{
-				Debug.LogError( $"[IAP] 지원하지 않는 스토어 입니다. {UnityIAPServices.DefaultStore()}" );
+				Debug.LogError($"[IAP] Unsupported store: {UnityIAPServices.DefaultStore()}");
 			}
 #endif
 			m_fetchingProductList.Clear();
@@ -248,7 +255,7 @@ namespace KZLib.Purchasing
 				return;
 			}
 
-			// 자체 검증
+			// Local receipt validation before server verification.
 			if(!_IsValidPurchase())
 			{
 				LogChannel.External.E("[IAP] Unsupported purchase method.");
@@ -347,6 +354,9 @@ namespace KZLib.Purchasing
 #endif
 		}
 
+		/// <summary>
+		/// Purchases a product by internal product id and store SKU, then validates it with the server.
+		/// </summary>
 		public async UniTask<InAppPurchaseResultType> PurchaseProductAsync(string productId,string sku)
 		{
 			if(m_lastPurchaseProductId.IsEqual(productId))
@@ -358,14 +368,14 @@ namespace KZLib.Purchasing
 
 			m_lastPurchaseProductId = productId;
 
-			InputManager.In.BlockInput(true);
+			KZInputKit.LockInput();
 
 #if !UNITY_EDITOR
 			if(m_storeController == null)
 			{
 				LogChannel.External.E("[IAP] StoreController is null");
 
-				InputManager.In.BlockInput(false);
+				KZInputKit.UnLockInput();
 
 				m_lastPurchaseProductId = string.Empty;
 
@@ -400,6 +410,8 @@ namespace KZLib.Purchasing
 
 					m_lastPurchaseProductId = string.Empty;
 
+					KZInputKit.UnLockInput();
+
 					return InAppPurchaseResultType.ProductNotFound;
 				}
 			}
@@ -417,7 +429,7 @@ namespace KZLib.Purchasing
 
 			if(m_purchaseResultInfo.Type == PurchaseResultType.Fail)
 			{
-				InputManager.In.BlockInput(false);
+				KZInputKit.UnLockInput();
 
 				m_lastPurchaseProductId = string.Empty;
 
@@ -453,7 +465,7 @@ namespace KZLib.Purchasing
 
 				m_lastPurchaseProductId = string.Empty;
 
-				InputManager.In.BlockInput(false);
+				KZInputKit.UnLockInput();
 
 				return InAppPurchaseResultType.ProductNotFound;
 			}
@@ -465,7 +477,7 @@ namespace KZLib.Purchasing
 
 			m_lastPurchaseProductId = string.Empty;
 
-			InputManager.In.BlockInput(false);
+			KZInputKit.UnLockInput();
 
 			if(!finishResult)
 			{
@@ -597,6 +609,9 @@ namespace KZLib.Purchasing
 		}
 #endif
 
+		/// <summary>
+		/// Returns whether the given SKU is available for purchase in the current store state.
+		/// </summary>
 		public bool CanPurchaseProduct(string sku)
 		{
 			var product = m_storeController.GetProductById(sku);
@@ -604,6 +619,9 @@ namespace KZLib.Purchasing
 			return product != null && product.availableToPurchase;
 		}
 
+		/// <summary>
+		/// Returns the localized price string for the given SKU, or empty when unavailable.
+		/// </summary>
 		public string GetProductPrice(string sku)
 		{
 			var product = m_storeController.GetProductById(sku);

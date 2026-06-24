@@ -1,4 +1,5 @@
 using KZLib;
+using KZLib.Effects;
 using UnityEngine;
 
 public class EffectTestController : MonoBehaviour

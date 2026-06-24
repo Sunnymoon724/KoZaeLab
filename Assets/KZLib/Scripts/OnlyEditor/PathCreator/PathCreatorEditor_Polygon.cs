@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using Sirenix.OdinInspector.Editor;
 
-namespace KZLib.Development
+namespace KZLib.EditorTools
 {
 	public partial class PathCreatorEditor : OdinEditor
 	{
@@ -11,14 +11,19 @@ namespace KZLib.Development
 
 		private void _SetShapePathInput(Event currentEvent)
 		{
-			var handleArray = m_pathCreator.HandleArray;
+			var handles = m_pathCreator.Handles;
+
+			if(handles.Count < c_shapeCount)
+			{
+				return;
+			}
 
 			m_mouseOverHandleIndex = Global.InvalidIndex;
 
 			for(var i=0;i<c_shapeCount;i++)
 			{
-				var radius = _GetHandleDiameter(m_anchorSize,handleArray[i])/2.0f;
-				var position = handleArray[i].TransformPoint(m_pathCreator.transform,m_pathCreator.PathSpaceType);
+				var radius = _GetHandleDiameter(m_anchorSize,handles[i])/2.0f;
+				var position = handles[i].TransformPoint(m_pathCreator.transform,m_pathCreator.PathSpaceType);
 	
 				if(HandleUtility.DistanceToCircle(position,radius) == 0.0f)
 				{
@@ -46,7 +51,12 @@ namespace KZLib.Development
 
 					case EventType.MouseDrag when m_dragHandleIndex != Global.InvalidIndex:
 					{
-						var currentPosition = handleArray[m_dragHandleIndex];
+						if(m_dragHandleIndex < 0 || m_dragHandleIndex >= handles.Count)
+						{
+							break;
+						}
+
+						var currentPosition = handles[m_dragHandleIndex];
 						var newPosition = _GetMousePosition();
 
 						if(currentPosition != newPosition)
@@ -61,7 +71,7 @@ namespace KZLib.Development
 					break;
 					case EventType.MouseUp:
 					{
-						m_dragHandleIndex = -1;
+						m_dragHandleIndex = Global.InvalidIndex;
 					}
 					break;
 				}
@@ -77,10 +87,13 @@ namespace KZLib.Development
 
 			for(var i=0;i<pointArray.Length-1;i++)
 			{
-				Handles.DrawLine(pointArray[i+0],pointArray[i+1]);
+				Handles.DrawLine(_ToWorld(pointArray[i+0]),_ToWorld(pointArray[i+1]));
 			}
 
-			Handles.DrawLine(pointArray[^1],pointArray[0]);
+			if(pointArray.Length >= 2 && !pointArray[0].AreEqual(pointArray[^1]))
+			{
+				Handles.DrawLine(_ToWorld(pointArray[^1]),_ToWorld(pointArray[0]));
+			}
 
 			Handles.color = cachedColor;
 		}

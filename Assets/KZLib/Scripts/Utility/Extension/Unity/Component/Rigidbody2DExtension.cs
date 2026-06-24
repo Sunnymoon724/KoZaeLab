@@ -8,6 +8,9 @@ public static class Rigidbody2DExtension
 {
 	private static readonly RaycastHit2D[] s_cachedRaycast2DArray = new RaycastHit2D[1];
 
+	/// <summary>
+	/// Returns whether this rigidbody overlaps the target collider.
+	/// </summary>
 	public static bool IsOverlapping(this Rigidbody2D rigidbody2D,Collider2D collider2D)
 	{
 		if(!_IsValid(rigidbody2D) || !collider2D)
@@ -38,16 +41,25 @@ public static class Rigidbody2DExtension
 		return colliderDistance.distance.ApproximatelyZero();
 	}
 
+	/// <summary>
+	/// Casts the rigidbody along an offset vector and returns whether a collider on the layer mask was hit.
+	/// </summary>
 	public static bool IsOverlapping(this Rigidbody2D rigidbody2D,LayerMask layerMask,Vector2 offset)
 	{
 		return IsOverlapping(rigidbody2D,layerMask,offset,default);
 	}
 
+	/// <summary>
+	/// Casts the rigidbody along an offset vector using the given contact filter.
+	/// </summary>
 	public static bool IsOverlapping(this Rigidbody2D rigidbody2D,LayerMask layerMask,Vector2 offset,ContactFilter2D contactFilter2D)
 	{
 		return IsOverlapping(rigidbody2D,layerMask,offset,contactFilter2D,out _);
 	}
 
+	/// <summary>
+	/// Casts the rigidbody along an offset vector and outputs the first hit when found.
+	/// </summary>
 	public static bool IsOverlapping(this Rigidbody2D rigidbody2D,LayerMask layerMask,Vector2 offset,out RaycastHit2D raycastHit)
 	{
 		return IsOverlapping(rigidbody2D,layerMask,offset,default,out raycastHit);
@@ -81,6 +93,9 @@ public static class Rigidbody2DExtension
 		return isHit;
 	}
 
+	/// <summary>
+	/// Redirects linear velocity to the given direction while preserving speed.
+	/// </summary>
 	public static void ChangeDirection(this Rigidbody2D rigidbody2D,Vector2 direction)
 	{
 		if(!_IsValid(rigidbody2D))

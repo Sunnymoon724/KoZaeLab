@@ -6,16 +6,25 @@ using UnityEngine;
 /// </summary>
 public static class FloatExtension
 {
+	/// <summary>
+	/// Formats the float with thousands separators and no decimal places.
+	/// </summary>
 	public static string ToStringComma(this float number)
 	{
 		return $"{number:n0}";
 	}
 
+	/// <summary>
+	/// Formats the float as a percentage with the given decimal places.
+	/// </summary>
 	public static string ToStringPercent(this float number,int decimalPoint)
 	{
 		return string.Format(string.Concat("{0:f",decimalPoint,"}%"),number);
 	}
 
+	/// <summary>
+	/// Formats the float with an explicit plus sign for positive values.
+	/// </summary>
 	public static string ToStringSign(this float number)
 	{
 		return $"{(number > 0.0 ? "+" : "")}{number}";
@@ -37,10 +46,11 @@ public static class FloatExtension
 	public static float ToWrapAngle(this float angle)
 	{
 		var fullAngle = Global.FullAngle;
+		var halfAngle = fullAngle*0.5f;
 
-		angle = ((angle % fullAngle)+fullAngle)%fullAngle;
+		angle = ((angle%fullAngle)+fullAngle)%fullAngle;
 
-		return angle > fullAngle ? angle-fullAngle : angle;
+		return angle > halfAngle ? angle-fullAngle : angle;
 	}
 
 	/// <summary>
@@ -53,11 +63,17 @@ public static class FloatExtension
 		return new Vector3(radius*Mathf.Cos(degree*Mathf.Deg2Rad),0,radius*Mathf.Sin(degree*Mathf.Deg2Rad));
 	}
 
+	/// <summary>
+	/// Returns whether two floats are approximately equal.
+	/// </summary>
 	public static bool Approximately(this float number1,float number2)
 	{
 		return Mathf.Approximately(number1,number2);
 	}
 
+	/// <summary>
+	/// Returns whether the float is approximately zero.
+	/// </summary>
 	public static bool ApproximatelyZero(this float number)
 	{
 		return Approximately(number,0.0f);

@@ -4,8 +4,8 @@ public enum WindowPrefabType { Panel, PopUp, World };
 
 public enum WindowPriorityType
 {
-	Backmost,		//
-	Back,			//
+	Backmost,
+	Back,
 	Middle,			// default UI
 	Fore, 			// fade UI
 	Foremost		// info UI
@@ -17,7 +17,14 @@ public enum TeamType { None, Team0, Team1, Team2, Team3, Team4, Team5, Team6, Te
 
 public enum TeamRelationType { None, Neutral, Ally, Enemy }
 
-public enum GraphicQualityPresetType { QualityLowest, QualityLow, QualityMiddle, QualityHigh, QualityHighest, }
+public enum GraphicQualityPresetType
+{
+	QualityLowest = 0,
+	QualityLow = 1,
+	QualityMiddle = 2,
+	QualityHigh = 3,
+	QualityHighest = 4,
+}
 
 [Flags]
 public enum DirectionType

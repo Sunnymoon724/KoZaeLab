@@ -2,13 +2,14 @@
 using KZLib.Utilities;
 using Newtonsoft.Json;
 using System;
+using System.Globalization;
 using UnityEngine;
-using KZLib.Data;
 
 namespace KZLib
 {
 	/// <summary>
-	/// saving Encrypted, but not secure.
+	/// Typed wrapper over Unity <see cref="PlayerPrefs"/> with an in-memory cache.
+	/// All values are stored as strings. Not encrypted — do not store secrets here.
 	/// </summary>
 	public class PlayerPrefsManager : Singleton<PlayerPrefsManager>
 	{
@@ -33,6 +34,10 @@ namespace KZLib
 			base._Release(disposing);
 		}
 
+		/// <summary>
+		/// Returns whether the key exists. On a cache miss, loads the value into <see cref="m_cacheDict"/>.
+		/// Does not reflect changes made outside this manager until <see cref="_Initialize"/> runs again.
+		/// </summary>
 		public bool HasKey(string key)
 		{
 			if(key.IsEmpty())
@@ -64,28 +69,28 @@ namespace KZLib
 		{
 			value = default;
 
-			return _TryGetValue(key,out var result) && int.TryParse(result,out value);
+			return _TryGetValue(key,out var result) && int.TryParse(result,NumberStyles.Integer,CultureInfo.InvariantCulture,out value);
 		}
 
 		public bool TryGetLong(string key,out long value)
 		{
 			value = default;
 
-			return _TryGetValue(key,out var result) && long.TryParse(result,out value);
+			return _TryGetValue(key,out var result) && long.TryParse(result,NumberStyles.Integer,CultureInfo.InvariantCulture,out value);
 		}
 
 		public bool TryGetFloat(string key,out float value)
 		{
 			value = default;
 
-			return _TryGetValue(key,out var result) && float.TryParse(result,out value);
+			return _TryGetValue(key,out var result) && float.TryParse(result,NumberStyles.Float,CultureInfo.InvariantCulture,out value);
 		}
 
 		public bool TryGetDouble(string key,out double value)
 		{
 			value = default;
 
-			return _TryGetValue(key,out var result) && double.TryParse(result,out value);
+			return _TryGetValue(key,out var result) && double.TryParse(result,NumberStyles.Float,CultureInfo.InvariantCulture,out value);
 		}
 
 		public bool TryGetBool(string key,out bool value)
@@ -102,46 +107,101 @@ namespace KZLib
 			return _TryGetValue(key,out var result) && Enum.TryParse(result,true,out value);
 		}
 
+		/// <summary>
+		/// Deserializes JSON stored at <paramref name="key"/>.
+		/// Returns false on missing key, invalid JSON, type mismatch, or JSON <c>null</c> for non-nullable value types.
+		/// </summary>
 		public bool TryGetObject<TValue>(string key,out TValue value)
 		{
-			if(TryGetObject(key,typeof(TValue),out var result))
+			value = default;
+
+			if(!_TryGetValue(key,out var json) || !_TryDeserializeObject(key,typeof(TValue),json,out var result))
 			{
-				value = (TValue) result;
+				return false;
+			}
+
+			if(result == null)
+			{
+				return true;
+			}
+
+			if(result is TValue typed)
+			{
+				value = typed;
 
 				return true;
 			}
-			else
+
+			value = default;
+
+			return false;
+		}
+
+		/// <summary>
+		/// Deserializes JSON stored at <paramref name="key"/>.
+		/// On success, rewrites storage when Newtonsoft canonical form differs (legacy migration).
+		/// Returns false on missing key, invalid JSON, or JSON <c>null</c> for non-nullable value types.
+		/// </summary>
+		public bool TryGetObject(string key,Type type,out object value)
+		{
+			if(!_TryGetValue(key,out var result))
 			{
 				value = default;
 
 				return false;
 			}
+
+			return _TryDeserializeObject(key,type,result,out value);
 		}
 
-		public bool TryGetObject(string key,Type type,out object value)
+		private bool _TryDeserializeObject(string key,Type type,string json,out object value)
 		{
-			if(_TryGetValue(key,out var result))
+			value = default;
+
+			if(type == null)
 			{
-				var deserialize = JsonConvert.DeserializeObject(result,type);
-					var serialize = JsonConvert.SerializeObject(deserialize);
-
-					if(!serialize.IsEqual(result))
-					{
-						_SetValue(key,serialize);
-					}
-
-					value = deserialize;
-
-					return true;
-				}
-				else
-				{
-					value = default;
-
-					return false;
-				}
+				return false;
 			}
 
+			if(_IsJsonNullLiteral(json))
+			{
+				if(type.IsValueType && Nullable.GetUnderlyingType(type) == null)
+				{
+					return false;
+				}
+
+				value = null;
+
+				return true;
+			}
+
+			try
+			{
+				var deserialize = JsonConvert.DeserializeObject(json,type);
+				var serialize = JsonConvert.SerializeObject(deserialize);
+
+				// Migrate stored JSON to the current serializer format when parse succeeds but text differs.
+				if(!serialize.IsEqual(json))
+				{
+					_SetValue(key,serialize);
+				}
+
+				value = deserialize;
+
+				return true;
+			}
+			catch(JsonException)
+			{
+				return false;
+			}
+		}
+
+		private static bool _IsJsonNullLiteral(string json) => json.Trim().IsEqual("null");
+
+		/// <summary>
+		/// Reads a cached string or loads from <see cref="PlayerPrefs"/> on first access.
+		/// Stale if <see cref="PlayerPrefs"/> was modified without going through this manager.
+		/// </summary>
 		private bool _TryGetValue(string key,out string result)
 		{
 			if(key.IsEmpty())
@@ -170,6 +230,7 @@ namespace KZLib
 			return true;
 		}
 
+		/// <summary>Persists a non-empty string. To clear a key, use <see cref="RemoveKey"/>.</summary>
 		public void SetString(string key,string value)
 		{
 			_SetValue(key,value);
@@ -177,22 +238,22 @@ namespace KZLib
 
 		public void SetInt(string key,int value)
 		{
-			_SetValue(key,value.ToString());
+			_SetValue(key,value.ToString(CultureInfo.InvariantCulture));
 		}
 
 		public void SetLong(string key,long value)
 		{
-			_SetValue(key,value.ToString());
+			_SetValue(key,value.ToString(CultureInfo.InvariantCulture));
 		}
 
 		public void SetFloat(string key,float value)
 		{
-			_SetValue(key,value.ToString());
+			_SetValue(key,value.ToString(CultureInfo.InvariantCulture));
 		}
 
 		public void SetDouble(string key,double value)
 		{
-			_SetValue(key,value.ToString());
+			_SetValue(key,value.ToString(CultureInfo.InvariantCulture));
 		}
 
 		public void SetBool(string key,bool value)
@@ -200,7 +261,7 @@ namespace KZLib
 			_SetValue(key,value.ToString());
 		}
 
-		public void SetEnum<TEnum>(string key,TEnum value) where TEnum : struct
+		public void SetEnum<TEnum>(string key,TEnum value) where TEnum : struct,Enum
 		{
 			_SetValue(key,value.ToString());
 		}
@@ -210,14 +271,10 @@ namespace KZLib
 			_SetValue(key,JsonConvert.SerializeObject(value));
 		}
 
-		public void SetAffix(bool isUpdate,IAffix newAffix)
-		{
-			var affix = isUpdate ? AffixManager.In.Update(newAffix) : AffixManager.In.Set(newAffix);
-			var key = typeof(IAffix).Name;
-
-			_SetValue(key,JsonConvert.SerializeObject(affix));
-		}
-
+		/// <summary>
+		/// Writes to <see cref="PlayerPrefs"/> and cache. Empty key or value is ignored;
+		/// empty values cannot be stored — use <see cref="RemoveKey"/> instead.
+		/// </summary>
 		private void _SetValue(string key,string value)
 		{
 			if(value.IsEmpty() || key.IsEmpty())
@@ -244,6 +301,10 @@ namespace KZLib
 			PlayerPrefs.Save();
 		}
 
+		/// <summary>
+		/// Deletes every PlayerPrefs entry for this application, including keys not managed here.
+		/// Intended for editor/debug tooling only.
+		/// </summary>
 		public void Clear()
 		{
 			m_cacheDict.Clear();

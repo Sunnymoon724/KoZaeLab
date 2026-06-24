@@ -37,7 +37,7 @@
 // 		[MenuItem("KZMenu/Explorer/Check Vendor Projects",false,MenuOrder.Explorer.VENDER)]
 // 		private static void _OnCheckVendorProjects()
 // 		{
-// 			if(!KZEditorKit.DisplayCheckBeforeExecute("Check vendor projects"))
+// 			if(!KZEditorKit.DisplayConfirm("Check vendor projects"))
 // 			{
 // 				return;
 // 			}

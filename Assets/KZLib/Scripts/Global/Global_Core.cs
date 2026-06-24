@@ -113,6 +113,12 @@ public static partial class Global
 	public const string AnisotropicFiltering = "AnisotropicFiltering";
 	public const string VerticalSyncCount = "VerticalSyncCount";
 	public const string DisableCameraFarHalf = "DisableCameraFarHalf";
+	public const string LodBias = "LodBias";
+	public const string MaximumLODLevel = "MaximumLODLevel";
+	public const string AntiAliasing = "AntiAliasing";
+	public const string SkinWeights = "SkinWeights";
+	public const string ShadowDistance = "ShadowDistance";
+	public const string RealtimeReflectionProbes = "RealtimeReflectionProbes";
 }
 #endregion Graphic Option
 

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4747392594770532889}
   m_Layer: 0
-  m_Name: SoundEffectGroup
+  m_Name: EffectStorage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -77,8 +77,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9467cecefd7540e4ababbdd82250b63c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sfxBox: {fileID: 4747392594770532889}
-  m_bgmSource: {fileID: 8643535638848041472}
+  m_effect3dMinDistance: 1
+  m_effect3dMaxDistance: 50
+  m_effectStorage: {fileID: 4747392594770532889}
+  m_musicSource: {fileID: 8643535638848041472}
 --- !u!82 &8643535638848041472
 AudioSource:
   m_ObjectHideFlags: 0
@@ -90,6 +92,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

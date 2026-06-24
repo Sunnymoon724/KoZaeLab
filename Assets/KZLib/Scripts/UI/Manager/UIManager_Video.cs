@@ -1,5 +1,7 @@
-﻿using Cysharp.Threading.Tasks;
-using KZLib.Data.Video;
+﻿using System;
+using Cysharp.Threading.Tasks;
+using KZLib.Sounds;
+using KZLib.UI;
 using KZLib.Utilities;
 
 namespace KZLib
@@ -7,7 +9,8 @@ namespace KZLib
 	public partial class UIManager : SingletonMB<UIManager>
 	{
 		/// <summary>
-		/// fade out -> prepare video -> fade in -> play video
+		/// Fade out, prepare video, fade in, then play to completion.
+		/// Background music is paused for the duration and resumed afterward.
 		/// </summary>
 		public async UniTask WatchVideoAsync(CommonUINameTag transitionNameTag,VideoInfo videoInfo)
 		{
@@ -15,7 +18,8 @@ namespace KZLib
 		}
 
 		/// <summary>
-		/// fade out -> show loading -> fade in -> play video
+		/// Fade out, show loading while preparing video, fade in, then play to completion.
+		/// Background music is paused for the duration and resumed afterward.
 		/// </summary>
 		public async UniTask WatchVideoIncludeLoadingAsync(CommonUINameTag transitionNameTag,VideoInfo videoInfo)
 		{
@@ -26,40 +30,61 @@ namespace KZLib
 		{
 			if(videoInfo == null)
 			{
-				LogChannel.UI.E("VideoInfo is null");
-
-				return;
+				throw new InvalidOperationException("VideoInfo is null.");
 			}
 
-			SoundManager.In.PauseBGMSound();
+			SoundManager.In.PauseMusic();
 
-			var videoPanel = Open(CommonUINameTag.VideoPanel) as VideoPanel;
+			VideoPanel videoPanel = null;
 
-			videoPanel.Hide(true);
-
-			async UniTask _PlayTaskAsync()
+			try
 			{
-				await _PrepareVideoAsync(videoPanel,videoInfo);
-			}
+				videoPanel = Open(CommonUINameTag.VideoPanel) as VideoPanel;
 
-			if(includeLoading)
+				if(videoPanel == null)
+				{
+					throw new NullReferenceException("VideoPanel is null.");
+				}
+
+				videoPanel.Hide(true);
+
+				async UniTask _PrepareTaskAsync()
+				{
+					await _PrepareVideoAsync(videoPanel,videoInfo);
+				}
+
+				async UniTask _PrepareWithLoadingAsync(Action<float> onUpdateProgress)
+				{
+					await _PrepareVideoAsync(videoPanel,videoInfo);
+				}
+
+				if(includeLoading)
+				{
+					await PlayLoadingIncludeTransitionAsync(transitionNameTag,_PrepareWithLoadingAsync);
+				}
+				else
+				{
+					await _PlayTransitionOutInAsync(transitionNameTag,_PrepareTaskAsync);
+				}
+
+				videoPanel.PlayVideo();
+
+				await videoPanel.WaitUntilPlaybackEndsAsync();
+			}
+			finally
 			{
-				await PlayLoadingIncludeTransitionAsync(transitionNameTag,_PlayTaskAsync);
+				if(videoPanel != null)
+				{
+					Close(videoPanel);
+				}
+
+				SoundManager.In.ResumeMusic();
 			}
-			else
-			{
-				await _PlayTransitionOutInAsync(transitionNameTag,_PlayTaskAsync);
-			}
-
-			videoPanel.PlayVideo();
-
-			await videoPanel.WaitForPlayingAsync();
-
-			Close(videoPanel);
-
-			SoundManager.In.ResumeBGMSound();
 		}
 
+		/// <summary>
+		/// Reveals the video panel and prepares the clip without starting playback.
+		/// </summary>
 		private async UniTask _PrepareVideoAsync(VideoPanel videoPanel,VideoInfo videoInfo)
 		{
 			videoPanel.Hide(false);

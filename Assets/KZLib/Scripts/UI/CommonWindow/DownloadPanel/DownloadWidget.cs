@@ -4,6 +4,10 @@ using UnityEngine.UI;
 
 namespace KZLib.UI.Widgets
 {
+	/// <summary>
+	/// Bar, percent label, and byte counters for download progress.
+	/// Expects <see cref="m_progressImage"/> to use <see cref="Image.Type.Filled"/> when assigned.
+	/// </summary>
 	public class DownloadWidget : MonoBehaviour
 	{
 		[SerializeField]
@@ -23,6 +27,7 @@ namespace KZLib.UI.Widgets
 			SetTotalSizeText(string.Empty);
 		}
 
+		/// <summary>Expects <paramref name="progress"/> in [0, 1]; clamped by <see cref="DownloadPanel"/> when forwarded.</summary>
 		public virtual void SetProgress(float progress,long downloadedSize,long totalSize)
 		{
 			SetProgressImage(progress);

@@ -3,6 +3,11 @@ using UnityEngine;
 
 namespace KZLib.Utilities
 {
+	/// <summary>
+	/// Base for visual lerps on renderers.
+	/// <see cref="ModeType.Fade"/> builds a fade-in/hold/fade-out alpha curve and locks duration.
+	/// <see cref="ModeType.Free"/> allows color/gradient or material float driven by progress.
+	/// </summary>
 	public abstract class StanzaLerpRender : StanzaLerp
 	{
 		private enum ModeType { Fade, Free }
@@ -19,6 +24,10 @@ namespace KZLib.Utilities
 		[SerializeField,HideInInspector]
 		private Vector3 m_fadeDuration = Vector3.zero;
 
+		/// <summary>
+		/// x = fade-in, y = hold, z = fade-out (seconds).
+		/// Rebuilds <see cref="m_fadeCurve"/> and sets total <see cref="StanzaLerp.Duration"/>.
+		/// </summary>
 		[VerticalGroup("Visual/Fade",Order = 0),ShowInInspector,ShowIf(nameof(IsFadeMode))]
 		protected Vector3 FadeDuration
 		{
@@ -91,6 +100,7 @@ namespace KZLib.Utilities
 		protected string m_materialName = "";
 		#endregion Free Mode
 
+		/// <summary>Maps progress through the fade curve and applies alpha only.</summary>
 		protected Color _GetFadeColor(Color color,float progress)
 		{
 			if(m_fadeCurve == null)
@@ -101,6 +111,7 @@ namespace KZLib.Utilities
 			return color.MaskAlpha(Mathf.Lerp(0.0f,1.0f,m_fadeCurve.Evaluate(progress)));
 		}
 
+		/// <summary>Resolves color from curve/lerp or gradient depending on free-mode settings.</summary>
 		protected Color _GetColor(Color color,float progress)
 		{
 			if(UseCurve)

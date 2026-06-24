@@ -6,6 +6,10 @@ using R3;
 
 namespace KZLib.Webhooks
 {
+	/// <summary>
+	/// Sends outbound webhook requests to Discord, Google Apps Script, and Trello.
+	/// Centralizes HTTP dispatch, editor dump logging, and network error notification.
+	/// </summary>
 	public partial class WebhookManager : Singleton<WebhookManager>
 	{
 		private readonly Subject<string> m_networkErrorSubject = new();
@@ -23,6 +27,9 @@ namespace KZLib.Webhooks
 			base._Release(disposing);
 		}
 
+		/// <summary>
+		/// Publishes a network error message to observers such as UI overlays.
+		/// </summary>
 		public void SendNetworkError(string message)
 		{
 			m_networkErrorSubject.OnNext(message);

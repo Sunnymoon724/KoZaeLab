@@ -11,7 +11,7 @@ public static class GameObjectExtension
 	/// <summary>
 	/// Disables all <see cref="Renderer"/> components on this object and its children.
 	/// </summary>
-	public static void SetRenderOff(this GameObject gameObject)
+	public static void DisableRenderers(this GameObject gameObject)
 	{
 		if(!_IsValid(gameObject))
 		{
@@ -27,7 +27,7 @@ public static class GameObjectExtension
 	}
 
 	/// <summary>
-	/// gameObject.activeSelf != active => SetActive()
+	/// Sets active state only when it differs from the current <see cref="GameObject.activeSelf"/> value.
 	/// </summary>
 	public static void EnsureActive(this GameObject gameObject,bool value)
 	{
@@ -43,9 +43,9 @@ public static class GameObjectExtension
 	}
 
 	/// <summary>
-	/// Toggle active
+	/// Toggles <see cref="GameObject.activeSelf"/> to the opposite value.
 	/// </summary>
-	public static void SetActiveToggle(this GameObject gameObject)
+	public static void ToggleActive(this GameObject gameObject)
 	{
 		if(!_IsValid(gameObject))
 		{
@@ -56,7 +56,7 @@ public static class GameObjectExtension
 	}
 
 	/// <summary>
-	/// Set active all children
+	/// Sets the active state on every child transform, optionally including this object.
 	/// </summary>
 	public static void SetActiveAll(this GameObject gameObject,bool value,bool includeSelf)
 	{
@@ -98,6 +98,9 @@ public static class GameObjectExtension
 		gameObject.transform.RecursiveChildren(_SetLayer);
 	}
 
+	/// <summary>
+	/// Assigns the given layer to this object and every child, resolving the layer by name.
+	/// </summary>
 	public static void SetAllLayer(this GameObject gameObject,string layerName)
 	{
 		if(!_IsValid(gameObject))
@@ -124,7 +127,7 @@ public static class GameObjectExtension
 	/// <summary>
 	/// Returns whether every <see cref="MeshFilter"/> in the hierarchy has a non-null shared mesh.
 	/// </summary>
-	public static bool IsExistMeshFilter(this GameObject gameObject)
+	public static bool HasValidMeshFilters(this GameObject gameObject)
 	{
 		if(!_IsValid(gameObject))
 		{
@@ -149,6 +152,9 @@ public static class GameObjectExtension
 		return true;
 	}
 
+	/// <summary>
+	/// Returns the component when present; otherwise adds and returns a new one.
+	/// </summary>
 	public static TComponent GetOrAddComponent<TComponent>(this GameObject gameObject) where TComponent : Component
 	{
 		if(!_IsValid(gameObject))
@@ -159,6 +165,9 @@ public static class GameObjectExtension
 		return gameObject.GetComponent<TComponent>() ?? gameObject.AddComponent<TComponent>();
 	}
 
+	/// <summary>
+	/// Returns whether the component is attached to this object.
+	/// </summary>
 	public static bool HasComponent<TComponent>(this GameObject gameObject) where TComponent : Component
 	{
 		if(!_IsValid(gameObject))
@@ -171,6 +180,7 @@ public static class GameObjectExtension
 
 	/// <summary>
 	/// Re-resolves shaders on all child renderers and TMP text materials via <see cref="ShaderManager"/>.
+	/// Mutates shared material assets in place; all users of the same shared material are affected.
 	/// </summary>
 	public static void ReAssignShader(this GameObject gameObject)
 	{
@@ -185,28 +195,39 @@ public static class GameObjectExtension
 		{
 			var textGraphic = textGraphicArray[i];
 
-			if(!textGraphic.fontMaterial)
+			//? By design: fontSharedMaterial avoids TMP fontMaterial instance copies
+			var fontMaterial = textGraphic.fontSharedMaterial;
+
+			if(!fontMaterial || !fontMaterial.shader)
 			{
 				continue;
 			}
 
-			textGraphic.fontMaterial.shader = ShaderManager.In.FindShader(textGraphic.fontMaterial.shader.name);
+			fontMaterial.shader = ShaderManager.In.FindShader(fontMaterial.shader.name);
 		}
 
 		var rendererArray = gameObject.GetComponentsInChildren<Renderer>(true);
 
 		for(var i=0;i<rendererArray.Length;i++)
 		{
-			var materialArray = rendererArray[i].materials;
+			//? By design: sharedMaterials avoids renderer.materials instance copies
+			var sharedMaterialArray = rendererArray[i].sharedMaterials;
 
-			if(materialArray == null)
+			if(sharedMaterialArray == null)
 			{
 				continue;
 			}
 
-			for(var j=0;j<materialArray.Length;j++)
+			for(var j=0;j<sharedMaterialArray.Length;j++)
 			{
-				materialArray[j].shader = ShaderManager.In.FindShader(materialArray[j].shader.name);
+				var material = sharedMaterialArray[j];
+
+				if(!material || !material.shader)
+				{
+					continue;
+				}
+
+				material.shader = ShaderManager.In.FindShader(material.shader.name);
 			}
 		}
 	}
@@ -214,7 +235,7 @@ public static class GameObjectExtension
 	/// <summary>
 	/// Disables transparent-mesh culling on the root <see cref="CanvasRenderer"/>.
 	/// </summary>
-	public static void SetCanvasCullTransparentMeshOff(this GameObject gameObject)
+	public static void DisableCanvasCullTransparentMesh(this GameObject gameObject)
 	{
 		if(!_IsValid(gameObject))
 		{
@@ -230,9 +251,9 @@ public static class GameObjectExtension
 	}
 
 	/// <summary>
-	/// Check mesh flip
+	/// Mirrors the skinned mesh by offsetting vertices and reversing triangle winding order.
 	/// </summary>
-	public static void SkinMeshFlip(this GameObject gameObject)
+	public static void SkinnedMeshFlip(this GameObject gameObject)
 	{
 		if(!_IsValid(gameObject))
 		{

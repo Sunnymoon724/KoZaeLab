@@ -9,9 +9,9 @@ using UnityEngine;
 public static partial class TransformExtension
 {
 	/// <summary>
-	/// AAA/BBB
+	/// Builds a root-to-leaf hierarchy path such as <c>/Root/Child/Leaf</c>.
 	/// </summary>
-	public static string FindHierarchy(this Transform origin)
+	public static string BuildHierarchyPath(this Transform origin)
 	{
 		if(!_IsValid(origin))
 		{
@@ -82,6 +82,9 @@ public static partial class TransformExtension
 		return null;
 	}
 
+	/// <summary>
+	/// Returns the parent transform, or <c>null</c> when none exists.
+	/// </summary>
 	public static Transform GetParent(this Transform origin)
 	{
 		if(!_IsValid(origin))
@@ -92,6 +95,9 @@ public static partial class TransformExtension
 		return origin ? origin.parent : null;
 	}
 
+	/// <summary>
+	/// Creates and parents a new empty child <see cref="GameObject"/> with the given <paramref name="name"/>.
+	/// </summary>
 	public static Transform AddChild(this Transform origin,string name)
 	{
 		if(!_IsValid(origin))
@@ -106,6 +112,9 @@ public static partial class TransformExtension
 		return child.transform;
 	}
 
+	/// <summary>
+	/// Creates and parents multiple empty children from <paramref name="nameArray"/>.
+	/// </summary>
 	public static Transform[] AddChildren(this Transform origin,string[] nameArray)
 	{
 		if(!_IsValid(origin))
@@ -123,6 +132,9 @@ public static partial class TransformExtension
 		return childArray;
 	}
 
+	/// <summary>
+	/// Creates and parents <paramref name="count"/> empty children named <c>{name}_{i}</c>.
+	/// </summary>
 	public static Transform[] AddChildren(this Transform origin,string name,int count)
 	{
 		if(!_IsValid(origin))
@@ -158,16 +170,6 @@ public static partial class TransformExtension
 		}
 	}
 
-	// public static void SetUIChild(this Transform origin,Transform child,bool worldPositionStays,bool isSameLayer = true)
-	// {
-	// 	if(!_IsValid(origin))
-	// 	{
-	// 		return;
-	// 	}
-
-	// 	_SetChild(origin,child,false,isSameLayer);
-	// }
-
 	private static Transform _AddChildInside(Transform origin,GameObject prefab,bool worldPositionStays,bool isSameLayer)
 	{
 		if(!_IsValid(origin))
@@ -182,6 +184,9 @@ public static partial class TransformExtension
 		return child.transform;
 	}
 
+	/// <summary>
+	/// Instantiates and parents a copy of <paramref name="prefab"/> under <paramref name="origin"/>.
+	/// </summary>
 	public static Transform AddChild(this Transform origin,GameObject prefab,bool isSameLayer = true)
 	{
 		if(!_IsValid(origin))
@@ -192,6 +197,9 @@ public static partial class TransformExtension
 		return _AddChildInside(origin,prefab,true,isSameLayer);
 	}
 
+	/// <summary>
+	/// Instantiates and parents <paramref name="count"/> copies of <paramref name="prefab"/>.
+	/// </summary>
 	public static Transform[] AddChildren(this Transform origin,GameObject prefab,int count,bool isSameLayer = true)
 	{
 		if(!_IsValid(origin))
@@ -222,6 +230,9 @@ public static partial class TransformExtension
 		return _AddChildInside(origin,prefab,false,isSameLayer);
 	}
 
+	/// <summary>
+	/// Instantiates and parents <paramref name="count"/> UI prefab copies with <c>worldPositionStays = false</c>.
+	/// </summary>
 	public static Transform[] AddUIChildren(this Transform origin,GameObject prefab,int count,bool isSameLayer = true)
 	{
 		if(!_IsValid(origin))
@@ -271,9 +282,9 @@ public static partial class TransformExtension
 	}
 
 	/// <summary>
-	/// Yields all descendants, or only those whose name matches when <paramref name="name"/> is provided.
+	/// Breadth-first traversal of descendants, optionally filtered by <paramref name="name"/>.
 	/// </summary>
-	public static IEnumerable<Transform> FindChildGroup(this Transform origin,string name = null)
+	public static IEnumerable<Transform> TraverseChildGroup(this Transform origin,string name = null)
 	{
 		if(!_IsValid(origin))
 		{
@@ -339,6 +350,9 @@ public static partial class TransformExtension
 		return origin;
 	}
 
+	/// <summary>
+	/// Breadth-first traversal of descendants, invoking <paramref name="onAction"/> on each transform.
+	/// </summary>
 	public static void RecursiveChildren(this Transform origin,Action<Transform> onAction)
 	{
 		if(!_IsValid(origin))

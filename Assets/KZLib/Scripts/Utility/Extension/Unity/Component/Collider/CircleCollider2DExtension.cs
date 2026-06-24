@@ -5,6 +5,9 @@ using UnityEngine;
 /// </summary>
 public static class CircleCollider2DExtension
 {
+	/// <summary>
+	/// Returns local-space bounds from the collider offset and diameter.
+	/// </summary>
 	public static Bounds CalculateLocalBounds(this CircleCollider2D circleCollider2D)
 	{
 		if(!_IsValid(circleCollider2D))
@@ -17,6 +20,9 @@ public static class CircleCollider2DExtension
 		return new Bounds(circleCollider2D.offset,new Vector3(diameter,diameter));
 	}
 
+	/// <summary>
+	/// Returns the collider radius and outputs its local center offset.
+	/// </summary>
 	public static float CalculateRadius(this CircleCollider2D circleCollider2D,out Vector2 localCenter)
 	{
 		if(!_IsValid(circleCollider2D))

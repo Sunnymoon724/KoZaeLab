@@ -1,13 +1,18 @@
 using System;
 using Cysharp.Threading.Tasks;
 using KZLib.Data;
+using KZLib.Scenes;
 using KZLib.Utilities;
 using MessagePipe;
 using Newtonsoft.Json;
 
 namespace KZLib.Networks
 {
-	// Incomplete: will be finalized when backend server integration and live testing are done.
+	/// <summary>
+	/// Central gateway for server requests, PlayFab cloud-script execution, and response dispatch to FacetManager.
+	/// Handles request locking, optional input blocking, error routing, and encrypted packet parsing.
+	/// Incomplete: will be finalized when backend server integration and live testing are done.
+	/// </summary>
 	public partial class NetworkManager : Singleton<NetworkManager>
 	{
 		private const string c_titleScene = "TitleScene";
@@ -39,14 +44,14 @@ namespace KZLib.Networks
 
 		protected override void _Release(bool disposing)
 		{
-			if(disposing)
-			{
-				
-			}
+			if(disposing) { }
 
 			base._Release(disposing);
 		}
 
+		/// <summary>
+		/// Executes a PlayFab cloud script and applies the server response to FacetManager.
+		/// </summary>
 		public async UniTask<bool> RequestToServerAsync(string functionName,object parameter,bool touchBlock,CommonNoticeTag noticeTag)
 		{
 #if KZLIB_PLAY_FAB
@@ -67,6 +72,8 @@ namespace KZLib.Networks
 		{
 			if(IsRequesting)
 			{
+				LogChannel.Network.W("Request ignored because another request is in progress.");
+
 				return false;
 			}
 
@@ -88,6 +95,12 @@ namespace KZLib.Networks
 
 				return result;
 			}
+			catch(Exception exception)
+			{
+				LogChannel.Network.E($"Request failed with exception: {exception.Message}");
+
+				return false;
+			}
 			finally
 			{
 				if(touchBlock)
@@ -102,7 +115,28 @@ namespace KZLib.Networks
 #if KZLIB_PLAY_FAB
 		private string _GetRespondMessage(NetworkPacketInfo respondPacket)
 		{
-			return respondPacket.IsEncrypted ? KZCryptoKit.RSA.DecryptFromString(respondPacket.Message,m_publicKey) : respondPacket.Message;
+			if(!respondPacket.IsEncrypted)
+			{
+				return respondPacket.Message;
+			}
+
+			if(m_publicKey.IsEmpty())
+			{
+				LogChannel.Network.E("Encrypted respond received but RSA public key is not loaded.");
+
+				return null;
+			}
+
+			try
+			{
+				return KZCryptoKit.RSA.DecryptFromString(respondPacket.Message,m_publicKey);
+			}
+			catch(Exception exception)
+			{
+				LogChannel.Network.E($"Failed to decrypt respond message: {exception.Message}");
+
+				return null;
+			}
 		}
 
 		private bool _GetPlayFabResult(string functionName,PlayFabPacketInfo playFabPacket)
@@ -119,34 +153,32 @@ namespace KZLib.Networks
 			{
 				LogChannel.Network.E($"Respond Error : {code}");
 
-				var errorPrt = ProtoManager.In.GetProto<INetworkErrorProto>(code);
-
-				if(errorPrt == null)
+				if(!ProtoManager.In.TryGet(code,typeof(NetworkErrorProto),out var errorProto) || errorProto is not INetworkErrorProto networkErrorProto)
 				{
-					string text = string.Format( "{0} : {1}", code, respondPacket.Message );
+					var text = message.IsEmpty() ? code.ToString() : $"{code} : {message}";
 
 					_ShowErrorPopup(text,null);
 				}
 				else
 				{
-					switch( errorPrt.ResultMainType )
+					switch(networkErrorProto.ResultMainType)
 					{
 						case NetworkErrorResultType.Popup:
 							{
 								void _Close()
 								{
-									if( errorPrt.ResultSubType == NetworkErrorResultType.Title )
+									if(networkErrorProto.ResultSubType == NetworkErrorResultType.Title)
 									{
 										_ChangeTitleScene();
 									}
 								}
 
-								_ShowErrorPopup(errorPrt.Description,_Close);
+								_ShowErrorPopup(networkErrorProto.Description,_Close);
 								break;
 							}
 						case NetworkErrorResultType.Toast:
 							{
-								_ShowErrorToast(errorPrt.Description);
+								_ShowErrorToast(networkErrorProto.Description);
 								break;
 							}
 						case NetworkErrorResultType.Title:
@@ -154,12 +186,19 @@ namespace KZLib.Networks
 								_ChangeTitleScene();
 								break;
 							}
+						default:
+							{
+								LogChannel.Network.W($"Unhandled network error result type: {networkErrorProto.ResultMainType}");
+
+								_ShowErrorPopup(networkErrorProto.Description,null);
+								break;
+							}
 					}
 				}
 			}
-			else
+			else if(message.IsEmpty() || !_SetPacket(message))
 			{
-				_SetPacket(message);
+				isSuccess = false;
 			}
 
 			return isSuccess;
@@ -167,41 +206,94 @@ namespace KZLib.Networks
 
 		private void _ChangeTitleScene()
 		{
-			SceneStateManager.In.ChangeScene(c_titleScene,new SceneChangeInfo(CommonUINameTag.CommonTransitionPanel));
+			SceneStateManager.In.ChangeScene(c_titleScene,new SceneChangeInfo(CommonUINameTag.TransitionPanel));
 		}
 #endif
 
-		private void _SetPacket(string message)
+		/// <summary>Deserializes server facet payloads and applies them to FacetManager.</summary>
+		private bool _SetPacket(string message)
 		{
+			if(message.IsEmpty())
+			{
+				LogChannel.Network.E("Server facet payload is empty.");
+
+				return false;
+			}
+
 			try
 			{
 				var respondArray = JsonConvert.DeserializeObject<NetworkRespondInfo[]>(message);
+
+				if(respondArray == null || respondArray.Length == 0)
+				{
+					LogChannel.Network.E("Server facet payload deserialized to null or empty array.");
+
+					return false;
+				}
 
 				for(var i=0;i<respondArray.Length;i++)
 				{
 					var respond = respondArray[i];
 					var typeText = respond.Type;
-					var affixText = respond.Content;
-					// Incomplete: type resolution is hard-coded to Assembly-CSharp; needs multi-assembly lookup before production use.
-					var type = Type.GetType($"{typeText}, Assembly-CSharp") ?? throw new NullReferenceException($"{typeText} is not found. TypeText must be assigned.");
-					var newAffix = JsonConvert.DeserializeObject(affixText,type) as IAffix ?? throw new NullReferenceException($"{affixText} is not {type} type. AffixText must be assigned.");
+					var facetText = respond.Content;
+					var type = _ResolveFacetType(typeText);
 
-					if(respond.IsUpdate)
+					if(type == null || !typeof(IFacet).IsAssignableFrom(type))
 					{
-						AffixManager.In.Update(newAffix);
+						throw new InvalidOperationException($"{typeText} is not found or is not an IFacet type.");
 					}
-					else
+
+					var newFacet = JsonConvert.DeserializeObject(facetText,type) as IFacet;
+
+					if(newFacet == null)
 					{
-						AffixManager.In.Set(newAffix);
+						throw new InvalidOperationException($"Failed to deserialize facet payload as {type.Name}.");
 					}
+
+					FacetManager.In.Apply(newFacet);
 				}
+
+				return true;
 			}
 			catch(Exception exception)
 			{
-				LogChannel.Network.E($"Convert is fail : {exception.Message}. Exception must be assigned.");
+				LogChannel.Network.E($"Failed to deserialize server facet payload: {exception.Message}");
+
+				return false;
 			}
 		}
-		
+
+		private static Type _ResolveFacetType(string typeText)
+		{
+			if(typeText.IsEmpty())
+			{
+				return null;
+			}
+
+			var type = Type.GetType(typeText);
+
+			if(type != null)
+			{
+				return type;
+			}
+
+			type = KZReflectionKit.FindType(typeText);
+
+			if(type != null)
+			{
+				return type;
+			}
+
+			var dotIndex = typeText.LastIndexOf('.');
+
+			if(dotIndex > 0)
+			{
+				return KZReflectionKit.FindType(typeText.Substring(dotIndex + 1),typeText.Substring(0,dotIndex));
+			}
+
+			return null;
+		}
+
 		private void _ShowErrorPopup(string text,Action closeCallBack)
 		{
 			// Incomplete: error popup UI is not implemented yet.

@@ -12,24 +12,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51dd79be8f368244e8ea81e8d379242b, type: 3}
   m_Name: GraphicQualityOption
   m_EditorClassIdentifier: 
-  m_lowestPresetList: []
-  m_lowPresetList: []
-  m_middlePresetList:
+  m_optionList:
   - m_name: GlobalTextureMipmapLimit
     m_flag: 1
-    m_enableValue: 0
-    m_disableValue: 1
+    m_flagOnValue: 0
+    m_flagOffValue: 1
+    m_minimumPreset: 2
   - m_name: AnisotropicFiltering
     m_flag: 2
-    m_enableValue: Enable
-    m_disableValue: Disable
+    m_flagOnValue: Enable
+    m_flagOffValue: Disable
+    m_minimumPreset: 3
   - m_name: VerticalSyncCount
     m_flag: 4
-    m_enableValue: 1
-    m_disableValue: 0
+    m_flagOnValue: 1
+    m_flagOffValue: 0
+    m_minimumPreset: 4
   - m_name: DisableCameraFarHalf
     m_flag: 8
-    m_enableValue: 1.0
-    m_disableValue: 0.5
-  m_highPresetList: []
-  m_highestPresetList: []
+    m_flagOnValue: 1.0
+    m_flagOffValue: 0.5
+    m_minimumPreset: 4
+  - m_name: LodBias
+    m_flag: 16
+    m_flagOnValue: 1.0
+    m_flagOffValue: 0.5
+    m_minimumPreset: 2
+  - m_name: MaximumLODLevel
+    m_flag: 32
+    m_flagOnValue: 0
+    m_flagOffValue: 1
+    m_minimumPreset: 1
+  - m_name: AntiAliasing
+    m_flag: 64
+    m_flagOnValue: 2
+    m_flagOffValue: 0
+    m_minimumPreset: 3
+  - m_name: SkinWeights
+    m_flag: 128
+    m_flagOnValue: FourBones
+    m_flagOffValue: TwoBones
+    m_minimumPreset: 3
+  - m_name: ShadowDistance
+    m_flag: 256
+    m_flagOnValue: 80
+    m_flagOffValue: 40
+    m_minimumPreset: 2
+  - m_name: RealtimeReflectionProbes
+    m_flag: 512
+    m_flagOnValue: 1
+    m_flagOffValue: 0
+    m_minimumPreset: 3

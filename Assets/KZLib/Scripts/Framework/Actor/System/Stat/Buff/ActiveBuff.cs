@@ -23,7 +23,7 @@ namespace KZLib
 
 		public ActiveBuff(int buffNum)
 		{
-			m_buffProto = ProtoManager.In.GetProto<IBuffProto>(buffNum) ?? throw new NullReferenceException($"Buff Proto Not Found : {buffNum}. BuffNum must be assigned.");
+			m_buffProto = ProtoManager.In.Get<IBuffProto>(buffNum);
 
 			m_isPermanent = m_buffProto.Duration <= 0.0f;
 			m_remainingTime = m_buffProto.Duration;

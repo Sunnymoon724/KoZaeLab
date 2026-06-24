@@ -19,6 +19,9 @@ namespace KZLib
 {
 	public partial class PlayFabManager : Singleton<PlayFabManager>
 	{
+		/// <summary>
+		/// Resumes login using the previously saved login option type.
+		/// </summary>
 		public async UniTask<PlayFabPacketInfo> AutoLoginAsync(string sessionTicket,PlayFabLoginOptionType loginOptionType)
 		{
 			if(loginOptionType == PlayFabLoginOptionType.None)
@@ -34,11 +37,13 @@ namespace KZLib
 				}
 				case PlayFabLoginOptionType.GoogleLogin:
 				{
-					return await LoginWithGoogleAsync(sessionTicket); // 아직 미구현
+					// Incomplete: native Google Sign-In is not wired. sessionTicket must be a ServerAuthCode from the platform SDK; AutoLogin cannot obtain one yet.
+					return await LoginWithGoogleAsync(sessionTicket);
 				}
 				case PlayFabLoginOptionType.AppleLogin:
 				{
-					return await LoginWithAppleAsync(sessionTicket); // 아직 미구현
+					// Incomplete: native Sign in with Apple is not wired. sessionTicket must be an IdentityToken from the platform SDK; AutoLogin cannot obtain one yet.
+					return await LoginWithAppleAsync(sessionTicket);
 				}
 				default:
 				{
@@ -49,6 +54,9 @@ namespace KZLib
 
 		//? Log in -> Guest / Google / Apple
 		#region Login
+		/// <summary>
+		/// Logs in with a platform-specific guest/device identifier.
+		/// </summary>
 		public async UniTask<PlayFabPacketInfo> LoginWithGuestAsync()
 		{
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -103,6 +111,9 @@ namespace KZLib
 #endif
 		}
 
+		/// <summary>
+		/// Sends a PlayFab LoginWithGoogleAccount request. Caller must supply a ServerAuthCode from the native Google Sign-In flow (not implemented end-to-end).
+		/// </summary>
 		public async UniTask<PlayFabPacketInfo> LoginWithGoogleAsync(string sessionTicket)
 		{
 			static void _SendPacket(PlayFabRequestCommon commonRequest,Action<PlayFabResultCommon> onSendResult,Action<PlayFabError> onSendError)
@@ -121,6 +132,9 @@ namespace KZLib
 			return await _LoginAsync(request,PlayFabLoginOptionType.GoogleLogin,_SendPacket);
 		}
 
+		/// <summary>
+		/// Sends a PlayFab LoginWithApple request. Caller must supply an IdentityToken from Sign in with Apple (not implemented end-to-end).
+		/// </summary>
 		public async UniTask<PlayFabPacketInfo> LoginWithAppleAsync(string sessionTicket)
 		{
 			static void _SendPacket(PlayFabRequestCommon commonRequest,Action<PlayFabResultCommon> onSendResult,Action<PlayFabError> onSendError)
@@ -167,6 +181,9 @@ namespace KZLib
 		#endregion Login
 
 		#region LogOut
+		/// <summary>
+		/// Clears cached PlayFab credentials on the client.
+		/// </summary>
 		public async UniTask<PlayFabPacketInfo> LogOutAsync()
 		{
 			var stopwatch = Stopwatch.StartNew();

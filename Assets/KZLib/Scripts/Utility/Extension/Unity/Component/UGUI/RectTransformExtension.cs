@@ -15,6 +15,9 @@ public static partial class RectTransformExtension
 		return GetLocalCanvasPositionFromScreenPosition(rectTrans,screen,uiCamera);
 	}
 
+	/// <summary>
+	/// Converts a screen-space point to local coordinates within this rect using <paramref name="camera"/>.
+	/// </summary>
 	public static Vector2 GetLocalCanvasPositionFromScreenPosition(this RectTransform rectTrans,Vector2 screenPoint,Camera camera)
 	{
 		RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTrans,screenPoint,camera,out var point);
@@ -47,6 +50,9 @@ public static partial class RectTransformExtension
 		return new Rect(cornerArray[0],new Vector2(Vector3.Distance(cornerArray[0],cornerArray[1]),Vector3.Distance(cornerArray[1],cornerArray[2])));
 	}
 
+	/// <summary>
+	/// Returns the world-space center derived from <see cref="RectTransform.GetWorldCorners"/>.
+	/// </summary>
 	public static Vector2 CalculateWorldCenter(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -59,6 +65,9 @@ public static partial class RectTransformExtension
 		return new Vector2((cornerArray[0].x+cornerArray[3].x)/2.0f,(cornerArray[0].y+cornerArray[1].y)/2.0f);
 	}
 
+	/// <summary>
+	/// Returns the world-space width and height derived from <see cref="RectTransform.GetWorldCorners"/>.
+	/// </summary>
 	public static Vector2 CalculateWorldSize(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -71,6 +80,9 @@ public static partial class RectTransformExtension
 		return new Vector2(Vector3.Distance(cornerArray[1],cornerArray[2]),Vector3.Distance(cornerArray[0],cornerArray[1]));
 	}
 
+	/// <summary>
+	/// Returns the world-space left edge X coordinate.
+	/// </summary>
 	public static float CalculateWorldLeft(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -83,6 +95,9 @@ public static partial class RectTransformExtension
 		return cornerArray[0].x;
 	}
 
+	/// <summary>
+	/// Returns the world-space right edge X coordinate.
+	/// </summary>
 	public static float CalculateWorldRight(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -95,6 +110,9 @@ public static partial class RectTransformExtension
 		return cornerArray[2].x;
 	}
 
+	/// <summary>
+	/// Returns the world-space top edge Y coordinate.
+	/// </summary>
 	public static float CalculateWorldTop(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -107,6 +125,9 @@ public static partial class RectTransformExtension
 		return cornerArray[1].y;
 	}
 
+	/// <summary>
+	/// Returns the world-space bottom edge Y coordinate.
+	/// </summary>
 	public static float CalculateWorldBottom(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -119,6 +140,9 @@ public static partial class RectTransformExtension
 		return cornerArray[0].y;
 	}
 
+	/// <summary>
+	/// Returns the world-space top-left corner position.
+	/// </summary>
 	public static Vector2 CalculateWorldTopLeft(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -131,6 +155,9 @@ public static partial class RectTransformExtension
 		return new Vector2(cornerArray[0].x,cornerArray[1].y);
 	}
 
+	/// <summary>
+	/// Returns the world-space top-right corner position.
+	/// </summary>
 	public static Vector2 CalculateWorldTopRight(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -143,6 +170,9 @@ public static partial class RectTransformExtension
 		return new Vector2(cornerArray[2].x,cornerArray[1].y);
 	}
 
+	/// <summary>
+	/// Returns the world-space bottom-left corner position.
+	/// </summary>
 	public static Vector2 CalculateWorldBottomLeft(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -155,6 +185,9 @@ public static partial class RectTransformExtension
 		return new Vector2(cornerArray[0].x, cornerArray[0].y);
 	}
 
+	/// <summary>
+	/// Returns the world-space bottom-right corner position.
+	/// </summary>
 	public static Vector2 CalculateWorldBottomRight(this RectTransform rectTrans)
 	{
 		if(!_IsValid(rectTrans))
@@ -168,17 +201,36 @@ public static partial class RectTransformExtension
 	}
 
 	/// <summary>
-	/// Returns a screen-space rect with Y flipped from Unity world coordinates to screen coordinates.
+	/// Returns an axis-aligned screen-space rect from <see cref="RectTransform.GetWorldCorners"/>.
 	/// </summary>
 	public static Rect ToScreenSpace(this RectTransform rectTrans) 
 	{
-		var size = Vector2.Scale(rectTrans.rect.size,rectTrans.lossyScale);
-		var rect = new Rect(rectTrans.position.x,Screen.height-rectTrans.position.y,size.x,size.y);
+		if(!_IsValid(rectTrans))
+		{
+			return default;
+		}
 
-		rect.x -= rectTrans.pivot.x*size.x;
-		rect.y -= (1.0f-rectTrans.pivot.y)*size.y;
+		var cornerArray = _GetCornerArray(rectTrans);
+		var canvas = rectTrans.FindParentCanvas();
+		Camera camera = null;
 
-		return rect;
+		if(canvas && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+		{
+			camera = canvas.GetEventCamera();
+		}
+
+		var min = new Vector2(float.MaxValue,float.MaxValue);
+		var max = new Vector2(float.MinValue,float.MinValue);
+
+		for(var i=0;i<cornerArray.Length;i++)
+		{
+			var screen = RectTransformUtility.WorldToScreenPoint(camera,cornerArray[i]);
+
+			min = Vector2.Min(min,screen);
+			max = Vector2.Max(max,screen);
+		}
+
+		return Rect.MinMaxRect(min.x,min.y,max.x,max.y);
 	}
 
 	/// <summary>
@@ -322,6 +374,9 @@ public static partial class RectTransformExtension
 		rectTrans.offsetMax = Vector2.zero;
 	}
 
+	/// <summary>
+	/// Sets <see cref="RectTransform.anchoredPosition"/> to <paramref name="point"/>.
+	/// </summary>
 	public static void SetAnchoredPosition(this RectTransform rectTrans,Vector2 point)
 	{
 		if(!_IsValid(rectTrans))
@@ -332,6 +387,9 @@ public static partial class RectTransformExtension
 		rectTrans.anchoredPosition = point;
 	}
 
+	/// <summary>
+	/// Sets the anchored position X component to <paramref name="x"/>.
+	/// </summary>
 	public static void SetAnchoredPositionX(this RectTransform rectTrans,float x)
 	{
 		if(!_IsValid(rectTrans))
@@ -342,6 +400,9 @@ public static partial class RectTransformExtension
 		rectTrans.SetAnchoredPosition(new(x,rectTrans.anchoredPosition.y));
 	}
 
+	/// <summary>
+	/// Sets the anchored position Y component to <paramref name="y"/>.
+	/// </summary>
 	public static void SetAnchoredPositionY(this RectTransform rectTrans,float y)
 	{
 		if(!_IsValid(rectTrans))
@@ -352,6 +413,9 @@ public static partial class RectTransformExtension
 		rectTrans.SetAnchoredPosition(new(rectTrans.anchoredPosition.x,y));
 	}
 
+	/// <summary>
+	/// Sets <see cref="RectTransform.sizeDelta"/> to <paramref name="sizeDelta"/>.
+	/// </summary>
 	public static void SetSizeDelta(this RectTransform rectTrans,Vector2 sizeDelta)
 	{
 		if(!_IsValid(rectTrans))
@@ -362,6 +426,9 @@ public static partial class RectTransformExtension
 		rectTrans.sizeDelta = sizeDelta;
 	}
 
+	/// <summary>
+	/// Sets the <see cref="RectTransform.sizeDelta"/> width while preserving the current height.
+	/// </summary>
 	public static void SetWidth(this RectTransform rectTrans,float width)
 	{
 		if(!_IsValid(rectTrans))
@@ -372,6 +439,9 @@ public static partial class RectTransformExtension
 		rectTrans.SetSizeDelta(new(width,rectTrans.sizeDelta.y));
 	}
 
+	/// <summary>
+	/// Sets the <see cref="RectTransform.sizeDelta"/> height while preserving the current width.
+	/// </summary>
 	public static void SetHeight(this RectTransform rectTrans,float height)
 	{
 		if(!_IsValid(rectTrans))

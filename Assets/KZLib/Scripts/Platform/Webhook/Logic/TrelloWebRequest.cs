@@ -3,6 +3,9 @@ using UnityEngine.Networking;
 
 namespace KZLib.Webhooks
 {
+	/// <summary>
+	/// Base request type for Trello REST API calls.
+	/// </summary>
 	public abstract class TrelloWebRequest : BaseWebRequest
 	{
 		// trelloKey = "key={TrelloApiKey}&token={TrelloToken}"

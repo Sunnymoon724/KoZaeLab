@@ -5,6 +5,7 @@ using UnityEditor;
 
 namespace KZLib.Attributes
 {
+	/// <summary><see cref="KZVideoPathAttribute"/> drawer. VideoClip preview window.</summary>
 	public class KZVideoPathAttributeDrawer : KZResourcePathAttributeDrawer<KZVideoPathAttribute>
 	{
 		protected override SdfIconType IconType => SdfIconType.CameraVideo;

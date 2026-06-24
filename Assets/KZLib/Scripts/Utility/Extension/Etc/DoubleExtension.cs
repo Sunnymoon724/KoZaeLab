@@ -6,16 +6,25 @@ using System;
 /// </summary>
 public static class DoubleExtension
 {
+	/// <summary>
+	/// Formats the double with thousands separators and no decimal places.
+	/// </summary>
 	public static string ToStringComma(this double number)
 	{
 		return $"{number:n0}";
 	}
 
+	/// <summary>
+	/// Formats the double as a percentage with the given decimal places.
+	/// </summary>
 	public static string ToStringPercent(this double number,int decimalPoint)
 	{
 		return string.Format(string.Concat("{0:f",decimalPoint,"}%"),number);
 	}
 
+	/// <summary>
+	/// Formats the double with an explicit plus sign for positive values.
+	/// </summary>
 	public static string ToStringSign(this double number)
 	{
 		return $"{(number > 0.0d ? "+" : "")}{number}";
@@ -37,22 +46,32 @@ public static class DoubleExtension
 	public static double ToWrapAngle(this double angle)
 	{
 		var fullAngle = (double) Global.FullAngle;
+		var halfAngle = fullAngle*0.5d;
 
 		angle = ((angle%fullAngle)+fullAngle)%fullAngle;
 
-		return angle > fullAngle ? angle-fullAngle : angle;
+		return angle > halfAngle ? angle-fullAngle : angle;
 	}
 
+	/// <summary>
+	/// Converts seconds to whole milliseconds.
+	/// </summary>
 	public static long ToMilliseconds(this double second)
 	{
 		return (long) second*Global.MillisecondsPerSecond;
 	}
 
+	/// <summary>
+	/// Returns whether two doubles differ by at most <paramref name="delta"/>.
+	/// </summary>
 	public static bool Approximately(this double number1,double number2,double delta = 1e-15d)
 	{
 		return Math.Abs(number1-number2) <= delta;
 	}
 
+	/// <summary>
+	/// Returns whether the double is approximately zero.
+	/// </summary>
 	public static bool ApproximatelyZero(this double number,double delta = 1e-15d)
 	{
 		return Approximately(number,0.0d,delta);

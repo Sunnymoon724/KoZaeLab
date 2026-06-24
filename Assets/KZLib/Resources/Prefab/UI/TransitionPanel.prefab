@@ -100,11 +100,10 @@ MonoBehaviour:
   m_autoPlay: 0
   m_skipButton: {fileID: 0}
   m_loopCount: 1
-  m_duration: 0
+  m_duration: 0.5
   m_progress: 0
   m_IgnoreTimeScale: 0
   m_image: {fileID: 4348948429196818278}
-  m_currentMaterial: {fileID: 0}
   m_currentType: 0
 --- !u!1 &4582253882050708188
 GameObject:

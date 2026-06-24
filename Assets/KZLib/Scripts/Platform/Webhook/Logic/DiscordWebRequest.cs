@@ -9,7 +9,7 @@ namespace KZLib.Webhooks
 	//? https://discohook.org/ -> webhook test link
 
 	/// <summary>
-	/// Discord Webhook
+	/// Discord webhook request builder with Discord payload size limits applied.
 	/// </summary>
 	public abstract class DiscordWebRequest : BaseWebRequest
 	{
@@ -53,6 +53,9 @@ namespace KZLib.Webhooks
 		}
 	}
 
+	/// <summary>
+	/// Builds a Discord webhook payload, splitting large log bodies into embed fields when needed.
+	/// </summary>
 	public class PostDiscordWebHookWebRequest : PostDiscordWebRequest
 	{
 		private const string c_postDiscordWebHook = "Post DiscordWebHook";

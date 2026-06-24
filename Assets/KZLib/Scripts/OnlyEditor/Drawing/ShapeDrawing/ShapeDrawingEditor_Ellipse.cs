@@ -22,25 +22,19 @@ namespace KZLib.UI
 
 		private void _SyncAllKnotInfos_Ellipse()
 		{
-			var fixedPos = _GetVertexPosition(ShapeDrawing.c_zeroAngle);
+			_SyncWorldKnotInfo(1,m_shapeDrawing._GetEllipseOffsetAtAngle(ShapeDrawing.c_zeroAngle),KnotType.Fixed);
 
-			_SyncWorldKnotInfo(1,fixedPos,KnotType.Fixed);
+			var ellipseAngle = m_shapeDrawing.EllipseAngle;
 
-			var majorPos = _GetVertexPosition(m_shapeDrawing.EllipseAngle);
-
-			_SyncWorldKnotInfo(2,majorPos,KnotType.Major);
+			_SyncWorldKnotInfo(2,m_shapeDrawing._GetEllipseOffsetAtAngle(ellipseAngle),KnotType.Major);
 		}
 
 		private void _RefreshKnotInfo_Ellipse(int _,Vector3 position)
 		{
-			var angle = Mathf.Atan2(position.y,position.x)*Mathf.Rad2Deg;
+			var radius = m_shapeDrawing.Radius;
+			var angle = Mathf.Atan2(position.y/radius.y,position.x/radius.x)*Mathf.Rad2Deg;
 
-			if(angle < ShapeDrawing.c_zeroAngle)
-			{
-				angle += ShapeDrawing.c_fullAngle;
-			}
-
-			m_shapeDrawing.EllipseAngle = angle;
+			m_shapeDrawing.EllipseAngle = m_shapeDrawing._ClampEllipseEditorAngle(angle);
 		}
 	}
 }

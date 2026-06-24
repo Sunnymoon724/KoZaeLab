@@ -255,9 +255,9 @@ public static partial class KZMathKit
 	/// <summary>
 	/// Returns whether the control point count is valid for a cubic Bezier curve (open or closed).
 	/// </summary>
-	public static bool IsValidCubicBezier(int _count,bool isClosed)
+	public static bool IsValidCubicBezier(int count,bool isClosed)
 	{
-		return _count >= (isClosed ? 6 : 4);
+		return count >= (isClosed ? 6 : 4);
 	}
 
 	/// <summary>

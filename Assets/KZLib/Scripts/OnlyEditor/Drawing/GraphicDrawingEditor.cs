@@ -8,6 +8,10 @@ using UnityEngine.UI;
 
 namespace KZLib.UI
 {
+	/// <summary>
+	/// Custom editor base for <see cref="GraphicDrawing"/>.
+	/// Handles scene edit mode, knot handles, and border overlay aligned with the drawing layout.
+	/// </summary>
 	public abstract class GraphicDrawingEditor : OdinEditor
 	{
 		#region KnotInfo
@@ -27,6 +31,7 @@ namespace KZLib.UI
 		protected bool m_isRaycastPaddingExpanded = false;
 		protected SerializedObject m_serializedObject = null;
 
+		//? Edit mode
 		private bool m_isEditing = false;
 		private Tool m_previousTool = Tool.None;
 
@@ -57,7 +62,6 @@ namespace KZLib.UI
 		protected abstract bool _CanShowKnot();
 		protected abstract void _DoUpdateKnotList();
 		protected abstract void _ChangeKnotPosition(int index,Vector3 newPosition);
-		protected abstract Vector3 _ConvertToMousePosition(Vector3 mousePosition);
 
 		public override void OnInspectorGUI()
 		{
@@ -127,8 +131,11 @@ namespace KZLib.UI
 			EditorGUILayout.LabelField("Edit Mode Activated",labelStyle);
 		}
 
+		/// <summary>Scene view entry point. Call from subclass <c>OnSceneGUI</c>.</summary>
 		protected void _SceneGUI()
 		{
+			(target as GraphicDrawing)._RefreshLayout(force:true);
+
 			_DrawBorder();
 
 			if(Tools.current != Tool.None)
@@ -311,12 +318,24 @@ namespace KZLib.UI
 			m_dragKnotIndex = Global.InvalidIndex;
 		}
 
+		/// <summary>Uses <see cref="GraphicDrawing._ContainsLocalPoint"/> — same rect as the mesh.</summary>
 		protected bool _IsInsideRect(Vector3 mousePosition)
 		{
-			var rectTrans = CurrentTransform.GetComponent<RectTransform>();
-			var localPos = rectTrans.InverseTransformPoint(mousePosition);
+			var drawing = target as GraphicDrawing;
+			var rectTrans = drawing.rectTransform;
+			var localPos = (Vector2) rectTrans.InverseTransformPoint(mousePosition);
 
-			return rectTrans.rect.Contains(localPos);
+			return drawing._ContainsLocalPoint(localPos);
+		}
+
+		/// <summary>Projects GUI mouse position onto the RectTransform plane (supports rotated canvases).</summary>
+		protected virtual Vector3 _ConvertToMousePosition(Vector3 mousePosition)
+		{
+			var rectTrans = CurrentTransform as RectTransform;
+			var ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+			var plane = new Plane(rectTrans.forward,rectTrans.position);
+
+			return plane.Raycast(ray,out float enter) ? ray.GetPoint(enter) : rectTrans.position;
 		}
 
 		private void _UpdateKnotInfoList()
@@ -342,21 +361,32 @@ namespace KZLib.UI
 			}
 		}
 
+		/// <summary>Draws bounds using <see cref="GraphicDrawing._GetCornerLocalPosition"/> (Center-based, not pivot-based).</summary>
 		private void _DrawBorder()
 		{
 			var drawing = target as GraphicDrawing;
-			var cornerArray = drawing._GetCornerArray();
-
+			var rectTrans = drawing.rectTransform;
 			var worldCornerArray = new Vector3[5];
 
-			for(var i=0;i<worldCornerArray.Length-1;i++)
+			for(var i=0;i<GraphicDrawing.c_cornerCount;i++)
 			{
-				worldCornerArray[i] = drawing.transform.TransformPoint(cornerArray[i]);
+				var localPos = drawing._GetCornerLocalPosition(i);
+
+				worldCornerArray[i] = rectTrans.TransformPoint(new Vector3(localPos.x,localPos.y,0.0f));
 			}
 
 			worldCornerArray[^1] = worldCornerArray[0];
 
 			KZKnotKit.DrawBorderLine(worldCornerArray,2.0f,m_isEditing);
+		}
+
+		/// <summary>Places a knot from a Center-relative offset into world space.</summary>
+		protected void _SyncWorldKnotFromCenterOffset(GraphicDrawing drawing,int index,Vector2 centerOffset,KnotType knotType)
+		{
+			var localPos = drawing._GetLocalPositionFromCenterOffset(centerOffset);
+			var worldPos = drawing.rectTransform.TransformPoint(new Vector3(localPos.x,localPos.y,0.0f));
+
+			_SyncKnotInfo(index,worldPos,knotType);
 		}
 
 		protected void _SyncKnotInfo(int index,Vector3 worldPosition,KnotType knotType)
@@ -372,6 +402,8 @@ namespace KZLib.UI
 
 			m_knotIndexHashSet.Add(index);
 		}
+
+		//? Inspector helpers (Undo-aware)
 
 		protected void _DrawInspector<TValue>(Func<TValue> onDrawValue,Action<TValue> onSetValue,string undoText)
 		{
@@ -453,12 +485,7 @@ namespace KZLib.UI
 
 				Vector4 _DrawRaycastPadding()
 				{
-					return new Vector4(
-						EditorGUILayout.FloatField("Left",graphic.raycastPadding.x),
-						EditorGUILayout.FloatField("Right",graphic.raycastPadding.y),
-						EditorGUILayout.FloatField("Top",graphic.raycastPadding.z),
-						EditorGUILayout.FloatField("Bottom",graphic.raycastPadding.w)
-					);
+					return new Vector4(EditorGUILayout.FloatField("Left",graphic.raycastPadding.x),EditorGUILayout.FloatField("Right",graphic.raycastPadding.y),EditorGUILayout.FloatField("Top",graphic.raycastPadding.z),EditorGUILayout.FloatField("Bottom",graphic.raycastPadding.w));
 				}
 
 				void _SetRaycastPadding(Vector4 padding)
@@ -479,7 +506,7 @@ namespace KZLib.UI
 				graphic.maskable = maskable;
 			}
 
-			_DrawToggleInspector("Maskable",graphic.raycastTarget,_SetMaskable);
+			_DrawToggleInspector("Maskable",graphic.maskable,_SetMaskable);
 		}
 
 		protected void _DrawMaterialInspector(string label,Material value,Action<Material> onSetValue)

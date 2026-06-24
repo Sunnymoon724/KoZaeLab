@@ -45,7 +45,7 @@ namespace KZLib.Natives
 		{
 			base._Initialize();
 
-			TuneManager.In.FetchTune<NativeTune>().OnChangedVibration.Subscribe(_OnChangeUseVibration).AddTo(m_disposable);
+			TuneManager.In.Fetch<NativeTune>().OnChangedVibration.Subscribe(_OnChangeUseVibration).AddTo(m_disposable);
 
 #if UNITY_IOS && !UNITY_EDITOR
 			VibrationInitialize();

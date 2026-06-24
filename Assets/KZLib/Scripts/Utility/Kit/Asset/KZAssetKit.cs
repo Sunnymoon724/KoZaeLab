@@ -42,7 +42,7 @@ public static class KZAssetKit
 		{
 			var assetPath = AssetDatabase.GUIDToAssetPath(guidArray[i]);
 
-			if(!KZFileKit.IsFilePath(assetPath))
+			if(!KZFileKit.IsFileExist(assetPath))
 			{
 				continue;
 			}

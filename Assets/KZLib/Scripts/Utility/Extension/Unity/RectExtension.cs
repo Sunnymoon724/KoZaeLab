@@ -47,6 +47,9 @@ public static class RectExtension
 		return result;
 	}
 
+	/// <summary>
+	/// Rounds all rect edges to the nearest integer pixel coordinates.
+	/// </summary>
 	public static Rect MakePixelPerfect(this Rect rect)
 	{
 		rect.xMin = Mathf.RoundToInt(rect.xMin);

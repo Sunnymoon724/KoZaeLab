@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public static class UnityEventExtension
 {
 	/// <summary>
-	/// Add One Kind Listener
+	/// Adds a listener, removing any existing registration for the same action unless <paramref name="isOverlap"/> is true.
 	/// </summary>
 	public static void AddAction(this UnityEvent unityEvent,UnityAction onAction,bool isOverlap = false)
 	{
@@ -24,7 +24,7 @@ public static class UnityEventExtension
 	}
 
 	/// <summary>
-	/// Set One Listener
+	/// Replaces all listeners with a single action.
 	/// </summary>
 	public static void SetAction(this UnityEvent unityEvent,UnityAction onAction)
 	{
@@ -38,7 +38,7 @@ public static class UnityEventExtension
 	}
 
 	/// <summary>
-	/// Remove Listener
+	/// Removes the specified listener when it is registered.
 	/// </summary>
 	public static void RemoveAction(this UnityEvent unityEvent,UnityAction onAction)
 	{
@@ -51,7 +51,7 @@ public static class UnityEventExtension
 	}
 
 	/// <summary>
-	/// Clear Listener
+	/// Removes every registered listener.
 	/// </summary>
 	public static void ClearAction(this UnityEvent unityEvent)
 	{
@@ -64,7 +64,7 @@ public static class UnityEventExtension
 	}
 
 	/// <summary>
-	/// Add One Kind Listener
+	/// Adds a listener, removing any existing registration for the same action unless <paramref name="isOverlap"/> is true.
 	/// </summary>
 	public static void AddAction<TValue>(this UnityEvent<TValue> unityEvent,UnityAction<TValue> onAction,bool isOverlap = false)
 	{
@@ -82,7 +82,7 @@ public static class UnityEventExtension
 	}
 
 	/// <summary>
-	/// Set One Listener
+	/// Replaces all listeners with a single action.
 	/// </summary>
 	public static void SetAction<TValue>(this UnityEvent<TValue> unityEvent,UnityAction<TValue> onAction)
 	{
@@ -96,7 +96,7 @@ public static class UnityEventExtension
 	}
 
 	/// <summary>
-	/// Remove Listener
+	/// Removes the specified listener when it is registered.
 	/// </summary>
 	public static void RemoveAction<TValue>(this UnityEvent<TValue> unityEvent,UnityAction<TValue> onAction)
 	{
@@ -109,7 +109,7 @@ public static class UnityEventExtension
 	}
 
 	/// <summary>
-	/// Clear Listener
+	/// Removes every registered listener.
 	/// </summary>
 	public static void ClearAction<TValue>(this UnityEvent<TValue> unityEvent)
 	{

@@ -20,7 +20,7 @@ public class CommonUINameTag : CustomTag
 
 	public static readonly CommonUINameTag DebugOverlayPanel			= new(nameof(DebugOverlayPanel));
 
-	public static readonly CommonUINameTag CommonTransitionPanel		= new(nameof(CommonTransitionPanel));
+	public static readonly CommonUINameTag TransitionPanel				= new(nameof(TransitionPanel));
 
 	public static readonly CommonUINameTag VideoPanel					= new(nameof(VideoPanel));
 	public static readonly CommonUINameTag SubtitlePanel				= new(nameof(SubtitlePanel));
@@ -37,14 +37,10 @@ public class CommonUINameTag : CustomTag
 #endregion UINameTag
 
 #region NoticeTag
-public class CommonNoticeTag : CustomTag
+public partial class CommonNoticeTag : CustomTag
 {
 	public static readonly CommonNoticeTag None							= new(nameof(None));
 	public static readonly CommonNoticeTag DisplayLog					= new(nameof(DisplayLog));
-
-	public static readonly CommonNoticeTag TouchDownPoint				= new(nameof(TouchDownPoint));
-	public static readonly CommonNoticeTag TouchHoldingPoint			= new(nameof(TouchHoldingPoint));
-	public static readonly CommonNoticeTag TouchUpPoint					= new(nameof(TouchUpPoint));
 
 	public static readonly CommonNoticeTag ChangedApplicationFocus		= new(nameof(ChangedApplicationFocus));
 	public static readonly CommonNoticeTag ChangedDeviceResolution		= new(nameof(ChangedDeviceResolution));
@@ -115,8 +111,12 @@ public record ListEntryInfo : EntryInfo
 
 public record AccordionEntryInfo : EntryInfo
 {
-	public AccordionEntryInfo(string name,string description) : base(name,description,null) { }
+	public AccordionEntryInfo(string name,string description) : base(name,description,null,null,null) { }
 }
 
-public record DialogEntryInfo(string Name,Action<IEntryInfo> OnClicked) : EntryInfo(Name,OnClicked);
+public interface ICarouselInfo
+{
+	int Order { get; }
+	int RemainTimeStamp { get; }
+}
 #endregion EntryInfo

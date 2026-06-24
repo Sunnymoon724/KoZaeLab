@@ -2,62 +2,61 @@
   "name": "com.bsheepstudio.kzlib",
   "displayName": "KoZaeLibrary",
   "author": { "name": "Ko KoZae", "url": "https://github.com/Sunnymoon724" },
-  "description": "KoZae Library \nIt is using 'UniTask'.",
-  "version": "1.1.4",
+  "description": "KoZae Unity game development library.\nRequires UniTask (git UPM) and NuGet packages via NuGetForUnity.",
+  "version": "1.1.5",
   "unity": "6000.3",
   "license": "MIT",
   "dependencies": {
-    "com.unity.nuget.newtonsoft-json" : "3.2.2",
-    "com.unity.addressables" : "2.7.6",
-    "com.unity.localization" : "1.5.9",
-    "com.unity.inputsystem" : "1.16.0",
+    "com.unity.nuget.newtonsoft-json": "3.2.2",
+    "com.unity.addressables": "2.8.1",
+    "com.unity.localization": "1.5.11",
+    "com.unity.inputsystem": "1.18.0",
     "com.unity.render-pipelines.universal": "17.3.0"
   },
   "samples": [
     {
-      "displayName": "DebugOverlaySample",
-      "description": "DebugOverlay Sample",
-      "path": "Samples~/DebugOverlaySample"
-    },
-
-    {
       "displayName": "MainSample",
-      "description": "Main Sample",
+      "description": "BaseMain subclass and TitleScene bootstrap flow",
       "path": "Samples~/MainSample"
     },
-
     {
-      "displayName": "FocusScrollerSample",
-      "description": "FocusScroller Sample",
-      "path": "Samples~/FocusScrollerSample"
+      "displayName": "DebugOverlaySample",
+      "description": "FPS and debug overlay panel",
+      "path": "Samples~/DebugOverlaySample"
+    },
+    {
+      "displayName": "CarouselSample",
+      "description": "Carousel, CarouselNavigator, and CarouselDot UI demo",
+      "path": "Samples~/CarouselSample"
     },
     {
       "displayName": "AccordionSample",
-      "description": "Accordion Sample",
+      "description": "RosterMapper-based expand/collapse accordion UI",
       "path": "Samples~/AccordionSample"
     },
-
+    {
+      "displayName": "FocusScrollerSample",
+      "description": "Focus-based scroll list",
+      "path": "Samples~/FocusScrollerSample"
+    },
     {
       "displayName": "ToggleSample",
-      "description": "Toggle Sample",
+      "description": "Custom Toggle Mount",
       "path": "Samples~/ToggleSample"
     },
-
     {
       "displayName": "ReuseScrollRectSample",
-      "description": "ReuseScrollRect Sample",
+      "description": "Virtualized (recycled) ScrollRect",
       "path": "Samples~/ReuseScrollRectSample"
     },
-
     {
       "displayName": "StanzaSample",
-      "description": "Stanza Sample",
+      "description": "Stanza Lerp and animation utilities",
       "path": "Samples~/StanzaSample"
     },
-
     {
       "displayName": "VibrationSample",
-      "description": "Vibration Sample",
+      "description": "Native vibration API",
       "path": "Samples~/VibrationSample"
     }
   ]

@@ -8,12 +8,17 @@ using UnityEditor;
 
 namespace KZLib.Attributes
 {
+	/// <summary>
+	/// <see cref="KZPathAttribute"/> drawer base.
+	/// Path label, change/open buttons, and validation color.
+	/// </summary>
 	public abstract class KZPathAttributeDrawer<TAttribute> : KZAttributeDrawer<TAttribute,string> where TAttribute : KZPathAttribute
 	{
 		private const int c_buttonWidth = 30;
 
 		protected readonly List<Func<Rect,bool,Rect>> m_onClickedList = new();
 
+		/// <summary>Absolute path respecting <see cref="KZPathAttribute.IsIncludeAssets"/>.</summary>
 		protected string AbsolutePath => KZFileKit.GetAbsolutePath(ValueEntry.SmartValue,Attribute.IsIncludeAssets);
 
 		protected override void Initialize()
@@ -46,7 +51,6 @@ namespace KZLib.Attributes
 
 				if(Attribute.IsIncludeAssets)
 				{
-					//? Path in assets folder
 					if(!KZFileKit.IsIncludeAssetHeader(newPath))
 					{
 						KZEditorKit.DisplayError(new NullReferenceException($"{newPath} is not in assets folder. Path must be assigned."));
@@ -56,7 +60,6 @@ namespace KZLib.Attributes
 				}
 				else
 				{
-					//? Path in project folder
 					ValueEntry.SmartValue = newPath;
 				}
 			}
@@ -71,13 +74,12 @@ namespace KZLib.Attributes
 			var isValid = IsValidPath();
 			var rect = _DrawPrefixLabel(label);
 
-			//? Add other buttons
 			for(var i=0;i<m_onClickedList.Count;i++)
 			{
 				rect = m_onClickedList[i](rect,isValid);
 			}
 
-			EditorGUI.LabelField(rect,ValueEntry.SmartValue,_GetValidationStyle(isValid,Global.WrongHexColor));
+			EditorGUI.LabelField(rect,ValueEntry.SmartValue,_GetValidationStyle(isValid,Attribute.WrongHexColor ?? Global.WrongHexColor));
 		}
 
 		protected Rect DrawButton(Rect rect,SdfIconType iconType,bool active,Action onClicked)
@@ -97,6 +99,7 @@ namespace KZLib.Attributes
 				return new Rect(rect.x,rect.y,rect.width-c_buttonWidth,rect.height);
 			}
 
+			/// <summary>Opens the parent folder in the OS file browser.</summary>
 			protected Rect DrawParentFolderOpenButton(Rect rect,bool isValid)
 			{
 				void _ClickButton()

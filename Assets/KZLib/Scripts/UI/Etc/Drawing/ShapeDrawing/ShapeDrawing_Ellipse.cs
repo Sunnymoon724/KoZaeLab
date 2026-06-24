@@ -10,6 +10,27 @@ namespace KZLib.UI
 		internal const float c_fullAngle = 360.0f;
 		private const int c_pivotResolution = 54;
 
+		internal float _ClampEllipseEditorAngle(float angle)
+		{
+			if(angle < c_zeroAngle)
+			{
+				angle += c_fullAngle;
+			}
+
+			return Mathf.Clamp(angle,c_zeroAngle,c_fullAngle);
+		}
+
+		internal Vector2 _GetEllipseOffsetAtAngle(float degree)
+		{
+			_RefreshLayout();
+
+			var radian = degree*Mathf.Deg2Rad;
+			var cos = Mathf.Cos(radian);
+			var sin = Mathf.Sin(radian);
+
+			return new Vector2(cos*Radius.x,sin*Radius.y);
+		}
+
 		[SerializeField]
 		private float m_ellipseAngle = c_fullAngle;
 		internal float EllipseAngle
@@ -17,6 +38,8 @@ namespace KZLib.UI
 			get => m_ellipseAngle;
 			set
 			{
+				value = Mathf.Clamp(value,c_zeroAngle,c_fullAngle);
+
 				int _CalculateExpectedVertexCount_EllipseAngle(float angle)
 				{
 					var segmentCnt = _GetSegmentCount_EllipseInner(angle);
@@ -77,7 +100,8 @@ namespace KZLib.UI
 
 		private List<VertexInfo> _CalculateAllEllipseVertexList(bool isFill)
 		{
-			var vertInfoList = new List<VertexInfo>();
+			m_vertexInfoList.Clear();
+
 			var segmentCnt = _GetSegmentCount_Ellipse();
 			var segmentAngle = _CalculateSegmentAngle(EllipseAngle,segmentCnt);
 
@@ -95,10 +119,10 @@ namespace KZLib.UI
 				var innerVert = _CalculateLocalVertex(cos,sin,innerRadius);
 				var antiVert = _CalculateLocalVertex(cos,sin,antiRadius);
 
-				vertInfoList.Add(new VertexInfo(outerVert,innerVert,antiVert));
+				m_vertexInfoList.Add(new VertexInfo(outerVert,innerVert,antiVert));
 			}
 
-			return vertInfoList;
+			return m_vertexInfoList;
 		}
 
 		private void _AddFillEllipseTriangles(VertexHelper vertexHelper,int vertCnt,bool canDrawAntiAliasing)
@@ -175,14 +199,24 @@ namespace KZLib.UI
 		}
 
 
+		private static int _GetEllipseBoundaryVertexCount(int segmentCount)
+		{
+			return segmentCount+1;
+		}
+
+
 		private int _CalculateExpectedFillVertexCount_Ellipse(int segmentCount,bool canDrawAntiAliasing)
 		{
-			return 1+(canDrawAntiAliasing ? segmentCount*2 : segmentCount);
+			var boundaryCount = _GetEllipseBoundaryVertexCount(segmentCount);
+
+			return 1+(canDrawAntiAliasing ? boundaryCount*2 : boundaryCount);
 		}
 
 		private int _CalculateExpectedOutlineVertexCount_Ellipse(int segmentCount,bool canDrawAntiAliasing)
 		{
-			return canDrawAntiAliasing ? segmentCount*3 : segmentCount*2;
+			var boundaryCount = _GetEllipseBoundaryVertexCount(segmentCount);
+
+			return canDrawAntiAliasing ? boundaryCount*3 : boundaryCount*2;
 		}
 	}
 }

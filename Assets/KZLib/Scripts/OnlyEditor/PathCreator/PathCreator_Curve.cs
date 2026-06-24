@@ -1,0 +1,240 @@
+#if UNITY_EDITOR
+using System;
+using System.Collections.Generic;
+using Sirenix.OdinInspector;
+using UnityEditor;
+using UnityEngine;
+
+namespace KZLib.EditorTools
+{
+	public partial class PathCreator : MonoBehaviour
+	{
+		private void _GetCurvePointArray()
+		{
+			m_pointArray = KZMathKit.CalculateCubicBezierCurve(m_handleList.ToArray(),IsClosed,m_resolution) ?? Array.Empty<Vector3>();
+		}
+
+		public void SetCurve(Vector3[] handleArray,bool isClosed,float resolution)
+		{
+			m_drawMode = PathDrawMode.Curve;
+
+			m_closed = isClosed;
+			m_resolution = resolution;
+
+			m_handleList.Clear();
+			m_handleList.AddRange(handleArray);
+
+			SetDirty();
+		}
+
+		[VerticalGroup("1",Order = 1),ShowInInspector,ShowIf(nameof(IsCurveMode))]
+		public bool IsClosed
+		{
+			get => m_closed;
+			private set
+			{
+				if(m_closed == value)
+				{
+					return;
+				}
+
+				if(value)
+				{
+					if(m_handleList.Count < 4)
+					{
+						return;
+					}
+				}
+				else if(m_handleList.Count < 6)
+				{
+					return;
+				}
+
+				m_closed = value;
+
+				if(IsClosed)
+				{
+					m_handleList.Add(m_handleList[^1]*2-m_handleList[^2]);
+					m_handleList.Add(m_handleList[0]*2-m_handleList[1]);
+				}
+				else
+				{
+					m_handleList.RemoveRange(m_handleList.Count-2,2);
+				}
+
+				SetDirty();
+			}
+		}
+
+		private void _ResetCurve()
+		{
+			var handle = m_handleList.Count > 0 ? m_handleList[0] : Vector3.zero;
+
+			m_resolution = 50.0f;
+			m_handleList.Clear();
+
+			var position = _ConvertPosition(handle);
+
+			var sceneCamera = SceneView.lastActiveSceneView.camera;
+			var pivot = (sceneCamera == null ? 1.0f : sceneCamera.orthographicSize)*0.5f;
+
+			m_handleList.AddRange(new List<Vector3>()
+			{
+				position+_GetPlaneOffset(-pivot,+0.0f),
+				position+_GetPlaneOffset(-pivot,-pivot),
+				position+_GetPlaneOffset(+pivot,+pivot),
+				position+_GetPlaneOffset(+pivot,+0.0f),
+			});
+
+			if(IsClosed)
+			{
+				m_handleList.Add(position+_GetPlaneOffset(+pivot,-pivot));
+				m_handleList.Add(position+_GetPlaneOffset(-pivot,+pivot));
+			}
+		}
+
+		public void AddAnchor(Vector3 position)
+		{
+			if(m_handleList.Count < 2)
+			{
+				return;
+			}
+
+			var control1 = 2*m_handleList[^1]-m_handleList[^2];
+
+			if(IsClosed)
+			{
+				var control0 = m_handleList[^1];
+
+				m_handleList[^1] = (position+m_handleList[^2])*0.5f;
+
+				m_handleList.Add(position);
+				m_handleList.Add(control1);
+				m_handleList.Add(control0);
+			}
+			else
+			{
+				var control2 = (position+control1)*0.5f;
+
+				m_handleList.Add(control1);
+				m_handleList.Add(control2);
+				m_handleList.Add(position);
+			}
+
+			SetDirty();
+		}
+
+		public void InsertAnchor(int index,Vector3 position)
+		{
+			if(!m_handleList.ContainsIndex(index) || index%3 != 0 || m_handleList.Count < 2)
+			{
+				return;
+			}
+
+			if(index == m_handleList.Count-1)
+			{
+				AddAnchor(position);
+
+				return;
+			}
+
+			var newIndex = index+1;
+
+			if(!m_handleList.ContainsIndex(newIndex))
+			{
+				return;
+			}
+
+			var control = (position+m_handleList[newIndex])*0.5f;
+
+			m_handleList.Insert(newIndex+1,control);
+			m_handleList.Insert(newIndex+2,position);
+			m_handleList.Insert(newIndex+3,2*position-control);
+
+			SetDirty();
+		}
+
+		public void RemoveAnchor(int index)
+		{
+			if(m_handleList.Count <= (IsClosed ? 6 : 4))
+			{
+				return;
+			}
+
+			if(index%3 != 0)
+			{
+				return;
+			}
+
+			if(index == 0)
+			{
+				if(IsClosed)
+				{
+					m_handleList[^1] = m_handleList[2];
+				}
+
+				m_handleList.RemoveRange(0,3);
+			}
+			else if(index == m_handleList.Count-1 && !IsClosed)
+			{
+				m_handleList.RemoveRange(index-2,3);
+			}
+			else
+			{
+				m_handleList.RemoveRange(index-1,3);
+			}
+
+			SetDirty();
+		}
+
+		public void MoveCurve(int index,Vector3 position,bool isFree)
+		{
+			if(!m_handleList.ContainsIndex(index))
+			{
+				return;
+			}
+
+			var convertPosition = _ConvertPosition(position);
+			var deltaMove = convertPosition-m_handleList[index];
+
+			m_handleList[index] = convertPosition;
+
+			var length = m_handleList.Count;
+
+			if(index%3 == 0)
+			{
+				if(index+1 < length || IsClosed)
+				{
+					m_handleList[KZMathKit.LoopClamp(index+1,length)] += deltaMove;
+				}
+
+				if(index-1 >= 0 || IsClosed)
+				{
+					m_handleList[KZMathKit.LoopClamp(index-1,length)] += deltaMove;
+				}
+			}
+			else if(!isFree)
+			{
+				var nextPointIsAnchor = (index+1)%3 == 0;
+				var controlIndex = nextPointIsAnchor ? index+2 : index-2;
+				var anchorIndex = nextPointIsAnchor ? index+1 : index-1;
+
+				if((controlIndex >= 0 && controlIndex < length) || IsClosed)
+				{
+					var anchor = m_handleList[KZMathKit.LoopClamp(anchorIndex,length)];
+					var newIndex = KZMathKit.LoopClamp(controlIndex,length);
+
+					m_handleList[newIndex] = anchor+(anchor-convertPosition).normalized*(anchor-m_handleList[newIndex]).magnitude;
+				}
+			}
+
+			SetDirty();
+		}
+
+		private void _DrawCurveGizmos()
+		{
+			_DrawGizmoPathLines(IsClosed);
+		}
+	}
+}
+#endif

@@ -1,35 +1,59 @@
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using KZLib;
+using KZLib.Utilities;
 using MessagePipe;
+using R3;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
+/// <summary>Shows or hides badge objects when the bound <see cref="BadgeTag"/> count is greater than zero.</summary>
+/// <remarks>Assign the tag via inspector dropdown. Game project must declare <see cref="BadgeTag"/> static instances.</remarks>
 public class BadgeUI : MonoBehaviour
 {
 	[SerializeField]
 	private List<GameObject> m_badgeList = new();
-	[SerializeField]
-	private BadgeTag m_badgeTag = BadgeTag.NONE;
 
-	private IDisposable m_subscription = null;
+	[SerializeField,ValueDropdown(nameof(BadgeTagGroup))]
+	private string m_badgeName = null;
 
-	private void OnEnable()
+	private List<BadgeTag> m_badgeTagList = null;
+	private IEnumerable BadgeTagGroup => m_badgeTagList ??= CustomTag.CollectCustomTagList<BadgeTag>();
+
+	private BadgeTag _ResolveBadgeTag()
 	{
-		if(m_badgeTag == BadgeTag.NONE)
+		if(m_badgeName.IsEmpty() || !m_badgeName.TryToCustomTag(out BadgeTag badgeTag))
+		{
+			return BadgeTag.NONE;
+		}
+
+		return badgeTag;
+	}
+
+	private void Awake()
+	{
+		var badgeTag = _ResolveBadgeTag();
+
+		if(badgeTag == BadgeTag.NONE)
 		{
 			return;
 		}
 
-		var currentCount = ContextManager.In.GetBadgeCount(m_badgeTag);
-		_RefreshBadge(currentCount);
+		_RefreshBadge(ContextManager.In.GetBadgeCount(badgeTag));
 
-		m_subscription?.Dispose();
-		m_subscription = GlobalMessagePipe.GetSubscriber<BadgeTag,int>().Subscribe(m_badgeTag,_RefreshBadge);
+		GlobalMessagePipe.GetSubscriber<BadgeTag,int>().Subscribe(badgeTag,_RefreshBadge).RegisterTo(destroyCancellationToken);
 	}
 
-	private void OnDisable()
+	private void OnEnable()
 	{
-		m_subscription?.Dispose();
+		var badgeTag = _ResolveBadgeTag();
+
+		if(badgeTag == BadgeTag.NONE)
+		{
+			return;
+		}
+
+		_RefreshBadge(ContextManager.In.GetBadgeCount(badgeTag));
 	}
 
 	private void _RefreshBadge(int currentCount)

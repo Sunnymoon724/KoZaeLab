@@ -1,6 +1,9 @@
 
 namespace KZLib.Networks
 {
+	/// <summary>
+	/// Persists the local account identifier and exposes whether a saved login token exists.
+	/// </summary>
 	public abstract class AccountCredential
 	{
 		private const string c_accountId = "AccountId";
@@ -33,6 +36,9 @@ namespace KZLib.Networks
 		}
 	}
 #if KZLIB_PLAY_FAB
+	/// <summary>
+	/// PlayFab account credential that also stores the last successful login option in PlayerPrefs.
+	/// </summary>
 	public class PlayFabAccountCredential : AccountCredential
 	{
 		private const string c_loginOptionType = "LoginOptionType";
@@ -66,6 +72,9 @@ namespace KZLib.Networks
 	}
 #endif
 #if !KZLIB_PLAY_FAB
+	/// <summary>
+	/// No-op credential used when PlayFab integration is disabled.
+	/// </summary>
 	public sealed class StubAccountCredential : AccountCredential { }
 #endif
 }

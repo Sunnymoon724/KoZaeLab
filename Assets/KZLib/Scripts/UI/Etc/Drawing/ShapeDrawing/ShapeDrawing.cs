@@ -6,12 +6,46 @@ using UnityEngine.UI;
 
 namespace KZLib.UI
 {
+	/// <summary>
+	/// Vector shape drawing (ellipse, polygon, triangle) built on <see cref="GraphicDrawing"/>.
+	/// Primitive-specific mesh logic lives in partial class files; this file owns shared properties and dispatch.
+	/// </summary>
 	public partial class ShapeDrawing : GraphicDrawing
 	{
 		internal enum ShapePrimitiveType { Ellipse, Polygon, Triangle, } // Rectangle, Freeform, }
 		internal enum ShapeFillType { None, Matched, Solid, }
 
-		private record VertexInfo(Vector3 Outer,Vector3 Inner,Vector3 Anti);
+		private const float c_directionEpsilonSqr = 1e-10f;
+
+		private readonly struct VertexInfo
+		{
+			public Vector3 Outer { get; }
+			public Vector3 Inner { get; }
+			public Vector3 Anti { get; }
+
+			public VertexInfo(Vector3 outer,Vector3 inner,Vector3 anti)
+			{
+				Outer = outer;
+				Inner = inner;
+				Anti = anti;
+			}
+		}
+
+		// Reused each mesh rebuild to avoid per-frame allocations.
+		private readonly List<VertexInfo> m_vertexInfoList = new();
+		private Vector2[] m_outerVertArray = Array.Empty<Vector2>();
+
+		protected override void _OnValidateDrawing()
+		{
+			m_outlineThickness = Mathf.Max(m_outlineThickness,0.0f);
+			m_antiAliasing = Mathf.Max(m_antiAliasing,0.0f);
+			m_ellipseAngle = Mathf.Clamp(m_ellipseAngle,c_zeroAngle,c_fullAngle);
+			m_polygonSideCount = Mathf.Clamp(m_polygonSideCount,c_minPolygonCount,c_maxPolygonCount);
+
+			_SyncPolygonVertexDistanceList();
+		}
+
+		//? Shared appearance
 
 		[SerializeField]
 		private ShapePrimitiveType m_primitiveType = ShapePrimitiveType.Ellipse;
@@ -36,6 +70,8 @@ namespace KZLib.UI
 			get => m_outlineThickness;
 			set
 			{
+				value = Mathf.Max(value,0.0f);
+
 				int _CalculateExpectedVertexCount_OutlineThickness(float outlineThickness)
 				{
 					return _CalculateExpectedVertexCount_Inner(outlineThickness:outlineThickness);
@@ -111,6 +147,8 @@ namespace KZLib.UI
 			}
 		}
 
+		//? Strategy dispatch
+
 		private class ShapeCatalog : StrategyCatalog<ShapeDrawing,ShapePrimitiveType,ShapeStrategy>
 		{
 			public ShapeCatalog(ShapeDrawing owner) : base(owner) { }
@@ -166,12 +204,15 @@ namespace KZLib.UI
 
 			var canDrawAntiAliasing = AntiAliasing > 0.0f;
 
+			// Fill AA applies only when there is no outline (outer-edge softening).
+			var canDrawFillAntiAliasing = !canDrawOutline && canDrawAntiAliasing;
+
 			//? Draw Fill
 			if(canDrawFill)
 			{
 				if(_TryGetStrategy(PrimitiveType,out var strategy))
 				{
-					strategy.DrawFill(vertexHelper,realFillColor,!canDrawOutline && canDrawAntiAliasing);
+					strategy.DrawFill(vertexHelper,realFillColor,canDrawFillAntiAliasing);
 				}
 			}
 
@@ -192,7 +233,7 @@ namespace KZLib.UI
 
 		private bool _CanDrawOutline(float thickness,Color color)
 		{
-			return _CanDraw(color) && thickness >= 0.0f;
+			return _CanDraw(color) && thickness > 0.0f;
 		}
 
 		private bool _CanDraw(Color color)
@@ -205,6 +246,7 @@ namespace KZLib.UI
 			return _CalculateExpectedVertexCount_Inner();
 		}
 
+		/// <summary>Must mirror <see cref="_PopulateMesh"/> branch conditions for vertex budget checks.</summary>
 		private int _CalculateExpectedVertexCount_Inner(ShapePrimitiveType? primitiveType = null,ShapeFillType? fillType = null,Color? fillColor = null,float? outlineThickness = null,Color? outlineColor = null,int? segmentCount = null,float? antiAliasing = null)
 		{
 			var primitiveType2 = primitiveType ?? PrimitiveType;
@@ -226,11 +268,12 @@ namespace KZLib.UI
 				var canDrawOutline = _CanDrawOutline(outlineThickness2,outlineColor2);
 
 				var canDrawAntiAliasing = antiAliasing2 > 0.0f;
+				var canDrawFillAntiAliasing = !canDrawOutline && canDrawAntiAliasing;
 
 				//? Draw Fill
 				if(canDrawFill)
 				{
-					vertCnt += strategy.CalculateExpectedFillVertexCount(segmentCount2,!canDrawOutline && canDrawAntiAliasing);
+					vertCnt += strategy.CalculateExpectedFillVertexCount(segmentCount2,canDrawFillAntiAliasing);
 				}
 
 				//? Draw Outline
@@ -257,9 +300,12 @@ namespace KZLib.UI
 			};
 		}
 
+		//? Geometry helpers (polygon / triangle)
+
+		/// <summary>Miter-style offset for outline thickness or AA fringe at a corner.</summary>
 		private Vector2 _GetOffsetVertex(Vector2 vertex,Vector2 center,Vector2 direction1,Vector2 direction2,float thickness)
 		{
-			if(direction1 == Vector2.zero || direction2 == Vector2.zero)
+			if(direction1.sqrMagnitude < c_directionEpsilonSqr || direction2.sqrMagnitude < c_directionEpsilonSqr)
 			{
 				return vertex;
 			}
@@ -292,7 +338,7 @@ namespace KZLib.UI
 
 		private List<VertexInfo> _CalculateAllVertexList_CommonShape(bool isFill,int segmentCount,Vector2[] outerVertArray)
 		{
-			var vertInfoList = new List<VertexInfo>();
+			m_vertexInfoList.Clear();
 
 			for(var i=0;i<segmentCount;i++)
 			{
@@ -306,10 +352,10 @@ namespace KZLib.UI
 				var innerVert = _GetOffsetVertex(currVert,Center,direction1,direction2,OutlineThickness);
 				var antiVert = _GetOffsetVertex(isFill ? innerVert :currVert,Center,direction1,direction2,-AntiAliasing);
 
-				vertInfoList.Add(new VertexInfo(currVert,innerVert,antiVert));
+				m_vertexInfoList.Add(new VertexInfo(currVert,innerVert,antiVert));
 			}
 
-			return vertInfoList;
+			return m_vertexInfoList;
 		}
 	}
 }

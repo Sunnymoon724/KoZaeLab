@@ -8,6 +8,10 @@ namespace KZLib.Webhooks
 	public record ResponseInfo(bool Result,long Code,string Content,string Error);
 	public record DumpInfo(Uri Uri,string Method,string Payload,string ContentType);
 
+	/// <summary>
+	/// Base wrapper around UnityWebRequest for webhook HTTP calls.
+	/// Builds upload handlers, sends requests asynchronously, and disposes itself after completion.
+	/// </summary>
 	public abstract class BaseWebRequest : IDisposable
 	{
 		private bool m_disposed = false;

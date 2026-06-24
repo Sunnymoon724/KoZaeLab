@@ -38,6 +38,17 @@
                     "action": "AndroidBackButton",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a3c8f1e2-4b5d-6e7f-8a9b-0c1d2e3f4a5b",
+                    "path": "*/{Back}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AndroidBackButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

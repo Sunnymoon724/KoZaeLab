@@ -8,13 +8,23 @@ using UnityEngine;
 
 namespace KZLib.Windows
 {
+	/// <summary>
+	/// Editor tool that replaces matching pixels in a PNG and writes a sibling *_Convert.png file.
+	/// </summary>
 	public class PixelEditorWindow : OdinEditorWindow
 	{
+		private const int c_progressStep = 256;
+
 		[BoxGroup("Button",ShowLabel = false,Order = 1)]
 		[HorizontalGroup("Button/0"),Button("Find Image",ButtonSizes.Large)]
 		protected void OnFindImage()
 		{
-			m_spritePath = KZEditorKit.FindFilePathInPanel("Change new path.","png");
+			var filePath = KZEditorKit.OpenFilePanel("Change new path.","png");
+
+			if(!filePath.IsEmpty())
+			{
+				m_spritePath = filePath;
+			}
 		}
 
 		[HorizontalGroup("Button/0"),Button("Convert Image",ButtonSizes.Large),EnableIf(nameof(IsExist))]
@@ -22,50 +32,73 @@ namespace KZLib.Windows
 		{
 			var texture2D = new Texture2D(1,1);
 
-			if(!texture2D.LoadImage(KZFileKit.ReadFileToBytes(m_spritePath)))
+			try
 			{
-				KZEditorKit.DisplayError(new Exception("Fail to load image."));
-
-				return;
-			}
-
-			var afterColor = m_afterColor;
-			var pixelArray = texture2D.GetPixels32();
-			var changed = false;
-
-			for(var i=0;i<pixelArray.Length;i++)
-			{
-				if(_CanChangeColor(pixelArray[i]))
+				if(!texture2D.LoadImage(KZFileKit.ReadBytesFromFile(m_spritePath)))
 				{
-					if(!m_includeAlpha)
-					{
-						afterColor.a = pixelArray[i].a;
-					}
+					KZEditorKit.DisplayError(new Exception("Fail to load image."));
 
-					pixelArray[i] = afterColor;
-
-					changed = true;
+					return;
 				}
 
-				KZEditorKit.DisplayCancelableProgressBar("Change Color",$"Change Color : {i/pixelArray.Length}",i/(float)pixelArray.Length);
-			}
+				var afterColor = m_afterColor;
+				var pixelArray = texture2D.GetPixels32();
+				var changed = false;
+				var cancelled = false;
 
-			if(changed)
+				for(var i=0;i<pixelArray.Length;i++)
+				{
+					if(_CanChangeColor(pixelArray[i]))
+					{
+						if(!m_includeAlpha)
+						{
+							afterColor.a = pixelArray[i].a;
+						}
+
+						pixelArray[i] = afterColor;
+						changed = true;
+					}
+
+					if(i % c_progressStep != 0 && i != pixelArray.Length-1)
+					{
+						continue;
+					}
+
+					if(KZEditorKit.DisplayCancelableProgressBar("Change Color",$"Change Color : {i}/{pixelArray.Length}",i,pixelArray.Length))
+					{
+						cancelled = true;
+
+						break;
+					}
+				}
+
+				if(cancelled)
+				{
+					KZEditorKit.DisplayInfo("Conversion cancelled.");
+
+					return;
+				}
+
+				if(changed)
+				{
+					texture2D.SetPixels32(pixelArray);
+
+					var convertPath = string.Concat(KZFileKit.GetPathWithoutExtension(m_spritePath),"_Convert.png");
+
+					KZFileKit.WriteBytesToFile(convertPath,texture2D.EncodeToPNG());
+
+					KZEditorKit.DisplayInfo("Image change completed");
+				}
+				else
+				{
+					KZEditorKit.DisplayInfo("No color to change");
+				}
+			}
+			finally
 			{
-				texture2D.SetPixels32(pixelArray);
-
-				var convertPath = string.Concat(KZFileKit.GetPathWithoutExtension(m_spritePath),"_Convert.png");
-
-				KZFileKit.WriteByteToFile(convertPath,texture2D.EncodeToPNG());
-
-				KZEditorKit.DisplayInfo("Image change completed");
+				KZEditorKit.ClearProgressBar();
+				DestroyImmediate(texture2D);
 			}
-			else
-			{
-				KZEditorKit.DisplayInfo("No color to change");
-			}
-
-			KZEditorKit.ClearProgressBar();
 		}
 
 		private bool IsExist => !m_spritePath.IsEmpty() && !m_beforeColor.Equals(m_afterColor);
@@ -84,6 +117,9 @@ namespace KZLib.Windows
 		[HorizontalGroup("Option/1"),SerializeField]
 		private bool m_includeAlpha = false;
 
+		/// <summary>
+		/// Returns true when each RGB channel is within <see cref="m_errorRange"/> of <see cref="m_beforeColor"/>.
+		/// </summary>
 		private bool _CanChangeColor(Color32 color32)
 		{
 			return Mathf.Abs(color32.r-m_beforeColor.r) <= m_errorRange && Mathf.Abs(color32.g-m_beforeColor.g) <= m_errorRange && Mathf.Abs(color32.b-m_beforeColor.b) <= m_errorRange;

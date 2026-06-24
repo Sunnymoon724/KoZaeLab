@@ -1,8 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// List extension methods for indexing, reordering, and pop operations.
+/// </summary>
 public static partial class ContainerExtension
 {
+	/// <summary>
+	/// Tries to get the element at <paramref name="index"/> when the index is in range.
+	/// </summary>
 	public static bool TryGetValueByIndex<TValue>(this IList<TValue> list,int index,out TValue value)
 	{
 		value = default;
@@ -49,6 +55,9 @@ public static partial class ContainerExtension
 		return list.ContainsIndex(index) ? list[index] : default;
 	}
 
+	/// <summary>
+	/// Moves the first matching item to <paramref name="newIndex"/>.
+	/// </summary>
 	public static void Move<TValue>(this IList<TValue> list,TValue value,int newIndex)
 	{
 		if(!_IsValid(list))
@@ -97,6 +106,9 @@ public static partial class ContainerExtension
 		list.Insert(newIndex,value);
 	}
 
+	/// <summary>
+	/// Swaps the elements at <paramref name="index1"/> and <paramref name="index2"/>.
+	/// </summary>
 	public static void Swap<TValue>(this IList<TValue> list,int index1,int index2)
 	{
 		if(!_IsValid(list))
@@ -135,6 +147,9 @@ public static partial class ContainerExtension
 		return (_IsValid(list) && list.Count > 0) ? list.Pop(list.Count-1) : default;
 	}
 
+	/// <summary>
+	/// Removes and returns the first element that satisfies <paramref name="onPredicate"/>.
+	/// </summary>
 	public static TValue Pop<TValue>(this IList<TValue> list,Predicate<TValue> onPredicate)
 	{
 		if(!_IsValid(list))
@@ -152,6 +167,9 @@ public static partial class ContainerExtension
 		return list.Pop(index);
 	}
 
+	/// <summary>
+	/// Removes and returns the first matching element.
+	/// </summary>
 	public static TValue Pop<TValue>(this IList<TValue> list,TValue value)
 	{
 		if(!_IsValid(list))

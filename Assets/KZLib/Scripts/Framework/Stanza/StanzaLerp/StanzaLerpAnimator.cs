@@ -5,6 +5,10 @@ using UnityEngine;
 
 namespace KZLib.Utilities
 {
+	/// <summary>
+	/// Drives an <see cref="Animator"/> state by normalized time via <see cref="StanzaLerp.Progress"/>.
+	/// Animator speed is held at 0; frame updates are manual (required in edit mode).
+	/// </summary>
 	[RequireComponent(typeof(Animator))]
 	public class StanzaLerpAnimator : StanzaLerp
 	{
@@ -36,6 +40,7 @@ namespace KZLib.Utilities
 				return;
 			}
 
+			// Instant snap to end frame when no duration is specified.
 			if(param is Param progressParam)
 			{
 				if(progressParam.Duration == null)
@@ -85,6 +90,7 @@ namespace KZLib.Utilities
 
 		private readonly List<string> m_stateNameList = new();
 
+		/// <summary>State names for the Odin value dropdown.</summary>
 		private IEnumerable<string> StateNameGroup
 		{
 			get

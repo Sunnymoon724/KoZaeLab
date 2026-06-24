@@ -17,17 +17,7 @@ namespace KZLib.UI
 		internal float TriangleOffset
 		{
 			get => m_triangleOffset;
-			set
-			{
-				if(m_triangleOffset == value)
-				{
-					return;
-				}
-
-				m_triangleOffset = value;
-
-				SetVerticesDirty();
-			}
+			set => _SetVerticesDirtyProperty(ref m_triangleOffset,value);
 		}
 
 		private void _DrawFill_Triangle(VertexHelper vertexHelper,Color drawColor,bool canDrawAntiAliasing)
@@ -84,15 +74,19 @@ namespace KZLib.UI
 
 		private Vector2[] _CalculateTriangleOuterVertexArray()
 		{
-			var cornerArray = _GetCornerArray();
+			if(m_outerVertArray.Length < c_triangleSegmentCount)
+			{
+				m_outerVertArray = new Vector2[c_triangleSegmentCount];
+			}
 
-			var vertArray = new Vector2[3];
+			var topLeft = new Vector2(Center.x-Radius.x,Center.y+Radius.y);
+			var topRight = new Vector2(Center.x+Radius.x,Center.y+Radius.y);
 
-			vertArray[0] = Center+cornerArray[2];
-			vertArray[1] = Center+cornerArray[3];
-			vertArray[2] = Center+Vector2.Lerp(cornerArray[0],cornerArray[1],TriangleOffset);
+			m_outerVertArray[0] = new Vector2(Center.x+Radius.x,Center.y-Radius.y);
+			m_outerVertArray[1] = new Vector2(Center.x-Radius.x,Center.y-Radius.y);
+			m_outerVertArray[2] = Vector2.Lerp(topLeft,topRight,TriangleOffset);
 
-			return vertArray;
+			return m_outerVertArray;
 		}
 
 		private void _AddFillTriangleTriangles(VertexHelper vertexHelper,int vertCnt,bool canDrawAntiAliasing)

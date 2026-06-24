@@ -6,356 +6,275 @@ using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using KZLib.ToolKits;
 using UnityEditor.AddressableAssets;
-using UnityEditor.AddressableAssets.Settings.GroupSchemas;
-using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 using System.IO;
 using UnityEditor.Localization;
 using System.Collections.Generic;
-using KZLib.Data;
+using KZLib.Utilities;
 
 namespace KZLib.EditorInternal.Menus
 {
 	public static partial class KZMenuItem
 	{
 		private const string c_key = "Key";
+		private const string c_stringExcelName = "String";
+		private const string c_assetExcelName = "Asset";
+		private const string c_tableNameSuffix = "Table";
 
+		#region Lingo Menu
 		/// <summary>
 		/// excel file -> asset file
 		/// </summary>
-		[MenuItem("KZMenu/Lingo/Generate Lingo",false,MenuOrder.Data.GENERATE)]
+		[MenuItem("KZMenu/Lingo/Generate Lingo",false,MenuOrder.Data.GENERATE_LINGO)]
 		private static void _OnGenerateLingo()
 		{
-			AddressableAssetSettingsDefaultObject.GetSettings(true);
-
-			var localizationSettings = LocalizationSettings.GetInstanceDontCreateDefault();
-
-			if(localizationSettings == null)
+			if(!KZEditorKit.DisplayCheck(
+				"Generate Lingo",
+				"Excel sync may remove lingo tables and keys that are not present in the Excel files.\nContinue?"))
 			{
-				localizationSettings = ScriptableObject.CreateInstance<LocalizationSettings>();
-
-				KZAssetKit.CreateAsset(Path.Combine("Localization","LocalizationSettings.asset"),localizationSettings,true);
-
-				EditorBuildSettings.AddConfigObject("com.unity.localization.settings",localizationSettings,true);
+				return;
 			}
 
-			var lingoRoute = RouteManager.In.FetchRoute("defaultRes:lingo");
+			_EnsureLocalizationSettings();
 
-			foreach(var lingoFilePath in KZFileKit.FindAllExcelFileGroupByFolderPath(Global.LingoFolderPath))
+			var lingoRoute = RouteManager.In.Fetch("defaultRes:lingo");
+			var errorCount = 0;
+
+			foreach(var lingoFilePath in KZFileKit.FindExcelFilesInFolder(Global.LingoFolderPath))
 			{
-				if(!KZFileKit.IsExcelFile(lingoFilePath))
-				{
-					LogChannel.Editor.W($"{lingoFilePath} is not exist. -> generate failed");
-
-					continue;
-				}
-
 				try
 				{
-					LingoGenerator.TryConvertToDictionary<SystemLanguage>(lingoFilePath,out var languageHashSet,out var lingoDict);
-
-					var identifierHashSet = new HashSet<LocaleIdentifier>();
-
-					foreach(var language in languageHashSet)
+					if(!_ProcessLingoExcelFile(lingoFilePath,lingoRoute.AssetPath))
 					{
-						var assetPath = Path.Combine($"{lingoRoute.AssetPath}",$"{language}.asset");
-						var locale = Locale.CreateLocale(language);
-
-						identifierHashSet.Add(locale.Identifier);
-
-						KZAssetKit.CreateAsset(assetPath,locale,false);
-					}
-
-					var tableNameHashSet = new HashSet<string>();
-					var fileName = KZFileKit.GetOnlyName(lingoFilePath);
-
-					switch(fileName)
-					{
-						case "String":
-							{
-								foreach(var pair in lingoDict)
-								{
-									var sheetName = pair.Key;
-
-									var collection = _GetOrCreateLocalizationTableCollection(sheetName,fileName,LocalizationEditorSettings.GetStringTableCollection,LocalizationEditorSettings.CreateStringTableCollection);
-
-									_SyncStringTableCollection(collection,identifierHashSet);
-
-									_ApplyStringToTableCollection(collection,sheetName,pair.Value);
-
-									tableNameHashSet.Add(collection.name);
-								}
-
-								break;
-							}
-						case "Asset":
-							{
-								foreach(var pair in lingoDict)
-								{
-									var sheetName = pair.Key;
-
-									var collection = _GetOrCreateLocalizationTableCollection(sheetName,fileName,LocalizationEditorSettings.GetAssetTableCollection,LocalizationEditorSettings.CreateAssetTableCollection);
-
-									_SyncAssetTableCollection(collection,identifierHashSet);
-
-									_ApplyAssetTableCollection(collection,sheetName,pair.Value);
-
-									tableNameHashSet.Add(collection.name);
-								}
-
-								break;
-							}
-						default:
-							{
-								LogChannel.Editor.W($"Excel file name must be String or Asset.");
-
-								break;
-							}
-					}
-
-					var removeList = new List<string>();
-					var stringTableList = LocalizationEditorSettings.GetStringTableCollections();
-
-					for(var i=0;i<stringTableList.Count;i++)
-					{
-						var stringTable = stringTableList[i];
-
-						if(!tableNameHashSet.Contains(stringTable.name))
-						{
-							removeList.Add(stringTable.name);
-						}
-					}
-
-					var assetTableList = LocalizationEditorSettings.GetAssetTableCollections();
-
-					for(var i=0;i<assetTableList.Count;i++)
-					{
-						var assetTable = assetTableList[i];
-
-						if(!tableNameHashSet.Contains(assetTable.name))
-						{
-							removeList.Add(assetTable.name);
-						}
-					}
-
-					for(var i=0;i<removeList.Count;i++)
-					{
-						var sheetName = removeList[i].Replace("Table","");
-						var folderPath = Path.Combine("Assets","Localization",fileName,sheetName);
-
-						KZFileKit.DeleteFolder(KZFileKit.GetAbsolutePath(folderPath,true),true);
+						errorCount++;
 					}
 				}
 				catch(Exception exception)
 				{
 					LogChannel.Editor.E(exception);
 
-					return;
+					errorCount++;
 				}
+			}
+
+			if(errorCount > 0)
+			{
+				_DisplayInfo($"Generate finished with {errorCount} error(s).\nCheck the log.",true);
+
+				return;
 			}
 
 			_DisplayGenerateEnd();
 		}
 
-		private static void _ApplyStringToTableCollection(StringTableCollection collection,string sheetName,Dictionary<string,string[]> lingoDict)
+		[MenuItem("KZMenu/Lingo/Open Lingo Folder",false,MenuOrder.Data.OPEN_LINGO)]
+		private static void _OnOpenLingoFolder()
 		{
-			var keyHashSet = new HashSet<string>();
-			var schemeArray = lingoDict.TryGetValue(c_key,out var textArray) ? textArray : null;
+			_OpenFolder("Lingo",Global.LingoFolderPath);
+		}
+		#endregion Lingo Menu
 
-			if(schemeArray == null)
+		#region Lingo Generate Pipeline
+		private static void _EnsureLocalizationSettings()
+		{
+			AddressableAssetSettingsDefaultObject.GetSettings(true);
+
+			var localizationSettings = LocalizationSettings.GetInstanceDontCreateDefault();
+
+			if(localizationSettings != null)
 			{
-				LogChannel.Editor.E($"{c_key} is not found in {sheetName}");
-
 				return;
 			}
 
+			localizationSettings = ScriptableObject.CreateInstance<LocalizationSettings>();
+
+			KZAssetKit.CreateAsset(Path.Combine("Localization","LocalizationSettings.asset"),localizationSettings,true);
+
+			EditorBuildSettings.AddConfigObject("com.unity.localization.settings",localizationSettings,true);
+		}
+
+		private static bool _ProcessLingoExcelFile(string lingoFilePath,string lingoLocaleAssetPath)
+		{
+			if(!KZFileKit.IsExcelFile(lingoFilePath))
+			{
+				LogChannel.Editor.W($"{lingoFilePath} is not excel file. -> generate skipped");
+
+				return false;
+			}
+
+			if(!LingoGenerator.TryConvertToDictionary<SystemLanguage>(lingoFilePath,out var languageHashSet,out var lingoDict))
+			{
+				LogChannel.Editor.W($"{lingoFilePath} convert failed. -> generate skipped");
+
+				return false;
+			}
+
+			var localeContext = _SyncLocalesFromExcel(languageHashSet,lingoLocaleAssetPath);
+			var excelName = KZFileKit.GetOnlyFileName(lingoFilePath);
+
+			if(excelName.IsEqual(c_stringExcelName))
+			{
+				return _GenerateStringLingo(lingoDict,localeContext);
+			}
+
+			if(excelName.IsEqual(c_assetExcelName))
+			{
+				return _GenerateAssetLingo(lingoDict,localeContext);
+			}
+
+			LogChannel.Editor.W($"Excel file name must be {c_stringExcelName} or {c_assetExcelName}. [{excelName}]");
+
+			return false;
+		}
+
+		private readonly struct LingoLocaleContext
+		{
+			public HashSet<LocaleIdentifier> IdentifierHashSet { get; init; }
+			public Dictionary<LocaleIdentifier,SystemLanguage> LanguageByIdentifier { get; init; }
+		}
+
+		private static LingoLocaleContext _SyncLocalesFromExcel(HashSet<SystemLanguage> languageHashSet,string lingoLocaleAssetPath)
+		{
+			var identifierHashSet = new HashSet<LocaleIdentifier>();
+			var languageByIdentifier = new Dictionary<LocaleIdentifier,SystemLanguage>();
+
+			foreach(var language in languageHashSet)
+			{
+				var assetPath = Path.Combine(lingoLocaleAssetPath,$"{language}.asset");
+				var locale = Locale.CreateLocale(language);
+
+				identifierHashSet.Add(locale.Identifier);
+				languageByIdentifier[locale.Identifier] = language;
+
+				KZAssetKit.CreateAsset(assetPath,locale,false);
+			}
+
+			return new LingoLocaleContext
+			{
+				IdentifierHashSet = identifierHashSet,
+				LanguageByIdentifier = languageByIdentifier,
+			};
+		}
+
+		private static bool _GenerateStringLingo(Dictionary<string,Dictionary<string,string[]>> lingoDict,LingoLocaleContext localeContext)
+		{
+			var tableNameHashSet = new HashSet<string>();
+			var hasError = false;
+
 			foreach(var pair in lingoDict)
 			{
-				var key = pair.Key;
+				var sheetName = pair.Key;
+				var collection = _GetOrCreateStringTableCollection(sheetName);
 
-				if(key.IsEqual(c_key))
+				_SyncStringTableCollection(collection,localeContext.IdentifierHashSet);
+
+				if(!_ApplyStringToTableCollection(collection,sheetName,pair.Value,localeContext.LanguageByIdentifier))
+				{
+					hasError = true;
+				}
+
+				tableNameHashSet.Add(collection.name);
+			}
+
+			_RemoveUnusedStringTableCollections(tableNameHashSet);
+
+			return !hasError;
+		}
+
+		private static bool _GenerateAssetLingo(Dictionary<string,Dictionary<string,string[]>> lingoDict,LingoLocaleContext localeContext)
+		{
+			var tableNameHashSet = new HashSet<string>();
+			var hasError = false;
+
+			foreach(var pair in lingoDict)
+			{
+				var sheetName = pair.Key;
+				var collection = _GetOrCreateAssetTableCollection(sheetName);
+
+				_SyncAssetTableCollection(collection,localeContext.IdentifierHashSet);
+
+				if(!_ApplyAssetTableCollection(collection,sheetName,pair.Value,localeContext.LanguageByIdentifier))
+				{
+					hasError = true;
+				}
+
+				tableNameHashSet.Add(collection.name);
+			}
+
+			_RemoveUnusedAssetTableCollections(tableNameHashSet);
+
+			return !hasError;
+		}
+
+		private static void _RemoveUnusedStringTableCollections(HashSet<string> activeTableNameHashSet)
+		{
+			_RemoveUnusedTableCollections(activeTableNameHashSet,c_stringExcelName,LocalizationEditorSettings.GetStringTableCollections());
+		}
+
+		private static void _RemoveUnusedAssetTableCollections(HashSet<string> activeTableNameHashSet)
+		{
+			_RemoveUnusedTableCollections(activeTableNameHashSet,c_assetExcelName,LocalizationEditorSettings.GetAssetTableCollections());
+		}
+
+		private static void _RemoveUnusedTableCollections<TCollection>(HashSet<string> activeTableNameHashSet,string excelName,IReadOnlyList<TCollection> tableList) where TCollection : UnityEngine.Object
+		{
+			var removedAny = false;
+
+			for(var i=0;i<tableList.Count;i++)
+			{
+				var tableName = tableList[i].name;
+
+				if(activeTableNameHashSet.Contains(tableName))
 				{
 					continue;
 				}
 
-				key = $"{sheetName.ToLower()}_{key}";
-				
-				var stringTableList = collection.StringTables;
-
-				for(var i=0;i<stringTableList.Count;i++)
+				if(_TryRemoveLingoTableCollectionFolder(excelName,tableName))
 				{
-					var stringTable = stringTableList[i];
-					var language = stringTable.LocaleIdentifier.CultureInfo.EnglishName;
-					var text = _GetValueByLanguage(language,schemeArray,pair.Value);
-
-					var tableEntry = stringTable.GetEntry(key);
-
-					if(tableEntry == null)
-					{
-						tableEntry = stringTable.AddEntry(key,text);
-					}
-					else
-					{
-						tableEntry.Value = text;
-					}
-
-					tableEntry.IsSmart = text.Contains("{0}");
-
-					EditorUtility.SetDirty(stringTable);
+					removedAny = true;
 				}
-
-				keyHashSet.Add(pair.Key);
 			}
 
-			_CheckUnusedKeys(collection.SharedData,keyHashSet);
-
-			KZAssetKit.SaveAsset();
+			if(removedAny)
+			{
+				AssetDatabase.Refresh();
+			}
 		}
 
-		private static void _ApplyAssetTableCollection(AssetTableCollection collection,string sheetName,Dictionary<string,string[]> lingoDict)
+		private static bool _TryRemoveLingoTableCollectionFolder(string excelName,string tableName)
 		{
-			var keyHashSet = new HashSet<string>();
-			var schemeArray = lingoDict.TryGetValue(c_key,out var textArray) ? textArray : null;
+			var sheetName = _GetSheetNameFromTableName(tableName);
+			var folderPath = Path.Combine("Assets","Localization",excelName,sheetName);
 
-			if(schemeArray == null)
+			if(AssetDatabase.IsValidFolder(folderPath))
 			{
-				LogChannel.Editor.E($"{c_key} is not found in {sheetName}");
-
-				return;
+				return AssetDatabase.DeleteAsset(folderPath);
 			}
 
-			foreach(var pair in lingoDict)
+			var absolutePath = KZFileKit.GetAbsolutePath(folderPath,true);
+
+			if(!KZFileKit.IsFolderExist(absolutePath))
 			{
-				var key = pair.Key;
-
-				if(key.IsEqual(c_key))
-				{
-					continue;
-				}
-
-				var assetTableList = collection.AssetTables;
-
-				for(var i=0;i<assetTableList.Count;i++)
-				{
-					var assetTable = assetTableList[i];
-					var language = assetTable.LocaleIdentifier.CultureInfo.EnglishName;
-					var path = _GetValueByLanguage(language,schemeArray,pair.Value);
-
-					var assetPath = RouteManager.In.FetchRoute(path).AssetPath;
-					var guid = _CreateAddressableGuid(assetPath,language,assetTable.LocaleIdentifier.Code);
-
-					if(guid.IsEmpty())
-					{
-						continue;
-					}
-
-					var tableEntry = assetTable.GetEntry(key);
-
-					if(tableEntry == null)
-					{
-						assetTable.AddEntry(key,guid);
-					}
-					else
-					{
-						tableEntry.Guid = guid;
-					}
-
-					EditorUtility.SetDirty(assetTable);
-				}
-
-				keyHashSet.Add(pair.Key);
+				return false;
 			}
 
-			_CheckUnusedKeys(collection.SharedData,keyHashSet);
+			KZFileKit.DeleteFolder(absolutePath,true);
 
-			KZAssetKit.SaveAsset();
+			return true;
 		}
 
-		private static TCollection _GetOrCreateLocalizationTableCollection<TCollection>(string sheetName,string fileName,Func<TableReference,TCollection> onGetCollection,Func<string,string,TCollection> onCreateCollection)
+		private static string _GetSheetNameFromTableName(string tableName)
 		{
-			var tableName = $"{sheetName}Table";
-			var collection = onGetCollection(tableName);
-
-			if(collection == null)
+			if(tableName.EndsWith(c_tableNameSuffix,StringComparison.Ordinal))
 			{
-				var folderPath = Path.Combine("Assets","Localization",fileName,sheetName);
-
-				KZFileKit.CreateFolder(KZFileKit.GetAbsolutePath(folderPath,true));
-
-				collection = onCreateCollection(tableName,folderPath);
-
-				KZAssetKit.SaveAsset();
+				return tableName.Substring(0,tableName.Length - c_tableNameSuffix.Length);
 			}
 
-			return collection;
+			return tableName;
 		}
+		#endregion Lingo Generate Pipeline
 
-		private static void _SyncStringTableCollection(StringTableCollection collection,HashSet<LocaleIdentifier> identifierHashSet)
-		{
-			var existingIdentifierHashSet = new HashSet<LocaleIdentifier>();
-			var removeList = new List<StringTable>();
-
-			var stringTableList = collection.StringTables;
-
-			for(var i=0;i<stringTableList.Count;i++)
-			{
-				var stringTable = stringTableList[i];
-
-				existingIdentifierHashSet.Add(stringTable.LocaleIdentifier);
-
-				if(!identifierHashSet.Contains(stringTable.LocaleIdentifier))
-				{
-					removeList.Add(stringTable);
-				}
-			}
-
-			for(var i=0;i<removeList.Count;i++)
-			{
-				collection.RemoveTable(removeList[i]);
-			}
-
-			foreach(var identifier in identifierHashSet)
-			{
-				if(!existingIdentifierHashSet.Contains(identifier))
-				{
-					collection.AddNewTable(identifier);
-				}
-			}
-		}
-
-		private static void _SyncAssetTableCollection(AssetTableCollection collection,HashSet<LocaleIdentifier> identifierHashSet)
-		{
-			var existingIdentifierHashSet = new HashSet<LocaleIdentifier>();
-			var removeList = new List<AssetTable>();
-
-			var assetTableList = collection.AssetTables;
-
-			for(var i=0;i<assetTableList.Count;i++)
-			{
-				var assetTable = assetTableList[i];
-
-				existingIdentifierHashSet.Add(assetTable.LocaleIdentifier);
-
-				if(!identifierHashSet.Contains(assetTable.LocaleIdentifier))
-				{
-					removeList.Add(assetTable);
-				}
-			}
-
-			for(var i=0;i<removeList.Count;i++)
-			{
-				collection.RemoveTable(removeList[i]);
-			}
-
-			foreach(var identifier in identifierHashSet)
-			{
-				if(!existingIdentifierHashSet.Contains(identifier))
-				{
-					collection.AddNewTable(identifier);
-				}
-			}
-		}
-
+		#region Lingo Common
 		private static void _CheckUnusedKeys(SharedTableData tableData,HashSet<string> usedKeyHashSet)
 		{
 			var sharedData = tableData;
@@ -379,13 +298,23 @@ namespace KZLib.EditorInternal.Menus
 			EditorUtility.SetDirty(sharedData);
 		}
 
-		private static string _GetValueByLanguage(string language,string[] schemeArray,string[] cellArray)
+		private static string _GetValueByLanguage(SystemLanguage language,string[] schemeArray,string[] cellArray)
 		{
 			for(var i=0;i<schemeArray.Length;i++)
 			{
+				if(i >= cellArray.Length)
+				{
+					break;
+				}
+
 				var scheme = schemeArray[i];
 
-				if(scheme.Equals(language))
+				if(scheme.IsEqual(language.ToString()))
+				{
+					return cellArray[i];
+				}
+
+				if(Enum.TryParse(scheme,out SystemLanguage schemeLanguage) && schemeLanguage == language)
 				{
 					return cellArray[i];
 				}
@@ -393,54 +322,7 @@ namespace KZLib.EditorInternal.Menus
 
 			return string.Empty;
 		}
-
-		private static AddressableAssetGroup _GetOrCreateAddressableGroup(string language)
-		{
-			var tableName = $"Localization-Asset-Tables-{language}";
-			var assetName = $"Localization-Assets-{language}";
-
-			var assetGroup = KZEditorKit.GetAddressableGroup(assetName);
-
-			if(assetGroup == null)
-			{
-				assetGroup = KZEditorKit.CopyAddressableGroup(tableName,assetName);
-
-				var namingSchema = assetGroup.GetSchema<BundledAssetGroupSchema>();
-
-				if (namingSchema != null)
-				{
-					namingSchema.BundleNaming = BundledAssetGroupSchema.BundleNamingStyle.NoHash;
-				}
-			}
-
-			return assetGroup;
-		}
-
-		private static string _CreateAddressableGuid(string assetPath,string language,string code)
-		{
-			var assetGroup = _GetOrCreateAddressableGroup(language);
-			var guid = AssetDatabase.AssetPathToGUID(assetPath);
-
-			if(!KZEditorKit.TryRegisterAddressable(assetPath,KZFileKit.GetOnlyName(assetPath),assetGroup,true,out var addressableAsset))
-			{
-				return null;
-			}
-
-			var label = $"Locale-{code}";
-
-			if(!addressableAsset.labels.Contains(label))
-			{
-				addressableAsset.SetLabel(label,true);
-			}
-
-			return guid;
-		}
-
-		[MenuItem("KZMenu/Lingo/Open Lingo Folder",false,MenuOrder.Data.OPEN)]
-		private static void _OnOpenLingoFolder()
-		{
-			_OpenFolder("Lingo",Global.LingoFolderPath);
-		}
+		#endregion Lingo Common
 	}
 }
 #endif

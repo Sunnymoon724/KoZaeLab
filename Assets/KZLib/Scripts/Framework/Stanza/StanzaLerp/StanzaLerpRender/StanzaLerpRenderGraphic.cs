@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 namespace KZLib.Utilities
 {
+	/// <summary>
+	/// Applies <see cref="StanzaLerpRender"/> fade/free modes to UI <see cref="Graphic"/> targets.
+	/// Optionally drives <see cref="Image.fillAmount"/> and per-instance material floats.
+	/// </summary>
 	public class StanzaLerpRenderGraphic : StanzaLerpRender
 	{
 		[SerializeField,ListDrawerSettings(DraggableItems = false),OnValueChanged(nameof(_OnChangedGraphic))]
@@ -43,6 +47,7 @@ namespace KZLib.Utilities
 
 		private Material[] m_materialArray = null;
 
+		/// <summary>Lazy-cloned materials so each graphic can be driven independently.</summary>
 		private Material[] MaterialArray
 		{
 			get

@@ -12,14 +12,29 @@ using UnityEngine.SceneManagement;
 
 namespace KZLib.EditorInternal
 {
-	[Serializable]
 	public static class EditorCustom
 	{
-		private const float c_headSpace = 37.0f;
 		private const float c_iconSpace = 7.0f;
 		private const int c_iconSize = 10;
 
+		private const float c_hierarchyFoldoutWidthFactor = 1.0f;
+		private const float c_hierarchyBuiltinIconWidthFactor = 1.0f;
+		private const float c_hierarchyMinDrawXFactor = 3.5f;
+		private const float c_branchLineThickness = 2.0f;
+		private const float c_branchLineHalfHeightDivisor = 2.0f;
+		private const float c_branchHorizontalShrinkWithChild = 5.0f;
+		private const float c_branchHorizontalExtendWithoutChild = 2.0f;
+		private const float c_inactiveIconAlpha = 0.5f;
+		private const float c_lightBackgroundGrayscaleThreshold = 0.5f;
+
+		private const int c_prefabRootTreeLevelWithParent = 1;
+		private const int c_prefabRootTreeLevelWithoutParent = 0;
+		private const int c_sceneRootTreeLevel = 0;
+		private const int c_minimumComponentCountForIcon = 2;
+		private const int c_firstNonTransformComponentIndex = 1;
+
 		private const string c_editorText = "[Editor] CustomData";
+		private const string c_customWindowTitle = "EditorCustomWindow";
 
 		#region Custom Editor Data
 		[Serializable]
@@ -41,7 +56,7 @@ namespace KZLib.EditorInternal
 			[SerializeField,HideInInspector,JsonProperty(nameof(UseHierarchy))]
 			private bool m_useHierarchy = false;
 			[TitleGroup("Hierarchy",BoldTitle = false,Order = 1)]
-			[VerticalGroup("Hierarchy/Use",Order = 0),ToggleLeft,ShowInInspector,JsonIgnore]
+			[VerticalGroup("Hierarchy/Use",Order = 0),ToggleLeft,ShowInInspector,JsonIgnore,OnValueChanged(nameof(_OnHierarchyOptionChanged))]
 			public bool UseHierarchy
 			{
 				get => m_useHierarchy;
@@ -60,7 +75,7 @@ namespace KZLib.EditorInternal
 			[SerializeField,HideInInspector,JsonProperty(nameof(UseBranchTree))]
 			private bool m_useBranchTree = true;
 			[BoxGroup("Hierarchy/Data",Order = 1,ShowLabel = false)]
-			[VerticalGroup("Hierarchy/Data/0"),ToggleLeft,ShowInInspector,JsonIgnore,ShowIf(nameof(UseHierarchy))]
+			[VerticalGroup("Hierarchy/Data/0"),ToggleLeft,ShowInInspector,JsonIgnore,ShowIf(nameof(UseHierarchy)),OnValueChanged(nameof(_OnHierarchyOptionChanged))]
 			public bool UseBranchTree
 			{
 				get => UseHierarchy && m_useBranchTree;
@@ -76,7 +91,7 @@ namespace KZLib.EditorInternal
 			}
 			[SerializeField,HideInInspector,JsonProperty(nameof(BranchTreeHexColor))]
 			private string m_branchTreeHexColor = "#FF61C2FF";
-			[VerticalGroup("Hierarchy/Data/0"),KZHexColor,ShowInInspector,JsonIgnore,ShowIf(nameof(UseBranchTree))]
+			[VerticalGroup("Hierarchy/Data/0"),KZHexColor,ShowInInspector,JsonIgnore,ShowIf(nameof(UseBranchTree)),OnValueChanged(nameof(_OnHierarchyRepaint))]
 			private string BranchTreeHexColor
 			{
 				get => m_branchTreeHexColor;
@@ -100,7 +115,7 @@ namespace KZLib.EditorInternal
 			private bool m_usePrefixDesign = true;
 
 			[BoxGroup("Hierarchy/Data",Order = 1,ShowLabel = false)]
-			[VerticalGroup("Hierarchy/Data/1"),ToggleLeft,ShowInInspector,JsonIgnore,ShowIf(nameof(UseHierarchy))]
+			[VerticalGroup("Hierarchy/Data/1"),ToggleLeft,ShowInInspector,JsonIgnore,ShowIf(nameof(UseHierarchy)),OnValueChanged(nameof(_OnHierarchyOptionChanged))]
 			public bool UsePrefixDesign
 			{
 				get => UseHierarchy && m_usePrefixDesign;
@@ -118,7 +133,7 @@ namespace KZLib.EditorInternal
 			[SerializeField,HideInInspector,JsonProperty(nameof(DesignInfoList))]
 			private List<PrefixDesignInfo> m_designInfoList = new();
 
-			[VerticalGroup("Hierarchy/Data/1"),ShowInInspector,JsonIgnore,ShowIf(nameof(UsePrefixDesign))]
+			[VerticalGroup("Hierarchy/Data/1"),ShowInInspector,JsonIgnore,ShowIf(nameof(UsePrefixDesign)),OnValueChanged(nameof(_OnHierarchyOptionChanged))]
 			public List<PrefixDesignInfo> DesignInfoList
 			{
 				get => m_designInfoList;
@@ -137,7 +152,7 @@ namespace KZLib.EditorInternal
 
 			[SerializeField,HideInInspector,JsonProperty(nameof(UseIcon))]
 			private bool m_useIcon = true;
-			[VerticalGroup("Hierarchy/Data/2"),ToggleLeft,ShowInInspector,JsonIgnore,ShowIf(nameof(UseHierarchy))]
+			[VerticalGroup("Hierarchy/Data/2"),ToggleLeft,ShowInInspector,JsonIgnore,ShowIf(nameof(UseHierarchy)),OnValueChanged(nameof(_OnHierarchyOptionChanged))]
 			public bool UseIcon
 			{
 				get => UseHierarchy && m_useIcon;
@@ -151,6 +166,16 @@ namespace KZLib.EditorInternal
 					m_useIcon = value;
 				}
 			}
+
+			private void _OnHierarchyOptionChanged()
+			{
+				_SetHierarchy();
+			}
+
+			private void _OnHierarchyRepaint()
+			{
+				EditorApplication.RepaintHierarchyWindow();
+			}
 		}
 		#endregion Custom Editor Data
 
@@ -160,7 +185,7 @@ namespace KZLib.EditorInternal
 		{
 			[SerializeField,HideInInspector,JsonProperty(nameof(PrefixKey))]
 			private string m_prefixKey;
-			[ShowInInspector,JsonIgnore]
+			[ShowInInspector,JsonIgnore,OnValueChanged(nameof(_NotifyDesignInfoChanged))]
 			public string PrefixKey
 			{
 				get => m_prefixKey;
@@ -177,7 +202,7 @@ namespace KZLib.EditorInternal
 
 			[SerializeField,HideInInspector,JsonProperty(nameof(BackgroundHexColor))]
 			private string m_backgroundHexColor;
-			[ShowInInspector,JsonIgnore,KZHexColor]
+			[ShowInInspector,JsonIgnore,KZHexColor,OnValueChanged(nameof(_NotifyDesignInfoChanged))]
 			public string BackgroundHexColor
 			{
 				get => m_backgroundHexColor;
@@ -194,7 +219,7 @@ namespace KZLib.EditorInternal
 
 			[SerializeField,HideInInspector,JsonProperty(nameof(Alignment))]
 			private TextAnchor m_alignment;
-			[ShowInInspector,JsonIgnore]
+			[ShowInInspector,JsonIgnore,OnValueChanged(nameof(_NotifyDesignInfoChanged))]
 			public TextAnchor Alignment
 			{
 				get => m_alignment;
@@ -211,7 +236,7 @@ namespace KZLib.EditorInternal
 
 			[SerializeField,HideInInspector,JsonProperty(nameof(Style))]
 			private FontStyle m_style;
-			[ShowInInspector,JsonIgnore]
+			[ShowInInspector,JsonIgnore,OnValueChanged(nameof(_NotifyDesignInfoChanged))]
 			public FontStyle Style
 			{
 				get => m_style;
@@ -228,10 +253,37 @@ namespace KZLib.EditorInternal
 
 			[JsonIgnore]
 			public Color BackgroundColor => BackgroundHexColor.IsEmpty() ? Color.white : BackgroundHexColor.ToColor();
+
+			private void _NotifyDesignInfoChanged()
+			{
+				_OnDesignInfoChanged();
+			}
 		}
 		#endregion Prefix Design Info
 
-		private record HierarchyInfo(int TreeLevel,int TreeGroup,bool HasChild,bool IsLast);
+		private record HierarchyInfo(int TreeLevel,bool HasChild,bool IsLast);
+
+		private readonly struct PrefixDrawInfo
+		{
+			public readonly int DesignIndex;
+			public readonly string DisplayName;
+
+			public PrefixDrawInfo(int designIndex,string displayName)
+			{
+				DesignIndex = designIndex;
+				DisplayName = displayName;
+			}
+		}
+
+		private sealed class HierarchyDrawCache
+		{
+			public HierarchyInfo Tree;
+			public PrefixDrawInfo? Prefix;
+			public GUIContent Icon;
+			public bool ActiveInHierarchy;
+			public int ComponentCount;
+			public int IconSourceInstanceId;
+		}
 
 		private static CustomEditorData s_customData = null;
 
@@ -243,7 +295,8 @@ namespace KZLib.EditorInternal
 			}
 		}
 
-		private static readonly Dictionary<int,HierarchyInfo> s_hierarchyInfoDict = new();
+		private static readonly Dictionary<int,HierarchyDrawCache> s_drawCacheDict = new();
+		private static readonly Dictionary<(FontStyle,TextAnchor,bool),GUIStyle> s_prefixStyleCache = new();
 
 		[InitializeOnLoadMethod]
 		private static void _Initialize()
@@ -256,11 +309,13 @@ namespace KZLib.EditorInternal
 			// Remove Overlap
 			EditorApplication.hierarchyWindowItemOnGUI -= _OnDrawHierarchy;
 			EditorApplication.hierarchyChanged -= _OnUpdateHierarchy;
+			ObjectChangeEvents.changesPublished -= _OnObjectChanged;
 
 			if(CustomData.UseHierarchy)
 			{
 				EditorApplication.hierarchyWindowItemOnGUI += _OnDrawHierarchy;
 				EditorApplication.hierarchyChanged += _OnUpdateHierarchy;
+				ObjectChangeEvents.changesPublished += _OnObjectChanged;
 
 				_OnUpdateHierarchy();
 			}
@@ -272,41 +327,48 @@ namespace KZLib.EditorInternal
 		{
 			var text = EditorPrefs.GetString(c_editorText,"");
 
-			return text.IsEmpty() ? new TInfo() : JsonConvert.DeserializeObject<TInfo>(text);
+			if(text.IsEmpty())
+			{
+				return new TInfo();
+			}
+
+			try
+			{
+				var info = JsonConvert.DeserializeObject<TInfo>(text);
+
+				return info ?? new TInfo();
+			}
+			catch(Exception exception)
+			{
+				LogChannel.Editor.E($"Get editorPrefs failed. [{c_editorText}/{typeof(TInfo).Name} - {exception.Message}]");
+
+				return new TInfo();
+			}
 		}
 
 		private static void _OnDrawHierarchy(int instanceId,Rect rect)
 		{
 			var customData = CustomData;
-			
-			if(!customData.UseHierarchy || !s_hierarchyInfoDict.TryGetValue(instanceId,out var hierarchyInfo))
+
+			if(!customData.UseHierarchy || !s_drawCacheDict.TryGetValue(instanceId,out var cache))
 			{
 				return;
 			}
 
-			if(customData.UsePrefixDesign)
+			if(customData.UsePrefixDesign && cache.Prefix is { } prefix)
 			{
-				var instance = EditorUtility.EntityIdToObject(instanceId) as GameObject;
-
-				if(instance != null)
-				{
-					_DrawPrefixDesign(instance,rect);
-				}
+				_DrawPrefixDesign(prefix,rect,Selection.activeEntityId == instanceId,customData.UseIcon);
 			}
 
 			if(customData.UseIcon)
 			{
-				var instance = EditorUtility.EntityIdToObject(instanceId) as GameObject;
-
-				if(instance != null)
-				{
-					_DrawIcon(instance,rect);
-				}
+				_TryRefreshIconCache(instanceId,cache);
+				_DrawIcon(cache.Icon,cache.ActiveInHierarchy,rect);
 			}
 
 			if(customData.UseBranchTree)
 			{
-				_DrawBranchTree(hierarchyInfo,rect);
+				_DrawBranchTree(cache.Tree,rect);
 			}
 		}
 
@@ -317,16 +379,16 @@ namespace KZLib.EditorInternal
 				return;
 			}
 
-			s_hierarchyInfoDict.Clear();
+			s_drawCacheDict.Clear();
 
 			var prefab = PrefabStageUtility.GetCurrentPrefabStage();
 
 			if(prefab)
 			{
 				var root = prefab.prefabContentsRoot;
-				var level = root.transform.parent ? 1 : 0;
+				var level = root.transform.parent ? c_prefabRootTreeLevelWithParent : c_prefabRootTreeLevelWithoutParent;
 
-				_CheckGameObject(root,level,0,true);
+				_CheckGameObject(root,level,true);
 
 				return;
 			}
@@ -344,34 +406,210 @@ namespace KZLib.EditorInternal
 
 				for(var j=0;j<objectArray.Length;j++)
 				{
-					_CheckGameObject(objectArray[j],0,j,j == objectArray.Length-1);
+					_CheckGameObject(objectArray[j],c_sceneRootTreeLevel,j == objectArray.Length-1);
 				}
 			}
 		}
 
-		private static void _CheckGameObject(GameObject gameObject,int treeLevel,int treeGroup,bool isLastChild)
+		private static void _CheckGameObject(GameObject gameObject,int treeLevel,bool isLastChild)
 		{
 			var instanceId = gameObject.GetInstanceID();
 
-			if(s_hierarchyInfoDict.ContainsKey(instanceId))
+			if(s_drawCacheDict.ContainsKey(instanceId))
 			{
 				return;
 			}
 
 			var childCount = gameObject.transform.childCount;
 
-			s_hierarchyInfoDict.Add(instanceId,new HierarchyInfo(treeLevel,treeGroup,childCount > 0,isLastChild));
+			var cache = new HierarchyDrawCache()
+			{
+				Tree = new HierarchyInfo(treeLevel,childCount > 0,isLastChild),
+			};
+
+			_ApplyDrawCache(gameObject,cache);
+			s_drawCacheDict.Add(instanceId,cache);
 
 			for(var i=0;i<childCount;i++)
 			{
-				_CheckGameObject(gameObject.transform.GetChild(i).gameObject,treeLevel+1,treeGroup,i == childCount-1);
+				_CheckGameObject(gameObject.transform.GetChild(i).gameObject,treeLevel+1,i == childCount-1);
 			}
+		}
+
+		private static void _OnDesignInfoChanged()
+		{
+			if(!CustomData.UseHierarchy)
+			{
+				return;
+			}
+
+			_OnUpdateHierarchy();
+			EditorApplication.RepaintHierarchyWindow();
+		}
+
+		private static PrefixDrawInfo? _FindPrefixDesign(string instanceName)
+		{
+			var designInfoList = CustomData.DesignInfoList;
+			var matchIndex = -1;
+			var matchLength = -1;
+
+			for(var i=0;i<designInfoList.Count;i++)
+			{
+				var prefixKey = designInfoList[i].PrefixKey;
+
+				if(prefixKey.IsEmpty() || !instanceName.StartsWith(prefixKey,StringComparison.OrdinalIgnoreCase) || prefixKey.Length <= matchLength)
+				{
+					continue;
+				}
+
+				matchIndex = i;
+				matchLength = prefixKey.Length;
+			}
+
+			if(matchIndex == -1)
+			{
+				return null;
+			}
+
+			return new PrefixDrawInfo(matchIndex,instanceName[matchLength..]);
+		}
+
+		private static void _OnObjectChanged(ref ObjectChangeEventStream stream)
+		{
+			if(!CustomData.UseHierarchy)
+			{
+				return;
+			}
+
+			var repaint = false;
+
+			for(var i=0;i<stream.length;i++)
+			{
+				var instanceId = _GetChangedInstanceId(ref stream,i);
+
+				if(instanceId == 0)
+				{
+					continue;
+				}
+
+				if(_RefreshDrawCacheEntry(instanceId))
+				{
+					repaint = true;
+				}
+			}
+
+			if(repaint)
+			{
+				EditorApplication.RepaintHierarchyWindow();
+			}
+		}
+
+		private static int _GetChangedInstanceId(ref ObjectChangeEventStream stream,int index)
+		{
+			switch(stream.GetEventType(index))
+			{
+				case ObjectChangeKind.ChangeGameObjectStructure:
+				{
+					stream.GetChangeGameObjectStructureEvent(index,out var changeEvent);
+
+					return changeEvent.instanceId;
+				}
+				case ObjectChangeKind.ChangeGameObjectOrComponentProperties:
+				{
+					stream.GetChangeGameObjectOrComponentPropertiesEvent(index,out var changeEvent);
+
+					return changeEvent.instanceId;
+				}
+				default:
+					return 0;
+			}
+		}
+
+		private static bool _RefreshDrawCacheEntry(int instanceId)
+		{
+			if(!s_drawCacheDict.TryGetValue(instanceId,out var cache))
+			{
+				return false;
+			}
+
+			var gameObject = EditorUtility.EntityIdToObject(instanceId) as GameObject;
+
+			if(gameObject == null)
+			{
+				s_drawCacheDict.Remove(instanceId);
+
+				return true;
+			}
+
+			_ApplyDrawCache(gameObject,cache);
+
+			return true;
+		}
+
+		private static void _ApplyDrawCache(GameObject gameObject,HierarchyDrawCache cache)
+		{
+			var customData = CustomData;
+
+			cache.Prefix = customData.UsePrefixDesign ? _FindPrefixDesign(gameObject.name) : null;
+			cache.Icon = customData.UseIcon ? _GenerateContent(gameObject,out cache.IconSourceInstanceId) : null;
+			cache.ActiveInHierarchy = gameObject.activeInHierarchy;
+			cache.ComponentCount = gameObject.GetComponentCount();
+
+			if(!customData.UseIcon)
+			{
+				cache.IconSourceInstanceId = 0;
+			}
+		}
+
+		private static void _TryRefreshIconCache(int instanceId,HierarchyDrawCache cache)
+		{
+			var gameObject = EditorUtility.EntityIdToObject(instanceId) as GameObject;
+
+			if(gameObject == null)
+			{
+				return;
+			}
+
+			if(!CustomData.UseIcon)
+			{
+				return;
+			}
+
+			var componentCount = gameObject.GetComponentCount();
+			var activeInHierarchy = gameObject.activeInHierarchy;
+			var icon = _GenerateContent(gameObject,out var iconSourceInstanceId);
+
+			if(componentCount == cache.ComponentCount && activeInHierarchy == cache.ActiveInHierarchy && iconSourceInstanceId == cache.IconSourceInstanceId)
+			{
+				return;
+			}
+
+			cache.ComponentCount = componentCount;
+			cache.ActiveInHierarchy = activeInHierarchy;
+			cache.IconSourceInstanceId = iconSourceInstanceId;
+			cache.Icon = icon;
+		}
+
+		private static float _GetHierarchyRowLeadingWidth(Rect rect) => rect.height*(c_hierarchyFoldoutWidthFactor+c_hierarchyBuiltinIconWidthFactor);
+
+		private static float _GetHierarchyMinDrawX(Rect rect) => rect.height*c_hierarchyMinDrawXFactor;
+
+		private static Rect _GetPrefixDesignRect(Rect rect,bool useCustomIcon)
+		{
+			var offset = _GetHierarchyRowLeadingWidth(rect);
+
+			if(useCustomIcon)
+			{
+				offset += c_iconSpace+c_iconSize+c_iconSpace;
+			}
+
+			return new Rect(rect.x+offset,rect.y,Mathf.Max(0.0f,rect.width-offset),rect.height);
 		}
 
 		#region Draw Branch Tree
 		private static void _DrawBranchTree(HierarchyInfo hierarchyInfo,Rect rect)
 		{
-			if(!CustomData.UseBranchTree || hierarchyInfo.TreeLevel < 0 || rect.x < 60)
+			if(!CustomData.UseBranchTree || hierarchyInfo.TreeLevel < 0 || rect.x < _GetHierarchyMinDrawX(rect))
 			{
 				return;
 			}
@@ -414,11 +652,11 @@ namespace KZLib.EditorInternal
 		//! Half-Vertical
 		private static void _DrawHalfVerticalLine(Rect rect,bool isUpper,int treeLevel)
 		{
-			var height = rect.height/2.0f;
+			var height = rect.height/c_branchLineHalfHeightDivisor;
 			var x = _GetTreeStartX(rect,treeLevel);
 			var y = isUpper ? rect.y : (rect.y+height);
 
-			EditorGUI.DrawRect(new Rect(x,y,2.0f,height),CustomData.BranchTreeColor);
+			EditorGUI.DrawRect(new Rect(x,y,c_branchLineThickness,height),CustomData.BranchTreeColor);
 		}
 
 		/// <summary>
@@ -428,57 +666,53 @@ namespace KZLib.EditorInternal
 		private static void _DrawHorizontalLine(Rect rect,int treeLevel,bool hasChild)
 		{
 			var x = _GetTreeStartX(rect,treeLevel);
-			var y = rect.y+rect.height/2.0f;
-			var width = rect.height+(hasChild ? -5.0f :  2.0f);
+			var y = rect.y+rect.height/c_branchLineHalfHeightDivisor;
+			var width = rect.height+(hasChild ? -c_branchHorizontalShrinkWithChild : c_branchHorizontalExtendWithoutChild);
 
-			EditorGUI.DrawRect(new Rect(x,y,width,2.0f),CustomData.BranchTreeColor);
+			EditorGUI.DrawRect(new Rect(x,y,width,c_branchLineThickness),CustomData.BranchTreeColor);
 		}
 
 		private static float _GetTreeStartX(Rect rect,int treeLevel)
 		{
-			return c_headSpace+(rect.height-2.0f)*treeLevel;
+			return _GetHierarchyRowLeadingWidth(rect)+(rect.height-c_branchLineThickness)*treeLevel;
 		}
 		#endregion Draw Branch Tree
 
 		#region Draw Prefix Design
-		private static void _DrawPrefixDesign(GameObject instance,Rect rect)
+		private static void _DrawPrefixDesign(PrefixDrawInfo prefixDrawInfo,Rect rect,bool isSelected,bool useCustomIcon)
 		{
-			var instanceName = instance.name;
-			var designInfoList = CustomData.DesignInfoList;
+			var designInfo = CustomData.DesignInfoList[prefixDrawInfo.DesignIndex];
+			var backgroundColor = isSelected ? designInfo.BackgroundColor.InvertColor() : designInfo.BackgroundColor;
+			var darkText = backgroundColor.grayscale <= c_lightBackgroundGrayscaleThreshold;
+			var designRect = _GetPrefixDesignRect(rect,useCustomIcon);
 
-			bool _FindName(PrefixDesignInfo designInfo)
+			EditorGUI.DrawRect(designRect,backgroundColor);
+			EditorGUI.LabelField(designRect,prefixDrawInfo.DisplayName,_GetPrefixStyle(designInfo.Style,designInfo.Alignment,darkText));
+		}
+
+		private static GUIStyle _GetPrefixStyle(FontStyle style,TextAnchor alignment,bool darkText)
+		{
+			var key = (style,alignment,darkText);
+
+			if(!s_prefixStyleCache.TryGetValue(key,out var guiStyle))
 			{
-				var prefixKey = designInfo.PrefixKey;
-
-				return !prefixKey.IsEmpty() && instanceName.StartsWith(prefixKey);
-			}
-
-			var index = designInfoList.FindIndex(_FindName);
-
-			if(index != -1)
-			{
-				var designInfo = designInfoList[index];
-
-				var backgroundColor = Selection.activeGameObject == instance ? designInfo.BackgroundColor.InvertColor() : designInfo.BackgroundColor;
-				var newName = instanceName[designInfo.PrefixKey.Length..];
-
-				EditorGUI.DrawRect(rect,backgroundColor);
-
-				EditorGUI.LabelField(rect,newName,new GUIStyle()
+				guiStyle = new GUIStyle()
 				{
-					fontStyle = designInfo.Style,
-					alignment = designInfo.Alignment,
-					normal = new GUIStyleState() { textColor = backgroundColor.grayscale > 0.5f ? Color.black : Color.white },
-				});
+					fontStyle = style,
+					alignment = alignment,
+					normal = new GUIStyleState() { textColor = darkText ? Color.white : Color.black },
+				};
+
+				s_prefixStyleCache[key] = guiStyle;
 			}
+
+			return guiStyle;
 		}
 		#endregion Draw Prefix Design
 
 		#region Draw Icon
-		private static void _DrawIcon(GameObject instance,Rect rect)
+		private static void _DrawIcon(GUIContent content,bool activeInHierarchy,Rect rect)
 		{
-			var content = _GenerateContent(instance);
-
 			if(content == null || content.image == null)
 			{
 				return;
@@ -486,9 +720,9 @@ namespace KZLib.EditorInternal
 
 			var cachedColor = GUI.color;
 
-			if(!instance.activeInHierarchy)
+			if(!activeInHierarchy)
 			{
-				GUI.color = cachedColor.MaskAlpha(0.5f);
+				GUI.color = cachedColor.MaskAlpha(c_inactiveIconAlpha);
 			}
 
 			var iconRect = new Rect(rect.x+c_iconSpace,rect.y+c_iconSpace,c_iconSize,c_iconSize);
@@ -498,16 +732,18 @@ namespace KZLib.EditorInternal
 			GUI.color = cachedColor;
 		}
 
-		private static GUIContent _GenerateContent(GameObject gameObject)
+		private static GUIContent _GenerateContent(GameObject gameObject,out int sourceInstanceId)
 		{
+			sourceInstanceId = 0;
+
 			var componentArray = gameObject.GetComponents<Component>();
 
-			if(componentArray == null || componentArray.Length < 2)
+			if(componentArray == null || componentArray.Length < c_minimumComponentCountForIcon)
 			{
 				return null;
 			}
 
-			var component = componentArray[1];
+			var component = componentArray[c_firstNonTransformComponentIndex];
 
 			if(component == null)
 			{
@@ -519,11 +755,14 @@ namespace KZLib.EditorInternal
 			if(componentType == typeof(CanvasRenderer))
 			{
 				component = componentArray[^1];
+				componentType = component.GetType();
 			}
+
+			sourceInstanceId = component.GetInstanceID();
 
 			var content = EditorGUIUtility.ObjectContent(component,componentType);
 			content.text = null;
-            content.tooltip = "";
+			content.tooltip = "";
 
 			return content;
 		}
@@ -531,7 +770,7 @@ namespace KZLib.EditorInternal
 
 		private static void _ResetCustomData()
 		{
-			if(!KZEditorKit.DisplayCheckBeforeExecute("Reset CustomData"))
+			if(!KZEditorKit.DisplayConfirm("Reset CustomData"))
 			{
 				return;
 			}
@@ -565,9 +804,9 @@ namespace KZLib.EditorInternal
 		{
 			var window = OdinEditorWindow.InspectObject(CustomData);
 
-			window.titleContent = new GUIContent("EditorCustomWindow");
-
+			window.titleContent = new GUIContent(c_customWindowTitle);
 			window.Show();
+			window.Focus();
 		}
 	}
 }

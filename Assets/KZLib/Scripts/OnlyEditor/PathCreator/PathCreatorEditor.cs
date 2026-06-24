@@ -4,7 +4,7 @@ using UnityEngine;
 using Sirenix.OdinInspector.Editor;
 using R3;
 
-namespace KZLib.Development
+namespace KZLib.EditorTools
 {
 	[CustomEditor(typeof(PathCreator))]
 	public partial class PathCreatorEditor : OdinEditor
@@ -117,35 +117,34 @@ namespace KZLib.Development
 				return;
 			}
 
-			var handleArray = m_pathCreator.HandleArray;
+			var handles = m_pathCreator.Handles;
 
 			if(m_pathCreator.IsCurveMode)
 			{
-				for(var i=0;i<handleArray.Length;i++)
+				for(var i=0;i<handles.Count;i++)
 				{
-					_DrawHandle(i,handleArray[i]);
+					_DrawHandle(i,handles[i]);
 				}
 			}
 			else
 			{
-				if(handleArray.Length >= 3)
+				if(handles.Count >= 3)
 				{
-					//? center,start,direction
 					for(var i=0;i<3;i++)
 					{
-						_DrawHandle(i,handleArray[i]);
+						_DrawHandle(i,handles[i]);
 					}
 				}
 			}
 
-			_DrawLine(handleArray);
+			_DrawLine();
 		}
 
-		private void _DrawLine(Vector3[] handleArray)
+		private void _DrawLine()
 		{
 			if(m_pathCreator.IsCurveMode)
 			{
-				_DrawLineInCurve(handleArray);
+				_DrawLineInCurve();
 			}
 			else
 			{
@@ -178,6 +177,11 @@ namespace KZLib.Development
 			Handles.Label(transformPoint,$"{index}",style);
 
 			Handles.color = cachedColor;
+		}
+
+		private Vector3 _ToWorld(Vector3 position)
+		{
+			return position.TransformPoint(m_pathCreator.transform,m_pathCreator.PathSpaceType);
 		}
 
 		private float _GetHandleDiameter(float diameter,Vector3 position)

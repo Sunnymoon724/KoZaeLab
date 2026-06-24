@@ -1,0 +1,160 @@
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using Sirenix.OdinInspector;
+using UnityEngine;
+
+/// <summary>
+/// Scrolling tiled <see cref="RawImage"/> texture via <see cref="RawImage.uvRect"/>. Supports manual, child-relative, or self-relative tiling.
+/// </summary>
+public class PatternRawImageUI : BaseRawImageUI
+{
+	private enum TilingPatternType { Manual, Child, Self, }
+
+	[SerializeField,Range(-1.0f,1.0f)]
+	private float m_scrollSpeedX = 0.0f;
+
+	[SerializeField,Range(-1.0f,1.0f)]
+	private float m_scrollSpeedY = 0.0f;
+
+	[SerializeField]
+	private TilingPatternType m_tilingType = TilingPatternType.Manual;
+
+	[SerializeField,ShowIf(nameof(IsChildPatternType))]
+	private float m_childValue = 1.0f;
+	[SerializeField,ShowIf(nameof(IsSelfPatternType))]
+	private float m_selfValue = 1.0f;
+
+	[SerializeField]
+	private bool m_ignoreTimescale = false;
+
+	private bool IsSelfPatternType => m_tilingType == TilingPatternType.Self;
+	private bool IsChildPatternType => m_tilingType == TilingPatternType.Child;
+
+	private CancellationTokenSource m_tokenSource = null;
+
+	protected override void OnEnable()
+	{
+		base.OnEnable();
+
+		_SetPatternAspect();
+
+		if(Application.isPlaying)
+		{
+			KZExternalKit.RecycleTokenSource(ref m_tokenSource);
+
+			_ScrollPatternAsync(m_tokenSource.Token).Forget();
+		}
+	}
+
+	protected override void OnDisable()
+	{
+		KZExternalKit.KillTokenSource(ref m_tokenSource);
+
+		base.OnDisable();
+	}
+
+	private void _SetPatternAspect()
+	{
+		var texture = m_rawImage.texture;
+
+		if(texture == null)
+		{
+			return;
+		}
+
+		switch(m_tilingType)
+		{
+			case TilingPatternType.Child:
+				{
+					var parentRectTrans = transform.parent.GetComponent<RectTransform>();
+
+					_SetPatternRect(parentRectTrans,m_childValue);
+
+					break;
+				}
+			case TilingPatternType.Self:
+				{
+					var currentRectTrans = transform.GetComponent<RectTransform>();
+
+					_SetPatternRect(currentRectTrans,m_selfValue);
+
+					break;
+				}
+			case TilingPatternType.Manual:
+			default:
+				{
+					break;
+				}
+		}
+	}
+
+	private void _SetPatternRect(RectTransform rectTrans,float value)
+	{
+		if(!rectTrans || !m_rawImage?.texture)
+		{
+			return;
+		}
+
+		var texture = m_rawImage.texture;
+
+		if(texture.height <= 0)
+		{
+			return;
+		}
+
+		var scrollRect = m_rawImage.uvRect;
+
+		var rectWidth = rectTrans.rect.width;
+		var rectHeight = rectTrans.rect.height;
+
+		var ratio = (float)texture.width/texture.height;
+		var divisor = Mathf.Max(Mathf.Abs(value)*100.0f,Mathf.Epsilon);
+
+		scrollRect.width = rectWidth/divisor;
+		scrollRect.height = rectHeight/divisor*ratio;
+
+		m_rawImage.uvRect = scrollRect;
+	}
+
+	private async UniTaskVoid _ScrollPatternAsync(CancellationToken token)
+	{
+		var scrollRect = m_rawImage.uvRect;
+
+		void _UpdatePattern(float deltaTime)
+		{
+			scrollRect.x += deltaTime * m_scrollSpeedX;
+			scrollRect.y += deltaTime * m_scrollSpeedY;
+
+			if(Mathf.Abs(scrollRect.x) >= 1.0f)
+			{
+				scrollRect.x %= 1.0f;
+			}
+
+			if(Mathf.Abs(scrollRect.y) >= 1.0f)
+			{
+				scrollRect.y %= 1.0f;
+			}
+
+			m_rawImage.uvRect = scrollRect;
+		}
+
+		await KZExternalKit.LoopUpdateAndWaitForFrameAsync(_UpdatePattern,m_ignoreTimescale,-1,token);
+	}
+
+	protected override void _Reset()
+	{
+		base._Reset();
+
+		m_rawImage.raycastTarget = false;
+
+		var rectTransform = m_rawImage.rectTransform;
+
+		rectTransform.offsetMin = Vector2.zero;
+		rectTransform.offsetMax = Vector2.zero;
+
+		rectTransform.anchorMin = Vector2.zero;
+		rectTransform.anchorMax = Vector2.one;
+
+		rectTransform.pivot = new Vector2(0.5f,0.5f);
+	}
+}

@@ -13,6 +13,9 @@ namespace KZLib.Webhooks
 			PostBugReportWebRequestAsync(messageGroup,file).Forget();
 		}
 
+		/// <summary>
+		/// Posts a bug report to configured destinations such as Discord and Trello.
+		/// </summary>
 		public async UniTask PostBugReportWebRequestAsync(IEnumerable<MessageInfo> messageInfoGroup,byte[] file)
 		{
 			var postHashSet = new HashSet<string>(WebhookCfg.BugReportPostList);

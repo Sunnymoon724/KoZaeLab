@@ -5,10 +5,10 @@ using UnityEditor;
 
 namespace KZLib.Attributes
 {
+	/// <summary><see cref="KZPrefabPathAttribute"/> drawer. Prefab preview window.</summary>
 	public class KZPrefabPathAttributeDrawer : KZResourcePathAttributeDrawer<KZPrefabPathAttribute>
 	{
 		protected override SdfIconType IconType => SdfIconType.Box;
-
 		protected override string ResourceKind => "prefab";
 
 		protected override void OnOpenResource()

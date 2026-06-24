@@ -11,7 +11,7 @@ public static class ColorExtension
 	private const float c_defaultBrightness = 0.0625f;
 
 	/// <summary>
-	/// Color to hexCode
+	/// Converts the color to an HTML-style RGBA hex string.
 	/// </summary>
 	public static string ToHexCode(this Color color)
 	{
@@ -24,7 +24,7 @@ public static class ColorExtension
 	}
 
 	/// <summary>
-	/// Color to HSV
+	/// Converts the color to an HSV vector (hue, saturation, value).
 	/// </summary>
 	public static Vector3 ToHSV(this Color color)
 	{
@@ -34,17 +34,38 @@ public static class ColorExtension
 	}
 
 	#region Mask
+	/// <summary>
+	/// Replaces the red channel with the given value.
+	/// </summary>
 	public static Color MaskRed(this Color color,float red = 0.0f) => color.MaskColor(red,null,null,null);
+
+	/// <summary>
+	/// Replaces the green channel with the given value.
+	/// </summary>
 	public static Color MaskGreen(this Color color,float green = 0.0f) => color.MaskColor(null,green,null,null);
+
+	/// <summary>
+	/// Replaces the blue channel with the given value.
+	/// </summary>
 	public static Color MaskBlue(this Color color,float blue = 0.0f) => color.MaskColor(null,null,blue,null);
+
+	/// <summary>
+	/// Replaces the alpha channel with the given value.
+	/// </summary>
 	public static Color MaskAlpha(this Color color,float alpha = 0.0f) => color.MaskColor(null,null,null,alpha);
 
+	/// <summary>
+	/// Replaces selected RGBA channels with optional mask values.
+	/// </summary>
 	public static Color MaskColor(this Color color,float? red = null,float? green = null,float? blue = null,float? alpha = null)
 	{
 		return new Color(red ?? color.r,green ?? color.g,blue ?? color.b,alpha ?? color.a);
 	}
 	#endregion Mask
 
+	/// <summary>
+	/// Inverts RGB channels while preserving alpha.
+	/// </summary>
 	public static Color InvertColor(this Color color) => new(1.0f-color.r,1.0f-color.g,1.0f-color.b);
 
 	/// <summary>
@@ -62,13 +83,23 @@ public static class ColorExtension
 		return result;
 	}
 
+	/// <summary>
+	/// Lightens RGB channels by adding the given brightness offset.
+	/// </summary>
 	public static Color Lighter(this Color color,float value = c_defaultBrightness) => color.Brightness(+value);
+
+	/// <summary>
+	/// Darkens RGB channels by subtracting the given brightness offset.
+	/// </summary>
 	public static Color Darker(this Color color,float value = c_defaultBrightness) => color.Brightness(-value);
 
+	/// <summary>
+	/// Adjusts RGB channels by the given brightness offset while preserving alpha.
+	/// </summary>
 	public static Color Brightness(this Color color,float value) => new(color.r+value,color.g+value,color.b+value,color.a);
 
 	/// <summary>
-	/// Compare value & 0.5f => white, else => black
+	/// Returns white or black for readable text contrast against this color.
 	/// </summary>
 	public static Color AutoTextColor(this Color color)
 	{

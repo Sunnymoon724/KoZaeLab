@@ -2,6 +2,9 @@
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// Editor-only utility methods for drawing spline/path knots, borders, and labels in the scene view.
+/// </summary>
 public static class KZKnotKit
 {
 	private const float c_majorSize = 10.0f;
@@ -16,7 +19,6 @@ public static class KZKnotKit
 	private readonly static Color s_normalMinorColor = "#5999FFFF".ToColor();
 	private readonly static Color s_highlightMinorColor = "#3232C0FF".ToColor();
 
-
 	private readonly static Color s_normalBorderLineColor = "#33CC1AFF".ToColor();
 	private readonly static Color s_editingBorderLineColor = "#91F48BFF".ToColor();
 
@@ -26,18 +28,24 @@ public static class KZKnotKit
 	private static GUIStyle s_labelStyle = null;
 	private static GUIStyle s_shadowStyle = null;
 
+	/// <summary>
+	/// Draws a non-interactive knot at the given world position.
+	/// </summary>
 	public static void DrawFixedKnot(int index,Vector3 position)
 	{
 		_DrawKnot(index,false,position,s_fixedColor);
 	}
 
+	/// <summary>
+	/// Draws an interactive control knot with hover, selection, and major/minor styling.
+	/// </summary>
 	public static void DrawControlKnot(int index,Vector3 position,bool isMouseOver,bool isSelected,bool isMajor)
 	{
 		var highlightColor = isMajor ? s_highlightMajorColor : s_highlightMinorColor;
 		var normalColor = isMajor ? s_normalMajorColor : s_normalMinorColor;
 		var controlColor = isSelected ? s_selectedColor : isMouseOver ? highlightColor : normalColor;
 
-		_DrawKnot(index,true,position,controlColor);
+		_DrawKnot(index,isMajor,position,controlColor);
 	}
 
 	private static void _DrawKnot(int index,bool isMajor,Vector3 position,Color color)
@@ -56,6 +64,9 @@ public static class KZKnotKit
 		Handles.color = cachedColor;
 	}
 
+	/// <summary>
+	/// Returns whether the mouse is within the knot's circular pick radius.
+	/// </summary>
 	public static bool IsMouseOverHandle(bool isMajor,Vector3 position)
 	{
 		var diameterSize = _GetKnotDiameterSize(isMajor,position)/2.0f;
@@ -70,6 +81,9 @@ public static class KZKnotKit
 		return knotSize*0.01f*HandleUtility.GetHandleSize(position)*2.5f;
 	}
 
+	/// <summary>
+	/// Draws the closed border polyline around a shape.
+	/// </summary>
 	public static void DrawBorderLine(Vector3[] positionArray,float width,bool isEditing)
 	{
 		if(positionArray == null)
@@ -91,6 +105,9 @@ public static class KZKnotKit
 		Handles.color = cachedColor;
 	}
 
+	/// <summary>
+	/// Draws world-space text with an optional offset shadow.
+	/// </summary>
 	public static void DrawText(string labelText,Vector3 position,Color textColor,bool hasShadow)
 	{
 		var cachedColor = Handles.color;

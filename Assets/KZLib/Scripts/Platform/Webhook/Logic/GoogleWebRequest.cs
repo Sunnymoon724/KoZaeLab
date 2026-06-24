@@ -4,6 +4,9 @@ using UnityEngine.Networking;
 
 namespace KZLib.Webhooks
 {
+	/// <summary>
+	/// Base request type for Google Apps Script endpoints that manage Sheets and Drive.
+	/// </summary>
 	public abstract class GoogleWebRequest : BaseWebRequest
 	{
 		// protected const string URL = @"https://script.google.com/macros/s/AKfycbwloic4is9JujQIh041RarXfsTrCyeKFk4P9a-jrBANVgsOEr4BeHmGuZAcP3kKuX2d/exec";
@@ -16,6 +19,9 @@ namespace KZLib.Webhooks
 		protected GetGoogleWebRequest(string name,string url,string query) : base(name,$"{url}{query}",UnityWebRequest.kHttpVerbGET) { }
 	}
 
+	/// <summary>
+	/// Reads a Google Sheet tab by file id and sheet index.
+	/// </summary>
 	public class GetGoogleSheetWebRequest : GetGoogleWebRequest
 	{
 		public static GetGoogleSheetWebRequest Create(string url,string fileId,int sheetIndex)
@@ -26,6 +32,9 @@ namespace KZLib.Webhooks
 		private GetGoogleSheetWebRequest(string url,string query) : base("Get GoogleSheet",url,query) { }
 	}
 
+	/// <summary>
+	/// Lists entries inside a Google Drive folder.
+	/// </summary>
 	public class GetGoogleDriveEntryWebRequest : GetGoogleWebRequest
 	{
 		public static GetGoogleDriveEntryWebRequest Create(string url,string folderId)
@@ -46,6 +55,9 @@ namespace KZLib.Webhooks
 		}
 	}
 
+	/// <summary>
+	/// Appends a row to a Google Sheet through the Apps Script endpoint.
+	/// </summary>
 	public class PostGoogleSheetAddRowWebRequest : PostGoogleWebRequest
 	{
 		public static PostGoogleSheetAddRowWebRequest Create(string url,string sheetId,int sheetIndex,string content)
@@ -62,6 +74,9 @@ namespace KZLib.Webhooks
 		private PostGoogleSheetAddRowWebRequest(string url,byte[] rawData) : base("Post GoogleSheetAddRow",url,rawData) { }
 	}
 
+	/// <summary>
+	/// Uploads a file into a Google Drive folder through the Apps Script endpoint.
+	/// </summary>
 	public class PostGoogleDriveFileWebRequest : PostGoogleWebRequest
 	{
 		public static PostGoogleDriveFileWebRequest Create(string url,string folderId,string fileName,byte[] content,string mimeType)

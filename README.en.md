@@ -30,13 +30,31 @@ A Unity 6 research and development project that organizes game development code 
 |------|---------|
 | **Unity Version** | 6000.3.7f1 (Unity 6.3) |
 | **Render Pipeline** | URP (Universal Render Pipeline) |
-| **Core Package** | `com.bsheepstudio.kzlib` v1.1.1 |
+| **Core Package** | `com.bsheepstudio.kzlib` v1.1.4 |
 | **License** | MIT |
 
 This repository serves as a **lab** for developing and validating the KZLib library. The library itself can be added to other projects via a UPM Git URL.
 
 ```
 https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
+```
+
+### Scripts Folder Structure
+
+```
+Assets/KZLib/Scripts/
+├── Data/          Config, Proto, Lingo, Tune(Graphic/Language/Native/Sound), Facet, Cluster
+├── Framework/     Actor, Stanza, Pool, RosterMapper, Presentation, Graphic
+├── Global/        Constants, shared types, enums
+├── Inspector/     KZ* Odin Inspector attribute definitions
+├── Main/          BaseMain, ResolutionMonitor
+├── OnlyEditor/    AttributeDrawer, KZMenu, EditorWindow, PathCreator, Drawing
+├── Platform/      Network, PlayFab, Webhook, InAppPurchase
+├── Runtime/       Wrapper UGUI components, TimeFlow, Enchanted
+├── Shared/        Shared C# shims (e.g. init-only)
+├── System/        Input, Sound, Scene, Resource, Context, CutScene, ...
+├── UI/            UIManager, Window, CommonWindow, UI modules (Carousel/Accordion/FocusScroller)
+└── Utility/       Extension, Kit, Log
 ```
 
 ---
@@ -54,7 +72,7 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 | DOTween Pro | [Asset Store](https://assetstore.unity.com/packages/tools/visual-scripting/dotween-pro-32416) |
 | Odin Inspector | [Asset Store](https://assetstore.unity3d.com/packages/tools/utilities/odin-inspector-and-serializer-89041) |
 
-#### Git
+#### Git (UPM)
 
 Package Manager → **Add package from git URL**:
 
@@ -64,13 +82,17 @@ Package Manager → **Add package from git URL**:
 | UIEffect | [GitHub](https://github.com/mob-sakai/UIEffect?tab=readme-ov-file#-installation) |
 | SoftMaskForUGUI | [GitHub](https://github.com/mob-sakai/SoftMaskForUGUI?tab=readme-ov-file#-installation) |
 | ParticleEffectForUGUI | [GitHub](https://github.com/mob-sakai/ParticleEffectForUGUI?tab=readme-ov-file#-installation) |
+| NuGetForUnity | [GitHub](https://github.com/GlitchEnzo/NuGetForUnity) |
 
 ```
 https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
 https://github.com/mob-sakai/UIEffect.git?path=Packages/src
 https://github.com/mob-sakai/SoftMaskForUGUI.git?path=Packages/src
 https://github.com/mob-sakai/ParticleEffectForUGUI.git
+https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity
 ```
+
+> After installing NuGetForUnity, NuGet packages defined in `Assets/KZLib/packages.config` (MessagePipe, MemoryPack, etc.) are restored automatically.
 
 ### 2. Open the Project
 
@@ -94,31 +116,35 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 
 - **Name:** `com.bsheepstudio.kzlib`
 - **Display Name:** KoZaeLibrary
-- **Version:** 1.1.1
+- **Version:** 1.1.4
 - **Author:** Ko KoZae
 
 ### Main Script Modules
 
 | Module | Description |
 |--------|-------------|
-| **Main** | `BaseMain` — app entry point, language/resolution/init modes |
-| **Actor** | `Actor`, `Unit`, `Structure` — state/stat/buff/team relation framework |
-| **UI** | `UIManager`, Window(2D/3D), common panels, Carousel/Accordion/FocusScroller |
-| **System** | Input, Sound, Effect, Camera, Scene, Resource, Addressables, Debug managers |
-| **Data** | Config(YAML), Proto(MemoryPack), Lingo, Tune, Affix, Cluster |
-| **Network** | `NetworkManager` — PlayFab-integrated server requests |
-| **Platform** | PlayFab, Webhook(Discord/Trello/Google), InAppPurchase |
-| **GameTime** | Game time and time scaling |
-| **Utility** | Extension, Kit, Stanza(animation), ObjectPool, Log |
-| **InEditor** | Custom UGUI components, Odin attributes, editor windows/menus |
-| **Develop** | PathCreator, GraphicQualityOption |
+| **Main** | `BaseMain` — app entry point, Test/Normal play mode, language/resolution |
+| **Framework/Actor** | `Actor`, `Unit`, `Structure` — state/stat/buff/team relation framework |
+| **Framework** | Stanza(animation), Pool(`GameObjectPawnPool`), `RosterMapper`, Presentation, Graphic |
+| **UI** | `UIManager`, Window(2D/3D), CommonWindow (Loading/Download/Video/Transition, etc.), Carousel·CarouselNavigator·Accordion·FocusScroller |
+| **System** | Input, Sound, Effect, Camera, Scene, Resource, Context, CutScene, DebugOverlay, etc. |
+| **Data** | Config(YAML), Proto(MemoryPack), Lingo, Tune, Facet, Cluster |
+| **Platform** | PlayFab, Network, Webhook(Discord/Trello/Google), InAppPurchase |
+| **Runtime** | Wrapper UGUI components, `TimeFlow`(per-object time scale), Enchanted |
+| **Inspector** | `KZ*` Odin attributes (paths, HexColor, Clamp, List, etc.) |
+| **OnlyEditor** | AttributeDrawer, KZMenu, EditorWindow, PathCreator, Drawing |
+| **Utility** | Extension, Kit, Log |
 
-### InEditor Components (partial)
+### Runtime Components (partial)
 
-- **UI:** Button, Toggle, ScrollRect(Reuse/Pager), Dropdown, Image(Shader/Graph), TMP
+- **UI:** Button, Toggle, ScrollRect(Reuse/Pager), ReuseGridLayoutGroup, Dropdown, Image(Shader/Graph), TMP, RawImage
 - **Camera:** ObserveCamera
 - **Particle:** ForceMoveParticleSystem
-- **Drawing:** LineDrawing, ShapeDrawing, GraphicDrawing
+- **Other:** TimeFlow, EnchantedContentSizeFitter, FollowTargetWatcher
+
+### OnlyEditor Drawing (partial)
+
+- LineDrawing, ShapeDrawing, GraphicDrawing — UGUI drawing components and editors
 
 ---
 
@@ -128,17 +154,46 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 
 ```
 BaseMain (subclass implementation)
-  → TuneManager (language/sound/graphics settings)
+  → TuneManager (language/sound/graphics/native settings)
   → ConfigManager (YAML load)
   → RouteManager (path resolution)
   → ResourceManager / AddressablesManager
   → UIManager, InputManager, SoundManager ...
 ```
 
+In editor **Test mode**, `TestModeConfig` scene transient data lets you skip TitleScene and start directly from a configured scene.
+
+### Event Bus (MessagePipe)
+
+MessagePipe is configured during `LogChannel` initialization. It delivers cross-system events such as resolution changes, input, log display, and Badge/Unlock notifications via pub/sub.
+
+### Facet (Server-Synced State)
+
+```
+NetworkManager → FacetManager.Apply<TFacet>() → game code Get/TryGet
+```
+
+`FacetManager` caches `IFacet` payloads from the server in a session store. Client persistence uses Tune (PlayerPrefs).
+
+### Pool & RosterMapper
+
+```
+data roster  →  RosterMapper<TItem,UData>  →  GameObjectPawnPool<T>  →  active views
+```
+
+- `GameObjectPawnPool<T>` — `GameObjectPawn`-backed component pool (Get/Put, storage parent)
+- `RosterMapper<TItem,UData>` — binds roster length/order to pooled views (`TrySetDataList`)
+- **Non-virtualized UI:** `Accordion`, `Carousel`, `CarouselNavigator` (`CarouselDot` page indicators)
+- **Virtualized UI:** `ReuseScrollRect`, `ReuseGridLayoutGroup`
+
+### Context (Badge / Unlock)
+
+`ContextManager` discovers `IContentProvider` implementations in the game project via reflection and manages content unlock state and badge (red-dot) counts.
+
 ### Manager Lifecycle
 
 `KZGameKit.ReleaseManager()` releases all singleton managers at once.  
-Includes SceneState, UI, Input, Effect, Sound, Proto, Config, Lingo, Addressables, Network, Webhook, and more.
+Includes SceneState, UI, Input, Effect, Sound, Proto, Config, Cluster, Facet, Lingo, Addressables, Network, Webhook, Tune, and more.
 
 ### Data Flow
 
@@ -147,6 +202,7 @@ Excel (ClosedXML)  →  YAML Config / Lingo ScriptableObject
 MemoryPack           →  Proto binary (.bytes)
 Route.yaml           →  Resources / Addressables path resolution
 Game.yaml            →  local/server resources, save mode, HUD flags
+TestMode.yaml        →  editor Test mode per-scene transient data
 ```
 
 ---
@@ -159,14 +215,13 @@ Import from Package Manager → KoZaeLibrary → Samples:
 |--------|-------------|
 | **MainSample** | `BaseMain` subclass, TitleScene flow |
 | **DebugOverlaySample** | FPS and debug overlay panel |
+| **CarouselSample** | Carousel, CarouselNavigator, and CarouselDot UI demo |
 | **FocusScrollerSample** | Focus-based scroll list |
-| **AccordionSample** | Expand/collapse accordion UI |
+| **AccordionSample** | Expand/collapse accordion UI (`RosterMapper`-based) |
 | **ToggleSample** | Custom Toggle Mount |
 | **ReuseScrollRectSample** | Virtualized (recycled) ScrollRect |
 | **StanzaSample** | Stanza Lerp and animation utilities |
 | **VibrationSample** | Native vibration API |
-
-> `Samples~/CarouselSample` also exists but is not registered in the `package.json` samples list.
 
 ---
 
@@ -183,7 +238,7 @@ Import from Package Manager → KoZaeLibrary → Samples:
 
 | File | Purpose |
 |------|---------|
-| `Editor.yaml` | Editor-only parameter path dictionary |
+| `TestMode.yaml` | Test mode per-scene `ISceneTransient` payload (`SceneTransientDict`) |
 
 ### Paths (`Assets/Resources/Text/Setting/`)
 
@@ -193,8 +248,9 @@ Import from Package Manager → KoZaeLibrary → Samples:
 
 ### Config System
 
-- `ConfigManager` deserializes `*Config` classes via YamlDotNet
+- `ConfigManager` deserializes `*Config` classes via YamlDotNet (including `TestModeConfig`)
 - **KZMenu → Config → Generate All Config** generates YAML from Excel (ClosedXML)
+- Separate YAML generation menus for Game, Webhook, and TestMode, with custom options
 
 ---
 
@@ -204,17 +260,25 @@ Available from the Unity **KZMenu**:
 
 | Section | Features |
 |---------|----------|
-| **Option** | Delete managers, clean empty folders, unload unused assets, add PlayFab/IAP modules |
-| **Explorer** | Open route file, Documents, DataPath, PersistentDataPath, VS Code integration |
-| **Config** | Excel → YAML generation, open config folders |
-| **Lingo** | Excel → Localization + Addressables registration |
+| **Option** | Delete managers, clean empty folders, unload unused assets, find missing components/mesh filters, add PlayFab/IAP modules, check internet |
+| **Explorer** | Open route file, Documents, Tools, DataPath, PersistentDataPath |
+| **Config** | Excel → YAML generation (Game/Webhook/TestMode, custom), open config folders |
+| **Lingo** | Excel → Localization (String/Asset) + Addressables registration |
 | **Proto** | Batch proto generation, Proto window |
-| **Window** | Manual, PlayerPrefs, Graphic Quality, Network/Webhook Test |
+| **Window** | Manual, Editor Custom, PlayerPrefs, Graphic Quality, Network Test (Webhook) |
 | **Scene** | Open Main Scene |
+
+### Unity Built-in Context Menu Extensions (DefaultMenuItem)
+
+| Area | Features |
+|------|----------|
+| **Assets/KZSubMenu** | Script → create ScriptableObject, open Texture/ScriptableObject, Prefab mesh name lookup |
+| **Hierarchy** | Copy Hierarchy, Create Category Line |
+| **GameObject** | Path Creator, UI (Empty Panel, Shape, Carousel) |
 
 ### Editor Windows
 
-ManualWindow, EasingGraphWindow, PixelEditorWindow, MeshFinderWindow, ProtoWindow, ResourceWindow, WebhookTestWindow (Discord/Trello/Google), and more.
+ManualWindow, EasingGraphWindow, PixelEditorWindow, MeshFinderWindow, ProtoWindow, ResourceWindow, WebhookTestWindow (Network Test menu; Discord/Trello/Google), PlayerPrefsWindow, EditorCustom, and more.
 
 ---
 
@@ -240,7 +304,7 @@ The PlayFab SDK is included at `Assets/PlayFabSDK/`. KZLib wrappers primarily us
 | DOTween Pro | [Asset Store](https://assetstore.unity.com/packages/tools/visual-scripting/dotween-pro-32416) |
 | Odin Inspector | [Asset Store](https://assetstore.unity3d.com/packages/tools/utilities/odin-inspector-and-serializer-89041) |
 
-### Required Git
+### Required Git (UPM)
 
 | Package | GitHub |
 |---------|--------|
@@ -248,13 +312,23 @@ The PlayFab SDK is included at `Assets/PlayFabSDK/`. KZLib wrappers primarily us
 | UIEffect | [GitHub](https://github.com/mob-sakai/UIEffect?tab=readme-ov-file#-installation) |
 | SoftMaskForUGUI | [GitHub](https://github.com/mob-sakai/SoftMaskForUGUI?tab=readme-ov-file#-installation) |
 | ParticleEffectForUGUI | [GitHub](https://github.com/mob-sakai/ParticleEffectForUGUI?tab=readme-ov-file#-installation) |
+| NuGetForUnity | [GitHub](https://github.com/GlitchEnzo/NuGetForUnity) |
 
-```
-https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
-https://github.com/mob-sakai/UIEffect.git?path=Packages/src
-https://github.com/mob-sakai/SoftMaskForUGUI.git?path=Packages/src
-https://github.com/mob-sakai/ParticleEffectForUGUI.git
-```
+### NuGet (`Assets/KZLib/packages.config`)
+
+| Package | Purpose |
+|---------|---------|
+| MessagePipe | Pub/sub event bus |
+| MemoryPack | Proto binary serialization |
+| YamlDotNet | YAML config deserialization |
+| ClosedXML | Excel → Config/Lingo conversion |
+| MoonSharp | Lua scripting (optional) |
+| R3 | Reactive Extensions |
+| ZXing.Net | QR/barcode |
+
+### KZLib UPM Dependencies (`package.json`)
+
+Newtonsoft JSON, Addressables, Localization, Input System, URP
 
 ---
 
@@ -269,7 +343,7 @@ https://github.com/mob-sakai/ParticleEffectForUGUI.git
 When `KZLIB_PLAY_FAB` is defined:
 
 - `PlayFabManager` — Guest/Android Device login, profile, CloudScript
-- `NetworkManager` — routes server requests through CloudScript
+- `NetworkManager` — routes server requests through CloudScript, applies Facet payloads
 - Symbol is set by default on Android build target
 
 The full SDK (Admin, Economy, Multiplayer, etc.) is included, but KZLib wrappers focus on the **Client API**.

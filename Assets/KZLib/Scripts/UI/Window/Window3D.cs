@@ -1,22 +1,29 @@
-﻿
-public abstract class Window3D : Window
+﻿using UnityEngine;
+
+namespace KZLib.UI
 {
-	private const string c_screenUI = "ScreenUI";
-
-	public override bool IsBlocked => true; // 3D does not have input
-
-	public override bool Is3D => true;
-
-	public override bool IsPooling => true;
-	public override WindowPrefabType WindowType => WindowPrefabType.Panel;
-	public override WindowPriorityType PriorityType => WindowPriorityType.Middle;
-
-	public override void Open(object param)
+	/// <summary>
+	/// World-space UI window rendered on a scene camera. Input is always treated as blocked.
+	/// </summary>
+	public abstract class Window3D : Window
 	{
-		base.Open(param);
+		private const string c_screenUI = "ScreenUI";
 
-		gameObject.SetAllLayer(c_screenUI.FindLayerByName(true));
+		public override bool IsBlocked => true;
+
+		public override bool Is3D => true;
+
+		public override bool IsPooling => true;
+		public override WindowPrefabType WindowType => WindowPrefabType.Panel;
+		public override WindowPriorityType PriorityType => WindowPriorityType.Middle;
+
+		public override void Open(object param)
+		{
+			base.Open(param);
+
+			gameObject.SetAllLayer(c_screenUI.FindLayerByName(true));
+		}
+
+		public override void BlockUI(bool isBlocked) { }
 	}
-
-	public override void BlockInput(bool isBlocked) { }
 }

@@ -1,22 +1,22 @@
-﻿using KZLib.Data;
+using KZLib.Data;
 using KZLib.Utilities;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace KZLib
+namespace KZLib.Sounds
 {
+	/// <summary>
+	/// Short sound effect (SFX) API for <see cref="SoundManager"/>.
+	/// <para>
+	/// Playback pipeline: acquire → <see cref="_Initialize_Effect2D"/> / <see cref="_Initialize_Effect3D"/> → <see cref="_PlaySound"/> (immediate).
+	/// 2D and 3D share one <see cref="SoundLanePool"/>; lanes return on end-of-clip <c>Tick</c>, manual <see cref="ReleaseEffect"/>, or follow-target destroy.
+	/// </para>
+	/// </summary>
 	public partial class SoundManager : SingletonMB<SoundManager>
 	{
-		private const int c_sfxCount = 10;
+		private SoundVolume m_effectVolume = SoundVolume.max;
 
-		[SerializeField]
-		private Transform m_sfxBox = null;
-
-		private readonly List<AudioSource> m_sfxList = new(c_sfxCount);
-
-		private SoundVolume m_sfxVolume = SoundVolume.max;
-
-		public AudioSource PlaySFX(string audioPath,bool ignoreTime = false)
+		/// <summary>Loads and plays a 3D effect at a fixed world position.</summary>
+		public AudioSource PlayEffect3D(string audioPath,Vector3 worldPosition,bool ignoreListenerPause = false)
 		{
 			if(audioPath.IsEmpty())
 			{
@@ -25,10 +25,11 @@ namespace KZLib
 				return null;
 			}
 
-			return PlaySFX(ResourceManager.In.GetAudioClip(audioPath),ignoreTime);
+			return PlayEffect3D(ResourceManager.In.GetAudioClip(audioPath),worldPosition,ignoreListenerPause);
 		}
 
-		public AudioSource PlaySFX(AudioClip audioClip,bool ignoreTime = false)
+		/// <summary>Plays a 3D effect at a fixed world position (no follow target; source stays under pool storage).</summary>
+		public AudioSource PlayEffect3D(AudioClip audioClip,Vector3 worldPosition,bool ignoreListenerPause = false)
 		{
 			if(!audioClip)
 			{
@@ -37,94 +38,159 @@ namespace KZLib
 				return null;
 			}
 
-			var audioSource = _SetSFX(audioClip);
+			if(!_TryAcquireEffectSource(null,out var audioSource))
+			{
+				return null;
+			}
 
-			audioSource.ignoreListenerPause = ignoreTime;
+			audioSource.transform.position = worldPosition;
 
+			_Initialize_Effect3D(audioSource,audioClip,ignoreListenerPause);
 			_PlaySound(audioSource);
 
 			return audioSource;
 		}
 
-		public void StopAllSFX()
+		/// <summary>Loads and plays a 3D follow effect. See <see cref="PlayEffect3D(AudioClip, Transform, bool)"/>.</summary>
+		public AudioSource PlayEffect3D(string audioPath,Transform followTarget,bool ignoreListenerPause = false)
 		{
-			for(var i=0;i<m_sfxList.Count;i++)
+			if(audioPath.IsEmpty())
 			{
-				StopSFX(m_sfxList[i]);
+				LogChannel.Sound.E("Audio path is empty");
+
+				return null;
+			}
+
+			return PlayEffect3D(ResourceManager.In.GetAudioClip(audioPath),followTarget,ignoreListenerPause);
+		}
+
+		/// <summary>Plays a 3D effect parented under <paramref name="followTarget"/> until the clip ends, the lane is released, or the target is destroyed.</summary>
+		public AudioSource PlayEffect3D(AudioClip audioClip,Transform followTarget,bool ignoreListenerPause = false)
+		{
+			if(!audioClip)
+			{
+				LogChannel.Sound.E("Audio clip is null");
+
+				return null;
+			}
+
+			if(!followTarget)
+			{
+				LogChannel.Sound.E("Follow target is null");
+
+				return null;
+			}
+
+			if(!_TryAcquireEffectSource(followTarget,out var audioSource))
+			{
+				return null;
+			}
+
+			_Initialize_Effect3D(audioSource,audioClip,ignoreListenerPause);
+			_PlaySound(audioSource);
+
+			return audioSource;
+		}
+
+		/// <summary>Loads and plays a non-spatial 2D effect (UI, etc.).</summary>
+		public AudioSource PlayEffect2D(string audioPath,bool ignoreListenerPause = false)
+		{
+			if(audioPath.IsEmpty())
+			{
+				LogChannel.Sound.E("Audio path is empty");
+
+				return null;
+			}
+
+			return PlayEffect2D(ResourceManager.In.GetAudioClip(audioPath),ignoreListenerPause);
+		}
+
+		/// <summary>Plays a non-spatial 2D effect (source under pool storage, no follow target).</summary>
+		public AudioSource PlayEffect2D(AudioClip audioClip,bool ignoreListenerPause = false)
+		{
+			if(!audioClip)
+			{
+				LogChannel.Sound.E("Audio clip is null");
+
+				return null;
+			}
+
+			if(!_TryAcquireEffectSource(null,out var audioSource))
+			{
+				return null;
+			}
+
+			_Initialize_Effect2D(audioSource,audioClip,ignoreListenerPause);
+			_PlaySound(audioSource);
+
+			return audioSource;
+		}
+
+		/// <summary>Releases every active effect lane regardless of clip and returns all slots to the pool.</summary>
+		public void ReleaseAllEffects()
+		{
+			m_soundLanePool.ReleaseAll();
+		}
+
+		/// <summary>
+		/// Releases the first active effect whose <see cref="AudioClip.name"/> matches <paramref name="clipName"/>.
+		/// By project convention, clip names are unique; duplicate-name assets do not exist.
+		/// </summary>
+		public void ReleaseOneEffect(string clipName)
+		{
+			var result = m_soundLanePool.TryReleaseOneEffect(clipName);
+
+			if(!result)
+			{
+				LogChannel.Sound.E($"Failed to release effect [{clipName}]");
 			}
 		}
 
-		public void StopSFX(string sfxName)
+		/// <summary>Releases the first active effect playing <paramref name="audioClip"/>.</summary>
+		public void ReleaseOneEffect(AudioClip audioClip)
 		{
-			bool _FindSource(AudioSource source)
-			{
-				return source.clip != null && source.clip.name.IsEqual(sfxName);
-			}
+			var result = m_soundLanePool.TryReleaseOneEffect(audioClip);
 
-			var effect = m_sfxList.Find(_FindSource);
-
-			if(effect)
+			if(!result)
 			{
-				StopSFX(effect);
+				LogChannel.Sound.E($"Failed to release effect [{audioClip.name}]");
 			}
 		}
 
-		public void StopEffect(AudioClip clip)
+		/// <summary>
+		/// Releases every active effect whose <see cref="AudioClip.name"/> matches <paramref name="clipName"/>.
+		/// By project convention, clip names are unique; duplicate-name assets do not exist.
+		/// </summary>
+		public void ReleaseEffects(string clipName)
 		{
-			bool _FindSource(AudioSource source)
-			{
-				return source.clip != null && source.clip.Equals(clip);
-			}
+			var result = m_soundLanePool.TryReleaseEffects(clipName);
 
-			var effect = m_sfxList.Find(_FindSource);
-
-			if(effect)
+			if(!result)
 			{
-				StopSFX(effect);
+				LogChannel.Sound.E($"Failed to release effects [{clipName}]");
 			}
 		}
 
-		public void StopSFX(AudioSource audioSource)
+		/// <summary>Releases every active effect playing <paramref name="audioClip"/>.</summary>
+		public void ReleaseEffects(AudioClip audioClip)
 		{
-			_StopSound(audioSource,true);
-		}
+			var result = m_soundLanePool.TryReleaseEffects(audioClip);
 
-		private AudioSource _SetSFX(AudioClip audioClip)
-		{
-			var source = FindEmptySFX();
-
-			if(!source)
+			if(!result)
 			{
-				source = CreateSFX(m_sfxList.Count);
+				LogChannel.Sound.E($"Failed to release effects [{audioClip.name}]");
 			}
-
-			_SetAudioSource(source,audioClip,string.Format("[Effect] {0}",audioClip.name),false,m_sfxVolume);
-
-			return source;
 		}
 
-		private AudioSource FindEmptySFX()
+		/// <summary>Releases the pooled effect source returned by <see cref="PlayEffect2D"/> / <see cref="PlayEffect3D"/> and returns its lane to the pool.</summary>
+		public void ReleaseEffect(AudioSource audioSource)
 		{
-			for(var i=0;i<m_sfxList.Count;i++)
+			var result = m_soundLanePool.TryReleaseEffect(audioSource);
+
+			if(!result)
 			{
-				if(!m_sfxList[i].isPlaying)
-				{
-					return m_sfxList[i];
-				}
+				LogChannel.Sound.E($"Failed to release effect [{audioSource.name}]");
 			}
-
-			return null;
-		}
-
-		private AudioSource CreateSFX(int order)
-		{
-			var child = m_sfxBox.AddChild($"SoundEffect_{order}");
-			var source = child.gameObject.AddComponent<AudioSource>();
-
-			source.loop = false;
-			source.playOnAwake = false;
-
-			return source;
 		}
 	}
 }

@@ -11,11 +11,18 @@ using Sirenix.Utilities.Editor;
 
 namespace KZLib.Windows
 {
+	/// <summary>
+	/// Editor window for browsing, editing, sorting, and deleting Unity PlayerPrefs for the current project.
+	/// Keys are discovered through <see cref="PlayerPrefsReader"/>; writes go through <see cref="PlayerPrefsManager"/>.
+	/// </summary>
 	public class PlayerPrefsWindow : OdinEditorWindow
 	{
 		private enum PlayerPrefsType { None, String, Int, Float, }
 
 		#region PlayerPrefsInfo
+		/// <summary>
+		/// Editable view model for one PlayerPrefs key shown in the Odin list.
+		/// </summary>
 		[Serializable]
 		private record PlayerPrefsInfo
 		{
@@ -43,16 +50,24 @@ namespace KZLib.Windows
 							{
 								PlayerPrefsManager.In.SetInt(m_key,intNumber);
 							}
+							else
+							{
+								return;
+							}
 							break;
 						case PlayerPrefsType.Float:
 							if(float.TryParse(value,out var floatNumber))
 							{
 								PlayerPrefsManager.In.SetFloat(m_key,floatNumber);
 							}
+							else
+							{
+								return;
+							}
 							break;
 						case PlayerPrefsType.None:
 						default:
-							break;
+							return;
 					}
 
 					m_value = value;
@@ -80,7 +95,7 @@ namespace KZLib.Windows
 		protected string InfoText => "PlayerPrefs is empty";
 
 		private bool IsExistInfo => m_playerPrefsInfoList.Count > 0;
-		
+
 		private bool m_ascending = true;
 		private bool m_isShowSystem = false;
 
@@ -89,13 +104,14 @@ namespace KZLib.Windows
 			base.Initialize();
 
 			_LoadPlayerPrefsInfo();
-
-			_SortInfoList();
 		}
 
+		/// <summary>
+		/// Removes one key after confirmation and updates the visible list.
+		/// </summary>
 		private void _OnRemoveInfo(int index)
 		{
-			if(!KZEditorKit.DisplayCheckBeforeExecute("Remove this playerPrefs"))
+			if(!KZEditorKit.DisplayConfirm("Remove this playerPrefs"))
 			{
 				return;
 			}
@@ -109,6 +125,9 @@ namespace KZLib.Windows
 			LogChannel.Editor.I($"{info.Key} is removed");
 		}
 
+		/// <summary>
+		/// Draws list toolbar buttons for sort direction, reload, and system-key visibility.
+		/// </summary>
 		private void _OnRefreshInfo()
 		{
 			if(m_ascending)
@@ -132,7 +151,7 @@ namespace KZLib.Windows
 			{
 				_LoadPlayerPrefsInfo();
 			}
-			
+
 			if(m_isShowSystem)
 			{
 				if(SirenixEditorGUI.ToolbarButton(SdfIconType.EyeSlashFill))
@@ -154,7 +173,7 @@ namespace KZLib.Windows
 		[VerticalGroup("2",Order = 2),Button("Delete All",ButtonHeight = 30),ShowIf(nameof(IsExistInfo))]
 		protected void OnDeleteAll()
 		{
-			if(!KZEditorKit.DisplayCheckBeforeExecute("Delete all playerPrefs"))
+			if(!KZEditorKit.DisplayConfirm("Delete all playerPrefs"))
 			{
 				return;
 			}
@@ -166,6 +185,9 @@ namespace KZLib.Windows
 			m_playerPrefsInfoList.Clear();
 		}
 
+		/// <summary>
+		/// Reloads all PlayerPrefs keys for the current company/product and rebuilds the list rows.
+		/// </summary>
 		private void _LoadPlayerPrefsInfo()
 		{
 			var keyArray = PlayerPrefsReader.LoadPlayerPrefsKeyArray(PlayerSettings.companyName,PlayerSettings.productName);
@@ -195,49 +217,74 @@ namespace KZLib.Windows
 			_SortInfoList();
 		}
 
+		/// <summary>
+		/// Reads a stored value and infers its display type.
+		/// Game prefs written by <see cref="PlayerPrefsManager"/> are stored as strings, so string parsing is tried first.
+		/// </summary>
 		private bool _TryGetPlayerValue(string key,out string value,out PlayerPrefsType playerPrefsType)
 		{
 			value = string.Empty;
 			playerPrefsType = PlayerPrefsType.None;
 
-			if(PlayerPrefs.HasKey(key))
+			if(!PlayerPrefs.HasKey(key))
 			{
-				var intValue = PlayerPrefs.GetInt(key,int.MinValue);
+				return false;
+			}
 
-				if(intValue != int.MinValue)
+			var stringValue = PlayerPrefs.GetString(key,string.Empty);
+
+			if(!stringValue.IsEmpty())
+			{
+				if(int.TryParse(stringValue,out _))
 				{
-					value = $"{intValue}";
+					value = stringValue;
 					playerPrefsType = PlayerPrefsType.Int;
 
 					return true;
 				}
 
-				var floatValue = PlayerPrefs.GetFloat(key,float.MinValue);
-
-				if(floatValue != float.MinValue)
+				if(float.TryParse(stringValue,out _))
 				{
-					value = $"{floatValue}";
+					value = stringValue;
 					playerPrefsType = PlayerPrefsType.Float;
 
 					return true;
 				}
 
-				var stringValue = PlayerPrefs.GetString(key,string.Empty);
+				value = stringValue;
+				playerPrefsType = PlayerPrefsType.String;
 
-				if(!stringValue.IsEmpty())
-				{
-					value = stringValue;
-					playerPrefsType = PlayerPrefsType.String;
-
-					return true;
-				}
-
-				PlayerPrefs.DeleteKey(key);
+				return true;
 			}
+
+			var intValue = PlayerPrefs.GetInt(key,int.MinValue);
+
+			if(intValue != int.MinValue)
+			{
+				value = $"{intValue}";
+				playerPrefsType = PlayerPrefsType.Int;
+
+				return true;
+			}
+
+			var floatValue = PlayerPrefs.GetFloat(key,float.MinValue);
+
+			if(floatValue != float.MinValue)
+			{
+				value = $"{floatValue}";
+				playerPrefsType = PlayerPrefsType.Float;
+
+				return true;
+			}
+
+			PlayerPrefs.DeleteKey(key);
 
 			return false;
 		}
 
+		/// <summary>
+		/// Sorts the visible list by key using the current ascending/descending toolbar state.
+		/// </summary>
 		private void _SortInfoList()
 		{
 			if(m_ascending)

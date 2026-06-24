@@ -5,6 +5,7 @@ using UnityEditor;
 
 namespace KZLib.Attributes
 {
+	/// <summary><see cref="KZListAttribute"/> drawer. Count input plus inline horizontal list editing.</summary>
 	public abstract class KZListAttributeDrawer<TValue> : KZAttributeDrawer<KZListAttribute,TValue>
 	{
 		private const float c_width = 30.0f;

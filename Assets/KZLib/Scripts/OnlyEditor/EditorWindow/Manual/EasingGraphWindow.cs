@@ -8,12 +8,17 @@ using UnityEngine;
 
 namespace KZLib.Windows
 {
+	/// <summary>
+	/// Visualizes an <see cref="EaseType"/> curve and the eased value at a chosen normalized time.
+	/// </summary>
 	public class EasingGraphWindow : OdinEditorWindow
 	{
+		private const float c_graphSampleStep = 0.01f;
+
 		[SerializeField,HideInInspector]
 		private float m_currentPoint = 0.0f;
 
-		[HorizontalGroup("Type",Order = 0),SerializeField]
+		[HorizontalGroup("Type",Order = 0),SerializeField,OnValueChanged(nameof(_OnEaseTypeChanged))]
 		private EaseType m_easeType = EaseType.Linear;
 
 		[HorizontalGroup("Value",Order = 1)]
@@ -26,6 +31,8 @@ namespace KZLib.Windows
 				m_currentPoint = value;
 
 				m_resultPoint = KZMathKit.GetEaseCurve(m_easeType).Evaluate(value);
+
+				Repaint();
 			}
 		}
 
@@ -46,14 +53,26 @@ namespace KZLib.Windows
 				Handles.BeginGUI();
 
 				_DrawGraphLine(rect,Color.blue);
-
 				_DrawPoint(rect,Color.red);
 
 				Handles.EndGUI();
 			}
 		}
 
-		private void _DrawGrid(Rect rect,float size)
+		/// <summary>
+		/// Keeps the sampled result and graph in sync when the ease type changes.
+		/// </summary>
+		private void _OnEaseTypeChanged()
+		{
+			m_resultPoint = KZMathKit.GetEaseCurve(m_easeType).Evaluate(m_currentPoint);
+
+			Repaint();
+		}
+
+		/// <summary>
+		/// Draws the easing plot background grid and axes.
+		/// </summary>
+		private static void _DrawGrid(Rect rect,float size)
 		{
 			Handles.color = new Color(0.5f,0.5f,0.5f,0.2f);
 
@@ -73,6 +92,9 @@ namespace KZLib.Windows
 			Handles.DrawLine(new Vector3(rect.x,rect.y+rect.height,0.0f),new Vector3(rect.x+rect.width,rect.y+rect.height,0.0f));
 		}
 
+		/// <summary>
+		/// Samples the active ease curve from 0 to 1 and draws it inside the graph rect.
+		/// </summary>
 		private void _DrawGraphLine(Rect rect,Color color)
 		{
 			Handles.color = color;
@@ -80,12 +102,10 @@ namespace KZLib.Windows
 			var pointList = new List<Vector3>();
 			var curve = KZMathKit.GetEaseCurve(m_easeType);
 
-			for(var i=0.0f;i<1.0f;i+=0.01f)
+			for(var time=0.0f;time <= 1.0f;time+=c_graphSampleStep)
 			{
-				var xTime = i;
-				var yTime = curve.Evaluate(i);
-
-				var xPosition = Mathf.Lerp(rect.x,rect.x+rect.width,xTime);
+				var yTime = curve.Evaluate(time);
+				var xPosition = Mathf.Lerp(rect.x,rect.x+rect.width,time);
 				var yPosition = rect.y+rect.height-(yTime*rect.height);
 
 				pointList.Add(new Vector3(xPosition,yPosition,0.0f));
@@ -94,10 +114,13 @@ namespace KZLib.Windows
 			Handles.DrawAAPolyLine(3.0f,pointList.ToArray());
 		}
 
+		/// <summary>
+		/// Draws the current sample point on the curve.
+		/// </summary>
 		private void _DrawPoint(Rect rect,Color color)
 		{
 			var currentX = Mathf.Lerp(rect.x,rect.x+rect.width,CurrentPoint);
-			var currentY = rect.y + rect.height-(m_resultPoint*rect.height);
+			var currentY = rect.y+rect.height-(m_resultPoint*rect.height);
 
 			Handles.color = color;
 			Handles.DrawSolidDisc(new Vector3(currentX,currentY,0.0f),Vector3.forward,5.0f);

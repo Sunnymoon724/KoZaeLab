@@ -137,12 +137,12 @@ namespace KZLib.Webhooks
 				}
 				catch(Exception exception)
 				{
-					LogChannel.Webhook.E($"Parse is failed - {exception}");
+					LogChannel.Webhook.E($"Failed to parse response: {exception}");
 				}
 			}
 			else
 			{
-				LogChannel.Webhook.E("Result is failed");
+				LogChannel.Webhook.E("Request failed.");
 			}
 
 			return null;
@@ -239,6 +239,9 @@ namespace KZLib.Webhooks
 			PostTrelloListInCardAsync(trelloKey,boardName,listName,cardName,cardDescription,file).Forget();
 		}
 
+		/// <summary>
+		/// Creates a Trello card in the named list, creating the list first when it does not exist.
+		/// </summary>
 		public async UniTask PostTrelloListInCardAsync(string boardName,string listName,string cardName,string cardDescription,byte[] file = null)
 		{
 			await PostTrelloListInCardAsync(WebhookCfg.TrelloKey,boardName,listName,cardName,cardDescription,file);
@@ -315,7 +318,7 @@ namespace KZLib.Webhooks
 			}
 			catch(Exception exception)
 			{
-				LogChannel.Webhook.E($"Convert is failed - {exception}");
+				LogChannel.Webhook.E($"Failed to convert response: {exception}");
 			}
 
 			return null;

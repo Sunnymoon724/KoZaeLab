@@ -4,6 +4,7 @@ using UnityEditor;
 
 namespace KZLib.Attributes
 {
+	/// <summary><see cref="KZSuffixAttribute"/> drawer. Places a suffix label to the right of the field.</summary>
 	public abstract class KZSuffixAttributeDrawer<TValue> : KZAttributeDrawer<KZSuffixAttribute,TValue>
 	{
 		private const int c_labelSpace = 5;
@@ -30,42 +31,27 @@ namespace KZLib.Attributes
 
 	public class KZSuffixStringAttributeDrawer : KZSuffixAttributeDrawer<string>
 	{
-		protected override string DrawField(Rect rect,string label)
-		{
-			return EditorGUI.TextField(rect,label,ValueEntry.SmartValue);
-		}
+		protected override string DrawField(Rect rect,string label) => EditorGUI.TextField(rect,label,ValueEntry.SmartValue);
 	}
 
 	public class KZSuffixIntAttributeDrawer : KZSuffixAttributeDrawer<int>
 	{
-		protected override int DrawField(Rect rect,string label)
-		{
-			return EditorGUI.IntField(rect,label,ValueEntry.SmartValue);
-		}
+		protected override int DrawField(Rect rect,string label) => EditorGUI.IntField(rect,label,ValueEntry.SmartValue);
 	}
 
 	public class KZSuffixLongAttributeDrawer : KZSuffixAttributeDrawer<long>
 	{
-		protected override long DrawField(Rect rect,string label)
-		{
-			return EditorGUI.LongField(rect,label,ValueEntry.SmartValue);
-		}
+		protected override long DrawField(Rect rect,string label) => EditorGUI.LongField(rect,label,ValueEntry.SmartValue);
 	}
 
 	public class KZSuffixFloatAttributeDrawer : KZSuffixAttributeDrawer<float>
 	{
-		protected override float DrawField(Rect rect,string label)
-		{
-			return EditorGUI.FloatField(rect,label,ValueEntry.SmartValue);
-		}
+		protected override float DrawField(Rect rect,string label) => EditorGUI.FloatField(rect,label,ValueEntry.SmartValue);
 	}
 
 	public class KZSuffixDoubleAttributeDrawer : KZSuffixAttributeDrawer<double>
 	{
-		protected override double DrawField(Rect rect,string label)
-		{
-			return EditorGUI.DoubleField(rect,label,ValueEntry.SmartValue);
-		}
+		protected override double DrawField(Rect rect,string label) => EditorGUI.DoubleField(rect,label,ValueEntry.SmartValue);
 	}
 }
 #endif

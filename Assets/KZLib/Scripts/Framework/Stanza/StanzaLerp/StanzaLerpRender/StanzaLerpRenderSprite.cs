@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace KZLib.Utilities
 {
+	/// <summary>
+	/// Applies <see cref="StanzaLerpRender"/> fade/free modes to <see cref="SpriteRenderer"/> targets.
+	/// Clones materials per renderer when driving shader floats in free mode.
+	/// </summary>
 	public class StanzaLerpRenderSprite : StanzaLerpRender
 	{
 		[SerializeField,ListDrawerSettings(DraggableItems = false),OnValueChanged(nameof(_OnChangedSpriteRenderer))]
@@ -39,6 +43,7 @@ namespace KZLib.Utilities
 
 		private Material[] m_materialArray = null;
 
+		/// <summary>Lazy-cloned materials so each sprite renderer can be driven independently.</summary>
 		private Material[] MaterialArray
 		{
 			get

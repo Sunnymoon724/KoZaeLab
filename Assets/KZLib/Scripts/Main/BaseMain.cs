@@ -10,7 +10,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.IO;
 using KZLib.Data;
-using System.Collections;
+using KZLib.Scenes;
 using MessagePipe;
 using KZLib.Natives;
 
@@ -22,6 +22,11 @@ using UnityEditor;
 
 namespace KZLib
 {
+	/// <summary>
+	/// Game entry point: bootstraps managers, loads data, enters the first scene.
+	/// Editor: Test/Normal play presets (<see cref="c_mainPreset"/>), F5 in-play refresh without stopping the editor.
+	/// Extend in game <c>Main</c> via <see cref="_InitializeNormalMode"/>, <see cref="ApplyTestModeSceneTransient"/>, etc.
+	/// </summary>
 	public abstract class BaseMain : MonoBehaviour
 	{
 		private const string c_titleScene = "TitleScene";
@@ -34,14 +39,20 @@ namespace KZLib
 		{
 			get
 			{
-				if(!m_gameLanguage.HasValue)
+				if(m_gameLanguage.HasValue)
 				{
-					var languageTne = TuneManager.In.FetchTune<LanguageTune>();
-
-					m_gameLanguage = languageTne.CurrentLanguage;
+					return m_gameLanguage.Value;
 				}
 
-				return m_gameLanguage.Value;
+#if UNITY_EDITOR
+				//? Edit-mode inspector: show TuneManager language before play (no m_gameLanguage cache yet).
+				if(!Application.isPlaying)
+				{
+					return TuneManager.In.Fetch<LanguageTune>().CurrentLanguage;
+				}
+#endif
+
+				return SystemLanguage.English;
 			}
 
 			set
@@ -53,9 +64,7 @@ namespace KZLib
 
 				m_gameLanguage = value;
 
-				var languageTne = TuneManager.In.FetchTune<LanguageTune>();
-
-				languageTne.SetLanguage(m_gameLanguage.Value);
+				_SyncGameLanguage();
 			}
 		}
 
@@ -71,9 +80,6 @@ namespace KZLib
 		public bool IsPlaying => m_isPlaying;
 
 		[SerializeField,HideInInspector]
-		private int m_safeWidth = 0;
-
-		[SerializeField,HideInInspector]
 		private Vector2Int m_screenResolution = Vector2Int.zero;
 
 		[VerticalGroup("30",30),ShowInInspector,KZRichText("width : {0}, height : {1}")]
@@ -81,75 +87,72 @@ namespace KZLib
 
 		private enum PlayType { Test, Normal, }
 
-		private PlayType? m_gamePlayType = null;
-
+#if UNITY_EDITOR
 		[VerticalGroup("0",0),ShowInInspector]
 		private PlayType GamePlayType
 		{
 			get
 			{
-#if UNITY_EDITOR
-				if(!m_gamePlayType.HasValue)
-				{
-					m_gamePlayType = MainPreset.GamePlayType;
-				}
+				var presetInfo = _LoadPresetInfo();
 
-				return m_gamePlayType.Value;
-#else
-				return PlayType.Normal;
-#endif
+				return presetInfo.GamePlayType;
 			}
 			set
 			{
-#if UNITY_EDITOR
-				if(m_gamePlayType == value)
+				var presetInfo = _LoadPresetInfo();
+
+				if(presetInfo.GamePlayType == value)
 				{
 					return;
 				}
 
-				m_gamePlayType = MainPreset.GamePlayType = value;
+				presetInfo.GamePlayType = value;
 
-				_SavePresetInfo();
-#endif
+				_SavePresetInfo(presetInfo);
 			}
 		}
+#endif
 
-		[SerializeField,HideInInspector]
-		private string m_startSceneName = "";
-
-		[VerticalGroup("0",0),ShowInInspector,ValueDropdown(nameof(SceneNameGroup)),EnableIf(nameof(IsTestMode)),InfoBox("TitleScene is not include in SceneArray.",InfoMessageType.Warning,nameof(IsIncludeTitleName))]
+#if UNITY_EDITOR
+		[VerticalGroup("0",0),ShowInInspector,ValueDropdown(nameof(SceneNameGroup)),EnableIf(nameof(IsTestMode)),InfoBox("TitleScene is not included in SceneArray.",InfoMessageType.Warning,nameof(IsTitleSceneMissingFromSceneArray))]
 		private string StartSceneName
 		{
 			get
 			{
-#if UNITY_EDITOR
-				if(m_startSceneName.IsEmpty())
+				if(!IsTestMode)
 				{
-					m_startSceneName = IsTestMode ? MainPreset.StartSceneName : c_titleScene;
+					return c_titleScene;
 				}
 
-				return IsTestMode ? m_startSceneName : c_titleScene;
-#else
-				return c_titleScene;
-#endif
+				var presetInfo = _LoadPresetInfo();
+
+				var sceneName = presetInfo.StartSceneName;
+
+				return sceneName.IsEmpty() ? c_titleScene : sceneName;
 			}
 			set
 			{
-#if UNITY_EDITOR
-				if(m_startSceneName == value)
+				var presetInfo = _LoadPresetInfo();
+
+				if(presetInfo.StartSceneName == value)
 				{
 					return;
 				}
 
-				m_startSceneName = MainPreset.StartSceneName = value;
+				presetInfo.StartSceneName = value;
 
-				_SavePresetInfo();
-#endif
+				_SavePresetInfo(presetInfo);
 			}
 		}
+#else
+		private string StartSceneName => c_titleScene;
+#endif
 
+#if UNITY_EDITOR
 		protected bool IsTestMode => GamePlayType == PlayType.Test;
-		private bool IsIncludeTitleName => !SceneNameList.Contains(c_titleScene);
+#else
+		protected bool IsTestMode => false;
+#endif
 
 		protected CancellationTokenSource m_tokenSource = null;
 		
@@ -161,77 +164,119 @@ namespace KZLib
 
 			LogChannel.Game.I("Initialize Main");
 
-			//? 에디터가 아니면 Normal Play
-#if !UNITY_EDITOR
-			GamePlayType = PlayType.Normal;
-#endif
-			LogChannel.Game.I($"Current PlayType {GamePlayType}");
+			LogChannel.Game.I($"Current PlayType {(IsTestMode ? PlayType.Test : PlayType.Normal)}");
 		}
 
-		private async void Start()
+		private void _SyncGameLanguage()
 		{
-			var gameCfg = ConfigManager.In.FetchConfig<GameConfig>();
+			//? Push cached language to TuneManager, or seed cache from TuneManager before Lingo load.
+			var lanTun = TuneManager.In.Fetch<LanguageTune>();
 
-#if UNITY_EDITOR
-			if(gameCfg.UseHeadUpDisplay)
+			if(m_gameLanguage.HasValue)
 			{
-				DebugOverlayManager.In.ShowOverlay();
-			}
-#else
-			if(Debug.isDebugBuild && gameCfg.UseHeadUpDisplay)
-			{
-				DebugOverlayManager.In.ShowOverlay();
-			}
-#endif
-
-			// init base setting
-			if(m_safeWidth <= 0)
-			{
-				m_safeWidth = (int) Screen.safeArea.width;
-			}
-
-			DOTween.Init(false,false,LogBehaviour.ErrorsOnly);
-			DOTween.SetTweensCapacity(1000,100);
-
-			var stringBuilder = new StringBuilder();
-
-			_InitializeResolution(stringBuilder);
-			_InitializeFrame(stringBuilder);
-			_InitializeRenderSetting(stringBuilder);
-			_InitializeObject(stringBuilder);
-
-			LogChannel.Game.I(stringBuilder.ToString());
-
-			m_resolutionMonitor = new ResolutionMonitor();
-
-			await _StartMainAsync();
-		}
-
-		private async UniTask _StartMainAsync()
-		{
-			KZExternalKit.RecycleTokenSource(ref m_tokenSource);
-
-			if(IsTestMode)
-			{
-#if UNITY_EDITOR
-				await _InitializeTestMode(m_tokenSource.Token);
-
-				SceneStateManager.In.AddScene(StartSceneName,new SceneChangeInfo(CommonUINameTag.None));
-#else
-				throw new Exception("This cannot be tested outside of the editor mode.");
-#endif
+				lanTun.SetLanguage(m_gameLanguage.Value);
 			}
 			else
 			{
-				await _InitializeNormalMode(m_tokenSource.Token);
-
-				ContextManager.In.InitializeContext();
-
-				SceneStateManager.In.AddScene(StartSceneName,new SceneChangeInfo(CommonUINameTag.None));
+				m_gameLanguage = lanTun.CurrentLanguage;
 			}
 		}
 
+		private void Start()
+		{
+			_StartAsync().Forget();
+		}
+
+		/// <summary>DOTween, frame/resolution setup, <see cref="ResolutionMonitor"/>, then <see cref="_StartMainAsync"/>.</summary>
+		private async UniTask _StartAsync()
+		{
+			try
+			{
+				var gameCfg = ConfigManager.In.FetchConfig<GameConfig>();
+
 #if UNITY_EDITOR
+				if(gameCfg.UseHeadUpDisplay)
+				{
+					DebugOverlayManager.In.ShowOverlay();
+				}
+#else
+				if(Debug.isDebugBuild && gameCfg.UseHeadUpDisplay)
+				{
+					DebugOverlayManager.In.ShowOverlay();
+				}
+#endif
+
+				DOTween.Init(false,false,LogBehaviour.ErrorsOnly);
+				DOTween.SetTweensCapacity(1000,100);
+
+				var stringBuilder = new StringBuilder();
+
+				_InitializeFrame(stringBuilder);
+				_InitializeResolution(stringBuilder);
+				_InitializeRenderSetting(stringBuilder);
+				_InitializeObject(stringBuilder);
+
+				LogChannel.Game.I(stringBuilder.ToString());
+
+				void _OnResolutionChanged(Vector2Int resolution)
+				{
+					ScreenResolution = resolution;
+				}
+
+				m_resolutionMonitor = new ResolutionMonitor(_OnResolutionChanged);
+
+				m_resolutionMonitor.StartResolutionDetection();
+
+				await _StartMainAsync();
+			}
+			catch(OperationCanceledException)
+			{
+				_StopResolutionMonitor();
+
+				LogChannel.Game.I("Main Start cancelled.");
+			}
+			catch(Exception exception)
+			{
+				m_isPlaying = false;
+
+				_StopResolutionMonitor();
+
+				LogChannel.Game.E($"Main Start failed.\n{exception}");
+			}
+		}
+
+		private void _StopResolutionMonitor()
+		{
+			m_resolutionMonitor?.StopResolutionDetection();
+			m_resolutionMonitor = null;
+		}
+
+
+		/// <summary>Load Proto/Lingo, init <see cref="ContextManager"/>, await first scene transition.</summary>
+		private async UniTask _StartMainAsync()
+		{
+			KZExternalKit.RecycleTokenSourceInMono(ref m_tokenSource,this);
+
+			_SyncGameLanguage();
+
+#if UNITY_EDITOR
+			if(IsTestMode)
+			{
+				await _InitializeTestMode(m_tokenSource.Token);
+			}
+			else
+#endif
+			{
+				await _InitializeNormalMode(m_tokenSource.Token);
+			}
+
+			ContextManager.In.InitializeContext();
+
+			await SceneStateManager.In.AddSceneAsync(StartSceneName,new SceneChangeInfo(CommonUINameTag.None));
+		}
+
+#if UNITY_EDITOR
+		//? PlayType / start scene for editor play; persisted in EditorPrefs (no in-memory cache).
 		private const string c_mainPreset = "[Main] MainPreset";
 
 		private class PresetInfo
@@ -246,38 +291,48 @@ namespace KZLib
 			}
 		}
 
-		private PresetInfo m_mainPreset;
-
-		private PresetInfo MainPreset
+		private PresetInfo _LoadPresetInfo()
 		{
-			get
-			{
-				if(m_mainPreset == null)
-				{
-					var text = EditorPrefs.GetString(c_mainPreset,"");
+			var text = EditorPrefs.GetString(c_mainPreset,"");
 
-					m_mainPreset = text.IsEmpty() ? new PresetInfo() : JsonConvert.DeserializeObject<PresetInfo>(text);
-				}
-
-				return m_mainPreset;
-			}
+			return text.IsEmpty() ? new PresetInfo() : JsonConvert.DeserializeObject<PresetInfo>(text) ?? new PresetInfo();
 		}
 
-		private void _SavePresetInfo()
+		private void _SavePresetInfo(PresetInfo presetInfo)
 		{
-			EditorPrefs.SetString(c_mainPreset,JsonConvert.SerializeObject(MainPreset));
+			EditorPrefs.SetString(c_mainPreset,JsonConvert.SerializeObject(presetInfo));
 		}
 #endif
 
 #if UNITY_EDITOR
-		protected async virtual UniTask _InitializeTestMode(CancellationToken token) { await _InitializeManager(token); }
-#endif
-		protected async virtual UniTask _InitializeNormalMode(CancellationToken token) { await _InitializeManager(token); }
-		
-		protected async UniTask _InitializeManager(CancellationToken token)
+		/// <summary>TestMode: store scene transient before the start scene is entered. Override in game Main.</summary>
+		protected virtual void ApplyTestModeSceneTransient(string sceneName,TestModeConfig config) { }
+
+		protected virtual async UniTask _InitializeTestMode(CancellationToken token)
 		{
-			await ProtoManager.In.TryLoadAsync(token);
-			await LingoManager.In.TryLoadAsync(token);
+			await _InitializeManager(token);
+
+			var testModeCfg = ConfigManager.In.FetchConfig<TestModeConfig>();
+
+			ApplyTestModeSceneTransient(StartSceneName,testModeCfg);
+		}
+#endif
+		protected virtual async UniTask _InitializeNormalMode(CancellationToken token)
+		{
+			await _InitializeManager(token);
+		}
+		
+		protected virtual async UniTask _InitializeManager(CancellationToken token)
+		{
+			if(!await ProtoManager.In.TryLoadAsync(token))
+			{
+				throw new InvalidOperationException("Proto load failed.");
+			}
+
+			if(!await LingoManager.In.TryLoadAsync(token))
+			{
+				throw new InvalidOperationException("Lingo load failed.");
+			}
 		}
 
 		protected virtual void _InitializeResolution(StringBuilder stringBuilder)
@@ -295,19 +350,19 @@ namespace KZLib
 
 		protected virtual void _InitializeFrame(StringBuilder stringBuilder)
 		{
-#if UNITY_ANDROID || UNITY_IOS
-			QualitySettings.vSyncCount	= 0;
-			Application.targetFrameRate = Global.FRAME_RATE_30;
-#elif UNITY_STANDALONE
-			QualitySettings.vSyncCount = 1;
-			Application.targetFrameRate = Global.FrameRate60;
-#endif
-			stringBuilder.AppendFormat($"Current FPS {Application.targetFrameRate}\n");
+			_ = GraphicManager.In;
+
+			var graphicTun = TuneManager.In.Fetch<GraphicTune>();
+
+			stringBuilder.AppendFormat($"Current FPS {graphicTun.CurrentFrameRate}\n");
 		}
 
 		protected virtual void _InitializeRenderSetting(StringBuilder stringBuilder) { }
 
 		protected virtual void _InitializeObject(StringBuilder stringBuilder) { }
+
+		/// <summary>Editor refresh: cleanup not handled by <see cref="KZGameKit.ReleaseManager"/>. Override in game Main.</summary>
+		protected virtual UniTask OnRefreshTeardownAsync() => UniTask.CompletedTask;
 
 		protected virtual void OnDestroy()
 		{
@@ -315,66 +370,125 @@ namespace KZLib
 
 			m_isPlaying = false;
 
+			KZExternalKit.KillTokenSource(ref m_tokenSource);
+
+			_StopResolutionMonitor();
+
 			KZGameKit.ReleaseManager();
 		}
 
 		protected virtual void Update()
 		{
 #if UNITY_EDITOR
+			//? Editor debug: LeftShift+C toggles the debug HUD overlay on/off (intentional hotkey).
 			if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C))
 			{
 				DebugOverlayManager.In.ToggleOverlay();
 			}
 
-			//? Create Exception
+			//? Editor debug: F4 intentionally throws to test exception handlers / crash reporting.
 			if(Input.GetKeyDown(KeyCode.F4))
 			{
 				throw new Exception("Force Exception");
 			}
 
-			//? Refresh Game
+			//? Editor debug: F5 tears down managers and re-runs _StartAsync without exiting play mode.
 			if(Input.GetKeyDown(KeyCode.F5))
 			{
-				LogChannel.Game.I("Refresh Game");
-
 				_RefreshGame().Forget();
 			}
 #endif
 		}
 
 #if UNITY_EDITOR
+		//? Guards F5 re-entry while teardown or bootstrap is in progress.
+		private bool m_isRefreshing = false;
+
+		/// <summary>Editor F5: Teardown → <see cref="_StartAsync"/>. Main GameObject stays alive; <see cref="OnDestroy"/> is not called.</summary>
 		private async UniTask _RefreshGame()
 		{
-			await SceneStateManager.In.RemoveSceneAsync(new SceneChangeInfo(CommonUINameTag.None));
+			if(m_isRefreshing)
+			{
+				LogChannel.Game.W("Refresh Game is already in progress.");
 
-			await _StartMainAsync();
+				return;
+			}
+
+			m_isRefreshing = true;
+
+			var refreshInputLocked = false;
+
+			try
+			{
+				LogChannel.Game.I("Refresh Game started.");
+
+				KZInputKit.LockInput();
+
+				refreshInputLocked = true;
+
+				await _TeardownForRefreshAsync();
+
+				//? ReleaseManager.Reset clears the input lock acquired above.
+				refreshInputLocked = false;
+
+				KZInputKit.LockInput();
+
+				refreshInputLocked = true;
+
+				m_isPlaying = true;
+
+				await _StartAsync();
+			}
+			catch(Exception exception)
+			{
+				m_isPlaying = false;
+
+				LogChannel.Game.E($"Refresh Game failed.\n{exception}");
+			}
+			finally
+			{
+				if(refreshInputLocked)
+				{
+					KZInputKit.UnLockInput();
+				}
+
+				m_isRefreshing = false;
+			}
 		}
-#endif
 
-		private void OnApplicationFocus(bool focus)
+		/// <summary>Cancel work, remove current scene when safe, kill tweens, <see cref="KZGameKit.ReleaseManager"/>.</summary>
+		private async UniTask _TeardownForRefreshAsync()
 		{
-			if(focus)
+			KZExternalKit.KillTokenSource(ref m_tokenSource);
+
+			_StopResolutionMonitor();
+
+			await OnRefreshTeardownAsync();
+
+			//? Skip when no scene is loaded (bootstrap failed) or a transition is already running.
+			if(SceneStateManager.HasInstance && !SceneStateManager.In.IsSceneChanging)
 			{
-				LogChannel.Game.I("Move to foreground");
-
-				m_resolutionMonitor?.StartResolutionDetection();
-
-				PushManager.In.ClearNotification();
-			}
-			else
-			{
-				LogChannel.Game.I("Move to background");
-
-				m_resolutionMonitor?.StopResolutionDetection();
+				try
+				{
+					await SceneStateManager.In.RemoveSceneAsync(new SceneChangeInfo(CommonUINameTag.None));
+				}
+				catch(InvalidOperationException exception)
+				{
+					LogChannel.Game.I($"Refresh skip remove scene. {exception.Message}");
+				}
 			}
 
-			GlobalMessagePipe.GetPublisher<CommonNoticeTag,bool>().Publish(CommonNoticeTag.ChangedApplicationFocus,focus);
+			DOTween.KillAll();
+
+			KZGameKit.ReleaseManager();
 		}
+
+		private bool IsTitleSceneMissingFromSceneArray => !SceneNameList.Contains(c_titleScene);
 
 		private readonly List<string> m_sceneNameList = new();
 		private List<string> SceneNameList => SceneNameGroup as List<string>;
 
-		private IEnumerable SceneNameGroup
+		private IEnumerable<string> SceneNameGroup
 		{
 			get
 			{
@@ -397,6 +511,31 @@ namespace KZLib
 
 				return m_sceneNameList;
 			}
+		}
+#endif
+
+		private void OnApplicationFocus(bool focus)
+		{
+			//? Pause resolution polling in background; resume on foreground (see ResolutionMonitor).
+			if(focus)
+			{
+				LogChannel.Game.I("Move to foreground");
+
+				m_resolutionMonitor?.StartResolutionDetection();
+
+				if(PushManager.HasInstance)
+				{
+					PushManager.In.ClearNotification();
+				}
+			}
+			else
+			{
+				LogChannel.Game.I("Move to background");
+
+				m_resolutionMonitor?.StopResolutionDetection();
+			}
+
+			GlobalMessagePipe.GetPublisher<CommonNoticeTag,bool>().Publish(CommonNoticeTag.ChangedApplicationFocus,focus);
 		}
 	}
 }

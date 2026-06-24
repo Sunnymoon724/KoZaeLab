@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace KZLib
+namespace KZLib.Scenes
 {
 	/// <summary>
 	/// SceneState factory registry. Game project registers scene types before SceneStateManager creates them.

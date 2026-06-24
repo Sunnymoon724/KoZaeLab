@@ -6,6 +6,9 @@ using System;
 /// </summary>
 public static class DateTimeExtension
 {
+	/// <summary>
+	/// Returns year, month, day, hour, minute, and second as an int array.
+	/// </summary>
 	public static int[] ToArray(this DateTime dateTime)
 	{
 		return new int[] { dateTime.Year,dateTime.Month,dateTime.Day,dateTime.Hour,dateTime.Minute,dateTime.Second, };

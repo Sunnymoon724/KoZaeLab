@@ -96,21 +96,21 @@ public static partial class KZPhysicsKit
 	/// <summary>
 	/// Searches raycast results in reverse order for a hit whose collider GameObject matches the filter.
 	/// </summary>
-	public static bool CheckGameObject<T>(RaycastHit2D[] _raycastArray,int _length,T _filter,out RaycastHit2D _raycast) where T : Object
+	public static bool CheckGameObject<T>(RaycastHit2D[] raycastArray,int length,T filter,out RaycastHit2D raycast) where T : Object
 	{
-		for(var i=_length-1;i>=0;i--)
+		for(var i=length-1;i>=0;i--)
 		{
-			var collider = _raycastArray[i].collider;
+			var collider = raycastArray[i].collider;
 
-			if(collider && _filter.Equals(collider.gameObject))
+			if(collider && filter.Equals(collider.gameObject))
 			{
-				_raycast = _raycastArray[i];
+				raycast = raycastArray[i];
 
 				return true;
 			}
 		}
 
-		_raycast = default;
+		raycast = default;
 
 		return false;
 	}

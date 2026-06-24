@@ -3,6 +3,7 @@ using Sirenix.OdinInspector;
 
 namespace KZLib.Attributes
 {
+	/// <summary><see cref="KZDocumentPathAttribute"/> drawer. Opens the document with the OS default app.</summary>
 	public class KZDocumentPathAttributeDrawer : KZResourcePathAttributeDrawer<KZDocumentPathAttribute>
 	{
 		protected override SdfIconType IconType => SdfIconType.FileEarmark;

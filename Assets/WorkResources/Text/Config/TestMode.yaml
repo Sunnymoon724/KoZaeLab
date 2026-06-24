@@ -1,0 +1,10 @@
+SceneTransientDict:
+  BattleScene:
+    TargetSceneName: BattleScene
+    StageId: 10
+    Difficulty: Normal
+  ShopScene:
+    TargetSceneName: ShopScene
+    ShopId: 1
+  TitleScene:
+    TargetSceneName: TitleScene

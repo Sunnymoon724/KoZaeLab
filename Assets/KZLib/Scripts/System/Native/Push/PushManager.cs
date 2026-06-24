@@ -73,7 +73,7 @@ namespace KZLib.Natives
 				return;
 			}
 
-			var nativeTune = TuneManager.In.FetchTune<NativeTune>();
+			var nativeTune = TuneManager.In.Fetch<NativeTune>();
 
 			if(!nativeTune.UseNotification)
 			{

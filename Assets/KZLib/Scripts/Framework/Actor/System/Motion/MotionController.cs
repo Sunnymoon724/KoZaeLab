@@ -67,7 +67,7 @@ namespace KZLib
 
 			if(!m_animator.HasState(layer,Animator.StringToHash(stateName)))
 			{
-				LogChannel.Develop.W($"{stateName} is not exist in {m_animator.name}");
+				LogChannel.Develop.W($"{stateName} does not exist in {m_animator.name}");
 
 				return false;
 			}
@@ -109,7 +109,7 @@ namespace KZLib
 				return;
 			}
 
-			var motionPrt = ProtoManager.In.GetProto<IMotionProto>(motionNum);
+			var motionPrt = ProtoManager.In.Get<IMotionProto>(motionNum);
 
 			m_motionEntryDict.Clear();
 

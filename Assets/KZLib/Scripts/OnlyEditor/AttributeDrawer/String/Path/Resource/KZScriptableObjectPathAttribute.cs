@@ -6,6 +6,7 @@ using UnityEditor;
 
 namespace KZLib.Attributes
 {
+	/// <summary><see cref="KZScriptableObjectPathAttribute"/> drawer. Opens ScriptableObjectWindow preview.</summary>
 	public class KZScriptableObjectPathAttributeDrawer : KZResourcePathAttributeDrawer<KZScriptableObjectPathAttribute>
 	{
 

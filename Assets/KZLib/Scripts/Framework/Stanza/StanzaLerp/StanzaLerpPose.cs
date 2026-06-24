@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace KZLib.Utilities
 {
+	/// <summary>
+	/// Lerps transform pose (position, rotation, and/or scale) between low/high values using optional curves.
+	/// Uses <see cref="RectTransform.anchoredPosition"/> when a <see cref="RectTransform"/> is present.
+	/// </summary>
 	public class StanzaLerpPose : StanzaLerp
 	{
 		[Flags]

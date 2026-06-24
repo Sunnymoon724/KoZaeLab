@@ -326,7 +326,7 @@ MonoBehaviour:
   m_descriptionText: {fileID: 387679926}
   m_button: {fileID: 553405927}
   m_isOn: 0
-  m_titleRectTrans: {fileID: 0}
+  m_titleRootRect: {fileID: 1341045229}
   m_layoutElement: {fileID: 553405925}
 --- !u!114 &553405925
 MonoBehaviour:

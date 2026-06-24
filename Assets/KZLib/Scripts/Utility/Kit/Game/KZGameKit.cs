@@ -1,4 +1,8 @@
 using KZLib;
+using KZLib.Effects;
+using KZLib.Inputs;
+using KZLib.Scenes;
+using KZLib.Sounds;
 using UnityEngine;
 using KZLib.Utilities;
 using System.IO;
@@ -62,6 +66,9 @@ public static partial class KZGameKit
 	/// </summary>
 	public static void ReleaseManager()
 	{
+		//? Clear input lock count before managers that BlockInput/BlockUI are destroyed
+		KZInputKit.Reset();
+
 		//? Release SingletonMB
 		_ReleaseSingletonMB<SceneStateManager>();
 		_ReleaseSingletonMB<UIManager>();
@@ -74,7 +81,8 @@ public static partial class KZGameKit
 		//? Release Singleton
 		_ReleaseSingleton<ProtoManager>();
 		_ReleaseSingleton<ConfigManager>();
-		_ReleaseSingleton<AffixManager>();
+		_ReleaseSingleton<ClusterManager>();
+		_ReleaseSingleton<FacetManager>();
 		_ReleaseSingleton<LingoManager>();
 
 		_ReleaseSingleton<PlayerPrefsManager>();
@@ -84,14 +92,14 @@ public static partial class KZGameKit
 
 		_ReleaseSingleton<CameraManager>();
 
+		_ReleaseSingleton<GraphicManager>();
+
 		_ReleaseSingleton<RouteManager>();
 		_ReleaseSingleton<TuneManager>();
 
 		_ReleaseSingleton<ShaderManager>();
-		_ReleaseSingleton<GameTimeManager>();
-		_ReleaseSingleton<ServerClockManager>();
 
-		_ReleaseSingleton<TimeManager>();
+		_ReleaseSingleton<ServerClockManager>();
 		_ReleaseSingleton<LuaManager>();
 
 		_ReleaseSingleton<NetworkManager>();
@@ -102,7 +110,7 @@ public static partial class KZGameKit
 
 		_ReleaseSingleton<ContextManager>();
 
-		_ReleaseSingleton<TimelineManager>();
+		_ReleaseSingleton<CutSceneManager>();
 
 #if KZLIB_PLAY_FAB
 		_ReleaseSingleton<PlayFabManager>();
@@ -132,7 +140,7 @@ public static partial class KZGameKit
 	public static EnvironmentType GetCurrentEnvironmentType()
 	{
 #if UNITY_EDITOR
-		var text = KZFileKit.ReadFileToText(Path.Combine(Global.ProjectParentPath,"BranchInfo.txt"));
+		var text = KZFileKit.ReadTextFromFile(Path.Combine(Global.ProjectParentPath,"BranchInfo.txt"));
 
 		if(text.TryToEnum<EnvironmentType>(out var environment))
 		{

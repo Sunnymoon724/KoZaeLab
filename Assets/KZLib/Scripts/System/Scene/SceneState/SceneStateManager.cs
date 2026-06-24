@@ -3,6 +3,7 @@ using KZLib.Attributes;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
+using KZLib.UI;
 using KZLib.Utilities;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -13,7 +14,7 @@ using UnityEditor;
 
 #endif
 
-namespace KZLib
+namespace KZLib.Scenes
 {
 	public record SceneChangeInfo(CommonUINameTag TransitionNameTag,bool UseLoading = true);
 
@@ -352,6 +353,11 @@ namespace KZLib
 
 		private void _OnUnloadSceneResources(Scene scene)
 		{
+			if(ResourceManager.HasInstance)
+			{
+				ResourceManager.In.ClearCache();
+			}
+
 			if(AddressablesManager.HasInstance)
 			{
 				AddressablesManager.In.ReleaseResources(scene.name);

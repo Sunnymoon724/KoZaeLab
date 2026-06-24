@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace KZLib.Windows
 {
+	/// <summary>
+	/// Discord webhook text and image post tests for <see cref="WebhookTestWindow"/>.
+	/// </summary>
 	public partial class WebhookTestWindow : OdinEditorWindow
 	{
 		[TabGroup("Network","Discord")]
@@ -23,7 +26,12 @@ namespace KZLib.Windows
 		[HorizontalGroup("Network/Discord/1"),Button("Post Image",ButtonSizes.Large),EnableIf(nameof(IsExistDiscord))]
 		protected void OnPostImageTest_Discord()
 		{
-			WebhookManager.In.PostDiscordWebHook(m_discordLink,"Image Test",_CreateTestMessageInfo(),KZEditorKit.FindTestImage());
+			if(!_TryReadTemplateTestImage(out var imageBytes))
+			{
+				return;
+			}
+
+			WebhookManager.In.PostDiscordWebHook(m_discordLink,"Image Test",_CreateTestMessageInfo(),imageBytes);
 		}
 	}
 }

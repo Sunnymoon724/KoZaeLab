@@ -15,10 +15,12 @@ namespace KZLib.Samples.Main
 			base.OnDestroy();
 		}
 
+#if UNITY_EDITOR
 		protected override async UniTask _InitializeTestMode(CancellationToken token)
 		{
 			await base._InitializeTestMode(token);
 		}
+#endif
 
 		protected override async UniTask _InitializeNormalMode(CancellationToken token)
 		{

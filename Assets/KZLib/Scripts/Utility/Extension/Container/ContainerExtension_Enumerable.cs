@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// IEnumerable extension methods for searching, comparing, cloning, and formatting sequences.
+/// </summary>
 public static partial class ContainerExtension
 {
 	/// <summary>
-	/// Returns the element at a clamped index after counting the sequence once.
+	/// Counts the sequence once, then returns the element at a clamped <paramref name="index"/>.
 	/// When the sequence has one item, that item is always returned.
 	/// </summary>
-	public static TValue FindValueInRange<TValue>(this IEnumerable<TValue> enumerable,int index)
+	public static TValue PickClampedFromGroup<TValue>(this IEnumerable<TValue> enumerable,int index)
 	{
 		if(!_IsValid(enumerable))
 		{
@@ -20,6 +23,11 @@ public static partial class ContainerExtension
 		foreach(var value in enumerable)
 		{
 			count++;
+		}
+
+		if(count == 0)
+		{
+			return default;
 		}
 
 		return enumerable._GetValue(count == 1 ? 0 : Mathf.Clamp(index,0,count-1));
@@ -46,6 +54,9 @@ public static partial class ContainerExtension
 		return enumerable._GetFirstValue();
 	}
 
+	/// <summary>
+	/// Returns the index of the minimum projected value, or invalid when empty.
+	/// </summary>
 	public static int FindMinIndex<TValue,TCompare>(this IEnumerable<TValue> enumerable,Func<TValue,TCompare> onFunc) where TCompare : IComparable
 	{
 		var minIndex = Global.InvalidIndex;
@@ -77,6 +88,9 @@ public static partial class ContainerExtension
 		return minIndex;
 	}
 
+	/// <summary>
+	/// Returns the index of the maximum projected value, or invalid when empty.
+	/// </summary>
 	public static int FindMaxIndex<TValue,TCompare>(this IEnumerable<TValue> enumerable,Func<TValue,TCompare> onFunc) where TCompare : IComparable
 	{
 		var maxIndex = Global.InvalidIndex;
@@ -108,6 +122,9 @@ public static partial class ContainerExtension
 		return maxIndex;
 	}
 
+	/// <summary>
+	/// Returns the first index matching the predicate, or invalid when none.
+	/// </summary>
 	public static int IndexOf<TValue>(this IEnumerable<TValue> enumerable,Predicate<TValue> onPredicate)
 	{
 		if(_IsValid(enumerable) && !_IsEmpty(enumerable))
@@ -128,7 +145,10 @@ public static partial class ContainerExtension
 		return Global.InvalidIndex;
 	}
 
-	public static bool Exist<TValue>(this IEnumerable<TValue> enumerable,Predicate<TValue> onPredicate)
+	/// <summary>
+	/// Returns whether any element satisfies <paramref name="onPredicate"/>.
+	/// </summary>
+	public static bool Exists<TValue>(this IEnumerable<TValue> enumerable,Predicate<TValue> onPredicate)
 	{
 		if(!_IsValid(enumerable))
 		{
@@ -146,7 +166,10 @@ public static partial class ContainerExtension
 		return false;
 	}
 
-	public static void Enumerate<TValue>(this IEnumerable<TValue> enumerable,Action<TValue,int> onPredicate)
+	/// <summary>
+	/// Invokes <paramref name="onPredicate"/> for each element with its zero-based index.
+	/// </summary>
+	public static void ForEachWithIndex<TValue>(this IEnumerable<TValue> enumerable,Action<TValue,int> onPredicate)
 	{
 		var index = 0;
 
@@ -156,7 +179,10 @@ public static partial class ContainerExtension
 		}
 	}
 
-	public static IEnumerable<TResult> Zip<TValue1,TValue2,TResult>(this IEnumerable<TValue1> enumerable1,IEnumerable<TValue2> enumerable2,Func<TValue1,TValue2,TResult> _predicate)
+	/// <summary>
+	/// Pairs two sequences element-wise until the shorter sequence ends.
+	/// </summary>
+	public static IEnumerable<TResult> Zip<TValue1,TValue2,TResult>(this IEnumerable<TValue1> enumerable1,IEnumerable<TValue2> enumerable2,Func<TValue1,TValue2,TResult> onPredicate)
 	{
 		if(_IsValid(enumerable1) && _IsValid(enumerable2))
 		{
@@ -165,7 +191,7 @@ public static partial class ContainerExtension
 
 			while(enumerator1.MoveNext() && enumerator2.MoveNext())
 			{
-				yield return _predicate(enumerator1.Current, enumerator2.Current);
+				yield return onPredicate(enumerator1.Current, enumerator2.Current);
 			}
 		}
 	}
@@ -197,7 +223,7 @@ public static partial class ContainerExtension
 	/// <summary>
 	/// Compares two sequences for equal length and element-wise equality.
 	/// </summary>
-	public static bool IsEquals<TValue>(this IEnumerable<TValue> enumerable1,IEnumerable<TValue> enumerable2)
+	public static bool AreEqual<TValue>(this IEnumerable<TValue> enumerable1,IEnumerable<TValue> enumerable2)
 	{
 		var result1 = enumerable1.IsNullOrEmpty();
 		var result2 = enumerable2.IsNullOrEmpty();
@@ -226,6 +252,9 @@ public static partial class ContainerExtension
 		return !enumerator1.MoveNext() && !enumerator2.MoveNext();
 	}
 
+	/// <summary>
+	/// Returns whether the sequence is null or contains no elements.
+	/// </summary>
 	public static bool IsNullOrEmpty<TValue>(this IEnumerable<TValue> enumerable)
 	{
 		if(enumerable == null)
@@ -238,6 +267,9 @@ public static partial class ContainerExtension
 		return !enumerator.MoveNext();
 	}
 
+	/// <summary>
+	/// Returns a debug string with the element count and joined values.
+	/// </summary>
 	public static string ToString<TValue>(this IEnumerable<TValue> enumerable,string separator)
 	{
 		var count = _CalculateCount(enumerable);
@@ -246,9 +278,9 @@ public static partial class ContainerExtension
 	}
 
 	/// <summary>
-	/// Creates a shallow clone of each element that implements <see cref="ICloneable"/>.
+	/// Yields a cloned copy of each element that implements <see cref="ICloneable"/>.
 	/// </summary>
-	public static IEnumerable<TValue> DeepCopy<TValue>(this IEnumerable<TValue> enumerable) where TValue : ICloneable
+	public static IEnumerable<TValue> CloneElementGroup<TValue>(this IEnumerable<TValue> enumerable) where TValue : ICloneable
 	{
 		if(_IsValid(enumerable))
 		{

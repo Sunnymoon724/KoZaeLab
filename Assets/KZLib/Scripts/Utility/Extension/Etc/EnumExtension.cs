@@ -6,11 +6,17 @@ using System;
 /// </summary>
 public static class EnumExtension
 {
+	/// <summary>
+	/// Converts an enum value to its underlying int.
+	/// </summary>
 	public static int ToInt<TEnum>(this TEnum value) where TEnum : struct,Enum
 	{
 		return Convert.ToInt32(value);
 	}
 
+	/// <summary>
+	/// Converts one enum type to another via its integer value.
+	/// </summary>
 	public static TEnum ConvertToEnum<TEnum,UEnum>(this UEnum value) where TEnum : struct,Enum where UEnum : struct,Enum
 	{
 		return (TEnum) Enum.ToObject(typeof(TEnum),Convert.ToInt32(value));

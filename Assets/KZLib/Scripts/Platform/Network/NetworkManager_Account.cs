@@ -14,6 +14,9 @@ namespace KZLib.Networks
 	public partial class NetworkManager : Singleton<NetworkManager>
 	{
 		#region Login
+		/// <summary>
+		/// Re-authenticates using the saved login option and the provided session ticket.
+		/// </summary>
 		public async UniTask<bool> RequestAutoLoginAsync(string sessionTicket)
 		{
 #if KZLIB_PLAY_FAB
@@ -33,6 +36,9 @@ namespace KZLib.Networks
 #endif
 		}
 
+		/// <summary>
+		/// Logs in with a device-based guest account.
+		/// </summary>
 		public async UniTask<bool> LoginWithGuestAsync()
 		{
 #if KZLIB_PLAY_FAB
@@ -51,6 +57,9 @@ namespace KZLib.Networks
 #endif
 		}
 
+		/// <summary>
+		/// Logs in with a Google account using the server auth code or session ticket.
+		/// </summary>
 		public async UniTask<bool> LoginWithGoogleAsync(string sessionTicket)
 		{
 #if KZLIB_PLAY_FAB
@@ -69,6 +78,9 @@ namespace KZLib.Networks
 #endif
 		}
 
+		/// <summary>
+		/// Logs in with an Apple account using the identity token or session ticket.
+		/// </summary>
 		public async UniTask<bool> LoginWithAppleAsync(string sessionTicket)
 		{
 #if KZLIB_PLAY_FAB
@@ -89,6 +101,9 @@ namespace KZLib.Networks
 		#endregion Login
 
 		#region LogOut
+		/// <summary>
+		/// Clears PlayFab credentials and local account profile data.
+		/// </summary>
 		public async UniTask<bool> LogOutAsync()
 		{
 #if KZLIB_PLAY_FAB

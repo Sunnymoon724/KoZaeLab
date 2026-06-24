@@ -7,6 +7,9 @@ using UnityEngine;
 /// </summary>
 public static class IntExtension
 {
+	/// <summary>
+	/// Returns -1, 0, or 1 for negative, zero, or positive values.
+	/// </summary>
 	public static int Sign(this int number)
 	{
 		return number < 0 ? -1 : number > 0 ? 1 : 0;
@@ -25,11 +28,17 @@ public static class IntExtension
 		return number == 0 ? 1 : (int) Math.Floor(Math.Log10(Math.Abs(number)))+1;
 	}
 
+	/// <summary>
+	/// Formats the integer with thousands separators.
+	/// </summary>
 	public static string ToStringComma(this int number)
 	{
 		return $"{number:n0}";
 	}
 
+	/// <summary>
+	/// Formats the integer with an explicit sign prefix.
+	/// </summary>
 	public static string ToStringSign(this int number)
 	{
 		return $"{number:+#;-#;0}";
@@ -51,33 +60,48 @@ public static class IntExtension
 		return number < Global.HexLetterOffset ? (char) ('0'+number) : (char) ('A'+number-Global.HexLetterOffset);
 	}
 
+	/// <summary>
+	/// Formats a single nibble as one uppercase hex character.
+	/// </summary>
 	public static string ToHex(this int number)
 	{
 		return $"{number.ToHexChar()}";
 	}
 
+	/// <summary>
+	/// Formats the lower 8 bits as a two-digit hex string.
+	/// </summary>
 	public static string ToHex8(this int number)
 	{
 		return $"{number & 0xFF:x2}";
 	}
 
+	/// <summary>
+	/// Formats the lower 24 bits as a six-digit hex string.
+	/// </summary>
 	public static string ToHex24(this int number)
 	{
 		return $"{number & 0xFFFFFF:x6}";
 	}
 
+	/// <summary>
+	/// Formats the value as an eight-digit hex string.
+	/// </summary>
 	public static string ToHex32(this int number)
 	{
 		return $"{number & 0xFFFFFFFF:x8}";
 	}
 
+	/// <summary>
+	/// Returns whether the int is a defined value of <typeparamref name="TNumber"/>.
+	/// </summary>
 	public static bool IsEnumDefined<TNumber>(this int number)
 	{
 		return Enum.IsDefined(typeof(TNumber),number);
 	}
 
 	/// <summary>
-	/// Converts an ARGB hex integer to a normalized Unity color.
+	/// Converts an RGBA packed integer (<see cref="Color.ToInt"/>) to a normalized Unity color.
 	/// </summary>
 	public static Color ToColor(this int hexNumber)
 	{
@@ -93,7 +117,7 @@ public static class IntExtension
 	}
 
 	/// <summary>
-	/// Converts an ARGB hex integer to a byte-based Unity color.
+	/// Converts an RGBA packed integer (<see cref="Color.ToInt"/>) to a byte-based Unity color.
 	/// </summary>
 	public static Color32 ToColor32(this int hexNumber)
 	{
@@ -106,21 +130,41 @@ public static class IntExtension
 		);
 	}
 
-	public static bool HasFlag(this int pivot,int target)
+	/// <summary>
+	/// Returns whether any bits in <paramref name="target"/> are set in <paramref name="pivot"/>.
+	/// </summary>
+	public static bool HasAnyFlag(this int pivot,int target)
 	{
 		return (pivot & target) != 0;
 	}
 
+	/// <summary>
+	/// Returns whether all bits in <paramref name="target"/> are set in <paramref name="pivot"/>.
+	/// </summary>
+	public static bool HasAllFlags(this int pivot,int target)
+	{
+		return target == 0 || (pivot & target) == target;
+	}
+
+	/// <summary>
+	/// ORs <paramref name="target"/> bit flags into <paramref name="pivot"/>.
+	/// </summary>
 	public static int AddFlag(this int pivot,int target)
 	{
 		return pivot | target;
 	}
 
+	/// <summary>
+	/// Clears <paramref name="target"/> bit flags from <paramref name="pivot"/>.
+	/// </summary>
 	public static int RemoveFlag(this int pivot,int target)
 	{
 		return pivot & ~target;
 	}
 
+	/// <summary>
+	/// Adds and removes bit flags in one operation.
+	/// </summary>
 	public static int ChangeFlag(this int pivot,int add,int remove)
 	{
 		return pivot.AddFlag(add).RemoveFlag(remove);

@@ -5,16 +5,25 @@ using UnityEngine;
 /// </summary>
 public static class RigidbodyExtension
 {
+	/// <summary>
+	/// Sweeps the rigidbody along an offset vector and returns whether a collider on the layer mask was hit.
+	/// </summary>
 	public static bool IsOverlapping(this Rigidbody rigidbody,LayerMask layerMask,Vector3 offset)
 	{
 		return IsOverlapping(rigidbody,layerMask,offset,QueryTriggerInteraction.Ignore);
 	}
 
+	/// <summary>
+	/// Sweeps the rigidbody along an offset vector with the given trigger interaction mode.
+	/// </summary>
 	public static bool IsOverlapping(this Rigidbody rigidbody,LayerMask layerMask,Vector3 offset,QueryTriggerInteraction triggerInteraction)
 	{
 		return IsOverlapping(rigidbody,layerMask,offset,triggerInteraction,out _);
 	}
 
+	/// <summary>
+	/// Sweeps the rigidbody along an offset vector and outputs the first hit when found.
+	/// </summary>
 	public static bool IsOverlapping(this Rigidbody rigidbody,LayerMask layerMask,Vector3 offset,out RaycastHit raycastHit)
 	{
 		return IsOverlapping(rigidbody,layerMask,offset,QueryTriggerInteraction.Ignore,out raycastHit);
@@ -55,6 +64,9 @@ public static class RigidbodyExtension
 		return false;
 	}
 
+	/// <summary>
+	/// Redirects linear velocity to the given direction while preserving speed.
+	/// </summary>
 	public static void ChangeDirection(this Rigidbody rigidbody,Vector3 direction)
 	{
 		if(!_IsValid(rigidbody))

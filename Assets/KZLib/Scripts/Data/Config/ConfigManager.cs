@@ -1,21 +1,39 @@
 using System;
-using YamlDotNet.Serialization;
-using KZLib.Utilities;
 using System.IO;
+using KZLib.Utilities;
+using UnityEngine;
+using YamlDotNet.Serialization;
 
 namespace KZLib.Data
 {
+	/// <summary>
+	/// Lazy cache of YAML-backed <see cref="IConfig"/> instances (build/environment settings).
+	/// Load order: Custom yaml (editor) → Addressable (optional) → RouteManager path. Requires <see cref="RouteManager"/> for default routes.
+	/// </summary>
+	/// <remarks>
+	/// Distinct from <see cref="TuneManager"/> (PlayerPrefs user settings) and <see cref="FacetManager"/> (server user state).
+	/// </remarks>
 	public class ConfigManager : Singleton<ConfigManager>
 	{
-		private const string c_editorYaml = "Editor.yaml";
+		private const string c_testModeYaml = "TestMode.yaml";
+
+		private static readonly IDeserializer s_deserializer = new DeserializerBuilder().IncludeNonPublicProperties().Build();
 
 		private readonly LazyRegistry<Type,IConfig> m_registry = new();
 
-		private readonly static Type[] s_defaultConfigArray = new Type[] { typeof(GameConfig),typeof(WebhookConfig),typeof(EditorConfig) };
+		private readonly static Type[] s_defaultConfigArray = new Type[]
+		{
+			typeof(GameConfig),
+			typeof(WebhookConfig),
+			typeof(TestModeConfig),
+		};
 
 		protected override void _Initialize()
 		{
 			base._Initialize();
+
+			// Route paths are resolved before the first config load.
+			_ = RouteManager.In;
 
 			_FetchConfig(typeof(GameConfig));
 		}
@@ -30,19 +48,47 @@ namespace KZLib.Data
 			base._Release(disposing);
 		}
 
-		/// <summary>
-		/// If config is not exist, load config.
-		/// </summary>
+		/// <summary>Returns a cached config, loading and deserializing YAML on first access. Throws when load fails.</summary>
 		public TConfig FetchConfig<TConfig>() where TConfig : class,IConfig
 		{
-			var type = typeof(TConfig);
+			_ValidateConfigType(typeof(TConfig));
 
-			return _FetchConfig(type) as TConfig;
+			var config = _FetchConfig(typeof(TConfig));
+
+			if(config is TConfig result)
+			{
+				return result;
+			}
+
+			throw new InvalidOperationException($"Failed to load config [{typeof(TConfig).Name}].");
 		}
 
-		/// <summary>
-		/// If config is not exist, load config.
-		/// </summary>
+		/// <summary>Returns a cached config, or false when load or deserialization fails.</summary>
+		public bool TryFetchConfig<TConfig>(out TConfig config) where TConfig : class,IConfig
+		{
+			config = null;
+
+			try
+			{
+				_ValidateConfigType(typeof(TConfig));
+			}
+			catch
+			{
+				return false;
+			}
+
+			var loaded = _FetchConfig(typeof(TConfig));
+
+			if(loaded is TConfig result)
+			{
+				config = result;
+
+				return true;
+			}
+
+			return false;
+		}
+
 		private IConfig _FetchConfig(Type type)
 		{
 			return m_registry.Fetch(type,_TryLoadConfig);
@@ -55,13 +101,16 @@ namespace KZLib.Data
 
 			if(!text.IsEmpty())
 			{
-				var deserializer = new DeserializerBuilder().IncludeNonPublicProperties().Build();
-
 				try
 				{
-					config = deserializer.Deserialize(text,type) as IConfig;
+					config = s_deserializer.Deserialize(text,type) as IConfig;
 
-					return true;
+					if(config != null)
+					{
+						return true;
+					}
+
+					LogChannel.Data.E($"Deserialized [{name}] is not {nameof(IConfig)}.");
 				}
 				catch(Exception exception)
 				{
@@ -76,12 +125,11 @@ namespace KZLib.Data
 
 		private string _LoadConfigFile(string name)
 		{
-			var fileName = $"{name.Replace("Config","")}.yaml";
+			var fileName = _BuildYamlFileName(name);
 			var text = string.Empty;
 
-			//? check custom. [only editor]
 #if UNITY_EDITOR
-			text = KZFileKit.ReadFileToText(Path.Combine(Global.CustomConfigFolderPath,$"Custom{fileName}"));
+			text = KZFileKit.ReadTextFromFile(Path.Combine(Global.CustomConfigFolderPath,$"Custom{fileName}"));
 #endif
 			if(!text.IsEmpty())
 			{
@@ -95,46 +143,45 @@ namespace KZLib.Data
 				return text;
 			}
 
-			//? check resource folder.
 #if UNITY_EDITOR
-			var routePath = _IsEditorCfg(fileName) ? $"workRes:config:{fileName}" : $"defaultRes:config:{fileName}";
+			var routePath = _IsTestModeCfg(fileName) ? $"workRes:config:{fileName}" : $"defaultRes:config:{fileName}";
 #else
 			var routePath = $"defaultRes:config:{fileName}";
 #endif
-			text = KZFileKit.ReadFileToText(RouteManager.In.FetchRoute(routePath).AbsolutePath);
+			text = KZFileKit.ReadTextFromFile(RouteManager.In.Fetch(routePath).AbsolutePath);
 
 			if(!text.IsEmpty())
 			{
 				return text;
 			}
 
-			LogChannel.Data.W($"{name} yaml file is not exist. generate config first.");
+			LogChannel.Data.W($"{name} yaml file does not exist. Generate config first.");
 
 			return null;
 		}
 
 		private string _ReadConfigFileInAddressable(string fileName)
 		{
-			if(_IsEditorCfg(fileName))
+			if(_IsTestModeCfg(fileName))
 			{
-				// Editor is only editor
 				return string.Empty;
 			}
 
-			//? if use addressable ? check gameResource folder.
+			var textAsset = AddressablesManager.In.GetObject<TextAsset>(fileName);
 
-			// TODO 어드레서블 체크 및 로드
-
-			return string.Empty;
+			return textAsset != null ? textAsset.text : string.Empty;
 		}
 
+		/// <summary>Returns true when the path/name matches a built-in config (Game, Webhook, TestMode, or Custom variants).</summary>
 		public static bool IsDefaultConfig(string filePath)
 		{
+			var fileName = Path.GetFileNameWithoutExtension(filePath);
+
 			for(var i=0;i<s_defaultConfigArray.Length;i++)
 			{
-				var name = s_defaultConfigArray[i].Name.Replace("Config","");
+				var baseName = s_defaultConfigArray[i].Name.Replace("Config","");
 
-				if(filePath.Contains(name))
+				if(fileName == baseName || fileName == $"Custom{baseName}")
 				{
 					return true;
 				}
@@ -142,10 +189,30 @@ namespace KZLib.Data
 
 			return false;
 		}
-		
-		private bool _IsEditorCfg(string fileName)
+
+		private static string _BuildYamlFileName(string configTypeName) => $"{configTypeName.Replace("Config","")}.yaml";
+
+		private static void _ValidateConfigType(Type type)
 		{
-			return fileName == c_editorYaml;
+			if(type == null)
+			{
+				throw new ArgumentNullException(nameof(type));
+			}
+
+			if(type.IsAbstract || type.IsInterface)
+			{
+				throw new ArgumentException($"Type [{type.Name}] must be a concrete config class.",nameof(type));
+			}
+
+			if(!typeof(IConfig).IsAssignableFrom(type))
+			{
+				throw new ArgumentException($"Type [{type.Name}] must implement {nameof(IConfig)}.",nameof(type));
+			}
+		}
+
+		private bool _IsTestModeCfg(string fileName)
+		{
+			return fileName == c_testModeYaml;
 		}
 	}
 }

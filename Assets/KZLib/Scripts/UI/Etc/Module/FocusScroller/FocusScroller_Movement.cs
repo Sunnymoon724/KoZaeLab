@@ -75,12 +75,15 @@ namespace KZLib.UI
 		[SerializeField,ShowIf(nameof(m_magnetMode))]
 		private EaseType m_magnetEasing = EaseType.InOutCubic;
 
-		private bool m_dragging = true;
+		private bool m_dragging = false;
 
 		private bool m_hold = false;
 		private bool m_scrolling = false;
 		private float m_velocity = 0.0f;
 
+		/// <summary>
+		/// Normalized scroll position along the entry axis. Integer values align with entry indices at the viewport center.
+		/// </summary>
 		public float CurrentLocation
 		{
 			get => m_currentLocation;
@@ -101,12 +104,27 @@ namespace KZLib.UI
 		private Vector2 m_beginDragPoint = Vector2.zero;
 		private float m_scrollStartLocation = 0.0f;
 
-		private float ViewportSize => m_vertical ? m_viewport.rect.height : m_viewport.rect.width;
+		private float ViewportSize
+		{
+			get
+			{
+				var size = m_vertical ? m_viewport.rect.height : m_viewport.rect.width;
+
+				return Mathf.Max(size,float.Epsilon);
+			}
+		}
 
 		private readonly Subject<Unit> m_dragStartSubject = new();
+
+		/// <summary>Emits when a drag gesture begins.</summary>
 		public Observable<Unit> OnStartedDrag => m_dragStartSubject;
 
 		private readonly Subject<float> m_dragEndSubject = new();
+
+		/// <summary>
+		/// Emits the remaining snap duration when magnet inertia triggers a scroll, or <c>0</c> when inertia ends
+		/// without magnet. Not emitted for every drag end.
+		/// </summary>
 		public Observable<float> OnFinishedDrag => m_dragEndSubject;
 
 		void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
@@ -239,7 +257,9 @@ namespace KZLib.UI
 
 					if(Mathf.Abs(m_velocity) < 0.001f)
 					{
-						location = Mathf.Clamp(Mathf.RoundToInt(location),0,m_entryInfoList.Count-1);
+						var maxIndex = Mathf.Max(m_entryInfoList.Count-1,0);
+
+						location = Mathf.Clamp(Mathf.RoundToInt(location),0,maxIndex);
 						m_velocity = 0.0f;
 						m_scrollInfo.Complete();
 					}
@@ -311,8 +331,17 @@ namespace KZLib.UI
 			m_scrolling = false;
 		}
 
+		/// <summary>
+		/// Animates or jumps to <paramref name="location"/>. On completion, updates focus via <see cref="RefreshIndex"/>.
+		/// No-op when the entry list is empty.
+		/// </summary>
 		public void ScrollTo(float location,float duration,EaseType easeType)
 		{
+			if(m_entryInfoList.Count == 0)
+			{
+				return;
+			}
+
 			if(duration <= 0.0f)
 			{
 				CurrentLocation = KZMathKit.LoopClamp(location,m_entryInfoList.Count);
@@ -328,6 +357,7 @@ namespace KZLib.UI
 			m_scrollStartLocation = CurrentLocation;
 		}
 
+		/// <summary>Immediately sets focus and scroll location to <paramref name="index"/> without animation.</summary>
 		public void JumpTo(int index)
 		{
 			if(m_entryInfoList.ContainsIndex(index))
@@ -383,6 +413,7 @@ namespace KZLib.UI
 			return 0.0f;
 		}
 
+		/// <summary>Snaps focus index from the rounded current location after scroll completes.</summary>
 		private void _RefreshAll()
 		{
 			RefreshIndex(Mathf.RoundToInt(CurrentLocation));

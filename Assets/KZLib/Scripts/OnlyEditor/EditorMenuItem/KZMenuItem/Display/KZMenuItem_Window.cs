@@ -1,6 +1,5 @@
 #if UNITY_EDITOR
-using KZLib.Development;
-using KZLib.EditorInternal;
+using KZLib.Data;
 using KZLib.Windows;
 using UnityEditor;
 
@@ -15,19 +14,19 @@ namespace KZLib.EditorInternal.Menus
 			EditorWindow.GetWindow<ManualWindow>().Show();
 		}
 
-		[MenuItem("KZMenu/Window/Open Editor Custom Window",false,MenuOrder.Display.CUSTOM)]
+		[MenuItem("KZMenu/Window/Open Editor Custom Window",false,MenuOrder.Display.CUSTOM_EDITOR)]
 		private static void _OnOpenEditorCustomWindow()
 		{
 			EditorCustom.ShowCustom();
 		}
 
-		[MenuItem("KZMenu/Window/Open PlayerPrefs Window",false,MenuOrder.Display.CUSTOM)]
+		[MenuItem("KZMenu/Window/Open PlayerPrefs Window",false,MenuOrder.Display.CUSTOM_PLAYER_PREFS)]
 		private static void _OnOpenPlayerPrefsWindow()
 		{
 			EditorWindow.GetWindow<PlayerPrefsWindow>().Show();
 		}
 
-		[MenuItem("KZMenu/Window/Open Graphic Quality Option Window",false,MenuOrder.Display.CUSTOM)]
+		[MenuItem("KZMenu/Window/Open Graphic Quality Option Window",false,MenuOrder.Display.CUSTOM_GRAPHIC_QUALITY)]
 		private static void _OnOpenGraphicQualityOptionWindow()
 		{
 			var instance = GraphicQualityOption.In;
@@ -38,7 +37,7 @@ namespace KZLib.EditorInternal.Menus
 			window.Show();
 		}
 
-		[MenuItem("KZMenu/Window/Open Network Test Window",false,MenuOrder.Display.TEST)]
+		[MenuItem("KZMenu/Window/Open Network Test Window",false,MenuOrder.Display.TEST_NETWORK)]
 		private static void _OnOpenNetworkTestWindow()
 		{
 			EditorWindow.GetWindow<WebhookTestWindow>().Show();

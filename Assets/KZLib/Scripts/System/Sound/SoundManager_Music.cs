@@ -2,36 +2,47 @@ using KZLib.Data;
 using KZLib.Utilities;
 using UnityEngine;
 
-namespace KZLib
+namespace KZLib.Sounds
 {
+	/// <summary>Music (BGM) API for <see cref="SoundManager"/>. Uses the dedicated <see cref="m_musicSource"/>; supports delayed start via <see cref="PlayMusic(AudioClip, float, float)"/>.</summary>
 	public partial class SoundManager : SingletonMB<SoundManager>
 	{
-		/// <summary>
-		/// 배경음
-		/// </summary>
+		/// <summary>Dedicated looping music source. Falls back to the component on this GameObject when unset.</summary>
 		[SerializeField]
-		private AudioSource m_bgmSource = null;
+		private AudioSource m_musicSource = null;
 
-		private SoundVolume m_bgmVolume = SoundVolume.max;
+		private SoundVolume m_musicVolume = SoundVolume.max;
 
-		public bool IsPlaying => m_bgmSource.isPlaying;
+		/// <summary>Set by <see cref="PauseMusic"/>; cleared by <see cref="ResumeMusic"/>, <see cref="StopMusic"/>, or <see cref="SetMusic"/>.</summary>
+		private bool m_musicPaused = false;
+		/// <summary>When true, <see cref="ResumeMusic"/> calls <see cref="AudioSource.Play"/> instead of <see cref="AudioSource.UnPause"/> (PlayDelayed was cancelled).</summary>
+		private bool m_musicResumeWithPlay = false;
 
-		public string GetPlayingBGMName()
+		/// <summary>True while <see cref="m_musicSource"/> is actively playing.</summary>
+		public bool IsMusicPlaying => m_musicSource.isPlaying;
+
+		/// <summary>True between <see cref="PauseMusic"/> and <see cref="ResumeMusic"/> (or stop/clear).</summary>
+		public bool IsMusicPaused => m_musicPaused;
+
+		/// <summary>Current music clip name, or empty when no clip is assigned.</summary>
+		public string GetPlayingMusicName()
 		{
-			return m_bgmSource.clip == null ? string.Empty : m_bgmSource.clip.name;
+			return m_musicSource.clip == null ? string.Empty : m_musicSource.clip.name;
 		}
 
-		public float GetBGMTime()
+		/// <summary>Playback position in seconds. Returns 0 when there is no clip or frequency is invalid.</summary>
+		public float GetMusicTime()
 		{
-			if(m_bgmSource.clip == null || m_bgmSource.clip.frequency == 0)
+			if(m_musicSource.clip == null || m_musicSource.clip.frequency == 0)
 			{
 				return 0.0f;
 			}
 
-			return (float) m_bgmSource.timeSamples/m_bgmSource.clip.frequency;
+			return (float) m_musicSource.timeSamples/m_musicSource.clip.frequency;
 		}
 
-		public AudioSource SetBGM(string audioPath)
+		/// <summary>Loads a clip from Resources and assigns it without playing.</summary>
+		public AudioSource SetMusic(string audioPath)
 		{
 			if(audioPath.IsEmpty())
 			{
@@ -40,10 +51,11 @@ namespace KZLib
 				return null;
 			}
 
-			return SetBGM(ResourceManager.In.GetAudioClip(audioPath));
+			return SetMusic(ResourceManager.In.GetAudioClip(audioPath));
 		}
 
-		public AudioSource SetBGM(AudioClip audioClip)
+		/// <summary>Assigns a clip (looping) without playing.</summary>
+		public AudioSource SetMusic(AudioClip audioClip)
 		{
 			if(!audioClip)
 			{
@@ -52,12 +64,14 @@ namespace KZLib
 				return null;
 			}
 
-			_SetAudioSource(m_bgmSource,audioClip,$"[Music] {audioClip.name}",true,m_bgmVolume);
+			_ClearMusicPauseState();
+			_SetAudioSource(m_musicSource,audioClip,$"[Music] {audioClip.name}",true,m_musicVolume);
 
-			return m_bgmSource;
+			return m_musicSource;
 		}
 
-		public AudioSource PlayBGM(string audioPath,float time = 0.0f,float delay = 0.0f)
+		/// <summary>Loads a clip from Resources, assigns it, and starts playback.</summary>
+		public AudioSource PlayMusic(string audioPath,float time = 0.0f,float delay = 0.0f)
 		{
 			if(audioPath.IsEmpty())
 			{
@@ -66,39 +80,117 @@ namespace KZLib
 				return null;
 			}
 
-			return PlayBGM(ResourceManager.In.GetAudioClip(audioPath),time,delay);
+			return PlayMusic(ResourceManager.In.GetAudioClip(audioPath),time,delay);
 		}
 
-		public AudioSource PlayBGM(AudioClip audioClip,float time = 0.0f,float delay = 0.0f)
+		/// <summary>Assigns a clip and starts playback at <paramref name="time"/> (optionally after <paramref name="delay"/> seconds).</summary>
+		public AudioSource PlayMusic(AudioClip audioClip,float time = 0.0f,float delay = 0.0f)
 		{
-			if(!SetBGM(audioClip))
+			if(SetMusic(audioClip) == null)
 			{
 				return null;
 			}
 
-			_PlaySound(m_bgmSource,time,delay);
+			_PlaySound(m_musicSource,time,delay);
 
-			return m_bgmSource;
+			return m_musicSource;
 		}
 
-		public bool RestartBGM(float? time = null)
+		/// <summary>
+		/// Re-starts playback from <paramref name="time"/> or the current position.
+		/// Returns false when there is no clip, or when not paused and not currently playing.
+		/// </summary>
+		public bool RestartMusic(float? time = null)
 		{
-			return _RestartSound(m_bgmSource,time == null ? m_bgmSource.time : time.Value);
+			if(m_musicSource.clip == null)
+			{
+				return false;
+			}
+
+			if(m_musicPaused)
+			{
+				_ClearMusicPauseState();
+			}
+			else if(!_IsPlayingSource(m_musicSource))
+			{
+				return false;
+			}
+
+			_PlaySound(m_musicSource,time ?? m_musicSource.time);
+
+			return true;
 		}
 
-		public void StopBGM(bool clearClip)
+		/// <summary>Stops music and clears pause flags. Clears the clip when <paramref name="clearClip"/> is true.</summary>
+		public void StopMusic(bool clearClip)
 		{
-			_StopSound(m_bgmSource,clearClip);
+			_ClearMusicPauseState();
+			_StopSound(m_musicSource,clearClip);
 		}
 
-		public void PauseBGMSound()
+		/// <summary>
+		/// Pauses playing music.
+		/// When a clip is assigned but not yet playing (e.g. <see cref="AudioSource.PlayDelayed"/>), cancels the scheduled play instead.
+		/// </summary>
+		public void PauseMusic()
 		{
-			m_bgmSource.Pause();
+			if(m_musicPaused)
+			{
+				return;
+			}
+
+			if(m_musicSource.isPlaying)
+			{
+				m_musicPaused = true;
+				m_musicResumeWithPlay = false;
+				m_musicSource.Pause();
+
+				return;
+			}
+
+			if(m_musicSource.clip == null)
+			{
+				return;
+			}
+
+			m_musicPaused = true;
+			m_musicResumeWithPlay = true;
+			m_musicSource.Stop();
 		}
 
-		public void ResumeBGMSound()
+		/// <summary>Resumes music paused via <see cref="PauseMusic"/>.</summary>
+		public void ResumeMusic()
 		{
-			m_bgmSource.Play();
+			if(!m_musicPaused)
+			{
+				return;
+			}
+
+			m_musicPaused = false;
+
+			if(m_musicSource.clip == null)
+			{
+				m_musicResumeWithPlay = false;
+
+				return;
+			}
+
+			if(m_musicResumeWithPlay)
+			{
+				m_musicSource.Play();
+			}
+			else
+			{
+				m_musicSource.UnPause();
+			}
+
+			m_musicResumeWithPlay = false;
+		}
+
+		private void _ClearMusicPauseState()
+		{
+			m_musicPaused = false;
+			m_musicResumeWithPlay = false;
 		}
 	}
 }

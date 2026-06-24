@@ -1,7 +1,11 @@
 using UnityEngine.InputSystem;
 
-namespace KZLib
+namespace KZLib.Inputs
 {
+	/// <summary>
+	/// Handles the <c>AndroidBackButton</c> action (Escape / gamepad B / <c>*/{Back}</c> in <c>MobileInputAction</c>).
+	/// Forwards to <see cref="UIManager.PressBackButton"/> on the top 2D window.
+	/// </summary>
 	public class MobileInputController : InputController
 	{
 		private const string c_androidBackButton = "AndroidBackButton";

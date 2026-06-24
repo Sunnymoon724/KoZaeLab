@@ -17,17 +17,7 @@ namespace KZLib.UI
 		internal float CornerRadius
 		{
 			get => m_cornerRadius;
-			set
-			{
-				if(m_cornerRadius == value)
-				{
-					return;
-				}
-
-				m_cornerRadius = value;
-
-				SetVerticesDirty();
-			}
+			set => _SetVerticesDirtyProperty(ref m_cornerRadius,value);
 		}
 
 		private void _DrawFill_Rectangle(VertexHelper vertexHelper,Color drawColor,bool canDrawAntiAliasing)

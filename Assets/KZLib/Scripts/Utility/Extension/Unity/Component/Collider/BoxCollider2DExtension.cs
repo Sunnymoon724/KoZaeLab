@@ -5,6 +5,9 @@ using UnityEngine;
 /// </summary>
 public static class BoxCollider2DExtension
 {
+	/// <summary>
+	/// Returns local-space bounds from the collider offset and size.
+	/// </summary>
 	public static Bounds CalculateLocalBounds(this BoxCollider2D boxCollider2D)
 	{
 		if(!_IsValid(boxCollider2D))

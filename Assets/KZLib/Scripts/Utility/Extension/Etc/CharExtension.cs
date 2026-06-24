@@ -1,27 +1,43 @@
-using System.Globalization;
-
 /// <summary>
 /// Extension methods for char.
 /// Provides hex conversion and character comparison helpers.
 /// </summary>
 public static class CharExtension
 {
-	public static int HexToDecimal(this char character)
+	/// <summary>
+	/// Converts a single hex digit to 0-15, or -1 when the character is not a hex digit.
+	/// </summary>
+	public static int FromHexDigit(this char character)
 	{
-		if(!int.TryParse(character.ToString(),NumberStyles.HexNumber,CultureInfo.CurrentCulture,out var number))
+		character = char.ToUpperInvariant(character);
+
+		if(character >= '0' && character <= '9')
 		{
-			LogChannel.Kit.E($"Failed to convert '{character}' into decimal.");
+			return character-'0';
 		}
 
-		return number;
+		if(character >= 'A' && character <= 'F')
+		{
+			return Global.HexLetterOffset+(character-'A');
+		}
+
+		return -1;
 	}
 
-	public static int HexToDecimal(this char character,int defaultNumber)
+	/// <summary>
+	/// Converts a single hex digit to 0-15, returning <paramref name="defaultNumber"/> when invalid.
+	/// </summary>
+	public static int FromHexDigit(this char character,int defaultNumber)
 	{
-		return int.TryParse(character.ToString(),NumberStyles.HexNumber,CultureInfo.CurrentCulture,out var number) ? number : defaultNumber;
+		var value = character.FromHexDigit();
+
+		return value < 0 ? defaultNumber : value;
 	}
 
-	public static bool IsEqualLetter(this char character,params char[] characterArray)
+	/// <summary>
+	/// Returns whether the character matches any value in <paramref name="characterArray"/>.
+	/// </summary>
+	public static bool EqualsAny(this char character,params char[] characterArray)
 	{
 		for(var i=0;i<characterArray.Length;i++)
 		{
@@ -32,28 +48,5 @@ public static class CharExtension
 		}
 
 		return false;
-	}
-
-	/// <summary>
-	/// Converts a single hex digit to its numeric value without parsing overhead.
-	/// </summary>
-	/// <returns>0-15 for valid digits, or -1 when the character is not hex.</returns>
-	public static int FromHex(this char character)
-	{
-		character = char.ToUpperInvariant(character);
-
-		// check number
-		if(character >= '0' && character <= '9')
-		{
-			return character-'0';
-		}
-
-		// check hex number
-		if (character >= 'A' && character <= 'F')
-		{
-			return Global.HexLetterOffset+(character-'A');
-		}
-
-		return -1;
 	}
 }

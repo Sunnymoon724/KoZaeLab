@@ -53,9 +53,9 @@ namespace KZLib.UI
 		{
 			for(var i=0;i<m_shapeDrawing.PolygonVertexDistanceCount;i++)
 			{
-				var vertPos = _GetPolygonVertexPosition(i)*m_shapeDrawing.GetPolygonVertexDistance(i);
+				var vertOffset = (Vector2) _GetPolygonVertexPosition(i)*m_shapeDrawing.GetPolygonVertexDistance(i);
 
-				_SyncWorldKnotInfo(i+1,vertPos,KnotType.Major);
+				_SyncWorldKnotInfo(i+1,vertOffset,KnotType.Major);
 			}
 		}
 

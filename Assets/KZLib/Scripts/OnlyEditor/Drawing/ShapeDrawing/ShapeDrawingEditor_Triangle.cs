@@ -22,14 +22,12 @@ namespace KZLib.UI
 
 		private void _SyncAllKnotInfos_Triangle()
 		{
-			var cornerArray = m_shapeDrawing._GetCornerArray();
+			_SyncWorldKnotInfo(1,m_shapeDrawing._GetCornerOffset(2),KnotType.Fixed);
+			_SyncWorldKnotInfo(2,m_shapeDrawing._GetCornerOffset(3),KnotType.Fixed);
 
-			_SyncWorldKnotInfo(1,cornerArray[2],KnotType.Fixed);
-			_SyncWorldKnotInfo(2,cornerArray[3],KnotType.Fixed);
+			var topOffset = Vector2.Lerp(m_shapeDrawing._GetCornerOffset(0),m_shapeDrawing._GetCornerOffset(1),m_shapeDrawing.TriangleOffset);
 
-			var topPos = Vector3.Lerp(cornerArray[0],cornerArray[1],m_shapeDrawing.TriangleOffset);
-
-			_SyncWorldKnotInfo(3,topPos,KnotType.Major);
+			_SyncWorldKnotInfo(3,topOffset,KnotType.Major);
 		}
 
 		private void _RefreshKnotInfo_Triangle(int _,Vector3 position)

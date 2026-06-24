@@ -4,6 +4,7 @@ using UnityEditor;
 
 namespace KZLib.Attributes
 {
+	/// <summary><see cref="KZHexColorAttribute"/> drawer. Converts between ColorField and hex string.</summary>
 	public class KZHexColorAttributeDrawer : KZAttributeDrawer<KZHexColorAttribute,string>
 	{
 		protected override void _DoDrawPropertyLayout(GUIContent label)

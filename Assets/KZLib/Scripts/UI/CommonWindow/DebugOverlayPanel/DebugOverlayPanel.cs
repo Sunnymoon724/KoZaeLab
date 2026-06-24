@@ -16,38 +16,55 @@ namespace KZLib.UI.Widgets.Debug
 		bool IsActive { get; }
 		void Refresh(int frameRate,float frameTime);
 	}
-}
 
-public class DebugOverlayPanel : BasePanel
-{
-	[SerializeField,ListDrawerSettings(ShowFoldout = false)]
-	private List<IImmediateOverlay> m_immediateList = new();
-
-	[SerializeField,ListDrawerSettings(ShowFoldout = false)]
-	private List<IPeriodicOverlay> m_periodicList = new();
-
-	public void RefreshImmediate()
+	public abstract class ImmediateOverlayBehaviour : MonoBehaviour,IImmediateOverlay
 	{
-		for(var i=0;i<m_immediateList.Count;i++)
-		{
-			var overlay = m_immediateList[i];
+		public virtual bool IsActive => gameObject.activeInHierarchy;
 
-			if(overlay.IsActive)
-			{
-				overlay.Refresh();
-			}
-		}
+		public abstract void Refresh();
 	}
 
-	public void RefreshPeriodic(int frameRate,float frameTime)
+	public abstract class PeriodicOverlayBehaviour : MonoBehaviour,IPeriodicOverlay
 	{
-		for(var i=0;i<m_periodicList.Count;i++)
-		{
-			var overlay = m_periodicList[i];
+		public virtual bool IsActive => gameObject.activeInHierarchy;
 
-			if(overlay.IsActive)
+		public abstract void Refresh(int frameRate,float frameTime);
+	}
+}
+
+namespace KZLib.UI
+{
+	public class DebugOverlayPanel : BasePanel
+	{
+		[SerializeField,ListDrawerSettings(ShowFoldout = false)]
+		private List<ImmediateOverlayBehaviour> m_immediateList = new();
+
+		[SerializeField,ListDrawerSettings(ShowFoldout = false)]
+		private List<PeriodicOverlayBehaviour> m_periodicList = new();
+
+		public void RefreshImmediate()
+		{
+			for(var i=0;i<m_immediateList.Count;i++)
 			{
-				overlay.Refresh(frameRate,frameTime);
+				var overlay = m_immediateList[i];
+
+				if(overlay && overlay.IsActive)
+				{
+					overlay.Refresh();
+				}
+			}
+		}
+
+		public void RefreshPeriodic(int frameRate,float frameTime)
+		{
+			for(var i=0;i<m_periodicList.Count;i++)
+			{
+				var overlay = m_periodicList[i];
+
+				if(overlay && overlay.IsActive)
+				{
+					overlay.Refresh(frameRate,frameTime);
+				}
 			}
 		}
 	}

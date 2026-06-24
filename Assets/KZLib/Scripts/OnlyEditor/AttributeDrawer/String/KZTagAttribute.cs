@@ -6,6 +6,7 @@ using UnityEditorInternal;
 
 namespace KZLib.Attributes
 {
+	/// <summary><see cref="KZTagAttribute"/> drawer. Unity Tag list popup.</summary>
 	public class KZTagAttributeDrawer : KZAttributeDrawer<KZTagAttribute,string>
 	{
 		protected override void _DoDrawPropertyLayout(GUIContent label)

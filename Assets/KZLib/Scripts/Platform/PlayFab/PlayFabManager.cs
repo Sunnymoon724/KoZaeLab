@@ -10,6 +10,9 @@ using PlayFab.SharedModels;
 
 namespace KZLib
 {
+	/// <summary>
+	/// Low-level PlayFab client wrapper that sends requests and normalizes results into NetworkPacketInfo.
+	/// </summary>
 	public partial class PlayFabManager : Singleton<PlayFabManager>
 	{
 		private PlayFabManager() { }

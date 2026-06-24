@@ -50,6 +50,9 @@ public static class ImageExtension
 		image.color = color.Value;
 	}
 
+	/// <summary>
+	/// Animates the image color from <paramref name="prevColor"/> to <paramref name="nextColor"/> over the given duration.
+	/// </summary>
 	public static async UniTask FadeImageAsync(this Image image,float duration,Color prevColor,Color nextColor)
 	{
 		if(!_IsValid(image))

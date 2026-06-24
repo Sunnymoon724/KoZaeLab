@@ -8,17 +8,20 @@ public static class Texture2DExtension
 	/// <summary>
 	/// Fills all non-transparent pixels with the given color, leaving fully transparent pixels clear.
 	/// </summary>
-	public static void ToSolidColor(this Texture2D texture2D,Color color)
+	public static void FillSolidColor(this Texture2D texture2D,Color color)
 	{
 		if(!_IsValid(texture2D))
 		{
 			return;
 		}
 
-		texture2D.ToSolidColor((Color32) color);
+		texture2D.FillSolidColor((Color32) color);
 	}
 
-	public static void ToSolidColor(this Texture2D texture2D,Color32 color32)
+	/// <summary>
+	/// Fills all non-transparent pixels with the given color, leaving fully transparent pixels clear.
+	/// </summary>
+	public static void FillSolidColor(this Texture2D texture2D,Color32 color32)
 	{
 		if(!_IsValid(texture2D))
 		{
@@ -62,6 +65,9 @@ public static class Texture2DExtension
 		RenderTexture.ReleaseTemporary(renderTexture);
 	}
 
+	/// <summary>
+	/// Creates a duplicate texture with the same pixel data and format.
+	/// </summary>
 	public static Texture2D CopyTexture(this Texture2D texture2D)
 	{
 		if(!_IsValid(texture2D))
@@ -77,6 +83,9 @@ public static class Texture2DExtension
 		return texture;
 	}
 
+	/// <summary>
+	/// Creates a centered sprite covering the full texture area.
+	/// </summary>
 	public static Sprite CreateSprite(this Texture2D texture2D)
 	{
 		if(!_IsValid(texture2D))
@@ -250,14 +259,14 @@ public static class Texture2DExtension
 		texture2D.Apply();
 	}
 
-	private static float _RotateX(float _angle,float _x,float _y)
+	private static float _RotateX(float angle,float x,float y)
 	{
-		return _x*Mathf.Cos(_angle/180.0f*Mathf.PI)+_y*-Mathf.Sin(_angle/180.0f*Mathf.PI);
+		return x*Mathf.Cos(angle/180.0f*Mathf.PI)+y*-Mathf.Sin(angle/180.0f*Mathf.PI);
 	}
 
-	private static float _RotateY(float _angle,float _x,float _y)
+	private static float _RotateY(float angle,float x,float y)
 	{
-		return _x*Mathf.Sin(_angle/180.0f*Mathf.PI)+_y*Mathf.Cos(_angle/180.0f*Mathf.PI);
+		return x*Mathf.Sin(angle/180.0f*Mathf.PI)+y*Mathf.Cos(angle/180.0f*Mathf.PI);
 	}
 
 	private static bool _IsValid(Texture2D texture2D)

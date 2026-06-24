@@ -5,57 +5,85 @@ using System;
 using MessagePipe;
 using R3;
 
-public class ResolutionMonitor
+namespace KZLib
 {
-	private Vector2Int m_resolution;
-	private CancellationTokenSource m_tokenSource = null;
-
-	public ResolutionMonitor()
+	/// <summary>
+	/// Polls screen display metrics while detection is active and publishes
+	/// <see cref="CommonNoticeTag.ChangedDeviceResolution"/> when resolution or safe area changes.
+	/// Polling is used instead of platform callbacks for consistent cross-platform behavior.
+	/// </summary>
+	public class ResolutionMonitor
 	{
-		_SetScreen(false);
-	}
+		/// <summary>Interval between display checks while the app is in the foreground.</summary>
+		private const float c_pollIntervalSeconds = 0.1f;
 
-	public void StartResolutionDetection()
-	{
-		KZExternalKit.RecycleTokenSource(ref m_tokenSource);
+		private Vector2Int m_resolution = Vector2Int.zero;
+		private Rect m_safeArea = Rect.zero;
+		private CancellationTokenSource m_tokenSource = null;
+		private readonly Action<Vector2Int> m_onResolutionChanged = null;
 
-		_SetScreen(false);
-
-		_CheckResolutionDetectionAsync(m_tokenSource.Token).Forget();
-	}
-
-	public void StopResolutionDetection()
-	{
-		KZExternalKit.KillTokenSource(ref m_tokenSource);
-	}
-
-	private void _SetScreen(bool notify)
-	{
-		m_resolution = new Vector2Int(Screen.width,Screen.height);
-
-		if(notify)
+		public ResolutionMonitor(Action<Vector2Int> onResolutionChanged = null)
 		{
-			GlobalMessagePipe.GetPublisher<CommonNoticeTag,Unit>().Publish(CommonNoticeTag.ChangedDeviceResolution,Unit.Default);
+			m_onResolutionChanged = onResolutionChanged;
+
+			_SyncDisplayState(notify: false);
 		}
-	}
 
-	private async UniTaskVoid _CheckResolutionDetectionAsync(CancellationToken token)
-	{
-		while(!token.IsCancellationRequested)
+		/// <summary>Starts or restarts foreground display polling.</summary>
+		public void StartResolutionDetection()
 		{
-			await UniTask.WaitForEndOfFrame(token).SuppressCancellationThrow();
+			KZExternalKit.RecycleTokenSource(ref m_tokenSource);
 
-			if(token.IsCancellationRequested)
+			// Notify when display changed while detection was stopped (e.g. rotation in background).
+			_SyncDisplayState(notify: _HasDisplayChanged());
+
+			_CheckResolutionDetectionAsync(m_tokenSource.Token).Forget();
+		}
+
+		/// <summary>Stops foreground display polling.</summary>
+		public void StopResolutionDetection()
+		{
+			KZExternalKit.KillTokenSource(ref m_tokenSource);
+		}
+
+		private bool _HasDisplayChanged()
+		{
+			return m_resolution.x != Screen.width || m_resolution.y != Screen.height || m_safeArea != Screen.safeArea;
+		}
+
+		private void _SyncDisplayState(bool notify)
+		{
+			m_resolution = new Vector2Int(Screen.width,Screen.height);
+			m_safeArea = Screen.safeArea;
+
+			if(notify)
 			{
-				break;
-			}
+				m_onResolutionChanged?.Invoke(m_resolution);
 
-			if(m_resolution.x != Screen.width || m_resolution.y != Screen.height)
+				GlobalMessagePipe.GetPublisher<CommonNoticeTag,Unit>().Publish(CommonNoticeTag.ChangedDeviceResolution,Unit.Default);
+			}
+		}
+
+		private async UniTaskVoid _CheckResolutionDetectionAsync(CancellationToken token)
+		{
+			while(!token.IsCancellationRequested)
 			{
-				_SetScreen(true);
-			}
+				// Read after the frame ends so layout/orientation has settled.
+				await UniTask.WaitForEndOfFrame(token).SuppressCancellationThrow();
 
-			await UniTask.Delay(TimeSpan.FromSeconds(0.1f),DelayType.Realtime,cancellationToken: token).SuppressCancellationThrow();
+				if(token.IsCancellationRequested)
+				{
+					break;
+				}
+
+				if(_HasDisplayChanged())
+				{
+					_SyncDisplayState(notify: true);
+				}
+
+				// Realtime so detection still works when Time.timeScale is zero.
+				await UniTask.Delay(TimeSpan.FromSeconds(c_pollIntervalSeconds),DelayType.Realtime,cancellationToken: token).SuppressCancellationThrow();
+			}
 		}
 	}
 }

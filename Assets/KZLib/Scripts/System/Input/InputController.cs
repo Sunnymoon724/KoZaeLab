@@ -4,8 +4,13 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace KZLib
+namespace KZLib.Inputs
 {
+	/// <summary>
+	/// Base for Input System–driven controllers. Loads actions from <see cref="m_inputActionAsset"/>,
+	/// registers with <see cref="InputManager"/>, and supports per-controller blocking.
+	/// Derive and implement <see cref="SubscribeInputAction"/> / <see cref="UnsubscribeInputAction"/>.
+	/// </summary>
 	public abstract class InputController : MonoBehaviour
 	{
 		[SerializeField,HideInInspector]
@@ -17,10 +22,7 @@ namespace KZLib
 		[SerializeField]
 		private InputActionAsset m_inputActionAsset = null;
 
-		[SerializeField]
-		private int m_priority = 0;
-		public int Priority => m_priority;
-
+		/// <summary>Action name (or <c>MapName/ActionName</c> when names collide across maps) → action.</summary>
 		private readonly Dictionary<string,InputAction> m_inputActionDict = new();
 
 		protected abstract void SubscribeInputAction();
@@ -41,13 +43,24 @@ namespace KZLib
 
 			for(var i=0;i<actionMapArray.Count;i++)
 			{
-				var inputActionArray = actionMapArray[i].actions;
+				var actionMap = actionMapArray[i];
+				var inputActionArray = actionMap.actions;
 
 				for(var j=0;j<inputActionArray.Count;j++)
 				{
 					var inputAction = inputActionArray[j];
 
-					m_inputActionDict.Add(inputAction.name,inputAction);
+					if(m_inputActionDict.TryAdd(inputAction.name,inputAction))
+					{
+						continue;
+					}
+
+					var qualifiedKey = $"{actionMap.name}/{inputAction.name}";
+
+					if(!m_inputActionDict.TryAdd(qualifiedKey,inputAction))
+					{
+						LogChannel.Input.W($"Duplicate input action '{qualifiedKey}' in {gameObject.name}.");
+					}
 				}
 			}
 
@@ -56,7 +69,8 @@ namespace KZLib
 
 		private void OnEnable()
 		{
-			_SetEnable(true);
+			// Respect block state after disable/enable cycles (OnEnable alone would re-enable actions).
+			_SetEnable(!m_blocked);
 		}
 
 		private void OnDisable()
@@ -89,6 +103,7 @@ namespace KZLib
 			}
 		}
 
+		/// <summary>When blocked, disables all actions on this controller.</summary>
 		public void BlockInput(bool isBlocked)
 		{
 			m_blocked = isBlocked;
@@ -96,6 +111,7 @@ namespace KZLib
 			_SetEnable(!isBlocked);
 		}
 
+		/// <summary>Looks up by short action name; use <c>MapName/ActionName</c> when registered with a qualified key.</summary>
 		protected InputAction _TryGetInputAction(string inputActionName)
 		{
 			return m_inputActionDict.TryGetValue(inputActionName,out var inputAction) ? inputAction : null;

@@ -6,11 +6,17 @@ using UnityEngine;
 public static class Vector2Extension
 {
 	#region Set
+	/// <summary>
+	/// Returns a copy with the X component replaced.
+	/// </summary>
 	public static Vector2 SetX(this Vector2 vector,float x = 0.0f)
 	{
 		return new Vector2(x,vector.y);
 	}
 
+	/// <summary>
+	/// Returns a copy with the Y component replaced.
+	/// </summary>
 	public static Vector2 SetY(this Vector2 vector,float y = 0.0f)
 	{
 		return new Vector2(vector.x,y);
@@ -18,50 +24,77 @@ public static class Vector2Extension
 	#endregion Set
 
 	#region Offset
+	/// <summary>
+	/// Returns a copy offset by the same value on both axes.
+	/// </summary>
 	public static Vector2 Offset(this Vector2 vector,float value)
 	{
 		return new Vector2(vector.x+value,vector.y+value);
 	}
 
+	/// <summary>
+	/// Returns a copy offset along the X axis.
+	/// </summary>
 	public static Vector2 OffsetX(this Vector2 vector,float x)
 	{
 		return vector+new Vector2(x,0.0f);
 	}
 
+	/// <summary>
+	/// Returns a copy offset along the Y axis.
+	/// </summary>
 	public static Vector2 OffsetY(this Vector2 vector,float y)
 	{
 		return vector+new Vector2(0.0f,y);
 	}
     #endregion Offset
 
-	#region Invert
-	public static Vector2 Invert(this Vector2 vector)
+	#region Negate
+	/// <summary>
+	/// Negates all components.
+	/// </summary>
+	public static Vector2 Negate(this Vector2 vector)
 	{
 		return new Vector2(-vector.x,-vector.y);
 	}
 
-	public static Vector2 InvertX(this Vector2 vector)
+	/// <summary>
+	/// Negates the X component.
+	/// </summary>
+	public static Vector2 NegateX(this Vector2 vector)
 	{
 		return new Vector2(-vector.x,vector.y);
 	}
 
-	public static Vector2 InvertY(this Vector2 vector)
+	/// <summary>
+	/// Negates the Y component.
+	/// </summary>
+	public static Vector2 NegateY(this Vector2 vector)
 	{
 		return new Vector2(vector.x,-vector.y);
 	}
-	#endregion Invert
+	#endregion Negate
 
 	#region ToVector
+	/// <summary>
+	/// Promotes to <see cref="Vector3"/> with optional Z.
+	/// </summary>
 	public static Vector3 ToVector3(this Vector2 vector,float z = 0.0f)
 	{
 		return new(vector.x,vector.y,z);
 	}
 
-	public static Vector4 ToVector4(this Vector3 vector,float z = 0.0f,float w = 0.0f)
+	/// <summary>
+	/// Promotes to <see cref="Vector4"/> with optional Z and W.
+	/// </summary>
+	public static Vector4 ToVector4(this Vector2 vector,float z = 0.0f,float w = 0.0f)
 	{
 		return new(vector.x,vector.y,z,w);
 	}
 
+	/// <summary>
+	/// Formats the components as <c>(x, y)</c> with fixed decimal places.
+	/// </summary>
 	public static string ToVectorString(this Vector2 vector,int decimalPoint = 2)
 	{
 		var format = $"({"{0:f"}{decimalPoint}}}, {"{1:f"}{decimalPoint}}})";
@@ -71,16 +104,25 @@ public static class Vector2Extension
 	#endregion ToVector
 
 
-	public static Vector2 Transpose(this Vector2 vector)
+	/// <summary>
+	/// Swaps the X and Y components.
+	/// </summary>
+	public static Vector2 SwapXY(this Vector2 vector)
 	{
 		return new Vector2(vector.y,vector.x);
 	}
 
-	public static bool IsEquals(this Vector2 vector1,Vector2 vector2)
+	/// <summary>
+	/// Returns whether both components are approximately equal.
+	/// </summary>
+	public static bool AreEqual(this Vector2 vector1,Vector2 vector2)
 	{
 		return vector1.x.Approximately(vector2.x) && vector1.y.Approximately(vector2.y);
 	}
 	
+	/// <summary>
+	/// Returns whether both components are approximately zero.
+	/// </summary>
 	public static bool IsZero(this Vector2 vector) 
 	{
 		return vector.x.ApproximatelyZero() && vector.y.ApproximatelyZero();
@@ -94,61 +136,97 @@ public static class Vector2Extension
 		return new Vector2(vector.x.ApproximatelyZero() ? 0.0f : 1.0f/vector.x,vector.y.ApproximatelyZero() ? 0.0f : 1.0f/vector.y);
 	}
 
+	/// <summary>
+	/// Returns the absolute component-wise distance to another vector.
+	/// </summary>
 	public static Vector2 DistanceEach(this Vector2 vector1,Vector2 vector2)
 	{
 		return new Vector2(Mathf.Abs(vector1.x-vector2.x),Mathf.Abs(vector1.y-vector2.y));
 	}
 
+	/// <summary>
+	/// Rounds each component to the nearest integer.
+	/// </summary>
 	public static Vector2 Round(this Vector2 vector)
 	{
 		return new Vector2(Mathf.Round(vector.x),Mathf.Round(vector.y));
 	}
 
+	/// <summary>
+	/// Applies ceiling to each component.
+	/// </summary>
 	public static Vector2 Ceil(this Vector2 vector)
 	{
 		return new Vector2(Mathf.Ceil(vector.x),Mathf.Ceil(vector.y));
 	}
 
+	/// <summary>
+	/// Applies floor to each component.
+	/// </summary>
 	public static Vector2 Floor(this Vector2 vector)
 	{
 		return new Vector2(Mathf.Floor(vector.x),Mathf.Floor(vector.y));
 	}
 
+	/// <summary>
+	/// Returns the absolute value of each component.
+	/// </summary>
 	public static Vector2 Abs(this Vector2 vector)
 	{
 		return new Vector2(Mathf.Abs(vector.x),Mathf.Abs(vector.y));
 	}
 
-	public static Vector2 Clamp(this Vector2 vector,float _min,float _max)
+	/// <summary>
+	/// Clamps each component between the given bounds.
+	/// </summary>
+	public static Vector2 Clamp(this Vector2 vector,float min,float max)
 	{
-		return new Vector2(Mathf.Clamp(vector.x,_min,_max),Mathf.Clamp(vector.y,_min,_max));
+		return new Vector2(Mathf.Clamp(vector.x,min,max),Mathf.Clamp(vector.y,min,max));
 	}
 
+	/// <summary>
+	/// Clamps each component to the 0–1 range.
+	/// </summary>
 	public static Vector2 Clamp01(this Vector2 vector)
 	{
 		return new Vector2(Mathf.Clamp01(vector.x),Mathf.Clamp01(vector.y));
 	}
 
+	/// <summary>
+	/// Returns the largest component value.
+	/// </summary>
 	public static float MaxValue(this Vector2 vector)
 	{
 		return vector.x >= vector.y ? vector.x : vector.y;
 	}
 
+	/// <summary>
+	/// Returns the smallest component value.
+	/// </summary>
 	public static float MinValue(this Vector2 vector)
 	{
 		return vector.x <= vector.y ? vector.x : vector.y;
 	}
 
+	/// <summary>
+	/// Returns the component-wise product with another vector.
+	/// </summary>
 	public static Vector2 MultiplyEach(this Vector2 vector1,Vector2 vector2)
 	{
 		return new Vector2(vector1.x*vector2.x,vector1.y*vector2.y);
 	}
 
-	public static Vector2 MiddleVector(this Vector2 vector1,Vector2 vector2)
+	/// <summary>
+	/// Returns the linear interpolation between two vectors.
+	/// </summary>
+	public static Vector2 Lerp(this Vector2 vector1,Vector2 vector2,float time = 0.5f)
 	{
-		return new Vector2((vector1.x+vector2.x)/2.0f,(vector1.y+vector2.y)/2.0f);
+		return Vector2.Lerp(vector1,vector2,time);
 	}
 
+	/// <summary>
+	/// Returns this vector rotated by the given angle in degrees.
+	/// </summary>
 	public static Vector2 Rotate(this Vector2 vector,float angle)
 	{
 		return Quaternion.AngleAxis(angle,Vector3.forward)*vector;
@@ -201,26 +279,39 @@ public static class Vector2Extension
 	}
 
 	/// <summary>
-	/// Projects this point onto an infinite ray and returns the closest point and signed distance along the ray.
+	/// Projects this point onto an infinite ray and returns the closest point and ray parameter.
 	/// </summary>
-	public static (Vector2 point,float distance) CalculateClosestPointOnRay(this Vector2 point,Vector2 origin,Vector2 direction)
+	public static (Vector2 Point,float RayParameter) ProjectOntoRay(this Vector2 point,Vector2 origin,Vector2 direction)
 	{
-		var distance = Vector2.Dot(point-origin,direction);
+		var directionSquared = Vector2.Dot(direction,direction);
 
-		return (origin+direction*distance,distance);
+		if(directionSquared.ApproximatelyZero())
+		{
+			return (origin,0.0f);
+		}
+
+		var rayParameter = Vector2.Dot(point-origin,direction)/directionSquared;
+
+		return (origin+direction*rayParameter,rayParameter);
 	}
 
-	// public static (Vector2 point,float distance) CalculateClosestPointOnSegment(this Vector2 point,Vector2 _start,Vector2 _end)
-	// {
-	// 	var direction = _end-_start;
-	// 	var magnitude = direction.magnitude;
+	/// <summary>
+	/// Projects this point onto a line segment and returns the closest point and segment parameter in the 0–1 range.
+	/// </summary>
+	public static (Vector2 Point,float RayParameter) ProjectOntoSegment(this Vector2 point,Vector2 start,Vector2 end)
+	{
+		var direction = end-start;
+		var directionSquared = Vector2.Dot(direction,direction);
 
-	// 	direction.Normalize();
+		if(directionSquared.ApproximatelyZero())
+		{
+			return (start,0.0f);
+		}
 
-	// 	var distance = Mathf.Clamp(Vector2.Dot(point-_start,direction),0.0f,magnitude);
+		var rayParameter = Mathf.Clamp01(Vector2.Dot(point-start,direction)/directionSquared);
 
-	// 	return (_start+direction*distance,distance);
-	// }
+		return (start+direction*rayParameter,rayParameter);
+	}
 
 	/// <summary>
 	/// Converts screen input to world space based on the parent canvas render mode.
@@ -229,22 +320,29 @@ public static class Vector2Extension
 	{
 		var canvas = rectTrans.FindParentCanvas();
 
-		if(point == Vector2.zero || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+		if(!canvas || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
 		{
 			return point;
 		}
 
-		RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTrans,point,canvas.GetEventCamera(),out var movePos);
+		var eventCamera = canvas.GetEventCamera();
 
-		return canvas.transform.TransformPoint(movePos);
+		if(!eventCamera)
+		{
+			return point;
+		}
+
+		RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTrans,point,eventCamera,out var localPoint);
+
+		return rectTrans.TransformPoint(localPoint);
 	}
 
 	/// <summary>
 	/// Converts screen input to world space for the given canvas render mode.
 	/// </summary>
-	public static Vector2 TransformInputBasedOnCanvasType(this Vector2 input,Canvas canvas)
+	public static Vector3 TransformInputBasedOnCanvasType(this Vector2 input,Canvas canvas)
 	{
-		if(canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+		if(!canvas || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
 		{
 			return input;
 		}
@@ -256,9 +354,14 @@ public static class Vector2Extension
 			return input;
 		}
 
-		return eventCamera.ScreenToWorldPoint(input);
+		var planeDistance = eventCamera.WorldToScreenPoint(canvas.transform.position).z;
+
+		return eventCamera.ScreenToWorldPoint(new Vector3(input.x,input.y,planeDistance));
 	}
 
+	/// <summary>
+	/// Returns the displacement from source to destination.
+	/// </summary>
 	public static Vector2 To(this Vector2 source,Vector2 destination)
 	{
 		return destination-source;

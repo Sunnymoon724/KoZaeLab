@@ -5,6 +5,9 @@ namespace KZLib.Networks
 {
 	public partial class NetworkManager : Singleton<NetworkManager>
 	{
+		/// <summary>
+		/// Fetches the current player's PlayFab profile from the server.
+		/// </summary>
 		public async UniTask<bool> GetPlayerProfileAsync(string sessionTicket)
 		{
 #if KZLIB_PLAY_FAB

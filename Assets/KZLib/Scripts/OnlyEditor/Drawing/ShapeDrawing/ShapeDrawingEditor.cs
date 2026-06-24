@@ -71,7 +71,7 @@ namespace KZLib.UI
 
 			void _SetOutlineThickness(float outlineThickness)
 			{
-				var rect = m_shapeDrawing.rectTransform.rect;
+				var rect = m_shapeDrawing.GetPixelAdjustedRect();
 				var thickness = Mathf.Min(rect.width,rect.height);
 
 				m_shapeDrawing.OutlineThickness = Mathf.Clamp(outlineThickness,0.0f,thickness/2.0f);
@@ -145,9 +145,10 @@ namespace KZLib.UI
 
 		protected override void _DoUpdateKnotList()
 		{
-			CurrentTransform.GetPositionAndRotation(out var center,out var _);
+			var centerLocal = m_shapeDrawing.Center;
+			var worldCenter = m_shapeDrawing.rectTransform.TransformPoint(new Vector3(centerLocal.x,centerLocal.y,0.0f));
 
-			_SyncKnotInfo(0,center,KnotType.Fixed);
+			_SyncKnotInfo(0,worldCenter,KnotType.Fixed);
 
 			if(_TryGetStrategy(m_shapeDrawing.PrimitiveType,out var strategy))
 			{
@@ -157,20 +158,13 @@ namespace KZLib.UI
 
 		protected override void _ChangeKnotPosition(int index,Vector3 newPosition)
 		{
-			var localPos = CurrentTransform.InverseTransformPoint(newPosition);
+			var pivotLocal = (Vector2) CurrentTransform.InverseTransformPoint(newPosition);
+			var centerRelative = pivotLocal-m_shapeDrawing.Center;
 
 			if(_TryGetStrategy(m_shapeDrawing.PrimitiveType,out var strategy))
 			{
-				strategy.RefreshKnotInfo(index,localPos);
+				strategy.RefreshKnotInfo(index,new Vector3(centerRelative.x,centerRelative.y,0.0f));
 			}
-		}
-
-		protected override Vector3 _ConvertToMousePosition(Vector3 mousePosition)
-		{
-			var plane = new Plane(Vector3.forward,CurrentTransform.position);
-			var ray = HandleUtility.GUIPointToWorldRay(mousePosition);
-
-			return plane.Raycast(ray,out float enter) ? ray.GetPoint(enter) : CurrentTransform.position;
 		}
 
 		private Vector3 _GetVertexPosition(float degree)
@@ -184,13 +178,9 @@ namespace KZLib.UI
 			return new Vector3(cos*radius.x,sin*radius.y);
 		}
 
-		private void _SyncWorldKnotInfo(int index,Vector3 position,KnotType knotType)
+		private void _SyncWorldKnotInfo(int index,Vector2 centerOffset,KnotType knotType)
 		{
-			CurrentTransform.GetPositionAndRotation(out var center,out var rotation);
-
-			var worldPos = center+rotation*position;
-
-			_SyncKnotInfo(index,worldPos,knotType);
+			_SyncWorldKnotFromCenterOffset(m_shapeDrawing,index,centerOffset,knotType);
 		}
 	}
 }

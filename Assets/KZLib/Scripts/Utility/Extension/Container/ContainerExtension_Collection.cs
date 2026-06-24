@@ -10,7 +10,7 @@ public static partial class ContainerExtension
 	/// <summary>
 	/// Adds a value only when it is not already contained in the collection.
 	/// </summary>
-	public static void AddNotOverlap<TValue>(this ICollection<TValue> collection,TValue val)
+	public static void AddIfAbsent<TValue>(this ICollection<TValue> collection,TValue val)
 	{
 		if(!_IsValid(collection))
 		{
@@ -23,6 +23,9 @@ public static partial class ContainerExtension
 		}
 	}
 
+	/// <summary>
+	/// Adds the same value to the collection <paramref name="cnt"/> times.
+	/// </summary>
 	public static void AddCount<TValue>(this ICollection<TValue> collection,TValue val,int cnt)
 	{
 		if(!_IsValid(collection))
@@ -36,6 +39,9 @@ public static partial class ContainerExtension
 		}
 	}
 
+	/// <summary>
+	/// Returns whether <paramref name="idx"/> is within the collection bounds.
+	/// </summary>
 	public static bool ContainsIndex<TValue>(this ICollection<TValue> collection,int idx)
 	{
 		return _IsValid(collection) && 0 <= idx && idx < collection.Count;
@@ -70,11 +76,17 @@ public static partial class ContainerExtension
 		return collection._GetValue(index);
 	}
 
+	/// <summary>
+	/// Removes the value only when it is present in the collection.
+	/// </summary>
 	public static bool RemoveSafe<TValue>(this ICollection<TValue> collection,TValue val)
 	{
 		return _IsValid(collection) && collection.Contains(val) && collection.Remove(val);
 	}
 
+	/// <summary>
+	/// Removes each value in <paramref name="valueList"/> when it is present in the collection.
+	/// </summary>
 	public static void RemoveRange<TValue>(this ICollection<TValue> collection,IList<TValue> valueList)
 	{
 		if(!_IsValid(collection))
@@ -96,6 +108,9 @@ public static partial class ContainerExtension
 		return _IsValid(collection) && collection.TryGetValueByIndex(idx, out var value) ? value : default;
 	}
 
+	/// <summary>
+	/// Tries to get the element at <paramref name="index"/> when the index is in range.
+	/// </summary>
 	public static bool TryGetValueByIndex<TValue>(this ICollection<TValue> collection,int index,out TValue value)
 	{
 		value = default;

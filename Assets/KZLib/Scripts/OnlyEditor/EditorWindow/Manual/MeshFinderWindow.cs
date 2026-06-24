@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace KZLib.Windows
 {
+	/// <summary>
+	/// Scans project prefabs for a source mesh and batch-replaces matching <see cref="MeshFilter.sharedMesh"/> references.
+	/// </summary>
 	public class MeshFinderWindow : OdinEditorWindow
 	{
 		private Mesh m_selectionMesh = null;
@@ -29,39 +32,12 @@ namespace KZLib.Windows
 
 				if(m_selectionMesh == null)
 				{
+					m_prefabHashSet.Clear();
+
 					return;
 				}
 
-				m_prefabHashSet.Clear();
-
-				bool _Execute(string assetPath,int index,int totalCount)
-				{
-					var asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
-
-					if(!asset)
-					{
-						return true;
-					}
-
-					var meshFilterArray = asset.GetComponentsInChildren<MeshFilter>(true);
-
-					for(var i=0;i<meshFilterArray.Length;i++)
-					{
-						if(meshFilterArray[i].sharedMesh == m_selectionMesh)
-						{
-							m_prefabHashSet.Add(new Prefab(asset,assetPath,value,m_replaceMesh,IsValidReplace));
-						}
-					}
-
-					return true;
-				}
-
-				KZAssetKit.ExecuteMatchedAssetPath("t:prefab",null,_Execute);
-
-				if(m_prefabHashSet.IsNullOrEmpty())
-				{
-					KZEditorKit.DisplayInfo("There is no prefab with a mesh.");
-				}
+				_FindPrefabsUsingMesh();
 			}
 		}
 
@@ -83,26 +59,18 @@ namespace KZLib.Windows
 					return;
 				}
 
-				var prefabList = new List<Prefab>(m_prefabHashSet);
-
-				m_prefabHashSet.Clear();
-
-				var isValidReplace = SelectionMesh && SelectionMesh != ReplaceMesh;
-
-				for(var i=0;i<prefabList.Count;i++)
-				{
-					m_prefabHashSet.Add(new Prefab(prefabList[i],value,isValidReplace));
-				}
+				_RefreshReplaceState();
 			}
 		}
 
 		[HorizontalGroup("Find Mesh/2",Order = 2),SerializeField,ShowIf(nameof(HasPrefab)),ListDrawerSettings(ShowFoldout = false,DraggableItems = false,HideAddButton = true,HideRemoveButton = true)]
 		private HashSet<Prefab> m_prefabHashSet = new();
+
 		private bool HasPrefab => SelectionMesh && !m_prefabHashSet.IsNullOrEmpty();
 
 		private bool IsValidReplace => ReplaceMesh && SelectionMesh != ReplaceMesh && HasPrefab;
 
-		[VerticalGroup("Find Mesh/3",Order = 3),ShowIf(nameof(HasPrefab)),EnableIf(nameof(IsValidReplace))]
+		[VerticalGroup("Find Mesh/3",Order = 3),ShowIf(nameof(HasPrefab)),EnableIf(nameof(IsValidReplace)),Button("Replace All",ButtonSizes.Large)]
 		protected void OnMeshToolBar()
 		{
 			foreach(var prefab in m_prefabHashSet)
@@ -111,6 +79,65 @@ namespace KZLib.Windows
 			}
 		}
 
+		/// <summary>
+		/// Scans every prefab asset and collects ones that reference <see cref="SelectionMesh"/>.
+		/// </summary>
+		private void _FindPrefabsUsingMesh()
+		{
+			m_prefabHashSet.Clear();
+
+			bool _Execute(string assetPath,int index,int totalCount)
+			{
+				var asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+
+				if(!asset)
+				{
+					return true;
+				}
+
+				var meshFilterArray = asset.GetComponentsInChildren<MeshFilter>(true);
+
+				for(var i=0;i<meshFilterArray.Length;i++)
+				{
+					if(meshFilterArray[i].sharedMesh != m_selectionMesh)
+					{
+						continue;
+					}
+
+					m_prefabHashSet.Add(new Prefab(asset,assetPath,m_selectionMesh,m_replaceMesh,IsValidReplace));
+				}
+
+				return true;
+			}
+
+			KZAssetKit.ExecuteMatchedAssetPath("t:prefab",null,_Execute);
+
+			if(m_prefabHashSet.IsNullOrEmpty())
+			{
+				KZEditorKit.DisplayInfo("There is no prefab with a mesh.");
+			}
+		}
+
+		/// <summary>
+		/// Rebuilds prefab rows after the replacement mesh changes.
+		/// </summary>
+		private void _RefreshReplaceState()
+		{
+			var prefabList = new List<Prefab>(m_prefabHashSet);
+
+			m_prefabHashSet.Clear();
+
+			var isValidReplace = SelectionMesh && SelectionMesh != ReplaceMesh;
+
+			for(var i=0;i<prefabList.Count;i++)
+			{
+				m_prefabHashSet.Add(new Prefab(prefabList[i],m_replaceMesh,isValidReplace));
+			}
+		}
+
+		/// <summary>
+		/// One prefab asset row with a per-prefab replace action.
+		/// </summary>
 		private readonly struct Prefab
 		{
 			[HorizontalGroup("0",width: 0.95f),ShowInInspector,HideLabel,ReadOnly]
@@ -123,10 +150,15 @@ namespace KZLib.Windows
 			[HorizontalGroup("0",width: 0.05f),Button(SdfIconType.ArrowRepeat,""),EnableIf(nameof(m_isExistReplace))]
 			public void OnChangeMesh()
 			{
+				if(m_replaceMesh == null)
+				{
+					return;
+				}
+
 				var changed = false;
 
 				var meshFilterArray = m_prefab.GetComponentsInChildren<MeshFilter>(true);
-				
+
 				for(var i=0;i<meshFilterArray.Length;i++)
 				{
 					var meshFilter = meshFilterArray[i];
@@ -140,18 +172,18 @@ namespace KZLib.Windows
 					changed = true;
 				}
 
-				if(changed)
+				if(!changed)
 				{
-					PrefabUtility.SaveAsPrefabAsset(m_prefab,m_filePath,out var result);
+					return;
+				}
 
-					if(result)
-					{
-						LogChannel.Editor.I($"{m_prefab.name} is changed. and saved to {m_filePath}.");
-					}
-					else
-					{
-						LogChannel.Editor.W($"{m_prefab.name} try to change and save. but not saved to {m_filePath}.");
-					}
+				if(PrefabUtility.SaveAsPrefabAsset(m_prefab,m_filePath,out var result) && result)
+				{
+					LogChannel.Editor.I($"{m_prefab.name} is changed. and saved to {m_filePath}.");
+				}
+				else
+				{
+					LogChannel.Editor.W($"{m_prefab.name} try to change and save. but not saved to {m_filePath}.");
 				}
 			}
 

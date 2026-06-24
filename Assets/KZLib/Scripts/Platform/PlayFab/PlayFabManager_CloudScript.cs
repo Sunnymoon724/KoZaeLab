@@ -11,6 +11,9 @@ namespace KZLib
 {
 	public partial class PlayFabManager : Singleton<PlayFabManager>
 	{
+		/// <summary>
+		/// Executes a PlayFab Cloud Script function and converts the result into NetworkPacketInfo.
+		/// </summary>
 		public async UniTask<PlayFabPacketInfo> ExecuteCloudScriptAsync(string functionName,object parameter)
 		{
 			void _SendPacket(PlayFabRequestCommon commonRequest,Action<PlayFabResultCommon> onSendResult,Action<PlayFabError> onSendError)

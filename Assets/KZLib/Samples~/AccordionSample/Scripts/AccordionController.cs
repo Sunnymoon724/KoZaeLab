@@ -7,6 +7,8 @@ namespace KZLib.Samples.UI
 {
 	public class AccordionController : MonoBehaviour
 	{
+		private record SampleEntryInfo(string name,string description) : EntryInfo(name,description,null,null,null);
+
 		[VerticalGroup("0",Order = 0),SerializeField]
 		private Accordion m_accordionGroup = null;
 
@@ -72,11 +74,10 @@ namespace KZLib.Samples.UI
 
 			for(var i=0;i<count;i++)
 			{
-				m_entryInfoList.Add(new EntryInfo($"The Accordion {i}","Kindness is a language everyone understands, use it often.",null,null,null));
+				m_entryInfoList.Add(new SampleEntryInfo($"The Accordion {i}","Kindness is a language everyone understands, use it often."));
 			}
 
 			m_accordionGroup.SetEntryInfoList(m_entryInfoList,StartIndex);
 		}
 	}
 }
-

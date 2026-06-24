@@ -31,6 +31,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4961789443012135479}
+  - {fileID: 8847291056382749013}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7321504864794222978
@@ -46,8 +47,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: KZLib::KZLib.InputManager
   m_blocked: 0
-  m_useTouchEffect: 0
-  m_touchEffectName: 
 --- !u!1 &6382056084358326211
 GameObject:
   m_ObjectHideFlags: 0
@@ -104,6 +103,52 @@ MonoBehaviour:
   m_blocked: 0
   m_inputActionAsset: {fileID: -944628639613478452, guid: 2722a22030cff0746a54ee42138c64be,
     type: 3}
-  m_priority: 0
   m_useTouchEffect: 0
   m_touchEffectName: 
+--- !u!1 &8847291056382749012
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8847291056382749013}
+  - component: {fileID: 8847291056382749014}
+  m_Layer: 0
+  m_Name: MobileInputController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8847291056382749013
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8847291056382749012}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 701956305230637362}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8847291056382749014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8847291056382749012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341671e9938fc849904503a5c9f0404, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KZLib.Inputs::KZLib.Inputs.MobileInputController
+  m_blocked: 0
+  m_inputActionAsset: {fileID: -944628639613478452, guid: 61f774a7914753849a9d2301bbbe33ea,
+    type: 3}

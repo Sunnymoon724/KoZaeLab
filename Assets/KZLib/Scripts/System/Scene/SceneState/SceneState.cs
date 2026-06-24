@@ -1,8 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine.SceneManagement;
-
-namespace KZLib
+namespace KZLib.Scenes
 {
 	/// <summary>
 	/// Unity scene load/unload and scene content setup/teardown.
@@ -40,7 +39,7 @@ namespace KZLib
 					onUpdateProgress?.Invoke(c_progressHalf+progress*c_progressHalf);
 				}
 
-				await SetupAsync(_UpdateProgress);
+				await _SetupAsync(_UpdateProgress);
 
 				SceneManager.SetActiveScene(loadedScene);
 
@@ -61,7 +60,7 @@ namespace KZLib
 		{
 			try
 			{
-				await TeardownAsync(null);
+				await _TeardownAsync(null);
 			}
 			catch(Exception exception)
 			{
@@ -120,7 +119,7 @@ namespace KZLib
 				onUpdateProgress?.Invoke(progress*c_progressHalf);
 			}
 
-			await TeardownAsync(_UpdateProgress);
+			await _TeardownAsync(_UpdateProgress);
 
 			await _UnloadSceneAsync(SceneName,onUpdateProgress,c_progressHalf);
 
@@ -139,7 +138,29 @@ namespace KZLib
 			}
 		}
 
-		protected async virtual UniTask SetupAsync(Action<float> onUpdateProgress) { await UniTask.Yield(); }
-		protected async virtual UniTask TeardownAsync(Action<float> onUpdateProgress) { await UniTask.Yield(); }
+		protected async virtual UniTask _SetupAsync(Action<float> onUpdateProgress) { await UniTask.Yield(); }
+
+		protected async virtual UniTask _TeardownAsync(Action<float> onUpdateProgress) { await UniTask.Yield(); }
+	}
+
+	/// <summary>
+	/// Scene state that consumes <see cref="ISceneTransient"/> in <see cref="_SetupAsync"/> before <see cref="OnSetupAsync"/>.
+	/// </summary>
+	public abstract class SceneState<TTransient> : SceneState where TTransient : class,ISceneTransient
+	{
+		protected TTransient Transient { get; private set; }
+
+		protected sealed override async UniTask _SetupAsync(Action<float> onUpdateProgress)
+		{
+			onUpdateProgress?.Invoke(0.0f);
+
+			Transient = SceneTransientStore<TTransient>.ConsumeValid(SceneName);
+
+			await OnSetupAsync(onUpdateProgress);
+
+			onUpdateProgress?.Invoke(1.0f);
+		}
+
+		protected async virtual UniTask OnSetupAsync(Action<float> onUpdateProgress) { await UniTask.Yield(); }
 	}
 }

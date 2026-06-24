@@ -7,11 +7,16 @@ using UnityEngine;
 
 namespace KZLib.Utilities
 {
+	/// <summary>
+	/// Plays a ordered list of <see cref="Entry"/> blocks sequentially.
+	/// Each entry can delay, then play one or more child <see cref="Stanza"/> instances in parallel.
+	/// </summary>
 	public class StanzaGroup : Stanza
 	{
 		[SerializeField]
 		private List<Entry> m_stanzaList = new();
 
+		/// <summary>One timed block containing child stanzas to run together.</summary>
 		[Serializable]
 		private class Entry
 		{
@@ -21,6 +26,7 @@ namespace KZLib.Utilities
 			[SerializeField,ListDrawerSettings(ShowFoldout = false,DraggableItems = false)]
 			private List<Stanza> m_stanzaList = new();
 
+			/// <summary>Waits <see cref="m_delayTime"/>, then plays all child stanzas (parallel when count &gt; 1).</summary>
 			public async UniTask PlayAsync(Param param,CancellationToken token)
 			{
 				if(m_stanzaList.IsNullOrEmpty())
@@ -57,6 +63,7 @@ namespace KZLib.Utilities
 				}
 			}
 
+		/// <summary>Resets every child stanza in this entry.</summary>
 		public void ResetAll()
 		{
 			for(var i=0;i<m_stanzaList.Count;i++)

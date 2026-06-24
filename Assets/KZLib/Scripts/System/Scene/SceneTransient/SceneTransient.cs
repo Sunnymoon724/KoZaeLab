@@ -1,6 +1,6 @@
 using KZLib.Utilities;
 
-namespace KZLib.Data
+namespace KZLib.Scenes
 {
 	public interface ISceneTransient
 	{
@@ -15,7 +15,7 @@ namespace KZLib.Data
 
 			if(data == null)
 			{
-				LogChannel.Data.W("data is not exist.");
+				LogChannel.Data.W("Transient data does not exist.");
 
 				return null;
 			}
@@ -25,7 +25,7 @@ namespace KZLib.Data
 				return data;
 			}
 
-			LogChannel.Data.W($"data's target scene name({data.TargetSceneName}) is not match with current scene name({sceneName}).");
+			LogChannel.Data.W($"Transient target scene ({data.TargetSceneName}) does not match the current scene ({sceneName}).");
 
 			return null;
 		}

@@ -5,6 +5,9 @@ using UnityEngine;
 /// </summary>
 public static partial class TransformExtension
 {
+	/// <summary>
+	/// Resets local position, rotation, and scale; optionally reparents under <paramref name="parent"/>.
+	/// </summary>
 	public static void ResetTransform(this Transform transform,Transform parent = null)
 	{
 		if(!_IsValid(transform))
@@ -75,6 +78,9 @@ public static partial class TransformExtension
 		transform.rotation = Quaternion.Slerp(transform.rotation,rotation,Time.deltaTime*speed);
 	}
 
+	/// <summary>
+	/// Returns whether this transform's position lies inside <paramref name="collider"/>.
+	/// </summary>
 	public static bool IsInside(this Transform transform,Collider collider)
 	{
 		if(!_IsValid(transform))

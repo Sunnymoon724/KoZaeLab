@@ -6,6 +6,9 @@ using UnityEngine;
 /// </summary>
 public static class MonoBehaviourExtension
 {
+	/// <summary>
+	/// Enables <see cref="MonoBehaviour.runInEditMode"/> on the component.
+	/// </summary>
 	public static void StartRunInEditMode(this MonoBehaviour behaviour)
 	{
 		if(!_IsValid(behaviour))

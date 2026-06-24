@@ -9,17 +9,19 @@ using Object = UnityEngine.Object;
 
 namespace KZLib.Attributes
 {
+	/// <summary>
+	/// <see cref="KZResourcePathAttribute"/> drawer base.
+	/// File picker, parent-folder open, and resource preview window.
+	/// </summary>
 	public abstract class KZResourcePathAttributeDrawer<TResource> : KZPathAttributeDrawer<TResource> where TResource : KZResourcePathAttribute
 	{
 		protected abstract SdfIconType IconType { get; }
+		/// <summary>Filter string for <see cref="KZEditorKit.OpenFilePanel"/>.</summary>
 		protected abstract string ResourceKind { get; }
 
 		protected abstract void OnOpenResource();
 
-		protected override string FindNewPath()
-		{
-			return KZEditorKit.FindFilePathInPanel("Change new path.",ResourceKind);
-		}
+		protected override string FindNewPath() => KZEditorKit.OpenFilePanel("Change new path.",ResourceKind);
 
 		protected override Rect OnClickToOpen(Rect rect,bool isValid)
 		{
@@ -28,11 +30,9 @@ namespace KZLib.Attributes
 			return DrawButton(newRect,IconType,isValid,OnOpenResource);
 		}
 
-		protected override bool IsValidPath()
-		{
-			return KZFileKit.IsFileExist(AbsolutePath);
-		}
+		protected override bool IsValidPath() => KZFileKit.IsFileExist(AbsolutePath);
 
+		/// <summary>Loads a resource from an Assets path. Shows an error dialog on failure.</summary>
 		protected UResource GetResource<UResource>() where UResource : Object
 		{
 			var assetsPath = KZFileKit.GetAssetPath(ValueEntry.SmartValue);
@@ -56,6 +56,7 @@ namespace KZLib.Attributes
 			return resource;
 		}
 
+		/// <summary>Base Odin EditorWindow for resource preview.</summary>
 		protected class ResourceViewer<UObject> : OdinEditorWindow where UObject : Object
 		{
 			private bool m_changed = false;
