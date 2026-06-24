@@ -136,20 +136,17 @@ namespace KZLib.Data
 				return text;
 			}
 
-			text = _ReadFileInAddressable(fileName);
-
-			if(!text.IsEmpty())
-			{
-				return text;
-			}
-
 #if UNITY_EDITOR
 			var routePath = _IsTestModeCfg(fileName) ? $"workRes:config:{fileName}" : $"defaultRes:config:{fileName}";
+
+			text = KZFileKit.ReadTextFromFile(RouteManager.In.Fetch(routePath).AbsolutePath);
 #else
 			var routePath = $"defaultRes:config:{fileName}";
-#endif
-			text = KZFileKit.ReadTextFromFile(RouteManager.In.Fetch(routePath).AbsolutePath);
 
+			var textAsset = ResourceManager.In.GetTextAsset(RouteManager.In.Fetch(routePath).AbsolutePath);
+
+			text = textAsset != null ? textAsset.text : string.Empty;
+#endif
 			if(!text.IsEmpty())
 			{
 				return text;
@@ -158,18 +155,6 @@ namespace KZLib.Data
 			LogChannel.Data.W($"{name} yaml file does not exist. Generate config first.");
 
 			return null;
-		}
-
-		private string _ReadFileInAddressable(string fileName)
-		{
-			if(_IsTestModeCfg(fileName))
-			{
-				return string.Empty;
-			}
-
-			var textAsset = AddressablesManager.In.GetObject<TextAsset>(fileName);
-
-			return textAsset != null ? textAsset.text : string.Empty;
 		}
 
 		/// <summary>Returns true when the path/name matches a built-in config (Game, Webhook, TestMode, or Custom variants).</summary>
