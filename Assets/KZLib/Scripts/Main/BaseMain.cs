@@ -192,7 +192,7 @@ namespace KZLib
 		{
 			try
 			{
-				var gameCfg = ConfigManager.In.FetchConfig<GameConfig>();
+				var gameCfg = ConfigManager.In.Fetch<GameConfig>();
 
 #if UNITY_EDITOR
 				if(gameCfg.UseHeadUpDisplay)
@@ -312,7 +312,7 @@ namespace KZLib
 		{
 			await _InitializeManager(token);
 
-			var testModeCfg = ConfigManager.In.FetchConfig<TestModeConfig>();
+			var testModeCfg = ConfigManager.In.Fetch<TestModeConfig>();
 
 			ApplyTestModeSceneTransient(StartSceneName,testModeCfg);
 		}

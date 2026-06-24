@@ -35,7 +35,7 @@ namespace KZLib.Data
 			// Route paths are resolved before the first config load.
 			_ = RouteManager.In;
 
-			_FetchConfig(typeof(GameConfig));
+			_Fetch(typeof(GameConfig));
 		}
 
 		protected override void _Release(bool disposing)
@@ -49,11 +49,11 @@ namespace KZLib.Data
 		}
 
 		/// <summary>Returns a cached config, loading and deserializing YAML on first access. Throws when load fails.</summary>
-		public TConfig FetchConfig<TConfig>() where TConfig : class,IConfig
+		public TConfig Fetch<TConfig>() where TConfig : class,IConfig
 		{
 			_ValidateConfigType(typeof(TConfig));
 
-			var config = _FetchConfig(typeof(TConfig));
+			var config = _Fetch(typeof(TConfig));
 
 			if(config is TConfig result)
 			{
@@ -64,7 +64,7 @@ namespace KZLib.Data
 		}
 
 		/// <summary>Returns a cached config, or false when load or deserialization fails.</summary>
-		public bool TryFetchConfig<TConfig>(out TConfig config) where TConfig : class,IConfig
+		public bool TryFetch<TConfig>(out TConfig config) where TConfig : class,IConfig
 		{
 			config = null;
 
@@ -77,7 +77,7 @@ namespace KZLib.Data
 				return false;
 			}
 
-			var loaded = _FetchConfig(typeof(TConfig));
+			var loaded = _Fetch(typeof(TConfig));
 
 			if(loaded is TConfig result)
 			{
@@ -89,7 +89,7 @@ namespace KZLib.Data
 			return false;
 		}
 
-		private IConfig _FetchConfig(Type type)
+		private IConfig _Fetch(Type type)
 		{
 			return m_registry.Fetch(type,_TryLoadConfig);
 		}
@@ -97,7 +97,7 @@ namespace KZLib.Data
 		private bool _TryLoadConfig(Type type,out IConfig config)
 		{
 			var name = type.Name;
-			var text = _LoadConfigFile(name);
+			var text = _LoadFile(name);
 
 			if(!text.IsEmpty())
 			{
@@ -123,7 +123,7 @@ namespace KZLib.Data
 			return false;
 		}
 
-		private string _LoadConfigFile(string name)
+		private string _LoadFile(string name)
 		{
 			var fileName = _BuildYamlFileName(name);
 			var text = string.Empty;
@@ -136,7 +136,7 @@ namespace KZLib.Data
 				return text;
 			}
 
-			text = _ReadConfigFileInAddressable(fileName);
+			text = _ReadFileInAddressable(fileName);
 
 			if(!text.IsEmpty())
 			{
@@ -160,7 +160,7 @@ namespace KZLib.Data
 			return null;
 		}
 
-		private string _ReadConfigFileInAddressable(string fileName)
+		private string _ReadFileInAddressable(string fileName)
 		{
 			if(_IsTestModeCfg(fileName))
 			{
@@ -173,7 +173,7 @@ namespace KZLib.Data
 		}
 
 		/// <summary>Returns true when the path/name matches a built-in config (Game, Webhook, TestMode, or Custom variants).</summary>
-		public static bool IsDefaultConfig(string filePath)
+		public static bool IsDefault(string filePath)
 		{
 			var fileName = Path.GetFileNameWithoutExtension(filePath);
 

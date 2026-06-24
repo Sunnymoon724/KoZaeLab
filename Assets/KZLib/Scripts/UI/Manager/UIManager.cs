@@ -48,7 +48,7 @@ namespace KZLib
 				m_repositoryList.Add(m_repository3D);
 			}
 
-			m_prefabPath = ConfigManager.In.FetchConfig<GameConfig>().UIPrefabPath;
+			m_prefabPath = ConfigManager.In.Fetch<GameConfig>().UIPrefabPath;
 		}
 
 		protected override void _Release()

@@ -474,7 +474,7 @@ namespace KZLib.Data
 		/// <summary>Resolves proto TextAssets from <see cref="GameConfig.ProtoFolderPath"/>.</summary>
 		private bool _TryGetTextAsset(out TextAsset[] textAssetArray)
 		{
-			var gameCfg = ConfigManager.In.FetchConfig<GameConfig>();
+			var gameCfg = ConfigManager.In.Fetch<GameConfig>();
 
 			textAssetArray = ResourceManager.In.GetTextAssetArray(gameCfg.ProtoFolderPath);
 

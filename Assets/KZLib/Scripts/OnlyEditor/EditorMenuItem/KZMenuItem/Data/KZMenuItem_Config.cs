@@ -33,7 +33,7 @@ namespace KZLib.EditorInternal.Menus
 				{
 					var fileName = KZFileKit.GetFileName(configFilePath);
 
-					if(ConfigManager.IsDefaultConfig(fileName))
+					if(ConfigManager.IsDefault(fileName))
 					{
 						LogChannel.Editor.W($"{fileName} is default config. -> generate skipped");
 
@@ -203,7 +203,7 @@ namespace KZLib.EditorInternal.Menus
 				}
 			}
 
-			if(!ConfigManager.In.TryFetchConfig<TConfig>(out var config))
+			if(!ConfigManager.In.TryFetch<TConfig>(out var config))
 			{
 				LogChannel.Editor.W($"{typeof(TConfig).Name} is not loaded. Using new instance.");
 

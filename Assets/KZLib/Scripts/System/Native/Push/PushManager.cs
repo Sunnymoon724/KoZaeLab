@@ -169,7 +169,7 @@ namespace KZLib.Natives
 
 		private bool _IsNightTime(DateTime localTargetTime)
 		{
-			var gameCfg = ConfigManager.In.FetchConfig<GameConfig>();
+			var gameCfg = ConfigManager.In.Fetch<GameConfig>();
 
 			return KZTimeKit.IsTimeInRange(localTargetTime,gameCfg.LocalPushBlockStartHour,gameCfg.LocalPushBlockEndHour);
 		}

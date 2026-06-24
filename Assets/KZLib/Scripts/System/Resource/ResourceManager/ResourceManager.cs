@@ -52,7 +52,7 @@ namespace KZLib
 
 			m_isLoopRunning = false;
 
-			var gameCfg = ConfigManager.In.FetchConfig<GameConfig>();
+			var gameCfg = ConfigManager.In.Fetch<GameConfig>();
 
 			m_useServerResource = !gameCfg.IsLocalResource;
 		}

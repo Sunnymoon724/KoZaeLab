@@ -15,7 +15,7 @@ namespace KZLib.Webhooks
 		private readonly Subject<string> m_networkErrorSubject = new();
 		public Observable<string> OnShownNetworkError => m_networkErrorSubject;
 
-		private WebhookConfig WebhookCfg => ConfigManager.In.FetchConfig<WebhookConfig>();
+		private WebhookConfig WebhookCfg => ConfigManager.In.Fetch<WebhookConfig>();
 
 		protected override void _Release(bool disposing)
 		{
