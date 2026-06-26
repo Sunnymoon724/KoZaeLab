@@ -686,7 +686,7 @@ namespace KZLib.EditorInternal
 			var darkText = backgroundColor.grayscale <= c_lightBackgroundGrayscaleThreshold;
 			var designRect = _GetPrefixDesignRect(rect,useCustomIcon);
 
-			EditorGUI.DrawRect(designRect,backgroundColor);
+			EditorGUI.DrawRect(rect,backgroundColor);
 			EditorGUI.LabelField(designRect,prefixDrawInfo.DisplayName,_GetPrefixStyle(designInfo.Style,designInfo.Alignment,darkText));
 		}
 
