@@ -307,7 +307,7 @@ namespace KZLib.Data
 		}
 
 		/// <summary>
-		/// Synchronous load for editor tooling (<c>ProtoWindow</c>, <c>PaletteChanger</c>).
+		/// Synchronous load for editor tooling (<c>ProtoWindow</c>, <c>PaletteRenderer</c>).
 		/// No-op when already loaded — call <see cref="Reload"/> after proto assets change in the editor.
 		/// </summary>
 		public void LoadInEditor()

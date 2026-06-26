@@ -6,6 +6,11 @@ using UnityEngine;
 /// </summary>
 public class GraphImage : ShaderImage
 {
+	/// <summary>Must match GraphTexture.shader GRAPH_ARRAY_MAX.</summary>
+	public const int MaxGraphLength = 512;
+	/// <summary>Shader divides by (_GraphLength - 1); fewer than two samples is invalid.</summary>
+	public const int MinGraphLength = 2;
+
 	[SerializeField]
 	protected int m_graphLength = 0;
 
@@ -14,7 +19,10 @@ public class GraphImage : ShaderImage
 
 	protected float[] m_graphArray = null;
 
-	protected bool HasGraphData => m_graphLength > 0;
+	/// <summary>Clamped length passed to the shader and used for the CPU buffer.</summary>
+	protected int EffectiveGraphLength => Mathf.Clamp(m_graphLength,MinGraphLength,MaxGraphLength);
+
+	protected bool HasGraphData => m_graphLength >= MinGraphLength;
 
 	protected override void _Initialize()
 	{
@@ -83,7 +91,9 @@ public class GraphImage : ShaderImage
 			return false;
 		}
 
-		if(m_graphArray != null && m_graphArray.Length == m_graphLength && m_image?.material)
+		var graphLength = EffectiveGraphLength;
+
+		if(m_graphArray != null && m_graphArray.Length == graphLength && m_image?.material)
 		{
 			return true;
 		}
@@ -93,9 +103,9 @@ public class GraphImage : ShaderImage
 			return false;
 		}
 
-		m_graphArray = new float[m_graphLength];
+		m_graphArray = new float[graphLength];
 
-		m_image.material.SetFloat("_GraphLength",m_graphLength);
+		m_image.material.SetFloat("_GraphLength",graphLength);
 
 		return true;
 	}

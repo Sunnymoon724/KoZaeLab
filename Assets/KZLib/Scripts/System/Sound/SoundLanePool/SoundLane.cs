@@ -74,7 +74,7 @@ namespace KZLib.Sounds
 
 			m_target = soundLaneParam.Target;
 
-			_SetParent(m_target ?? m_storage);
+			_SetParent(m_target != null ? m_target : m_storage);
 
 			if(m_target)
 			{

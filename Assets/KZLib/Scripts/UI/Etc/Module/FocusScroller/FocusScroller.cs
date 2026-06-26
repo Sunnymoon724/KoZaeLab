@@ -82,13 +82,13 @@ namespace KZLib.UI
 		{
 			m_slotPool = new GameObjectPawnPool<FocusSlot>(m_slot,m_viewport,m_poolCapacity,false);
 
-			var slotRectTransform = m_slot.GetComponent<RectTransform>();
+			var slotRootRect = m_slot.GetComponent<RectTransform>();
 
-			slotRectTransform.gameObject.EnsureActive(false);
-			m_viewport.SetChild(slotRectTransform.transform,false);
+			slotRootRect.gameObject.EnsureActive(false);
+			m_viewport.SetChild(slotRootRect.transform,false);
 
 			m_viewport.pivot = new Vector2(0.0f,1.0f);
-			slotRectTransform.pivot = new Vector2(0.5f,0.5f);
+			slotRootRect.pivot = new Vector2(0.5f,0.5f);
 
 			m_entryInfoList.Clear();
 			m_slotList.Clear();

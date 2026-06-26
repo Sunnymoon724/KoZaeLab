@@ -26,14 +26,14 @@ public static partial class KZEditorKit
 	/// </summary>
 	public static string ResolveTemplateFilePath(string fileName)
 	{
-		var packagePath = Path.Combine("Packages","com.bsheepstudio.kzlib","WorkResources","Templates",$"{fileName}");
+		var packagePath = Path.Combine("Packages","com.bsheepstudio.kzlib","WorkResources","Template",$"{fileName}");
 
 		if(KZFileKit.IsFileExist(Path.Combine(Global.ProjectPath,packagePath)))
 		{
 			return packagePath;
 		}
 
-		var assetPath = Path.Combine("Assets","KZLib","WorkResources","Templates",$"{fileName}");
+		var assetPath = Path.Combine("Assets","KZLib","WorkResources","Template",$"{fileName}");
 
 		if(KZFileKit.IsFileExist(Path.Combine(Global.ProjectPath,assetPath)))
 		{

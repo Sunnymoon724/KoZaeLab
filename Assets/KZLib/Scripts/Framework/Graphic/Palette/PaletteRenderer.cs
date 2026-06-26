@@ -3,26 +3,16 @@ using KZLib.Data;
 using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
-using System;
 
 namespace KZLib.Utilities
 {
 	/// <summary>
-	/// Applies a palette (color array) to child <see cref="Renderer"/> instances via <see cref="MaterialPropertyBlock"/>.
-	/// Writes the shader property <c>_PixelColorArray</c> without instantiating per-renderer materials.
+	/// Collects child <see cref="Renderer"/> instances and applies a palette via <see cref="KZPaletteKit"/>.
 	/// </summary>
-	public class PaletteChanger : MonoBehaviour
+	public class PaletteRenderer : MonoBehaviour
 	{
-		/// <summary>Shader property name for the palette color array.</summary>
-		private const string c_pixelColorArray = "_PixelColorArray";
-
 		[SerializeField,ReadOnly]
 		private List<Renderer> m_rendererList = new();
-
-		private MaterialPropertyBlock m_propertyBlock = null;
-
-		/// <summary>Shared property block reused across all target renderers.</summary>
-		private MaterialPropertyBlock PropertyBlock => m_propertyBlock ??= new MaterialPropertyBlock();
 
 		/// <summary>Resolves colors from <paramref name="colorPrt"/> and applies them.</summary>
 		public void SetPalette(IColorProto colorPrt)
@@ -38,38 +28,16 @@ namespace KZLib.Utilities
 
 		/// <summary>
 		/// Sets <c>_PixelColorArray</c> on every entry in <see cref="m_rendererList"/>.
-		/// Throws when renderers or colors are missing.
+		/// Throws when renderers, colors, material count, or shader are invalid.
 		/// </summary>
 		public void SetPalette(Vector4[] colorArray)
 		{
-			if(m_rendererList.Count < 1)
-			{
-				throw new InvalidOperationException($"Renderer list is empty in {gameObject.name}. Fill Renderers must be called.");
-			}
-
-			if(colorArray.IsNullOrEmpty())
-			{
-				throw new InvalidOperationException($"Color array is null or empty in {gameObject.name}. Color data must be assigned.");
-			}
-
-			PropertyBlock.SetVectorArray(c_pixelColorArray,colorArray);
-
-			for(var i=0;i<m_rendererList.Count;i++)
-			{
-				var renderer = m_rendererList[i];
-
-				if(!renderer)
-				{
-					throw new NullReferenceException($"Renderer does not exist in {gameObject.name}. GameObject must be assigned.");
-				}
-
-				renderer.SetPropertyBlock(PropertyBlock);
-			}
+			KZPaletteKit.SetPalette(m_rendererList,colorArray);
 		}
 
 		/// <summary>Collects all child <see cref="Renderer"/> components (including inactive) into <see cref="m_rendererList"/>.</summary>
 		[Button("Fill Renderers",ButtonSizes.Large)]
-		private void OnFillRendererList()
+		private void _OnFillRendererList()
 		{
 			m_rendererList.Clear();
 
@@ -81,7 +49,7 @@ namespace KZLib.Utilities
 		{
 			var rendererList = new List<Renderer>(m_rendererList);
 
-			OnFillRendererList();
+			_OnFillRendererList();
 
 			return rendererList.AreEqual(m_rendererList);
 		}

@@ -1,5 +1,8 @@
 ﻿Shader "KZLib/GraphTexture"
 {
+	// UI graph fill shader. UV.x maps to sample index, UV.y is normalized height (0 = bottom).
+	// GraphImage pushes heights into _GraphArray; fragments below the curve stay visible.
+
 	Properties
 	{
 		[HideInInspector] _MainTex("Sprite Texture", 2D) = "white" {}
@@ -14,14 +17,13 @@
 				"IgnoreProjector"	=	"True" 
 				"RenderType"		=	"Transparent" 
 				"PreviewType"		=	"Plane"
-				"CanUseSpriteAtlas"	=	"True"
 			}
 
 			Cull Off
 			Lighting Off
 			ZWrite Off
-			ZTest Off
-			Blend One OneMinusSrcAlpha
+			ZTest [unity_GUIZTestMode]
+			Blend One OneMinusSrcAlpha // Premultiplied alpha; frag multiplies rgb by alpha
 
 			Pass
 			{
@@ -30,9 +32,11 @@
 
 				#pragma vertex vert
 				#pragma fragment frag
-				#pragma multi_compile _ PIXELSNAP_ON
 				
 				#include "UnityCG.cginc"
+
+				// Must match GraphImage.MaxGraphLength
+				#define GRAPH_ARRAY_MAX 512
 
 				struct appdata_t
 				{
@@ -67,9 +71,11 @@
 					return tex2D(_MainTex,uv);
 				}
 
-				uniform float _GraphArray[512];
+				// Heights per column, uploaded by GraphImage.SetFloatArray
+				uniform float _GraphArray[GRAPH_ARRAY_MAX];
 				uniform float _GraphLength;
 
+				// Gradient band depth (in sample steps), strength, and horizontal edge fade width
 				static const float GradientThickness	= 4.0;
 				static const float GradientIntensity 	= 0.3;
 				static const float FadeRange			= 0.03;
@@ -81,8 +87,18 @@
 					float x = input.texcoord.x;
 					float y = input.texcoord.y;
 
-					float value = _GraphArray[floor(x*_GraphLength)];
+					// increment uses (_GraphLength - 1); need at least two samples
+					if(_GraphLength < 2.0)
+					{
+						return fixed4(0.0,0.0,0.0,0.0);
+					}
 
+					// Clamp index so x == 1 does not read past the last element
+					int lastIndex = (int)_GraphLength-1;
+					int index = min((int)floor(x*_GraphLength),lastIndex);
+					float value = _GraphArray[index];
+
+					// Negative values are sentinels (e.g. AudioGraphImage gap markers)
 					if(value < 0.0)
 					{
 						return fixed4(0.0,0.0,0.0,0.0);
@@ -90,16 +106,19 @@
 
 					float increment = 1.0/(_GraphLength-1.0);
 
+					// Darken the fill slightly below the curve (nearest-neighbor columns)
 					if(value > 0.0 && value-y > increment*GradientThickness)
 					{
 						color.a *= y*GradientIntensity/value;
 					}
 
+					// Hide pixels above the curve; keep the area under the graph
 					if(y > value)
 					{
 						color.a = 0.0;
 					}
 
+					// Soft fade at left/right edges
 					if(x < FadeRange)
 					{
 						color.a *= 1.0-(FadeRange-x)/FadeRange;
@@ -111,7 +130,7 @@
 
 					fixed4 result = SampleTexture(input.texcoord)*color;
 
-					result.rgb *= result.a;
+					result.rgb *= result.a; // Premultiply for Blend One OneMinusSrcAlpha
 
 					return result;
 				}
