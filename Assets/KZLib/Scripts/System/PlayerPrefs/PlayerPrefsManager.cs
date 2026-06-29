@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using KZLib.Utilities;
 using Newtonsoft.Json;
 using System;
@@ -181,7 +181,7 @@ namespace KZLib
 				var serialize = JsonConvert.SerializeObject(deserialize);
 
 				// Migrate stored JSON to the current serializer format when parse succeeds but text differs.
-				if(!serialize.IsEqual(json))
+				if(!string.Equals(serialize,json))
 				{
 					_SetValue(key,serialize);
 				}
@@ -196,7 +196,7 @@ namespace KZLib
 			}
 		}
 
-		private static bool _IsJsonNullLiteral(string json) => json.Trim().IsEqual("null");
+		private static bool _IsJsonNullLiteral(string json) => string.Equals(json.Trim(),"null");
 
 		/// <summary>
 		/// Reads a cached string or loads from <see cref="PlayerPrefs"/> on first access.

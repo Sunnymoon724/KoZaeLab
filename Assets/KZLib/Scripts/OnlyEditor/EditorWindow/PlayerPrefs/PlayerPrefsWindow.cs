@@ -35,7 +35,7 @@ namespace KZLib.Windows
 				get => m_value;
 				private set
 				{
-					if(m_value.IsEqual(value))
+					if(string.Equals(m_value,value))
 					{
 						return;
 					}

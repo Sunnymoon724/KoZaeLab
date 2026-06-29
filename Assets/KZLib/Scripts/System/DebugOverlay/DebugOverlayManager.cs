@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace KZLib
 {
-	[SingletonConfig(AutoCreate = true,DontDestroy = true)]
+	[SingletonMBConfig(AutoCreate = true,DontDestroy = true)]
 	public class DebugOverlayManager : SingletonMB<DebugOverlayManager>
 	{
 		private const float c_updatePeriod = 0.25f;

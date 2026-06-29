@@ -7,6 +7,8 @@ namespace KZLib
 {
 	public class TeamRelationManager : Singleton<TeamRelationManager>
 	{
+		private TeamRelationManager() { }
+
 		private static readonly int s_count = Enum.GetValues(typeof(TeamType)).Length-1;
 
 		private readonly TeamRelationType[,] m_relationArray = new TeamRelationType[s_count,s_count];

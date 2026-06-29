@@ -30,7 +30,7 @@ Unity 6 기반 연구·개발 프로젝트입니다. 다양한 게임 개발 코
 |------|------|
 | **Unity 버전** | 6000.3.7f1 (Unity 6.3) |
 | **렌더 파이프라인** | URP (Universal Render Pipeline) |
-| **핵심 패키지** | `com.bsheepstudio.kzlib` v1.1.4 |
+| **핵심 패키지** | `com.bsheepstudio.kzlib` v1.1.17 |
 | **라이선스** | MIT |
 
 이 저장소는 KZLib 라이브러리를 **개발·검증하는 실험실(Lab)** 역할을 합니다. 라이브러리 자체는 UPM Git URL로 다른 프로젝트에도 추가할 수 있습니다.
@@ -43,8 +43,8 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 
 ```
 Assets/KZLib/Scripts/
-├── Data/          Config, Proto, Lingo, Tune(Graphic/Language/Native/Sound), Facet, Cluster
-├── Framework/     Actor, Stanza, Pool, RosterMapper, Presentation, Graphic
+├── Data/          Config, Proto, Lingo, Facet, Cluster
+├── Framework/     Actor, Stanza, Pool, RosterMapper, Presentation, ReactivePrefs
 ├── Global/        상수, 공통 타입, Enum
 ├── Inspector/     KZ* Odin Inspector Attribute 정의
 ├── Main/          BaseMain, ResolutionMonitor
@@ -52,7 +52,7 @@ Assets/KZLib/Scripts/
 ├── Platform/      Network, PlayFab, Webhook, InAppPurchase
 ├── Runtime/       Wrapper UGUI 컴포넌트, TimeFlow, Enchanted
 ├── Shared/        C# init-only 등 공용 shim
-├── System/        Input, Sound, Scene, Resource, Context, CutScene, ...
+├── System/        Input, Sound, Graphic, Scene, Resource, Context, CutScene, ...
 ├── UI/            UIManager, Window, CommonWindow, UI 모듈(Carousel/Accordion/FocusScroller)
 └── Utility/       Extension, Kit, Log
 ```
@@ -116,7 +116,7 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 
 - **이름:** `com.bsheepstudio.kzlib`
 - **표시 이름:** KoZaeLibrary
-- **버전:** 1.1.4
+- **버전:** 1.1.17
 - **작성자:** Ko KoZae
 
 ### Scripts 주요 모듈
@@ -125,10 +125,10 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 |------|------|
 | **Main** | `BaseMain` — 앱 진입점, Test/Normal 플레이 모드, 언어·해상도 |
 | **Framework/Actor** | `Actor`, `Unit`, `Structure` — 상태/스탯/버프/팀 관계 프레임워크 |
-| **Framework** | Stanza(애니메이션), Pool(`GameObjectPawnPool`), `RosterMapper`, Presentation, Graphic |
+| **Framework** | Stanza(애니메이션), Pool(`GameObjectPawnPool`), `RosterMapper`, Presentation, `ReactivePrefs` |
 | **UI** | `UIManager`, Window(2D/3D), CommonWindow(Loading/Download/Video/Transition 등), Carousel·CarouselNavigator·Accordion·FocusScroller |
-| **System** | Input, Sound, Effect, Camera, Scene, Resource, Context, CutScene, DebugOverlay 등 |
-| **Data** | Config(YAML), Proto(MemoryPack), Lingo, Tune, Facet, Cluster |
+| **System** | Input, Sound, Graphic, Effect, Camera, Scene, Resource, Context, CutScene, DebugOverlay 등 |
+| **Data** | Config(YAML), Proto(MemoryPack), Lingo, Facet, Cluster |
 | **Platform** | PlayFab, Network, Webhook(Discord/Trello/Google), InAppPurchase |
 | **Runtime** | Wrapper UGUI 컴포넌트, `TimeFlow`(오브젝트별 시간 스케일), Enchanted |
 | **Inspector** | `KZ*` Odin Attribute (경로, HexColor, Clamp, List 등) |
@@ -154,14 +154,28 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 
 ```
 BaseMain (서브클래스 구현)
-  → TuneManager (언어·사운드·그래픽·네이티브 설정)
   → ConfigManager (YAML 로드)
   → RouteManager (경로 해석)
+  → GraphicManager / LingoManager (ReactivePrefs 사용자 설정)
   → ResourceManager / AddressablesManager
   → UIManager, InputManager, SoundManager ...
 ```
 
 에디터 **Test 모드**에서는 `TestModeConfig`의 씬별 transient 데이터로 TitleScene을 건너뛰고 지정 씬에서 바로 시작할 수 있습니다.
+
+### 사용자 설정 (ReactivePrefs)
+
+`Data/Tune` 계층(`TuneManager`, `LanguageTune`, `SoundTune`, `GraphicTune`, `NativeTune`)을 제거하고, 각 도메인 매니저가 `ReactivePrefs<T>`로 PlayerPrefs를 직접 소유합니다.
+
+| 매니저 | 설정 | 설명 |
+|--------|------|------|
+| `LingoManager` | `Language` | Unity Localization locale 적용 |
+| `GraphicManager` | `Resolution`, `FrameRate`, `GraphicQuality` | Screen·FPS·QualitySettings·카메라 far clip |
+| `SoundManager` | `SoundProfile` | 마스터·음악·효과음 볼륨 |
+| `VibrationManager` | `UseVibration` | 진동 on/off |
+| `PushManager` | `UseNotification`, `UseNightNotification` | 로컬 푸시 허용·야간 알림 |
+
+`ReactivePrefs<T>`는 R3 `Observable`로 변경을 구독할 수 있으며, 키 누락·파싱 실패 시 기본값을 저장합니다. `GraphicQualityOption` ScriptableObject는 `System/Graphic`으로 이동했습니다.
 
 ### 이벤트 버스 (MessagePipe)
 
@@ -173,7 +187,7 @@ BaseMain (서브클래스 구현)
 NetworkManager → FacetManager.Apply<TFacet>() → 게임 코드 Get/TryGet
 ```
 
-`FacetManager`는 서버에서 내려온 `IFacet` payload를 세션 캐시로 보관합니다. 디스크 영속은 Tune(PlayerPrefs)을 사용합니다.
+`FacetManager`는 서버에서 내려온 `IFacet` payload를 세션 캐시로 보관합니다. 클라이언트 로컬 설정은 각 매니저의 `ReactivePrefs`를 사용합니다.
 
 ### Pool & RosterMapper
 
@@ -193,7 +207,7 @@ NetworkManager → FacetManager.Apply<TFacet>() → 게임 코드 Get/TryGet
 ### 매니저 생명주기
 
 `KZGameKit.ReleaseManager()` 가 싱글톤 매니저를 일괄 해제합니다.  
-SceneState, UI, Input, Effect, Sound, Proto, Config, Cluster, Facet, Lingo, Addressables, Network, Webhook, Tune 등이 포함됩니다.
+SceneState, UI, Input, Effect, Sound, Graphic, Proto, Config, Cluster, Facet, Lingo, Addressables, Network, Webhook 등이 포함됩니다.
 
 ### 데이터 흐름
 

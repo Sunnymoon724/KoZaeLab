@@ -30,7 +30,7 @@ A Unity 6 research and development project that organizes game development code 
 |------|---------|
 | **Unity Version** | 6000.3.7f1 (Unity 6.3) |
 | **Render Pipeline** | URP (Universal Render Pipeline) |
-| **Core Package** | `com.bsheepstudio.kzlib` v1.1.4 |
+| **Core Package** | `com.bsheepstudio.kzlib` v1.1.17 |
 | **License** | MIT |
 
 This repository serves as a **lab** for developing and validating the KZLib library. The library itself can be added to other projects via a UPM Git URL.
@@ -43,8 +43,8 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 
 ```
 Assets/KZLib/Scripts/
-├── Data/          Config, Proto, Lingo, Tune(Graphic/Language/Native/Sound), Facet, Cluster
-├── Framework/     Actor, Stanza, Pool, RosterMapper, Presentation, Graphic
+├── Data/          Config, Proto, Lingo, Facet, Cluster
+├── Framework/     Actor, Stanza, Pool, RosterMapper, Presentation, ReactivePrefs
 ├── Global/        Constants, shared types, enums
 ├── Inspector/     KZ* Odin Inspector attribute definitions
 ├── Main/          BaseMain, ResolutionMonitor
@@ -52,7 +52,7 @@ Assets/KZLib/Scripts/
 ├── Platform/      Network, PlayFab, Webhook, InAppPurchase
 ├── Runtime/       Wrapper UGUI components, TimeFlow, Enchanted
 ├── Shared/        Shared C# shims (e.g. init-only)
-├── System/        Input, Sound, Scene, Resource, Context, CutScene, ...
+├── System/        Input, Sound, Graphic, Scene, Resource, Context, CutScene, ...
 ├── UI/            UIManager, Window, CommonWindow, UI modules (Carousel/Accordion/FocusScroller)
 └── Utility/       Extension, Kit, Log
 ```
@@ -116,7 +116,7 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 
 - **Name:** `com.bsheepstudio.kzlib`
 - **Display Name:** KoZaeLibrary
-- **Version:** 1.1.4
+- **Version:** 1.1.17
 - **Author:** Ko KoZae
 
 ### Main Script Modules
@@ -125,10 +125,10 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 |--------|-------------|
 | **Main** | `BaseMain` — app entry point, Test/Normal play mode, language/resolution |
 | **Framework/Actor** | `Actor`, `Unit`, `Structure` — state/stat/buff/team relation framework |
-| **Framework** | Stanza(animation), Pool(`GameObjectPawnPool`), `RosterMapper`, Presentation, Graphic |
+| **Framework** | Stanza(animation), Pool(`GameObjectPawnPool`), `RosterMapper`, Presentation, `ReactivePrefs` |
 | **UI** | `UIManager`, Window(2D/3D), CommonWindow (Loading/Download/Video/Transition, etc.), Carousel·CarouselNavigator·Accordion·FocusScroller |
-| **System** | Input, Sound, Effect, Camera, Scene, Resource, Context, CutScene, DebugOverlay, etc. |
-| **Data** | Config(YAML), Proto(MemoryPack), Lingo, Tune, Facet, Cluster |
+| **System** | Input, Sound, Graphic, Effect, Camera, Scene, Resource, Context, CutScene, DebugOverlay, etc. |
+| **Data** | Config(YAML), Proto(MemoryPack), Lingo, Facet, Cluster |
 | **Platform** | PlayFab, Network, Webhook(Discord/Trello/Google), InAppPurchase |
 | **Runtime** | Wrapper UGUI components, `TimeFlow`(per-object time scale), Enchanted |
 | **Inspector** | `KZ*` Odin attributes (paths, HexColor, Clamp, List, etc.) |
@@ -154,14 +154,28 @@ https://github.com/Sunnymoon724/KoZaeLab.git?path=Assets/KZLib
 
 ```
 BaseMain (subclass implementation)
-  → TuneManager (language/sound/graphics/native settings)
   → ConfigManager (YAML load)
   → RouteManager (path resolution)
+  → GraphicManager / LingoManager (ReactivePrefs user settings)
   → ResourceManager / AddressablesManager
   → UIManager, InputManager, SoundManager ...
 ```
 
 In editor **Test mode**, `TestModeConfig` scene transient data lets you skip TitleScene and start directly from a configured scene.
+
+### User Settings (ReactivePrefs)
+
+The `Data/Tune` layer (`TuneManager`, `LanguageTune`, `SoundTune`, `GraphicTune`, `NativeTune`) was removed. Each domain manager now owns PlayerPrefs directly via `ReactivePrefs<T>`.
+
+| Manager | Settings | Description |
+|---------|----------|-------------|
+| `LingoManager` | `Language` | Applies Unity Localization locale |
+| `GraphicManager` | `Resolution`, `FrameRate`, `GraphicQuality` | Screen, FPS, QualitySettings, camera far clip |
+| `SoundManager` | `SoundProfile` | Master, music, and effect volumes |
+| `VibrationManager` | `UseVibration` | Vibration on/off |
+| `PushManager` | `UseNotification`, `UseNightNotification` | Local push and night-time notification toggles |
+
+`ReactivePrefs<T>` exposes changes through R3 `Observable` and persists a default when the key is missing or parsing fails. The `GraphicQualityOption` ScriptableObject moved to `System/Graphic`.
 
 ### Event Bus (MessagePipe)
 
@@ -173,7 +187,7 @@ MessagePipe is configured during `LogChannel` initialization. It delivers cross-
 NetworkManager → FacetManager.Apply<TFacet>() → game code Get/TryGet
 ```
 
-`FacetManager` caches `IFacet` payloads from the server in a session store. Client persistence uses Tune (PlayerPrefs).
+`FacetManager` caches `IFacet` payloads from the server in a session store. Client-side local settings use each manager's `ReactivePrefs`.
 
 ### Pool & RosterMapper
 
@@ -193,7 +207,7 @@ data roster  →  RosterMapper<TItem,UData>  →  GameObjectPawnPool<T>  →  ac
 ### Manager Lifecycle
 
 `KZGameKit.ReleaseManager()` releases all singleton managers at once.  
-Includes SceneState, UI, Input, Effect, Sound, Proto, Config, Cluster, Facet, Lingo, Addressables, Network, Webhook, Tune, and more.
+Includes SceneState, UI, Input, Effect, Sound, Graphic, Proto, Config, Cluster, Facet, Lingo, Addressables, Network, Webhook, and more.
 
 ### Data Flow
 

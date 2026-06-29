@@ -1,4 +1,3 @@
-using KZLib.Data;
 using KZLib.Utilities;
 using UnityEngine;
 
@@ -10,8 +9,6 @@ namespace KZLib.Sounds
 		/// <summary>Dedicated looping music source. Falls back to the component on this GameObject when unset.</summary>
 		[SerializeField]
 		private AudioSource m_musicSource = null;
-
-		private SoundVolume m_musicVolume = SoundVolume.max;
 
 		/// <summary>Set by <see cref="PauseMusic"/>; cleared by <see cref="ResumeMusic"/>, <see cref="StopMusic"/>, or <see cref="SetMusic"/>.</summary>
 		private bool m_musicPaused = false;
@@ -65,7 +62,7 @@ namespace KZLib.Sounds
 			}
 
 			_ClearMusicPauseState();
-			_SetAudioSource(m_musicSource,audioClip,$"[Music] {audioClip.name}",true,m_musicVolume);
+			_SetAudioSource(m_musicSource,audioClip,$"[Music] {audioClip.name}",true,GetMusicVolume(true));
 
 			return m_musicSource;
 		}

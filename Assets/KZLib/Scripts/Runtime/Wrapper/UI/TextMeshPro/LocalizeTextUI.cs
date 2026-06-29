@@ -48,7 +48,7 @@ public class LocalizeTextUI : BaseTextMeshUI
 		m_subscription = null;
 	}
 
-	private void _OnChangedLanguage(Unit _)
+	private void _OnChangedLanguage(SystemLanguage _)
 	{
 		_RefreshLocalize();
 	}
@@ -72,7 +72,7 @@ public class LocalizeTextUI : BaseTextMeshUI
 			return;
 		}
 
-		if(m_key.IsEqual(key))
+		if(string.Equals(m_key,key))
 		{
 			return;
 		}

@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using KZLib.Utilities;
-using UnityEngine;
 using YamlDotNet.Serialization;
 
 namespace KZLib.Data
@@ -15,6 +14,8 @@ namespace KZLib.Data
 	/// </remarks>
 	public class ConfigManager : Singleton<ConfigManager>
 	{
+		private ConfigManager() { }
+
 		private const string c_testModeYaml = "TestMode.yaml";
 
 		private static readonly IDeserializer s_deserializer = new DeserializerBuilder().IncludeNonPublicProperties().Build();

@@ -20,7 +20,7 @@ namespace KZLib.Sounds
 		/// Returns the lane <see cref="AudioSource"/>; <c>null</c> when the pool is at capacity.
 		/// </summary>
 		/// <param name="followTarget">
-		/// Optional parent for follow playback; <see cref="SoundLane.Initialize"/> reparents the pooled source under it with local identity.
+		/// Optional parent for follow playback; <see cref="SoundLane.Initialize"/> sets the pooled source parent under it with local identity.
 		/// <c>null</c> keeps the source under pool storage; the caller sets world position for fixed 3D playback.
 		/// </param>
 		public AudioSource TryAcquireSource(Transform followTarget)
@@ -33,7 +33,7 @@ namespace KZLib.Sounds
 			return lane.Payload;
 		}
 
-		/// <summary>Applies global effect volume from <see cref="SoundTune"/> to every active lane.</summary>
+		/// <summary>Applies global effect volume from <see cref="SoundManager"/> to every active lane.</summary>
 		public void ApplyVolume(float level,bool mute)
 		{
 			void _ApplyVolume(SoundLane lane)
@@ -160,7 +160,7 @@ namespace KZLib.Sounds
 		{
 			var clip = lane.Payload.clip;
 
-			return clip != null && clip.name.IsEqual(clipName);
+			return clip != null && string.Equals(clip.name,clipName);
 		}
 
 		private bool _MatchesClip(SoundLane lane,AudioClip audioClip)

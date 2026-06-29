@@ -1,7 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
 using KZLib.Data;
-using KZLib.Scenes;
 using KZLib.Utilities;
 using MessagePipe;
 using Newtonsoft.Json;
@@ -44,7 +43,10 @@ namespace KZLib.Networks
 
 		protected override void _Release(bool disposing)
 		{
-			if(disposing) { }
+			if(disposing)
+			{
+				
+			}
 
 			base._Release(disposing);
 		}

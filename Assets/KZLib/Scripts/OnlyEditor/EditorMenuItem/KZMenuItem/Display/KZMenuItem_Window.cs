@@ -2,6 +2,7 @@
 using KZLib.Data;
 using KZLib.Windows;
 using UnityEditor;
+using UnityEngine;
 
 namespace KZLib.EditorInternal.Menus
 {
@@ -29,11 +30,19 @@ namespace KZLib.EditorInternal.Menus
 		[MenuItem("KZMenu/Window/Open Graphic Quality Option Window",false,MenuOrder.Display.CUSTOM_GRAPHIC_QUALITY)]
 		private static void _OnOpenGraphicQualityOptionWindow()
 		{
-			var instance = GraphicQualityOption.In;
+			var resourcesPath = "ScriptableObject/GraphicQualityOption";
+			var graphicQuality = Resources.Load<GraphicQualityOption>(resourcesPath);
+
+			if(graphicQuality == null)
+			{
+				graphicQuality = ScriptableObject.CreateInstance<GraphicQualityOption>();
+
+				KZAssetKit.CreateAsset($"Resources/{resourcesPath}.asset",graphicQuality,true);
+			}
 
 			var window = EditorWindow.GetWindow<ScriptableObjectWindow>("Graphic Quality Option");
 
-			window.SetResource(instance);
+			window.SetResource(graphicQuality);
 			window.Show();
 		}
 

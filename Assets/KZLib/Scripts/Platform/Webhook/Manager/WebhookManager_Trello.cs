@@ -310,7 +310,7 @@ namespace KZLib.Webhooks
 
 					var dataName = value.ToString();
 
-					if(name.IsEqual(dataName) && json.TryGetValue(c_trelloId,out var trelloId))
+					if(string.Equals(name,dataName) && json.TryGetValue(c_trelloId,out var trelloId))
 					{
 						return trelloId.ToString();
 					}

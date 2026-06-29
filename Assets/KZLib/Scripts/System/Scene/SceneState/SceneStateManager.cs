@@ -18,7 +18,7 @@ namespace KZLib.Scenes
 {
 	public record SceneChangeInfo(CommonUINameTag TransitionNameTag,bool UseLoading = true);
 
-	[SingletonConfig(AutoCreate = true,DontDestroy = true)]
+	[SingletonMBConfig(AutoCreate = true,DontDestroy = true)]
 	public class SceneStateManager : SingletonMB<SceneStateManager>
 	{
 		private const float c_unloadMinTime = 300.0f;

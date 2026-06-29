@@ -12,7 +12,7 @@ namespace KZLib
 	/// Central hub for UI window lifecycle: create, register, open, close, hide, and query.
 	/// Supports separate 2D (screen overlay) and 3D (world space) repositories.
 	/// </summary>
-	[SingletonConfig(AutoCreate = true,PrefabPath = "Prefab/UIManager",DontDestroy = true)]
+	[SingletonMBConfig(AutoCreate = true,PrefabPath = "Prefab/UIManager",DontDestroy = true)]
 	public partial class UIManager : SingletonMB<UIManager>
 	{
 		// Active repositories used for iteration (Hide, Find, BlockUI, etc.).

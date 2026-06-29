@@ -6,7 +6,7 @@ using UnityEngine;
 public static partial class TransformExtension
 {
 	/// <summary>
-	/// Resets local position, rotation, and scale; optionally reparents under <paramref name="parent"/>.
+	/// Resets local position, rotation, and scale; optionally sets parent to <paramref name="parent"/>.
 	/// </summary>
 	public static void ResetTransform(this Transform transform,Transform parent = null)
 	{

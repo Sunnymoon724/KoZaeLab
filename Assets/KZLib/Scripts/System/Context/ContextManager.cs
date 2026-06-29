@@ -59,6 +59,8 @@ namespace KZLib
 	/// </remarks>
 	public class ContextManager : Singleton<ContextManager>
 	{
+		private ContextManager() { }
+
 		private readonly Dictionary<UnlockTag,List<IContext>> m_unlockListDict = new();
 		private readonly Dictionary<BadgeTag,List<IContext>> m_badgeListDict = new();
 

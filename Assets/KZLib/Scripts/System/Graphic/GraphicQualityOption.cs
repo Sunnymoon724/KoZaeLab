@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using KZLib.Utilities;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using KZLib.Attributes;
@@ -10,34 +9,31 @@ using KZLib.Attributes;
 using Sirenix.Utilities;
 using Sirenix.Utilities.Editor;
 using Sirenix.OdinInspector.Editor;
-using UnityEditor;
 
 #endif
 
 namespace KZLib.Data
 {
 	/// <summary>
-	/// ScriptableObject catalog for graphic quality options.
-	/// Each option owns a single bit in a graphicQuality long and stores On/Off string payloads.
-	/// Preset helpers (e.g. Highest) OR together flags whose MinimumPreset is met.
-	/// Consumed by GraphicManager.
+	/// ScriptableObject catalog loaded from Resources; maps graphic-quality option names to Unity setting values.
+	/// Consumed only by <see cref="GraphicManager"/>. Each entry owns one bit in the manager's quality bitmask
+	/// and stores On/Off string payloads. <see cref="GetGraphicQualityInPreset"/> builds preset bitmasks
+	/// (e.g. <see cref="GraphicManager.Highest"/>); the manager applies the active bitmask via
+	/// <see cref="FindOptionValue{TValue}"/>.
 	/// </summary>
-	public class GraphicQualityOption : SingletonSO<GraphicQualityOption>
+	public class GraphicQualityOption : SerializedScriptableObject
 	{
 		/// <summary>Maximum number of single-bit options (bit index 0 .. 63).</summary>
 		private const int c_maxOptionCount = 64;
-		// UI "Add Option" path: new options start at Highest only. Adjust MinimumPreset in the list afterward.
+
+		/// <summary>Default <see cref="GraphicQualityEntry.MinimumPreset"/> for options added through the editor UI.</summary>
 		private const GraphicQualityPresetType c_addOptionDefaultMinimumPreset = GraphicQualityPresetType.QualityHighest;
 
 #if UNITY_EDITOR
-		private enum AddOptionResult
-		{
-			Success,
-			DuplicateName,
-			MaxCountReached,
-		}
+		private enum AddOptionResult { Success, DuplicateName, }
 
 		#region Option Handler
+		/// <summary>Odin popup fields for creating a new catalog entry.</summary>
 		private class OptionHandler
 		{
 			private string m_optionName = string.Empty;
@@ -57,7 +53,7 @@ namespace KZLib.Data
 				}
 			}
 
-			[HorizontalGroup("1",Order = 1),ShowInInspector,LabelText("Flag On Value")]
+			[HorizontalGroup("1",Order = 1),ShowInInspector]
 			private string FlagOnValue
 			{
 				get => m_flagOnValue;
@@ -68,7 +64,7 @@ namespace KZLib.Data
 				}
 			}
 
-			[HorizontalGroup("2",Order = 2),ShowInInspector,LabelText("Flag Off Value")]
+			[HorizontalGroup("2",Order = 2),ShowInInspector]
 			private string FlagOffValue
 			{
 				get => m_flagOffValue;
@@ -110,13 +106,6 @@ namespace KZLib.Data
 
 						break;
 					}
-					case AddOptionResult.MaxCountReached:
-					{
-						EditorUtility.DisplayDialog("Info",$"Cannot create more options. (Max {c_maxOptionCount})","Ok");
-						m_errorText = "<color=red>max options reached.</color>";
-
-						break;
-					}
 				}
 			}
 
@@ -128,13 +117,13 @@ namespace KZLib.Data
 		#endregion Option Handler
 #endif
 
-		#region Graphic Quality Info
+		#region Graphic Quality Entry
 		/// <summary>
-		/// One graphic quality entry. Flag bit is ON when the preset includes this option;
-		/// OFF otherwise. On/Off values are strings parsed by FindOptionValue.
+		/// One catalog entry. When its flag bit is set in the quality bitmask, <see cref="GetValue"/> returns the On string;
+		/// otherwise the Off string. Typed parsing is done by the catalog query API.
 		/// </summary>
 		[Serializable]
-		public class GraphicQualityInfo
+		public class GraphicQualityEntry
 		{
 			[SerializeField,HideInInspector]
 			private string m_name = string.Empty;
@@ -148,11 +137,11 @@ namespace KZLib.Data
 			[SerializeField,HideInInspector]
 			private string m_flagOffValue = string.Empty;
 
-			/// Lowest preset rank that turns this option's flag ON.
+			/// <summary>Lowest preset tier that includes this entry when building a preset bitmask.</summary>
 			[SerializeField,HideInInspector]
 			private GraphicQualityPresetType m_minimumPreset = GraphicQualityPresetType.QualityLowest;
 
-			public GraphicQualityInfo(string name,long flag,string flagOnValue,string flagOffValue,GraphicQualityPresetType minimumPreset = GraphicQualityPresetType.QualityLowest)
+			public GraphicQualityEntry(string name,long flag,string flagOnValue,string flagOffValue,GraphicQualityPresetType minimumPreset = GraphicQualityPresetType.QualityLowest)
 			{
 				m_name = name;
 				m_flag = flag;
@@ -162,12 +151,15 @@ namespace KZLib.Data
 			}
 
 			public long Flag => m_flag;
+
+			/// <summary>Zero-based bit index of <see cref="Flag"/>; used for inspector display.</summary>
 			public int Order => m_flag.ToFlagOrder();
+
 			public string Name => m_name;
 
 			[HorizontalGroup("Row")]
 			[ShowInInspector,HideLabel,KZRichText,HorizontalGroup("Row/Info")]
-			protected string FlagName => $"{Order} : {m_name} [On:{m_flagOnValue}/Off:{m_flagOffValue}]";
+			protected string FlagName => $"[{Order}] : {m_name} [On:{m_flagOnValue}/Off:{m_flagOffValue}]";
 
 			[ShowInInspector,HorizontalGroup("Row/Min"),LabelText("Minimum Preset")]
 			public GraphicQualityPresetType MinimumPreset
@@ -176,276 +168,122 @@ namespace KZLib.Data
 				set => m_minimumPreset = value;
 			}
 
+			/// <summary>Returns the On or Off string for the active quality bitmask from <see cref="KZLib.GraphicManager"/>.</summary>
 			public string GetValue(long graphicQuality)
 			{
 				return graphicQuality.HasAnyFlag(m_flag) ? m_flagOnValue : m_flagOffValue;
 			}
-
-#if UNITY_EDITOR
-			internal void _EditorSetFlag(long flag)
-			{
-				m_flag = flag;
-			}
-#endif
 		}
-		#endregion Graphic Quality Info
+		#endregion Graphic Quality Entry
 
-		// Preset bitmask shortcuts. Values follow the current option list in this asset.
-		public static long Highest => In.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityHighest);
-		public static long High => In.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityHigh);
-		public static long Middle => In.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityMiddle);
-		public static long Low => In.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityLow);
-		public static long Lowest => In.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityLowest);
-
+		[SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true,DraggableItems = false),OnValueChanged(nameof(_OnChangedOptionList))]
+		private List<GraphicQualityEntry> m_qualityList = new();
 
 #if UNITY_EDITOR
-		[HorizontalGroup("Button",Order = 0),Button("Add Option",ButtonSizes.Large)]
+		[HorizontalGroup("Button",Order = 0),Button("Add Option",ButtonSizes.Large),DisableIf(nameof(IsOptionListFull)),Tooltip("Cannot add more options.")]
 		protected void OnAddOption()
 		{
 			var handler = new OptionHandler(_TryAddOption);
 			var window = OdinEditorWindow.InspectObject(handler);
 
-			window.position = GUIHelper.GetEditorWindowRect().AlignCenter(250,150);
+			window.titleContent = new GUIContent("New Graphic Quality Option");
+			window.position = GUIHelper.GetEditorWindowRect().AlignCenter(350,150);
 
 			handler.SetWindow(window);
 		}
+
+		private bool IsOptionListFull => m_qualityList.Count >= c_maxOptionCount;
 
 		private AddOptionResult _TryAddOption(string optionName,string flagOnValue,string flagOffValue)
 		{
 			return _TryAddOption(optionName,flagOnValue,flagOffValue,c_addOptionDefaultMinimumPreset);
 		}
 
+		/// <summary>Allocates the next free flag bit and appends an entry. Rejects duplicate names.</summary>
 		private AddOptionResult _TryAddOption(string optionName,string flagOnValue,string flagOffValue,GraphicQualityPresetType minimumPreset)
 		{
-			var result = _TryGetOptionFlag(optionName,out var flag);
-
-			if(result != AddOptionResult.Success)
+			for(var i=0;i<m_qualityList.Count;i++)
 			{
-				return result;
+				var option = m_qualityList[i];
+
+				if(string.Equals(option.Name,optionName,StringComparison.Ordinal))
+				{
+					return AddOptionResult.DuplicateName;
+				}
 			}
 
-			m_optionList.Add(new GraphicQualityInfo(optionName,flag,flagOnValue,flagOffValue,minimumPreset));
+			var flag = _AllocateNextFlag();
+
+			m_qualityList.Add(new GraphicQualityEntry(optionName,flag,flagOnValue,flagOffValue,minimumPreset));
 
 			_OnChangedOptionList();
 
 			return AddOptionResult.Success;
 		}
 
-		private AddOptionResult _TryGetOptionFlag(string name,out long flag)
+		/// <summary>Returns the lowest unused single-bit flag, or throws when all 64 bits are taken.</summary>
+		private long _AllocateNextFlag()
 		{
-			var usedOrders = new HashSet<int>();
+			var usedFlags = 0L;
 
-			for(var i=0;i<m_optionList.Count;i++)
+			for(var i = 0;i<m_qualityList.Count;i++)
 			{
-				var option = m_optionList[i];
+				usedFlags |= m_qualityList[i].Flag;
+			}
 
-				if(string.Equals(option.Name,name,StringComparison.Ordinal))
+			for(var i=0; i<c_maxOptionCount;i++)
+			{
+				var candidate = 1L << i;
+
+				if(!usedFlags.HasAnyFlag(candidate))
 				{
-					flag = -1L;
-
-					return AddOptionResult.DuplicateName;
+					return candidate;
 				}
-
-				_CollectUsedOrder(option,usedOrders);
 			}
 
-			if(!_TryAllocateNextFlag(usedOrders,out flag))
-			{
-				return AddOptionResult.MaxCountReached;
-			}
-
-			return AddOptionResult.Success;
+			throw new InvalidOperationException("Failed to allocate next flag");
 		}
 
-		private static void _CollectUsedOrder(GraphicQualityInfo option,HashSet<int> usedOrders)
+		/// <summary>Seeds entries consumed by <see cref="GraphicManager"/> (QualitySettings and camera far clip).</summary>
+		private void Reset()
 		{
-			if(!option.Flag.IsSingleBitFlag())
-			{
-				return;
-			}
+			m_qualityList.Clear();
 
-			var order = option.Order;
-
-			if(order >= 0 && order < c_maxOptionCount)
-			{
-				usedOrders.Add(order);
-			}
-		}
-
-		private static bool _TryAllocateNextFlag(HashSet<int> usedOrders,out long flag)
-		{
-			// Scan bit orders and assign the first unused single-bit flag (1L << order).
-			for(var order=0;order<c_maxOptionCount;order++)
-			{
-				if(usedOrders.Add(order))
-				{
-					flag = 1L << order;
-
-					return true;
-				}
-			}
-
-			flag = -1L;
-
-			return false;
-		}
-
-		private bool m_isValidatingOptionList = false;
-
-		private void OnValidate()
-		{
-			_ValidateOptionList();
-		}
-
-		private void _ValidateOptionList()
-		{
-			// Editor-only repair pass: drop invalid names, dedupe, and reassign corrupted flag bits.
-			if(m_isValidatingOptionList)
-			{
-				return;
-			}
-
-			m_isValidatingOptionList = true;
-
-			try
-			{
-				var removedMessages = new List<string>();
-				var fixedMessages = new List<string>();
-				var nameSet = new HashSet<string>(StringComparer.Ordinal);
-
-				for(var i=m_optionList.Count-1;i>=0;i--)
-				{
-					var option = m_optionList[i];
-					var name = option.Name;
-
-					if(name.IsEmpty())
-					{
-						m_optionList.RemoveAt(i);
-						removedMessages.Add("Removed option with empty name.");
-
-						continue;
-					}
-
-					if(!nameSet.Add(name))
-					{
-						m_optionList.RemoveAt(i);
-						removedMessages.Add($"Removed duplicate option name. [{name}]");
-					}
-				}
-
-				var usedOrders = new HashSet<int>();
-
-				for(var i=0;i<m_optionList.Count;i++)
-				{
-					var option = m_optionList[i];
-					var needsReassign = !option.Flag.IsSingleBitFlag();
-
-					if(!needsReassign)
-					{
-						var order = option.Order;
-
-						if(order < 0 || order >= c_maxOptionCount || !usedOrders.Add(order))
-						{
-							needsReassign = true;
-						}
-					}
-
-					if(!needsReassign)
-					{
-						continue;
-					}
-
-					if(!_TryAllocateNextFlag(usedOrders,out var newFlag))
-					{
-						var name = option.Name;
-
-						m_optionList.RemoveAt(i);
-						i--;
-						removedMessages.Add($"Removed option. Max {c_maxOptionCount} flags. [{name}]");
-
-						continue;
-					}
-
-					var oldFlag = option.Flag;
-
-					option._EditorSetFlag(newFlag);
-					fixedMessages.Add($"Reassigned flag. [{option.Name}] {oldFlag} -> {newFlag}");
-				}
-
-				if(removedMessages.Count == 0 && fixedMessages.Count == 0)
-				{
-					return;
-				}
-
-				EditorUtility.SetDirty(this);
-
-				var message = string.Empty;
-
-				if(removedMessages.Count > 0)
-				{
-					message += $"Removed:\n{string.Join("\n",removedMessages)}";
-				}
-
-				if(fixedMessages.Count > 0)
-				{
-					if(!message.IsEmpty())
-					{
-						message += "\n\n";
-					}
-
-					message += $"Fixed:\n{string.Join("\n",fixedMessages)}";
-				}
-
-				EditorUtility.DisplayDialog("GraphicQualityOption",message,"Ok");
-			}
-			finally
-			{
-				m_isValidatingOptionList = false;
-			}
-		}
-
-		// Editor-only initial seed for a new asset. Runtime does not re-run this; the saved asset is the source of truth.
-		protected override void OnCreate()
-		{
 			_TryAddOption(Global.GlobalTextureMipmapLimit,"0","1",GraphicQualityPresetType.QualityMiddle);
 			_TryAddOption(Global.AnisotropicFiltering,"Enable","Disable",GraphicQualityPresetType.QualityHigh);
-			_TryAddOption(Global.VerticalSyncCount,"1","0",GraphicQualityPresetType.QualityHighest);
 			_TryAddOption(Global.DisableCameraFarHalf,"1.0","0.5",GraphicQualityPresetType.QualityHighest);
 			_TryAddOption(Global.LodBias,"1.0","0.5",GraphicQualityPresetType.QualityMiddle);
 			_TryAddOption(Global.MaximumLODLevel,"0","1",GraphicQualityPresetType.QualityLow);
 			_TryAddOption(Global.AntiAliasing,"2","0",GraphicQualityPresetType.QualityHigh);
 			_TryAddOption(Global.SkinWeights,"FourBones","TwoBones",GraphicQualityPresetType.QualityHigh);
 			_TryAddOption(Global.ShadowDistance,"80","40",GraphicQualityPresetType.QualityMiddle);
-			_TryAddOption(Global.RealtimeReflectionProbes,"1","0",GraphicQualityPresetType.QualityHigh);
+			_TryAddOption(Global.RealtimeReflectionProbes,"True","False",GraphicQualityPresetType.QualityHigh);
 		}
 #endif
 
-		[SerializeField,ListDrawerSettings(ShowFoldout = false,HideAddButton = true),OnValueChanged(nameof(_OnChangedOptionList))]
-		private List<GraphicQualityInfo> m_optionList = new();
-
+		/// <summary>Keeps the inspector list ordered by flag bit index.</summary>
 		private void _OnChangedOptionList()
 		{
-#if UNITY_EDITOR
-			_ValidateOptionList();
-#endif
-			static int _Compare(GraphicQualityInfo infoA,GraphicQualityInfo infoB)
+			static int _Compare(GraphicQualityEntry infoA,GraphicQualityEntry infoB)
 			{
 				return infoA.Flag.CompareTo(infoB.Flag);
 			}
 
-			m_optionList.Sort(_Compare);
+			m_qualityList.Sort(_Compare);
 		}
 
 		/// <summary>
-		/// Builds a preset bitmask. Options whose MinimumPreset is met by presetType are turned ON.
+		/// Builds a preset bitmask for <see cref="KZLib.GraphicManager"/> (e.g. <see cref="KZLib.GraphicManager.Highest"/>).
+		/// Each entry whose <see cref="GraphicQualityEntry.MinimumPreset"/> is met by <paramref name="presetType"/>
+		/// has its flag bit set.
 		/// </summary>
 		public long GetGraphicQualityInPreset(GraphicQualityPresetType presetType)
 		{
 			var graphicsQuality = 0L;
 
-			for(var i=0;i<m_optionList.Count;i++)
+			for(var i=0;i<m_qualityList.Count;i++)
 			{
-				var option = m_optionList[i];
+				var option = m_qualityList[i];
 
 				if(_IsAtLeast(presetType,option.MinimumPreset))
 				{
@@ -457,7 +295,7 @@ namespace KZLib.Data
 		}
 
 		#region Query
-		/// <summary>Returns the raw On/Off string for an option. Throws when the option name is missing.</summary>
+		/// <summary>Returns the raw On/Off string for an option in the manager's quality bitmask. Throws when the option name is missing.</summary>
 		public string FindValue(long graphicQuality,string optionName)
 		{
 			if(TryFindValue(graphicQuality,optionName,out var value))
@@ -468,6 +306,7 @@ namespace KZLib.Data
 			throw new InvalidOperationException($"Graphic quality option not found. [{optionName}]");
 		}
 
+		/// <summary>Returns the raw On/Off string for an option without throwing.</summary>
 		public bool TryFindValue(long graphicQuality,string optionName,out string value)
 		{
 			if(_TryFindOption(optionName,out var option))
@@ -482,11 +321,11 @@ namespace KZLib.Data
 			return false;
 		}
 
-		private bool _TryFindOption(string optionName,out GraphicQualityInfo option)
+		private bool _TryFindOption(string optionName,out GraphicQualityEntry option)
 		{
-			for(var i=0;i<m_optionList.Count;i++)
+			for(var i=0;i<m_qualityList.Count;i++)
 			{
-				option = m_optionList[i];
+				option = m_qualityList[i];
 
 				if(string.Equals(option.Name,optionName,StringComparison.Ordinal))
 				{
@@ -500,8 +339,9 @@ namespace KZLib.Data
 		}
 
 		/// <summary>
-		/// Returns a typed option value. Parsing follows TValue, not option name.
-		/// Throws InvalidOperationException (missing/empty) or FormatException (parse failure).
+		/// Returns a typed Unity setting value for <see cref="KZLib.GraphicManager"/>.
+		/// Parsing follows <typeparamref name="TValue"/> (string, enum, or <see cref="Convert.ChangeType"/>).
+		/// Throws on missing name, empty value, or parse failure.
 		/// </summary>
 		public TValue FindOptionValue<TValue>(long graphicQuality,string optionName)
 		{
@@ -527,6 +367,7 @@ namespace KZLib.Data
 			}
 		}
 
+		/// <summary>Non-throwing counterpart of <see cref="FindOptionValue{TValue}"/>; logs parse failures.</summary>
 		public bool TryFindOptionValue<TValue>(long graphicQuality,string optionName,out TValue optionValue)
 		{
 			optionValue = default;
@@ -555,7 +396,7 @@ namespace KZLib.Data
 			return false;
 		}
 
-		/// <summary>Parses a catalog string into TValue. Caller type selects parsing rules.</summary>
+		/// <summary>Parses a catalog string into <typeparamref name="TValue"/>.</summary>
 		private static TValue _ParseOptionValue<TValue>(string value)
 		{
 			var targetType = typeof(TValue);
@@ -573,20 +414,21 @@ namespace KZLib.Data
 		}
 		#endregion Query
 
-		// Preset rank is explicit so enum declaration order can change safely.
+		/// <summary>Returns whether <paramref name="presetType"/> meets or exceeds <paramref name="minimumPreset"/>.</summary>
 		private bool _IsAtLeast(GraphicQualityPresetType presetType,GraphicQualityPresetType minimumPreset)
 		{
 			return _ToPresetRank(presetType) >= _ToPresetRank(minimumPreset);
 		}
 
+		/// <summary>Explicit preset ordering; independent of enum declaration order.</summary>
 		private int _ToPresetRank(GraphicQualityPresetType presetType)
 		{
 			return presetType switch
 			{
-				GraphicQualityPresetType.QualityLowest => 0,
-				GraphicQualityPresetType.QualityLow => 1,
-				GraphicQualityPresetType.QualityMiddle => 2,
-				GraphicQualityPresetType.QualityHigh => 3,
+				GraphicQualityPresetType.QualityLowest	=> 0,
+				GraphicQualityPresetType.QualityLow		=> 1,
+				GraphicQualityPresetType.QualityMiddle	=> 2,
+				GraphicQualityPresetType.QualityHigh	=> 3,
 				GraphicQualityPresetType.QualityHighest => 4,
 
 				_ => throw new ArgumentOutOfRangeException(nameof(presetType),presetType,null),

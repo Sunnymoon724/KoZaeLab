@@ -207,7 +207,7 @@ namespace KZLib
 				{
 					var label = labelArray[i];
 
-					if(assetInfo.Label.IsEqual(label))
+					if(string.Equals(assetInfo.Label,label))
 					{
 						keyList.Add(pair.Key);
 					}
@@ -251,13 +251,12 @@ namespace KZLib
 		/// <summary>Returns whether <paramref name="assetPath"/> is the folder itself or a file directly under it.</summary>
 		private static bool _IsAssetUnderFolder(string assetPath,string folderPath)
 		{
-			if(assetPath.IsEqual(folderPath))
+			if(string.Equals(assetPath,folderPath))
 			{
 				return true;
 			}
 
-			return assetPath.StartsWith($"{folderPath}/",StringComparison.OrdinalIgnoreCase)
-				|| assetPath.StartsWith($"{folderPath}\\",StringComparison.OrdinalIgnoreCase);
+			return assetPath.StartsWith($"{folderPath}/",StringComparison.OrdinalIgnoreCase) || assetPath.StartsWith($"{folderPath}\\",StringComparison.OrdinalIgnoreCase);
 		}
 
 		/// <summary>Reports download progress until <paramref name="handle"/> completes.</summary>

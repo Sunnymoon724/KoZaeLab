@@ -17,7 +17,7 @@ public static partial class KZEditorKit
 	{
 		foreach(var tag in InternalEditorUtility.tags)
 		{
-			if(tag.IsEqual(newTag))
+			if(string.Equals(tag,newTag))
 			{
 				return;
 			}
@@ -62,7 +62,7 @@ public static partial class KZEditorKit
 			{
 				index = i;
 			}			
-			else if(value.IsEqual(layerName))
+			else if(string.Equals(value,layerName))
 			{
 				index = Global.InvalidIndex;
 

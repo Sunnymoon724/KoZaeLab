@@ -82,7 +82,7 @@ namespace KZLib
 				{
 					var buffEntry = buffEntryArray[i];
 
-					if(!buffEntry.StatName.IsEqual(statName))
+					if(!string.Equals(buffEntry.StatName,statName))
 					{
 						continue;
 					}

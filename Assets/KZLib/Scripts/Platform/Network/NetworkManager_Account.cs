@@ -25,7 +25,18 @@ namespace KZLib.Networks
 				var playFabAccount = m_accountCredential as PlayFabAccountCredential;
 				var loginOptionType = playFabAccount.LoginOptionType;
 
-				return _GetPlayFabResult("AutoLoginAsync",await PlayFabManager.In.AutoLoginAsync(sessionTicket,loginOptionType));
+				if(!_GetPlayFabResult("AutoLoginAsync",await PlayFabManager.In.AutoLoginAsync(sessionTicket,loginOptionType)))
+				{
+					return false;
+				}
+
+				// Login succeeded; align the client clock before gameplay systems read server time.
+				if(!await PlayFabManager.In.SyncServerTimeAsync())
+				{
+					LogChannel.Network.W("AutoLoginAsync succeeded but server clock sync failed.");
+				}
+
+				return true;
 			}
 
 			return await _RequestToServerAsync(_RequestAsync,true,CommonNoticeTag.None);
@@ -46,7 +57,7 @@ namespace KZLib.Networks
 			{
 				var packet = await PlayFabManager.In.LoginWithGuestAsync();
 
-				return _TryApplyLoginResult("LoginWithGuestAsync",packet);
+				return await _TryApplyLoginResult("LoginWithGuestAsync",packet);
 			}
 
 			return await _RequestToServerAsync(_RequestAsync,true,CommonNoticeTag.None);
@@ -67,7 +78,7 @@ namespace KZLib.Networks
 			{
 				var packet = await PlayFabManager.In.LoginWithGoogleAsync(sessionTicket);
 
-				return _TryApplyLoginResult("LoginWithGoogleAsync",packet);
+				return await _TryApplyLoginResult("LoginWithGoogleAsync",packet);
 			}
 
 			return await _RequestToServerAsync(_RequestAsync,true,CommonNoticeTag.None);
@@ -88,7 +99,7 @@ namespace KZLib.Networks
 			{
 				var packet = await PlayFabManager.In.LoginWithAppleAsync(sessionTicket);
 
-				return _TryApplyLoginResult("LoginWithAppleAsync",packet);
+				return await _TryApplyLoginResult("LoginWithAppleAsync",packet);
 			}
 
 			return await _RequestToServerAsync(_RequestAsync,true,CommonNoticeTag.None);
@@ -117,6 +128,7 @@ namespace KZLib.Networks
 				}
 
 				_ClearAccountProfile();
+				_ClearServerClock();
 
 				return true;
 			}
@@ -131,7 +143,11 @@ namespace KZLib.Networks
 		#endregion LogOut
 
 #if KZLIB_PLAY_FAB
-		private bool _TryApplyLoginResult(string functionName,PlayFabPacketInfo packet)
+		/// <summary>
+		/// Applies login credentials and syncs <see cref="ServerClockManager"/> before returning success.
+		/// Login still succeeds when clock sync fails; callers should check <see cref="KZTimeKit.IsClockSynced"/>.
+		/// </summary>
+		private async UniTask<bool> _TryApplyLoginResult(string functionName,PlayFabPacketInfo packet)
 		{
 			if(!_GetPlayFabResult(functionName,packet))
 			{
@@ -139,6 +155,12 @@ namespace KZLib.Networks
 			}
 
 			_TrySetAccountCredentialFromMessage(_GetRespondMessage(packet.RespondPacket));
+
+			// Session is active; align the client clock before gameplay systems read server time.
+			if(!await PlayFabManager.In.SyncServerTimeAsync())
+			{
+				LogChannel.Network.W($"{functionName} succeeded but server clock sync failed.");
+			}
 
 			return true;
 		}

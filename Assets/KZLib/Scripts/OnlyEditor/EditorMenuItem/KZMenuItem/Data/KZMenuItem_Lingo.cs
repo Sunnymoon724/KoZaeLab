@@ -112,12 +112,12 @@ namespace KZLib.EditorInternal.Menus
 			var localeContext = _SyncLocalesFromExcel(languageHashSet,lingoLocaleAssetPath);
 			var excelName = KZFileKit.GetOnlyFileName(lingoFilePath);
 
-			if(excelName.IsEqual(c_stringExcelName))
+			if(string.Equals(excelName,c_stringExcelName))
 			{
 				return _GenerateStringLingo(lingoDict,localeContext);
 			}
 
-			if(excelName.IsEqual(c_assetExcelName))
+			if(string.Equals(excelName,c_assetExcelName))
 			{
 				return _GenerateAssetLingo(lingoDict,localeContext);
 			}
@@ -267,7 +267,7 @@ namespace KZLib.EditorInternal.Menus
 		{
 			if(tableName.EndsWith(c_tableNameSuffix,StringComparison.Ordinal))
 			{
-				return tableName.Substring(0,tableName.Length - c_tableNameSuffix.Length);
+				return tableName[..^c_tableNameSuffix.Length];
 			}
 
 			return tableName;
@@ -309,7 +309,7 @@ namespace KZLib.EditorInternal.Menus
 
 				var scheme = schemeArray[i];
 
-				if(scheme.IsEqual(language.ToString()))
+				if(string.Equals(scheme,language.ToString()))
 				{
 					return cellArray[i];
 				}

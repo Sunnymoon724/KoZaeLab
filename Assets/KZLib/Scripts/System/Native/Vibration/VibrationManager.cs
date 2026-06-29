@@ -11,16 +11,19 @@ using UnityEngine;
 
 using UnityEngine;
 using KZLib.Utilities;
-using KZLib.Data;
 using R3;
 
 namespace KZLib.Natives
 {
 	public class VibrationManager : Singleton<VibrationManager>
 	{
-		private readonly CompositeDisposable m_disposable = new();
-
-		private bool m_useVibration = true;
+		private ReactivePrefs<bool> m_useVibration = null;
+		public Observable<bool> OnChangedVibration => m_useVibration.OnChanged;
+		public bool UseVibration
+		{
+			get => m_useVibration.Value;
+			set => _ApplyVibration(value);
+		}
 
 #if UNITY_IOS && !UNITY_EDITOR
 		[DllImport("__Internal")]
@@ -41,11 +44,13 @@ namespace KZLib.Natives
 
 		private VibrationManager() { }
 
+		private string _PrefsKey(string name) => $"[{nameof(VibrationManager)}] {name}";
+
 		protected override void _Initialize()
 		{
 			base._Initialize();
 
-			TuneManager.In.Fetch<NativeTune>().OnChangedVibration.Subscribe(_OnChangeUseVibration).AddTo(m_disposable);
+			m_useVibration = new ReactivePrefs<bool>(_PrefsKey(nameof(m_useVibration)),bool.TryParse,true);
 
 #if UNITY_IOS && !UNITY_EDITOR
 			VibrationInitialize();
@@ -61,15 +66,15 @@ namespace KZLib.Natives
 		{
 			if(disposing)
 			{
-				m_disposable.Dispose();
+				m_useVibration?.Dispose();
 			}
 
 			base._Release(disposing);
 		}
 
-		private void _OnChangeUseVibration(bool useVibration)
+		private void _ApplyVibration(bool useVibration)
 		{
-			m_useVibration = useVibration;
+			m_useVibration.TrySetValue(useVibration);
 		}
 
 		/// <param name="_amplitude">0.0 ~ 10.0</param>
@@ -82,7 +87,7 @@ namespace KZLib.Natives
 
 			var newAmplitude = Mathf.Clamp(amplitude,0.0f,10.0f);
 
-			if(!m_useVibration)
+			if(!UseVibration)
 			{
 				return;
 			}

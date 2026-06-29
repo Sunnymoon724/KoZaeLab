@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -145,7 +146,7 @@ public static partial class KZEditorKit
 		{
 			var scenePath = AssetDatabase.GUIDToAssetPath(guidArray[i]);
 
-			if(Path.GetFileNameWithoutExtension(scenePath).IsEqual(sceneName))
+			if(string.Equals(Path.GetFileNameWithoutExtension(scenePath),sceneName))
 			{
 				matchedPathList.Add(scenePath);
 			}

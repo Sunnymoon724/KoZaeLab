@@ -221,13 +221,13 @@ public static class StringExtension
 		return includeSpace ? string.IsNullOrWhiteSpace(text) : string.IsNullOrEmpty(text);
 	}
 
-	/// <summary>
-	/// Returns whether two strings are equal using ordinal comparison.
-	/// </summary>
-	public static bool IsEqual(this string text1,string text2)
-	{
-		return string.Equals(text1,text2);
-	}
+	// /// <summary>
+	// /// Returns whether two strings are equal using ordinal comparison.
+	// /// </summary>
+	// public static bool IsEqual(this string text1,string text2,StringComparison comparisonType = StringComparison.Ordinal)
+	// {
+	// 	return string.Equals(text1,text2,comparisonType);
+	// }
 
 	/// <summary>
 	/// Returns whether a substring at the given index equals the match text.
@@ -427,14 +427,14 @@ public static class StringExtension
 
 		var lower = text.ToLower();
 
-		if(lower.IsEqual("t") || lower.IsEqual("1") || lower.IsEqual("yes") || lower.IsEqual("y"))
+		if(string.Equals(lower,"t") || string.Equals(lower,"1") || string.Equals(lower,"yes") || string.Equals(lower,"y"))
 		{
 			value = true;
 
 			return true;
 		}
 
-		if(lower.IsEqual("f") || lower.IsEqual("0") || lower.IsEqual("no") || lower.IsEqual("n"))
+		if(string.Equals(lower,"f") || string.Equals(lower,"0") || string.Equals(lower,"no") || string.Equals(lower,"n"))
 		{
 			value = false;
 
@@ -1005,14 +1005,14 @@ public static class StringExtension
 	{
 		var start = text.RemoveStart(startText);
 
-		if(text.IsEqual(start))
+		if(string.Equals(text,start))
 		{
 			return text;
 		}
 
 		var end = start.RemoveEnd(endText);
 
-		return start.IsEqual(end) ? text : end;
+		return string.Equals(start,end) ? text : end;
 	}
 
 	/// <summary>
@@ -1097,7 +1097,7 @@ public static class StringExtension
 				{
 					slotIndex = i;
 				}
-				else if(value.IsEqual(layerName))
+				else if(string.Equals(value,layerName))
 				{
 					slotIndex = Global.InvalidIndex;
 					break;

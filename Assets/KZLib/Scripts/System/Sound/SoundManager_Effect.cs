@@ -1,4 +1,3 @@
-using KZLib.Data;
 using KZLib.Utilities;
 using UnityEngine;
 
@@ -13,8 +12,6 @@ namespace KZLib.Sounds
 	/// </summary>
 	public partial class SoundManager : SingletonMB<SoundManager>
 	{
-		private SoundVolume m_effectVolume = SoundVolume.max;
-
 		/// <summary>Loads and plays a 3D effect at a fixed world position.</summary>
 		public AudioSource PlayEffect3D(string audioPath,Vector3 worldPosition,bool ignoreListenerPause = false)
 		{

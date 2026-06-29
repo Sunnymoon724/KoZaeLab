@@ -81,7 +81,7 @@ namespace KZLib.EditorInternal.Menus
 			{
 				var key = pair.Key;
 
-				if(key.IsEqual(c_key))
+				if(string.Equals(key,c_key))
 				{
 					continue;
 				}

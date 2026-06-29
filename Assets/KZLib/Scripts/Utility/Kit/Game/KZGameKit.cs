@@ -95,7 +95,6 @@ public static partial class KZGameKit
 		_ReleaseSingleton<GraphicManager>();
 
 		_ReleaseSingleton<RouteManager>();
-		_ReleaseSingleton<TuneManager>();
 
 		_ReleaseSingleton<ShaderManager>();
 

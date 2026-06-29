@@ -8,7 +8,7 @@ using KZLib.Data;
 namespace KZLib.Effects
 {
 	/// <summary>Pooled <see cref="EffectClip"/> spawn/cache. Prefab roots should be inactive; <see cref="PlayEffect"/> disables before <see cref="EffectClip.Set"/> then enables.</summary>
-	[SingletonConfig(AutoCreate = true,DontDestroy = true)]
+	[SingletonMBConfig(AutoCreate = true,DontDestroy = true)]
 	public class EffectManager : SingletonMB<EffectManager>
 	{
 		private string m_effectPath = null;

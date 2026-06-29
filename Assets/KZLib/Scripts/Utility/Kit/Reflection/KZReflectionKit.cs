@@ -61,7 +61,7 @@ public static class KZReflectionKit
 			{
 				var type = typeArray[j];
 
-				if(type.Namespace != null && type.Namespace.IsEqual(namespaceName))
+				if(type.Namespace != null && string.Equals(type.Namespace,namespaceName))
 				{
 					yield return type;
 				}

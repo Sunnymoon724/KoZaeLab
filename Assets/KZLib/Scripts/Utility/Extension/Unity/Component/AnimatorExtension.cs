@@ -314,7 +314,7 @@ public static class AnimatorExtension
 		{
 			var clip = clipArray[i];
 
-			if(clipName.IsEqual(clip.name))
+			if(string.Equals(clipName,clip.name))
 			{
 				return true;
 			}
@@ -334,7 +334,7 @@ public static class AnimatorExtension
 		{
 			var clip = clipArray[i];
 
-			if(clipName.IsEqual(clip.name))
+			if(string.Equals(clipName,clip.name))
 			{
 				return clip.length;
 			}
@@ -386,7 +386,7 @@ public static class AnimatorExtension
 		{
 			var state = animatorStateArray[i].state;
 
-			if(!state || !state.name.IsEqual(stateName))
+			if(!state || !string.Equals(state.name,stateName))
 			{
 				continue;
 			}

@@ -399,7 +399,7 @@ public class CombineMesh : BaseMesh
 
 	private static Mesh _DuplicateMesh(Mesh source)
 	{
-		return Instantiate(source);
+		return source.CopyObject() as Mesh;
 	}
 
 	private void _ReleaseOwnedMesh()

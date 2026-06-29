@@ -84,7 +84,7 @@ public class EnchantedToggleGroup : ToggleGroup
 
 		var toggleName = m_toggleNameList.Contains(m_startToggleName) ? m_startToggleName : NoneToggleName;
 
-		if(toggleName.IsEqual(NoneToggleName))
+		if(string.Equals(toggleName,NoneToggleName))
 		{
 			// When allowSwitchOff is false, ToggleGroup requires at least one toggle on.
 			if(!allowSwitchOff)
@@ -176,7 +176,7 @@ public class EnchantedToggleGroup : ToggleGroup
 				continue;
 			}
 
-			if(toggle.name.IsEqual(toggleName))
+			if(string.Equals(toggle.name,toggleName))
 			{
 				return toggle;
 			}

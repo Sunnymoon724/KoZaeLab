@@ -53,7 +53,7 @@ public static class LongExtension
 	/// </summary>
 	public static bool HasAnyFlag(this long pivot,long target)
 	{
-		return (pivot & target) != 0;
+		return (pivot & target) != 0L;
 	}
 
 	/// <summary>

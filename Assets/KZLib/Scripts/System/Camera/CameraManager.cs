@@ -70,9 +70,9 @@ namespace KZLib
 			_CaptureFarClipPlane(newCamera);
 			_CaptureMainRenderType(newCamera);
 
-			if(GraphicManager.HasInstance)
+			if(GraphicManager.HasInstance && GraphicManager.In.TryFindGraphicQualityOptionValue<float>(Global.DisableCameraFarHalf,out var factor))
 			{
-				GraphicManager.In.ApplyCameraFarClip();
+				ApplyFarClipScale(factor);
 			}
 
 			_ApplySubCamerasToMain();
@@ -144,7 +144,7 @@ namespace KZLib
 		{
 			if(m_mainCamera != null && m_hasOriginalFarClipPlane)
 			{
-				m_mainCamera.farClipPlane = m_originalFarClipPlane * factor;
+				m_mainCamera.farClipPlane = m_originalFarClipPlane*factor;
 			}
 		}
 

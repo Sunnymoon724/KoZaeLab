@@ -34,6 +34,8 @@ namespace KZLib.Data
 	/// </remarks>
 	public class ProtoManager : Singleton<ProtoManager>
 	{
+		private ProtoManager() { }
+
 		/// <summary>Accumulated load work budget before yielding one frame (~30 fps).</summary>
 		private const double c_frameTime = 1.0/30.0d;
 

@@ -110,7 +110,7 @@ namespace KZLib.UI
 			_TryApplyPendingEntryInfoList();
 		}
 
-		private void _OnChangedLanguage(Unit _)
+		private void _OnChangedLanguage(SystemLanguage _)
 		{
 			SetMenu(m_cachedMenuParamArray);
 		}

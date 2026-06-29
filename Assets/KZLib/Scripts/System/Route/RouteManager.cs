@@ -16,6 +16,8 @@ namespace KZLib.Utilities
 	/// </remarks>
 	public class RouteManager : Singleton<RouteManager>
 	{
+		private RouteManager() { }
+
 		private readonly LazyRegistry<string,Route> m_registry = new();
 		private readonly Dictionary<string,string> m_definedPathDict = new();
 

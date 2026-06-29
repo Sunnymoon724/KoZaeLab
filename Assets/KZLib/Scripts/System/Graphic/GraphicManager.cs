@@ -6,52 +6,150 @@ using UnityEngine;
 namespace KZLib
 {
 	/// <summary>
-	/// Applies <see cref="GraphicTune"/> to Unity (Screen, frame rate, QualitySettings, camera far clip).
-	/// Same role as <see cref="Sounds.SoundManager"/> for <see cref="SoundTune"/>.
+	/// Persists graphic settings in PlayerPrefs and applies them to Unity
+	/// (Screen, frame rate, <see cref="QualitySettings"/>, camera far clip via <see cref="CameraManager"/>).
 	/// URP Asset is not handled here; use a separate pipeline/preset path when needed.
 	/// </summary>
 	public class GraphicManager : Singleton<GraphicManager>
 	{
-		private readonly CompositeDisposable m_disposable = new();
-
-		private GraphicTune m_graphicTune = null;
+		private GraphicQualityOption m_graphicQualityOption = null;
 
 		private GraphicManager() { }
+
+		/// <summary>Preset bitmasks from <see cref="GraphicQualityOption"/>. Access via <see cref="Singleton{T}.In"/> only.</summary>
+		public long Highest => m_graphicQualityOption.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityHighest);
+		/// <inheritdoc cref="Highest"/>
+		public long High => m_graphicQualityOption.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityHigh);
+		/// <inheritdoc cref="Highest"/>
+		public long Middle => m_graphicQualityOption.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityMiddle);
+		/// <inheritdoc cref="Highest"/>
+		public long Low => m_graphicQualityOption.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityLow);
+		/// <inheritdoc cref="Highest"/>
+		public long Lowest => m_graphicQualityOption.GetGraphicQualityInPreset(GraphicQualityPresetType.QualityLowest);
+
+		// Access via GraphicManager.In only; Singleton init completes before the instance is returned.
+		private ReactivePrefs<ScreenResolution> m_resolution = null;
+		public Observable<ScreenResolution> OnChangedResolution => m_resolution.OnChanged;
+		public ScreenResolution Resolution
+		{
+			get => m_resolution.Value;
+			set => _ApplyResolution(value);
+		}
+
+		private ReactivePrefs<int> m_frameRate = null;
+		public Observable<int> OnChangedFrameRate => m_frameRate.OnChanged;
+		public int FrameRate
+		{
+			get => m_frameRate.Value;
+			set => _ApplyFrameRate(value);
+		}
+
+		private ReactivePrefs<long> m_graphicQuality = null;
+		public Observable<long> OnChangedGraphicQuality => m_graphicQuality.OnChanged;
+		public long GraphicQuality
+		{
+			get => m_graphicQuality.Value;
+			set => _ApplyGraphicQuality(value);
+		}
+
+		private string _PrefsKey(string name) => $"[{nameof(GraphicManager)}] {name}";
 
 		protected override void _Initialize()
 		{
 			base._Initialize();
 
-			m_graphicTune = TuneManager.In.Fetch<GraphicTune>();
+			m_graphicQualityOption = Resources.Load<GraphicQualityOption>("ScriptableObject/GraphicQualityOption");
 
-			// OnChangedWithStart on the tune side: first subscription applies saved settings (boot restore).
-			m_graphicTune.OnChangedResolution.Subscribe(_OnChangeResolution).AddTo(m_disposable);
-			m_graphicTune.OnChangedFrameRate.Subscribe(_OnChangeFrameRate).AddTo(m_disposable);
-			m_graphicTune.OnChangedGraphicQuality.Subscribe(_OnChangeGraphicQuality).AddTo(m_disposable);
+			if(!m_graphicQualityOption)
+			{
+				throw new System.InvalidOperationException("GraphicQualityOption not found at Resources/ScriptableObject/GraphicQualityOption.");
+			}
+
+			m_resolution = new ReactivePrefs<ScreenResolution>(_PrefsKey(nameof(m_resolution)),ScreenResolution.TryParse,ScreenResolution.fhd);
+			m_frameRate = new ReactivePrefs<int>(_PrefsKey(nameof(m_frameRate)),int.TryParse,Global.FrameRate60);
+			m_graphicQuality = new ReactivePrefs<long>(_PrefsKey(nameof(m_graphicQuality)),long.TryParse,Highest);
+
+			_ApplyResolution(Resolution);
+			_ApplyFrameRate(FrameRate);
+			_ApplyGraphicQuality(GraphicQuality);
 		}
 
 		protected override void _Release(bool disposing)
 		{
 			if(disposing)
 			{
-				m_disposable.Dispose();
-				m_graphicTune = null;
+				m_resolution?.Dispose();
+				m_frameRate?.Dispose();
+				m_graphicQuality?.Dispose();
+
+				m_graphicQualityOption = null;
 			}
 
 			base._Release(disposing);
 		}
 
-		/// <summary>
-		/// Called from <see cref="CameraManager.AttachCamera"/> when the main camera was not ready at last quality apply.
-		/// </summary>
-		public void ApplyCameraFarClip()
+		private void _ApplyResolution(ScreenResolution resolution)
 		{
-			if(m_graphicTune == null)
+			m_resolution.TrySetValue(resolution);
+			Screen.SetResolution(resolution.width,resolution.height,resolution.fullscreen);
+		}
+
+		private void _ApplyFrameRate(int frameRate)
+		{
+			m_frameRate.TrySetValue(frameRate);
+			Application.targetFrameRate = frameRate;
+		}
+
+		private void _ApplyGraphicQuality(long graphicQuality)
+		{
+			m_graphicQuality.TrySetValue(graphicQuality);
+
+			if(_TryFindGraphicQualityOptionValue<int>(graphicQuality,Global.GlobalTextureMipmapLimit,out var globalTextureMipmapLimit))
 			{
-				return;
+				QualitySettings.globalTextureMipmapLimit = globalTextureMipmapLimit;
 			}
 
-			if(!GraphicQualityOption.In.TryFindOptionValue<float>(m_graphicTune.CurrentGraphicQuality,Global.DisableCameraFarHalf,out var factor))
+			if(_TryFindGraphicQualityOptionValue<AnisotropicFiltering>(graphicQuality,Global.AnisotropicFiltering,out var anisotropicFiltering))
+			{
+				QualitySettings.anisotropicFiltering = anisotropicFiltering;
+			}
+
+			if(_TryFindGraphicQualityOptionValue<float>(graphicQuality,Global.LodBias,out var lodBias))
+			{
+				QualitySettings.lodBias = lodBias;
+			}
+
+			if(_TryFindGraphicQualityOptionValue<int>(graphicQuality,Global.MaximumLODLevel,out var maximumLODLevel))
+			{
+				QualitySettings.maximumLODLevel = maximumLODLevel;
+			}
+
+			if(_TryFindGraphicQualityOptionValue<int>(graphicQuality,Global.AntiAliasing,out var antiAliasing))
+			{
+				QualitySettings.antiAliasing = antiAliasing;
+			}
+
+			if(_TryFindGraphicQualityOptionValue<SkinWeights>(graphicQuality,Global.SkinWeights,out var skinWeights))
+			{
+				QualitySettings.skinWeights = skinWeights;
+			}
+
+			if(_TryFindGraphicQualityOptionValue<float>(graphicQuality,Global.ShadowDistance,out var shadowDistance))
+			{
+				QualitySettings.shadowDistance = shadowDistance;
+			}
+
+			if(_TryFindGraphicQualityOptionValue<bool>(graphicQuality,Global.RealtimeReflectionProbes,out var realtimeReflectionProbes))
+			{
+				QualitySettings.realtimeReflectionProbes = realtimeReflectionProbes;
+			}
+
+			_ApplyCameraFarClip(graphicQuality);
+		}
+
+		private void _ApplyCameraFarClip(long graphicQuality)
+		{
+			if(!_TryFindGraphicQualityOptionValue<float>(graphicQuality,Global.DisableCameraFarHalf,out var factor))
 			{
 				return;
 			}
@@ -64,49 +162,24 @@ namespace KZLib
 			CameraManager.In.ApplyFarClipScale(factor);
 		}
 
-		private void _OnChangeResolution(ScreenResolution _)
+		public bool TryFindGraphicQualityOptionValue<TValue>(string optionName,out TValue value)
 		{
-			_ApplyResolution();
+			return _TryFindGraphicQualityOptionValue(GraphicQuality,optionName,out value);
 		}
 
-		private void _OnChangeFrameRate(int _)
+		private bool _TryFindGraphicQualityOptionValue<TValue>(long graphicQuality,string optionName,out TValue value)
 		{
-			_ApplyFrameRate();
+			return m_graphicQualityOption.TryFindOptionValue(graphicQuality,optionName,out value);
 		}
 
-		private void _OnChangeGraphicQuality(long _)
+		public void AddGraphicQuality(long graphicQuality)
 		{
-			_ApplyGraphicQuality();
+			_ApplyGraphicQuality(GraphicQuality.AddFlag(graphicQuality));
 		}
 
-		private void _ApplyResolution()
+		public void RemoveGraphicQuality(long graphicQuality)
 		{
-			var resolution = m_graphicTune.CurrentResolution;
-
-			Screen.SetResolution(resolution.width,resolution.height,resolution.fullscreen);
-		}
-
-		private void _ApplyFrameRate()
-		{
-			Application.targetFrameRate = m_graphicTune.CurrentFrameRate;
-		}
-
-		/// <summary>Maps <see cref="GraphicTune.CurrentGraphicQuality"/> through <see cref="GraphicQualityOption"/> into QualitySettings.</summary>
-		private void _ApplyGraphicQuality()
-		{
-			var graphicQuality = m_graphicTune.CurrentGraphicQuality;
-
-			QualitySettings.globalTextureMipmapLimit = GraphicQualityOption.In.FindOptionValue<int>(graphicQuality,Global.GlobalTextureMipmapLimit);
-			QualitySettings.anisotropicFiltering = GraphicQualityOption.In.FindOptionValue<AnisotropicFiltering>(graphicQuality,Global.AnisotropicFiltering);
-			QualitySettings.vSyncCount = GraphicQualityOption.In.FindOptionValue<int>(graphicQuality,Global.VerticalSyncCount);
-			QualitySettings.lodBias = GraphicQualityOption.In.FindOptionValue<float>(graphicQuality,Global.LodBias);
-			QualitySettings.maximumLODLevel = GraphicQualityOption.In.FindOptionValue<int>(graphicQuality,Global.MaximumLODLevel);
-			QualitySettings.antiAliasing = GraphicQualityOption.In.FindOptionValue<int>(graphicQuality,Global.AntiAliasing);
-			QualitySettings.skinWeights = GraphicQualityOption.In.FindOptionValue<SkinWeights>(graphicQuality,Global.SkinWeights);
-			QualitySettings.shadowDistance = GraphicQualityOption.In.FindOptionValue<float>(graphicQuality,Global.ShadowDistance);
-			QualitySettings.realtimeReflectionProbes = GraphicQualityOption.In.FindOptionValue<bool>(graphicQuality,Global.RealtimeReflectionProbes);
-
-			ApplyCameraFarClip();
+			_ApplyGraphicQuality(GraphicQuality.RemoveFlag(graphicQuality));
 		}
 	}
 }

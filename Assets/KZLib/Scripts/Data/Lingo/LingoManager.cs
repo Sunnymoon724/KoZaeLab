@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using KZLib.Utilities;
@@ -12,36 +13,47 @@ using Object = UnityEngine.Object;
 namespace KZLib.Data
 {
 	/// <summary>
-	/// Unity Localization runtime bridge for <see cref="LanguageTune"/>.
-	/// Same role as <see cref="GraphicManager"/> for <see cref="GraphicTune"/> / <see cref="KZLib.Sounds.SoundManager"/> for <see cref="SoundTune"/>.
-	/// Applies <see cref="LocalizationSettings.SelectedLocale"/> and notifies UI when locale is ready.
+	/// Persists language in PlayerPrefs and applies <see cref="LocalizationSettings.SelectedLocale"/>.
+	/// Also resolves localized strings and assets.
 	/// </summary>
 	public class LingoManager : Singleton<LingoManager>
 	{
+		private LingoManager() { }
+
 		private bool m_isLoaded = false;
-		private readonly CompositeDisposable m_disposable = new();
-		private readonly Subject<Unit> m_lingoSubject = new();
 
-		private LanguageTune m_languageTune = null;
-		private SystemLanguage m_currentLanguage = SystemLanguage.English;
-
-		/// <summary>Locale apply finished; refresh localized UI (not the same as <see cref="LanguageTune.OnChangedLanguage"/>).</summary>
-		public Observable<Unit> OnChangedLanguage => m_lingoSubject;
-
-		/// <summary>Last locale applied to <see cref="LocalizationSettings.SelectedLocale"/>.</summary>
-		public SystemLanguage CurrentLanguage => m_currentLanguage;
-
-		/// <summary>True after <see cref="TryLoadAsync"/> succeeds; required before string/asset lookup.</summary>
+		/// <summary>True after <see cref="TryLoadAsync"/> succeeds; required before string/asset lookup and locale apply.</summary>
 		public bool IsLoaded => m_isLoaded;
+
+		// Access via LingoManager.In only; Singleton init completes before the instance is returned.
+		private ReactivePrefs<SystemLanguage> m_language = null;
+		public Observable<SystemLanguage> OnChangedLanguage => m_language.OnChanged;
+		public SystemLanguage Language
+		{
+			get => m_language.Value;
+			set => _ApplyLanguage(value);
+		}
+
+		private string _PrefsKey(string name) => $"[{nameof(LingoManager)}] {name}";
+
+		protected override void _Initialize()
+		{
+			base._Initialize();
+
+#if UNITY_EDITOR
+			var defaultValue = SystemLanguage.English;
+#else
+			var defaultValue = Application.systemLanguage;
+#endif
+			m_language = new ReactivePrefs<SystemLanguage>(_PrefsKey(nameof(m_language)),Enum.TryParse,defaultValue);
+		}
 
 		protected override void _Release(bool disposing)
 		{
 			if(disposing)
 			{
-				m_disposable.Dispose();
-				m_lingoSubject.Dispose();
+				m_language?.Dispose();
 
-				m_languageTune = null;
 				m_isLoaded = false;
 			}
 
@@ -49,8 +61,8 @@ namespace KZLib.Data
 		}
 
 		/// <summary>
-		/// Initializes Unity Localization, subscribes to <see cref="LanguageTune"/>, and applies saved language.
-		/// Call from <see cref="KZLib.BaseMain"/> before localized UI is expected to resolve strings.
+		/// Awaits Unity Localization init, then applies the saved language to <see cref="LocalizationSettings.SelectedLocale"/>.
+		/// Call from <see cref="BaseMain"/> before localized UI is expected to resolve strings.
 		/// </summary>
 		public async UniTask<bool> TryLoadAsync(CancellationToken token)
 		{
@@ -68,11 +80,8 @@ namespace KZLib.Data
 
 			await LocalizationSettings.InitializationOperation.ToUniTask(cancellationToken: token);
 
-			m_languageTune = TuneManager.In.Fetch<LanguageTune>();
 			m_isLoaded = true;
-
-			// OnChangedWithStart on LanguageTune runs synchronously on Subscribe; m_isLoaded must be true first.
-			m_languageTune.OnChangedLanguage.Subscribe(_OnChangeLanguage).AddTo(m_disposable);
+			_ApplyLanguage(Language);
 
 			return true;
 		}
@@ -80,17 +89,7 @@ namespace KZLib.Data
 		/// <summary>Resolves a string table entry. Key format: {TableName}_{EntryKey}.</summary>
 		public string FindString(string key)
 		{
-			if(key.IsEmpty())
-			{
-				return key;
-			}
-
-			if(!_IsReadyForQuery())
-			{
-				return key;
-			}
-
-			if(!_SplitFormat(key,out var tableName))
+			if(key.IsEmpty() || !m_isLoaded || !_SplitFormat(key,out var tableName))
 			{
 				return key;
 			}
@@ -110,12 +109,7 @@ namespace KZLib.Data
 		/// <summary>Loads a localized asset. Key format: {TableName}_{EntryKey}.</summary>
 		public async UniTask<TAsset> FindAssetAsync<TAsset>(string key,CancellationToken token = default) where TAsset : Object
 		{
-			if(key.IsEmpty() || !_IsReadyForQuery())
-			{
-				return null;
-			}
-
-			if(!_SplitFormat(key,out var tableName))
+			if(key.IsEmpty() || !m_isLoaded || !_SplitFormat(key,out var tableName))
 			{
 				return null;
 			}
@@ -136,37 +130,24 @@ namespace KZLib.Data
 			return result;
 		}
 
-		private void _OnChangeLanguage(SystemLanguage lan)
+		private void _ApplyLanguage(SystemLanguage requested)
 		{
-			if(m_languageTune == null)
-			{
-				return;
-			}
-
-			if(!_TryResolveLocale(lan,out var locale,out var resolvedLanguage))
+			if(!_TryResolveLocale(requested,out var locale,out var resolved))
 			{
 				LogChannel.Data.E("Localization does not include an English locale.");
 
 				return;
 			}
 
-			// Unsupported locale: persist English on LanguageTune, then re-enter via OnChangedWithStart.
-			if(resolvedLanguage != lan)
+			if(resolved != m_language.Value)
 			{
-				m_languageTune.SetLanguage(resolvedLanguage);
-
-				return;
+				m_language.TrySetValue(resolved);
 			}
 
-			LocalizationSettings.SelectedLocale = locale;
-			m_currentLanguage = resolvedLanguage;
-
-			m_lingoSubject.OnNext(Unit.Default);
-		}
-
-		private bool _IsReadyForQuery()
-		{
-			return m_isLoaded && LocalizationSettings.Instance;
+			if(m_isLoaded)
+			{
+				LocalizationSettings.SelectedLocale = locale;
+			}
 		}
 
 		/// <summary>Maps <see cref="SystemLanguage"/> to a project locale; falls back to English.</summary>
@@ -184,7 +165,7 @@ namespace KZLib.Data
 			resolvedLan = SystemLanguage.English;
 			locale = LocalizationSettings.AvailableLocales.GetLocale(new LocaleIdentifier(resolvedLan));
 
-			return locale;
+			return locale != null;
 		}
 
 		/// <summary>Key format: {TableName}_{EntryKey}</summary>

@@ -6,7 +6,7 @@ A Unity 6 research lab for **KoZaeLibrary (KZLib)** — a reusable game developm
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blueviolet.svg)](LICENSE)
 [![Unity Version](https://img.shields.io/badge/Unity-6000.3.7f1-important)](https://unity3d.com/)
-[![KZLib](https://img.shields.io/badge/KZLib-v1.1.4-blue)](Assets/KZLib/package.json)
+[![KZLib](https://img.shields.io/badge/KZLib-v1.1.17-blue)](Assets/KZLib/package.json)
 
 ---
 

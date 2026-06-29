@@ -19,6 +19,8 @@ namespace KZLib.Data
 	/// </remarks>
 	public class ClusterManager : Singleton<ClusterManager>
 	{
+		private ClusterManager() { }
+
 		/// <summary>Sentinel key for parameterless cluster ctors. Used only by <see cref="Fetch{TCluster}()"/>.</summary>
 		private readonly struct ParameterlessKey : IEquatable<ParameterlessKey>
 		{

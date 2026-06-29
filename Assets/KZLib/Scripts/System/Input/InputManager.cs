@@ -10,7 +10,7 @@ namespace KZLib.Inputs
 	/// Singleton hub that registers <see cref="InputController"/> instances and applies a global input block.
 	/// Game code should lock via <see cref="KZInputKit"/>, which reference-counts and also blocks <see cref="UIManager.BlockUI"/>.
 	/// </summary>
-	[SingletonConfig(AutoCreate = true,PrefabPath = "Prefab/InputManager",DontDestroy = true)]
+	[SingletonMBConfig(AutoCreate = true,PrefabPath = "Prefab/InputManager",DontDestroy = true)]
 	public class InputManager : SingletonMB<InputManager>
 	{
 		[SerializeField,HideInInspector]

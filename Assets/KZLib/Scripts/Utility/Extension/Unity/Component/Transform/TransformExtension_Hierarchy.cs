@@ -73,7 +73,7 @@ public static partial class TransformExtension
 
 		for(var current = origin.parent;current != null;current = current.parent)
 		{
-			if(current.name.IsEqual(name))
+			if(string.Equals(current.name,name))
 			{
 				return current;
 			}
@@ -267,7 +267,7 @@ public static partial class TransformExtension
 		{
 			var current = queue.Dequeue();
 
-			if(current.name.IsEqual(name))
+			if(string.Equals(current.name,name))
 			{
 				return current;
 			}
@@ -298,7 +298,7 @@ public static partial class TransformExtension
 		{
 			var current = queue.Dequeue();
 
-			if(name.IsEmpty() || current.name.IsEqual(name))
+			if(name.IsEmpty() || string.Equals(current.name,name))
 			{
 				yield return current;
 			}

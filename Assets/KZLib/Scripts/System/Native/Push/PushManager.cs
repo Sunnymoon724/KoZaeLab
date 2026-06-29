@@ -1,7 +1,7 @@
 using System;
-using KZLib;
 using KZLib.Data;
 using KZLib.Utilities;
+using R3;
 
 #if UNITY_ANDROID
 
@@ -20,11 +20,49 @@ namespace KZLib.Natives
 {
 	public class PushManager : Singleton<PushManager>
 	{
+		private PushManager() { }
+
 		private bool m_isInitialized = false;
 
 #if UNITY_ANDROID
-		private const string CHANNEL_ID = "game_notification_channel";
+		private const string c_channelId = "game_notification_channel";
 #endif
+
+		private string _PrefsKey(string name) => $"[{nameof(VibrationManager)}] {name}";
+
+		private ReactivePrefs<bool> m_useNotification = null;
+		public Observable<bool> OnChangedNotification => m_useNotification.OnChanged;
+		public bool UseNotification
+		{
+			get => m_useNotification.Value;
+			set => _ApplyNotification(value);
+		}
+
+		private ReactivePrefs<bool> m_useNightNotification = null;
+		public Observable<bool> OnChangedNightNotification => m_useNightNotification.OnChanged;
+		public bool UseNightNotification
+		{
+			get => m_useNightNotification.Value;
+			set => _ApplyNightNotification(value);
+		}
+
+		private void _ApplyNotification(bool useNotification)
+		{
+			m_useNotification.TrySetValue(useNotification);
+		}
+
+		private void _ApplyNightNotification(bool useNightNotification)
+		{
+			m_useNightNotification.TrySetValue(useNightNotification);
+		}
+
+		protected override void _Initialize()
+		{
+			base._Initialize();
+
+			m_useNotification = new ReactivePrefs<bool>(_PrefsKey(nameof(m_useNotification)),bool.TryParse,true);
+			m_useNightNotification = new ReactivePrefs<bool>(_PrefsKey(nameof(m_useNightNotification)),bool.TryParse,true);
+		}
 
 		public void RequestPermission()
 		{
@@ -44,7 +82,7 @@ namespace KZLib.Natives
 
 			var channel = new AndroidNotificationChannel()
 			{
-				Id = CHANNEL_ID,
+				Id = c_channelId,
 				Name = "Game Notification",
 				Importance = Importance.High,
 				Description = "Generic notifications for the game",
@@ -56,6 +94,11 @@ namespace KZLib.Natives
 			m_isInitialized = true;
 		}
 
+		/// <summary>
+		/// Schedules a local notification at <paramref name="targetTimestamp"/> (Unix seconds, UTC).
+		/// Skipped when the server clock has not been synced, because delay calculation requires
+		/// <see cref="ServerClockManager.UtcNow"/>.
+		/// </summary>
 		public void SendLocalPush(int id,string title,string body,long targetTimestamp)
 		{
 			if(!m_isInitialized)
@@ -63,26 +106,31 @@ namespace KZLib.Natives
 				return;
 			}
 
+			// if(!ServerClockManager.In.IsSynced)
+			// {
+			// 	LogChannel.Kit.W("Local push skipped because server clock is not synced.");
+
+			// 	return;
+			// }
+
 			var serverTime = ServerClockManager.In.UtcNow;
 			var targetTime = DateTimeOffset.FromUnixTimeSeconds(targetTimestamp).UtcDateTime;
 
-			var second = (targetTime - serverTime).TotalSeconds;
+			var second = (targetTime-serverTime).TotalSeconds;
 
 			if(second <= 0)
 			{
 				return;
 			}
 
-			var nativeTune = TuneManager.In.Fetch<NativeTune>();
-
-			if(!nativeTune.UseNotification)
+			if(!UseNotification)
 			{
 				return;
 			}
 
 			var localTargetTime = targetTime.ToLocalTime();
 
-			if(_IsNightTime(localTargetTime) && !nativeTune.UseNightNotification)
+			if(_IsNightTime(localTargetTime) && !UseNightNotification)
 			{
 				return;
 			}
@@ -107,7 +155,7 @@ namespace KZLib.Natives
 				ShowInForeground = false
 			};
 
-			AndroidNotificationCenter.SendNotificationWithExplicitID(notification,CHANNEL_ID,id);
+			AndroidNotificationCenter.SendNotificationWithExplicitID(notification,c_channelId,id);
 		}
 #endif
 

@@ -12,6 +12,8 @@ namespace KZLib.Webhooks
 	/// </summary>
 	public partial class WebhookManager : Singleton<WebhookManager>
 	{
+		private WebhookManager() { }
+
 		private readonly Subject<string> m_networkErrorSubject = new();
 		public Observable<string> OnShownNetworkError => m_networkErrorSubject;
 

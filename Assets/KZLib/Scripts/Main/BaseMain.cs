@@ -45,10 +45,10 @@ namespace KZLib
 				}
 
 #if UNITY_EDITOR
-				//? Edit-mode inspector: show TuneManager language before play (no m_gameLanguage cache yet).
+				//? Edit-mode inspector: show saved language before play (no m_gameLanguage cache yet).
 				if(!Application.isPlaying)
 				{
-					return TuneManager.In.Fetch<LanguageTune>().CurrentLanguage;
+					return LingoManager.In.Language;
 				}
 #endif
 
@@ -169,16 +169,18 @@ namespace KZLib
 
 		private void _SyncGameLanguage()
 		{
-			//? Push cached language to TuneManager, or seed cache from TuneManager before Lingo load.
-			var lanTun = TuneManager.In.Fetch<LanguageTune>();
+			if(!LingoManager.In.IsLoaded)
+			{
+				return;
+			}
 
 			if(m_gameLanguage.HasValue)
 			{
-				lanTun.SetLanguage(m_gameLanguage.Value);
+				LingoManager.In.Language = m_gameLanguage.Value;
 			}
 			else
 			{
-				m_gameLanguage = lanTun.CurrentLanguage;
+				m_gameLanguage = LingoManager.In.Language;
 			}
 		}
 
@@ -257,8 +259,6 @@ namespace KZLib
 		{
 			KZExternalKit.RecycleTokenSourceInMono(ref m_tokenSource,this);
 
-			_SyncGameLanguage();
-
 #if UNITY_EDITOR
 			if(IsTestMode)
 			{
@@ -269,6 +269,8 @@ namespace KZLib
 			{
 				await _InitializeNormalMode(m_tokenSource.Token);
 			}
+
+			_SyncGameLanguage();
 
 			ContextManager.In.InitializeContext();
 
@@ -339,22 +341,17 @@ namespace KZLib
 		{
 			Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-#if UNITY_EDITOR || UNITY_STANDALONE
-			ScreenResolution = new Vector2Int(Screen.width,Screen.height);
-#else
-			ScreenResolution = new Vector2Int(Screen.currentResolution.width,Screen.currentResolution.height);
-#endif
+			var resolution = GraphicManager.In.Resolution;
+
+			ScreenResolution = new Vector2Int(resolution.width,resolution.height);
 
 			stringBuilder.AppendFormat($"Current Screen Resolution {ScreenResolution.x}x{ScreenResolution.y}\n");
 		}
 
 		protected virtual void _InitializeFrame(StringBuilder stringBuilder)
 		{
-			_ = GraphicManager.In;
-
-			var graphicTun = TuneManager.In.Fetch<GraphicTune>();
-
-			stringBuilder.AppendFormat($"Current FPS {graphicTun.CurrentFrameRate}\n");
+			QualitySettings.vSyncCount = 0;
+			stringBuilder.AppendFormat($"Current FPS {GraphicManager.In.FrameRate}\n");
 		}
 
 		protected virtual void _InitializeRenderSetting(StringBuilder stringBuilder) { }

@@ -6,8 +6,8 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using MessagePipe;
 using Microsoft.Extensions.DependencyInjection;
-using KZLib;
 using KZLib.Collections.Generic;
+using KZLib;
 using KZLib.Diagnostics;
 
 #if UNITY_EDITOR
@@ -66,6 +66,9 @@ public partial class LogChannel
 	public static readonly LogChannel Kit			= new(nameof(Kit));
 
 	public static readonly LogChannel Develop		= new(nameof(Develop));
+	public static readonly LogChannel Storage		= new(nameof(Storage));
+
+	public static readonly LogChannel Script		= new(nameof(Script));
 
 
 	public static readonly LogChannel External		= new(nameof(External));
@@ -384,7 +387,7 @@ public partial class LogChannel
 	{
 		var entity = EditorUtility.EntityIdToObject(instance);
 
-		if(entity == null || entity.name.IsEmpty() || !entity.name.IsEqual(nameof(LogChannel)))
+		if(entity == null || entity.name.IsEmpty() || !string.Equals(entity.name,nameof(LogChannel)))
 		{
 			return false;
 		}

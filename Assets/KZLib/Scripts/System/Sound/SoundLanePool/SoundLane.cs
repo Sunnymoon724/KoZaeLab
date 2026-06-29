@@ -18,7 +18,7 @@ namespace KZLib.Sounds
 	/// One pooled effect <see cref="AudioSource"/> slot managed by <see cref="LanePool{TLane,TSource}"/>.
 	/// <para>
 	/// At pool creation each lane is parented under <see cref="SoundLanePool"/> storage.
-	/// On acquire, <see cref="Initialize"/> reparents under <see cref="SoundLaneParam.Target"/> for follow playback, or keeps the source under storage when <see cref="SoundLaneParam.Target"/> is <c>null</c>.
+	/// On acquire, <see cref="Initialize"/> sets the source parent to <see cref="SoundLaneParam.Target"/> for follow playback, or leaves it under storage when <see cref="SoundLaneParam.Target"/> is <c>null</c>.
 	/// <see cref="Release"/> and <see cref="LanePool{TLane,TSource}.Tick"/> return lanes to storage.
 	/// <see cref="FollowTargetWatcher"/> on the follow target calls <see cref="Release"/> when the target is destroyed externally.
 	/// </para>
@@ -61,7 +61,7 @@ namespace KZLib.Sounds
 
 		/// <summary>
 		/// Called by <see cref="LanePool{TLane,TSource}.TryAcquire"/> when the lane is borrowed.
-		/// Marks the lane active, reparents the source under <see cref="SoundLaneParam.Target"/> or storage when <c>null</c>, and binds <see cref="FollowTargetWatcher"/> for follow targets. Does not play audio.
+		/// Marks the lane active, sets the source parent to <see cref="SoundLaneParam.Target"/> or storage when <c>null</c>, and binds <see cref="FollowTargetWatcher"/> for follow targets. Does not play audio.
 		/// </summary>
 		public void Initialize(ILaneParam param)
 		{
@@ -84,7 +84,7 @@ namespace KZLib.Sounds
 			}
 		}
 
-		/// <summary>Reparents the pooled source and resets local position and rotation to identity.</summary>
+		/// <summary>Sets the pooled source parent and resets local position and rotation to identity.</summary>
 		private void _SetParent(Transform parent)
 		{
 			var transform = m_source.transform;
@@ -94,7 +94,7 @@ namespace KZLib.Sounds
 		}
 
 		/// <summary>
-		/// Returns the lane to the pool: stops playback, marks inactive, resets <see cref="AudioSource"/> to pooled defaults, and reparents the source under storage.
+		/// Returns the lane to the pool: stops playback, marks inactive, resets <see cref="AudioSource"/> to pooled defaults, and sets the source parent back to storage.
 		/// Unbinds <see cref="FollowTargetWatcher"/> when the lane had a follow target.
 		/// </summary>
 		public void Release()

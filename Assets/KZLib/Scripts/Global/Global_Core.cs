@@ -111,7 +111,6 @@ public static partial class Global
 {
 	public const string GlobalTextureMipmapLimit = "GlobalTextureMipmapLimit";
 	public const string AnisotropicFiltering = "AnisotropicFiltering";
-	public const string VerticalSyncCount = "VerticalSyncCount";
 	public const string DisableCameraFarHalf = "DisableCameraFarHalf";
 	public const string LodBias = "LodBias";
 	public const string MaximumLODLevel = "MaximumLODLevel";
